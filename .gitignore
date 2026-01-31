@@ -1,0 +1,31 @@
+# =========================
+#   SISTEMA / EDITORES
+# =========================
+.vscode/
+*.code-workspace
+.DS_Store
+Thumbs.db
+*.log
+
+# =========================
+#   DEPENDÊNCIAS (Composer)
+# =========================
+/vendor/
+/composer.lock
+
+# =========================
+#   CACHE / TEMP
+# =========================
+/cache/
+/tmp/
+/storage/
+/sessions/
+/logs/
+/uploads/
+
+# =========================
+#   AMBIENTE
+# =========================
+.env
+.env.local
+.env.*.local

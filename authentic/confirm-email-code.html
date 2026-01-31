@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="author" content="Vooso">
+    <meta name="theme-color" content="#FF0089">
+    <title>Verificar código - Wasom Upfy</title>
+    <link rel="shortcut icon" href="../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/josembengacosta/wasomupfy@main/css/light.css">
+    <link rel="stylesheet" href="../css/login.css">
+    <link rel="stylesheet" href="../css/loanding.css">
+    <style>
+        .card {
+            border-radius: 12px;
+            border: 1px solid rgba(255, 0, 157, 0.2);
+            background: #fff;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-wasomupfy {
+            background: linear-gradient(45deg, #ff0089, #FF0089);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 5px 7px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-wasomupfy:hover {
+            background: linear-gradient(45deg, #e04385, #cc0070);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(172, 19, 19, 0.2);
+            color: white;
+        }
+
+        .fade-in {
+            animation: fadeIn 1s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loaded .preloader {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .code-inputs {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            max-width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .code-inputs input {
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            font-size: 1.25rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+
+        .code-inputs input:focus {
+            border-color: #FF0089;
+            outline: none;
+            box-shadow: 0 0 5px rgba(255, 0, 157, 0.5);
+        }
+
+        @media (max-width: 576px) {
+            .code-inputs input {
+                width: 36px;
+                height: 36px;
+                font-size: 1rem;
+            }
+
+            .code-inputs {
+                gap: 6px;
+            }
+        }
+
+        .spinner-border {
+            border-bottom-color: #ff0089;
+            border-top-color: #ff0089;
+            border-left-color: #ff0089;
+            ;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="preloader">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Carregando...</span>
+        </div>
+    </div>
+    <main class="content">
+        <div class="container-fluid p-0">
+            <section class="py-4">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8 text-center">
+                            <img src="../assets/img/brand/wasomupfy_authentic.png" class="img-fluid fade-in" width="120"
+                                height="120" alt="Logo Wasom Upfy">
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="verify-code">
+                <div class="row justify-content-center">
+                    <div class="col-xl-4 col-lg-6 col-md-8 col-12">
+                        <div class="card shadow-sm mb-4">
+                            <div class="card-body p-4">
+                                <h4 class="card-title text-center mb-4" style="color: #FF0089;">Verificar código</h4>
+                                <p class="text-center text-muted mb-4">Insira o código de 6 dígitos enviado para o seu
+                                    e-mail.</p>
+                                <form method="POST" action="verify-code-process.php" class="needs-validation"
+                                    id="validation-form" novalidate>
+                                    <input type="hidden" name="csrf_token"
+                                        value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
+                                    <input type="hidden" name="email"
+                                        value="<?php echo htmlspecialchars($_GET['email'] ?? ''); ?>">
+                                    <input type="text" name="honeypot" style="display: none;" value="">
+                                    <div class="mb-3">
+                                        <label for="code-1" class="form-label">Código de confirmação <span
+                                                class="text-danger">*</span></label>
+                                        <div class="code-inputs">
+                                            <input type="text" class="form-control code-digit" id="code-1"
+                                                inputmode="numeric" maxlength="1" pattern="[0-9]" required
+                                                aria-label="Dígito 1 do código">
+                                            <input type="text" class="form-control code-digit" id="code-2"
+                                                inputmode="numeric" maxlength="1" pattern="[0-9]" required
+                                                aria-label="Dígito 2 do código">
+                                            <input type="text" class="form-control code-digit" id="code-3"
+                                                inputmode="numeric" maxlength="1" pattern="[0-9]" required
+                                                aria-label="Dígito 3 do código">
+                                            <input type="text" class="form-control code-digit" id="code-4"
+                                                inputmode="numeric" maxlength="1" pattern="[0-9]" required
+                                                aria-label="Dígito 4 do código">
+                                            <input type="text" class="form-control code-digit" id="code-5"
+                                                inputmode="numeric" maxlength="1" pattern="[0-9]" required
+                                                aria-label="Dígito 5 do código">
+                                            <input type="text" class="form-control code-digit" id="code-6"
+                                                inputmode="numeric" maxlength="1" pattern="[0-9]" required
+                                                aria-label="Dígito 6 do código">
+                                            <input type="hidden" name="code" id="code">
+                                        </div>
+                                        <div class="invalid-feedback text-center mt-2">Insira um código de 6 dígitos
+                                            válido.</div>
+                                    </div>
+                                    <div class="d-grid mb-2">
+                                        <button class="btn btn-wasomupfy" type="submit">Confirmar código</button>
+                                    </div>
+                                    <div class="text-center">
+                                        <a href="forgot-password.html" style="color: #FF0089;">Alterar e-mail</a>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="card-footer text-center py-2">
+                                <a href="#support" data-bs-toggle="modal" data-bs-target="#support"
+                                    style="color: #FF0089;" class="me-2">Suporte</a> |
+                                <a href="#terms" data-bs-toggle="modal" data-bs-target="#terms" style="color: #FF0089;"
+                                    class="me-2">Termos</a> |
+                                <a href="#privacy" data-bs-toggle="modal" data-bs-target="#privacy"
+                                    style="color: #FF0089;" class="me-2">Privacidade</a> |
+                                <a href="../home.html" class="text-muted">Voltar à página inicial</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+    <!-- Modal Suporte -->
+    <div class="modal fade" id="support" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="supportLabel">
+        <div class="modal-dialog">
+            <form action="support_process.php" method="POST" class="needs-validation" novalidate>
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" style="color: #FF0089;" id="supportLabel">Suporte</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Precisa de ajuda? Envie sua mensagem abaixo.</p>
+                        <div class="mb-3">
+                            <label for="support_email" class="form-label">E-mail <span
+                                    class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="support_email" required autocomplete="email"
+                                name="support_email" placeholder="seu.email@exemplo.com" maxlength="60">
+                            <div class="invalid-feedback">Insira um e-mail válido.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="support_subject" class="form-label">Assunto <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="support_subject" required name="support_subject"
+                                placeholder="Assunto da mensagem" maxlength="60">
+                            <div class="invalid-feedback">Insira o assunto.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="support_message" class="form-label">Mensagem <span
+                                    class="text-danger">*</span></label>
+                            <textarea class="form-control" id="support_message" name="support_message" rows="4" required
+                                maxlength="400" placeholder="Descreva seu problema..."></textarea>
+                            <div class="invalid-feedback">Insira sua mensagem.</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-wasom">Enviar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Modal Privacidade -->
+    <div class="modal fade" id="privacy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="privacyLabel">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="color: #FF0089;" id="privacyLabel">Política de Privacidade</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="accordion" id="privacyAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#privacy1">Coleta de Dados</button>
+                            </h2>
+                            <div id="privacy1" class="accordion-collapse collapse show"
+                                data-bs-parent="#privacyAccordion">
+                                <div class="accordion-body">
+                                    <p>Coletamos dados como nome, e-mail, telefone e informações de pagamento para
+                                        oferecer serviços.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-wasom" data-bs-dismiss="modal">Entendido</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Termos -->
+    <div class="modal fade" id="terms" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="termsLabel">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="color: #FF0089;" id="termsLabel">Termos de Uso</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="accordion" id="termsAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#terms1">Descrição dos Serviços</button>
+                            </h2>
+                            <div id="terms1" class="accordion-collapse collapse show" data-bs-parent="#termsAccordion">
+                                <div class="accordion-body">
+                                    <p>A Wasom Upfy distribui músicas para plataformas como Spotify e Apple Music.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-wasom" data-bs-dismiss="modal">Entendido</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/validacao.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/josembengacosta/wasomupfy@main/js/app.js"></script>
+    <script>
+        window.addEventListener("load", () => {
+            setTimeout(() => document.body.classList.add("loaded"), 300);
+        });
+        $(document).ready(() => {
+            const inputs = $(".code-digit");
+            // Navegação automática
+            inputs.on("input", function () {
+                if (this.value.length === 1 && /[0-9]/.test(this.value)) {
+                    const nextInput = $(this).next(".code-digit");
+                    if (nextInput.length) nextInput.focus();
+                }
+                updateHiddenCode();
+                validateCode();
+            });
+            // Voltar com Backspace
+            inputs.on("keydown", function (e) {
+                if (e.key === "Backspace" && !this.value) {
+                    const prevInput = $(this).prev(".code-digit");
+                    if (prevInput.length) prevInput.focus();
+                }
+            });
+            // Suporte a colar código
+            inputs.first().on("paste", function (e) {
+                const pastedData = e.originalEvent.clipboardData.getData("text").replace(/\D/g, "");
+                if (pastedData.length === 6) {
+                    inputs.each((i, input) => {
+                        $(input).val(pastedData[i]);
+                    });
+                    updateHiddenCode();
+                    validateCode();
+                    inputs.last().focus();
+                }
+                e.preventDefault();
+            });
+            // Atualizar campo oculto
+            function updateHiddenCode() {
+                const code = Array.from(inputs).map(input => input.value).join("");
+                $("#code").val(code);
+            }
+            // Validar código
+            function validateCode() {
+                const code = $("#code").val();
+                if (/^\d{6}$/.test(code)) {
+                    $(".code-inputs").removeClass("is-invalid").addClass("is-valid");
+                    inputs.removeClass("is-invalid").addClass("is-valid");
+                } else {
+                    $(".code-inputs").removeClass("is-valid").addClass("is-invalid");
+                    inputs.removeClass("is-valid").addClass("is-invalid");
+                }
+            }
+            // Validação jQuery
+            $("#validation-form").validate({
+                rules: {
+                    code: {
+                        required: true,
+                        digits: true,
+                        minlength: 6,
+                        maxlength: 6
+                    }
+                },
+                messages: {
+                    code: {
+                        required: "Insira o código de 6 dígitos.",
+                        digits: "O código deve conter apenas números.",
+                        minlength: "O código deve ter 6 dígitos.",
+                        maxlength: "O código deve ter 6 dígitos."
+                    }
+                },
+                errorPlacement: (error, element) => {
+                    if (element.attr("name") === "code") {
+                        error.insertAfter(".code-inputs");
+                    } else {
+                        error.insertAfter(element);
+                    }
+                },
+                highlight: () => {
+                    $(".code-inputs").addClass("is-invalid").removeClass("is-valid");
+                    inputs.addClass("is-invalid").removeClass("is-valid");
+                },
+                unhighlight: () => {
+                    $(".code-inputs").addClass("is-valid").removeClass("is-invalid");
+                    inputs.addClass("is-valid").removeClass("is-invalid");
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

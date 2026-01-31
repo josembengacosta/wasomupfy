@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="author" content="Voosoft" />
+    <meta name="theme-color" content="#FF0089">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="../../assets/img/icones/wasomupfy_fiv_512.png">
+    <link rel="apple-touch-startup-image" href="../../assets/img/screenshots/splash.png">
+    <link rel="manifest" href="../manifest.json">
+    <title>Gestão da conta - Wasom Upfy</title>
+    <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
+    <link rel="stylesheet" href="../../css/libs/plugins.css">
+    <link rel="stylesheet" href="../../css/libs/scrollue.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
+    <link href="
+https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css
+" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../../css/dashboard-style.css">
+    <link rel="stylesheet" href="../../css/lastest-style.css">
+    <link rel="stylesheet" href="../../css/account-style.css">
+</head>
+
+<body>
+
+    <!-- Tela de Carregamento -->
+    <!-- <div class="loading-screen" id="loadingScreen">
+      <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg" class="loading-logo">
+          <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2"/>
+          <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
+      </svg>
+      <div class="spinner"></div>
+  </div> -->
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <!-- Menu Button (Left) -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu"
+                aria-controls="offcanvasMenu">
+                <span class="navbar-toggler-icon"><i class="bi bi-list text-white fs-1"></i></span>
+            </button>
+
+            <!-- Logo (Center on Mobile, Left on Desktop) -->
+            <a class="navbar-brand" href="../painel.html">
+                <!-- SVG Logo Wasom Upfy -->
+                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
+                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
+                        fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
+                </svg> -->
+                <span class="text-light"
+                    style="font-weight: bold; box-sizing: border-box; text-transform: capitalize; font-family:Arial, sans-serif">WASOM
+                    UPFY</span>
+            </a>
+
+
+            <!-- Desktop Menu -->
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav m-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="../painel.html"><i class="bi bi-speedometer2"></i>
+                            Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../launch/releases.html"><i class="bi bi-disc"></i>
+                            Lançamentos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../analytics/statistics.html"><i
+                                class="bi bi-bar-chart"></i>
+                            Estatísticas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../finances/overview.html"><i
+                                class="bi bi-currency-dollar"></i>
+                            Finanças</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../artists/artists-list.html"><i
+                                class="bi bi-person"></i>
+                            Artistas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="youtube.html"><i class="bi bi-youtube"></i>
+                            Unificação de canal YouTube</a></li>
+                </ul>
+            </div>
+
+            <!-- User Icon (Right) -->
+            <div class="user-menu d-flex align-items-center">
+                <!-- Theme Toggle Button -->
+                <a class="theme-toggle text-white me-2" id="themeToggle">
+                    <i class="bi bi-sun" id="themeIcon"></i>
+                </a>
+                <a href="../notifications.html" class="text-white me-2" aria-label="Notificações">
+                    <i class="bi bi-bell fs-4"></i>
+                    <span class="badge bg-danger">9</span>
+                </a>
+                <a href="#" class="text-white" data-bs-toggle="dropdown">
+                    <i class="bi bi-person-circle fs-4"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="../user/profile.html"><i class="bi bi-person me-2"></i>
+                            <strong>Eleven
+                                Records</strong></a>
+                        <div class="text-white-50"> &nbsp; &nbsp; &nbsp; &nbsp;
+                            (Conta 560108)</div>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="../user/profile.html"><i class="bi bi-person me-2"></i> Meu
+                            Perfil</a>
+                    </li>
+                    <li><a class="dropdown-item" href="../account/manage-account.html"><i class="bi bi-tools me-2"></i>
+                            Gestão de Conta</a>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="../page/settings.html"><i class="bi bi-gear me-2"></i>
+                            Configurações</a></li>
+                    <li><a class="dropdown-item" href="../page/notifications.html"><i class="bi bi-bell me-2"></i>
+                            Notificações</a></li>
+                    <li><a class="dropdown-item" href="../services/available-services.html"><i
+                                class="bi bi-star me-2"></i> Conta e serviços disponíveis</a></li>
+                    <li><a class="dropdown-item" href="#?logout-wasomupfy" data-bs-toggle="modal"
+                            data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right me-2"></i>
+                            Desconectar-se</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="../page/sobre.html"><i class="bi bi-info-circle me-2"></i>
+                            Sobre</a>
+                    </li>
+                    <li><a class="dropdown-item" href="../page/support.html"><i class="bi bi-headset me-2"></i> Enviar
+                            pedido de suporte</a></li>
+                    <li><a class="dropdown-item" href="../page/faq.html"><i class="bi bi-chat-left-text me-2"></i>
+                            Perguntas frequentes</a></li>
+                    <li><a class="dropdown-item" href="../page/help.html"><i class="bi bi-question-circle me-2"></i>
+                            Ajuda</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><span class="dropdown-item-text" id="versionDropdown"></span></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Modal logout -->
+    <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">Terminar sessão</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row justify-content-center text-center">
+                            <div class="col-md-12 content-center justify-center text-center">
+                                <p class="text-center text-dark">@josembengadacosta você tem
+                                    certeza
+                                    de que desejas terminar
+                                    sessão?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Não, continuar</button>
+                    </div>
+                    <div>
+                        <button class="btn btn-danger" type="button" name="logout_wasomupfy"
+                            onclick="logout_wasomupfy()">Sim, terminar
+                            sessão</button>
+                    </div>
+                    <script type="text/javascript">
+                        function logout_wasomupfy() {
+                            window.location = '../logout';
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal logout fim -->
+
+    <!-- Offcanvas Menu para Mobile e Desktop -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasMenuLabel">
+                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
+                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
+                        fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
+                </svg> -->
+                <span class="text-light"
+                    style="font-weight: bold; box-sizing: border-box; text-transform: capitalize; font-family:Arial, sans-serif">WASOM
+                    UPFY</span>
+            </h5>
+            <button type="button" class="btn-close text-white" data-bs-dismiss="offcanvas" aria-label="Close">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link" href="../painel.html"><i class="bi bi-speedometer2"></i>
+                        Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="../launch/releases.html"><i class="bi bi-disc"></i>
+                        Lançamentos</a></li>
+                <li class="nav-item"><a class="nav-link" href="../analytics/statistics.html"><i
+                            class="bi bi-bar-chart"></i> Estatísticas</a></li>
+                <li class="nav-item"><a class="nav-link" href="../finances/overview.html"><i
+                            class="bi bi-currency-dollar"></i> Finanças</a></li>
+                <li class="nav-item"><a class="nav-link" href="../artists/artists-list.html"><i
+                            class="bi bi-person"></i>
+                        Artistas</a></li>
+                <li class="nav-item"><a class="nav-link" href="../youtube.html"><i class="bi bi-youtube"></i> Unificação
+                        de
+                        canal YouTube</a></li>
+                <!-- Links secundários exibidos apenas em mobile -->
+                <li class="nav-item d-lg-none"><a class="nav-link" href="../user/profile.html"><i
+                            class="bi bi-person-circle"></i> Meu Perfil</a></li>
+                <li class="nav-item d-lg-none"><a class="nav-link active" href="../page/settings.html"><i
+                            class="bi bi-gear"></i> Configurações</a></li>
+                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/notifications.html"><i
+                            class="bi bi-bell"></i> Notificações</a></li>
+                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/sobre.html"><i
+                            class="bi bi-info-circle"></i> Sobre</a></li>
+                <li class="nav-item d-lg-none"><a class="nav-link" href="../services/available-services.html"><i
+                            class="bi bi-star"></i>
+                        Conta e serviços disponíveis</a></li>
+                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/help.html"><i
+                            class="bi bi-question-circle"></i> Ajuda</a></li>
+                <li class="nav-item d-lg-none"><a class="nav-link" href="#?logout-wasomupfy" data-bs-toggle="modal"
+                        data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right"></i> Desconectar-se</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Toast para Notificações de Status -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="connectionToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">Conexão</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Fechar"></button>
+            </div>
+            <div class="toast-body">
+                Você está offline. Alguns dados podem estar desatualizados.
+                <div class="mt-2">
+                    <button class="btn btn-pink btn-sm" onclick="tryReconnect()">Tentar Reconectar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Main Content -->
+    <div class="container form-custom">
+        <h1>Gestão de Conta</h1>
+
+        <div class="form-group">
+            <label>Nome da Conta</label>
+            <input type="text" value="Eleven Records" readonly>
+        </div>
+
+        <div class="form-group">
+            <label>E-mail da Conta</label>
+            <input type="email" value="cristiano@elevenrecords.com">
+        </div>
+
+        <div class="form-group">
+            <label>País</label>
+            <input type="text" value="Angola">
+        </div>
+
+        <div class="form-group">
+            <label>Telefone</label>
+            <input type="tel" value="+244 935 200 488">
+        </div>
+
+        <button class="btn btn-pink w-100" onclick="saveAccount()">Salva conta</button>
+
+        <div class="d-flex justify-content-between align-items-center mt-2 mb-5">
+            <a href="#" class="user-list-link" data-bs-toggle="modal" data-bs-target="#userListModal">
+                <i class="bi bi-people"></i> Lista de usuários
+            </a>
+            <button class="btn-add-user" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                <i class="bi bi-plus"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal for User List -->
+    <div class="modal fade" id="userListModal" tabindex="-1" aria-labelledby="userListModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userListModalLabel">Lista de Usuários</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="filter-group">
+                        <div class="input-group">
+                            <i class="bi bi-search"></i>
+                            <input type="text" id="userSearch" placeholder="Pesquisar usuário" onkeyup="filterUsers()">
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Foto</th>
+                                    <th><i class="bi bi-person me-1"></i> Nome de Usuário</th>
+                                    <th><i class="bi bi-person-fill me-1"></i> Nome</th>
+                                    <th><i class="bi bi-envelope me-1"></i> E-mail</th>
+                                    <th><i class="bi bi-phone me-1"></i> Telefone</th>
+                                    <th><i class="bi bi-hash me-1"></i> ID</th>
+                                    <th><i class="bi bi-briefcase me-1"></i> Função</th>
+                                    <th><i class="bi bi-circle-fill me-1"></i> Estado</th>
+                                    <th><i class="bi bi-calendar me-1"></i> Criado/Modificado</th>
+                                    <th><i class="bi bi-clock-history me-1"></i> Atividades</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userList">
+                                <!-- Users will be populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Add User -->
+    <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addUserModalLabel">Adicionar novo usuário</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addUserForm">
+                        <div class="form-group">
+                            <label for="newUserPhoto">Foto de Perfil (URL)</label>
+                            <input type="text" id="newUserPhoto" autocomplete="url" placeholder="URL da foto" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newUserUsername">Nome de Usuário</label>
+                            <input type="text" id="newUserUsername" autocomplete="username"
+                                placeholder="Ex.: josé_da_costa" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newUserName">Nome Completo</label>
+                            <input type="text" id="newUserName" autocomplete="name" placeholder="Ex.: João da Costa"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newUserEmail">E-mail</label>
+                            <input type="email" id="newUserEmail" autocomplete="email"
+                                placeholder="Ex.: josembenga@wasomupfy.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newUserPhone">Telefone</label>
+                            <input type="tel" id="newUserPhone" placeholder="Ex.: +244 9XX XXX XXX" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newUserRole">Função</label>
+                            <select id="newUserRole" required>
+                                <option value="" disabled selected>Selecione uma função</option>
+                                <option value="Administrador">Administrador</option>
+                                <option value="Editor">Editor</option>
+                                <option value="Analista">Analista</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="newUserPassword">Senha Inicial</label>
+                            <input type="password" autocomplete="new-password" id="newUserPassword"
+                                placeholder="Digite a senha inicial" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newUserConfirmPassword">Confirmar Senha</label>
+                            <input type="password" id="newUserConfirmPassword" placeholder="Confirme a senha inicial"
+                                required>
+                        </div>
+                    </form>
+                    <div class="error-message" id="addUserError">
+                        Por favor, preencha todos os campos corretamente.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-save" onclick="addUser()">Adicionar Usuário</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Edit User -->
+    <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editUserModalLabel">Editar Usuário</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editUserForm" class="needs-validation" novalidate>
+                        <input type="hidden" id="editUserId">
+                        <div class="form-group">
+                            <label for="editUserPhoto">Foto de Perfil (URL)</label>
+                            <input type="text" class="form-control" id="editUserPhoto" placeholder="URL da foto"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editUserUsername">Nome de Usuário</label>
+                            <input type="text" class="form-control" id="editUserUsername" placeholder="Ex.: joao_silva"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editUserName">Nome Completo</label>
+                            <input type="text" class="form-control" id="editUserName" placeholder="Ex.: João Silva"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editUserEmail">E-mail</label>
+                            <input type="email" id="editUserEmail" placeholder="Ex.: joao@elevenrecords.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editUserPhone">Telefone</label>
+                            <input type="tel" id="editUserPhone" placeholder="Ex.: +244 912 345 678" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editUserRole">Função</label>
+                            <select id="editUserRole" required>
+                                <option value="" disabled>Selecione uma função</option>
+                                <option value="Administrador">Administrador</option>
+                                <option value="Editor">Editor</option>
+                                <option value="Analista">Analista</option>
+                            </select>
+                        </div>
+                    </form>
+                    <div class="error-message" id="editUserError">
+                        Por favor, preencha todos os campos corretamente.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-save" onclick="saveEditedUser()">Salvar Alterações</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="bottom-nav d-lg-none">
+        <ul class="nav justify-content-around">
+            <li class="nav-item"><a class="nav-link" href="../painel.html" aria-label="Ir para Dashboard"><i
+                        class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="../launch/releases.html" aria-label="Ir para Lançamentos"><i
+                        class="bi bi-disc"></i><span>Lançamentos</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="../analytics/statistics.html"
+                    aria-label="Ir para Estatísticas"><i class="bi bi-bar-chart"></i><span>Estatísticas</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="../finances/overview.html" aria-label="Ir para Finanças"><i
+                        class="bi bi-currency-dollar"></i><span>Finanças</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="../artists/artists-list.html"
+                    aria-label="Ir para Artistas"><i class="bi bi-person"></i><span>Artistas</span></a></li>
+        </ul>
+    </nav>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../js/theme.wp.js"></script>
+    <script src="../../js/wp.tools.js"></script>
+
+    <script>
+        // Dados simulados de usuários
+        let users = [{
+                photo: "https://randomuser.me/api/portraits/men/1.jpg",
+                username: "cristiano",
+                name: "Cristiano Silva",
+                email: "cristiano@elevenrecords.com",
+                phone: "+244 935 200 488",
+                id: "USR001",
+                role: "Administrador",
+                status: "online",
+                created: "2024-01-15",
+                modified: "2024-04-20",
+                activities: [{
+                        action: "Atualizou perfil",
+                        time: "2024-04-20 14:30"
+                    },
+                    {
+                        action: "Adicionou artista",
+                        time: "2024-04-19 09:15"
+                    },
+                    {
+                        action: "Fez login",
+                        time: "2024-04-18 08:00"
+                    }
+                ]
+            },
+            {
+                photo: "https://randomuser.me/api/portraits/women/2.jpg",
+                username: "ana_maria",
+                name: "Ana Maria Lopes",
+                email: "ana.maria@elevenrecords.com",
+                phone: "+244 912 345 678",
+                id: "USR002",
+                role: "Editor",
+                status: "offline",
+                created: "2024-02-10",
+                modified: "2024-04-15",
+                activities: [{
+                        action: "Editou faixa",
+                        time: "2024-04-15 16:20"
+                    },
+                    {
+                        action: "Fez logout",
+                        time: "2024-04-14 18:00"
+                    }
+                ]
+            },
+            {
+                photo: "https://randomuser.me/api/portraits/men/3.jpg",
+                username: "joao_pedro",
+                name: "João Pedro Miguel Jó",
+                email: "joaopedromiguel@wasomupfy.com",
+                phone: "+244 923 456 789",
+                id: "USR003",
+                role: "Analista",
+                status: "online",
+                created: "2024-03-05",
+                modified: "2024-04-22",
+                activities: [{
+                        action: "Gerou relatório",
+                        time: "2024-04-22 10:00"
+                    },
+                    {
+                        action: "Fez login",
+                        time: "2024-04-22 09:00"
+                    }
+                ]
+            }
+        ];
+
+        // Carregar lista de usuários
+        const userList = document.getElementById('userList');
+
+        function loadUsers(usersToDisplay) {
+            userList.innerHTML = '';
+            usersToDisplay.forEach(user => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><img src="${user.photo}" alt="${user.name}" class="user-photo"></td>
+                    <td>${user.username}</td>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>${user.phone}</td>
+                    <td>${user.id}</td>
+                    <td>${user.role}</td>
+                    <td>
+                        <span class="status-dot ${user.status}"></span>
+                        ${user.status === 'online' ? 'Online' : 'Offline'}
+                    </td>
+                    <td>
+                        Criado: ${user.created}<br>
+                        Modificado: ${user.modified}
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" onclick="showActivities('${user.id}')">
+                            <i class="bi bi-clock-history"></i> Ver
+                        </button>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-warning me-1" onclick="editUser('${user.id}')">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteUser('${user.id}')">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                `;
+                userList.appendChild(tr);
+            });
+        }
+
+        // Carregar usuários iniciais
+        loadUsers(users);
+
+        // Filtrar usuários
+        function filterUsers() {
+            const searchTerm = document.getElementById('userSearch').value.toLowerCase();
+            const filteredUsers = users.filter(user =>
+                user.username.toLowerCase().includes(searchTerm) ||
+                user.name.toLowerCase().includes(searchTerm) ||
+                user.email.toLowerCase().includes(searchTerm)
+            );
+            loadUsers(filteredUsers);
+        }
+
+        // Mostrar atividades do usuário
+        function showActivities(userId) {
+            const user = users.find(u => u.id === userId);
+            if (!user) return;
+
+            const modal = document.createElement('div');
+            modal.className = 'modal fade';
+            modal.id = 'activityModal';
+            modal.innerHTML = `
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Atividades de ${user.name}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <ul class="activity-list">
+                                ${user.activities.map(activity => `
+                                    <li>
+                                        <i class="bi bi-activity"></i>
+                                        ${activity.action}
+                                        <span class="activity-time">${activity.time}</span>
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            const modalInstance = new bootstrap.Modal(document.getElementById('activityModal'));
+            modalInstance.show();
+
+            modal.addEventListener('hidden.bs.modal', () => {
+                modal.remove();
+            });
+        }
+
+        // Função para adicionar novo usuário
+        function addUser() {
+            const form = document.getElementById('addUserForm');
+            const errorMessage = document.getElementById('addUserError');
+
+            const photo = document.getElementById('newUserPhoto').value.trim();
+            const username = document.getElementById('newUserUsername').value.trim();
+            const name = document.getElementById('newUserName').value.trim();
+            const email = document.getElementById('newUserEmail').value.trim();
+            const phone = document.getElementById('newUserPhone').value.trim();
+            const role = document.getElementById('newUserRole').value;
+            const password = document.getElementById('newUserPassword').value.trim();
+            const confirmPassword = document.getElementById('newUserConfirmPassword').value.trim();
+
+            errorMessage.style.display = 'none';
+            errorMessage.textContent = 'Por favor, preencha todos os campos corretamente.';
+
+            if (!photo || !username || !name || !email || !phone || !role || !password || !confirmPassword) {
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                errorMessage.textContent = 'Por favor, insira um e-mail válido.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            const phoneRegex = /^\+\d{3}\s\d{3}\s\d{3}\s\d{3}$/;
+            if (!phoneRegex.test(phone)) {
+                errorMessage.textContent = 'Por favor, insira o telefone no formato +244 912 345 678.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            if (password.length < 6) {
+                errorMessage.textContent = 'A senha deve ter pelo menos 6 caracteres.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                errorMessage.textContent = 'As senhas não coincidem.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            if (users.some(user => user.email === email)) {
+                errorMessage.textContent = 'Este e-mail já está registrado.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            if (users.some(user => user.username === username)) {
+                errorMessage.textContent = 'Este nome de usuário já está registrado.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            const newId = `USR${(users.length + 1).toString().padStart(3, '0')}`;
+            const today = new Date();
+            const createdDate = today.toISOString().split('T')[0];
+
+            const newUser = {
+                photo: photo,
+                username: username,
+                name: name,
+                email: email,
+                phone: phone,
+                id: newId,
+                role: role,
+                status: "offline",
+                created: createdDate,
+                modified: createdDate,
+                activities: [{
+                    action: "Conta criada",
+                    time: today.toISOString().replace('T', ' ').split('.')[0]
+                }]
+            };
+
+            users.push(newUser);
+            loadUsers(users);
+            const modalInstance = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
+            modalInstance.hide();
+            alert('Usuário adicionado com sucesso!');
+            form.reset();
+        }
+
+        // Função para editar usuário
+        function editUser(userId) {
+            const user = users.find(u => u.id === userId);
+            if (!user) return;
+
+            document.getElementById('editUserId').value = user.id;
+            document.getElementById('editUserPhoto').value = user.photo;
+            document.getElementById('editUserUsername').value = user.username;
+            document.getElementById('editUserName').value = user.name;
+            document.getElementById('editUserEmail').value = user.email;
+            document.getElementById('editUserPhone').value = user.phone;
+            document.getElementById('editUserRole').value = user.role;
+
+            const modalInstance = new bootstrap.Modal(document.getElementById('editUserModal'));
+            modalInstance.show();
+        }
+
+        function saveEditedUser() {
+            const errorMessage = document.getElementById('editUserError');
+            errorMessage.style.display = 'none';
+
+            const userId = document.getElementById('editUserId').value;
+            const photo = document.getElementById('editUserPhoto').value.trim();
+            const username = document.getElementById('editUserUsername').value.trim();
+            const name = document.getElementById('editUserName').value.trim();
+            const email = document.getElementById('editUserEmail').value.trim();
+            const phone = document.getElementById('editUserPhone').value.trim();
+            const role = document.getElementById('editUserRole').value;
+
+            if (!photo || !username || !name || !email || !phone || !role) {
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                errorMessage.textContent = 'Por favor, insira um e-mail válido.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            const phoneRegex = /^\+\d{3}\s\d{3}\s\d{3}\s\d{3}$/;
+            if (!phoneRegex.test(phone)) {
+                errorMessage.textContent = 'Por favor, insira o telefone no formato +244 912 345 678.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            if (users.some(user => user.email === email && user.id !== userId)) {
+                errorMessage.textContent = 'Este e-mail já está registrado.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+            if (users.some(user => user.username === username && user.id !== userId)) {
+                errorMessage.textContent = 'Este nome de usuário já está registrado.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            const userIndex = users.findIndex(u => u.id === userId);
+            if (userIndex !== -1) {
+                const today = new Date();
+                users[userIndex] = {
+                    ...users[userIndex],
+                    photo,
+                    username,
+                    name,
+                    email,
+                    phone,
+                    role,
+                    modified: today.toISOString().split('T')[0],
+                    activities: [
+                        ...users[userIndex].activities,
+                        {
+                            action: "Perfil atualizado",
+                            time: today.toISOString().replace('T', ' ').split('.')[0]
+                        }
+                    ]
+                };
+
+                loadUsers(users);
+                const modalInstance = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+                modalInstance.hide();
+                alert('Usuário atualizado com sucesso!');
+            }
+        }
+
+        // Função para excluir usuário
+        function deleteUser(userId) {
+            const user = users.find(u => u.id === userId);
+            if (!user) return;
+
+            if (!confirm(`Deseja realmente excluir o usuário ${user.name}?`)) {
+                return;
+            }
+
+            users = users.filter(u => u.id !== userId);
+            loadUsers(users);
+            alert('Usuário excluído com sucesso!');
+        }
+
+        // Função para salvar conta (simulada)
+        function saveAccount() {
+            alert('Dados da conta salvos com sucesso!');
+        }
+    </script>
+</body>
+
+</html>

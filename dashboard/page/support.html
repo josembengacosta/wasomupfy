@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="author" content="Voosoft" />
+    <meta name="theme-color" content="#FF0089">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="../../assets/img/icones/wasomupfy_fiv_512.png">
+    <link rel="apple-touch-startup-image" href="../../assets/img/screenshots/splash.png">
+    <link rel="manifest" href="../manifest.json">
+    <title>Wasom Upfy - Enviar pedido de suporte </title>
+    <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
+    <link rel="stylesheet" href="../../css/libs/plugins.css">
+    <link rel="stylesheet" href="../../css/libs/scrollue.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
+    <link href="
+https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css
+" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../../css/dashboard-style.css">
+    <link rel="stylesheet" href="../../css/lastest-style.css">
+    <link rel="stylesheet" href="../../css/support.css">
+</head>
+
+<body>
+    <!-- Tela de Carregamento -->
+    <!-- <div class="loading-screen" id="loadingScreen">
+        <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg" class="loading-logo">
+            <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2"/>
+            <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
+        </svg>
+        <div class="spinner"></div>
+    </div> -->
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <!-- Menu Button (Left) -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu"
+                aria-controls="offcanvasMenu">
+                <span class="navbar-toggler-icon"><i class="bi bi-list text-white fs-1"></i></span>
+            </button>
+
+            <!-- Logo (Center on Mobile, Left on Desktop) -->
+            <a class="navbar-brand" href="../painel.html">
+                <!-- SVG Logo Wasom Upfy -->
+                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
+                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
+                        fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
+                </svg> -->
+                <span class="text-light"
+                    style="font-weight: bold; box-sizing: border-box; text-transform: capitalize; font-family:Arial, sans-serif">WASOM
+                    UPFY</span>
+            </a>
+
+
+            <!-- Desktop Menu -->
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav m-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="../painel.html"><i class="bi bi-speedometer2"></i>
+                            Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../launch/releases.html"><i class="bi bi-disc"></i>
+                            Lançamentos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../analytics/statistics.html"><i
+                                class="bi bi-bar-chart"></i>
+                            Estatísticas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../finances/overview.html"><i
+                                class="bi bi-currency-dollar"></i>
+                            Finanças</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../artists/artists-list.html"><i
+                                class="bi bi-person"></i>
+                            Artistas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="youtube.html"><i class="bi bi-youtube"></i>
+                            Unificação de canal YouTube</a></li>
+                </ul>
+            </div>
+
+            <!-- User Icon (Right) -->
+            <div class="user-menu d-flex align-items-center">
+                <!-- Theme Toggle Button -->
+                <a class="theme-toggle text-white me-2" id="themeToggle">
+                    <i class="bi bi-sun" id="themeIcon"></i>
+                </a>
+                <a href="../notifications.html" class="text-white me-2" aria-label="Notificações">
+                    <i class="bi bi-bell fs-4"></i>
+                    <span class="badge bg-danger">9</span>
+                </a>
+                <a href="#" class="text-white" data-bs-toggle="dropdown">
+                    <i class="bi bi-person-circle fs-4"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="../user/profile.html"><i class="bi bi-person me-2"></i>
+                            <strong>Eleven
+                                Records</strong></a>
+                        <div class="text-white-50"> &nbsp; &nbsp; &nbsp; &nbsp;
+                            (Conta 560108)</div>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="../user/profile.html"><i class="bi bi-person me-2"></i> Meu
+                            Perfil</a>
+                    </li>
+                    <li><a class="dropdown-item" href="../account/manage-account.html"><i class="bi bi-tools me-2"></i>
+                            Gestão de Conta</a>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="../page/settings.html"><i class="bi bi-gear me-2"></i>
+                            Configurações</a></li>
+                    <li><a class="dropdown-item" href="../page/notifications.html"><i class="bi bi-bell me-2"></i>
+                            Notificações</a></li>
+                    <li><a class="dropdown-item" href="../services/available-services.html"><i
+                                class="bi bi-star me-2"></i> Conta e serviços disponíveis</a></li>
+                    <li><a class="dropdown-item" href="#?logout-wasomupfy" data-bs-toggle="modal"
+                            data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right me-2"></i>
+                            Desconectar-se</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="../page/sobre.html"><i class="bi bi-info-circle me-2"></i>
+                            Sobre</a>
+                    </li>
+                    <li><a class="dropdown-item" href="../page/support.html"><i class="bi bi-headset me-2"></i> Enviar
+                            pedido de suporte</a></li>
+                    <li><a class="dropdown-item" href="../page/faq.html"><i class="bi bi-chat-left-text me-2"></i>
+                            Perguntas frequentes</a></li>
+                    <li><a class="dropdown-item" href="../page/help.html"><i class="bi bi-question-circle me-2"></i>
+                            Ajuda</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><span class="dropdown-item-text" id="versionDropdown"></span></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Modal logout -->
+    <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">Terminar sessão</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row justify-content-center text-center">
+                            <div class="col-md-12 content-center justify-center text-center">
+                                <p class="text-center text-dark">@josembengadacosta você tem
+                                    certeza
+                                    de que desejas terminar
+                                    sessão?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Não, continuar</button>
+                    </div>
+                    <div>
+                        <button class="btn btn-danger" type="button" name="logout_wasomupfy"
+                            onclick="logout_wasomupfy()">Sim, terminar
+                            sessão</button>
+                    </div>
+                    <script type="text/javascript">
+                        function logout_wasomupfy() {
+                            window.location = '../logout';
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal logout fim -->
+
+    <!-- Offcanvas Menu par Mobile e Desktop -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasMenuLabel">
+                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
+                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
+                        fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
+                </svg> -->
+                <span class="text-light"
+                    style="font-weight: bold; box-sizing: border-box; text-transform: capitalize; font-family:Arial, sans-serif">WASOM
+                    UPFY</span>
+            </h5>
+            <button type="button" class="btn-close text-white" data-bs-dismiss="offcanvas" aria-label="Close">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link" href="../painel.html"><i class="bi bi-speedometer2"></i>
+                        Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="../launch/releases.html"><i class="bi bi-disc"></i>
+                        Lançamentos</a></li>
+                <li class="nav-item"><a class="nav-link" href="../analytics/statistics.html"><i
+                            class="bi bi-bar-chart"></i> Estatísticas</a></li>
+                <li class="nav-item"><a class="nav-link" href="../finances/overview.html"><i
+                            class="bi bi-currency-dollar"></i> Finanças</a></li>
+                <li class="nav-item"><a class="nav-link" href="../artists/artists-list.html"><i
+                            class="bi bi-person"></i>
+                        Artistas</a></li>
+                <li class="nav-item"><a class="nav-link" href="../youtube.html"><i class="bi bi-youtube"></i> Unificação
+                        de
+                        canal YouTube</a></li>
+                <!-- Links secundários exibidos apenas em mobile -->
+                <li class="nav-item d-lg-none"><a class="nav-link" href="../user/profile.html"><i
+                            class="bi bi-person-circle"></i> Meu Perfil</a></li>
+                <li class="nav-item d-lg-none"><a class="nav-link active" href="../page/settings.html"><i
+                            class="bi bi-gear"></i> Configurações</a></li>
+                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/notifications.html"><i
+                            class="bi bi-bell"></i> Notificações</a></li>
+                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/sobre.html"><i
+                            class="bi bi-info-circle"></i> Sobre</a></li>
+                <li class="nav-item d-lg-none"><a class="nav-link" href="../services/available-services.html"><i
+                            class="bi bi-star"></i>
+                        Conta e serviços disponíveis</a></li>
+                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/help.html"><i
+                            class="bi bi-question-circle"></i> Ajuda</a></li>
+                <li class="nav-item d-lg-none"><a class="nav-link" href="#?logout-wasomupfy" data-bs-toggle="modal"
+                        data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right"></i> Desconectar-se</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Toast para Notificações de Status -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="connectionToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">Conexão</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Fechar"></button>
+            </div>
+            <div class="toast-body">
+                Você está offline. Alguns dados podem estar desatualizados.
+                <div class="mt-2">
+                    <button class="btn btn-pink btn-sm" onclick="tryReconnect()">Tentar Reconectar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container my-4">
+        <!-- Welcome Section -->
+
+        <div class="welcome-text col-auto d-sm-block support-header text-center">
+            <h1>Enviar pedido de suporte</h1>
+            <!-- Stats Description -->
+            <p class="stats-description" style="font-size: medium;">
+                Preencha o formulário abaixo para entrar em contato com nossa equipe de suporte. Antes, <a
+                    href="faq.html" target="_blank" class="text-secondary">consulte o FAQ</a> para respostas rápidas!
+            </p>
+        </div>
+
+        <div class="progress-bar-container">
+            <div class="progress-bar">
+                <div class="progress-bar-fill" id="progressBar"></div>
+            </div>
+        </div>
+
+
+        <form class="support-form fade-in-custom" id="supportForm" onsubmit="submitSupportRequest(event)">
+            <div class="form-group">
+                <label for="name">Nome <span class="text-danger">*</span></label>
+                <input type="text" id="name" placeholder="Insira o seu nome completo" name="name" autocomplete="name"
+                    required>
+                <div class="error-message" id="nameError">Por favor, insira seu nome.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">E-mail <span class="text-danger">*</span></label>
+                <input type="email" id="email" placeholder="Insira o seu e-mail válido" name="email"
+                    autocomplete="email" required>
+                <div class="error-message" id="emailError">Por favor, insira um e-mail válido.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="urgency">Urgência <span class="text-danger">*</span></label>
+                <select id="urgency" name="urgency" required>
+                    <option value="" disabled selected>Selecione uma opção</option>
+                    <option value="low">Baixa</option>
+                    <option value="medium">Média</option>
+                    <option value="high">Alta</option>
+                </select>
+                <div class="error-message" id="urgencyError">Por favor, selecione a urgência.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="issueType">Tipo de Problema <span class="text-danger">*</span></label>
+                <select id="issueType" name="issueType" required>
+                    <option value="" disabled selected>Selecione uma opção</option>
+                    <option value="login">Problemas de Login</option>
+                    <option value="plan">Alterar o plano</option>
+                    <option value="stats">Erro nas Estatísticas</option>
+                    <option value="upload">Falha ao Enviar Arquivos</option>
+                    <option value="other">Outro</option>
+                </select>
+                <div class="error-message" id="issueTypeError">Por favor, selecione o tipo de problema.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Descrição do Problema <span class="text-danger">*</span></label>
+                <textarea id="description" name="description" placeholder="Insira a descrição do problema"
+                    required></textarea>
+                <div class="error-message" id="descriptionError">Por favor, descreva o problema.</div>
+            </div>
+
+            <div class="form-group" id="attachmentContainer">
+                <label for="attachment">Anexar Arquivo (opcional)</label>
+                <input type="file" id="attachment" name="attachment" class="file-input">
+                <button type="button" class="add-attachment-btn" onclick="addAttachmentField()">+ Adicionar
+                    Arquivo</button>
+            </div>
+
+            <button type="submit" class="submit-btn">Enviar Pedido</button>
+        </form>
+
+    </div>
+
+    <!-- Modal de Sucesso -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="successModalLabel">Sucesso!</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Pedido de suporte enviado com sucesso! Você receberá uma resposta em breve.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+    <!-- Support Button -->
+    <a href="mailto:suporte@wasomupfy.com" class="support-btn">
+        <i class="bi bi-envelope"></i>
+    </a>
+
+    <!-- Language Selector
+       <div class="language-selector" id="languageSelector">
+        <select id="languageSelect" onchange="changeLanguage(this.value)">
+            <option value="pt-BR">Português</option>
+            <option value="en-US">English</option>
+        </select>
+    </div> -->
+
+    <nav class="bottom-nav d-lg-none">
+        <ul class="nav justify-content-around">
+            <li class="nav-item"><a class="nav-link" href="../painel.html" aria-label="Ir para Dashboard"><i
+                        class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="../launch/releases.html" aria-label="Ir para Lançamentos"><i
+                        class="bi bi-disc"></i><span>Lançamentos</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="../analytics/statistics.html"
+                    aria-label="Ir para Estatísticas"><i class="bi bi-bar-chart"></i><span>Estatísticas</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="../finances/overview.html" aria-label="Ir para Finanças"><i
+                        class="bi bi-currency-dollar"></i><span>Finanças</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="../artists/artists-list.html"
+                    aria-label="Ir para Artistas"><i class="bi bi-person"></i><span>Artistas</span></a></li>
+        </ul>
+    </nav>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../js/theme.wp.js"></script>
+    <script src="../../js/wp.tools.js"></script>
+    <script>
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    </script>
+    <script>
+        // Função para adicionar mais campos de anexo
+        function addAttachmentField() {
+            const container = document.getElementById('attachmentContainer');
+            const newInput = document.createElement('input');
+            newInput.type = 'file';
+            newInput.name = 'attachment';
+            newInput.className = 'file-input';
+            newInput.style.marginBottom = '15px';
+            container.appendChild(newInput);
+        }
+
+        // Função para atualizar a barra de progresso
+        function updateProgressBar() {
+            const form = document.getElementById('supportForm');
+            const inputs = form.querySelectorAll('input[required], select[required], textarea[required]');
+            let filledCount = 0;
+
+            inputs.forEach(input => {
+                if (input.value.trim() !== '' && input.value !== '') {
+                    filledCount++;
+                }
+            });
+
+            const progress = (filledCount / inputs.length) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
+
+        // Função para validar e enviar o formulário
+        function submitSupportRequest(event) {
+            event.preventDefault();
+
+            const form = document.getElementById('supportForm');
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const urgency = document.getElementById('urgency').value;
+            const issueType = document.getElementById('issueType').value;
+            const description = document.getElementById('description').value.trim();
+
+            let isValid = true;
+
+            // Limpa mensagens de erro anteriores
+            document.querySelectorAll('.error-message').forEach(error => {
+                error.style.display = 'none';
+            });
+
+            // Validação dos campos
+            if (!name) {
+                document.getElementById('nameError').style.display = 'block';
+                isValid = false;
+            }
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                document.getElementById('emailError').style.display = 'block';
+                isValid = false;
+            }
+            if (!urgency) {
+                document.getElementById('urgencyError').style.display = 'block';
+                isValid = false;
+            }
+            if (!issueType) {
+                document.getElementById('issueTypeError').style.display = 'block';
+                isValid = false;
+            }
+            if (!description) {
+                document.getElementById('descriptionError').style.display = 'block';
+                isValid = false;
+            }
+
+            if (isValid) {
+                // Simula o envio do formulário
+                console.log('Formulário enviado:', {
+                    name,
+                    email,
+                    urgency,
+                    issueType,
+                    description
+                });
+
+                // Exibe modal de sucesso
+                const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                successModal.show();
+
+                // Limpa o formulário
+                form.reset();
+                document.getElementById('urgency').value = '';
+                document.getElementById('issueType').value = '';
+                document.querySelectorAll('.file-input').forEach((input, index) => {
+                    if (index > 0) input.remove();
+                });
+
+                // Reseta a barra de progresso
+                updateProgressBar();
+            } else {
+                updateProgressBar();
+            }
+        }
+
+        // Atualiza a barra de progresso ao interagir com o formulário
+        document.getElementById('supportForm').addEventListener('input', updateProgressBar);
+
+
+        // Fecha o dropdown ao clicar fora
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('themeDropdown');
+            const toggle = document.getElementById('themeToggle');
+            if (!toggle.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+
+</html>

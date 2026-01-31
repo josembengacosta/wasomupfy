@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="author" content="Voosoft" />
+    <meta name="theme-color" content="#FF0089">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#FF0089">
+    <link rel="apple-touch-icon" href="../../../assets/img/icones/wasomupfy_fiv_512.png">
+    <link rel="apple-touch-startup-image" href="../../../assets/img/screenshots/splash.png">
+    <link rel="manifest" href="manifest.json">
+    <title>Relatórios Personalizados - Wasom Upfy</title>
+    <link rel="shortcut icon" href="../../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
+    <link rel="stylesheet" href="../../../css/libs/plugins.css">
+    <link rel="stylesheet" href="../../../css/libs/scrollue.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
+    <link rel="stylesheet" href="../../../css/lastest-style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <!-- Google Fonts - Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        .fade-in-custom {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .report-wizard {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .wizard-step {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .wizard-step.active {
+            display: block;
+        }
+
+        .wizard-progress {
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            margin: 2rem 0;
+            overflow: hidden;
+        }
+
+        .wizard-progress-bar {
+            height: 100%;
+            background-color: white;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .report-card {
+            border-radius: 12px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .report-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .report-card.selected {
+            border-color: #FF0089;
+            background-color: rgba(255, 0, 137, 0.05);
+        }
+
+        .report-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .template-card {
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .template-card:hover {
+            border-color: #007bff;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .template-card.selected {
+            border-color: #28a745;
+            background-color: rgba(40, 167, 69, 0.05);
+        }
+
+        .filter-group {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .preview-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .report-preview {
+            min-height: 400px;
+            padding: 1rem;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+        }
+
+        .parameter-badge {
+            background-color: #e9ecef;
+            border-radius: 20px;
+            padding: 0.25rem 0.75rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .parameter-badge button {
+            background: none;
+            border: none;
+            color: #6c757d;
+            margin-left: 0.5rem;
+            cursor: pointer;
+        }
+
+        .schedule-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+        }
+
+        .export-options {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .export-option {
+            flex: 1;
+            min-width: 150px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .export-option:hover {
+            border-color: #007bff;
+            transform: translateY(-2px);
+        }
+
+        .export-option.selected {
+            border-color: #28a745;
+            background-color: rgba(40, 167, 69, 0.05);
+        }
+
+        .history-item {
+            border-left: 4px solid;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background-color: white;
+        }
+
+        .history-item.success {
+            border-left-color: #28a745;
+            background-color: rgba(40, 167, 69, 0.05);
+        }
+
+        .history-item.error {
+            border-left-color: #dc3545;
+            background-color: rgba(220, 53, 69, 0.05);
+        }
+
+        .history-item.processing {
+            border-left-color: #ffc107;
+            background-color: rgba(255, 193, 7, 0.05);
+        }
+
+        .visualization-option {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .visualization-option:hover {
+            border-color: #007bff;
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+
+        .visualization-option.selected {
+            border-color: #FF0089;
+            background-color: rgba(255, 0, 137, 0.05);
+        }
+
+        .chart-preview {
+            width: 100%;
+            height: 200px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+        }
+
+        .btn-wizard {
+            background-color: #FF0089;
+            border-color: #FF0089;
+            color: white;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-wizard:hover {
+            background-color: #e0007a;
+            border-color: #e0007a;
+            transform: translateY(-2px);
+        }
+
+        .btn-wizard:disabled {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .nav-tabs .nav-link {
+            color: #6c757d;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: #FF0089;
+            background-color: transparent;
+            border-bottom: 2px solid #FF0089;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <!-- Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="d-flex align-items-center">
+                    <img src="../../../assets/img/brand/wasomupfy_brand.png" alt="Logo Wasom Upfy"
+                        class="rounded-circle me-2" style="height: 40px;">
+                    <span class="brand-text">Wasom Upfy</span>
+                </div>
+                <i class="bi bi-chevron-left toggle-icon" id="sidebarCollapse" title="Colapsar/Expandir Menu"
+                    aria-label="Colapsar/Expandir Menu"></i>
+            </div>
+            <ul class="nav flex-column mt-3">
+                <li class="nav-item">
+                    <a href="../../home.html" class="nav-link">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Painel de Controle</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#collapseAnalytics" class="nav-link active" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseAnalytics">
+                        <i class="bi bi-graph-up"></i>
+                        <span>Estatísticas e Análises</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseAnalytics">
+                        <a href="../analytics/home.html" class="nav-link">
+                            <i class="bi bi-bar-chart-line"></i>
+                            <span>Visão Geral</span>
+                        </a>
+                        <a href="../analytics/artists.html" class="nav-link">
+                            <i class="bi bi-person-lines-fill"></i>
+                            <span>Desempenho por Artista</span>
+                        </a>
+                        <a href="../analytics/stores.html" class="nav-link">
+                            <i class="bi bi-shop"></i>
+                            <span>Desempenho por Loja Digital</span>
+                        </a>
+                        <a href="../analytics/reports.html" class="nav-link active">
+                            <i class="bi bi-file-earmark-bar-graph"></i>
+                            <span>Relatórios Personalizados</span>
+                        </a>
+                    </div>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#collapseAdmins" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseAdmins">
+                        <i class="bi bi-person-gear"></i>
+                        <span>Gestão de Admins</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseAdmins">
+                        <a href="../employees/all-employees.html" class="nav-link">
+                            <i class="bi bi-people"></i>
+                            <span>Listar Admins</span>
+                        </a>
+                        <a href="../employees/add.html" class="nav-link">
+                            <i class="bi bi-person-plus"></i>
+                            <span>Adicionar</span>
+                        </a>
+                        <a href="../employees/edit.html" class="nav-link">
+                            <i class="bi bi-person-gear"></i>
+                            <span>Editar</span>
+                        </a>
+                        <a href="../employees/delete.html" class="nav-link">
+                            <i class="bi bi-person-x"></i>
+                            <span>Excluir</span>
+                        </a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="#collapseUsers" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseUsers">
+                        <i class="bi bi-person-gear"></i>
+                        <span>Gestão de Usuários</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseUsers">
+                        <a href="../users/all-users.html" class="nav-link">
+                            <i class="bi bi-people"></i>
+                            <span>Todos Usuários</span>
+                        </a>
+                        <a href="../users/add.html" class="nav-link">
+                            <i class="bi bi-person-plus"></i>
+                            <span>Adicionar</span>
+                        </a>
+                        <a href="../users/edit.html" class="nav-link">
+                            <i class="bi bi-person-gear"></i>
+                            <span>Editar</span>
+                        </a>
+                        <a href="../users/delete.html" class="nav-link">
+                            <i class="bi bi-person-x"></i>
+                            <span>Excluir</span>
+                        </a>
+                        <a href="../users/available-account.html" class="nav-link">
+                            <i class="bi bi-person-check"></i>
+                            <span>Contas Disponíveis</span>
+                        </a>
+                        <a href="../users/unavailable-account.html" class="nav-link">
+                            <i class="bi bi-person-exclamation"></i>
+                            <span>Contas Indisponíveis</span>
+                        </a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="#collapseSongs" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseSongs">
+                        <i class="bi bi-music-note-list"></i>
+                        <span>Gestão de Músicas</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseSongs">
+                        <a href="../music/revise.html" class="nav-link">
+                            <i class="bi bi-eye"></i>
+                            <span>Revisar Envios</span>
+                        </a>
+                        <a href="../music/approve.html" class="nav-link">
+                            <i class="bi bi-check-circle"></i>
+                            <span>Aprovar</span>
+                        </a>
+                        <a href="../music/reject.html" class="nav-link">
+                            <i class="bi bi-x-circle"></i>
+                            <span>Rejeitar</span>
+                        </a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="../artist/accounts-users.html" class="nav-link">
+                        <i class="bi bi-person-check"></i>
+                        <span>Contas e Usuários</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../artist/collaborators-artist.html" class="nav-link">
+                        <i class="bi bi-people"></i>
+                        <span>Artistas e Colaboradores</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#collapseDistribution" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseDistribution">
+                        <i class="bi bi-globe"></i>
+                        <span>Distribuição</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseDistribution">
+                        <a href="../distribution/releases.html" class="nav-link">
+                            <i class="bi bi-rocket-takeoff"></i>
+                            <span>Lançamentos</span>
+                        </a>
+                        <a href="../distribution/store.html" class="nav-link">
+                            <i class="bi bi-shop"></i>
+                            <span>Lojas Digitais</span>
+                        </a>
+                        <a href="../distribution/schedule.html" class="nav-link">
+                            <i class="bi bi-calendar-event"></i>
+                            <span>Agendar Lançamento</span>
+                        </a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="../manager/gestion.html" class="nav-link">
+                        <i class="bi bi-star"></i>
+                        <span>Gestão Geral</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../finances/payments.html" class="nav-link">
+                        <i class="bi bi-wallet2"></i>
+                        <span>Pagamentos</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../finances/earnings.html" class="nav-link">
+                        <i class="bi bi-currency-dollar"></i>
+                        <span>Finanças e Rendimentos</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#collapseIntegration" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseIntegration">
+                        <i class="bi bi-youtube"></i>
+                        <span>Unificação e V. Youtube</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseIntegration">
+                        <a href="../integration/youtube.html" class="nav-link">
+                            <i class="bi bi-gear"></i>
+                            <span>Configurar Integração</span>
+                        </a>
+                        <a href="../integration/verify.html" class="nav-link">
+                            <i class="bi bi-check2-all"></i>
+                            <span>Verificar Canais</span>
+                        </a>
+                        <a href="../integration/monetization.html" class="nav-link">
+                            <i class="bi bi-youtube"></i>
+                            <span>Gerenciamento de Conteúdo Monetizado</span>
+                        </a>
+                    </div>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#collapseSupport" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseSupport">
+                        <i class="bi bi-headset"></i>
+                        <span>Suporte</span>
+                        <span class="badge bg-danger badge-notification">3</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseSupport">
+                        <a href="../messages/inbox.html" class="nav-link">
+                            <i class="bi bi-envelope"></i>
+                            <span>Caixa de entrada</span>
+                        </a>
+                        <a href="../messages/compose.html" class="nav-link">
+                            <i class="bi bi-pencil"></i>
+                            <span>Enviar mensagens</span>
+                        </a>
+                    </div>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#collapseHelp" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseHelp">
+                        <i class="bi bi-question-circle"></i>
+                        <span>Ajuda</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseHelp">
+                        <a href="../help/faqs.html" class="nav-link">
+                            <i class="bi bi-messenger"></i>
+                            <span>FAQs</span>
+                        </a>
+                        <a href="../help/tutorials.html" class="nav-link">
+                            <i class="bi bi-book"></i>
+                            <span>Tutoriais</span>
+                        </a>
+                        <a href="../help/contact.html" class="nav-link">
+                            <i class="bi bi-telephone"></i>
+                            <span>Contacto com suporte</span>
+                        </a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="../settings/config.html" class="nav-link">
+                        <i class="bi bi-sliders"></i>
+                        <span>Configurações</span>
+                    </a>
+                </li>
+                <li class="nav-item mt-4">
+                    <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#logoutwasomupfy">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+                <li class="nav-item mt-4">
+                    <a href="http://localhost:5500/home.html" target="_blank" class="nav-link">
+                        <i class="bi bi-box-arrow-in-up-right"></i>
+                        <span>Visitar Site</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Content -->
+        <div class="content w-100" id="mainContent">
+            <nav class="navbar navbar-expand-lg">
+                <button class="navbar-toggler" type="button" id="sidebarToggle" aria-label="Abrir/Fechar Menu">
+                    <i class="bi bi-list text-white"></i>
+                </button>
+                <div class="ms-auto d-flex align-items-center">
+                    <button class="btn btn-outline-light btn-sm me-2" onclick="toggleDarkMode()"
+                        aria-label="Alternar Modo Escuro">
+                        <i class="bi bi-moon"></i>
+                    </button>
+                    <div class="dropdown me-2 position-relative">
+                        <button class="btn btn-outline-light btn-sm position-relative" type="button"
+                            data-bs-toggle="dropdown" aria-label="Notificações">
+                            <i class="bi bi-bell"></i>
+                            <span
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">5</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-start p-0" style="min-width: 250px;">
+                            <li class="dropdown-header bg-dark text-white p-2">Notificações (5)</li>
+                            <li><a class="dropdown-item p-2" href="#">Novo artista registrado</a></li>
+                            <li><a class="dropdown-item p-2" href="#">Música atingiu 1000 plays</a></li>
+                            <li><a class="dropdown-item p-2" href="#">Atualização do sistema disponível</a></li>
+                            <li class="dropdown-footer text-center p-2"><a href="#" class="text-primary">Ver todas</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="dropdown me-2 position-relative">
+                        <button class="btn btn-outline-light btn-sm position-relative" type="button"
+                            data-bs-toggle="dropdown" aria-label="Mensagens">
+                            <i class="bi bi-envelope"></i>
+                            <span
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">2</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-start p-0" style="min-width: 250px;">
+                            <li class="dropdown-header bg-dark text-white p-2">Mensagens (2)</li>
+                            <li><a class="dropdown-item p-2" href="#">Suporte #4521 - Novo ticket</a></li>
+                            <li><a class="dropdown-item p-2" href="#">Mensagem de artista</a></li>
+                            <li class="dropdown-footer text-center p-2"><a href="#" class="text-primary">Ver todas</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center"
+                            type="button" data-bs-toggle="dropdown" aria-label="Menu do Usuário">
+                            <img src="../../../assets/img/avatar/avatar.png" alt="Usuário" class="rounded-circle me-1"
+                                style="height: 24px;">
+                            <span>Cristiano Amadeu</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="../user/profile.html"><i
+                                        class="bi bi-person me-2"></i>Perfil</a></li>
+                            <li><a class="dropdown-item" href="../settings/config.html"><i
+                                        class="bi bi-sliders me-2"></i>Configurações</a></li>
+                            <li><a class="dropdown-item" href="../help/help.html"><i
+                                        class="bi bi-question-circle me-2"></i>Ajuda</a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutwasomupfy"
+                                    href="#"><i class="bi bi-box-arrow-right me-2"></i>Sair</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Adicione isso dentro da tag <nav class="bottom-nav"> -->
+            <div class="connection-status" id="connectionStatus"></div>
+            <div class="status-notification" id="statusNotification"></div>
+
+            <!-- Modal logout -->
+            <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false"
+                tabindex="-1" aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content modal-bottom">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">Terminar sessão</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container">
+                                <div class="row justify-content-center text-center">
+                                    <div class="col-md-12 content-center justify-center text-center">
+                                        <p class="text-center text-dark">@josembengadacosta você tem
+                                            certeza
+                                            de que desejas terminar
+                                            sessão?</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <div>
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Não,
+                                    continuar</button>
+                            </div>
+                            <div>
+                                <button class="btn btn-danger" type="button" name="logout_wasomupfy"
+                                    onclick="logout_wasomupfy()">Sim, terminar</button>
+                            </div>
+                            <script type="text/javascript">
+                                function logout_wasomupfy() {
+                                    window.location = 'logout';
+                                }
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal logout fim -->
+
+            <div class="container-fluid py-0">
+                <div class="row mb-3 mt-2">
+                    <div class="welcome-text col-auto d-sm-block">
+                        <h2 class="mb-3"><i class="bi bi-file-earmark-bar-graph me-2"></i> Relatórios Personalizados
+                        </h2>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb mb-0">
+                                <li class="breadcrumb-item"><a href="../../home.html"
+                                        class="text-secondary">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="home.html" class="text-secondary">Estatísticas</a>
+                                </li>
+                                <li class="breadcrumb-item active text-white-stable" aria-current="page">Relatórios
+                                    Personalizados</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <div class="col-auto ms-auto text-end mt-n1 mt-3 mb-2">
+                        <button class="btn btn-wasomupfy text-white shadow-sm me-2" onclick="showReportWizard()">
+                            <i class="bi bi-plus-circle me-1"></i> Novo Relatório
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Abas Principais -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs" id="reportsTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="wizard-tab" data-bs-toggle="tab"
+                                    data-bs-target="#wizard" type="button" role="tab">
+                                    <i class="bi bi-magic me-1"></i> Assistente de Criação
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="templates-tab" data-bs-toggle="tab"
+                                    data-bs-target="#templates" type="button" role="tab">
+                                    <i class="bi bi-layers me-1"></i> Modelos Prontos
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history"
+                                    type="button" role="tab">
+                                    <i class="bi bi-clock-history me-1"></i> Histórico de Relatórios
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="scheduled-tab" data-bs-toggle="tab"
+                                    data-bs-target="#scheduled" type="button" role="tab">
+                                    <i class="bi bi-calendar-check me-1"></i> Relatórios Agendados
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content" id="reportsTabsContent">
+                            <!-- Aba Assistente -->
+                            <div class="tab-pane fade show active" id="wizard" role="tabpanel">
+                                <div class="report-wizard" id="reportWizard" style="display: none;">
+                                    <div class="wizard-step active fade-in" id="step1">
+                                        <h3 class="mb-4">1. Escolha o Tipo de Relatório</h3>
+                                        <div class="row g-4" id="reportTypes">
+                                            <!-- Tipos de relatório serão carregados aqui -->
+                                        </div>
+                                        <div class="wizard-progress mt-4">
+                                            <div class="wizard-progress-bar" style="width: 0%"></div>
+                                        </div>
+                                        <div class="text-end mt-4">
+                                            <button class="btn btn-light me-2" onclick="cancelWizard()">
+                                                <i class="bi bi-x-circle me-1"></i> Cancelar
+                                            </button>
+                                            <button class="btn btn-wizard" onclick="nextStep(2)">
+                                                Próximo <i class="bi bi-arrow-right ms-1"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="wizard-step fade-in" id="step2">
+                                        <h3 class="mb-4">2. Configure os Parâmetros</h3>
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <div id="parametersContainer">
+                                                    <!-- Parâmetros serão carregados dinamicamente -->
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="preview-container">
+                                                    <h6 class="mb-3"><i class="bi bi-eye me-1"></i> Pré-visualização
+                                                    </h6>
+                                                    <div class="report-preview" id="parameterPreview">
+                                                        Selecione um tipo de relatório para visualizar os parâmetros
+                                                        disponíveis.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="wizard-progress mt-4">
+                                            <div class="wizard-progress-bar" style="width: 25%"></div>
+                                        </div>
+                                        <div class="d-flex justify-content-between mt-4">
+                                            <button class="btn btn-light" onclick="prevStep(1)">
+                                                <i class="bi bi-arrow-left me-1"></i> Voltar
+                                            </button>
+                                            <button class="btn btn-wizard" onclick="nextStep(3)">
+                                                Próximo <i class="bi bi-arrow-right ms-1"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="wizard-step fade-in" id="step3">
+                                        <h3 class="mb-4">3. Personalize a Visualização</h3>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-4">
+                                                    <h6 class="mb-3">Formato do Relatório</h6>
+                                                    <div class="export-options" id="formatOptions">
+                                                        <div class="export-option" onclick="selectFormat('pdf')">
+                                                            <i class="bi bi-file-earmark-pdf fs-1 text-danger mb-2"></i>
+                                                            <h6>PDF</h6>
+                                                            <small class="text-muted">Documento formatado</small>
+                                                        </div>
+                                                        <div class="export-option selected"
+                                                            onclick="selectFormat('excel')">
+                                                            <i
+                                                                class="bi bi-file-earmark-excel fs-1 text-success mb-2"></i>
+                                                            <h6>Excel</h6>
+                                                            <small class="text-muted">Dados editáveis</small>
+                                                        </div>
+                                                        <div class="export-option" onclick="selectFormat('csv')">
+                                                            <i
+                                                                class="bi bi-file-earmark-text fs-1 text-primary mb-2"></i>
+                                                            <h6>CSV</h6>
+                                                            <small class="text-muted">Dados brutos</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="mb-4">
+                                                    <h6 class="mb-3">Tipo de Visualização</h6>
+                                                    <div class="export-options" id="visualizationOptions">
+                                                        <div class="export-option selected"
+                                                            onclick="selectVisualization('table')">
+                                                            <i class="bi bi-table fs-1 mb-2"></i>
+                                                            <h6>Tabela</h6>
+                                                            <small class="text-muted">Dados tabulares</small>
+                                                        </div>
+                                                        <div class="export-option"
+                                                            onclick="selectVisualization('chart')">
+                                                            <i class="bi bi-bar-chart fs-1 mb-2"></i>
+                                                            <h6>Gráfico</h6>
+                                                            <small class="text-muted">Visualização gráfica</small>
+                                                        </div>
+                                                        <div class="export-option"
+                                                            onclick="selectVisualization('mixed')">
+                                                            <i class="bi bi-layout-split fs-1 mb-2"></i>
+                                                            <h6>Misto</h6>
+                                                            <small class="text-muted">Tabela + Gráficos</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <div class="preview-container">
+                                                    <h6 class="mb-3"><i class="bi bi-eye me-1"></i> Pré-visualização
+                                                    </h6>
+                                                    <div id="visualizationPreview">
+                                                        <div class="chart-preview">
+                                                            <i class="bi bi-bar-chart fs-1 mb-2"></i>
+                                                            <p>Selecione um tipo de visualização</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="wizard-progress mt-4">
+                                            <div class="wizard-progress-bar" style="width: 50%"></div>
+                                        </div>
+                                        <div class="d-flex justify-content-between mt-4">
+                                            <button class="btn btn-light" onclick="prevStep(2)">
+                                                <i class="bi bi-arrow-left me-1"></i> Voltar
+                                            </button>
+                                            <button class="btn btn-wizard" onclick="nextStep(4)">
+                                                Próximo <i class="bi bi-arrow-right ms-1"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="wizard-step fade-in" id="step4">
+                                        <h3 class="mb-4">4. Agende ou Exporte</h3>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="schedule-card mb-4">
+                                                    <h5 class="mb-3"><i class="bi bi-calendar-check me-2"></i>
+                                                        Agendamento</h5>
+                                                    <div class="form-check mb-3">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            id="scheduleReport">
+                                                        <label class="form-check-label" for="scheduleReport">
+                                                            Agendar este relatório
+                                                        </label>
+                                                    </div>
+
+                                                    <div id="scheduleOptions" style="display: none;">
+                                                        <div class="mb-3">
+                                                            <label for="scheduleFrequency"
+                                                                class="form-label">Frequência</label>
+                                                            <select class="form-select" id="scheduleFrequency">
+                                                                <option value="daily">Diário</option>
+                                                                <option value="weekly">Semanal</option>
+                                                                <option value="monthly">Mensal</option>
+                                                                <option value="quarterly">Trimestral</option>
+                                                                <option value="yearly">Anual</option>
+                                                                <option value="custom">Personalizado</option>
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="mb-3">
+                                                            <label for="scheduleEmail" class="form-label">Enviar para
+                                                                E-mail</label>
+                                                            <input type="email" class="form-control" id="scheduleEmail"
+                                                                placeholder="email@exemplo.com">
+                                                        </div>
+
+                                                        <div class="mb-3">
+                                                            <label for="scheduleStart" class="form-label">Iniciar
+                                                                em</label>
+                                                            <input type="date" class="form-control" id="scheduleStart">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="mb-4">
+                                                    <h6 class="mb-3">Destino do Relatório</h6>
+                                                    <div class="form-check mb-2">
+                                                        <input class="form-check-input" type="checkbox" id="sendEmail"
+                                                            checked>
+                                                        <label class="form-check-label" for="sendEmail">
+                                                            Enviar para meu e-mail
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check mb-2">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            id="saveDashboard" checked>
+                                                        <label class="form-check-label" for="saveDashboard">
+                                                            Salvar no Painel
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            id="downloadNow">
+                                                        <label class="form-check-label" for="downloadNow">
+                                                            Download Imediato
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <div class="preview-container">
+                                                    <h6 class="mb-3"><i class="bi bi-file-earmark-text me-1"></i> Resumo
+                                                        do Relatório</h6>
+                                                    <div id="reportSummary">
+                                                        <div class="mb-3">
+                                                            <h6>Tipo de Relatório:</h6>
+                                                            <p id="summaryType" class="text-muted">-</p>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <h6>Período:</h6>
+                                                            <p id="summaryPeriod" class="text-muted">-</p>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <h6>Filtros Aplicados:</h6>
+                                                            <div id="summaryFilters" class="text-muted">-</div>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <h6>Formato:</h6>
+                                                            <p id="summaryFormat" class="text-muted">-</p>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <h6>Destino:</h6>
+                                                            <p id="summaryDestination" class="text-muted">-</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="wizard-progress mt-4">
+                                            <div class="wizard-progress-bar" style="width: 75%"></div>
+                                        </div>
+                                        <div class="d-flex justify-content-between mt-4">
+                                            <button class="btn btn-light" onclick="prevStep(3)">
+                                                <i class="bi bi-arrow-left me-1"></i> Voltar
+                                            </button>
+                                            <button class="btn btn-wizard" onclick="generateReport()">
+                                                <i class="bi bi-gear me-1"></i> Gerar Relatório
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="text-center py-5" id="wizardStart">
+                                    <i class="bi bi-file-earmark-bar-graph fs-1 text-muted mb-3"></i>
+                                    <h4 class="text-muted mb-3">Crie Relatórios Personalizados</h4>
+                                    <p class="text-muted mb-4">
+                                        Use nosso assistente para criar relatórios personalizados com os dados que você
+                                        precisa.
+                                    </p>
+                                    <button class="btn btn-primary btn-lg" onclick="showReportWizard()">
+                                        <i class="bi bi-magic me-2"></i> Iniciar Assistente
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Aba Modelos -->
+                            <div class="tab-pane fade" id="templates" role="tabpanel">
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" placeholder="Buscar modelo..."
+                                                id="templateSearch">
+                                            <button class="btn btn-outline-secondary" onclick="searchTemplates()">
+                                                <i class="bi bi-search"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 text-end">
+                                        <button class="btn btn-outline-primary" onclick="saveAsTemplate()">
+                                            <i class="bi bi-save me-1"></i> Salvar como Modelo
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="row" id="templatesList">
+                                    <!-- Modelos serão carregados aqui -->
+                                </div>
+                            </div>
+
+                            <!-- Aba Histórico -->
+                            <div class="tab-pane fade" id="history" role="tablist">
+                                <div class="row mb-4">
+                                    <div class="col-md-4">
+                                        <label for="historyFilter" class="form-label">Filtrar por Status</label>
+                                        <select class="form-select" id="historyFilter" onchange="filterHistory()">
+                                            <option value="all">Todos</option>
+                                            <option value="success">Concluídos</option>
+                                            <option value="processing">Processando</option>
+                                            <option value="error">Com Erro</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="historyDate" class="form-label">Período</label>
+                                        <select class="form-select" id="historyDate" onchange="filterHistory()">
+                                            <option value="all">Todo o período</option>
+                                            <option value="today">Hoje</option>
+                                            <option value="week">Esta semana</option>
+                                            <option value="month">Este mês</option>
+                                            <option value="year">Este ano</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="historyType" class="form-label">Tipo de Relatório</label>
+                                        <select class="form-select" id="historyType" onchange="filterHistory()">
+                                            <option value="all">Todos os tipos</option>
+                                            <option value="financial">Financeiro</option>
+                                            <option value="performance">Desempenho</option>
+                                            <option value="analytics">Analítico</option>
+                                            <option value="custom">Personalizado</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div id="reportsHistory">
+                                    <!-- Histórico será carregado aqui -->
+                                    <div class="text-center py-5">
+                                        <i class="bi bi-clock-history fs-1 text-muted mb-3"></i>
+                                        <h5 class="text-muted mb-2">Nenhum relatório gerado ainda</h5>
+                                        <p class="text-muted">Crie seu primeiro relatório usando o assistente acima.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Aba Agendados -->
+                            <div class="tab-pane fade" id="scheduled" role="tabpanel">
+                                <div class="row mb-4">
+                                    <div class="col-md-8">
+                                        <div class="alert alert-info">
+                                            <i class="bi bi-info-circle me-2"></i>
+                                            <span>Relatórios agendados são gerados automaticamente e enviados para o
+                                                e-mail configurado.</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 text-end">
+                                        <button class="btn btn-primary" onclick="scheduleNewReport()">
+                                            <i class="bi bi-plus-circle me-1"></i> Novo Agendamento
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Nome do Relatório</th>
+                                                <th>Tipo</th>
+                                                <th>Frequência</th>
+                                                <th>Próxima Geração</th>
+                                                <th>Status</th>
+                                                <th>Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="scheduledReports">
+                                            <!-- Relatórios agendados serão carregados aqui -->
+                                            <tr>
+                                                <td colspan="6" class="text-center py-5">
+                                                    <i class="bi bi-calendar-check fs-1 text-muted mb-3"></i>
+                                                    <h5 class="text-muted mb-2">Nenhum relatório agendado</h5>
+                                                    <p class="text-muted">Agende seu primeiro relatório automático.</p>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dicas e Sugestões -->
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="bi bi-lightbulb me-2"></i> Dicas Rápidas</h5>
+                                <ul class="mb-0">
+                                    <li class="mb-2">Use filtros específicos para relatórios mais precisos</li>
+                                    <li class="mb-2">Agende relatórios recorrentes para economizar tempo</li>
+                                    <li class="mb-2">Salve modelos para reutilização futura</li>
+                                    <li class="mb-2">Exporte em diferentes formatos conforme necessidade</li>
+                                    <li>Revise o histórico para identificar padrões</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="bi bi-graph-up me-2"></i> Métricas Populares</h5>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Receita por Artista</span>
+                                    <span class="badge bg-primary">85%</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Desempenho por Loja</span>
+                                    <span class="badge bg-success">72%</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Crescimento Mensal</span>
+                                    <span class="badge bg-info">68%</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span>Royalties Detalhados</span>
+                                    <span class="badge bg-warning">54%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="bi bi-clock-history me-2"></i> Atividade Recente</h5>
+                                <div class="mb-3">
+                                    <small class="text-muted d-block mb-1">Hoje, 10:30</small>
+                                    <p class="mb-0">Relatório financeiro gerado por Ana Silva</p>
+                                </div>
+                                <div class="mb-3">
+                                    <small class="text-muted d-block mb-1">Ontem, 16:45</small>
+                                    <p class="mb-0">Novo modelo salvo: "Performance Trimestral"</p>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block mb-1">2 dias atrás</small>
+                                    <p class="mb-0">Agendamento criado: Relatório Semanal</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Visualizar Relatório -->
+    <div class="modal fade" id="viewReportModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Visualizar Relatório</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="viewReportBody">
+                    <!-- Conteúdo do relatório será carregado aqui -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" onclick="downloadCurrentReport()">
+                        <i class="bi bi-download me-1"></i> Download
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p class="mb-2">© 2026 Wasom Upfy. Todos os direitos reservados.</p>
+                    <a href="#" class="me-2">Termos de Uso</a>
+                    <a href="#" class="me-2">Privacidade</a>
+                    <a href="#">Suporte</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- Bottom Navigation -->
+    <!-- <nav class="bottom-nav">
+    <ul>
+        <li>
+            <a href="home.html" class="active">
+                <i class="bi bi-speedometer2"></i>
+                <span>Dashboard</span>
+            </a>
+        </li>
+        <li>
+            <a href="pages/music/approve.html">
+                <i class="bi bi-music-note-list"></i>
+                <span>Músicas</span>
+            </a>
+        </li>
+        <li>
+            <a href="pages/users/all-users.html">
+                <i class="bi bi-people"></i>
+                <span>Usuários</span>
+            </a>
+        </li>
+        <li>
+            <a href="pages/finances/earnings.html">
+                <i class="bi bi-currency-dollar"></i>
+                <span>Finanças</span>
+            </a>
+        </li>
+        <li>
+            <a href="pages/settings/config.html">
+                <i class="bi bi-sliders"></i>
+                <span>Config</span>
+            </a>
+        </li>
+    </ul>
+</nav> -->
+
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-content">
+            <!-- Sua imagem pulsante -->
+            <img src="../../../assets/img/brand/wasomupfy_brand.png" class="loader-image" alt="Carregando">
+            <!-- Barra de progresso agora perfeitamente centralizada -->
+            <div class="loader-progress"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../../../js/lastest.js"></script>
+    <script src="../../../js/lastest.min.js"></script>
+    <!-- DataTables -->
+    <script src="https://cdn.datatables.net/v/bs5/dt-1.13.6/datatables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="js/reports-performance.js"></script>
+</body>
+
+</html>

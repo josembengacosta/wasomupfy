@@ -1,0 +1,1777 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="author" content="Voosoft" />
+    <meta name="theme-color" content="#FF0089" />
+    <title>Cadastrar - Wasom Upfy - Dashboard</title>
+    <link
+      rel="shortcut icon"
+      href="../../assets/img/icones/wasomupfy_fiv.png"
+      type="image/x-icon"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <link rel="stylesheet" href="../css/login.css" />
+    <link rel="stylesheet" href="../css/register.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/josembengacosta/wasomupfy@main/css/light.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+    />
+  </head>
+  <style>
+    :root {
+        --wasom-primary: #ff0089;
+        --wasom-secondary: #e04385;
+        --wasom-light: #fff0f7;
+        --wasom-dark: #cc0070;
+      }
+
+      .card {
+        border-radius: 15px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        background: rgba(255, 255, 255, 0.98);
+        margin: auto;
+        border: none;
+        overflow: hidden;
+      }
+
+      .btn-wasomupfy {
+        background: linear-gradient(
+          45deg,
+          var(--wasom-primary),
+          var(--wasom-secondary)
+        );
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 24px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      .btn-wasomupfy:hover {
+        background: linear-gradient(
+          45deg,
+          var(--wasom-dark),
+          var(--wasom-secondary)
+        );
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(255, 0, 137, 0.25);
+        color: white;
+      }
+
+      .btn-outline-wasom {
+        border: 2px solid var(--wasom-primary);
+        color: var(--wasom-primary);
+        background: transparent;
+        border-radius: 10px;
+        padding: 10px 20px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      .btn-outline-wasom:hover {
+        background: var(--wasom-primary);
+        color: white;
+        transform: translateY(-2px);
+      }
+
+      .step-progress {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+        position: relative;
+        padding: 0 1rem;
+      }
+
+      .step-progress::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50px;
+        right: 50px;
+        height: 2px;
+        background: #e9ecef;
+        transform: translateY(-50%);
+        z-index: 1;
+      }
+
+      .step-item {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        flex: 1;
+      }
+
+      .step-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #e9ecef;
+        color: #6c757d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 0.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: 3px solid white;
+      }
+
+      .step-item.active .step-circle {
+        background: var(--wasom-primary);
+        color: white;
+        transform: scale(1.1);
+        box-shadow: 0 0 0 3px rgba(255, 0, 137, 0.2);
+      }
+
+      .step-item.completed .step-circle {
+        background: var(--wasom-primary);
+        color: white;
+      }
+
+      .step-title {
+        font-size: 0.85rem;
+        color: #6c757d;
+        font-weight: 500;
+      }
+
+      .step-item.active .step-title {
+        color: var(--wasom-primary);
+        font-weight: 600;
+      }
+
+      .form-step {
+        display: none;
+        animation: fadeIn 0.5s ease;
+      }
+
+      .form-step.active {
+        display: block;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .input-group {
+        position: relative;
+      }
+
+      .input-group-text {
+        background: var(--wasom-light);
+        border: 1px solid #dee2e6;
+        border-right: none;
+      }
+
+      .form-control:focus {
+        border-color: var(--wasom-primary);
+        box-shadow: 0 0 0 0.25rem rgba(255, 0, 137, 0.15);
+      }
+
+      .password-requirements {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-top: 1rem;
+        border-left: 4px solid var(--wasom-primary);
+      }
+
+      .requirements-title {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #495057;
+      }
+
+      .requirements-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .requirements-list li {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      .req-icon {
+        margin-right: 0.5rem;
+        font-size: 1rem;
+      }
+
+      .req-icon.valid {
+        color: #28a745;
+      }
+
+      .req-icon.invalid {
+        color: #dc3545;
+      }
+
+      .strength-meter {
+        height: 8px;
+        margin-top: 5px;
+        border-radius: 4px;
+        background: #e9ecef;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .strength-fill {
+        height: 100%;
+        width: 0%;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+      }
+
+      .strength-text {
+        font-size: 0.8rem;
+        margin-top: 0.25rem;
+        text-align: right;
+      }
+
+      .password-wrapper {
+        position: relative;
+      }
+
+      .toggle-password {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #6c757d;
+        cursor: pointer;
+        z-index: 10;
+      }
+
+      .form-radio-group {
+        display: flex;
+        gap: 2rem;
+        margin-top: 0.5rem;
+      }
+
+      .form-radio-label {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        border: 2px solid #dee2e6;
+        transition: all 0.3s ease;
+        flex: 1;
+        justify-content: center;
+      }
+
+      .form-radio-label:hover {
+        border-color: var(--wasom-primary);
+      }
+
+      .form-radio-label.active {
+        border-color: var(--wasom-primary);
+        background: rgba(255, 0, 137, 0.05);
+      }
+
+      .form-radio-input {
+        display: none;
+      }
+
+      .form-radio-text {
+        margin-left: 0.5rem;
+        font-weight: 500;
+      }
+
+      .review-item {
+        padding: 1rem;
+        border-bottom: 1px solid #e9ecef;
+      }
+
+      .review-item:last-child {
+        border-bottom: none;
+      }
+
+      .review-label {
+        font-weight: 600;
+        color: #495057;
+        min-width: 120px;
+      }
+
+      .review-value {
+        color: #6c757d;
+      }
+
+      .preloader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease;
+      }
+
+      .loaded .preloader {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .spinner-border {
+        border-bottom-color: var(--wasom-primary);
+        border-top-color: var(--wasom-primary);
+        border-left-color: var(--wasom-primary);
+      }
+
+      .select-wrapper {
+        position: relative;
+      }
+
+      .select-wrapper::after {
+        content: "";
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 16px;
+        height: 16px;
+        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');
+        pointer-events: none;
+      }
+
+      .form-check-input:checked {
+        background-color: var(--wasom-primary);
+        border-color: var(--wasom-primary);
+      }
+
+      .text-wasom {
+        color: var(--wasom-primary) !important;
+      }
+
+      .birthday-selects {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 1rem;
+      }
+
+      @media (max-width: 768px) {
+        .step-progress::before {
+          left: 30px;
+          right: 30px;
+        }
+
+        .step-circle {
+          width: 32px;
+          height: 32px;
+          font-size: 0.9rem;
+        }
+
+        .step-title {
+          font-size: 0.75rem;
+        }
+
+        .birthday-selects {
+          grid-template-columns: 1fr;
+        }
+
+        .form-radio-group {
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+      }
+  </style>
+
+  <body>
+    <div class="preloader">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Carregando...</span>
+      </div>
+    </div>
+
+    <main class="content">
+      <div class="container-fluid p-0">
+        <section class="py-4">
+          <div class="container">
+            <div class="row justify-content-center">
+              <div class="col-md-8 text-center">
+                <img
+                  src="../../assets/img/brand/wasomupfy_authentic.png"
+                  class="img-fluid fade-in"
+                  width="90"
+                  height="90"
+                  alt="Logo Wasom Upfy"
+                />
+                <h1 class="h3 mt-3 text-wasom">Crie sua conta Wasom Upfy</h1>
+                <p class="text-muted">
+                  Preencha seus dados para começar sua jornada conosco
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <div class="row justify-content-center">
+            <div class="col-xl-6 col-lg-8 col-md-10 col-11 m-auto">
+              <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                  <!-- Progress Steps -->
+                  <div class="step-progress">
+                    <div class="step-item active" data-step="1">
+                      <div class="step-circle">1</div>
+                      <div class="step-title">Informações Básicas</div>
+                    </div>
+                    <div class="step-item" data-step="2">
+                      <div class="step-circle">2</div>
+                      <div class="step-title">Contato</div>
+                    </div>
+                    <div class="step-item" data-step="3">
+                      <div class="step-circle">3</div>
+                      <div class="step-title">Senha</div>
+                    </div>
+                    <div class="step-item" data-step="4">
+                      <div class="step-circle">4</div>
+                      <div class="step-title">Revisão</div>
+                    </div>
+                  </div>
+
+                  <form
+                    method="POST"
+                    action="register_process.php"
+                    class="needs-validation"
+                    id="registration-form"
+                    novalidate
+                  >
+                    <input
+                      type="hidden"
+                      name="csrf_token"
+                      value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>"
+                    />
+                    <input
+                      type="text"
+                      name="hairypot"
+                      style="display: none"
+                      value=""
+                    />
+
+                    <!-- Step 1: Informações Básicas -->
+                    <div class="form-step active" id="step-1">
+                      <h3 class="h5 mb-4 text-wasom">
+                        <i class="bi bi-person-circle me-2"></i>Informações
+                        Pessoais
+                      </h3>
+
+                      <div class="row">
+                        <div class="col-md-12 mb-3">
+                          <label for="email" class="form-label"
+                            >E-mail <span class="text-danger">*</span></label
+                          >
+                          <div class="input-group">
+                            <span class="input-group-text"
+                              ><i class="bi bi-envelope"></i
+                            ></span>
+                            <input
+                              type="email"
+                              class="form-control"
+                              id="email"
+                              name="email_user"
+                              required
+                              placeholder="seu.email@exemplo.com"
+                              autocomplete="email"
+                            />
+                            <div class="invalid-feedback">
+                              Por favor, insira um e-mail válido.
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                          <label for="confirm_email" class="form-label"
+                            >Confirmar E-mail
+                            <span class="text-danger">*</span></label
+                          >
+                          <div class="input-group">
+                            <span class="input-group-text"
+                              ><i class="bi bi-envelope-check"></i
+                            ></span>
+                            <input
+                              type="email"
+                              class="form-control"
+                              id="confirm_email"
+                              required
+                              placeholder="Confirme seu e-mail"
+                              autocomplete="email"
+                            />
+                            <div class="invalid-feedback">
+                              Os e-mails não coincidem.
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-md-12 mb-3">
+                          <label for="fullname_user" class="form-label"
+                            >Nome Completo
+                            <span class="text-danger">*</span></label
+                          >
+                          <div class="input-group">
+                            <span class="input-group-text"
+                              ><i class="bi bi-person"></i
+                            ></span>
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="fullname_user"
+                              name="fullname_user"
+                              required
+                              minlength="6"
+                              maxlength="100"
+                              placeholder="Nome completo"
+                            />
+                            <div class="invalid-feedback">
+                              Por favor, insira um nome válido (mínimo 6
+                              caracteres).
+                            </div>
+                          </div>
+                          <div class="form-text">
+                            Use o nome que aparece em seus documentos oficiais.
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-md-12 mb-3">
+                          <label class="form-label"
+                            >Data de Nascimento
+                            <span class="text-danger">*</span></label
+                          >
+                          <div class="birthday-selects">
+                            <select
+                              class="form-select"
+                              id="birth_day"
+                              name="birth_day"
+                              required
+                            >
+                              <option value="" selected disabled>Dia</option>
+                              <?php for ($i = 1; $i <= 31; $i++): ?>
+                              <option value="<?php echo $i; ?>">
+                                <?php echo $i; ?>
+                              </option>
+                              <?php endfor; ?>
+                            </select>
+
+                            <select
+                              class="form-select"
+                              id="birth_month"
+                              name="birth_month"
+                              required
+                            >
+                              <option value="" selected disabled>Mês</option>
+                              <option value="1">Janeiro</option>
+                              <option value="2">Fevereiro</option>
+                              <option value="3">Março</option>
+                              <option value="4">Abril</option>
+                              <option value="5">Maio</option>
+                              <option value="6">Junho</option>
+                              <option value="7">Julho</option>
+                              <option value="8">Agosto</option>
+                              <option value="9">Setembro</option>
+                              <option value="10">Outubro</option>
+                              <option value="11">Novembro</option>
+                              <option value="12">Dezembro</option>
+                            </select>
+
+                            <select
+                              class="form-select"
+                              id="birth_year"
+                              name="birth_year"
+                              required
+                            >
+                              <option value="" selected disabled>Ano</option>
+                              <?php for ($i = date('Y') - 16; $i >= date('Y') -
+                              100; $i--): ?>
+                              <option value="<?php echo $i; ?>">
+                                <?php echo $i; ?>
+                              </option>
+                              <?php endfor; ?>
+                            </select>
+                          </div>
+                          <div class="invalid-feedback" id="birthday-error">
+                            Por favor, selecione uma data válida.
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-md-12 mb-3">
+                          <label class="form-label"
+                            >Gênero <span class="text-danger">*</span></label
+                          >
+                          <p class="field-description text-muted small mb-2">
+                            Seu gênero nos ajuda no fornecimento de sugestões e
+                            atendimento da nossa equipa.
+                          </p>
+                          <div class="form-radio-group">
+                            <label class="form-radio-label" for="gender_male">
+                              <input
+                                type="radio"
+                                class="form-radio-input"
+                                id="gender_male"
+                                name="gender"
+                                value="M"
+                                required
+                              />
+                              <i class="bi bi-gender-male"></i>
+                              <span class="form-radio-text ms-2"
+                                >Masculino</span
+                              >
+                            </label>
+
+                            <label class="form-radio-label" for="gender_female">
+                              <input
+                                type="radio"
+                                class="form-radio-input"
+                                id="gender_female"
+                                name="gender"
+                                value="F"
+                              />
+                              <i class="bi bi-gender-female"></i>
+                              <span class="form-radio-text ms-2">Feminino</span>
+                            </label>
+
+                            <label class="form-radio-label" for="gender_other">
+                              <input
+                                type="radio"
+                                class="form-radio-input"
+                                id="gender_other"
+                                name="gender"
+                                value="O"
+                              />
+                              <i class="bi bi-gender-ambiguous"></i>
+                              <span class="form-radio-text ms-2">Outro</span>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row mt-4">
+                        <div class="col-12 d-flex justify-content-end">
+                          <button
+                            type="button"
+                            class="btn btn-wasomupfy"
+                            onclick="nextStep(2)"
+                          >
+                            Continuar <i class="bi bi-arrow-right ms-2"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Step 2: Contato -->
+                    <div class="form-step" id="step-2">
+                      <h3 class="h5 mb-4 text-wasom">
+                        <i class="bi bi-telephone me-2"></i>Informações de
+                        Contato
+                      </h3>
+
+                      <div class="row">
+                        <div class="col-md-12 mb-3">
+                          <label for="country" class="form-label"
+                            >País <span class="text-danger">*</span></label
+                          >
+                          <select
+                            class="form-select"
+                            id="country"
+                            name="country_user"
+                            required
+                          >
+                            <option value="" selected disabled>
+                              Selecione seu país
+                            </option>
+                            <option value="AF">Afeganistão</option>
+                            <option value="ZA">África do Sul</option>
+                            <option value="AL">Albânia</option>
+                            <option value="DE">Alemanha</option>
+                            <option value="AD">Andorra</option>
+                            <option value="AO">Angola</option>
+                            <option value="AI">Anguilla</option>
+                            <option value="AQ">Antártida</option>
+                            <option value="AG">Antígua e Barbuda</option>
+                            <option value="SA">Arábia Saudita</option>
+                            <option value="DZ">Argélia</option>
+                            <option value="AR">Argentina</option>
+                            <option value="AM">Armênia</option>
+                            <option value="AW">Aruba</option>
+                            <option value="AU">Austrália</option>
+                            <option value="AT">Áustria</option>
+                            <option value="AZ">Azerbaijão</option>
+                            <option value="BS">Bahamas</option>
+                            <option value="BH">Bahrein</option>
+                            <option value="BD">Bangladesh</option>
+                            <option value="BB">Barbados</option>
+                            <option value="BE">Bélgica</option>
+                            <option value="BZ">Belize</option>
+                            <option value="BJ">Benin</option>
+                            <option value="BM">Bermudas</option>
+                            <option value="BY">Bielorrússia</option>
+                            <option value="BO">Bolívia</option>
+                            <option value="BA">Bósnia e Herzegovina</option>
+                            <option value="BW">Botsuana</option>
+                            <option value="BR">Brasil</option>
+                            <option value="BN">Brunei</option>
+                            <option value="BG">Bulgária</option>
+                            <option value="BF">Burquina Faso</option>
+                            <option value="BI">Burundi</option>
+                            <option value="BT">Butão</option>
+                            <option value="CV">Cabo Verde</option>
+                            <option value="CM">Camarões</option>
+                            <option value="KH">Camboja</option>
+                            <option value="CA">Canadá</option>
+                            <option value="QA">Catar</option>
+                            <option value="KZ">Cazaquistão</option>
+                            <option value="TD">Chade</option>
+                            <option value="CL">Chile</option>
+                            <option value="CN">China</option>
+                            <option value="CY">Chipre</option>
+                            <option value="VA">Cidade do Vaticano</option>
+                            <option value="CO">Colômbia</option>
+                            <option value="KM">Comores</option>
+                            <option value="CG">Congo</option>
+                            <option value="CD">Congo (RD)</option>
+                            <option value="KP">Coreia do Norte</option>
+                            <option value="KR">Coreia do Sul</option>
+                            <option value="CI">Costa do Marfim</option>
+                            <option value="CR">Costa Rica</option>
+                            <option value="HR">Croácia</option>
+                            <option value="CU">Cuba</option>
+                            <option value="CW">Curaçao</option>
+                            <option value="DK">Dinamarca</option>
+                            <option value="DJ">Djibuti</option>
+                            <option value="DM">Dominica</option>
+                            <option value="EG">Egito</option>
+                            <option value="SV">El Salvador</option>
+                            <option value="AE">Emirados Árabes Unidos</option>
+                            <option value="EC">Equador</option>
+                            <option value="ER">Eritreia</option>
+                            <option value="SK">Eslováquia</option>
+                            <option value="SI">Eslovênia</option>
+                            <option value="ES">Espanha</option>
+                            <option value="US">Estados Unidos</option>
+                            <option value="EE">Estônia</option>
+                            <option value="ET">Etiópia</option>
+                            <option value="FJ">Fiji</option>
+                            <option value="PH">Filipinas</option>
+                            <option value="FI">Finlândia</option>
+                            <option value="FR">França</option>
+                            <option value="GA">Gabão</option>
+                            <option value="GM">Gâmbia</option>
+                            <option value="GH">Gana</option>
+                            <option value="GE">Geórgia</option>
+                            <option value="GS">
+                              Geórgia do Sul e Sandwich do Sul
+                            </option>
+                            <option value="GI">Gibraltar</option>
+                            <option value="GD">Granada</option>
+                            <option value="GR">Grécia</option>
+                            <option value="GL">Groenlândia</option>
+                            <option value="GP">Guadalupe</option>
+                            <option value="GU">Guam</option>
+                            <option value="GT">Guatemala</option>
+                            <option value="GG">Guernsey</option>
+                            <option value="GY">Guiana</option>
+                            <option value="GF">Guiana Francesa</option>
+                            <option value="GN">Guiné</option>
+                            <option value="GQ">Guiné Equatorial</option>
+                            <option value="GW">Guiné-Bissau</option>
+                            <option value="HT">Haiti</option>
+                            <option value="HN">Honduras</option>
+                            <option value="HK">Hong Kong</option>
+                            <option value="HU">Hungria</option>
+                            <option value="YE">Iêmen</option>
+                            <option value="BV">Ilha Bouvet</option>
+                            <option value="CX">Ilha Christmas</option>
+                            <option value="IM">Ilha de Man</option>
+                            <option value="NF">Ilha Norfolk</option>
+                            <option value="AX">Ilhas Åland</option>
+                            <option value="KY">Ilhas Cayman</option>
+                            <option value="CC">Ilhas Cocos (Keeling)</option>
+                            <option value="CK">Ilhas Cook</option>
+                            <option value="FO">Ilhas Faroé</option>
+                            <option value="FK">Ilhas Malvinas</option>
+                            <option value="MP">Ilhas Marianas do Norte</option>
+                            <option value="MH">Ilhas Marshall</option>
+                            <option value="UM">
+                              Ilhas Menores Distantes dos EUA
+                            </option>
+                            <option value="PN">Ilhas Pitcairn</option>
+                            <option value="SB">Ilhas Salomão</option>
+                            <option value="TC">Ilhas Turcas e Caicos</option>
+                            <option value="VI">Ilhas Virgens Americanas</option>
+                            <option value="VG">Ilhas Virgens Britânicas</option>
+                            <option value="IN">Índia</option>
+                            <option value="ID">Indonésia</option>
+                            <option value="IR">Irã</option>
+                            <option value="IQ">Iraque</option>
+                            <option value="IE">Irlanda</option>
+                            <option value="IS">Islândia</option>
+                            <option value="IL">Israel</option>
+                            <option value="IT">Itália</option>
+                            <option value="JM">Jamaica</option>
+                            <option value="JP">Japão</option>
+                            <option value="JE">Jersey</option>
+                            <option value="JO">Jordânia</option>
+                            <option value="KW">Kuwait</option>
+                            <option value="LA">Laos</option>
+                            <option value="LS">Lesoto</option>
+                            <option value="LV">Letônia</option>
+                            <option value="LB">Líbano</option>
+                            <option value="LR">Libéria</option>
+                            <option value="LY">Líbia</option>
+                            <option value="LI">Liechtenstein</option>
+                            <option value="LT">Lituânia</option>
+                            <option value="LU">Luxemburgo</option>
+                            <option value="MO">Macau</option>
+                            <option value="MK">Macedônia do Norte</option>
+                            <option value="MG">Madagascar</option>
+                            <option value="MY">Malásia</option>
+                            <option value="MW">Malaui</option>
+                            <option value="MV">Maldivas</option>
+                            <option value="ML">Mali</option>
+                            <option value="MT">Malta</option>
+                            <option value="MA">Marrocos</option>
+                            <option value="MQ">Martinica</option>
+                            <option value="MU">Maurício</option>
+                            <option value="MR">Mauritânia</option>
+                            <option value="YT">Mayotte</option>
+                            <option value="MX">México</option>
+                            <option value="MM">Mianmar (Birmânia)</option>
+                            <option value="FM">Micronésia</option>
+                            <option value="MZ">Moçambique</option>
+                            <option value="MD">Moldávia</option>
+                            <option value="MC">Mônaco</option>
+                            <option value="MN">Mongólia</option>
+                            <option value="ME">Montenegro</option>
+                            <option value="MS">Montserrat</option>
+                            <option value="NA">Namíbia</option>
+                            <option value="NR">Nauru</option>
+                            <option value="NP">Nepal</option>
+                            <option value="NI">Nicarágua</option>
+                            <option value="NE">Níger</option>
+                            <option value="NG">Nigéria</option>
+                            <option value="NU">Niue</option>
+                            <option value="NO">Noruega</option>
+                            <option value="NC">Nova Caledônia</option>
+                            <option value="NZ">Nova Zelândia</option>
+                            <option value="OM">Omã</option>
+                            <option value="NL">Países Baixos</option>
+                            <option value="BQ">Países Baixos Caribenhos</option>
+                            <option value="PW">Palau</option>
+                            <option value="PA">Panamá</option>
+                            <option value="PG">Papua-Nova Guiné</option>
+                            <option value="PK">Paquistão</option>
+                            <option value="PY">Paraguai</option>
+                            <option value="PE">Peru</option>
+                            <option value="PF">Polinésia Francesa</option>
+                            <option value="PL">Polônia</option>
+                            <option value="PR">Porto Rico</option>
+                            <option value="PT">Portugal</option>
+                            <option value="KE">Quênia</option>
+                            <option value="KG">Quirguistão</option>
+                            <option value="KI">Quiribati</option>
+                            <option value="GB">Reino Unido</option>
+                            <option value="CF">
+                              República Centro-Africana
+                            </option>
+                            <option value="CZ">República Tcheca</option>
+                            <option value="DO">República Dominicana</option>
+                            <option value="RE">Reunião</option>
+                            <option value="RO">Romênia</option>
+                            <option value="RW">Ruanda</option>
+                            <option value="RU">Rússia</option>
+                            <option value="EH">Saara Ocidental</option>
+                            <option value="WS">Samoa</option>
+                            <option value="AS">Samoa Americana</option>
+                            <option value="SM">San Marino</option>
+                            <option value="SH">Santa Helena</option>
+                            <option value="LC">Santa Lúcia</option>
+                            <option value="BL">São Bartolomeu</option>
+                            <option value="KN">São Cristóvão e Nevis</option>
+                            <option value="MF">São Martinho (França)</option>
+                            <option value="SX">
+                              São Martinho (Países Baixos)
+                            </option>
+                            <option value="PM">São Pedro e Miquelão</option>
+                            <option value="ST">São Tomé e Príncipe</option>
+                            <option value="VC">São Vicente e Granadinas</option>
+                            <option value="SC">Seicheles</option>
+                            <option value="SN">Senegal</option>
+                            <option value="SL">Serra Leoa</option>
+                            <option value="RS">Sérvia</option>
+                            <option value="SG">Singapura</option>
+                            <option value="SY">Síria</option>
+                            <option value="SO">Somália</option>
+                            <option value="LK">Sri Lanka</option>
+                            <option value="SZ">Suazilândia</option>
+                            <option value="SD">Sudão</option>
+                            <option value="SS">Sudão do Sul</option>
+                            <option value="SE">Suécia</option>
+                            <option value="CH">Suíça</option>
+                            <option value="SR">Suriname</option>
+                            <option value="SJ">Svalbard e Jan Mayen</option>
+                            <option value="TJ">Tajiquistão</option>
+                            <option value="TH">Tailândia</option>
+                            <option value="TW">Taiwan</option>
+                            <option value="TZ">Tanzânia</option>
+                            <option value="IO">
+                              Território Britânico do Oceano Índico
+                            </option>
+                            <option value="TF">
+                              Territórios Franceses do Sul
+                            </option>
+                            <option value="PS">Territórios Palestinos</option>
+                            <option value="TL">Timor-Leste</option>
+                            <option value="TG">Togo</option>
+                            <option value="TK">Tokelau</option>
+                            <option value="TO">Tonga</option>
+                            <option value="TT">Trinidad e Tobago</option>
+                            <option value="TN">Tunísia</option>
+                            <option value="TM">Turcomenistão</option>
+                            <option value="TR">Turquia</option>
+                            <option value="TV">Tuvalu</option>
+                            <option value="UA">Ucrânia</option>
+                            <option value="UG">Uganda</option>
+                            <option value="UY">Uruguai</option>
+                            <option value="UZ">Uzbequistão</option>
+                            <option value="VU">Vanuatu</option>
+                            <option value="VE">Venezuela</option>
+                            <option value="VN">Vietnã</option>
+                            <option value="WF">Wallis e Futuna</option>
+                            <option value="ZM">Zâmbia</option>
+                            <option value="ZW">Zimbábue</option>
+                          </select>
+                          <div class="invalid-feedback">
+                            Por favor, selecione um país.
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-md-12 mb-3">
+                          <label for="city" class="form-label"
+                            >Cidade <span class="text-danger">*</span></label
+                          >
+                          <div class="input-group">
+                            <span class="input-group-text"
+                              ><i class="bi bi-geo-alt"></i
+                            ></span>
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="city"
+                              name="city"
+                              required
+                              placeholder="Sua cidade"
+                              autocomplete="address-level2"
+                            />
+                            <div class="invalid-feedback">
+                              Por favor, insira sua cidade.
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-md-12 mb-3">
+                          <label for="phone" class="form-label"
+                            >Telefone
+                            <span class="text-muted">(opcional)</span></label
+                          >
+                          <div class="input-group">
+                            <span class="input-group-text"
+                              ><i class="bi bi-telephone"></i
+                            ></span>
+                            <input
+                              type="tel"
+                              class="form-control"
+                              id="phone"
+                              name="tel_user"
+                              placeholder="+244 9XX XXX XXX"
+                              autocomplete="tel"
+                            />
+                          </div>
+                          <div class="form-text">
+                            Adicione seu telefone para melhor atendimento.
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row mt-4">
+                        <div class="col-12 d-flex justify-content-between">
+                          <button
+                            type="button"
+                            class="btn btn-outline-wasom"
+                            onclick="prevStep(1)"
+                          >
+                            <i class="bi bi-arrow-left me-2"></i> Voltar
+                          </button>
+                          <button
+                            type="button"
+                            class="btn btn-wasomupfy"
+                            onclick="nextStep(3)"
+                          >
+                            Continuar <i class="bi bi-arrow-right ms-2"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Step 3: Senha -->
+                    <div class="form-step" id="step-3">
+                      <h3 class="h5 mb-4 text-wasom">
+                        <i class="bi bi-shield-lock me-2"></i>Crie sua Senha
+                      </h3>
+
+                      <div class="row">
+                        <div class="col-md-12 mb-3">
+                          <label for="password" class="form-label"
+                            >Senha <span class="text-danger">*</span></label
+                          >
+                          <div class="password-wrapper">
+                            <input
+                              type="password"
+                              class="form-control"
+                              id="password"
+                              name="password_user"
+                              required
+                              minlength="10"
+                              placeholder="Crie uma senha segura"
+                              oninput="validatePassword()"
+                            />
+                            <button
+                              type="button"
+                              class="toggle-password"
+                              onclick="togglePasswordVisibility('password')"
+                            >
+                              <i class="bi bi-eye"></i>
+                            </button>
+                          </div>
+
+                          <div class="strength-meter mt-2">
+                            <div class="strength-fill" id="strength-fill"></div>
+                          </div>
+                          <div class="strength-text" id="strength-text"></div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-md-12 mb-3">
+                          <label for="confirm_password" class="form-label"
+                            >Confirmar Senha
+                            <span class="text-danger">*</span></label
+                          >
+                          <div class="password-wrapper">
+                            <input
+                              type="password"
+                              class="form-control"
+                              id="confirm_password"
+                              name="confirm_password"
+                              required
+                              minlength="10"
+                              placeholder="Confirme sua senha"
+                              oninput="validatePasswordMatch()"
+                            />
+                            <button
+                              type="button"
+                              class="toggle-password"
+                              onclick="togglePasswordVisibility('confirm_password')"
+                            >
+                              <i class="bi bi-eye"></i>
+                            </button>
+                          </div>
+                          <div
+                            class="invalid-feedback"
+                            id="password-match-error"
+                          >
+                            As senhas não coincidem.
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="password-requirements">
+                        <p class="requirements-title">
+                          A sua palavra-passe deve ter no mínimo
+                        </p>
+                        <ul class="requirements-list">
+                          <li id="req-length">
+                            <i
+                              class="bi bi-x-circle req-icon"
+                              id="icon-length"
+                            ></i>
+                            <span>Mínimo 10 caracteres</span>
+                          </li>
+                          <li id="req-letter">
+                            <i
+                              class="bi bi-x-circle req-icon"
+                              id="icon-letter"
+                            ></i>
+                            <span>1 letra maiúscula e 1 minúscula</span>
+                          </li>
+                          <li id="req-number">
+                            <i
+                              class="bi bi-x-circle req-icon"
+                              id="icon-number"
+                            ></i>
+                            <span>1 número ou carácter especial (#&€$)</span>
+                          </li>
+                        </ul>
+                      </div>
+
+                      <div class="row mt-4">
+                        <div class="col-12 d-flex justify-content-between">
+                          <button
+                            type="button"
+                            class="btn btn-outline-wasom"
+                            onclick="prevStep(2)"
+                          >
+                            <i class="bi bi-arrow-left me-2"></i> Voltar
+                          </button>
+                          <button
+                            type="button"
+                            class="btn btn-wasomupfy"
+                            onclick="nextStep(4)"
+                          >
+                            Continuar <i class="bi bi-arrow-right ms-2"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Step 4: Revisão -->
+                    <div class="form-step" id="step-4">
+                      <h3 class="h5 mb-4 text-wasom">
+                        <i class="bi bi-check-circle me-2"></i>Revise seus Dados
+                      </h3>
+
+                      <div class="review-data">
+                        <div class="review-item">
+                          <div class="d-flex">
+                            <div class="review-label">E-mail:</div>
+                            <div class="review-value" id="review-email"></div>
+                          </div>
+                        </div>
+
+                        <div class="review-item">
+                          <div class="d-flex">
+                            <div class="review-label">Nome Completo:</div>
+                            <div
+                              class="review-value"
+                              id="review-fullname"
+                            ></div>
+                          </div>
+                        </div>
+
+                        <div class="review-item">
+                          <div class="d-flex">
+                            <div class="review-label">Data de Nascimento:</div>
+                            <div
+                              class="review-value"
+                              id="review-birthdate"
+                            ></div>
+                          </div>
+                        </div>
+
+                        <div class="review-item">
+                          <div class="d-flex">
+                            <div class="review-label">Gênero:</div>
+                            <div class="review-value" id="review-gender"></div>
+                          </div>
+                        </div>
+
+                        <div class="review-item">
+                          <div class="d-flex">
+                            <div class="review-label">País:</div>
+                            <div class="review-value" id="review-country"></div>
+                          </div>
+                        </div>
+
+                        <div class="review-item">
+                          <div class="d-flex">
+                            <div class="review-label">Cidade:</div>
+                            <div class="review-value" id="review-city"></div>
+                          </div>
+                        </div>
+
+                        <div class="review-item">
+                          <div class="d-flex">
+                            <div class="review-label">Telefone:</div>
+                            <div class="review-value" id="review-phone"></div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="form-check mb-4">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="terms_agree"
+                          name="terms_agree"
+                          required
+                        />
+                        <label class="form-check-label" for="terms_agree">
+                          Li e concordo com os
+                          <a
+                            href="#terms"
+                            data-bs-toggle="modal"
+                            data-bs-target="#terms"
+                            class="text-wasom"
+                            >Termos de Uso</a
+                          >
+                          e
+                          <a
+                            href="#privacy"
+                            data-bs-toggle="modal"
+                            data-bs-target="#privacy"
+                            class="text-wasom"
+                            >Política de Privacidade</a
+                          >
+                        </label>
+                        <div class="invalid-feedback">
+                          Você deve concordar com os termos para continuar.
+                        </div>
+                      </div>
+
+                      <div class="row mt-4">
+                        <div class="col-12 d-flex justify-content-between">
+                          <button
+                            type="button"
+                            class="btn btn-outline-wasom"
+                            onclick="prevStep(3)"
+                          >
+                            <i class="bi bi-arrow-left me-2"></i> Voltar
+                          </button>
+                          <button
+                            type="submit"
+                            class="btn btn-wasomupfy"
+                            id="submit-btn"
+                          >
+                            <span id="submit-text">Criar Conta</span>
+                            <span
+                              class="spinner-border spinner-border-sm d-none"
+                              id="submit-spinner"
+                            ></span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+
+                <div class="text-center mt-3">
+                  <a
+                    href="#support"
+                    data-bs-toggle="modal"
+                    data-bs-target="#support"
+                    class="text-decoration-none me-2"
+                    style="color: #ff0089"
+                    >Suporte</a
+                  >|
+                  <a
+                    href="#terms"
+                    data-bs-toggle="modal"
+                    data-bs-target="#terms"
+                    class="text-decoration-none me-2"
+                    style="color: #ff0089"
+                    >Termos</a
+                  >|
+                  <a
+                    href="#privacy"
+                    data-bs-toggle="modal"
+                    data-bs-target="#privacy"
+                    class="text-decoration-none me-2"
+                    style="color: #ff0089"
+                    >Privacidade</a
+                  >|
+                  <a href="../home.html" class="text-muted text-decoration-none"
+                    >Voltar para home</a
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Modal para Termos (exemplo) -->
+    <div
+      class="modal fade"
+      id="terms"
+      tabindex="-1"
+      aria-labelledby="termsLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="termsLabel">Termos de Uso</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p>Conteúdo dos termos de uso...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../js/validacao.js"></script>
+
+    <script>
+      // Sistema de Etapas
+      let currentStep = 1;
+      const totalSteps = 4;
+
+      function updateProgressSteps() {
+        document.querySelectorAll(".step-item").forEach((item, index) => {
+          const stepNum = parseInt(item.dataset.step);
+          item.classList.remove("active", "completed");
+
+          if (stepNum < currentStep) {
+            item.classList.add("completed");
+          } else if (stepNum === currentStep) {
+            item.classList.add("active");
+          }
+        });
+      }
+
+      function showStep(step) {
+        document.querySelectorAll(".form-step").forEach((el) => {
+          el.classList.remove("active");
+        });
+
+        const stepEl = document.getElementById(`step-${step}`);
+        if (stepEl) {
+          stepEl.classList.add("active");
+          currentStep = step;
+          updateProgressSteps();
+
+          // Scroll to top of form
+          stepEl.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }
+      }
+
+      function nextStep(step) {
+        if (!validateCurrentStep()) return;
+        showStep(step);
+      }
+
+      function prevStep(step) {
+        showStep(step);
+      }
+
+      // Validação do passo atual
+      function validateCurrentStep() {
+        const stepEl = document.getElementById(`step-${currentStep}`);
+        const inputs = stepEl.querySelectorAll(
+          "input[required], select[required]"
+        );
+        let isValid = true;
+
+        // Reset validation
+        inputs.forEach((input) => {
+          input.classList.remove("is-invalid");
+        });
+
+        // Validação específica para cada passo
+        switch (currentStep) {
+          case 1:
+            // Validação de e-mail
+            const email = document.getElementById("email").value;
+            const confirmEmail = document.getElementById("confirm_email").value;
+
+            if (!email || !validateEmail(email)) {
+              document.getElementById("email").classList.add("is-invalid");
+              isValid = false;
+            }
+
+            if (email !== confirmEmail) {
+              document
+                .getElementById("confirm_email")
+                .classList.add("is-invalid");
+              isValid = false;
+            }
+
+            // Validação de nome
+            const fullname = document.getElementById("fullname_user").value;
+            if (!fullname || fullname.length < 6) {
+              document
+                .getElementById("fullname_user")
+                .classList.add("is-invalid");
+              isValid = false;
+            }
+
+            // Validação de data de nascimento
+            const day = document.getElementById("birth_day").value;
+            const month = document.getElementById("birth_month").value;
+            const year = document.getElementById("birth_year").value;
+
+            if (!day || !month || !year) {
+              document.getElementById("birthday-error").style.display = "block";
+              isValid = false;
+            } else {
+              // Valida se é maior de 16 anos
+              const birthDate = new Date(year, month - 1, day);
+              const today = new Date();
+              const age = today.getFullYear() - birthDate.getFullYear();
+              const monthDiff = today.getMonth() - birthDate.getMonth();
+
+              if (age < 16 || (age === 16 && monthDiff < 0)) {
+                document.getElementById("birthday-error").textContent =
+                  "Você deve ter pelo menos 16 anos para se cadastrar.";
+                document.getElementById("birthday-error").style.display =
+                  "block";
+                isValid = false;
+              } else {
+                document.getElementById("birthday-error").style.display =
+                  "none";
+              }
+            }
+
+            // Validação de gênero
+            const genderSelected = document.querySelector(
+              'input[name="gender"]:checked'
+            );
+            if (!genderSelected) {
+              document
+                .querySelector(".form-radio-group")
+                .classList.add("is-invalid");
+              isValid = false;
+            }
+            break;
+
+          case 2:
+            // Validação de país e cidade
+            const country = document.getElementById("country").value;
+            const city = document.getElementById("city").value;
+
+            if (!country) {
+              document.getElementById("country").classList.add("is-invalid");
+              isValid = false;
+            }
+
+            if (!city) {
+              document.getElementById("city").classList.add("is-invalid");
+              isValid = false;
+            }
+            break;
+
+          case 3:
+            // Validação de senha
+            const password = document.getElementById("password").value;
+            const confirmPassword =
+              document.getElementById("confirm_password").value;
+
+            if (!validatePasswordStrength(password)) {
+              document.getElementById("password").classList.add("is-invalid");
+              isValid = false;
+            }
+
+            if (password !== confirmPassword) {
+              document
+                .getElementById("confirm_password")
+                .classList.add("is-invalid");
+              document.getElementById("password-match-error").style.display =
+                "block";
+              isValid = false;
+            } else {
+              document.getElementById("password-match-error").style.display =
+                "none";
+            }
+            break;
+        }
+
+        return isValid;
+      }
+
+      // Função auxiliar para validar e-mail
+      function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+      }
+
+      // Validação de senha em tempo real
+      function validatePassword() {
+        const password = document.getElementById("password").value;
+        validatePasswordStrength(password);
+        validatePasswordMatch();
+      }
+
+      function validatePasswordStrength(password) {
+        let strength = 0;
+        const requirements = {
+          length: password.length >= 10,
+          upper: /[A-Z]/.test(password),
+          lower: /[a-z]/.test(password),
+          number: /[0-9]/.test(password),
+          special: /[^A-Za-z0-9]/.test(password),
+        };
+
+        // Atualizar ícones
+        document.getElementById("icon-length").className = requirements.length
+          ? "bi bi-check-circle req-icon valid"
+          : "bi bi-x-circle req-icon invalid";
+        document.getElementById("icon-letter").className =
+          requirements.upper && requirements.lower
+            ? "bi bi-check-circle req-icon valid"
+            : "bi bi-x-circle req-icon invalid";
+        document.getElementById("icon-number").className =
+          requirements.number || requirements.special
+            ? "bi bi-check-circle req-icon valid"
+            : "bi bi-x-circle req-icon invalid";
+
+        // Calcular força
+        if (requirements.length) strength += 25;
+        if (requirements.upper && requirements.lower) strength += 25;
+        if (requirements.number) strength += 25;
+        if (requirements.special) strength += 25;
+
+        // Atualizar barra
+        const fill = document.getElementById("strength-fill");
+        const text = document.getElementById("strength-text");
+
+        fill.style.width = `${strength}%`;
+
+        if (strength < 50) {
+          fill.style.backgroundColor = "#dc3545";
+          text.textContent = "Senha fraca";
+          text.style.color = "#dc3545";
+          return false;
+        } else if (strength < 75) {
+          fill.style.backgroundColor = "#ffc107";
+          text.textContent = "Senha média";
+          text.style.color = "#ffc107";
+          return false;
+        } else {
+          fill.style.backgroundColor = "#28a745";
+          text.textContent = "Senha forte";
+          text.style.color = "#28a745";
+          return true;
+        }
+      }
+
+      function validatePasswordMatch() {
+        const password = document.getElementById("password").value;
+        const confirmPassword =
+          document.getElementById("confirm_password").value;
+        const errorElement = document.getElementById("password-match-error");
+
+        if (confirmPassword && password !== confirmPassword) {
+          document
+            .getElementById("confirm_password")
+            .classList.add("is-invalid");
+          errorElement.style.display = "block";
+          return false;
+        } else {
+          document
+            .getElementById("confirm_password")
+            .classList.remove("is-invalid");
+          errorElement.style.display = "none";
+          return true;
+        }
+      }
+
+      // Alternar visibilidade da senha
+      function togglePasswordVisibility(fieldId) {
+        const input = document.getElementById(fieldId);
+        const button = input.nextElementSibling;
+
+        if (input.type === "password") {
+          input.type = "text";
+          button.innerHTML = '<i class="bi bi-eye-slash"></i>';
+        } else {
+          input.type = "password";
+          button.innerHTML = '<i class="bi bi-eye"></i>';
+        }
+      }
+
+      // Atualizar dados de revisão
+      function updateReviewData() {
+        document.getElementById("review-email").textContent =
+          document.getElementById("email").value;
+        document.getElementById("review-fullname").textContent =
+          document.getElementById("fullname_user").value;
+
+        // Data de nascimento
+        const day = document.getElementById("birth_day").value;
+        const month = document.getElementById("birth_month").value;
+        const year = document.getElementById("birth_year").value;
+        if (day && month && year) {
+          const monthNames = [
+            "Janeiro",
+            "Fevereiro",
+            "Março",
+            "Abril",
+            "Maio",
+            "Junho",
+            "Julho",
+            "Agosto",
+            "Setembro",
+            "Outubro",
+            "Novembro",
+            "Dezembro",
+          ];
+          document.getElementById(
+            "review-birthdate"
+          ).textContent = `${day} de ${
+            monthNames[parseInt(month) - 1]
+          } de ${year}`;
+        }
+
+        // Gênero
+        const gender = document.querySelector('input[name="gender"]:checked');
+        if (gender) {
+          const genderText = {
+            M: "Masculino",
+            F: "Feminino",
+            O: "Outro",
+          };
+          document.getElementById("review-gender").textContent =
+            genderText[gender.value];
+        }
+
+        // País e cidade
+        const countrySelect = document.getElementById("country");
+        document.getElementById("review-country").textContent =
+          countrySelect.options[countrySelect.selectedIndex].text;
+        document.getElementById("review-city").textContent =
+          document.getElementById("city").value;
+
+        // Telefone
+        const phone = document.getElementById("phone").value;
+        document.getElementById("review-phone").textContent =
+          phone || "Não informado";
+      }
+
+      // Manipular o envio do formulário
+      document
+        .getElementById("registration-form")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          if (
+            !validateCurrentStep() ||
+            !document.getElementById("terms_agree").checked
+          ) {
+            document.getElementById("terms_agree").classList.add("is-invalid");
+            return;
+          }
+
+          // Mostrar loading
+          const submitBtn = document.getElementById("submit-btn");
+          const submitText = document.getElementById("submit-text");
+          const submitSpinner = document.getElementById("submit-spinner");
+
+          submitBtn.disabled = true;
+          submitText.textContent = "Criando conta...";
+          submitSpinner.classList.remove("d-none");
+
+          // Simular envio (substituir por AJAX real)
+          setTimeout(() => {
+            // Aqui você faria o envio real via AJAX
+            // this.submit(); // Descomente para envio real
+
+            // Exemplo de sucesso
+            alert("Conta criada com sucesso! Redirecionando...");
+            window.location.href = "login.html";
+          }, 2000);
+        });
+
+      // Atualizar dados de revisão ao mostrar o passo 4
+      document
+        .getElementById("step-4")
+        .addEventListener("animationstart", function () {
+          if (currentStep === 4) {
+            updateReviewData();
+          }
+        });
+
+      // Estilizar radio buttons
+      document.querySelectorAll(".form-radio-input").forEach((input) => {
+        input.addEventListener("change", function () {
+          document.querySelectorAll(".form-radio-label").forEach((label) => {
+            label.classList.remove("active");
+          });
+          this.parentElement.classList.add("active");
+        });
+      });
+
+      // Preloader
+      window.addEventListener("load", () => {
+        setTimeout(() => document.body.classList.add("loaded"), 300);
+      });
+
+      // Inicializar
+      document.addEventListener("DOMContentLoaded", function () {
+        updateProgressSteps();
+
+        // Adicionar validação em tempo real
+        document.getElementById("email").addEventListener("blur", function () {
+          if (this.value && !validateEmail(this.value)) {
+            this.classList.add("is-invalid");
+          } else {
+            this.classList.remove("is-invalid");
+          }
+        });
+
+        document
+          .getElementById("confirm_email")
+          .addEventListener("blur", function () {
+            const email = document.getElementById("email").value;
+            if (this.value && this.value !== email) {
+              this.classList.add("is-invalid");
+            } else {
+              this.classList.remove("is-invalid");
+            }
+          });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,244 @@
+ .privacy-header {
+                text-align: center;
+                margin-bottom: 40px;
+                position: relative;
+            }
+
+            .privacy-header .description-text {
+                font-size: 1rem;
+                color: #666;
+                max-width: 600px;
+                margin: 0 auto;
+            }
+
+            .privacy-header .update-date {
+                font-size: 0.9rem;
+                color: #666;
+            }
+
+            .privacy-header::after {
+                content: "";
+                width: 60px;
+                height: 4px;
+                background-color: #ff0089;
+                position: absolute;
+                bottom: -10px;
+                left: 50%;
+                transform: translateX(-50%);
+                border-radius: 2px;
+            }
+
+            .action-buttons {
+                text-align: center;
+                margin-bottom: 30px;
+            }
+
+            .action-buttons a,
+            .action-buttons button {
+                background-color: #ff0089;
+                color: #fff;
+                border: none;
+                padding: 8px 20px;
+                border-radius: 20px;
+                font-size: 0.9rem;
+                cursor: pointer;
+                transition: transform 0.3s ease, background-color 0.3s ease;
+                margin: 0 10px;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+            }
+
+            .action-buttons a:hover,
+            .action-buttons button:hover {
+                transform: scale(1.05);
+                background-color: #e04385;
+            }
+
+            .action-buttons i {
+                margin-right: 5px;
+            }
+
+            .nav-index {
+                position: sticky;
+                top: 20px;
+                width: 200px;
+                float: left;
+                margin-right: 30px;
+                padding: 15px;
+                background-color: #fff;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .dark-mode .nav-index {
+                background-color: #2c2c2c;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            }
+
+            .nav-index h3 {
+                font-size: 1.2rem;
+                color: #ff0089;
+                margin-bottom: 15px;
+            }
+
+            .nav-index ul {
+                list-style: none;
+                padding: 0;
+            }
+
+            .nav-index li {
+                margin-bottom: 10px;
+            }
+
+            .nav-index a {
+                color: #333;
+                text-decoration: none;
+                font-size: 0.9rem;
+                transition: color 0.3s ease;
+            }
+
+            .dark-mode .nav-index a {
+                color: #ccc;
+            }
+
+            .nav-index a:hover {
+                color: #ff0089;
+            }
+
+            .privacy-content {
+                margin-left: 230px;
+            }
+
+            .privacy-section {
+                margin-bottom: 30px;
+                padding: 20px;
+                background-color: #fff;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .dark-mode .privacy-section {
+                background-color: #2c2c2c;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            }
+
+            .privacy-section h2 {
+                font-size: 1.5rem;
+                font-weight: 600;
+                color: #ff0089;
+                margin-bottom: 15px;
+            }
+
+            .privacy-section p {
+                font-size: 1rem;
+                color: #333;
+                line-height: 1.6;
+            }
+
+            .dark-mode .privacy-section p {
+                color: #ccc;
+            }
+
+            .scroll-hint {
+                text-align: center;
+                margin-top: 20px;
+                font-size: 0.9rem;
+                color: #666;
+                display: block;
+            }
+
+            .dark-mode .scroll-hint {
+                color: #ccc;
+            }
+
+            .back-to-top {
+                position: fixed;
+                bottom: 80px;
+                right: 20px;
+                background-color: #ff0089;
+                color: #fff;
+                border: none;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 1.2rem;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+                transition: transform 0.3s ease, background-color 0.3s ease, opacity 0.3s ease;
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            .back-to-top.visible {
+                opacity: 1;
+                pointer-events: auto;
+            }
+
+            .back-to-top:hover {
+                transform: scale(1.1);
+                background-color: #e04385;
+            }
+
+            .footer-version {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                background-color: rgba(255, 255, 255, 0.9);
+                text-align: center;
+                padding: 5px 0;
+                font-size: 0.8rem;
+                color: #888;
+                z-index: 1000;
+            }
+
+            .dark-mode .footer-version {
+                background-color: rgba(26, 26, 26, 0.9);
+                color: #bbb;
+            }
+
+            @media (max-width: 767px) {
+       
+
+                .privacy-header h1 {
+                    font-size: 2rem;
+                }
+
+                .privacy-header .update-date {
+                    font-size: 0.85rem;
+                }
+
+                .action-buttons a,
+                .action-buttons button {
+                    padding: 6px 15px;
+                    font-size: 0.85rem;
+                    margin: 5px;
+                }
+
+                .nav-index {
+                    position: static;
+                    width: 100%;
+                    margin-right: 0;
+                    margin-bottom: 20px;
+                }
+
+                .privacy-content {
+                    margin-left: 0;
+                }
+
+                .privacy-section {
+                    padding: 15px;
+                }
+
+                .privacy-section h2 {
+                    font-size: 1.3rem;
+                }
+
+                .privacy-section p {
+                    font-size: 0.95rem;
+                }
+
+            }

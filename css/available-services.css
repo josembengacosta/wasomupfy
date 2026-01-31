@@ -1,0 +1,140 @@
+#link2 {
+    display: none;
+}
+
+.service-card {
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    text-align: start;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.service-card .badge {
+    font-size: 0.9rem;
+    padding: 5px 10px;
+}
+
+.service-card p {
+    font-size: 1rem;
+    line-height: 1.6;
+    text-align: start;
+}
+
+.service-card ul {
+    list-style: none;
+    padding-left: 0;
+    text-align: start;
+
+}
+
+.service-card ul li {
+    display: flex;
+    align-items: start;
+    margin-bottom: 10px;
+}
+
+.service-card ul li i {
+    margin-right: 10px;
+    font-size: 1.2rem;
+    color: #e04385;
+}
+
+.service-card .btn {
+    background-color: #ff0089;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.service-card .btn:hover {
+    background-color: #e04385;
+}
+
+.plans-section {
+    border-radius: 10px;
+}
+
+.plans-section .table th {
+    background-color: #ff0089;
+    color: #fff;
+    text-align: center;
+}
+
+.plans-section .table td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.dark-mode .plans-section .table th {
+    background-color: #e04385;
+}
+
+
+@media (max-width: 991px) {
+    .navbar-brand {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .navbar-toggler {
+        margin-left: 0;
+    }
+
+    .user-menu,
+    .theme-menu {
+        margin-right: 0;
+    }
+
+    .container {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    .plans-section .table td,
+    .plans-section .table th {
+        font-size: 0.9rem;
+    }
+}
+
+@media (min-width: 992px) {
+    .navbar-brand {
+        position: static;
+        transform: none;
+    }
+
+    .navbar-nav {
+        display: flex;
+        align-items: center;
+    }
+
+    .navbar-brand {
+        margin-right: 30px;
+    }
+
+    .user-menu,
+    .theme-menu {
+        margin-left: auto;
+    }
+
+    .navbar-collapse {
+        display: flex !important;
+    }
+}

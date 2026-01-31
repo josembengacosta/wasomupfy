@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="author" content="Voosoft" />
+    <meta name="theme-color" content="#FF0089">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="../../assets/img/icones/wasomupfy_fiv_512.png">
+    <link rel="apple-touch-startup-image" href="../../assets/img/screenshots/splash.png">
+    <link rel="manifest" href="../manifest.json">
+    <title>Estatísticas - Wasom Upfy</title>
+    <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
+    <link rel="stylesheet" href="../../css/libs/scrollue.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
+    <link href="
+https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css
+" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../../css/dashboard-style.css">
+    <link rel="stylesheet" href="../../css/lastest-style.css">
+    <link rel="stylesheet" href="../../css/statistics.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+
+<body>
+
+    <!-- Tela de Carregamento -->
+    <!-- <div class="loading-screen" id="loadingScreen">
+        <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg" class="loading-logo">
+            <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2"/>
+            <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
+        </svg>
+        <div class="spinner"></div>
+    </div> -->
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <!-- Menu Button (Left) -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu"
+                aria-controls="offcanvasMenu">
+                <span class="navbar-toggler-icon"><i class="bi bi-list text-white fs-1"></i></span>
+            </button>
+
+            <!-- Logo (Center on Mobile, Left on Desktop) -->
+            <a class="navbar-brand" href="../painel.html">
+                <!-- SVG Logo Wasom Upfy -->
+                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
+                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
+                        fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
+                </svg> -->
+                <span class="text-light"
+                    style="font-weight: bold; box-sizing: border-box; text-transform: capitalize; font-family:Arial, sans-serif">WASOM
+                    UPFY</span>
+            </a>
+
+
+            <!-- Desktop Menu -->
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav m-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="../painel.html"><i class="bi bi-speedometer2"></i>
+                            Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../launch/releases.html"><i class="bi bi-disc"></i>
+                            Lançamentos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../analytics/statistics.html"><i
+                                class="bi bi-bar-chart"></i>
+                            Estatísticas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../finances/overview.html"><i
+                                class="bi bi-currency-dollar"></i>
+                            Finanças</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../artists/artists-list.html"><i
+                                class="bi bi-person"></i>
+                            Artistas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="youtube.html"><i class="bi bi-youtube"></i>
+                            Unificação de canal YouTube</a></li>
+                </ul>
+            </div>
+
+            <!-- User Icon (Right) -->
+            <div class="user-menu d-flex align-items-center">
+                <!-- Theme Toggle Button -->
+                <a class="theme-toggle text-white me-2" id="themeToggle">
+                    <i class="bi bi-sun" id="themeIcon"></i>
+                </a>
+                <a href="../notifications.html" class="text-white me-2" aria-label="Notificações">
+                    <i class="bi bi-bell fs-4"></i>
+                    <span class="badge bg-danger">9</span>
+                </a>
+                <a href="#" class="text-white" data-bs-toggle="dropdown">
+                    <i class="bi bi-person-circle fs-4"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="../user/profile.html"><i class="bi bi-person me-2"></i>
+                            <strong>Eleven
+                                Records</strong></a>
+                        <div class="text-white-50"> &nbsp; &nbsp; &nbsp; &nbsp;
+                            (Conta 560108)</div>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="../user/profile.html"><i class="bi bi-person me-2"></i> Meu
+                            Perfil</a>
+                    </li>
+                    <li><a class="dropdown-item" href="../account/manage-account.html"><i class="bi bi-tools me-2"></i>
+                            Gestão de Conta</a>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="../page/settings.html"><i class="bi bi-gear me-2"></i>
+                            Configurações</a></li>
+                    <li><a class="dropdown-item" href="../page/notifications.html"><i class="bi bi-bell me-2"></i>
+                            Notificações</a></li>
+                    <li><a class="dropdown-item" href="../page/plans.html"><i class="bi bi-star me-2"></i> Planos</a>
+                    </li>
+                    <li><a class="dropdown-item" href="#?logout-wasomupfy" data-bs-toggle="modal"
+                            data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right me-2"></i>
+                            Desconectar-se</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="../page/sobre.html"><i class="bi bi-info-circle me-2"></i>
+                            Sobre</a>
+                    </li>
+                    <li><a class="dropdown-item" href="../page/support.html"><i class="bi bi-headset me-2"></i> Enviar
+                            pedido de suporte</a></li>
+                    <li><a class="dropdown-item" href="../page/faq.html"><i class="bi bi-chat-left-text me-2"></i>
+                            Perguntas frequentes</a></li>
+                    <li><a class="dropdown-item" href="../page/help.html"><i class="bi bi-question-circle me-2"></i>
+                            Ajuda</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><span class="dropdown-item-text" id="versionDropdown"></span></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Modal logout -->
+    <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">Terminar sessão</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row justify-content-center text-center">
+                            <div class="col-md-12 content-center justify-center text-center">
+                                <p class="text-center text-dark">@josembengadacosta você tem
+                                    certeza
+                                    de que desejas terminar
+                                    sessão?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Não, continuar</button>
+                    </div>
+                    <div>
+                        <button class="btn btn-danger" type="button" name="logout_wasomupfy"
+                            onclick="logout_wasomupfy()">Sim, terminar
+                            sessão</button>
+                    </div>
+                    <script type="text/javascript">
+                        function logout_wasomupfy() {
+                            window.location = '../logout';
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal logout fim -->
+
+    <!-- Offcanvas Menu para Mobile e Desktop -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasMenuLabel">
+                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
+                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
+                        fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
+                </svg> -->
+                <span class="text-light"
+                    style="font-weight: bold; box-sizing: border-box; text-transform: capitalize; font-family:Arial, sans-serif">WASOM
+                    UPFY</span>
+            </h5>
+            <button type="button" class="btn-close text-white" data-bs-dismiss="offcanvas" aria-label="Close">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link" href="../painel.html"><i class="bi bi-speedometer2"></i>
+                        Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="../launch/releases.html"><i class="bi bi-disc"></i>
+                        Lançamentos</a></li>
+                <li class="nav-item"><a class="nav-link" href="../analytics/statistics.html"><i
+                            class="bi bi-bar-chart"></i> Estatísticas</a></li>
+                <li class="nav-item"><a class="nav-link" href="../finances/overview.html"><i
+                            class="bi bi-currency-dollar"></i> Finanças</a></li>
+                <li class="nav-item"><a class="nav-link" href="../artists/artists-list.html"><i
+                            class="bi bi-person"></i>
+                        Artistas</a></li>
+                <li class="nav-item"><a class="nav-link" href="../youtube.html"><i class="bi bi-youtube"></i> Unificação
+                        de
+                        canal YouTube</a></li>
+                <!-- Links secundários exibidos apenas em mobile -->
+                <li class="nav-item d-lg-none"><a class="nav-link" href="../user/profile.html"><i
+                            class="bi bi-person-circle"></i> Meu Perfil</a></li>
+                <li class="nav-item d-lg-none"><a class="nav-link active" href="../page/settings.html"><i
+                            class="bi bi-gear"></i> Configurações</a></li>
+                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/notifications.html"><i
+                            class="bi bi-bell"></i> Notificações</a></li>
+                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/sobre.html"><i
+                            class="bi bi-info-circle"></i> Sobre</a></li>
+                <li class="nav-item d-lg-none"><a class="nav-link" href="../services/available-services.html"><i
+                            class="bi bi-star"></i>
+                        Conta e serviços disponíveis</a></li>
+                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/help.html"><i
+                            class="bi bi-question-circle"></i> Ajuda</a></li>
+                <li class="nav-item d-lg-none"><a class="nav-link" href="#?logout-wasomupfy" data-bs-toggle="modal"
+                        data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right"></i> Desconectar-se</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Toast para Notificações de Status -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="connectionToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">Conexão</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Fechar"></button>
+            </div>
+            <div class="toast-body">
+                Você está offline. Alguns dados podem estar desatualizados.
+                <div class="mt-2">
+                    <button class="btn btn-pink btn-sm" onclick="tryReconnect()">Tentar Reconectar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container my-4">
+        <!-- Welcome Section -->
+        <div class="row">
+            <div class="welcome-text mb-4 col-auto d-sm-block">
+                <h1>Estatísticas</h1>
+            </div>
+            <div class="col-auto ms-auto text-end mt-n1">
+                <button class="btn btn-back shadow-sm" onclick="window.location.reload()"><i class="bi bi-repeat"></i>
+                    Actualizar</button>
+                <button class="btn btn-pink" onclick="window.location='report.html'"><i class="bi bi-receipt"></i> Ver
+                    relatórios</button>
+            </div>
+        </div>
+
+        <!-- Stats Description -->
+        <p class="stats-description">
+            O Stream Analytics agrega seus streams totais no Spotify, Apple Music, Deezer, Pandora, Amazon e YouTube Art
+            Tracks. Ele também calcula os streams diários e mensais dos parceiros e pode calcular os números que eles
+            informam nos relatórios de royalties.
+        </p>
+
+        <!-- Date Range Selector -->
+        <div class="date-range row">
+            <div class="col-md-3">
+                <label for="dateRange">Intervalo de datas:</label>
+                <div class="input-group">
+                    <i class="bi bi-calendar"></i>
+                    <input type="date" id="startDate" value="2024-10-09" onchange="validateDates()">
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <label for="dateRange">Intervalo de datas:</label>
+                <div class="input-group">
+                    <i class="bi bi-calendar"></i>
+                    <input type="date" id="endDate" value="2024-12-30" onchange="validateDates()">
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <label for="dateRange">Parceiros</label>
+                <div class="input-group">
+                    <i class="bi bi-filter"></i>
+                    <select id="partnerFilter">
+                        <option value="all">Todos</option>
+                        <option value="spotify">Spotify</option>
+                        <option value="deezer">Deezer</option>
+                        <option value="apple">Apple Music</option>
+                        <option value="amazon">Amazon Music</option>
+                        <option value="youtube">YouTube</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3 mt-4"><button class="btn-apply" id="applyButton" onclick="updateChart()"
+                    disabled>Aplicar</button></div>
+        </div>
+
+        <!-- Chart Card -->
+        <div class="chart-card platforms-card mb-4">
+            <div class="card">
+                <canvas id="streamChart"></canvas>
+                <hr>
+                <ul>
+                    <li>
+                        <div class="platform-info">
+                            <i class="bi bi-spotify"></i>
+                            <span>Spotify</span>
+                        </div>
+                        <span class="stream-count">15,000 Streams</span>
+                    </li>
+                    <li>
+                        <div class="platform-info">
+                            <i class="bi bi-music-player"></i>
+                            <span>Deezer</span>
+                        </div>
+                        <span class="stream-count">3,000 Streams</span>
+                    </li>
+                    <li>
+                        <div class="platform-info">
+                            <i class="bi bi-apple"></i>
+                            <span>Apple Music</span>
+                        </div>
+                        <span class="stream-count">9,000 Streams</span>
+                    </li>
+                    <li>
+                        <div class="platform-info">
+                            <i class="bi bi-music-note-beamed"></i>
+                            <span>Amazon Music</span>
+                        </div>
+                        <span class="stream-count">829 Streams</span>
+                    </li>
+                    <li>
+                        <div class="platform-info">
+                            <i class="bi bi-youtube"></i>
+                            <span>YouTube</span>
+                        </div>
+                        <span class="stream-count">80,000 Streams</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Artists Table Card -->
+        <div class="table-card mb-4">
+            <div class="card" id="artist">
+                <div class="card-header">
+                    <h6>Total de artistas: 5</h6>
+                </div>
+                <div class="table-responsive">
+                    <table id="artistsTable" class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Capa</th>
+                                <th>Artista</th>
+                                <th>Streams</th>
+                                <th>Ver mais...</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Dados serão preenchidos dinamicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Playlists Table Card -->
+        <div class="table-card mb-4">
+            <div class="card" id="playlist">
+                <div class="card-header">
+                    <h6>Total de playlists: 3</h6>
+                </div>
+                <div class="filter-group">
+                    <div class="input-group">
+                        <i class="bi bi-search"></i>
+                        <input type="text" id="playlistSearch" placeholder="Pesquisar playlist"
+                            onkeyup="filterPlaylists()">
+                    </div>
+                    <div class="input-group">
+                        <i class="bi bi-filter"></i>
+                        <input type="number" id="playlistStreamFilter" placeholder="Streams mínimos" min="0"
+                            oninput="validatePlaylistStreamFilter()">
+                    </div>
+                    <button class="btn-apply" id="applyPlaylistFilter" onclick="filterPlaylists()"
+                        disabled>Aplicar</button>
+                </div>
+                <div class="table-responsive">
+                    <table id="playlistsTable" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Capa</th>
+                                <th>Playlist</th>
+                                <th>Streams</th>
+                                <th>Detalhes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Dados serão preenchidos dinamicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Territories Card -->
+        <div class="territory-card mb-4">
+            <div class="card" id="country">
+                <div class="card-header">
+                    <h6>Total de territórios: 4</h6>
+                </div>
+                <div id="map"></div>
+                <div class="filter-group">
+                    <div class="input-group">
+                        <i class="bi bi-search"></i>
+                        <input type="text" id="territorySearch" placeholder="Pesquisar território"
+                            onkeyup="filterTerritories()">
+                    </div>
+                    <div class="input-group">
+                        <i class="bi bi-filter"></i>
+                        <input type="number" id="territoryStreamFilter" placeholder="Streams mínimos" min="0"
+                            oninput="validateTerritoryStreamFilter()">
+                    </div>
+                    <div class="input-group">
+                        <i class="bi bi-sort-down"></i>
+                        <select id="territorySort" onchange="filterTerritories()">
+                            <option value="desc">Ordenar por streams (Decrescente)</option>
+                            <option value="asc">Ordenar por streams (Crescente)</option>
+                        </select>
+                    </div>
+                    <button class="btn-apply" id="applyTerritoryFilter" onclick="filterTerritories()"
+                        disabled>Aplicar</button>
+                </div>
+                <ul id="territoryList"></ul>
+            </div>
+        </div>
+    </div>
+
+    <nav class="bottom-nav d-lg-none">
+        <ul class="nav justify-content-around">
+            <li class="nav-item"><a class="nav-link" href="../painel.html" aria-label="Ir para Dashboard"><i
+                        class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="../launch/releases.html" aria-label="Ir para Lançamentos"><i
+                        class="bi bi-disc"></i><span>Lançamentos</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="../analytics/statistics.html"
+                    aria-label="Ir para Estatísticas"><i class="bi bi-bar-chart"></i><span>Estatísticas</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="../finances/overview.html" aria-label="Ir para Finanças"><i
+                        class="bi bi-currency-dollar"></i><span>Finanças</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="../artists/artists-list.html"
+                    aria-label="Ir para Artistas"><i class="bi bi-person"></i><span>Artistas</span></a></li>
+        </ul>
+    </nav>
+
+    <!-- jQuery (necessário para DataTables) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/v/bs5/dt-1.13.6/datatables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <!-- Leaflet JS -->
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="../../js/wp.tools.js"></script>
+    <script src="../../js/theme.wp.js"></script>
+
+    <script>
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    </script>
+    <script>
+        // Dados completos para o gráfico (simulados)
+        const fullData = {
+            labels: ['2024-10-09', '2024-10-16', '2024-10-23', '2024-10-30', '2024-11-06', '2024-11-13',
+                '2024-11-20', '2024-11-27', '2024-12-04', '2024-12-11', '2024-12-18', '2024-12-25', '2024-12-30'
+            ],
+            datasets: [{
+                    label: 'Spotify',
+                    data: [7000, 7200, 6800, 6500, 6000, 5800, 5500, 5000, 4800, 4500, 4200, 4000, 3000],
+                    borderColor: '#1db954',
+                    backgroundColor: 'rgba(29, 185, 84, 0.5)',
+                    fill: true,
+                    stack: 'combined'
+                },
+                {
+                    label: 'Deezer',
+                    data: [5000, 4800, 4600, 4400, 4200, 4000, 3800, 3500, 3200, 3000, 2800, 2500, 1000],
+                    borderColor: '#ff0089',
+                    backgroundColor: 'rgba(255, 77, 148, 0.5)',
+                    fill: true,
+                    stack: 'combined'
+                },
+                {
+                    label: 'Apple Music',
+                    data: [3000, 3100, 3200, 3300, 3400, 3500, 3600, 3700, 3800, 4000, 4500, 4800, 5000],
+                    borderColor: '#ff4d4d',
+                    backgroundColor: 'rgba(255, 77, 77, 0.5)',
+                    fill: true,
+                    stack: 'combined'
+                },
+                {
+                    label: 'YouTube Art Track',
+                    data: [6000, 5800, 5600, 5400, 5200, 5000, 4800, 4600, 4400, 4200, 4000, 3800, 2000],
+                    borderColor: '#ff0000',
+                    backgroundColor: 'rgba(255, 0, 0, 0.5)',
+                    fill: true,
+                    stack: 'combined'
+                }
+            ]
+        };
+
+        // Dados dos artistas (simulados)
+        const artistsData = [{
+                name: 'Eunic',
+                streams: 15000,
+                cover: 'https://via.placeholder.com/40'
+            },
+            {
+                name: 'CHVJays',
+                streams: 3000,
+                cover: 'https://via.placeholder.com/40'
+            },
+            {
+                name: 'Anderson Cuper',
+                streams: 9000,
+                cover: 'https://via.placeholder.com/40'
+            },
+            {
+                name: 'Artista 4',
+                streams: 5000,
+                cover: 'https://via.placeholder.com/40'
+            },
+            {
+                name: 'Artista 5',
+                streams: 2000,
+                cover: 'https://via.placeholder.com/40'
+            }
+        ];
+
+
+        // Inicializar DataTables para Artistas
+        let artistsTable;
+        $(document).ready(function () {
+            artistsTable = $('#artistsTable').DataTable({
+                paging: true,
+                searching: true,
+                ordering: true,
+                info: true,
+                lengthChange: false,
+                pageLength: 3,
+                language: {
+                    search: "Pesquisar artista:",
+                    info: "Mostrando _START_ a _END_ de _TOTAL_ artistas",
+                    paginate: {
+                        next: "Próximo",
+                        previous: "Anterior"
+                    }
+                },
+                columnDefs: [{
+                        targets: 0, // Coluna de capa
+                        orderable: false,
+                        render: function (data, type, row) {
+                            return `<img src="${row[0]}" alt="${row[1]}" style="width: 40px; height: 40px; border-radius: 5px;">`;
+                        }
+                    },
+                    {
+                        targets: 3, // Coluna de detalhes
+                        orderable: false,
+                        render: function (data, type, row) {
+                            return `<a href="artist-details.html?artist=${encodeURIComponent(row[1])}" class="details-link" onclick="console.log('Redirecionando para artista: ${row[1]}')"><i class="bi bi-chevron-right"></i></a>`;
+                        }
+                    }
+                ]
+            });
+
+            // Preencher a tabela com dados iniciais
+            artistsData.forEach(artist => {
+                artistsTable.row.add([
+                    artist.cover, // Capa
+                    artist.name, // Nome do artista
+                    artist.streams, // Streams
+                    '' // Coluna de detalhes será renderizada pelo columnDefs
+                ]);
+            });
+            artistsTable.draw();
+        });
+
+        // Chart.js Configuration
+        const ctx = document.getElementById('streamChart').getContext('2d');
+        let streamChart = new Chart(ctx, {
+            type: 'line',
+            data: fullData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        stacked: true,
+                        title: {
+                            display: true,
+                            text: 'Streams'
+                        }
+                    },
+                    x: {
+                        stacked: true,
+                        title: {
+                            display: true,
+                            text: 'Data'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                },
+                interaction: {
+                    mode: 'nearest',
+                    axis: 'x',
+                    intersect: false
+                }
+            }
+        });
+
+        // Validar datas e habilitar/desabilitar botão Aplicar
+        function validateDates() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const applyButton = document.getElementById('applyButton');
+            if (startDate && endDate && new Date(startDate) <= new Date(endDate)) {
+                applyButton.disabled = false;
+            } else {
+                applyButton.disabled = true;
+            }
+        }
+
+        // Função para atualizar o gráfico com base nos filtros
+        function updateChart() {
+            const startDate = new Date(document.getElementById('startDate').value);
+            const endDate = new Date(document.getElementById('endDate').value);
+            const partner = document.getElementById('partnerFilter').value;
+
+            const filteredLabels = [];
+            const filteredData = {
+                vectors: [],
+                datasets: fullData.datasets.map(dataset => ({
+                    ...dataset,
+                    data: []
+                }))
+            };
+
+            fullData.labels.forEach((label, index) => {
+                const labelDate = new Date(label);
+                if (labelDate >= startDate && labelDate <= endDate) {
+                    filteredLabels.push(label);
+                    filteredData.datasets.forEach((dataset, datasetIndex) => {
+                        dataset.data.push(fullData.datasets[datasetIndex].data[index]);
+                    });
+                }
+            });
+
+            filteredData.labels = filteredLabels;
+            if (partner !== 'all') {
+                filteredData.datasets = filteredData.datasets.filter(dataset => dataset.label.toLowerCase().includes(
+                    partner));
+            }
+
+            streamChart.data = filteredData;
+            streamChart.update();
+        }
+
+        // Dados das playlists com capas
+        const playlistsData = [{
+                name: 'Mix Spotify',
+                streams: 15000,
+                cover: 'https://via.placeholder.com/40'
+            },
+            {
+                name: 'On Repeat',
+                streams: 5000,
+                cover: 'https://via.placeholder.com/40'
+            },
+            {
+                name: 'Playlist 3',
+                streams: 2000,
+                cover: 'https://via.placeholder.com/40'
+            }
+        ];
+
+        // Inicializar DataTables para Playlists
+        let playlistsTable;
+        $(document).ready(function () {
+            playlistsTable = $('#playlistsTable').DataTable({
+                paging: true,
+                searching: false,
+                ordering: true,
+                info: true,
+                lengthChange: false,
+                pageLength: 3,
+                language: {
+                    info: "Mostrando _START_ a _END_ de _TOTAL_ playlists",
+                    paginate: {
+                        next: "Próximo",
+                        previous: "Anterior"
+                    }
+                },
+                columnDefs: [{
+                        targets: 0, // Coluna de capa
+                        orderable: false,
+                        render: function (data, type, row) {
+                            return `<img src="${row[0]}" alt="${row[1]}" style="width: 40px; height: 40px; border-radius: 5px;">`;
+                        }
+                    },
+                    {
+                        targets: 3, // Coluna de detalhes
+                        orderable: false,
+                        render: function (data, type, row) {
+                            return `<a href="playlist-details.html?playlist=${encodeURIComponent(row[1])}" class="details-link" onclick="console.log('Redirecionando para playlist: ${row[1]}')"><i class="bi bi-chevron-right"></i></a>`;
+                        }
+                    }
+                ]
+            });
+
+            // Preencher a tabela com dados iniciais
+            playlistsData.forEach(playlist => {
+                playlistsTable.row.add([
+                    playlist.cover, // Capa
+                    playlist.name, // Nome da playlist
+                    playlist.streams, // Streams
+                    '' // Coluna de detalhes será renderizada pelo columnDefs
+                ]);
+            });
+            playlistsTable.draw();
+        });
+
+        function validatePlaylistStreamFilter() {
+            const streamFilter = document.getElementById('playlistStreamFilter').value;
+            const applyButton = document.getElementById('applyPlaylistFilter');
+            applyButton.disabled = streamFilter === '' || isNaN(streamFilter) || streamFilter < 0;
+        }
+
+        function filterPlaylists() {
+            const searchTerm = document.getElementById('playlistSearch').value.toLowerCase();
+            const streamFilter = parseInt(document.getElementById('playlistStreamFilter').value) || 0;
+
+            playlistsTable.clear();
+
+            const filteredPlaylists = playlistsData.filter(playlist =>
+                playlist.name.toLowerCase().includes(searchTerm) &&
+                playlist.streams >= streamFilter
+            );
+
+            filteredPlaylists.forEach(playlist => {
+                playlistsTable.row.add([
+                    playlist.cover,
+                    playlist.name,
+                    playlist.streams,
+                    ''
+                ]);
+            });
+
+            playlistsTable.draw();
+        }
+
+
+
+        // Dados dos territórios
+        const territories = [{
+                name: 'Brasil',
+                streams: 15000,
+                coords: [-14.2350, -51.9253],
+                flag: 'https://flagcdn.com/w20/br.png'
+            },
+            {
+                name: 'Angola',
+                streams: 8000,
+                coords: [-11.2027, 17.8739],
+                flag: 'https://flagcdn.com/w20/ao.png'
+            },
+            {
+                name: 'Portugal',
+                streams: 2500,
+                coords: [39.3999, -8.2245],
+                flag: 'https://flagcdn.com/w20/pt.png'
+            },
+            {
+                name: 'USA',
+                streams: 500,
+                coords: [37.0902, -95.7129],
+                flag: 'https://flagcdn.com/w20/us.png'
+            }
+        ];
+
+        const map = L.map('map').setView([0, 0], 2);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        const markers = [];
+
+        function addMarkers(filteredTerritories) {
+            markers.forEach(markerObj => map.removeLayer(markerObj.marker));
+            markers.length = 0;
+
+            filteredTerritories.forEach(territory => {
+                const marker = L.circleMarker(territory.coords, {
+                    color: '#ff0089',
+                    fillColor: '#ff0089',
+                    fillOpacity: 0.5,
+                    radius: 10
+                }).addTo(map);
+
+                marker.bindPopup(`<b>${territory.name}</b><br>${territory.streams} Streams`);
+                markers.push({
+                    name: territory.name,
+                    marker
+                });
+            });
+
+            if (filteredTerritories.length > 0) {
+                const bounds = L.latLngBounds(filteredTerritories.map(t => t.coords));
+                map.fitBounds(bounds);
+            } else {
+                map.setView([0, 0], 2);
+            }
+        }
+
+        function validateTerritoryStreamFilter() {
+            const streamFilter = document.getElementById('territoryStreamFilter').value;
+            const applyButton = document.getElementById('applyTerritoryFilter');
+            applyButton.disabled = streamFilter === '' || isNaN(streamFilter) || streamFilter < 0;
+        }
+
+        function filterTerritories() {
+            const searchTerm = document.getElementById('territorySearch').value.toLowerCase();
+            const streamFilter = parseInt(document.getElementById('territoryStreamFilter').value) || 0;
+            const sortOrder = document.getElementById('territorySort').value;
+            const territoryList = document.getElementById('territoryList');
+
+            let filteredTerritories = territories.filter(territory =>
+                territory.name.toLowerCase().includes(searchTerm) &&
+                territory.streams >= streamFilter
+            );
+
+            filteredTerritories.sort((a, b) => {
+                return sortOrder === 'asc' ? a.streams - b.streams : b.streams - a.streams;
+            });
+
+            territoryList.innerHTML = '';
+            filteredTerritories.forEach(territory => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <div class="territory-info">
+                        <img src="${territory.flag}" alt="${territory.name}">
+                        <span>${territory.name}</span>
+                    </div>
+                    <span class="stream-count">${territory.streams} Streams</span>
+                    <a href="country-details.html?country=${encodeURIComponent(territory.name)}" class="details-link" onclick="console.log('Redirecionando para ${territory.name}')"><i class="bi bi-chevron-right"></i></a>
+                `;
+                territoryList.appendChild(li);
+            });
+
+            addMarkers(filteredTerritories);
+        }
+
+        // Inicializar a lista de territórios
+        filterTerritories();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,75 @@
+   .fade-in-custom {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .btn-wasomupfy {
+            background-color: #6f42c1;
+        }
+
+        .status-badge {
+            padding: 0.35em 0.65em;
+            border-radius: 0.25rem;
+            font-size: 0.75em;
+            font-weight: 700;
+        }
+
+        .status-active {
+            background-color: #198754;
+            color: white;
+        }
+
+        .status-suspended {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .status-review {
+            background-color: #ffc107;
+            color: #212529;
+        }
+
+        .email-link {
+            color: (var(--primary-light));
+            text-decoration: none;
+        }
+
+        .profile-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .profile-img-lg {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .streaming-progress {
+            height: 10px;
+            border-radius: 5px;
+        }
+
+         .role-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .role-checkbox {
+            margin-right: 0.5rem;
+        }
+
+        

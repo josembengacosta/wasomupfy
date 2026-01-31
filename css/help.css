@@ -1,0 +1,46 @@
+ /* Estilos específicos da página de ajuda */
+        .accordion-button {
+            background-color: #fff;
+            color: #000;
+        }
+
+        .accordion-button:not(.collapsed) {
+            background-color: #ff0089;
+            color: #fff;
+        }
+
+        .support-section ul, .related-links .nav-link {
+            color: #b3b3b3;
+        }
+
+        .support-section ul li a:hover, .related-links .nav-link:hover {
+            color: #ff0089;
+        }
+
+        .account-info p {
+            color: #b3b3b3;
+        }
+
+        /* Footer Version */
+        .footer-version {
+            text-align: center;
+            padding: 10px 0;
+            font-size: 0.875rem;
+            color: #b3b3b3;
+            background-color: #181818;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+        /* Evitar sobreposição com a barra inferior em mobile */
+        @media (max-width: 991px) {
+            .container.my-4 {
+                padding-bottom: 80px;
+            }
+            .footer-version {
+                margin-bottom: 80px;
+            }
+        }
+
+       

@@ -1,0 +1,253 @@
+
+.artist-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.artist-header .artist-info {
+    display: flex;
+    align-items: center;
+}
+
+.artist-header .artist-info img {
+    width: 100px;
+    height: 100px;
+    border-radius: 10px;
+    margin-right: 20px;
+}
+
+.artist-header .artist-info h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+.description-text {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.date-range {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.date-range label {
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.date-range input {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    width: 150px;
+    transition: border-color 0.3s ease;
+}
+
+.date-range input:focus {
+    border-color: #ff0089;
+    outline: none;
+}
+
+.date-range .btn-apply {
+    background-color: #ff0089;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 20px;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+.date-range .btn-apply:hover {
+    background-color: #e04385;
+}
+
+.total-streams {
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: right;
+}
+
+.total-streams span {
+    color: #ff0089;
+}
+
+.chart-card .card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.filter-group .input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 200px;
+}
+
+.filter-group .input-group i {
+    position: absolute;
+    left: 10px;
+    color: #ff0089;
+    font-size: 1.2rem;
+}
+
+.filter-group input,
+.filter-group select {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 8px 12px 8px 35px;
+    font-size: 0.9rem;
+    width: 100%;
+    transition: border-color 0.3s ease;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+    border-color: #ff0089;
+    outline: none;
+}
+
+.filter-group .btn-apply {
+    background-color: #ff0089;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 20px;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+.filter-group .btn-apply:hover {
+    background-color: #e04385;
+}
+
+.filter-group .btn-apply:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.songs-list {
+    list-style: none;
+    padding: 0;
+}
+
+.songs-list li {
+    display: flex;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+    transition: transform 0.3s ease;
+}
+
+.songs-list li:hover {
+    transform: scale(1.02);
+}
+
+.songs-list li:last-child {
+    border-bottom: none;
+}
+
+.songs-list li img {
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    margin-right: 15px;
+}
+
+.songs-list li .song-info {
+    flex-grow: 1;
+}
+
+.songs-list li .song-info .song-title {
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.songs-list li .song-info .awards {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.songs-list li .song-streams {
+    font-size: 0.95rem;
+}
+
+
+@media (max-width: 991px) {
+    .navbar-brand {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    .navbar-toggler {
+        margin-left: 0;
+    }
+    .user-menu {
+        margin-right: 0;
+    }
+    .date-range {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .date-range input {
+        width: 100%;
+    }
+    .filter-group {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .filter-group .input-group {
+        max-width: 100%;
+    }
+    .filter-group .btn-apply {
+        width: 100%;
+        margin-top: 10px;
+    }
+    .artist-header .artist-info img {
+        width: 80px;
+        height: 80px;
+    }
+}
+
+@media (min-width: 992px) {
+    .navbar-brand {
+        position: static;
+        transform: none;
+    }
+    .navbar-nav {
+        display: flex;
+        align-items: center;
+    }
+    .navbar-brand {
+        margin-right: 30px;
+    }
+    .user-menu {
+        margin-left: auto;
+    }
+    .navbar-collapse {
+        display: flex !important;
+    }
+}

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="../assets/img/icones/wasomupfy_fiv_512.png">
+    <link rel="apple-touch-startup-image" href="../assets/img/screenshots/splash.png">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link href="../css/dashboard-style.css" rel="stylesheet">
+    <title>Wasom Upfy - Dashboard</title>
+</head>
+
+<body class="dark-mode">
+    <nav class="navbar navbar-dark fixed-top" style="background-color: #181818;">
+        <div class="container-fluid">
+            <span class="navbar-brand">Wasom Upfy</span>
+            <span class="badge me-2" id="connectionStatus" data-bs-toggle="tooltip"
+                title="Você está online">Online</span>
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+    </nav>
+    <div class="offcanvas offcanvas-end" id="sidebarMenu">
+        <div class="offcanvas-header" style="background-color: #181818;">
+            <h5 class="offcanvas-title" style="color: #ff0089;">Menu</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body" style="background-color: #181818;">
+            <div class="nav flex-column">
+                <a class="nav-link active" href="/index.html" aria-label="Acessar Dashboard">Dashboard</a>
+                <a class="nav-link" href="/settings.html" aria-label="Acessar Configurações">Configurações</a>
+                <span class="dropdown-item-text" id="versionDropdown">Versão 2.0 (2025)</span>
+            </div>
+        </div>
+    </div>
+    <div class="container mt-5 pt-5">
+        <h1 style="color: #ff0089;">Bem-vindo ao Wasom Upfy v2.0</h1>
+        <p style="color: #b3b3b3;">Este é o painel principal.</p>
+        <div class="install-prompt d-none" id="installPrompt">
+            <p style="color: #b3b3b3;">Instale o Wasom Upfy v2.0 para uma experiência nativa!</p>
+            <button class="btn btn-pink" onclick="installPWA()" aria-label="Instalar o Wasom Upfy">Instalar
+                Agora</button>
+        </div>
+    </div>
+    <nav class="bottom-nav fixed-bottom d-lg-none" style="background-color: #181818;">
+        <a class="nav-link active" href="/index.html" aria-label="Acessar Dashboard"><i class="bi bi-house"></i></a>
+        <a class="nav-link" href="/settings.html" aria-label="Acessar Configurações"><i class="bi bi-gear"></i></a>
+    </nav>
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="connectionToast" class="toast" role="alert" aria-live="assertive">
+            <div class="toast-body"></div>
+        </div>
+        <div id="updateToast" class="toast" role="alert" aria-live="assertive">
+            <div class="toast-header">
+                <strong class="me-auto">Atualização Disponível</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Fechar"></button>
+            </div>
+            <div class="toast-body">
+                Uma nova versão (v2.0) está disponível! Recarregue para atualizar.
+                <div class="mt-2">
+                    <button class="btn btn-pink btn-sm" onclick="location.reload()">Atualizar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const APP_VERSION = '2.0';
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('versionDropdown').textContent = `Versão ${APP_VERSION} (2025)`;
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(
+                tooltipTriggerEl));
+            const navLinks = document.querySelectorAll('.bottom-nav .nav-link, .offcanvas-body .nav-link');
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                let href = link.getAttribute('href');
+                if (href) {
+                    const hrefPage = new URL(href, window.location.origin).pathname.split('/').pop();
+                    if (hrefPage === currentPage) {
+                        link.classList.add('active');
+                        link.setAttribute('aria-current', 'page');
+                    }
+                }
+            });
+            const connectionStatus = document.getElementById('connectionStatus');
+            const connectionToast = document.getElementById('connectionToast');
+            const toast = new bootstrap.Toast(connectionToast);
+
+            function updateConnectionStatus() {
+                const isOnline = navigator.onLine;
+                connectionStatus.textContent = isOnline ? 'Online' : 'Offline';
+                connectionStatus.classList.toggle('online', isOnline);
+                connectionStatus.classList.toggle('offline', !isOnline);
+                connectionStatus.setAttribute('title', isOnline ? 'Você está online' : 'Você está offline');
+                bootstrap.Tooltip.getOrCreateInstance(connectionStatus).setContent({
+                    '.tooltip-inner': isOnline ? 'Você está online' : 'Você está offline'
+                });
+                connectionToast.querySelector('.toast-body').innerHTML = isOnline ?
+                    'Você está online. Todos os dados estão atualizados.' :
+                    'Você está offline. Alguns dados podem estar desatualizados.<div class="mt-2"><button class="btn btn-pink btn-sm" onclick="tryReconnect()">Tentar Reconectar</button></div>';
+                toast.show();
+            }
+
+            function tryReconnect() {
+                if (navigator.onLine) {
+                    updateConnectionStatus();
+                } else {
+                    fetch('/').then(() => updateConnectionStatus()).catch(() => alert('Ainda sem conexão.'));
+                }
+            }
+            updateConnectionStatus();
+            window.addEventListener('online', updateConnectionStatus);
+            window.addEventListener('offline', updateConnectionStatus);
+            let deferredPrompt;
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                document.getElementById('installPrompt').classList.remove('d-none');
+            });
+            window.installPWA = function () {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then(choiceResult => {
+                        if (choiceResult.outcome === 'accepted') {
+                            console.log('PWA instalado com sucesso');
+                        }
+                        deferredPrompt = null;
+                        document.getElementById('installPrompt').classList.add('d-none');
+                    });
+                }
+            };
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js').then(registration => {
+                    registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator
+                                .serviceWorker.controller) {
+                                const toast = new bootstrap.Toast(document
+                                    .getElementById('updateToast'));
+                                toast.show();
+                            }
+                        });
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

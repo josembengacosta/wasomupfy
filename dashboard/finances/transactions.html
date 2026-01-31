@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="author" content="Voosoft" />
+    <meta name="theme-color" content="#FF0089">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="../../assets/img/icones/wasomupfy_fiv_512.png">
+    <link rel="apple-touch-startup-image" href="../../assets/img/screenshots/splash.png">
+    <link rel="manifest" href="../manifest.json">
+    <title>Conta de saque - Wasom Upfy</title>
+    <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
+    <link href="
+https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css
+" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../../css/dashboard-style.css">
+    <!-- Select2 Bootstrap 5 Theme (opcional, para melhor integração) -->
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"
+        rel="stylesheet" />
+    <!-- Toastr -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+</head>
+<!-- javacript para habilitar o form de ID-->
+<script type="text/javascript">
+    function other_link1() {
+        if (link2.style.display = 'none');
+        link1.style.display = 'block';
+
+    }
+</script>
+<script type="text/javascript">
+    function other_link() {
+        if (link1.style.display = 'none');
+        link2.style.display = 'block';
+    }
+</script>
+
+<style>
+    #link2 {
+        display: none;
+    }
+</style>
+
+<body>
+
+    <!-- Tela de Carregamento -->
+    <!-- <div class="loading-screen" id="loadingScreen">
+        <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg" class="loading-logo">
+            <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2"/>
+            <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
+        </svg>
+        <div class="spinner"></div>
+    </div> -->
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <!-- Menu Button (Left) -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu"
+                aria-controls="offcanvasMenu">
+                <span class="navbar-toggler-icon"><i class="bi bi-list text-white fs-1"></i></span>
+            </button>
+
+            <!-- Logo (Center on Mobile, Left on Desktop) -->
+            <a class="navbar-brand" href="../painel.html">
+                <!-- SVG Logo Wasom Upfy -->
+                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
+                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
+                        fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
+                </svg> -->
+                <span class="text-light"
+                    style="font-weight: bold; box-sizing: border-box; text-transform: capitalize; font-family:Arial, sans-serif">WASOM
+                    UPFY</span>
+            </a>
+
+            <!-- Desktop Menu -->
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav m-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="../painel.html"><i class="bi bi-speedometer2"></i>
+                            Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../launch/releases.html"><i class="bi bi-disc"></i>
+                            Lançamentos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../analytics/statistics.html"><i
+                                class="bi bi-bar-chart"></i>
+                            Estatísticas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../finances/overview.html"><i
+                                class="bi bi-currency-dollar"></i>
+                            Finanças</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../artists/artists-list.html"><i
+                                class="bi bi-person"></i>
+                            Artistas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="youtube.html"><i class="bi bi-youtube"></i>
+                            Unificação de canal YouTube</a></li>
+                </ul>
+            </div>
+
+            <!-- User Icon (Right) -->
+            <div class="user-menu d-flex align-items-center">
+                <!-- Theme Toggle Button -->
+                <a class="theme-toggle text-white me-2" id="themeToggle">
+                    <i class="bi bi-sun" id="themeIcon"></i>
+                </a>
+                <a href="../notifications.html" class="text-white me-2" aria-label="Notificações">
+                    <i class="bi bi-bell fs-4"></i>
+                    <span class="badge bg-danger">9</span>
+                </a>
+                <a href="#" class="text-white" data-bs-toggle="dropdown">
+                    <i class="bi bi-person-circle fs-4"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="../user/profile.html"><i class="bi bi-person me-2"></i>
+                            <strong>Eleven
+                                Records</strong></a>
+                        <div class="text-white-50"> &nbsp; &nbsp; &nbsp; &nbsp;
+                            (Conta 560108)</div>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="../user/profile.html"><i class="bi bi-person me-2"></i> Meu
+                            Perfil</a>
+                    </li>
+                    <li><a class="dropdown-item" href="../account/manage-account.html"><i class="bi bi-tools me-2"></i>
+                            Gestão de Conta</a>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="../page/settings.html"><i class="bi bi-gear me-2"></i>
+                            Configurações</a></li>
+                    <li><a class="dropdown-item" href="../page/notifications.html"><i class="bi bi-bell me-2"></i>
+                            Notificações</a></li>
+                    <li><a class="dropdown-item" href="../services/available-services.html"><i
+                                class="bi bi-star me-2"></i> Conta e serviços disponíveis</a></li>
+                    <li><a class="dropdown-item" href="#?logout-wasomupfy" data-bs-toggle="modal"
+                            data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right me-2"></i>
+                            Desconectar-se</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="../page/sobre.html"><i class="bi bi-info-circle me-2"></i>
+                            Sobre</a>
+                    </li>
+                    <li><a class="dropdown-item" href="../page/support.html"><i class="bi bi-headset me-2"></i> Enviar
+                            pedido de suporte</a></li>
+                    <li><a class="dropdown-item" href="../page/faq.html"><i class="bi bi-chat-left-text me-2"></i>
+                            Perguntas frequentes</a></li>
+                    <li><a class="dropdown-item" href="../page/help.html"><i class="bi bi-question-circle me-2"></i>
+                            Ajuda</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><span class="dropdown-item-text" id="versionDropdown"></span></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Modal logout -->
+    <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">Terminar sessão</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row justify-content-center text-center">
+                            <div class="col-md-12 content-center justify-center text-center">
+                                <p class="text-center text-dark">@josembengadacosta você tem
+                                    certeza
+                                    de que desejas terminar
+                                    sessão?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Não, continuar</button>
+                    </div>
+                    <div>
+                        <button class="btn btn-danger" type="button" name="logout_wasomupfy"
+                            onclick="logout_wasomupfy()">Sim, terminar
+                            sessão</button>
+                    </div>
+                    <script type="text/javascript">
+                        function logout_wasomupfy() {
+                            window.location = '../logout';
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal logout fim -->
+
+    <!-- Offcanvas Menu para Mobile e Desktop -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasMenuLabel">
+                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
+                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
+                        fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
+                </svg> -->
+                <span class="text-light"
+                    style="font-weight: bold; box-sizing: border-box; text-transform: capitalize; font-family:Arial, sans-serif">WASOM
+                    UPFY</span>
+            </h5>
+            <button type="button" class="btn-close text-white" data-bs-dismiss="offcanvas" aria-label="Close">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link" href="../painel.html"><i class="bi bi-speedometer2"></i>
+                        Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="../launch/releases.html"><i class="bi bi-disc"></i>
+                        Lançamentos</a></li>
+                <li class="nav-item"><a class="nav-link" href="../analytics/statistics.html"><i
+                            class="bi bi-bar-chart"></i> Estatísticas</a></li>
+                <li class="nav-item"><a class="nav-link" href="../finances/overview.html"><i
+                            class="bi bi-currency-dollar"></i> Finanças</a></li>
+                <li class="nav-item"><a class="nav-link" href="../artists/artists-list.html"><i
+                            class="bi bi-person"></i>
+                        Artistas</a></li>
+                <li class="nav-item"><a class="nav-link" href="../youtube.html"><i class="bi bi-youtube"></i> Unificação
+                        de
+                        canal YouTube</a></li>
+                <!-- Links secundários exibidos apenas em mobile -->
+                <li class="nav-item d-lg-none"><a class="nav-link" href="../user/profile.html"><i
+                            class="bi bi-person-circle"></i> Meu Perfil</a></li>
+                <li class="nav-item d-lg-none"><a class="nav-link active" href="../page/settings.html"><i
+                            class="bi bi-gear"></i> Configurações</a></li>
+                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/notifications.html"><i
+                            class="bi bi-bell"></i> Notificações</a></li>
+                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/sobre.html"><i
+                            class="bi bi-info-circle"></i> Sobre</a></li>
+                <li class="nav-item d-lg-none"><a class="nav-link" href="../services/available-services.html"><i
+                            class="bi bi-star"></i>
+                        Conta e serviços disponíveis</a></li>
+                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/help.html"><i
+                            class="bi bi-question-circle"></i> Ajuda</a></li>
+                <li class="nav-item d-lg-none"><a class="nav-link" href="#?logout-wasomupfy" data-bs-toggle="modal"
+                        data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right"></i> Desconectar-se</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Toast para Notificações de Status -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="connectionToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">Conexão</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Fechar"></button>
+            </div>
+            <div class="toast-body">
+                Você está offline. Alguns dados podem estar desatualizados.
+                <div class="mt-2">
+                    <button class="btn btn-pink btn-sm" onclick="tryReconnect()">Tentar Reconectar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Main Content -->
+    <div class="container my-4">
+        <!-- Welcome Section -->
+        <div class="row">
+            <div class="welcome-text mb-4 col-auto d-sm-block">
+                <h1>Divisão de Royalties</h1>
+            </div>
+            <div class="col-auto ms-auto text-end mt-n1 mb-2">
+                <button class="btn btn-pink" data-bs-toggle="modal" data-bs-target="#creatnewRoyal"><i
+                        class="bi bi-plus"></i> Nova divisão</button>
+                <button class="btn btn-light" onclick="window.location='overview.html'"><i class="bi bi-arrow-left"></i>
+                    Voltar</button>
+            </div>
+        </div>
+
+        <!-- Stats Description -->
+        <p class="stats-description">
+            Todas as divisões feitas em cada faixa distribuída nesta conta encontram-se registradas aqui nesta mesma
+            área, bem como também podes fazer novas divisões para colaboradores de suas faixas de música.
+        </p>
+
+        <!-- Launch Card para actualizar a conta express -->
+        <div class="launch-card mb-4 mt-4">
+            <div class="card">
+                <div class="align-items-lg-center">
+                    <div class="text-center">
+                        <div class="welcome-text d-flex justify-content-between align-items-center">
+                            <h5 style="font-weight: unset;" class="text-secondary">Título da faixa Artista</h5>
+
+                            <a href="#other_link1" data-bs-toggle="collapse" id='link1'
+                                data-bs-target="#collapseOneAccount" onclick="other_link()" aria-expanded="false"
+                                aria-controls="collapseOneAccount" class="text-secondary"> Ver detalhes</a>
+
+                            <a href="#other_link2" data-bs-toggle="collapse" id='link2'
+                                data-bs-target="#collapseOneAccount" onclick="other_link1()" aria-expanded="false"
+                                aria-controls="collapseOneAccount" class="text-secondary"> Ocultar detalhes</a>
+
+
+                        </div>
+                        <div id="collapseOneAccount" class="accordion-collapse collapse w-100"
+                            data-bs-parent="#accordionExample">
+                            <div class="mt-3">
+                                <div class="welcome-text d-flex justify-content-between align-items-center">
+                                    <h5>Beneficíarios</h5>
+                                </div>
+                                <div class="welcome-text d-flex justify-content-between align-items-center">
+                                    <h6 style="font-weight: unset;" class="text-secondary">N.ª</h6>
+                                    <span class="text-secondary">1</span>
+                                </div>
+                                <div class="welcome-text d-flex justify-content-between align-items-center">
+                                    <h6 style="font-weight: unset;" class="text-secondary">Arista</h6>
+                                    <span class="text-secondary">Mbenga</span>
+                                </div>
+                                <div class="welcome-text d-flex justify-content-between align-items-center">
+                                    <h6 style="font-weight: unset;" class="text-secondary">Percetagem</h6>
+                                    <span class="text-secondary">10%</span>
+                                </div>
+                                <div class="welcome-text d-flex justify-content-between align-items-center">
+                                    <h6 style="font-weight: unset;" class="text-secondary">E-mail:</h6>
+                                    <span class="text-secondary">josembengadacosta@wasomupfy.com</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Launch Card para actualizar a conta paypal -->
+
+
+        <!-- Modal para criar contas -->
+        <div class="modal fade" id="creatnewRoyal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="creatnewRoyalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5 text-dark" id="creatnewRoyalLabel">Dividir royalties</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card row justify-content-center text-center">
+                            <div class="card-header row">
+                                <p class="stats-description text-start">
+                                    Faça a divisão dos seus royalties com os colaboradores das faixas disponíveis nessa
+                                    conta, faça com que seus colaboradores se beneficiem pelo trabalho feito.
+                                </p>
+                            </div>
+                            <div class="card-body">
+                                <!-- Launch Card para actualizar a conta express -->
+                                <div class="launch-card">
+                                    <div class="align-items-lg-center">
+                                        <div class="text-start">
+                                            <h6 class="font-bold">Disponível <span class="text-success">100%</sapn>
+                                            </h6>
+                                            <div class="mt-4">
+                                                <form method="POST" action="/split-royalties.php"
+                                                    class="needs-validation mb-2 row text-start" id="validation-form"
+                                                    novalidate>
+                                                    <input type="hidden" name="csrf_token"
+                                                        value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
+                                                    <input type="text" name="honeypot" style="display: none;" value="">
+                                                    <!-- Container para campos dinâmicos -->
+                                                    <div id="dynamic-fields">
+                                                        <div class="field-group mb-3" data-index="0">
+                                                            <div class="row">
+                                                                <div class="mb-2 col-md-12">
+                                                                    <label for="name_share_0" class="form-label">Faixa a
+                                                                        partilhar <span
+                                                                            class="text-danger text-xs">*</span></label>
+                                                                    <input type="text" autocomplete="off"
+                                                                        id="name_share_0" name="name_share[]"
+                                                                        placeholder="Insira o nome da faixa" required
+                                                                        class="form-control" value="">
+                                                                    <div class="invalid-feedback">Por favor, insira o
+                                                                        nome da faixa.</div>
+                                                                </div>
+                                                                <div class="mb-2 col-md-8">
+                                                                    <label for="name_author_band_0"
+                                                                        class="form-label">Artista <span
+                                                                            class="text-danger text-xs">*</span></label>
+                                                                    <input type="text" maxlength="60"
+                                                                        placeholder="Insira o nome do artista"
+                                                                        class="form-control" autocomplete="off"
+                                                                        id="name_author_band_0"
+                                                                        name="name_author_band[]" list="list_author_0"
+                                                                        required>
+                                                                    <datalist id="list_author_0">
+                                                                        <option value="Artista 1">
+                                                                        <option value="Artista 2">
+                                                                            <!-- Preencha com dados dinâmicos do back-end, se disponível -->
+                                                                    </datalist>
+                                                                    <div class="invalid-feedback">Por favor, insira o
+                                                                        nome do artista.</div>
+                                                                </div>
+                                                                <div class="mb-2 col-md-4">
+                                                                    <label for="por_0" class="form-label">Percentagem
+                                                                        <span
+                                                                            class="text-danger text-xs">*</span></label>
+                                                                    <input type="number" autocomplete="off" id="por_0"
+                                                                        name="por[]" step="0.1" min="1" max="100"
+                                                                        class="form-control" placeholder="%" required
+                                                                        value="">
+                                                                    <div class="invalid-feedback">Insira uma percentagem
+                                                                        válida (1-100).</div>
+                                                                </div>
+                                                                <div class="mb-2 col-md-12">
+                                                                    <label for="email_share_0" class="form-label">E-mail
+                                                                        da conta <span
+                                                                            class="text-danger text-xs">*</span></label>
+                                                                    <br>
+                                                                    <small>O e-mail da conta a receber deve ser uma
+                                                                        conta Wasom Upfy, neste caso o artista que vai
+                                                                        receber os royalties desta faixa deve ter uma
+                                                                        conta na plataforma para poder ter acesso aos
+                                                                        royalties.</small>
+                                                                    <input type="email" autocomplete="off"
+                                                                        id="email_share_0" name="email_share[]"
+                                                                        placeholder="Insira o email da conta Wasom Upfy"
+                                                                        required class="form-control mt-2" value="">
+                                                                    <div class="invalid-feedback">Insira um e-mail
+                                                                        válido da conta Wasom Upfy.</div>
+                                                                </div>
+                                                                <div class="col-md-12 mb-2">
+                                                                    <button type="button"
+                                                                        class="btn btn-outline-danger btn-sm delete-field"
+                                                                        style="display: none;"
+                                                                        aria-label="Remover faixa">Remover
+                                                                        campo</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mt-2">
+                                                        <button type="button" class="btn btn-pink form-control"
+                                                            id="add-field">+ Adicionar novo</button>
+                                                    </div>
+                                                    <div class="mt-3">
+                                                        <small>Ao prosseguir com esta ação, concorda em fazer a divisão
+                                                            de royalties da faixa selecionada para o artista assinar,
+                                                            bem como também demonstra que está de acordo com a
+                                                            percentagem dada.</small>
+                                                    </div>
+                                                    <div class="mt-3">
+                                                        <button type="submit"
+                                                            class="btn btn-outline-pink  form-control"> Dividir</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer row">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal para criar contas fim -->
+    </div>
+
+    <nav class="bottom-nav d-lg-none">
+        <ul class="nav justify-content-around">
+            <li class="nav-item"><a class="nav-link" href="../painel.html" aria-label="Ir para Dashboard"><i
+                        class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="../launch/releases.html" aria-label="Ir para Lançamentos"><i
+                        class="bi bi-disc"></i><span>Lançamentos</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="../analytics/statistics.html"
+                    aria-label="Ir para Estatísticas"><i class="bi bi-bar-chart"></i><span>Estatísticas</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="../finances/overview.html" aria-label="Ir para Finanças"><i
+                        class="bi bi-currency-dollar"></i><span>Finanças</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="../artists/artists-list.html"
+                    aria-label="Ir para Artistas"><i class="bi bi-person"></i><span>Artistas</span></a></li>
+        </ul>
+    </nav>
+
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../js/validacao.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.min.js"></script>
+    <!-- Toastr -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="../../js/theme.wp.js"></script>
+    <script src="../../js/wp.tools.js"></script>
+    <script>
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    </script>
+    <script>
+        $(document).ready(() => {
+            // Contador para índices únicos
+            let fieldIndex = 1;
+
+            // Adicionar novo grupo de campos
+            $("#add-field").click(() => {
+                const newField = `
+                <div class="field-group mb-3" data-index="${fieldIndex}">
+                    <hr>
+                    <div class="row">
+                        <div class="mb-2 col-md-12">
+                            <label for="name_share_${fieldIndex}" class="form-label">Faixa a partilhar <span class="text-danger text-xs">*</span></label>
+                            <input type="text" autocomplete="off" id="name_share_${fieldIndex}" name="name_share[]" placeholder="Insira o nome da faixa" required class="form-control" value="">
+                            <div class="invalid-feedback">Por favor, insira o nome da faixa.</div>
+                        </div>
+                        <div class="mb-2 col-md-8">
+                            <label for="name_author_band_${fieldIndex}" class="form-label">Artista <span class="text-danger text-xs">*</span></label>
+                            <input type="text" maxlength="60" placeholder="Insira o nome do artista" class="form-control" autocomplete="off" id="name_author_band_${fieldIndex}" name="name_author_band[]" list="list_author_${fieldIndex}" required>
+                            <datalist id="list_author_${fieldIndex}">
+                                <option value="Artista 1">
+                                <option value="Artista 2">
+                            </datalist>
+                            <div class="invalid-feedback">Por favor, insira o nome do artista.</div>
+                        </div>
+                        <div class="mb-2 col-md-4">
+                            <label for="por_${fieldIndex}" class="form-label">Percentagem <span class="text-danger text-xs">*</span></label>
+                            <input type="number" autocomplete="off" id="por_${fieldIndex}" name="por[]" step="0.1" min="1" max="100" class="form-control" placeholder="%" required value="">
+                            <div class="invalid-feedback">Insira uma percentagem válida (1-100).</div>
+                        </div>
+                        <div class="mb-2 col-md-12">
+                            <label for="email_share_${fieldIndex}" class="form-label">E-mail da conta <span class="text-danger text-xs">*</span></label>
+                            <br>
+                            <small>O e-mail da conta a receber deve ser uma conta Wasom Upfy, neste caso o artista que vai receber os royalties desta faixa deve ter uma conta na plataforma para poder ter acesso aos royalties.</small>
+                            <input type="email" autocomplete="off" id="email_share_${fieldIndex}" name="email_share[]" placeholder="Insira o email da conta Wasom Upfy" required class="form-control mt-2" value="">
+                            <div class="invalid-feedback">Insira um e-mail válido da conta Wasom Upfy.</div>
+                        </div>
+                        <div class="col-md-12 mb-2">
+                            <button type="button" class="btn btn-outline-danger btn-sm delete-field" aria-label="Remover faixa">Remover campo</button>
+                        </div>
+                    </div>
+                </div>`;
+                $("#dynamic-fields").append(newField);
+                fieldIndex++;
+            });
+
+            // Deletar grupo de campos
+            $(document).on("click", ".delete-field", function () {
+                $(this).closest(".field-group").remove();
+            });
+
+            // Validação do formulário
+            $("#validation-form").validate({
+                rules: {
+                    "name_share[]": {
+                        required: true,
+                        maxlength: 100
+                    },
+                    "name_author_band[]": {
+                        required: true,
+                        maxlength: 60
+                    },
+                    "por[]": {
+                        required: true,
+                        number: true,
+                        min: 1,
+                        max: 100
+                    },
+                    "email_share[]": {
+                        required: true,
+                        email: true,
+                        maxlength: 60
+                    }
+                },
+                messages: {
+                    "name_share[]": {
+                        required: "Insira o nome da faixa.",
+                        maxlength: "Máximo 100 caracteres."
+                    },
+                    "name_author_band[]": {
+                        required: "Insira o nome do artista.",
+                        maxlength: "Máximo 60 caracteres."
+                    },
+                    "por[]": {
+                        required: "Insira a percentagem.",
+                        number: "Insira um número válido.",
+                        min: "A percentagem deve ser no mínimo 1.",
+                        max: "A percentagem não pode exceder 100."
+                    },
+                    "email_share[]": {
+                        required: "Insira um e-mail.",
+                        email: "Insira um e-mail válido."
+                    }
+                },
+                errorPlacement: (error, element) => {
+                    error.insertAfter(element);
+                },
+                highlight: (element) => {
+                    $(element).addClass("is-invalid").removeClass("is-valid");
+                },
+                unhighlight: (element) => {
+                    $(element).removeClass("is-invalid").addClass("is-valid");
+                }
+            });
+        });
+    </script>
+    <script>
+        $(function () {
+            var Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 5000
+            });
+
+            $('.toastrDefaultInfo').click(function () {
+                toastr.info(
+                    'Para visualizar os dados da suas carteiras financeiras basta clicar <q>Express</q> ou <q>Paypal</q>'
+                )
+            });
+
+        });
+    </script>
+</body>
+
+</html>

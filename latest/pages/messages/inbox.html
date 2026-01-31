@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="author" content="Voosoft" />
+    <meta name="theme-color" content="#FF0089">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#FF0089">
+    <link rel="apple-touch-icon" href="../../../assets/img/icones/wasomupfy_fiv_512.png">
+    <link rel="apple-touch-startup-image" href="../../../assets/img/screenshots/splash.png">
+    <link rel="manifest" href="../../manifest.json">
+    <title>Caixa de entrada - Wasom Upfy</title>
+    <link rel="shortcut icon" href="../../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
+    <link rel="stylesheet" href="../../../css/libs/plugins.css">
+    <link rel="stylesheet" href="../../../css/libs/scrollue.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
+    <link rel="stylesheet" href="../../../css/lastest-style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <!-- Google Fonts - Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap5.min.css">
+    <!-- Flag Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
+    <style>
+        .fade-in-custom {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .email-card {
+            border-left: 4px solid;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .email-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .email-card.unread {
+            background-color: #f0f9ff;
+            border-left-color: #007bff;
+        }
+
+        .email-card.important {
+            border-left-color: #dc3545;
+        }
+
+        .email-card.starred {
+            border-left-color: #ffc107;
+        }
+
+        .email-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .email-preview {
+            color: #6c757d;
+            font-size: 0.875rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .email-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .email-tag {
+            padding: 0.125rem 0.5rem;
+            border-radius: 50rem;
+            font-size: 0.75rem;
+            background-color: #e9ecef;
+            color: #495057;
+        }
+
+        .email-actions {
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .email-card:hover .email-actions {
+            opacity: 1;
+        }
+
+        .folder-sidebar {
+            border-right: 1px solid #dee2e6;
+        }
+
+        .folder-item {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.25rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .folder-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .folder-item.active {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .folder-item .badge {
+            float: right;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <!-- Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="d-flex align-items-center">
+                    <img src="../../../assets/img/brand/wasomupfy_brand.png" alt="Logo Wasom Upfy"
+                        class="rounded-circle me-2" style="height: 40px;">
+                    <span class="brand-text">Wasom Upfy</span>
+                </div>
+                <i class="bi bi-chevron-left toggle-icon" id="sidebarCollapse" title="Colapsar/Expandir Menu"
+                    aria-label="Colapsar/Expandir Menu"></i>
+            </div>
+            <ul class="nav flex-column mt-3">
+                <li class="nav-item">
+                    <a href="../../home.html" class="nav-link">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Painel de Controle</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#collapseAnalytics" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseAnalytics">
+                        <i class="bi bi-graph-up"></i>
+                        <span>Estatísticas e Análises</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseAnalytics">
+                        <a href="../analytics/home.html" class="nav-link">
+                            <i class="bi bi-bar-chart-line"></i>
+                            <span>Visão Geral</span>
+                        </a>
+                        <a href="../analytics/artists.html" class="nav-link">
+                            <i class="bi bi-person-lines-fill"></i>
+                            <span>Desempenho por Artista</span>
+                        </a>
+                        <a href="../analytics/stores.html" class="nav-link">
+                            <i class="bi bi-shop"></i>
+                            <span>Desempenho por Loja Digital</span>
+                        </a>
+                        <a href="../analytics/reports.html" class="nav-link">
+                            <i class="bi bi-file-earmark-bar-graph"></i>
+                            <span>Relatórios Personalizados</span>
+                        </a>
+                    </div>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#collapseAdmins" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseAdmins">
+                        <i class="bi bi-person-gear"></i>
+                        <span>Gestão de Admins</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseAdmins">
+                        <a href="../employees/all-employees.html" class="nav-link">
+                            <i class="bi bi-people"></i>
+                            <span>Listar Admins</span>
+                        </a>
+                        <a href="../employees/add.html" class="nav-link">
+                            <i class="bi bi-person-plus"></i>
+                            <span>Adicionar</span>
+                        </a>
+                        <a href="../employees/edit.html" class="nav-link">
+                            <i class="bi bi-person-gear"></i>
+                            <span>Editar</span>
+                        </a>
+                        <a href="../employees/delete.html" class="nav-link">
+                            <i class="bi bi-person-x"></i>
+                            <span>Excluir</span>
+                        </a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="#collapseUsers" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseUsers">
+                        <i class="bi bi-person-gear"></i>
+                        <span>Gestão de Usuários</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseUsers">
+                        <a href="../users/all-users.html" class="nav-link">
+                            <i class="bi bi-people"></i>
+                            <span>Todos Usuários</span>
+                        </a>
+                        <a href="../users/add.html" class="nav-link">
+                            <i class="bi bi-person-plus"></i>
+                            <span>Adicionar</span>
+                        </a>
+                        <a href="../users/edit.html" class="nav-link">
+                            <i class="bi bi-person-gear"></i>
+                            <span>Editar</span>
+                        </a>
+                        <a href="../users/delete.html" class="nav-link">
+                            <i class="bi bi-person-x"></i>
+                            <span>Excluir</span>
+                        </a>
+                        <a href="../users/available-account.html" class="nav-link">
+                            <i class="bi bi-person-check"></i>
+                            <span>Contas Disponíveis</span>
+                        </a>
+                        <a href="../users/unavailable-account.html" class="nav-link">
+                            <i class="bi bi-person-exclamation"></i>
+                            <span>Contas Indisponíveis</span>
+                        </a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="#collapseSongs" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseSongs">
+                        <i class="bi bi-music-note-list"></i>
+                        <span>Gestão de Músicas</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseSongs">
+                        <a href="../music/revise.html" class="nav-link">
+                            <i class="bi bi-eye"></i>
+                            <span>Revisar Envios</span>
+                        </a>
+                        <a href="../music/approve.html" class="nav-link">
+                            <i class="bi bi-check-circle"></i>
+                            <span>Aprovar</span>
+                        </a>
+                        <a href="../music/reject.html" class="nav-link">
+                            <i class="bi bi-x-circle"></i>
+                            <span>Rejeitar</span>
+                        </a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="../artist/accounts-users.html" class="nav-link">
+                        <i class="bi bi-person-check"></i>
+                        <span>Contas e Usuários</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../artist/collaborators-artist.html" class="nav-link">
+                        <i class="bi bi-people"></i>
+                        <span>Artistas e Colaboradores</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#collapseDistribution" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseDistribution">
+                        <i class="bi bi-globe"></i>
+                        <span>Distribuição</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseDistribution">
+                        <a href="../distribution/releases.html" class="nav-link">
+                            <i class="bi bi-rocket-takeoff"></i>
+                            <span>Lançamentos</span>
+                        </a>
+                        <a href="../distribution/store.html" class="nav-link">
+                            <i class="bi bi-shop"></i>
+                            <span>Lojas Digitais</span>
+                        </a>
+                        <a href="../distribution/schedule.html" class="nav-link">
+                            <i class="bi bi-calendar-event"></i>
+                            <span>Agendar Lançamento</span>
+                        </a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="../manager/gestion.html" class="nav-link">
+                        <i class="bi bi-star"></i>
+                        <span>Gestão Geral</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../finances/payments.html" class="nav-link">
+                        <i class="bi bi-wallet2"></i>
+                        <span>Pagamentos</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../finances/earnings.html" class="nav-link">
+                        <i class="bi bi-currency-dollar"></i>
+                        <span>Finanças e Rendimentos</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#collapseIntegration" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseIntegration">
+                        <i class="bi bi-youtube"></i>
+                        <span>Unificação e V. Youtube</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseIntegration">
+                        <a href="../integration/youtube.html" class="nav-link">
+                            <i class="bi bi-gear"></i>
+                            <span>Configurar Integração</span>
+                        </a>
+                        <a href="../integration/verify.html" class="nav-link">
+                            <i class="bi bi-check2-all"></i>
+                            <span>Verificar Canais</span>
+                        </a>
+                        <a href="../integration/monetization.html" class="nav-link">
+                            <i class="bi bi-youtube"></i>
+                            <span>Gerenciamento de Conteúdo Monetizado</span>
+                        </a>
+                    </div>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#collapseSupport" class="nav-link active" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseSupport">
+                        <i class="bi bi-headset"></i>
+                        <span>Suporte</span>
+                        <span class="badge bg-danger badge-notification">3</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseSupport">
+                        <a href="../messages/inbox.html" class="nav-link active">
+                            <i class="bi bi-envelope"></i>
+                            <span>Caixa de entrada</span>
+                        </a>
+                        <a href="../messages/compose.html" class="nav-link">
+                            <i class="bi bi-pencil"></i>
+                            <span>Enviar mensagens</span>
+                        </a>
+                    </div>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#collapseHelp" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseHelp">
+                        <i class="bi bi-question-circle"></i>
+                        <span>Ajuda</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseHelp">
+                        <a href="../help/faqs.html" class="nav-link">
+                            <i class="bi bi-messenger"></i>
+                            <span>FAQs</span>
+                        </a>
+                        <a href="../help/tutorials.html" class="nav-link">
+                            <i class="bi bi-book"></i>
+                            <span>Tutoriais</span>
+                        </a>
+                        <a href="../help/contact.html" class="nav-link">
+                            <i class="bi bi-telephone"></i>
+                            <span>Contacto com suporte</span>
+                        </a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="../settings/config.html" class="nav-link">
+                        <i class="bi bi-sliders"></i>
+                        <span>Configurações</span>
+                    </a>
+                </li>
+                <li class="nav-item mt-4">
+                    <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#logoutwasomupfy">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+                <li class="nav-item mt-4">
+                    <a href="http://localhost:5500/home.html" target="_blank" class="nav-link">
+                        <i class="bi bi-box-arrow-in-up-right"></i>
+                        <span>Visitar Site</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+
+        <div class="content w-100" id="mainContent">
+            <nav class="navbar navbar-expand-lg">
+                <button class="navbar-toggler" type="button" id="sidebarToggle" aria-label="Abrir/Fechar Menu">
+                    <i class="bi bi-list text-white"></i>
+                </button>
+                <div class="ms-auto d-flex align-items-center">
+                    <button class="btn btn-outline-light btn-sm me-2" onclick="toggleDarkMode()"
+                        aria-label="Alternar Modo Escuro">
+                        <i class="bi bi-moon"></i>
+                    </button>
+                    <div class="dropdown me-2 position-relative">
+                        <button class="btn btn-outline-light btn-sm position-relative" type="button"
+                            data-bs-toggle="dropdown" aria-label="Notificações">
+                            <i class="bi bi-bell"></i>
+                            <span
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">5</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-start p-0" style="min-width: 250px;">
+                            <li class="dropdown-header bg-dark text-white p-2">Notificações (5)</li>
+                            <li><a class="dropdown-item p-2" href="#">Novo artista registrado</a></li>
+                            <li><a class="dropdown-item p-2" href="#">Música atingiu 1000 plays</a></li>
+                            <li><a class="dropdown-item p-2" href="#">Atualização do sistema disponível</a></li>
+                            <li class="dropdown-footer text-center p-2"><a href="#" class="text-primary">Ver todas</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="dropdown me-2 position-relative">
+                        <button class="btn btn-outline-light btn-sm position-relative" type="button"
+                            data-bs-toggle="dropdown" aria-label="Mensagens">
+                            <i class="bi bi-envelope"></i>
+                            <span
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">2</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-start p-0" style="min-width: 250px;">
+                            <li class="dropdown-header bg-dark text-white p-2">Mensagens (2)</li>
+                            <li><a class="dropdown-item p-2" href="#">Suporte #4521 - Novo ticket</a></li>
+                            <li><a class="dropdown-item p-2" href="#">Mensagem de artista</a></li>
+                            <li class="dropdown-footer text-center p-2"><a href="#" class="text-primary">Ver todas</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center"
+                            type="button" data-bs-toggle="dropdown" aria-label="Menu do Usuário">
+                            <img src="../../../assets/img/avatar/avatar.png" alt="Usuário" class="rounded-circle me-1"
+                                style="height: 24px;">
+                            <span>Cristiano Amadeu</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="../user/profile.html"><i
+                                        class="bi bi-person me-2"></i>Perfil</a></li>
+                            <li><a class="dropdown-item" href="../settings/config.html"><i
+                                        class="bi bi-sliders me-2"></i>Configurações</a></li>
+                            <li><a class="dropdown-item" href="../help/help.html"><i
+                                        class="bi bi-question-circle me-2"></i>Ajuda</a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutwasomupfy"
+                                    href="#"><i class="bi bi-box-arrow-right me-2"></i>Sair</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Adicione isso dentro da tag <nav class="bottom-nav"> -->
+            <div class="connection-status" id="connectionStatus"></div>
+            <div class="status-notification" id="statusNotification"></div>
+
+            <!-- Modal logout -->
+            <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false"
+                tabindex="-1" aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content modal-bottom">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">Terminar sessão</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container">
+                                <div class="row justify-content-center text-center">
+                                    <div class="col-md-12 content-center justify-center text-center">
+                                        <p class="text-center text-dark">@josembengadacosta você tem
+                                            certeza
+                                            de que desejas terminar
+                                            sessão?</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <div>
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Não,
+                                    continuar</button>
+                            </div>
+                            <div>
+                                <button class="btn btn-danger" type="button" name="logout_wasomupfy"
+                                    onclick="logout_wasomupfy()">Sim, terminar</button>
+                            </div>
+                            <script type="text/javascript">
+                                function logout_wasomupfy() {
+                                    window.location = 'logout';
+                                }
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal logout fim -->
+
+            <div class="container-fluid py-0">
+                <div class="row mb-3 mt-2">
+                    <div class="welcome-text col-auto d-sm-block">
+                        <h2 class="mb-3"><i class="bi bi-envelope me-2"></i> Caixa de Entrada</h2>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb mb-0">
+                                <li class="breadcrumb-item"><a href="../../home.html"
+                                        class="text-secondary">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="tickets.html" class="text-secondary">Suporte</a>
+                                </li>
+                                <li class="breadcrumb-item active text-white-stable" aria-current="page">Caixa de
+                                    Entrada</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <div class="col-auto ms-auto text-end mt-n1 mt-3 mb-2">
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-wasomupfy text-white shadow-sm"
+                                onclick="window.location.href='compose.html'">
+                                <i class="bi bi-pencil me-1"></i> Nova Mensagem
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <!-- Pastas -->
+                        <div class="card">
+                            <div class="card-body folder-sidebar">
+                                <div class="mb-3">
+                                    <button class="btn btn-primary w-100" onclick="window.location.href='compose.html'">
+                                        <i class="bi bi-pencil-square me-1"></i> Escrever
+                                    </button>
+                                </div>
+
+                                <div class="folder-item active">
+                                    <i class="bi bi-inbox me-2"></i> Caixa de Entrada
+                                    <span class="badge bg-primary float-end">12</span>
+                                </div>
+                                <div class="folder-item">
+                                    <i class="bi bi-star me-2"></i> Favoritos
+                                    <span class="badge bg-warning float-end">3</span>
+                                </div>
+                                <div class="folder-item">
+                                    <i class="bi bi-send me-2"></i> Enviadas
+                                    <span class="badge bg-success float-end">24</span>
+                                </div>
+                                <div class="folder-item">
+                                    <i class="bi bi-clock me-2"></i> Rascunhos
+                                    <span class="badge bg-secondary float-end">2</span>
+                                </div>
+                                <div class="folder-item">
+                                    <i class="bi bi-trash me-2"></i> Lixeira
+                                    <span class="badge bg-danger float-end">15</span>
+                                </div>
+                                <div class="folder-item">
+                                    <i class="bi bi-exclamation-circle me-2"></i> Importantes
+                                </div>
+                                <div class="folder-item">
+                                    <i class="bi bi-chat me-2"></i> Tickets
+                                </div>
+
+                                <hr>
+
+                                <h6 class="mb-2">Etiquetas</h6>
+                                <div class="folder-item">
+                                    <i class="bi bi-circle-fill me-2" style="color: #28a745;"></i> Suporte
+                                </div>
+                                <div class="folder-item">
+                                    <i class="bi bi-circle-fill me-2" style="color: #007bff;"></i> Financeiro
+                                </div>
+                                <div class="folder-item">
+                                    <i class="bi bi-circle-fill me-2" style="color: #ffc107;"></i> Artistas
+                                </div>
+                                <div class="folder-item">
+                                    <i class="bi bi-circle-fill me-2" style="color: #dc3545;"></i> Urgente
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Filtros Rápidos -->
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h6 class="mb-0">Filtrar por</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="filterUnread">
+                                    <label class="form-check-label" for="filterUnread">
+                                        Não lidas
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="filterStarred">
+                                    <label class="form-check-label" for="filterStarred">
+                                        Com estrela
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="filterImportant">
+                                    <label class="form-check-label" for="filterImportant">
+                                        Importantes
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="filterAttachments">
+                                    <label class="form-check-label" for="filterAttachments">
+                                        Com anexos
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-9">
+                        <!-- Barra de Ferramentas -->
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <div class="form-check me-3">
+                                            <input class="form-check-input" type="checkbox" id="selectAll">
+                                            <label class="form-check-label" for="selectAll">
+                                                Selecionar todas
+                                            </label>
+                                        </div>
+                                        <div class="dropdown">
+                                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle"
+                                                type="button" data-bs-toggle="dropdown">
+                                                Ações
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="#"><i
+                                                            class="bi bi-check2-square me-2"></i> Marcar como lida</a>
+                                                </li>
+                                                <li><a class="dropdown-item" href="#"><i class="bi bi-star me-2"></i>
+                                                        Adicionar estrela</a></li>
+                                                <li><a class="dropdown-item" href="#"><i
+                                                            class="bi bi-exclamation-circle me-2"></i> Marcar como
+                                                        importante</a></li>
+                                                <li>
+                                                    <hr class="dropdown-divider">
+                                                </li>
+                                                <li><a class="dropdown-item text-danger" href="#"><i
+                                                            class="bi bi-trash me-2"></i> Mover para lixeira</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <div class="input-group input-group-sm me-2" style="width: 200px;">
+                                            <input type="text" class="form-control" placeholder="Buscar mensagens...">
+                                            <button class="btn btn-outline-secondary">
+                                                <i class="bi bi-search"></i>
+                                            </button>
+                                        </div>
+                                        <button class="btn btn-outline-secondary btn-sm">
+                                            <i class="bi bi-arrow-clockwise"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lista de Emails -->
+                        <div id="emailsList">
+                            <!-- Emails serão carregados via JavaScript -->
+                            <div class="text-center py-5">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Carregando...</span>
+                                </div>
+                                <p class="mt-2">Carregando mensagens...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p class="mb-2">© 2026 Wasom Upfy. Todos os direitos reservados.</p>
+                    <a href="#" class="me-2">Termos de Uso</a>
+                    <a href="#" class="me-2">Privacidade</a>
+                    <a href="#">Suporte</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bottom Navigation -->
+    <!-- <nav class="bottom-nav">
+    <ul>
+        <li>
+            <a href="home.html" class="active">
+                <i class="bi bi-speedometer2"></i>
+                <span>Dashboard</span>
+            </a>
+        </li>
+        <li>
+            <a href="pages/music/approve.html">
+                <i class="bi bi-music-note-list"></i>
+                <span>Músicas</span>
+            </a>
+        </li>
+        <li>
+            <a href="pages/users/all-users.html">
+                <i class="bi bi-people"></i>
+                <span>Usuários</span>
+            </a>
+        </li>
+        <li>
+            <a href="pages/finances/earnings.html">
+                <i class="bi bi-currency-dollar"></i>
+                <span>Finanças</span>
+            </a>
+        </li>
+        <li>
+            <a href="pages/settings/config.html">
+                <i class="bi bi-sliders"></i>
+                <span>Config</span>
+            </a>
+        </li>
+    </ul>
+</nav> -->
+
+
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-content">
+            <!-- Sua imagem pulsante -->
+            <img src="../../../assets/img/brand/wasomupfy_brand.png" class="loader-image" alt="Carregando">
+            <!-- Barra de progresso agora perfeitamente centralizada -->
+            <div class="loader-progress"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../../../js/lastest.js"></script>
+    <script src="js/inbox.js"></script>
+</body>
+
+</html>

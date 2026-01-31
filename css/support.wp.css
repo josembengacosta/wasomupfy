@@ -1,0 +1,129 @@
+.support-header::after {
+            content: '';
+            width: 60px;
+            height: 4px;
+            background-color: #ff0089;
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .progress-bar-container {
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .dark-mode .progress-bar {
+            background-color: #444;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background-color: #ff0089;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+
+        .support-form input:focus,
+        .support-form select:focus,
+        .support-form textarea:focus {
+            outline: none;
+            border-color: #ff0089;
+            box-shadow: 0 0 5px rgba(255, 77, 148, 0.3);
+        }
+
+        .support-form textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+
+        .support-btn {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background-color: #ff0089;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .add-attachment-btn {
+            background-color: #ff0089;
+            color: #fff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            margin-top: -10px;
+            margin-bottom: 15px;
+        }
+
+        .add-attachment-btn:hover {
+            transform: scale(1.05);
+            background-color: #e04385;
+        }
+
+        .submit-btn {
+            background-color: #ff0089;
+            color: #fff;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .submit-btn:hover {
+            transform: scale(1.05);
+            background-color: #e04385;
+        }
+
+        .error-message {
+            color: #ff0089;
+            font-size: 0.9rem;
+            margin-top: -10px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+
+        @media (max-width: 767px) {
+            .support-header h1 {
+                font-size: 2rem;
+            }
+
+            .support-form {
+                padding: 20px;
+            }
+
+            .submit-btn {
+                padding: 10px 20px;
+            }
+
+            .add-attachment-btn {
+                padding: 6px 12px;
+            }
+        }

@@ -1,0 +1,301 @@
+.table-card .card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.table-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 0 10px 0;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 15px;
+}
+
+.table-card .card-header h6 {
+    font-size: 1rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+.table {
+    width: 100%;
+    margin-bottom: 0;
+}
+
+.table thead th {
+    background-color: #f8f9fa;
+    color: #333;
+    font-weight: 500;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #ddd;
+}
+
+.table tbody tr {
+    background-color: #fff;
+    transition: background-color 0.3s ease;
+}
+
+.table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+.table tbody td {
+    font-size: 0.9rem;
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.table tbody td img {
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+}
+
+.table .details-link {
+    color: #ff0089;
+    font-size: 1.2rem;
+    transition: color 0.3s ease;
+}
+
+.table .details-link:hover {
+    color: #e04385;
+}
+
+.date-range {
+    margin-bottom: 20px;
+}
+
+.date-range .input-group {
+    position: relative;
+}
+
+.date-range .input-group i {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #ff0089;
+    font-size: 1.2rem;
+}
+
+.date-range input,
+.date-range select {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 8px 12px 8px 35px;
+    font-size: 0.9rem;
+    width: 100%;
+    transition: border-color 0.3s ease;
+}
+
+.date-range input:focus,
+.date-range select:focus {
+    border-color: #ff0089;
+    outline: none;
+}
+
+.date-range .btn-apply {
+    background-color: #ff0089;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 20px;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+.date-range .btn-apply:hover {
+    background-color: #e04385;
+}
+
+.date-range .btn-apply:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.territory-card .card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    #map {
+        height: 300px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    .filter-group {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+    }
+
+    .filter-group .input-group {
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        max-width: 250px;
+    }
+
+    .filter-group .input-group i {
+        position: absolute;
+        left: 10px;
+        color: #ff0089;
+        font-size: 1.2rem;
+    }
+
+    .filter-group input,
+    .filter-group select {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 8px 12px 8px 35px;
+        font-size: 0.9rem;
+        width: 100%;
+        transition: border-color 0.3s ease;
+    }
+
+    .filter-group input:focus,
+    .filter-group select:focus {
+        border-color: #ff0089;
+        outline: none;
+    }
+
+    .filter-group .btn-apply {
+        background-color: #ff0089;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 8px 20px;
+        font-size: 0.9rem;
+        transition: background-color 0.3s ease;
+    }
+
+    .filter-group .btn-apply:hover {
+        background-color: #e04385;
+    }
+
+    .filter-group .btn-apply:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+
+    .territory-card ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .territory-card ul li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #eee;
+        transition: transform 0.3s ease;
+    }
+
+    .territory-card ul li:hover {
+        transform: scale(1.02);
+    }
+
+    .territory-card ul li:last-child {
+        border-bottom: none;
+    }
+
+    .territory-card ul li .territory-info {
+        display: flex;
+        align-items: center;
+    }
+
+    .territory-card ul li .territory-info img {
+        width: 24px;
+        height: 16px;
+        margin-right: 12px;
+    }
+
+    .territory-card ul li .territory-info span {
+        font-weight: 500;
+        font-size: 0.95rem;
+    }
+
+    .territory-card ul li .stream-count {
+        font-weight: bold;
+        color: #ff0089;
+        font-size: 0.95rem;
+    }
+
+    .territory-card ul li .details-link {
+        color: #ff0089;
+        font-size: 1.2rem;
+        transition: color 0.3s ease;
+    }
+
+    .territory-card ul li .details-link:hover {
+        color: #e04385;
+    }
+    @media (max-width: 991px) {
+        .navbar-brand {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .navbar-toggler {
+            margin-left: 0;
+        }
+
+        .user-menu {
+            margin-right: 0;
+        }
+
+        #map {
+            height: 200px;
+        }
+
+        .filter-group {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .filter-group .input-group {
+            max-width: 100%;
+        }
+
+        .filter-group .btn-apply {
+            width: 100%;
+            margin-top: 10px;
+        }
+    }
+
+    @media (min-width: 992px) {
+        .navbar-brand {
+            position: static;
+            transform: none;
+        }
+
+        .navbar-nav {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            margin-right: 30px;
+        }
+
+        .user-menu {
+            margin-left: auto;
+        }
+
+        .navbar-collapse {
+            display: flex !important;
+        }
+    }

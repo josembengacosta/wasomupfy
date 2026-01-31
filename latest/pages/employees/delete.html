@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="author" content="Voosoft" />
+    <meta name="theme-color" content="#FF0089">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#FF0089">
+    <link rel="apple-touch-icon" href="../../../assets/img/icones/wasomupfy_fiv_512.png">
+    <link rel="apple-touch-startup-image" href="../../../assets/img/screenshots/splash.png">
+    <link rel="manifest" href="manifest.json">
+    <title>Excluir Funcionário - Wasom Upfy</title>
+    <link rel="shortcut icon" href="../../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
+    <link rel="stylesheet" href="../../../css/libs/plugins.css">
+    <link rel="stylesheet" href="../../../css/libs/scrollue.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
+    <link rel="stylesheet" href="../../../css/lastest-style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <!-- Google Fonts - Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        .danger-zone {
+            border: 2px solid #dc3545;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #fff5f5 0%, #ffeaea 100%);
+        }
+
+        .warning-icon {
+            width: 80px;
+            height: 80px;
+            background-color: #dc3545;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .employee-card {
+            border-radius: 10px;
+            border: 1px solid #dee2e6;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .employee-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .employee-card.selected {
+            border-color: #dc3545;
+            background-color: #fff5f5;
+        }
+
+        .profile-img-sm {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 50rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-suspended {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .status-review {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-role {
+            font-size: 0.7rem;
+            margin-right: 4px;
+            margin-bottom: 4px;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box .form-control {
+            padding-left: 40px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+
+        .empty-state {
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: #dee2e6;
+            margin-bottom: 20px;
+        }
+
+        .confirm-box {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 4px solid #dc3545;
+        }
+
+        .employee-details {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+        }
+
+        .detail-row {
+            display: flex;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f1f3f5;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #495057;
+            width: 120px;
+            flex-shrink: 0;
+        }
+
+        .detail-value {
+            color: #212529;
+            flex-grow: 1;
+        }
+
+        .consequences-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .consequences-list li {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .consequences-list li:before {
+            content: "⚠";
+            position: absolute;
+            left: 0;
+            color: #dc3545;
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            border: none;
+            color: white;
+            padding: 10px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-delete:hover {
+            background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-delete:disabled {
+            background: #6c757d;
+            transform: none;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .selection-counter {
+            background-color: #dc3545;
+            color: white;
+            border-radius: 20px;
+            padding: 2px 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <!-- Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="d-flex align-items-center">
+                    <img src="../../../assets/img/brand/wasomupfy_brand.png" alt="Logo Wasom Upfy"
+                        class="rounded-circle me-2" style="height: 40px;">
+                    <span class="brand-text">Wasom Upfy</span>
+                </div>
+                <i class="bi bi-chevron-left toggle-icon" id="sidebarCollapse" title="Colapsar/Expandir Menu"
+                    aria-label="Colapsar/Expandir Menu"></i>
+            </div>
+            <ul class="nav flex-column mt-3">
+                <li class="nav-item">
+                    <a href="../../home.html" class="nav-link">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Painel de Controle</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#collapseAnalytics" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseAnalytics">
+                        <i class="bi bi-graph-up"></i>
+                        <span>Estatísticas e Análises</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseAnalytics">
+                        <a href="../analytics/home.html" class="nav-link">
+                            <i class="bi bi-bar-chart-line"></i>
+                            <span>Visão Geral</span>
+                        </a>
+                        <a href="../analytics/artists.html" class="nav-link">
+                            <i class="bi bi-person-lines-fill"></i>
+                            <span>Desempenho por Artista</span>
+                        </a>
+                        <a href="../analytics/stores.html" class="nav-link">
+                            <i class="bi bi-shop"></i>
+                            <span>Desempenho por Loja Digital</span>
+                        </a>
+                        <a href="../analytics/reports.html" class="nav-link">
+                            <i class="bi bi-file-earmark-bar-graph"></i>
+                            <span>Relatórios Personalizados</span>
+                        </a>
+                    </div>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#collapseAdmins" class="nav-link active" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseAdmins">
+                        <i class="bi bi-person-gear"></i>
+                        <span>Gestão de Admins</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseAdmins">
+                        <a href="all-employees.html" class="nav-link">
+                            <i class="bi bi-people"></i>
+                            <span>Listar Admins</span>
+                        </a>
+                        <a href="add.html" class="nav-link">
+                            <i class="bi bi-person-plus"></i>
+                            <span>Adicionar</span>
+                        </a>
+                        <a href="edit.html" class="nav-link">
+                            <i class="bi bi-person-gear"></i>
+                            <span>Editar</span>
+                        </a>
+                        <a href="delete.html" class="nav-link active">
+                            <i class="bi bi-person-x"></i>
+                            <span>Excluir</span>
+                        </a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="#collapseUsers" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseUsers">
+                        <i class="bi bi-person-gear"></i>
+                        <span>Gestão de Usuários</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseUsers">
+                        <a href="../users/all-users.html" class="nav-link">
+                            <i class="bi bi-people"></i>
+                            <span>Todos Usuários</span>
+                        </a>
+                        <a href="../users/add.html" class="nav-link">
+                            <i class="bi bi-person-plus"></i>
+                            <span>Adicionar</span>
+                        </a>
+                        <a href="../users/edit.html" class="nav-link">
+                            <i class="bi bi-person-gear"></i>
+                            <span>Editar</span>
+                        </a>
+                        <a href="../users/delete.html" class="nav-link">
+                            <i class="bi bi-person-x"></i>
+                            <span>Excluir</span>
+                        </a>
+                        <a href="../users/available-account.html" class="nav-link">
+                            <i class="bi bi-person-check"></i>
+                            <span>Contas Disponíveis</span>
+                        </a>
+                        <a href="../users/unavailable-account.html" class="nav-link">
+                            <i class="bi bi-person-exclamation"></i>
+                            <span>Contas Indisponíveis</span>
+                        </a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="#collapseSongs" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseSongs">
+                        <i class="bi bi-music-note-list"></i>
+                        <span>Gestão de Músicas</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseSongs">
+                        <a href="../music/revise.html" class="nav-link">
+                            <i class="bi bi-eye"></i>
+                            <span>Revisar Envios</span>
+                        </a>
+                        <a href="../music/approve.html" class="nav-link">
+                            <i class="bi bi-check-circle"></i>
+                            <span>Aprovar</span>
+                        </a>
+                        <a href="../music/reject.html" class="nav-link">
+                            <i class="bi bi-x-circle"></i>
+                            <span>Rejeitar</span>
+                        </a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="../artist/accounts-users.html" class="nav-link">
+                        <i class="bi bi-person-check"></i>
+                        <span>Contas e Usuários</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../artist/collaborators-artist.html" class="nav-link">
+                        <i class="bi bi-people"></i>
+                        <span>Artistas e Colaboradores</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#collapseDistribution" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseDistribution">
+                        <i class="bi bi-globe"></i>
+                        <span>Distribuição</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseDistribution">
+                        <a href="../distribution/releases.html" class="nav-link">
+                            <i class="bi bi-rocket-takeoff"></i>
+                            <span>Lançamentos</span>
+                        </a>
+                        <a href="../distribution/store.html" class="nav-link">
+                            <i class="bi bi-shop"></i>
+                            <span>Lojas Digitais</span>
+                        </a>
+                        <a href="../distribution/schedule.html" class="nav-link">
+                            <i class="bi bi-calendar-event"></i>
+                            <span>Agendar Lançamento</span>
+                        </a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="../manager/gestion.html" class="nav-link">
+                        <i class="bi bi-star"></i>
+                        <span>Gestão Geral</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../finances/payments.html" class="nav-link">
+                        <i class="bi bi-wallet2"></i>
+                        <span>Pagamentos</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../finances/earnings.html" class="nav-link">
+                        <i class="bi bi-currency-dollar"></i>
+                        <span>Finanças e Rendimentos</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#collapseIntegration" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseIntegration">
+                        <i class="bi bi-youtube"></i>
+                        <span>Unificação e V. Youtube</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseIntegration">
+                        <a href="../integration/youtube.html" class="nav-link">
+                            <i class="bi bi-gear"></i>
+                            <span>Configurar Integração</span>
+                        </a>
+                        <a href="../integration/verify.html" class="nav-link">
+                            <i class="bi bi-check2-all"></i>
+                            <span>Verificar Canais</span>
+                        </a>
+                        <a href="../integration/monetization.html" class="nav-link">
+                            <i class="bi bi-youtube"></i>
+                            <span>Gerenciamento de Conteúdo Monetizado</span>
+                        </a>
+                    </div>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#collapseSupport" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseSupport">
+                        <i class="bi bi-headset"></i>
+                        <span>Suporte</span>
+                        <span class="badge bg-danger badge-notification">3</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseSupport">
+                        <a href="../messages/inbox.html" class="nav-link">
+                            <i class="bi bi-envelope"></i>
+                            <span>Caixa de entrada</span>
+                        </a>
+                        <a href="../messages/compose.html" class="nav-link">
+                            <i class="bi bi-pencil"></i>
+                            <span>Enviar mensagens</span>
+                        </a>
+                    </div>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#collapseHelp" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseHelp">
+                        <i class="bi bi-question-circle"></i>
+                        <span>Ajuda</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseHelp">
+                        <a href="../help/faqs.html" class="nav-link">
+                            <i class="bi bi-messenger"></i>
+                            <span>FAQs</span>
+                        </a>
+                        <a href="../help/tutorials.html" class="nav-link">
+                            <i class="bi bi-book"></i>
+                            <span>Tutoriais</span>
+                        </a>
+                        <a href="../help/contact.html" class="nav-link">
+                            <i class="bi bi-telephone"></i>
+                            <span>Contacto com suporte</span>
+                        </a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="../settings/config.html" class="nav-link">
+                        <i class="bi bi-sliders"></i>
+                        <span>Configurações</span>
+                    </a>
+                </li>
+                <li class="nav-item mt-4">
+                    <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#logoutwasomupfy">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+                <li class="nav-item mt-4">
+                    <a href="http://localhost:5500/home.html" target="_blank" class="nav-link">
+                        <i class="bi bi-box-arrow-in-up-right"></i>
+                        <span>Visitar Site</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Content -->
+        <div class="content w-100" id="mainContent">
+            <nav class="navbar navbar-expand-lg">
+                <button class="navbar-toggler" type="button" id="sidebarToggle" aria-label="Abrir/Fechar Menu">
+                    <i class="bi bi-list text-white"></i>
+                </button>
+                <div class="ms-auto d-flex align-items-center">
+                    <button class="btn btn-outline-light btn-sm me-2" onclick="toggleDarkMode()"
+                        aria-label="Alternar Modo Escuro">
+                        <i class="bi bi-moon"></i>
+                    </button>
+                    <div class="dropdown me-2 position-relative">
+                        <button class="btn btn-outline-light btn-sm position-relative" type="button"
+                            data-bs-toggle="dropdown" aria-label="Notificações">
+                            <i class="bi bi-bell"></i>
+                            <span
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">5</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-start p-0" style="min-width: 250px;">
+                            <li class="dropdown-header bg-dark text-white p-2">Notificações (5)</li>
+                            <li><a class="dropdown-item p-2" href="#">Novo artista registrado</a></li>
+                            <li><a class="dropdown-item p-2" href="#">Música atingiu 1000 plays</a></li>
+                            <li><a class="dropdown-item p-2" href="#">Atualização do sistema disponível</a></li>
+                            <li class="dropdown-footer text-center p-2"><a href="#" class="text-primary">Ver todas</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="dropdown me-2 position-relative">
+                        <button class="btn btn-outline-light btn-sm position-relative" type="button"
+                            data-bs-toggle="dropdown" aria-label="Mensagens">
+                            <i class="bi bi-envelope"></i>
+                            <span
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">2</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-start p-0" style="min-width: 250px;">
+                            <li class="dropdown-header bg-dark text-white p-2">Mensagens (2)</li>
+                            <li><a class="dropdown-item p-2" href="#">Suporte #4521 - Novo ticket</a></li>
+                            <li><a class="dropdown-item p-2" href="#">Mensagem de artista</a></li>
+                            <li class="dropdown-footer text-center p-2"><a href="#" class="text-primary">Ver todas</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center"
+                            type="button" data-bs-toggle="dropdown" aria-label="Menu do Usuário">
+                            <img src="../../../assets/img/avatar/avatar.png" alt="Usuário" class="rounded-circle me-1"
+                                style="height: 24px;">
+                            <span>Cristiano Amadeu</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="../user/profile.html"><i
+                                        class="bi bi-person me-2"></i>Perfil</a></li>
+                            <li><a class="dropdown-item" href="../settings/config.html"><i
+                                        class="bi bi-sliders me-2"></i>Configurações</a></li>
+                            <li><a class="dropdown-item" href="../help/help.html"><i
+                                        class="bi bi-question-circle me-2"></i>Ajuda</a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutwasomupfy"
+                                    href="#"><i class="bi bi-box-arrow-right me-2"></i>Sair</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Adicione isso dentro da tag <nav class="bottom-nav"> -->
+            <div class="connection-status" id="connectionStatus"></div>
+            <div class="status-notification" id="statusNotification"></div>
+
+            <!-- Modal logout -->
+            <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false"
+                tabindex="-1" aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content modal-bottom">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">Terminar sessão</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container">
+                                <div class="row justify-content-center text-center">
+                                    <div class="col-md-12 content-center justify-center text-center">
+                                        <p class="text-center text-dark">@josembengadacosta você tem
+                                            certeza
+                                            de que desejas terminar
+                                            sessão?</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <div>
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Não,
+                                    continuar</button>
+                            </div>
+                            <div>
+                                <button class="btn btn-danger" type="button" name="logout_wasomupfy"
+                                    onclick="logout_wasomupfy()">Sim, terminar</button>
+                            </div>
+                            <script type="text/javascript">
+                                function logout_wasomupfy() {
+                                    window.location = 'logout';
+                                }
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal logout fim -->
+
+            <div class="container-fluid py-0">
+                <div class="row mb-3 mt-2">
+                    <div class="welcome-text col-auto d-sm-block">
+                        <h2 class="mb-3"><i class="bi bi-person-x me-2"></i> Excluir Funcionário</h2>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb mb-0">
+                                <li class="breadcrumb-item"><a href="../../home.html"
+                                        class="text-secondary">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="all-employees.html"
+                                        class="text-secondary">Funcionários</a></li>
+                                <li class="breadcrumb-item active text-white-stable" aria-current="page">Excluir
+                                    Funcionário</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <div class="col-auto ms-auto text-end mt-n1 mt-3 mb-2">
+                        <a href="all-employees.html" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i> Voltar para Lista
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Aviso Inicial -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="alert alert-danger">
+                            <div class="d-flex">
+                                <i class="bi bi-exclamation-triangle-fill fs-3 me-3"></i>
+                                <div>
+                                    <h5 class="alert-heading mb-2">Atenção: Operação Crítica</h5>
+                                    <p class="mb-0">
+                                        Você está prestes a excluir funcionários do sistema. Esta operação é
+                                        <strong>irreversível</strong> e pode afetar o funcionamento da plataforma.
+                                        Certifique-se de que está excluindo os funcionários corretos.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-5">
+                        <!-- Busca e Seleção -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="bi bi-search me-2"></i> Buscar Funcionários</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="search-box mb-3">
+                                    <i class="bi bi-search"></i>
+                                    <input type="text" class="form-control" id="searchEmployee"
+                                        placeholder="Buscar por nome, e-mail, ID ou conta...">
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h6 class="mb-0">Funcionários Encontrados</h6>
+                                    <span class="selection-counter" id="selectionCount">0 selecionados</span>
+                                </div>
+
+                                <div id="employeesList" class="mb-3" style="max-height: 400px; overflow-y: auto;">
+                                    <!-- Lista de funcionários será carregada aqui -->
+                                    <div class="text-center py-4">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Carregando...</span>
+                                        </div>
+                                        <p class="mt-2">Carregando funcionários...</p>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-between">
+                                    <button class="btn btn-outline-secondary btn-sm" id="selectAllBtn">
+                                        <i class="bi bi-check-square me-1"></i> Selecionar Todos
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-sm" id="deselectAllBtn">
+                                        <i class="bi bi-square me-1"></i> Desmarcar Todos
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Estatísticas -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="bi bi-bar-chart me-2"></i> Estatísticas</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <div class="display-6 text-danger" id="selectedCount">0</div>
+                                        <small class="text-muted">Selecionados</small>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="display-6" id="totalCount">0</div>
+                                        <small class="text-muted">Total</small>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="display-6" id="adminCount">0</div>
+                                        <small class="text-muted">Administradores</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-7">
+                        <!-- Zona de Perigo -->
+                        <div class="danger-zone p-4 mb-4">
+                            <div class="warning-icon">
+                                <i class="bi bi-exclamation-triangle-fill text-white fs-2"></i>
+                            </div>
+
+                            <h4 class="text-center text-danger mb-3">Zona de Perigo</h4>
+                            <p class="text-center mb-4 text-black-50">
+                                Você está prestes a realizar uma operação irreversível.
+                                Por favor, confirme todas as informações antes de prosseguir.
+                            </p>
+
+                            <!-- Detalhes do Funcionário Selecionado -->
+                            <div id="employeeDetails" class="employee-details fade-in" style="display: none;">
+                                <h6 class="text-danger mb-3">
+                                    <i class="bi bi-person-x me-2"></i> Funcionário(s) Selecionado(s)
+                                </h6>
+
+                                <div id="singleEmployeeDetails">
+                                    <!-- Detalhes de um único funcionário -->
+                                </div>
+
+                                <div id="multipleEmployeesDetails" style="display: none;">
+                                    <div class="alert alert-warning">
+                                        <i class="bi bi-exclamation-triangle me-2"></i>
+                                        <strong>Múltiplos funcionários selecionados:</strong>
+                                        <span id="multipleCount">0</span> funcionário(s) serão excluídos.
+                                    </div>
+
+                                    <h6 class="mb-2 text-black">Lista de Funcionários:</h6>
+                                    <div id="selectedEmployeesList" class="mb-3 text-black">
+                                        <!-- Lista de nomes dos selecionados -->
+                                    </div>
+                                </div>
+
+                                <div class="mt-4">
+                                    <h6 class="text-danger mb-2">
+                                        <i class="bi bi-shield-exclamation me-2"></i> Consequências da Exclusão
+                                    </h6>
+                                    <ul class="consequences-list">
+                                        <li class="text-black">Todos os dados do funcionário serão permanentemente
+                                            removidos</li>
+                                        <li class="text-black">Qualquer registro de atividade associado será perdido
+                                        </li>
+                                        <li class="text-black">Não será possível recuperar as informações excluídas</li>
+                                        <li class="text-black">O funcionário perderá acesso imediato à plataforma</li>
+                                        <li class="text-black">Quaisquer permissões ou configurações serão removidas
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div id="noSelectionMessage" class="text-center py-4">
+                                <i class="bi bi-person-slash fs-1 text-muted mb-3 d-block"></i>
+                                <p class="text-muted">Selecione um funcionário para ver os detalhes e opções de
+                                    exclusão.</p>
+                            </div>
+
+                            <!-- Confirmação Final -->
+                            <div class="confirm-box mt-4 fade-in" id="confirmationBox" style="display: none;">
+                                <h6 class="text-danger mb-3">
+                                    <i class="bi bi-shield-check me-2"></i> Confirmação Final
+                                </h6>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="confirmIrreversible">
+                                    <label class="form-check-label text-black" for="confirmIrreversible">
+                                        Eu entendo que esta ação é <strong>irreversível</strong>
+                                    </label>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="confirmBackup">
+                                    <label class="form-check-label text-black" for="confirmBackup">
+                                        Eu fiz backup das informações importantes
+                                    </label>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="confirmAuthorization">
+                                    <label class="form-check-label text-black" for="confirmAuthorization">
+                                        Eu tenho autorização para realizar esta exclusão
+                                    </label>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="deletionReason" class="form-label text-black">Motivo da Exclusão</label>
+                                    <textarea class="form-control" id="deletionReason" rows="3"
+                                        placeholder="Descreva o motivo da exclusão (obrigatório)"></textarea>
+                                    <small class="text-muted">Esta informação será registrada no log de
+                                        auditoria.</small>
+                                </div>
+
+                                <div class="text-center">
+                                    <button class="btn btn-delete btn-lg" id="deleteButton" disabled>
+                                        <i class="bi bi-trash3 me-2"></i> EXCLUIR FUNCIONÁRIO(S)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dicas de Segurança -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="bi bi-shield-check me-2"></i> Recomendações de Segurança</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="d-flex mb-3">
+                                            <i class="bi bi-check-circle-fill text-success me-3 fs-4"></i>
+                                            <div>
+                                                <h6 class="mb-1">Verifique Duplamente</h6>
+                                                <p class="text-muted mb-0">Confirme a identidade do funcionário antes de
+                                                    excluir.</p>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-3">
+                                            <i class="bi bi-check-circle-fill text-success me-3 fs-4"></i>
+                                            <div>
+                                                <h6 class="mb-1">Faça Backup</h6>
+                                                <p class="text-muted mb-0">Salve informações importantes antes da
+                                                    exclusão.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="d-flex mb-3">
+                                            <i class="bi bi-check-circle-fill text-success me-3 fs-4"></i>
+                                            <div>
+                                                <h6 class="mb-1">Documente o Motivo</h6>
+                                                <p class="text-muted mb-0">Registre sempre o motivo da exclusão.</p>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex">
+                                            <i class="bi bi-check-circle-fill text-success me-3 fs-4"></i>
+                                            <div>
+                                                <h6 class="mb-1">Notifique a Equipe</h6>
+                                                <p class="text-muted mb-0">Informe outros administradores sobre a
+                                                    exclusão.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação Final -->
+    <div class="modal fade" id="finalConfirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <div class="warning-icon" style="width: 60px; height: 60px;">
+                        <i class="bi bi-exclamation-triangle-fill text-white fs-4"></i>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center py-4">
+                    <h4 class="text-danger mb-3">Confirmação Final</h4>
+                    <p id="finalConfirmMessage" class="mb-4">
+                        Você está prestes a excluir 1 funcionário. Esta ação não pode ser desfeita.
+                    </p>
+                    <div class="alert alert-danger text-start">
+                        <i class="bi bi-exclamation-octagon-fill me-2"></i>
+                        <strong>Atenção:</strong> Após confirmar, os dados serão permanentemente removidos do sistema.
+                    </div>
+                </div>
+                <div class="modal-footer border-0 justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-1"></i> Cancelar
+                    </button>
+                    <button type="button" class="btn btn-delete" id="finalDeleteButton">
+                        <i class="bi bi-trash3 me-1"></i> Sim, Excluir Permanentemente
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Sucesso -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <div class="warning-icon" style="width: 60px; height: 60px; background-color: #198754;">
+                        <i class="bi bi-check-circle-fill text-white fs-4"></i>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center py-4">
+                    <h4 class="text-success mb-3">Exclusão Concluída!</h4>
+                    <p id="successMessage" class="mb-4">
+                        Funcionário excluído com sucesso.
+                    </p>
+                    <div class="alert alert-success text-start">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        A exclusão foi registrada no log de auditoria do sistema.
+                    </div>
+                </div>
+                <div class="modal-footer border-0 justify-content-center">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal" id="redirectButton">
+                        <i class="bi bi-arrow-left me-1"></i> Voltar para Lista
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p class="mb-2">© 2026 Wasom Upfy. Todos os direitos reservados.</p>
+                    <a href="#" class="me-2">Termos de Uso</a>
+                    <a href="#" class="me-2">Privacidade</a>
+                    <a href="#">Suporte</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bottom Navigation -->
+    <!-- <nav class="bottom-nav">
+    <ul>
+        <li>
+            <a href="home.html" class="active">
+                <i class="bi bi-speedometer2"></i>
+                <span>Dashboard</span>
+            </a>
+        </li>
+        <li>
+            <a href="../music/approve.html">
+                <i class="bi bi-music-note-list"></i>
+                <span>Músicas</span>
+            </a>
+        </li>
+        <li>
+            <a href="../users/all-users.html">
+                <i class="bi bi-people"></i>
+                <span>Usuários</span>
+            </a>
+        </li>
+        <li>
+            <a href="../finances/earnings.html">
+                <i class="bi bi-currency-dollar"></i>
+                <span>Finanças</span>
+            </a>
+        </li>
+        <li>
+            <a href="../settings/config.html">
+                <i class="bi bi-sliders"></i>
+                <span>Config</span>
+            </a>
+        </li>
+    </ul>
+</nav> -->
+
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-content">
+            <!-- Sua imagem pulsante -->
+            <img src="../../../assets/img/brand/wasomupfy_brand.png" class="loader-image" alt="Carregando">
+            <!-- Barra de progresso agora perfeitamente centralizada -->
+            <div class="loader-progress"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../js/lastest.js"></script>
+    <script src="js/delete-employee.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="author" content="Voosoft" />
+    <meta name="keywords" content="Wasom Upfy, Wasom, Upfy, Plano Single, Basic Plan, Basic" />
+    <meta name="robots" content="follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large" />
+    <meta name="theme-color" content="#FF009D">
+    <meta property="og:locale" content="pt_AO" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale:alternate" content="fr_FR" />
+    <meta property="og:locale:alternate" content="en_EN" />
+    <meta property="og:locale:alternate" content="pt_BR" />
+    <meta property="og:locale:alternate" content="pt_PT" />
+    <meta property="og:title" content="Wasom Upfy - Plano Single." />
+    <meta property="og:description"
+        content="A Wasom Upfy é a plataforma de distribuição de música mais fácil e completa do mercado. Ela constitui de serviços de distribuição digital e gestão de direitos de músicas, focada na promoção e desenvolvimento de artistas e gravadoras independentes. Com bons anos de experiência no mercado da música, a empresa tem como um dos principais objectivos desenvolver o mercado de distribuição e vendas de obras musicais para mais de 100 regiões em toda parte do mundo." />
+    <meta property="og:url" content="https://wasomupfy.rf.gd/" />
+    <meta property="og:site_name" content="Wasom Upfy" />
+    <meta property="og:image" content="https://wasomupfy.rf.gd/imgs/og_wasomupfy.jpeg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="300" />
+    <meta property="og:image:height" content="300" />
+    <meta property="og:image:alt" content="Slogan Wasom Upfy" />
+    <title> Wasom Upfy | Plano Single</title>
+    <!-- O processo de carregamento do site em Javascript fim -->
+    <script>
+        window.addEventListener("load", function () {
+            setTimeout(function () {
+                document.querySelector("body").classList.add("loaded")
+            }, 200)
+        })
+    </script>
+    <!-- O processo de carregamento do site em Javascript fim -->
+    <link rel="shortcut icon" href="../assets/img/icones/wasomupfy_fiv1.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../css/theme.min.css">
+    <link rel="stylesheet" href="../js/libs/scrollcue/scrollCue.css" />
+    <link rel="stylesheet" href="../css/framework.css">
+</head>
+<!-- CSS Adicional -->
+<style>
+:root {
+    --wasom-primary: #FF0089;
+    --wasom-secondary: #e04385;
+    --wasom-gradient: linear-gradient(135deg, var(--wasom-primary), var(--wasom-secondary));
+    --wasom-light: #fff0f7;
+}
+
+/* Hero Section */
+.about-hero {
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    padding: 6rem 0;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.4));
+    z-index: 1;
+}
+
+/* Stats Counter */
+.stat-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
+}
+
+.stat-icon {
+    color: var(--wasom-primary);
+}
+
+.stat-number {
+    background: var(--wasom-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* Timeline */
+.timeline {
+    position: relative;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: -1px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--wasom-gradient);
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -9px;
+    top: 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--wasom-primary);
+    border: 3px solid white;
+    box-shadow: 0 0 0 3px var(--wasom-light);
+}
+
+.timeline-date {
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+}
+
+/* Cards */
+.hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
+}
+
+.service-icon {
+    transition: transform 0.3s ease;
+}
+
+.service-card:hover .service-icon {
+    transform: scale(1.1);
+}
+
+/* Brand Section */
+.bg-gradient-wasom {
+    background: var(--wasom-gradient);
+}
+
+.brand-icon {
+    transition: transform 0.3s ease;
+}
+
+.brand-value-item:hover .brand-icon {
+    transform: rotate(10deg);
+}
+
+/* Global Cards */
+.global-card {
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.global-card:hover {
+    border-color: var(--wasom-primary);
+    box-shadow: 0 10px 25px rgba(255, 0, 137, 0.1);
+}
+
+.global-icon {
+    color: var(--wasom-primary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .about-hero {
+        min-height: 50vh;
+        padding: 4rem 0;
+    }
+    
+    .display-6 {
+        font-size: 2rem;
+    }
+    
+    .display-4 {
+        font-size: 2.5rem;
+    }
+}
+
+/* Animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+[data-cue] {
+    opacity: 0;
+}
+
+[data-cue].animated {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+/* Smooth Scroll */
+.smooth-scroll {
+    scroll-behavior: smooth;
+}
+</style>
+<body>
+
+    <!-- O processo de carregamento do site em HTML & CSS -->
+    <div class="preloader">
+        <img src="../assets/img/brand/wasomupfy_loaading.png" class="img-fluid loading-logo" width="90" height="90"
+            alt="Loading-wasomupfy">
+    </div>
+    <!-- O processo de carregamento do site em HTML & CSS fim -->
+
+    <!-- Cabecalho da página de navbar -->
+    <header>
+        <nav class="navbar navbar-expand-lg transparent navbar-transparent navbar-dark">
+            <div class="container px-3">
+                <a class="navbar-brand" href="../home.html" title="Home"><img
+                        src="../assets/img/brand/wasomupfy_brand.png" width="65" class="img-logo" height="60"
+                        alt="Logo Wasom Upfy" /></a>
+                <button class="navbar-toggler offcanvas-nav-btn" type="button">
+                    <i class="bi bi-list"></i>
+                </button>
+                <div class="offcanvas offcanvas-start offcanvas-nav" style="width: 20rem">
+                    <div class="offcanvas-header">
+                        <a title="Home" href="../home.html"><img width="65"
+                                src="../assets/img/brand/wasomupfy_brand.png" alt="Logo Wasom Upfy" /></a>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body pt-0 align-items-center">
+                        <ul class="navbar-nav mx-auto align-items-lg-center">
+                            <li class="nav-item">
+                                <a class="nav-link" href="../home.html" title="Inicio" role="button"
+                                    data-bs-toggle="link" aria-expanded="false">Início</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="../about.html" title="Sobre" role="button"
+                                    data-bs-toggle="link" aria-expanded="false">Sobre</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="blog/home" title="Blogue" target="_blank" rel="external"
+                                    role="button" data-bs-toggle="link" aria-expanded="false">Blogue</a>
+                                    </li>
+                            <li class="nav-item dropdown active">
+                                <a title="Planos" class="nav-link active" href="#" id="navbarDropdown" role="button"
+                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Planos
+                                    <i data-feather="chevron-down"></i></a>
+                                <div class="dropdown-menu dropdown-menu-md" aria-labelledby="navbarDropdown">
+
+                                    <a title="Single" class="dropdown-item mb-3 text-body active" href="single.html">
+                                        <div class="d-flex align-items-center">
+                                            <img src="../assets/img/icones/plan_single.png" class="svg-inject"
+                                                width="35" height="30" alt="Single">
+                                            <div class="ms-3 lh-1">
+                                                <h5 class="mb-1">Single</h5>
+                                                <p class="mb-0 fs-6">Nosso plano Single - 1.150 Kz</p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <a title="Álbum" class="dropdown-item mb-3 text-body" href="album.html">
+                                        <div class="d-flex align-items-center">
+                                            <img src="../assets/img/icones/plan_album.png" class="svg-inject" width="32"
+                                                height="32" alt="Album">
+                                            <div class="ms-3 lh-1">
+                                                <h5 class="mb-1">
+                                                    Álbum
+                                                </h5>
+                                                <p class="mb-0 fs-6">Nosso plano Álbum - 4.500 Kz</p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <a title="Artista" class="dropdown-item mb-3 text-body" href="artist.html">
+                                        <div class="d-flex align-items-center">
+                                            <img src="../assets/img/icones/plan_artist.png" class="svg-inject"
+                                                width="32" height="32" alt="Artist">
+                                            <div class="ms-3 lh-1">
+                                                <h5 class="mb-1">Artista</h5>
+                                                <p class="mb-0 fs-6">Nosso plano Artista - 11.400 Kz/2ano</p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <a title="Label" class="dropdown-item mb-3 text-body" href="label.html">
+                                        <div class="d-flex align-items-center">
+                                            <img src="../assets/img/icones/plan_label.png" class="svg-inject" width="32"
+                                                height="32" alt="Label">
+                                            <div class="ms-3 lh-1">
+                                                <h5 class="mb-1">Label</h5>
+                                                <p class="mb-0 fs-6">Nosso plano Label - 70.000 Kz/2ano</p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <a title="Todos os planos" class="dropdown-item mb-3 text-body"
+                                        href="all-plans.html">
+                                        <div class="d-flex align-items-center">
+                                            <img src="../assets/img/icones/all_plans.png" class="svg-inject" width="32"
+                                                height="32" alt="Todos os planos">
+                                            <div class="ms-3 lh-1">
+                                                <h5 class="mb-1">Todos os planos</h5>
+                                                <p class="mb-0 fs-6">Todos os nossos planos</p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a title="Páginas" class="nav-link" href="#" role="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false">Páginas <i data-feather="chevron-down"></i></a>
+                                <div class="dropdown-menu dropdown-menu-xxl">
+                                    <div class="row row-cols-lg-3">
+                                        <div class="col">
+                                            <div>
+                                                <div>
+                                                    <div class="dropdown-header">Blog</div>
+                                                    <a title="Destaque dos Melhores" class="dropdown-item"
+                                                        href="blog/news.html">Novidades</a>
+                                                    <a title="Passatempo Wasom Upfy" class="dropdown-item"
+                                                        href="blog/freetime">Passatempo</a>
+                                                    <a title="Trabalhar connosco" class="dropdown-item"
+                                                        href="blog/careers">Trabalhar connosco</a>
+                                                </div>
+                                                <div class="mt-3">
+                                                    <div class="dropdown-header">Sobre</div>
+                                                    <a title="A nossa marca" class="dropdown-item"
+                                                        href="../about.html?#nossamarca">A
+                                                        nossa marca</a>
+                                                    <a title="Parcerias" class="dropdown-item"
+                                                        href="partnership.html">Parcerias</a>
+                                                    <a title="Quem somos" class="dropdown-item"
+                                                        href="../about.html">Quem
+                                                        somos</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="mt-3 mt-lg-0">
+                                                <div>
+                                                    <div class="dropdown-header">Serviços</div>
+                                                    <a title="Propagandas" class="dropdown-item" href="#!">Distribuição
+                                                        de música</a>
+                                                    <a title="Parcerias" class="dropdown-item"
+                                                        href="./advertising-music.html">Promoção de música <span
+                                                            class="badge bg-success">Novo</span></a>
+                                                    <a title="Indisponível" class="dropdown-item" href="#!">Serviços
+                                                        personalizados
+                                                        <span class="badge bg-warning">Indisponível</span></a>
+                                                </div>
+
+                                                <div class="mt-3">
+                                                    <div class="dropdown-header">Contactos</div>
+                                                    <a title="Atendimento pelo Facebook" class="dropdown-item"
+                                                        href="https://www.facebook.com/m.me/2007900989425052">Atendimento</a>
+                                                    <a title="Contacto-nos" class="dropdown-item"
+                                                        href="../contact.html">Contacta-nos</a>
+                                                    <a title="Grupo Privado" class="dropdown-item"
+                                                        href="https://www.facebook.com/groups/wasomupfy">Grupo</a>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="mt-3 mt-lg-0">
+                                                <div>
+                                                    <div class="dropdown-header">Sugestões</div>
+                                                    <a title="Apoia-nos" class="dropdown-item"
+                                                        href="../page/support/support-us.html">Apoia-nós <span
+                                                            class="badge bg-success">Novo</span></a>
+                                                    <a title="Feedback" class="dropdown-item"
+                                                        href="../page/support/feedback.html">Feedback</a>
+                                                    <a title="Indisponível" class="dropdown-item" href="#!">Indisponível
+                                                        <span class="badge bg-warning">Indisponível</span></a>
+                                                </div>
+                                                <div class="mt-3">
+                                                    <div class="dropdown-header">Ajuda</div>
+                                                    <a title="Tutorial" class="dropdown-item"
+                                                        href="../page/support/tutorial.html">Tutorial <span
+                                                            class="badge bg-success">Novo</span></a>
+                                                    <a title="Ocorreu um erro" class="dropdown-item"
+                                                        href="../page/support/support.html">Suporte técnico</a>
+                                                    <a title="Preciso de ajuda" class="dropdown-item"
+                                                        href="../page/support/faq.html">Perguntas frequentes</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="../resources.html" title="Recursos" role="button"
+                                    data-bs-toggle="link" aria-expanded="false"> Recursos</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a title="Contacto" class="nav-link" href="#" role="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false">Contactar <i data-feather="chevron-down"></i></a>
+                                <ul class="dropdown-menu">
+                                    <li><a title="Caixa de mensagem" class="dropdown-item" href="../contact.html"> Caixa
+                                            de
+                                            mensagem</a>
+                                    </li>
+                                    <li><a title="E-mail" class="dropdown-item"
+                                            href="mailto:wasomupfy@gmail.com?subject=Entrando em contacto com equipa de Wasom Upfy.&bcc=wasomupfy@yahoo.com&body=Olá equipa de Wasom Upfy.">
+                                            wasomupfy@gmail.com</a>
+                                    </li>
+                                    <li><a title="WhatsApp" class="dropdown-item"
+                                            href="https://api.whatsapp.com/send/?phone=244922030116&text&type=phone_number&app_absent=0">
+                                            WhatsApp </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            </li>
+                        </ul>
+                        <div class="mt-3 mt-lg-0 d-flex align-items-center">
+                            <a title="Sign-in" href="../authentic/login.html" class="btn btn-secondary mx-2">Entrar
+                                <i data-feather="log-in"></i>
+                            </a>
+                            <a title="Sign-up" href="../authentic/register.html" class="btn btn-wasomupfy">Inscreva-se
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <!-- Cabecalho da página de navbar fim -->
+    <!--Seccão do site inteira até ao perto do footer  -->
+    <main>
+
+        <!-- A área de recursos  -->
+       <section class="about-hero jarallax position-relative overflow-hidden" data-jarallax data-speed="0.4">
+            <img class="jarallax-img" src="../assets/img/theme/plan_single.png" alt="Plano Single Wasom Upfy" />
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-4 col-md-7 mb-4 mt-7" data-cue="fadeIn">
+                        <small class="text-uppercase ls-md fw-semibold">Plano Single</small>
+                        <h2 class="h1 mb-4 mt-4 text-uppercase text-white-stable">Plano para iniciantes.</h2>
+                        <p class="mb-0 text-white-stable">Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+                            Quibusdam
+                            fugiat consequatur quisquam consectetur</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="divider-fade"></div>
+        <!-- Sessão para detalhes de recursos -->
+        <section class="my-xl-4 py-5 bg-ligth-100">
+            <div class="container mb-xl-3" data-cue="fadeIn">
+                <div class="row g-4" data-cue="fadeIn">
+                    <div class="col-lg-6 col-md-6 col-12 m-auto" data-cue="zoomIn">
+                        <!--card-->
+                        <div class="card bg-gray-200 border-0 p-2 mb-5 mb-xl-0">
+                            <div class="card-body bg-white shadow rounded-2">
+                                <div class="mb-5">
+                                    <h3 class="h6 mb-3">Single</h3>
+                                    <h2 class="d-flex align-items-center">
+                                        <span class="text-dark">1.150Kz</span>
+                                        <!-- <del class="text-body-tertiary ms-1">$29</del> -->
+                                    </h2>
+                                </div>
+                                <div class="mb-5">
+                                    <span class="small">80% Royalties</span>
+                                    <div class="progress mt-2" role="progressbar" aria-label="Event Ticket"
+                                        aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="height: 8px">
+                                        <div class="progress-bar bg-pink bg-opacity-50" style="width: 80%"></div>
+                                    </div>
+                                </div>
+
+                                <ul class="list-unstyled">
+                                    <li class="mb-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                            fill="currentColor" class="bi bi-check-circle-fill text-success"
+                                            viewBox="0 0 16 16">
+                                            <path
+                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                                        </svg>
+                                        <span class="ms-3">Apenas um lançamento</span>
+                                    </li>
+                                    <li class="mb-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                            fill="currentColor" class="bi bi-check-circle-fill text-success"
+                                            viewBox="0 0 16 16">
+                                            <path
+                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                                        </svg>
+                                        <span class="ms-3">1 Artista</span>
+                                    </li>
+                                    <li class="mb-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                            fill="currentColor" class="bi bi-check-circle-fill text-success"
+                                            viewBox="0 0 16 16">
+                                            <path
+                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                                        </svg>
+                                        <span class="ms-3">Colaboradores 1</span>
+                                    </li>
+                                    <li class="mb-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                            fill="currentColor" class="bi bi-check-circle-fill text-success"
+                                            viewBox="0 0 16 16">
+                                            <path
+                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                                        </svg>
+                                        <span class="ms-3">Acesso a dados Single</span>
+                                    </li>
+                                    <li class="mb-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                            fill="currentColor" class="bi bi-check-circle-fill text-success"
+                                            viewBox="0 0 16 16">
+                                            <path
+                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                                        </svg>
+                                        <span class="ms-3">ISRC e UPC grátis</span>
+                                    </li>
+                                    <li class="mb-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                            fill="currentColor" class="bi bi-check-circle-fill text-success"
+                                            viewBox="0 0 16 16">
+                                            <path
+                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                                        </svg>
+                                        <span class="ms-3">Smartlink e pre-salve</span>
+                                    </li>
+                                    <li class="mb-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                            fill="currentColor" class="bi bi-check-circle-fill text-success"
+                                            viewBox="0 0 16 16">
+                                            <path
+                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                                        </svg>
+                                        <span class="ms-3">1 lançamento mensal obrigatório</span>
+                                    </li>
+                                    <li class="mb-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                            fill="currentColor" class="bi bi-check-circle-fill text-success"
+                                            viewBox="0 0 16 16">
+                                            <path
+                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                                        </svg>
+                                        <span class="ms-3">Lançamento em 72h</span>
+                                    </li>
+                                    <li class="mb-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                            fill="currentColor" class="bi bi-check-circle-fill text-success"
+                                            viewBox="0 0 16 16">
+                                            <path
+                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                                        </svg>
+                                        <span class="ms-3">Suporte (WhatsApp, E-mail)</span>
+                                    </li>
+                                    <li class="mb-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                            fill="currentColor" class="bi bi-check-circle-fill text-success"
+                                            viewBox="0 0 16 16">
+                                            <path
+                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                                        </svg>
+                                        <span class="ms-3">Atendimento rápido</span>
+                                    </li>
+                                </ul>
+                                <div class="d-grid mt-5">
+                                    <a href="#" class="btn btn-wasomupfy">Registrar agora</a>
+                                </div>
+                            </div>
+                        </div>
+                        <!--card-->
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- A área do site fim -->
+    </main>
+    <!--Seccão do site inteira até ao perto do footer  fim -->
+    <!-- Footer -->
+    <div class="divider-fade"></div>
+    <footer class="pt-4">
+        <div class="container">
+            <div class="text-center">
+                <h4 class="">Acompanhe-nos</h4>
+                <div class="gap-2 mb-4">
+                    <a target="_blank" rel="external" title="Facebook Wasom Upfy"
+                        href="https://www.facebook.com/wasom.official" class="btn btn-wasomupfy">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                            class="bi bi-facebook" viewBox="0 0 16 16">
+                            <path
+                                d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z" />
+                        </svg>
+                    </a>
+                    <a target="_blank" rel="external" title="Instagram Wasom Upfy"
+                        href="https://www.instagram.com/wasomupfy" class="btn btn-wasomupfy btn-light">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                            class="bi bi-instagram" viewBox="0 0 16 16">
+                            <path
+                                d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z" />
+                        </svg>
+                    </a>
+                    <a target="_blank" rel="external" title="Twitter (X) Wasom Upfy"
+                        href="https://www.twitter.com/wasomupfy" class="btn btn-wasomupfy">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                            class="bi bi-twitter-x" viewBox="0 0 16 16">
+                            <path
+                                d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865l8.875 11.633Z" />
+                        </svg>
+                    </a>
+                    <a target="_blank" rel="external" title="Youtube Wasom Upfy"
+                        href="https://www.youtube.com/@WasomUpfy" class="btn btn-wasomupfy">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                            class="bi bi-youtube" viewBox="0 0 16 16">
+                            <path
+                                d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.007 2.007 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.007 2.007 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31.4 31.4 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.007 2.007 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A99.788 99.788 0 0 1 7.858 2h.193zM6.4 5.209v4.818l4.157-2.408L6.4 5.209z" />
+                        </svg>
+                    </a>
+                    <a target="_blank" rel="external" title="Tiktok Wasom Upfy" href="https://www.tiktok.com/@wasomupfy"
+                        class="btn btn-wasomupfy">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                            class="bi bi-tiktok" viewBox="0 0 16 16">
+                            <path
+                                d="M9 0h1.98c.144.715.54 1.617 1.235 2.512C12.895 3.389 13.797 4 15 4v2c-1.753 0-3.07-.814-4-1.829V11a5 5 0 1 1-5-5v2a3 3 0 1 0 3 3V0Z" />
+                        </svg>
+                    </a>
+                    <a target="_blank" rel="external" title="Threads Wasom Upfy"
+                        href="https://www.threads.net/wasomupfy" class="btn btn-wasomupfy">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                            class="bi bi-threads" viewBox="0 0 16 16">
+                            <path
+                                d="M6.321 6.016c-.27-.18-1.166-.802-1.166-.802.756-1.081 1.753-1.502 3.132-1.502.975 0 1.803.327 2.394.948.591.621.928 1.509 1.005 2.644.328.138.63.299.905.484 1.109.745 1.719 1.86 1.719 3.137 0 2.716-2.226 5.075-6.256 5.075C4.594 16 1 13.987 1 7.994 1 2.034 4.482 0 8.044 0 9.69 0 13.55.243 15 5.036l-1.36.353C12.516 1.974 10.163 1.43 8.006 1.43c-3.565 0-5.582 2.171-5.582 6.79 0 4.143 2.254 6.343 5.63 6.343 2.777 0 4.847-1.443 4.847-3.556 0-1.438-1.208-2.127-1.27-2.127-.236 1.234-.868 3.31-3.644 3.31-1.618 0-3.013-1.118-3.013-2.582 0-2.09 1.984-2.847 3.55-2.847.586 0 1.294.04 1.663.114 0-.637-.54-1.728-1.9-1.728-1.25 0-1.566.405-1.967.868ZM8.716 8.19c-2.04 0-2.304.87-2.304 1.416 0 .878 1.043 1.168 1.6 1.168 1.02 0 2.067-.282 2.232-2.423a6.217 6.217 0 0 0-1.528-.161Z" />
+                        </svg>
+                    </a>
+                </div>
+
+            </div>
+            <!-- Footer 4 column -->
+            <div class="row">
+                <div class="col-lg-12 col-12">
+                    <div class="row" id="ft-links">
+
+                        <div class="col-lg-3 col-12">
+
+                            <div
+                                class="mb-3 pb-2 d-flex justify-content-between border-bottom border-bottom-lg-0 position-relative">
+                                <h4 class="">Sobre Nós</h4>
+                                <a class="d-block d-lg-none stretched-link text-body" title="collapse"
+                                    data-bs-toggle="collapse" href="#collapseAccounts" role="button"
+                                    aria-expanded="false" aria-controls="collapseAccounts">
+                                    <i data-feather="chevron-down"></i>
+                                </a>
+                            </div>
+                            <div class="collapse d-lg-block" id="collapseAccounts" data-bs-parent="#ft-links">
+                                <ul class="list-unstyled mb-0 py-3 py-lg-0">
+                                    <li class="mb-2">
+                                        <a href="blog/home" title="Blogue"
+                                            class="text-decoration-none text-reset">Blogue</a>
+                                    </li>
+                                    <li class="mb-2">
+                                        <a href="services" title="Serviços"
+                                            class="text-decoration-none text-reset">Serviços</a>
+                                    </li>
+                                    <li class="mb-2">
+                                        <a href="../about.html" title="Sobre"
+                                            class="text-decoration-none text-reset">Sobre</a>
+                                    </li>
+                                    <li class="mb-2">
+                                        <a href="about#mark" title="A nossa marca"
+                                            class="text-decoration-none text-reset">A
+                                            nossa marca</a>
+                                    </li>
+                                </ul>
+                            </div>
+
+                        </div>
+                        <div class="col-lg-3 col-12">
+                            <div
+                                class="mb-3 pb-2 d-flex justify-content-between border-bottom border-bottom-lg-0 position-relative">
+                                <h4 class="">Suporte</h4>
+                                <a class="d-block d-lg-none stretched-link text-body" title="collapse"
+                                    data-bs-toggle="collapse" href="#collapseResources" role="button"
+                                    aria-expanded="false" aria-controls="collapseResources">
+                                    <i data-feather="chevron-down"></i>
+                                </a>
+                            </div>
+                            <div class="collapse d-lg-block" id="collapseResources" data-bs-parent="#ft-links">
+                                <ul class="list-unstyled mb-0 py-3 py-lg-0">
+                                    <li class="mb-2">
+                                        <a title="Atendimento pelo facebook"
+                                            href="https://www.facebook.com/m.me/2007900989425052"
+                                            class="text-decoration-none text-reset">Atendimento</a>
+                                    </li>
+                                    <li class="mb-2">
+                                        <a title="Ajuda" href="../page/support/help"
+                                            class="text-decoration-none text-reset">Ajuda</a>
+                                    </li>
+                                    <li class="mb-2">
+                                        <a title="Contacto-nos" href="contact"
+                                            class="text-decoration-none text-reset">Contacta-nos</a>
+                                    </li>
+                                    <li class="mb-2">
+                                        <a title="Trabalhar connosco" href="blog/careers"
+                                            class="text-decoration-none text-reset">Trabalhar connosco</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-12">
+                            <div
+                                class="mb-3 pb-2 d-flex justify-content-between border-bottom border-bottom-lg-0 position-relative">
+                                <h4 class="">Localidades</h4>
+                                <a class="d-block d-lg-none stretched-link text-body" title="collapse"
+                                    data-bs-toggle="collapse" href="#collapseLocations" role="button"
+                                    aria-expanded="false" aria-controls="collapseLocations">
+                                    <i data-feather="chevron-down"></i>
+                                </a>
+                            </div>
+                            <div class="collapse d-lg-block" id="collapseLocations" data-bs-parent="#ft-links">
+                                <ul class="list-unstyled mb-0 py-3 py-lg-0">
+                                    <li class="mb-2">
+                                        <a title="Africa do Sul - Joanesburgo" href=""
+                                            class="text-decoration-none text-reset">Africa do
+                                            Sul - Joanesburgo</a>
+                                    </li>
+                                    <li class="mb-2">
+                                        <a title="Angola - Luanda" target="_blank" rel="external" href="#!"
+                                            class="text-decoration-none text-reset">Angola - Luanda</a>
+                                    </li>
+                                    <li class="mb-2">
+                                        <a title="Brasil - Rio Grande do Sul" href="./changelog"
+                                            class="text-decoration-none text-reset">Brasil - Rio
+                                            Grande do Sul</a>
+                                    </li>
+
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-12">
+                            <div
+                                class="mb-3 pb-2 d-flex justify-content-between border-bottom border-bottom-lg-0 position-relative">
+                                <h4 class="">Dados de Contacto</h4>
+                                <a class="d-block d-lg-none stretched-link text-body" title="collapse"
+                                    data-bs-toggle="collapse" href="#collapseContacto" role="button"
+                                    aria-expanded="false" aria-controls="collapseContacto">
+                                    <i data-feather="chevron-down"></i>
+                                </a>
+                            </div>
+                            <div class="collapse d-lg-block" id="collapseContacto" data-bs-parent="#ft-links">
+                                <ul class="list-unstyled mb-0 py-3 py-lg-0">
+
+                                    <li class="mb-2">
+                                        <a title="E-mail para pedidos"
+                                            href="mailto:wasomupfy@gmail.com?subject=Preciso fazer um pedido.&bcc=wasomupfy@yahoo.com&body=Olá equipa de Wasom Upfy, estou interessado em fazer um pedido ao Wasom Upfy."
+                                            class="text-decoration-none text-reset">wasomupfy.apoio@gmail.com</a>
+                                    </li>
+                                    <li class="mb-2">
+                                        <a title="E-mail para pedidos"
+                                            href="mailto:wasomupfy@yahoo.com?subject=Preciso fazer um pedido.&bcc=wasomupfy@gmail.com&body=Olá equipa de Wasom Upfy, estou interessado em fazer um pedido ao Wasom Upfy."
+                                            class="text-decoration-none text-reset">wasomupfy@yahoo.com</a>
+                                    </li>
+                                    <li class="mb-2">
+                                        <a href="#!" title="Horário do atendimento"
+                                            class="text-decoration-none text-reset">De Seg. à
+                                            Sex. das 10h
+                                            às 18h</a>
+                                    </li>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <hr class="divider divider-fade divider-dark">
+        <div class="container mt-4 pt-lg-3 pb-0">
+            <div class="row align-items-center">
+                <div class="col-md-12">
+                    <div class=" mb-5 mb-lg-0 text-lg-center rodape">
+                        All rights Reserved <br> <a title="Privacidades" class="link" target="_blank" rel="internal"
+                            href="../page/politicies/privacy.html">Privacidade</a> | <a title="Termos de Uso"
+                            class="link" target="_blank" rel="internal" href="../page/politicies/terms.html">Termos de
+                            Uso</a> | <a title="Cookies" class="link" href="../page/politicies/cookies.html"
+                            target="_blank" rel="internal">Cookies</a> | Designed by <a title="Criado" class="link"
+                            href="https://www.linkedin.com/company/voosoft/" target="_blank" rel="internal">VooSoft</a>
+                        <br />&copy; Copyright 2026 Wasom Upfy
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </footer>
+    <!-- Footer fim -->
+
+    <!-- Scroll top ~; ou voltar para cima-->
+    <div class="btn-scroll-top">
+        <svg class="progress-square svg-content" width="100%" height="100%" viewBox="0 0 40 40">
+            <path
+                d="M8 1H32C35.866 1 39 4.13401 39 8V32C39 35.866 35.866 39 32 39H8C4.13401 39 1 35.866 1 32V8C1 4.13401 4.13401 1 8 1Z" />
+        </svg>
+    </div>
+    <!-- Scroll top ~; ou voltar para cima fim-->
+    <!-- Mudar de do tema da so site-->
+    <div class="customizer_1">
+        <div class="position-absolute end-0 bottom-0 m-4 fixed">
+            <div class="dropdown">
+                <button class="btn btn-light rounded-circle d-flex align-items-center" type="button"
+                    aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-paint-bucket" viewBox="0 0 16 16">
+                        <path
+                            d="M6.192 2.78c-.458-.677-.927-1.248-1.35-1.643a2.972 2.972 0 0 0-.71-.515c-.217-.104-.56-.205-.882-.02-.367.213-.427.63-.43.896-.003.304.064.664.173 1.044.196.687.556 1.528 1.035 2.402L.752 8.22c-.277.277-.269.656-.218.918.055.283.187.593.36.903.348.627.92 1.361 1.626 2.068.707.707 1.441 1.278 2.068 1.626.31.173.62.305.903.36.262.05.64.059.918-.218l5.615-5.615c.118.257.092.512.05.939-.03.292-.068.665-.073 1.176v.123h.003a1 1 0 0 0 1.993 0H14v-.057a1.01 1.01 0 0 0-.004-.117c-.055-1.25-.7-2.738-1.86-3.494a4.322 4.322 0 0 0-.211-.434c-.349-.626-.92-1.36-1.627-2.067-.707-.707-1.441-1.279-2.068-1.627-.31-.172-.62-.304-.903-.36-.262-.05-.64-.058-.918.219l-.217.216zM4.16 1.867c.381.356.844.922 1.311 1.632l-.704.705c-.382-.727-.66-1.402-.813-1.938a3.283 3.283 0 0 1-.131-.673c.091.061.204.15.337.274zm.394 3.965c.54.852 1.107 1.567 1.607 2.033a.5.5 0 1 0 .682-.732c-.453-.422-1.017-1.136-1.564-2.027l1.088-1.088c.054.12.115.243.183.365.349.627.92 1.361 1.627 2.068.706.707 1.44 1.278 2.068 1.626.122.068.244.13.365.183l-4.861 4.862a.571.571 0 0 1-.068-.01c-.137-.027-.342-.104-.608-.252-.524-.292-1.186-.8-1.846-1.46-.66-.66-1.168-1.32-1.46-1.846-.147-.265-.225-.47-.251-.607a.573.573 0 0 1-.01-.068l3.048-3.047zm2.87-1.935a2.44 2.44 0 0 1-.241-.561c.135.033.324.11.562.241.524.292 1.186.8 1.846 1.46.45.45.83.901 1.118 1.31a3.497 3.497 0 0 0-1.066.091 11.27 11.27 0 0 1-.76-.694c-.66-.66-1.167-1.322-1.458-1.847z" />
+                    </svg>
+                    <span class="visually-hidden bs-theme-text">Tema do Site</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bs-theme-text">
+                    <li>
+                        <button type="button" class="dropdown-item d-flex align-items-center"
+                            data-bs-theme-value="light" aria-pressed="false">
+                            <i data-feather="sun"></i>
+                            <span class="ms-2">Claro</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark"
+                            aria-pressed="false">
+                            <i data-feather="moon"></i>
+                            <span class="ms-2">Escuro</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="dropdown-item d-flex align-items-center active"
+                            data-bs-theme-value="auto" aria-pressed="true">
+                            <i data-feather="circle"></i>
+                            <span class="ms-2">Auto</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- Mudar de do tema da so site fim-->
+
+    <!-- Libs JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Simplebar (Scrollbar customizado) -->
+    <script src="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.js"></script>
+    <!-- Headhesive (Sticky header) -->
+    <script src="https://cdn.jsdelivr.net/npm/headhesive@1.2.4/dist/headhesive.min.js"></script>
+    <!-- Theme JS -->
+    <script src="../js/theme.min.js"></script>
+    <!-- Color modes -->
+    <script src="../js/vendors/color-modes.js"></script>
+    <script src="../js/libs/scrollcue/scrollCue.min.js"></script>
+    <script src="../js/vendors/scrollcue.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/svg-injector@1.1.3/dist/svg-injector.min.js"></script>
+    <!-- Feather Icons -->
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.29.0/dist/feather.min.js"></script>
+    <!-- In View (Detectar elementos na viewport) -->
+    <script src="https://unpkg.com/in-view@0.6.1/dist/in-view.min.js"></script>
+    <!-- Sticky Kit (Elementos sticky) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js"></script>
+    <!-- ImagesLoaded -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/imagesloaded/5.0.0/imagesloaded.pkgd.min.js"></script>
+    <!-- Jarallax (Efeitos parallax) -->
+    <script src="https://cdn.jsdelivr.net/npm/jarallax@2.2.0/dist/jarallax.min.js"></script>
+    <script>
+        feather.replace({
+            width: "1em",
+            height: "1em"
+        })
+    </script>
+    <script>
+        ! function (e, t, a, n, g) {
+            e[n] = e[n] || [], e[n].push({
+                "gtm.start": (new Date).getTime(),
+                event: "gtm.js"
+            });
+            var m = t.getElementsByTagName(a)[0],
+                r = t.createElement(a);
+            r.async = !0, r.src = "https://www.googletagmanager.com/gtm.js?id=GTM-MF4DZVH", m.parentNode.insertBefore(r,
+                m)
+        }(window, document, "script", "dataLayer")
+    </script>
+</body>
+
+
+</html>

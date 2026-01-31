@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="author" content="Voosoft" />
+    <meta name="theme-color" content="#FF0089">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#FF0089">
+    <link rel="apple-touch-icon" href="../../../assets/img/icones/wasomupfy_fiv_512.png">
+    <link rel="apple-touch-startup-image" href="../../../assets/img/screenshots/splash.png">
+    <link rel="manifest" href="../../manifest.json">
+    <title>Nova Mensagem - Wasom Upfy</title>
+    <link rel="shortcut icon" href="../../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
+    <link rel="stylesheet" href="../../../css/libs/plugins.css">
+    <link rel="stylesheet" href="../../../css/libs/scrollue.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
+    <link rel="stylesheet" href="../../../css/lastest-style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <!-- Google Fonts - Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap5.min.css">
+    <!-- Flag Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
+    <style>
+        .compose-card {
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .recipient-tag {
+            background-color: var(--text-dark);
+            border-radius: 20px;
+            padding: 0.25rem 0.75rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            color: var(--text-light);
+        }
+
+        .recipient-tag button {
+            background: none;
+            border: none;
+            color: #6c757d;
+            margin-left: 0.5rem;
+            cursor: pointer;
+        }
+
+        .editor-toolbar {
+            border-top: 1px solid #dee2e6;
+            border-bottom: 1px solid #dee2e6;
+            padding: 0.5rem;
+            color: var(--text-light);
+        }
+
+        .editor-content {
+            min-height: 300px;
+            padding: 1rem;
+            outline: none;
+        }
+
+        .attachment-preview {
+            border: 1px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem;
+            background-color: var(--text-dark);
+            border-radius: 5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .quick-templates {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .template-item {
+            padding: 0.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .template-item:hover {
+            background-color: var(--text-dark);
+            color: var(--text-light);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <!-- Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="d-flex align-items-center">
+                    <img src="../../../assets/img/brand/wasomupfy_brand.png" alt="Logo Wasom Upfy"
+                        class="rounded-circle me-2" style="height: 40px;">
+                    <span class="brand-text">Wasom Upfy</span>
+                </div>
+                <i class="bi bi-chevron-left toggle-icon" id="sidebarCollapse" title="Colapsar/Expandir Menu"
+                    aria-label="Colapsar/Expandir Menu"></i>
+            </div>
+            <ul class="nav flex-column mt-3">
+                <li class="nav-item">
+                    <a href="../../home.html" class="nav-link">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Painel de Controle</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#collapseAnalytics" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseAnalytics">
+                        <i class="bi bi-graph-up"></i>
+                        <span>Estatísticas e Análises</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseAnalytics">
+                        <a href="../analytics/home.html" class="nav-link">
+                            <i class="bi bi-bar-chart-line"></i>
+                            <span>Visão Geral</span>
+                        </a>
+                        <a href="../analytics/artists.html" class="nav-link">
+                            <i class="bi bi-person-lines-fill"></i>
+                            <span>Desempenho por Artista</span>
+                        </a>
+                        <a href="../analytics/stores.html" class="nav-link">
+                            <i class="bi bi-shop"></i>
+                            <span>Desempenho por Loja Digital</span>
+                        </a>
+                        <a href="../analytics/reports.html" class="nav-link">
+                            <i class="bi bi-file-earmark-bar-graph"></i>
+                            <span>Relatórios Personalizados</span>
+                        </a>
+                    </div>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#collapseAdmins" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseAdmins">
+                        <i class="bi bi-person-gear"></i>
+                        <span>Gestão de Admins</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseAdmins">
+                        <a href="../employees/all-employees.html" class="nav-link">
+                            <i class="bi bi-people"></i>
+                            <span>Listar Admins</span>
+                        </a>
+                        <a href="../employees/add.html" class="nav-link">
+                            <i class="bi bi-person-plus"></i>
+                            <span>Adicionar</span>
+                        </a>
+                        <a href="../employees/edit.html" class="nav-link">
+                            <i class="bi bi-person-gear"></i>
+                            <span>Editar</span>
+                        </a>
+                        <a href="../employees/delete.html" class="nav-link">
+                            <i class="bi bi-person-x"></i>
+                            <span>Excluir</span>
+                        </a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="#collapseUsers" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseUsers">
+                        <i class="bi bi-person-gear"></i>
+                        <span>Gestão de Usuários</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseUsers">
+                        <a href="../users/all-users.html" class="nav-link">
+                            <i class="bi bi-people"></i>
+                            <span>Todos Usuários</span>
+                        </a>
+                        <a href="../users/add.html" class="nav-link">
+                            <i class="bi bi-person-plus"></i>
+                            <span>Adicionar</span>
+                        </a>
+                        <a href="../users/edit.html" class="nav-link">
+                            <i class="bi bi-person-gear"></i>
+                            <span>Editar</span>
+                        </a>
+                        <a href="../users/delete.html" class="nav-link">
+                            <i class="bi bi-person-x"></i>
+                            <span>Excluir</span>
+                        </a>
+                        <a href="../users/available-account.html" class="nav-link">
+                            <i class="bi bi-person-check"></i>
+                            <span>Contas Disponíveis</span>
+                        </a>
+                        <a href="../users/unavailable-account.html" class="nav-link">
+                            <i class="bi bi-person-exclamation"></i>
+                            <span>Contas Indisponíveis</span>
+                        </a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="#collapseSongs" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseSongs">
+                        <i class="bi bi-music-note-list"></i>
+                        <span>Gestão de Músicas</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseSongs">
+                        <a href="../music/revise.html" class="nav-link">
+                            <i class="bi bi-eye"></i>
+                            <span>Revisar Envios</span>
+                        </a>
+                        <a href="../music/approve.html" class="nav-link">
+                            <i class="bi bi-check-circle"></i>
+                            <span>Aprovar</span>
+                        </a>
+                        <a href="../music/reject.html" class="nav-link">
+                            <i class="bi bi-x-circle"></i>
+                            <span>Rejeitar</span>
+                        </a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="../artist/accounts-users.html" class="nav-link">
+                        <i class="bi bi-person-check"></i>
+                        <span>Contas e Usuários</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../artist/collaborators-artist.html" class="nav-link">
+                        <i class="bi bi-people"></i>
+                        <span>Artistas e Colaboradores</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#collapseDistribution" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseDistribution">
+                        <i class="bi bi-globe"></i>
+                        <span>Distribuição</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseDistribution">
+                        <a href="../distribution/releases.html" class="nav-link">
+                            <i class="bi bi-rocket-takeoff"></i>
+                            <span>Lançamentos</span>
+                        </a>
+                        <a href="../distribution/store.html" class="nav-link">
+                            <i class="bi bi-shop"></i>
+                            <span>Lojas Digitais</span>
+                        </a>
+                        <a href="../distribution/schedule.html" class="nav-link">
+                            <i class="bi bi-calendar-event"></i>
+                            <span>Agendar Lançamento</span>
+                        </a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="../manager/gestion.html" class="nav-link">
+                        <i class="bi bi-star"></i>
+                        <span>Gestão Geral</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../finances/payments.html" class="nav-link">
+                        <i class="bi bi-wallet2"></i>
+                        <span>Pagamentos</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../finances/earnings.html" class="nav-link">
+                        <i class="bi bi-currency-dollar"></i>
+                        <span>Finanças e Rendimentos</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#collapseIntegration" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseIntegration">
+                        <i class="bi bi-youtube"></i>
+                        <span>Unificação e V. Youtube</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseIntegration">
+                        <a href="../integration/youtube.html" class="nav-link">
+                            <i class="bi bi-gear"></i>
+                            <span>Configurar Integração</span>
+                        </a>
+                        <a href="../integration/verify.html" class="nav-link">
+                            <i class="bi bi-check2-all"></i>
+                            <span>Verificar Canais</span>
+                        </a>
+                        <a href="../integration/monetization.html" class="nav-link">
+                            <i class="bi bi-youtube"></i>
+                            <span>Gerenciamento de Conteúdo Monetizado</span>
+                        </a>
+                    </div>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#collapseSupport" class="nav-link active" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseSupport">
+                        <i class="bi bi-headset"></i>
+                        <span>Suporte</span>
+                        <span class="badge bg-danger badge-notification">3</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseSupport">
+                        <a href="../messages/inbox.html" class="nav-link active">
+                            <i class="bi bi-envelope"></i>
+                            <span>Caixa de entrada</span>
+                        </a>
+                        <a href="../messages/compose.html" class="nav-link">
+                            <i class="bi bi-pencil"></i>
+                            <span>Enviar mensagens</span>
+                        </a>
+                    </div>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#collapseHelp" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseHelp">
+                        <i class="bi bi-question-circle"></i>
+                        <span>Ajuda</span>
+                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <div class="collapse" id="collapseHelp">
+                        <a href="../help/faqs.html" class="nav-link">
+                            <i class="bi bi-messenger"></i>
+                            <span>FAQs</span>
+                        </a>
+                        <a href="../help/tutorials.html" class="nav-link">
+                            <i class="bi bi-book"></i>
+                            <span>Tutoriais</span>
+                        </a>
+                        <a href="../help/contact.html" class="nav-link">
+                            <i class="bi bi-telephone"></i>
+                            <span>Contacto com suporte</span>
+                        </a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="../settings/config.html" class="nav-link">
+                        <i class="bi bi-sliders"></i>
+                        <span>Configurações</span>
+                    </a>
+                </li>
+                <li class="nav-item mt-4">
+                    <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#logoutwasomupfy">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+                <li class="nav-item mt-4">
+                    <a href="http://localhost:5500/home.html" target="_blank" class="nav-link">
+                        <i class="bi bi-box-arrow-in-up-right"></i>
+                        <span>Visitar Site</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="content w-100" id="mainContent">
+            <nav class="navbar navbar-expand-lg">
+                <button class="navbar-toggler" type="button" id="sidebarToggle" aria-label="Abrir/Fechar Menu">
+                    <i class="bi bi-list text-white"></i>
+                </button>
+                <div class="ms-auto d-flex align-items-center">
+                    <button class="btn btn-outline-light btn-sm me-2" onclick="toggleDarkMode()"
+                        aria-label="Alternar Modo Escuro">
+                        <i class="bi bi-moon"></i>
+                    </button>
+                    <div class="dropdown me-2 position-relative">
+                        <button class="btn btn-outline-light btn-sm position-relative" type="button"
+                            data-bs-toggle="dropdown" aria-label="Notificações">
+                            <i class="bi bi-bell"></i>
+                            <span
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">5</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-start p-0" style="min-width: 250px;">
+                            <li class="dropdown-header bg-dark text-white p-2">Notificações (5)</li>
+                            <li><a class="dropdown-item p-2" href="#">Novo artista registrado</a></li>
+                            <li><a class="dropdown-item p-2" href="#">Música atingiu 1000 plays</a></li>
+                            <li><a class="dropdown-item p-2" href="#">Atualização do sistema disponível</a></li>
+                            <li class="dropdown-footer text-center p-2"><a href="#" class="text-primary">Ver todas</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="dropdown me-2 position-relative">
+                        <button class="btn btn-outline-light btn-sm position-relative" type="button"
+                            data-bs-toggle="dropdown" aria-label="Mensagens">
+                            <i class="bi bi-envelope"></i>
+                            <span
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">2</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-start p-0" style="min-width: 250px;">
+                            <li class="dropdown-header bg-dark text-white p-2">Mensagens (2)</li>
+                            <li><a class="dropdown-item p-2" href="#">Suporte #4521 - Novo ticket</a></li>
+                            <li><a class="dropdown-item p-2" href="#">Mensagem de artista</a></li>
+                            <li class="dropdown-footer text-center p-2"><a href="#" class="text-primary">Ver todas</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center"
+                            type="button" data-bs-toggle="dropdown" aria-label="Menu do Usuário">
+                            <img src="../../../assets/img/avatar/avatar.png" alt="Usuário" class="rounded-circle me-1"
+                                style="height: 24px;">
+                            <span>Cristiano Amadeu</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="../user/profile.html"><i
+                                        class="bi bi-person me-2"></i>Perfil</a></li>
+                            <li><a class="dropdown-item" href="../settings/config.html"><i
+                                        class="bi bi-sliders me-2"></i>Configurações</a></li>
+                            <li><a class="dropdown-item" href="../help/help.html"><i
+                                        class="bi bi-question-circle me-2"></i>Ajuda</a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutwasomupfy"
+                                    href="#"><i class="bi bi-box-arrow-right me-2"></i>Sair</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Adicione isso dentro da tag <nav class="bottom-nav"> -->
+            <div class="connection-status" id="connectionStatus"></div>
+            <div class="status-notification" id="statusNotification"></div>
+
+            <!-- Modal logout -->
+            <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false"
+                tabindex="-1" aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content modal-bottom">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">Terminar sessão</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container">
+                                <div class="row justify-content-center text-center">
+                                    <div class="col-md-12 content-center justify-center text-center">
+                                        <p class="text-center text-dark">@josembengadacosta você tem
+                                            certeza
+                                            de que desejas terminar
+                                            sessão?</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <div>
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Não,
+                                    continuar</button>
+                            </div>
+                            <div>
+                                <button class="btn btn-danger" type="button" name="logout_wasomupfy"
+                                    onclick="logout_wasomupfy()">Sim, terminar</button>
+                            </div>
+                            <script type="text/javascript">
+                                function logout_wasomupfy() {
+                                    window.location = 'logout';
+                                }
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal logout fim -->
+
+            <div class="container-fluid py-0">
+                <div class="row mb-3 mt-2">
+                    <div class="welcome-text col-auto d-sm-block">
+                        <h2 class="mb-3"><i class="bi bi-pencil me-2"></i> Nova Mensagem</h2>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb mb-0">
+                                <li class="breadcrumb-item"><a href="../../home.html"
+                                        class="text-secondary">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="inbox.html" class="text-secondary">Caixa de
+                                        Entrada</a></li>
+                                <li class="breadcrumb-item active text-white-stable" aria-current="page">Nova Mensagem
+                                </li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <div class="col-auto ms-auto text-end mt-n1 mt-3 mb-2">
+                        <div class="d-flex gap-2">
+                            <a href="inbox.html" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-1"></i> Cancelar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        <div class="card compose-card">
+                            <div class="card-body">
+                                <form id="composeForm">
+                                    <div class="mb-3">
+                                        <label for="toRecipients" class="form-label">Para *</label>
+                                        <div id="recipientsContainer" class="mb-2">
+                                            <!-- Tags de destinatários serão adicionadas aqui -->
+                                        </div>
+                                        <input type="text" class="form-control" id="toRecipients"
+                                            placeholder="Digite e-mails separados por vírgula ou selecione da lista">
+                                        <small class="text-muted">Pressione Enter ou Tab para adicionar</small>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="ccRecipients" class="form-label">CC</label>
+                                            <input type="text" class="form-control" id="ccRecipients"
+                                                placeholder="Cópia para">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="bccRecipients" class="form-label">BCC</label>
+                                            <input type="text" class="form-control" id="bccRecipients"
+                                                placeholder="Cópia oculta para">
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="emailSubject" class="form-label">Assunto *</label>
+                                        <input type="text" class="form-control" id="emailSubject"
+                                            placeholder="Assunto da mensagem" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Mensagem *</label>
+                                        <div class="editor-toolbar">
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <button type="button" class="btn btn-outline-secondary"
+                                                    onclick="formatText('bold')">
+                                                    <i class="bi bi-type-bold"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-outline-secondary"
+                                                    onclick="formatText('italic')">
+                                                    <i class="bi bi-type-italic"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-outline-secondary"
+                                                    onclick="formatText('underline')">
+                                                    <i class="bi bi-type-underline"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-outline-secondary"
+                                                    onclick="formatText('bullet')">
+                                                    <i class="bi bi-list-ul"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-outline-secondary"
+                                                    onclick="formatText('number')">
+                                                    <i class="bi bi-list-ol"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-outline-secondary"
+                                                    onclick="insertLink()">
+                                                    <i class="bi bi-link"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-outline-secondary"
+                                                    onclick="insertImage()">
+                                                    <i class="bi bi-image"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="editor-content" id="emailMessage" contenteditable="true"
+                                            placeholder="Digite sua mensagem aqui..."></div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="emailAttachments" class="form-label">Anexos</label>
+                                        <input type="file" class="form-control" id="emailAttachments" multiple>
+                                        <small class="text-muted">Arraste arquivos aqui ou clique para selecionar (máx.
+                                            25MB total)</small>
+
+                                        <div id="attachmentsPreview" class="attachment-preview" style="display: none;">
+                                            <h6 class="mb-2">Arquivos anexados:</h6>
+                                            <div id="attachmentsList"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="quick-templates">
+                                        <h6 class="mb-2"><i class="bi bi-stars me-2"></i> Modelos Rápidos</h6>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="template-item" onclick="loadTemplate('greeting')">
+                                                    <h6 class="mb-1">Saudação</h6>
+                                                    <p class="text-muted small mb-0">Modelo formal de abertura</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="template-item" onclick="loadTemplate('followup')">
+                                                    <h6 class="mb-1">Acompanhamento</h6>
+                                                    <p class="text-muted small mb-0">Para seguir up de tickets</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="template-item" onclick="loadTemplate('support')">
+                                                    <h6 class="mb-1">Resposta de Suporte</h6>
+                                                    <p class="text-muted small mb-0">Resposta padrão de suporte</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between mt-4">
+                                        <div>
+                                            <button type="button" class="btn btn-outline-secondary"
+                                                onclick="saveDraft()">
+                                                <i class="bi bi-save me-1"></i> Salvar Rascunho
+                                            </button>
+                                            <button type="button" class="btn btn-outline-primary ms-2"
+                                                onclick="previewEmail()">
+                                                <i class="bi bi-eye me-1"></i> Visualizar
+                                            </button>
+                                        </div>
+                                        <div>
+                                            <button type="button" class="btn btn-secondary" onclick="scheduleEmail()">
+                                                <i class="bi bi-clock me-1"></i> Agendar
+                                            </button>
+                                            <button type="submit" class="btn btn-primary ms-2">
+                                                <i class="bi bi-send me-1"></i> Enviar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Dicas de Envio -->
+                        <div class="card mt-3">
+                            <div class="card-body">
+                                <h6><i class="bi bi-lightbulb me-2"></i> Dicas para uma boa mensagem:</h6>
+                                <ul class="mb-0">
+                                    <li>Use um assunto claro e objetivo</li>
+                                    <li>Seja direto no primeiro parágrafo</li>
+                                    <li>Use listas para itens importantes</li>
+                                    <li>Revise antes de enviar</li>
+                                    <li>Adicione anexos relevantes</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Visualizar Email -->
+    <div class="modal fade" id="previewModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Pré-visualização do Email</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="previewContent">
+                    <!-- Conteúdo da pré-visualização -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" onclick="sendEmail()">
+                        <i class="bi bi-send me-1"></i> Enviar Agora
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p class="mb-2">© 2026 Wasom Upfy. Todos os direitos reservados.</p>
+                    <a href="#" class="me-2">Termos de Uso</a>
+                    <a href="#" class="me-2">Privacidade</a>
+                    <a href="#">Suporte</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bottom Navigation -->
+    <!-- <nav class="bottom-nav">
+    <ul>
+        <li>
+            <a href="home.html" class="active">
+                <i class="bi bi-speedometer2"></i>
+                <span>Dashboard</span>
+            </a>
+        </li>
+        <li>
+            <a href="pages/music/approve.html">
+                <i class="bi bi-music-note-list"></i>
+                <span>Músicas</span>
+            </a>
+        </li>
+        <li>
+            <a href="pages/users/all-users.html">
+                <i class="bi bi-people"></i>
+                <span>Usuários</span>
+            </a>
+        </li>
+        <li>
+            <a href="pages/finances/earnings.html">
+                <i class="bi bi-currency-dollar"></i>
+                <span>Finanças</span>
+            </a>
+        </li>
+        <li>
+            <a href="pages/settings/config.html">
+                <i class="bi bi-sliders"></i>
+                <span>Config</span>
+            </a>
+        </li>
+    </ul>
+</nav> -->
+
+
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-content">
+            <!-- Sua imagem pulsante -->
+            <img src="../../../assets/img/brand/wasomupfy_brand.png" class="loader-image" alt="Carregando">
+            <!-- Barra de progresso agora perfeitamente centralizada -->
+            <div class="loader-progress"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../../../js/lastest.js"></script>
+    <script src="js/compose.js"></script>
+</body>
+
+</html>

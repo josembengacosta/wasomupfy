@@ -1,0 +1,342 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+    /* Container do card */
+    .music-card {
+        position: relative;
+        max-width: 400px;
+        margin: 20px auto;
+        background: #2a2a2a;
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        transition: transform 0.3s ease;
+    }
+
+    .music-card:hover {
+        transform: translateY(-5px);
+    }
+
+    /* Capa do álbum */
+    .album-cover {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .album-cover img {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+        border-bottom: 3px solid #ff0089;
+        transition: transform 0.3s ease;
+    }
+
+    /* Overlay de hover */
+    .album-cover::after {
+        content: '\f144';
+        /* Ícone de play do Font Awesome */
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #fff;
+        font-size: 3rem;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .album-cover::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 0, 8, 0.5);
+        /* Overlay com #ff0089 */
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 1;
+    }
+
+    .album-cover:hover::before,
+    .album-cover:hover::after {
+        opacity: 1;
+    }
+
+    .album-cover:hover img {
+        transform: scale(1.05);
+        /* Zoom sutil */
+    }
+
+    /* Informações do álbum */
+    .album-info {
+        padding: 20px;
+    }
+
+    .album-info h2 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: #fff;
+    }
+
+    .album-info h4 {
+        font-size: 1.2rem;
+        font-weight: 400;
+        color: #adb5bd;
+        margin-bottom: 15px;
+    }
+
+    .album-info p {
+        font-size: 0.9rem;
+        color: #ced4da;
+        margin-bottom: 5px;
+    }
+
+    /* Links de streaming */
+    .streaming-links {
+        margin-top: 10px;
+    }
+
+    .streaming-links a {
+        color: #ff0089;
+        font-size: 1.2rem;
+        margin-right: 10px;
+        transition: color 0.3s ease;
+    }
+
+    .streaming-links a:hover {
+        color: #cc0006;
+    }
+
+    /* Botão de play */
+    .play-button {
+        display: inline-block;
+        margin-top: 15px;
+        padding: 10px 20px;
+        background: #ff0089;
+        color: #fff;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: background 0.3s ease;
+    }
+
+    .play-button:hover {
+        background: #e04385;
+    }
+
+    /* Paginação */
+    .pagination {
+        justify-content: center;
+        margin-top: 30px;
+    }
+
+    .page-link {
+        background: #3a3a3a;
+        border: none;
+        color: #fff;
+        transition: background 0.3s ease;
+    }
+
+    .page-link:hover {
+        background: #E04385;
+        color: #fff;
+    }
+
+    .page-item.active .page-link {
+        background: #ff0089;
+        border-color: #ff0089;
+    }
+
+    .page-item.disabled .page-link {
+        background: #3a3a3a;
+        color: #6c757d;
+    }
+
+    @keyframes fadeInCard {
+        to { opacity: 1; }
+    }
+
+    /* Estilo do ribbon */
+    .ribbon {
+        position: absolute;
+        top: 20px;
+        right: -50px;
+        width: 180px;
+        padding: 8px 0;
+        text-align: center;
+        font-family: 'Poppins', sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transform: rotate(45deg);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        z-index: 2;
+        color: #fff;
+    }
+
+    /* Animação para Pendente */
+    .ribbon-pending,
+    .ribbon-draft {
+        animation: fadeInRibbon 0.8s ease-in-out, pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: rotate(45deg) scale(1);
+        }
+
+        50% {
+            transform: rotate(45deg) scale(1.05);
+        }
+
+        100% {
+            transform: rotate(45deg) scale(1);
+        }
+    }
+
+    /* Dobras do ribbon */
+    .ribbon::before,
+    .ribbon::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        border: 6px solid transparent;
+    }
+
+    .ribbon::before {
+        left: -6px;
+        border-top-color: inherit;
+        border-left-color: inherit;
+    }
+
+    .ribbon::after {
+        right: -6px;
+        border-top-color: inherit;
+        border-right-color: inherit;
+    }
+
+    /* Animação do ribbon */
+    @keyframes fadeInRibbon {
+        0% {
+            opacity: 0;
+            transform: rotate(45deg) translateY(-20px);
+        }
+
+        100% {
+            opacity: 1;
+            transform: rotate(45deg) translateY(0);
+        }
+    }
+
+    /* Variantes de status */
+    .ribbon-approved {
+        background: linear-gradient(45deg, #198754, #51cf66);
+    }
+
+    .ribbon-approved::before,
+    .ribbon-approved::after {
+        border-top-color: #146c43;
+        border-left-color: #146c43;
+        border-right-color: #146c43;
+    }
+
+    .ribbon-rejected {
+        background: linear-gradient(45deg, #cc0006, #ff4d4d);
+    }
+
+    .ribbon-rejected::before,
+    .ribbon-rejected::after {
+        border-top-color: #cc0006;
+        border-left-color: #cc0006;
+        border-right-color: #cc0006;
+    }
+
+    .ribbon-pending {
+        background: linear-gradient(45deg, #ffc107, #ffd43b);
+        color: #212529;
+    }
+
+    .ribbon-pending::before,
+    .ribbon-pending::after {
+        border-top-color: #cc9a06;
+        border-left-color: #cc9a06;
+        border-right-color: #cc9a06;
+    }
+
+    .ribbon-draft {
+        background: linear-gradient(45deg, #6c757d, #adb5bd);
+    }
+
+    .ribbon-draft::before,
+    .ribbon-draft::after {
+        border-top-color: #5a6268;
+        border-left-color: #5a6268;
+        border-right-color: #5a6268;
+    }
+
+
+    /* Responsividade */
+    @media (max-width: 400px) {
+        .music-card {
+            max-width: 100%;
+        }
+
+        .album-cover img {
+            height: 200px;
+        }
+
+        .album-info h2 {
+            font-size: 1.5rem;
+        }
+
+        .album-info h4 {
+            font-size: 1rem;
+        }
+
+        .ribbon {
+            width: 140px;
+            font-size: 12px;
+            right: -40px;
+        }
+    }
+
+    /* Ajustes específicos para elementos de formulário */
+.dark-mode ::placeholder {
+  color: #6c757d !important;
+  opacity: 1;
+}
+
+.dark-mode :-ms-input-placeholder {
+  color: #6c757d !important;
+}
+
+.dark-mode ::-ms-input-placeholder {
+  color: #6c757d !important;
+}
+
+/* Ajustes para elementos de terceiros */
+.dark-mode .leaflet-container {
+  background: var(--darker-bg) !important;
+}
+
+.dark-mode .leaflet-popup-content-wrapper,
+.dark-mode .leaflet-popup-tip {
+  background: var(--darker-bg) !important;
+  color: var(--text-light) !important;
+}
+
+.dark-mode .leaflet-control-attribution {
+  background: rgba(0, 0, 0, 0.7) !important;
+  color: var(--text-light) !important;
+}
+
+/* Ajustes para gráficos */
+.dark-mode .chartjs-render-monitor {
+  filter: brightness(0.8);
+}
