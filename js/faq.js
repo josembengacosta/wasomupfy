@@ -38,7 +38,7 @@ const translations = {
     watch_video: "Ver Vídeo",
     tutorial_modal_title: "Tutorial Wasom Upfy",
     close: "Fechar",
-    footer_version: "Versão 2.0 (2025)",
+    footer_version: "Versão 2.1 (2026)",
     nav_dashboard: "Dashboard",
     nav_releases: "Lançamentos",
     nav_stats: "Estatísticas",

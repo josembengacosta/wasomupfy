@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="author" content="Voosoft" />
     <meta name="keywords" content="Wasom Upfy, Wasom, Upfy, Plano, Plan Parceiro, Parceiro, Plano Label
-    <meta name="robots" content="follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large" />
+    <meta name=" robots" content="follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large" />
     <meta name="theme-color" content="#FF009D">
     <meta property="og:locale" content="pt_AO" />
     <meta property="og:type" content="website" />
@@ -41,7 +41,188 @@
     <link rel="stylesheet" href="../css/theme.min.css">
     <link rel="stylesheet" href="../js/libs/scrollcue/scrollCue.css" />
     <link rel="stylesheet" href="../css/framework.css">
+    <link rel="stylesheet" href="../css/main.css">
 </head>
+<style>
+    :root {
+        --wasom-primary: #FF0089;
+        --wasom-secondary: #e04385;
+        --wasom-gradient: linear-gradient(135deg, var(--wasom-primary), var(--wasom-secondary));
+        --wasom-light: #fff0f7;
+
+    }
+
+    .bg-wasom-gradient {
+        background: var(--wasom-gradient) !important;
+    }
+
+    .bg-wasom-light {
+        background-color: var(--wasom-light) !important;
+    }
+
+    .text-wasom {
+        color: var(--wasom-primary) !important;
+    }
+
+    .border-wasom {
+        border-color: var(--wasom-primary) !important;
+    }
+
+    .btn-outline-wasom {
+        border: 2px solid var(--wasom-primary);
+        color: var(--wasom-primary);
+        background: transparent;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-wasom:hover {
+        background: var(--wasom-primary);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .hover-lift {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .price-amount {
+        background: var(--wasom-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .progress-bar.bg-wasom-gradient {
+        background: var(--wasom-gradient) !important;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    [data-cue] {
+        opacity: 0;
+    }
+
+    [data-cue].animated {
+        animation: fadeInUp 0.6s ease forwards;
+    }
+
+    /* Hero Section */
+    .pricing-label-hero {
+          min-height: 70vh;
+        display: flex;
+        align-items: center;
+        padding: 6rem 0;
+    }
+
+    .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.4));
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    /* Stats Banner */
+    .stat-item {
+        padding: 1rem 0;
+    }
+
+    /* Card de Plano */
+    .pricing-card-main {
+        border-radius: 20px;
+        overflow: hidden;
+        border: none;
+    }
+
+    /* Dashboard Preview */
+    .dashboard-preview {
+        background: linear-gradient(135deg, #1a1a1a, #333333);
+        color: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        border: 2px solid var(--wasom-primary);
+    }
+
+    /* Artistas Grid */
+    .artists-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    .artist-item {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 10px;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .artist-item:hover {
+        background: var(--wasom-light);
+        transform: scale(1.05);
+    }
+
+    /* Economia Comparação */
+    .economy-box {
+        border: 2px dashed var(--wasom-primary);
+        border-radius: 15px;
+        padding: 1.5rem;
+        background: var(--wasom-light);
+    }
+
+    /* Painel Label */
+    .label-panel {
+        background: linear-gradient(135deg, #0a0a0a, #2a2a2a);
+        color: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    @media (max-width: 768px) {
+        .pricing-label-hero {
+            min-height: 50vh;
+            padding: 3rem 0;
+        }
+
+        .display-3 {
+            font-size: 2.5rem;
+        }
+
+        .display-5 {
+            font-size: 2rem;
+        }
+
+        .artists-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>
 
 <body>
 
@@ -89,11 +270,11 @@
 
                                     <a title="Single" class="dropdown-item mb-3 text-body" href="single.html">
                                         <div class="d-flex align-items-center">
-                                            <img src="../assets/img/icones/plan_single.png" class="svg-inject" width="35"
-                                                height="30" alt="Single">
+                                            <img src="../assets/img/icones/plan_single.png" class="svg-inject"
+                                                width="35" height="30" alt="Single">
                                             <div class="ms-3 lh-1">
                                                 <h5 class="mb-1">Single</h5>
-                                                <p class="mb-0 fs-6">Nosso plano Single - 1.150 Kz</p>
+                                                <p class="mb-0 fs-6">Nosso plano Single - 2.000 Kz</p>
                                             </div>
                                         </div>
                                     </a>
@@ -121,8 +302,8 @@
                                     </a>
                                     <a title="Label" class="dropdown-item mb-3 text-body" href="label.html">
                                         <div class="d-flex align-items-center">
-                                            <img src="../assets/img/icones/plan_label.png" class="svg-inject"
-                                                width="32" height="32" alt="Label">
+                                            <img src="../assets/img/icones/plan_label.png" class="svg-inject" width="32"
+                                                height="32" alt="Label">
                                             <div class="ms-3 lh-1">
                                                 <h5 class="mb-1">Label</h5>
                                                 <p class="mb-0 fs-6">Nosso plano Label - 70.000 Kz/2ano</p>
@@ -237,8 +418,8 @@
                                             mensagem</a>
                                     </li>
                                     <li><a title="E-mail" class="dropdown-item"
-                                            href="mailto:wasomupfy@gmail.com?subject=Entrando em contacto com equipa de Wasom Upfy.&bcc=wasomupfy@yahoo.com&body=Olá equipa de Wasom Upfy.">
-                                            wasomupfy@gmail.com</a>
+                                            href="mailto:info@wasomupfy.com?subject=Entrando em contacto com equipa de Wasom Upfy.&bcc=suporte@wasomupfy.com&body=Olá equipa de Wasom Upfy.">
+                                            info@wasomupfy.com</a>
                                     </li>
                                     <li><a title="WhatsApp" class="dropdown-item"
                                             href="https://api.whatsapp.com/send/?phone=244922030116&text&type=phone_number&app_absent=0">
@@ -264,148 +445,598 @@
     <!--Seccão do site inteira até ao perto do footer  -->
     <main>
 
-        <!-- A área de recursos  -->
-        <section class="jarallax" data-jarallax data-speed="0.4" data-cue="fadeIn">
-            <img class="jarallax-img" src="../assets/img/theme/plan_label.png" alt="Plano Label Wasom Upfy" />
-            <div class="container">
-                <div class="row">
-                    <div class="col-xl-4 col-md-7 mb-4 mt-7" data-cue="fadeIn">
-                        <small class="text-uppercase ls-md fw-semibold">Plano Label</small>
-                        <h2 class="h1 mb-4 mt-4 text-uppercase text-white-stable">Plano para ...</h2>
-                        <p class="mb-0 text-white-stable">Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                            Quibusdam
-                            fugiat consequatur quisquam consectetur</p>
+        <!-- Hero Section -->
+        <section class="pricing-label-hero jarallax position-relative overflow-hidden py-8" data-jarallax
+            data-speed="0.4">
+            <img class="jarallax-img" src="../assets/img/theme/plan_label.png" alt="Plano Label Wasom Upfy"
+                loading="lazy">
+            <div class="hero-overlay"></div>
+            <div class="container position-relative z-index-2 py-6">
+                <div class="row justify-content-center text-center">
+                    <div class="col-xl-8 col-lg-10" data-cue="fadeIn">
+                        <nav aria-label="breadcrumb" class="d-flex justify-content-center mb-3">
+                            <ol class="breadcrumb bg-dark bg-opacity-50 rounded-pill px-3 py-2">
+                                <li class="breadcrumb-item"><a href="../index.html" class="text-white">Home</a></li>
+                                <li class="breadcrumb-item"><a href="all-plans.html" class="text-white">Planos</a></li>
+                                <li class="breadcrumb-item active text-white" aria-current="page">Plano Label</li>
+                            </ol>
+                        </nav>
+                        <span class="badge bg-wasom-gradient text-white-stable fw-semibold px-4 py-2 mb-3">Perfeito para gravadoras</span>
+                        <h1 class="display-4 mb-4 text-white-stable fw-bold">Plano Label</h1>
+                        <p class="lead text-white-stable mb-4 opacity-90">Gerencie até 10 artistas por apenas 70.000Kz/ano</p>
+                        <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
+                            <span class="badge bg-white text-dark px-3 py-2">
+                                <i class="badge bg-white text-dark px-3 py-2"></i> 10 Artistas
+                            </span>
+                            <span class="badge bg-white text-dark px-3 py-2">
+                                <i class="bi bi-percent text-success me-1"></i> 90% Royalties
+                            </span>
+                            <span class="badge bg-white text-dark px-3 py-2">
+                                <i class="bi bi-cash-stack text-success me-1"></i> Economia Máxima
+                            </span>
+                        </div>
+                        <a href="#details" class="btn btn-wasomupfy btn-lg mt-2">
+                            Ver Dashboard <i class="bi bi-arrow-down ms-2"></i>
+                        </a>
                     </div>
                 </div>
             </div>
         </section>
-        <div class="divider-fade"></div>
-        <!-- Sessão para detalhes de recursos -->
-        <section class="my-xl-4 py-5 bg-ligth-100">
-            <div class="container mb-xl-3" data-cue="fadeIn">
-                <div class="row g-4" data-cue="fadeIn">
-                    <div class="col-lg-6 col-md-6 col-12 m-auto" data-cue="zoomIn">
-                        <!--card-->
-                        <div class="card bg-gray-200 border-0 p-2 mb-5 mb-xl-0">
-                            <div class="card-body bg-white shadow rounded-2">
-                                <div class="mb-5">
-                                    <h3 class="h6 mb-3">Album</h3>
-                                    <h2 class="d-flex align-items-center">
-                                        <span class="text-dark">$4.500Kzpan>
-                                        <!-- <del class="text-body-tertiary ms-1">$129</del> -->
-                                    </h2>
-                                </div>
-                                <div class="mb-5">
-                                    <span class="small">Royalties 90%</span>
-                                    <div class="progress mt-2" role="progressbar" aria-label="Basic example"
-                                        aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="height: 8px">
-                                        <div class="progress-bar bg-pink bg-opacity-50" style="width: 90%"></div>
+
+        <!-- Stats Banner -->
+        <section class="py-4 bg-wasom-gradient text-white" data-cue="fadeIn">
+            <div class="container">
+                <div class="row g-3 text-center">
+                    <div class="col-md-3 col-6">
+                        <div class="stat-item">
+                            <h3 class="h2 fw-bold mb-1">10</h3>
+                            <p class="small mb-0 opacity-85">Artistas</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="stat-item">
+                            <h3 class="h2 fw-bold mb-1">90%</h3>
+                            <p class="small mb-0 opacity-85">Royalties</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="stat-item">
+                            <h3 class="h2 fw-bold mb-1">5</h3>
+                            <p class="small mb-0 opacity-85">Colaboradores</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="stat-item">
+                            <h3 class="h2 fw-bold mb-1">24/7</h3>
+                            <p class="small mb-0 opacity-85">Suporte VIP</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Plano Details -->
+        <section id="details" class="py-8 bg-light-100" data-cue="fadeIn">
+            <div class="container">
+                <div class="row justify-content-center mb-6">
+                    <div class="col-lg-10 text-center">
+                        <h2 class="display-5 fw-bold mb-3">O plano completo para gravadoras e coletivos</h2>
+                        <p class="lead text-muted">Dashboard centralizado, relatórios consolidados e gestão
+                            multi-artista</p>
+                    </div>
+                </div>
+
+                <div class="row g-5">
+                    <!-- Card do Plano -->
+                    <div class="col-lg-8" data-cue="zoomIn">
+                        <div class="pricing-card-main card shadow-lg hover-lift">
+                            <div class="card-header border-0 pt-5 pb-4 px-5">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <div>
+                                        <h3 class="h2 fw-bold mb-2">Plano Label</h3>
+                                        <p class="text-muted mb-0">Assinatura anual para gravadoras</p>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="price-display">
+                                            <span class="price-amount display-3 fw-bold">70.000</span>
+                                            <span class="price-period h4 text-muted fw-normal">Kz/ano</span>
+                                        </div>
+                                        <div class="badge bg-success mt-2">Economize 86% vs Individual</div>
                                     </div>
                                 </div>
 
-                                <ul class="list-unstyled">
-                                    <li class="mb-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                            fill="currentColor" class="bi bi-check-circle-fill text-success"
-                                            viewBox="0 0 16 16">
-                                            <path
-                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                                        </svg>
-                                        <span class="ms-3">Lançamentos ilimitados</span>
-                                    </li>
-                                    <li class="mb-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                            fill="currentColor" class="bi bi-check-circle-fill text-success"
-                                            viewBox="0 0 16 16">
-                                            <path
-                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                                        </svg>
-                                        <span class="ms-3">1 Artista</span>
-                                    </li>
-                                    <li class="mb-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                            fill="currentColor" class="bi bi-check-circle-fill text-success"
-                                            viewBox="0 0 16 16">
-                                            <path
-                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                                        </svg>
-                                        <span class="ms-3">Colaboradores 1</span>
-                                    </li>
-                                    <li class="mb-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                            fill="currentColor" class="bi bi-check-circle-fill text-success"
-                                            viewBox="0 0 16 16">
-                                            <path
-                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                                        </svg>
-                                        <span class="ms-3">Acesso a dados Detalhado</span>
-                                    </li>
-                                    <li class="mb-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                            fill="currentColor" class="bi bi-check-circle-fill text-success"
-                                            viewBox="0 0 16 16">
-                                            <path
-                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                                        </svg>
-                                        <span class="ms-3">ISRC e UPC grátis</span>
-                                    </li>
-                                    <li class="mb-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                            fill="currentColor" class="bi bi-check-circle-fill text-success"
-                                            viewBox="0 0 16 16">
-                                            <path
-                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                                        </svg>
-                                        <span class="ms-3">Smartlink e pre-salve</span>
-                                    </li>
-                                    <li class="mb-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                            fill="currentColor" class="bi bi-x-circle-fill text-danger"
-                                            viewBox="0 0 16 16">
-                                            <path
-                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z" />
-                                        </svg>
-                                        <span class="ms-3">1 lançamento mensal obrigatório</span>
-                                    </li>
-                                    <li class="mb-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                            fill="currentColor" class="bi bi-check-circle-fill text-success"
-                                            viewBox="0 0 16 16">
-                                            <path
-                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                                        </svg>
-                                        <span class="ms-3">Lançamento em 24h</span>
-                                    </li>
-                                    <li class="mb-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                            fill="currentColor" class="bi bi-check-circle-fill text-success"
-                                            viewBox="0 0 16 16">
-                                            <path
-                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                                        </svg>
-                                        <span class="ms-3">Suporte (WhatsApp, E-mail)</span>
-                                    </li>
-                                    <li class="mb-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                            fill="currentColor" class="bi bi-check-circle-fill text-success"
-                                            viewBox="0 0 16 16">
-                                            <path
-                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                                        </svg>
-                                        <span class="ms-3">Atendimento rápido</span>
-                                    </li>
-                                </ul>
-                                <div class="d-grid mt-5">
-                                    <a href="#" class="btn btn-outline-pink">Register</a>
+                                <!-- Progress Bar -->
+                                <div class="mb-5">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="fw-semibold">Royalty Split</span>
+                                        <span class="fw-bold text-success">90% Label | 10% Wasom Upfy</span>
+                                    </div>
+                                    <div class="progress" style="height: 12px; border-radius: 6px;">
+                                        <div class="progress-bar bg-wasom-gradient" role="progressbar"
+                                            style="width: 90%" aria-label="Royalties da label" aria-valuenow="90"
+                                            aria-valuemin="0" aria-valuemax="100">
+                                            <span class="visually-hidden">90% para a label</span>
+                                        </div>
+                                        <div class="progress-bar bg-secondary" role="progressbar" style="width: 10%"
+                                            aria-label="Royalties da plataforma" aria-valuenow="10" aria-valuemin="0"
+                                            aria-valuemax="100">
+                                            <span class="visually-hidden">10% para a plataforma</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Dashboard Preview -->
+                                <div class="dashboard-preview mb-4">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-8">
+                                            <h5 class="mb-2 text-white-stable"><i class="bi bi-speedometer2 me-2"></i> Dashboard Label
+                                            </h5>
+                                            <p class="small opacity-75 mb-0">Gerencie todos os seus artistas em um único
+                                                painel</p>
+                                        </div>
+                                        <div class="col-md-4 text-end">
+                                            <div class="badge bg-wasom-gradient">10 Slots Disponíveis</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-body pt-4 pb-5 px-5">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h4 class="h5 mb-3 text-dark"><i class="bi bi-building text-success me-2"></i>
+                                            Recursos da Label:</h4>
+                                        <ul class="list-unstyled mb-4">
+                                            <li class="d-flex align-items-start mb-3">
+                                                <i class="bi bi-check-lg text-success mt-1 me-3"></i>
+                                                <span><strong>Até 10 artistas</strong> na conta</span>
+                                            </li>
+                                            <li class="d-flex align-items-start mb-3">
+                                                <i class="bi bi-check-lg text-success mt-1 me-3"></i>
+                                                <span><strong>Lançamentos ilimitados</strong> por artista</span>
+                                            </li>
+                                            <li class="d-flex align-items-start mb-3">
+                                                <i class="bi bi-check-lg text-success mt-1 me-3"></i>
+                                                <span><strong>5 colaboradores</strong> por faixa</span>
+                                            </li>
+                                            <li class="d-flex align-items-start mb-3">
+                                                <i class="bi bi-check-lg text-success mt-1 me-3"></i>
+                                                <span><strong>Dashboard centralizado</strong></span>
+                                            </li>
+                                            <li class="d-flex align-items-start mb-3">
+                                                <i class="bi bi-check-lg text-success mt-1 me-3"></i>
+                                                <span><strong>Relatórios consolidados</strong></span>
+                                            </li>
+                                            <li class="d-flex align-items-start mb-3">
+                                                <i class="bi bi-check-lg text-success mt-1 me-3"></i>
+                                                <span><strong>Contratos digitais</strong> integrados</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h4 class="h5 mb-3 text-dark"><i
+                                                class="bi bi-trophy-fill text-warning me-2"></i> Vantagens Exclusivas:
+                                        </h4>
+                                        <ul class="list-unstyled mb-4">
+                                            <li class="d-flex align-items-start mb-3">
+                                                <i class="bi bi-check-lg text-success mt-1 me-3"></i>
+                                                <span><strong>Selo personalizado premium</strong></span>
+                                            </li>
+                                            <li class="d-flex align-items-start mb-3">
+                                                <i class="bi bi-check-lg text-success mt-1 me-3"></i>
+                                                <span><strong>Lançamento em 24h</strong> (prioridade máxima)</span>
+                                            </li>
+                                            <li class="d-flex align-items-start mb-3">
+                                                <i class="bi bi-check-lg text-success mt-1 me-3"></i>
+                                                <span><strong>Gerente de conta dedicado</strong></span>
+                                            </li>
+                                            <li class="d-flex align-items-start mb-3">
+                                                <i class="bi bi-check-lg text-success mt-1 me-3"></i>
+                                                <span><strong>Suporte 24/7 VIP</strong></span>
+                                            </li>
+                                            <li class="d-flex align-items-start mb-3">
+                                                <i class="bi bi-check-lg text-success mt-1 me-3"></i>
+                                                <span><strong>Treinamento da equipe</strong></span>
+                                            </li>
+                                            <li class="d-flex align-items-start mb-3">
+                                                <i class="bi bi-check-lg text-success mt-1 me-3"></i>
+                                                <span><strong>API para integração</strong></span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <!-- Comparação de Economia -->
+                                <div class="economy-box mt-5">
+                                    <h5 class="mb-4 text-center"><i class="bi bi-graph-up-arrow text-wasom me-2"></i>
+                                        Economia Empresarial:</h5>
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <div class="text-center p-3 bg-white rounded-3">
+                                                <h6 class="mb-2">10 Planos Artista</h6>
+                                                <div class="h4 fw-bold mb-1">114.000 Kz</div>
+                                                <p class="small text-muted mb-0">10 artistas separados</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="text-center p-3 bg-white rounded-3 border-wasom border-2">
+                                                <h6 class="mb-2">Plano Label</h6>
+                                                <div class="h4 fw-bold mb-1 text-wasom">70.000 Kz</div>
+                                                <p class="small text-muted mb-0">10 artistas + dashboard</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="text-center p-3 bg-white rounded-3">
+                                                <div class="h4 fw-bold mb-1 text-success">44.000 Kz</div>
+                                                <p class="small mb-0">Economia anual</p>
+                                                <div class="badge bg-success mt-1">38% mais barato</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="text-center mt-3 small text-muted mb-0">
+                                        <i class="bi bi-calculator me-1"></i> Custo por artista: 7.000 Kz/ano (vs 11.400
+                                        Kz individual)
+                                    </p>
+                                </div>
+
+                                <!-- Call to Action -->
+                                <div class="cta-box bg-wasom-light rounded-4 p-4 mt-5">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-8">
+                                            <h4 class="h5 mb-2">Transforme sua gravadora!</h4>
+                                            <p class="mb-0 text-muted">Dashboard centralizado, economia máxima e suporte
+                                                dedicado</p>
+                                        </div>
+                                        <div class="col-md-4 text-md-end">
+                                            <a href="../authentic/register.html?plan=label"
+                                                class="btn btn-wasomupfy btn-lg px-5">
+                                                Solicitar Demonstração <i class="bi bi-arrow-right ms-2"></i>
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <!--card-->
+                    </div>
+
+                    <!-- Sidebar com informações adicionais -->
+                    <div class="col-lg-4" data-cue="slideInRight">
+                        <!-- Painel Label -->
+                        <div class="card border-0 shadow-sm mb-4 hover-lift">
+                            <div class="card-body p-4">
+                                <h4 class="h5 mb-3"><i class="bi bi-building-gear text-wasom me-2"></i> Painel Label
+                                </h4>
+                                <div class="label-panel mb-3">
+                                    <i class="bi bi-building fs-1 mb-2"></i>
+                                    <h6 class="mb-1 text-white-stable">SUA GRAVADORA</h6>
+                                    <p class="small opacity-75 mb-0">Dashboard empresarial completo</p>
+                                </div>
+                                <ul class="list-unstyled mb-0">
+                                    <li class="d-flex align-items-start mb-2">
+                                        <i class="bi bi-speedometer2 text-primary mt-1 me-2"></i>
+                                        <div>
+                                            <span class="fw-medium">Dashboard central</span>
+                                            <p class="small text-muted mb-0">Todos os artistas em um lugar</p>
+                                        </div>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-2">
+                                        <i class="bi bi-file-earmark-text text-primary mt-1 me-2"></i>
+                                        <div>
+                                            <span class="fw-medium">Relatórios consolidados</span>
+                                            <p class="small text-muted mb-0">Análise financeira completa</p>
+                                        </div>
+                                    </li>
+                                    <li class="d-flex align-items-start">
+                                        <i class="bi bi-shield-check text-primary mt-1 me-2"></i>
+                                        <div>
+                                            <span class="fw-medium">Contratos digitais</span>
+                                            <p class="small text-muted mb-0">Gestão de direitos automatizada</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Gestão de Artistas -->
+                        <div class="card border-0 shadow-sm mb-4 hover-lift">
+                            <div class="card-body p-4">
+                                <h4 class="h5 mb-3"><i class="bi bi-people-fill text-wasom me-2"></i> Gestão de Artistas
+                                </h4>
+                                <div class="artists-grid mb-3">
+                                    <div class="artist-item">
+                                        <i class="bi bi-person-circle fs-3 text-dark"></i>
+                                        <p class="small mb-0 mt-1">Artista 1</p>
+                                    </div>
+                                    <div class="artist-item">
+                                        <i class="bi bi-person-circle fs-3 text-dark"></i>
+                                        <p class="small mb-0 mt-1">Artista 2</p>
+                                    </div>
+                                    <div class="artist-item">
+                                        <i class="bi bi-person-circle fs-3 text-dark"></i>
+                                        <p class="small mb-0 mt-1">Artista 3</p>
+                                    </div>
+                                    <div class="artist-item">
+                                        <i class="bi bi-person-circle fs-3 text-dark"></i>
+                                        <p class="small mb-0 mt-1">Artista 4</p>
+                                    </div>
+                                    <div class="artist-item">
+                                        <i class="bi bi-person-circle fs-3 text-dark"></i>
+                                        <p class="small mb-0 mt-1">Artista 5</p>
+                                    </div>
+                                    <div class="artist-item">
+                                        <span class="badge bg-dark text-white">+5</span>
+                                        <p class="small mb-0 mt-1">Slots</p>
+                                    </div>
+                                </div>
+                                <p class="small text-muted mb-0">Gerencie até 10 artistas diferentes com perfis
+                                    individuais e relatórios separados.</p>
+                            </div>
+                        </div>
+
+                        <!-- Suporte Empresarial -->
+                        <div class="card border-0 shadow-sm hover-lift">
+                            <div class="card-body p-4">
+                                <h4 class="h5 mb-3"><i class="bi bi-headset text-wasom me-2"></i> Suporte Empresarial
+                                </h4>
+                                <ul class="list-unstyled mb-0">
+                                    <li class="d-flex align-items-start mb-2">
+                                        <i class="bi bi-person-vcard text-success mt-1 me-2"></i>
+                                        <div>
+                                            <span class="fw-medium">Gerente dedicado</span>
+                                            <p class="small text-muted mb-0">Atendimento personalizado</p>
+                                        </div>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-2">
+                                        <i class="bi bi-calendar-week text-primary mt-1 me-2"></i>
+                                        <div>
+                                            <span class="fw-medium">Reuniões estratégicas</span>
+                                            <p class="small text-muted mb-0">1x por mês</p>
+                                        </div>
+                                    </li>
+                                    <li class="d-flex align-items-start">
+                                        <i class="bi bi-file-earmark-ppt text-warning mt-1 me-2"></i>
+                                        <div>
+                                            <span class="fw-medium">Treinamento da equipe</span>
+                                            <p class="small text-muted mb-0">Sessões exclusivas</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
-        <!-- A área do site fim -->
+
+        <!-- FAQ Section -->
+        <section class="py-8 bg-light-100" data-cue="fadeIn">
+            <div class="container">
+                <div class="row justify-content-center mb-6">
+                    <div class="col-lg-8 text-center">
+                        <span class="badge bg-wasom-gradient text-white fw-semibold px-3 py-2 mb-3">FAQ
+                            EMPRESARIAL</span>
+                        <h2 class="display-5 fw-bold mb-4">Perguntas sobre o Plano Label</h2>
+                        <p class="text-muted lead">Tire suas dúvidas sobre gestão multi-artista</p>
+                    </div>
+                </div>
+
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        <div class="accordion" id="labelFaqAccordion">
+                            <div class="accordion-item border-0 mb-3 shadow-sm">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button bg-white rounded-3" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#faq1">
+                                        Como funciona a gestão de múltiplos artistas?
+                                    </button>
+                                </h3>
+                                <div id="faq1" class="accordion-collapse collapse show"
+                                    data-bs-parent="#labelFaqAccordion">
+                                    <div class="accordion-body">
+                                        Você tem um dashboard central onde gerencia até 10 artistas. Cada artista tem
+                                        seu perfil independente, mas você vê todos os lançamentos, royalties e analytics
+                                        em um único painel. Pode adicionar/remover artistas conforme necessário durante
+                                        o ano.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item border-0 mb-3 shadow-sm">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button bg-white rounded-3 collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#faq2">
+                                        Como são divididos os royalties entre a label e os artistas?
+                                    </button>
+                                </h3>
+                                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#labelFaqAccordion">
+                                    <div class="accordion-body">
+                                        A label recebe 90% dos royalties totais. Como a distribuição entre label e
+                                        artistas é feita internamente, oferecemos um sistema de split automático onde
+                                        você define percentuais diferentes para cada artista/colaborador. Também
+                                        fornecemos contratos digitais para formalizar esses acordos.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item border-0 mb-3 shadow-sm">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button bg-white rounded-3 collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#faq3">
+                                        Posso ter mais de 10 artistas?
+                                    </button>
+                                </h3>
+                                <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#labelFaqAccordion">
+                                    <div class="accordion-body">
+                                        O plano inclui até 10 artistas. Se precisar de mais, entre em contato para um
+                                        plano personalizado. Para cada artista adicional, oferecemos condições
+                                        especiais. Também pode remover artistas inativos para adicionar novos.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item border-0 mb-3 shadow-sm">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button bg-white rounded-3 collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#faq4">
+                                        Como funcionam os relatórios financeiros?
+                                    </button>
+                                </h3>
+                                <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#labelFaqAccordion">
+                                    <div class="accordion-body">
+                                        Oferecemos relatórios consolidados mensais com: royalties por artista,
+                                        plataforma e território; análise de crescimento; projeções; e dados para
+                                        declaração fiscal. Todos os relatórios podem ser exportados em PDF e Excel.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item border-0 shadow-sm">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button bg-white rounded-3 collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#faq5">
+                                        Há suporte para contratos digitais?
+                                    </button>
+                                </h3>
+                                <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#labelFaqAccordion">
+                                    <div class="accordion-body">
+                                        Sim! Incluímos um sistema de contratos digitais onde você pode criar, enviar e
+                                        gerenciar contratos com artistas e colaboradores. Os contratos são assinados
+                                        digitalmente, armazenados com segurança e integrados ao sistema de split de
+                                        royalties.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Outros Planos -->
+        <section class="py-8 bg-light-100" data-cue="fadeIn">
+            <div class="container">
+                <div class="row justify-content-center mb-6">
+                    <div class="col-lg-8 text-center">
+                        <span class="badge bg-wasom-gradient text-white fw-semibold px-3 py-2 mb-3">Compare
+                            Planos</span>
+                        <h2 class="display-5 fw-bold mb-4">Nossas Soluções para Artistas</h2>
+                        <p class="text-muted lead">Encontre a opção perfeita para cada necessidade</p>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <!-- Single -->
+                    <div class="col-md-4" data-cue="zoomIn">
+                        <div class="card border-0 h-100 shadow-sm hover-lift">
+                            <div class="card-body p-4">
+                                <h4 class="h5 mb-3">Plano Single</h4>
+                                <div class="price-display mb-3">
+                                    <span class="price-amount h3 fw-bold">2.000</span>
+                                    <span class="price-period text-muted">Kz/single</span>
+                                </div>
+                                <ul class="list-unstyled mb-4">
+                                    <li class="d-flex align-items-start mb-2">
+                                        <i class="bi bi-check-lg text-success mt-1 me-2"></i>
+                                        <span>1 faixa por lançamento</span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-2">
+                                        <i class="bi bi-check-lg text-success mt-1 me-2"></i>
+                                        <span>90% royalties</span>
+                                    </li>
+                                    <li class="d-flex align-items-start">
+                                        <i class="bi bi-check-lg text-success mt-1 me-2"></i>
+                                        <span>Iniciantes e testes</span>
+                                    </li>
+                                </ul>
+                                <a href="single.html" class="btn btn-outline-wasom w-100">Ver Plano Single</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Álbum -->
+                    <div class="col-md-4" data-cue="zoomIn" data-delay="100">
+                        <div class="card border-0 h-100 shadow-sm hover-lift">
+                            <div class="card-body p-4">
+                                <h4 class="h5 mb-3">Plano Álbum</h4>
+                                <div class="price-display mb-3">
+                                    <span class="price-amount h3 fw-bold">4.500</span>
+                                    <span class="price-period text-muted">Kz/álbum</span>
+                                </div>
+                                <ul class="list-unstyled mb-4">
+                                    <li class="d-flex align-items-start mb-2">
+                                        <i class="bi bi-check-lg text-success mt-1 me-2"></i>
+                                        <span>15 faixas por álbum</span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-2">
+                                        <i class="bi bi-check-lg text-success mt-1 me-2"></i>
+                                        <span>Selo personalizado</span>
+                                    </li>
+                                    <li class="d-flex align-items-start">
+                                        <i class="bi bi-check-lg text-success mt-1 me-2"></i>
+                                        <span>Projetos completos</span>
+                                    </li>
+                                </ul>
+                                <a href="album.html" class="btn btn-outline-wasom w-100">Ver Plano Álbum</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Artista -->
+                    <div class="col-md-4" data-cue="zoomIn" data-delay="200">
+                        <div class="card border-0 h-100 shadow-sm hover-lift">
+                            <div class="card-body p-4">
+                                <h4 class="h5 mb-3">Plano Artista</h4>
+                                <div class="price-display mb-3">
+                                    <span class="price-amount h3 fw-bold">11.400</span>
+                                    <span class="price-period text-muted">Kz/ano</span>
+                                </div>
+                                <ul class="list-unstyled mb-4">
+                                    <li class="d-flex align-items-start mb-2">
+                                        <i class="bi bi-check-lg text-success mt-1 me-2"></i>
+                                        <span>Lançamentos ilimitados</span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-2">
+                                        <i class="bi bi-check-lg text-success mt-1 me-2"></i>
+                                        <span>Selo personalizado</span>
+                                    </li>
+                                    <li class="d-flex align-items-start">
+                                        <i class="bi bi-check-lg text-success mt-1 me-2"></i>
+                                        <span>Artistas em crescimento</span>
+                                    </li>
+                                </ul>
+                                <a href="artist.html" class="btn btn-outline-wasom w-100">Ver Plano Artista</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final CTA -->
+        <section class="py-8 bg-dark text-white" data-cue="fadeIn">
+            <div class="container">
+                <div class="row justify-content-center text-center">
+                    <div class="col-lg-8">
+                        <h2 class="display-5 fw-bold mb-4">Pronto para escalar sua gravadora?</h2>
+                        <p class="lead mb-5 opacity-90">Dashboard centralizado, economia de 38% e suporte empresarial
+                        </p>
+                        <div class="d-flex flex-wrap justify-content-center gap-3">
+                            <a href="../authentic/register.html?plan=label"
+                                class="btn btn-light btn-lg px-5 text-wasom fw-semibold">
+                                Solicitar Demonstração <i class="bi bi-arrow-right ms-2"></i>
+                            </a>
+                            <a href="contact.html" class="btn btn-outline-light btn-lg px-5">
+                                Falar com Vendas Empresariais
+                            </a>
+                        </div>
+                        <p class="mt-4 small opacity-75">
+                            <i class="bi bi-shield-check me-1"></i> Contrato empresarial • Faturamento • Suporte
+                            dedicado 24/7
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
     <!--Seccão do site inteira até ao perto do footer  fim -->
     <!-- Footer -->
@@ -424,7 +1055,7 @@
                         </svg>
                     </a>
                     <a target="_blank" rel="external" title="Instagram Wasom Upfy"
-                        href="https://www.instagram.com/wasomupfy" class="btn btn-wasomupfy btn-light">
+                        href="https://www.instagram.com/@wasomupfy" class="btn btn-wasomupfy btn-light">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
                             class="bi bi-instagram" viewBox="0 0 16 16">
                             <path
@@ -583,13 +1214,13 @@
 
                                     <li class="mb-2">
                                         <a title="E-mail para pedidos"
-                                            href="mailto:wasomupfy@gmail.com?subject=Preciso fazer um pedido.&bcc=wasomupfy@yahoo.com&body=Olá equipa de Wasom Upfy, estou interessado em fazer um pedido ao Wasom Upfy."
-                                            class="text-decoration-none text-reset">wasomupfy.apoio@gmail.com</a>
+                                            href="mailto:info@wasomupfy.com?subject=Preciso fazer um pedido.&bcc=suporte@wasomupfy.com&body=Olá equipa de Wasom Upfy, estou interessado em fazer um pedido ao Wasom Upfy."
+                                            class="text-decoration-none text-reset">info@wasomupfy.com</a>
                                     </li>
                                     <li class="mb-2">
                                         <a title="E-mail para pedidos"
-                                            href="mailto:wasomupfy@yahoo.com?subject=Preciso fazer um pedido.&bcc=wasomupfy@gmail.com&body=Olá equipa de Wasom Upfy, estou interessado em fazer um pedido ao Wasom Upfy."
-                                            class="text-decoration-none text-reset">wasomupfy@yahoo.com</a>
+                                            href="mailto:suporte@wasomupfy.com?subject=Preciso fazer um pedido.&bcc=info@wasomupfy.com&body=Olá equipa de Wasom Upfy, estou interessado em fazer um pedido ao Wasom Upfy."
+                                            class="text-decoration-none text-reset">suporte@wasomupfy.com</a>
                                     </li>
                                     <li class="mb-2">
                                         <a href="#!" title="Horário do atendimento"
@@ -719,7 +1350,152 @@
                 m)
         }(window, document, "script", "dataLayer")
     </script>
-</body>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Inicializar Jarallax
+            if (typeof jarallax !== 'undefined') {
+                jarallax(document.querySelectorAll('.jarallax'), {
+                    speed: 0.4
+                });
+            }
 
+            // Smooth scroll para âncoras
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    const href = this.getAttribute('href');
+                    if (href === '#') return;
+
+                    e.preventDefault();
+                    const targetElement = document.querySelector(href);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Animações no scroll
+            const animateOnScroll = () => {
+                const elements = document.querySelectorAll('[data-cue]');
+                elements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    const elementVisible = 150;
+
+                    if (elementTop < window.innerHeight - elementVisible) {
+                        element.classList.add('animated');
+                    }
+                });
+            };
+
+            window.addEventListener('scroll', animateOnScroll);
+            animateOnScroll();
+
+            // Adicionar parâmetro de plano nos links de registro
+            document.querySelectorAll('a[href*="register.html"]').forEach(link => {
+                const href = link.getAttribute('href');
+                if (!href.includes('plan=')) {
+                    const newHref = href.includes('?') ?
+                        href + '&plan=label' :
+                        href + '?plan=label';
+                    link.setAttribute('href', newHref);
+                }
+            });
+
+            // Calculadora de economia empresarial
+            const calculateBusinessSavings = () => {
+                const artistPlanPrice = 11400; // Preço do plano Artista
+                const labelPlanPrice = 70000; // Preço do plano Label
+                const artistsCount = 10; // Número de artistas no plano Label
+
+                // Custo com planos individuais
+                const individualCost = artistPlanPrice * artistsCount;
+
+                // Economia
+                const savings = individualCost - labelPlanPrice;
+                const savingsPercentage = Math.round((savings / individualCost) * 100);
+
+                // Custo por artista
+                const costPerArtist = labelPlanPrice / artistsCount;
+                const savingsPerArtist = artistPlanPrice - costPerArtist;
+
+                return {
+                    individualCost,
+                    savings,
+                    savingsPercentage,
+                    costPerArtist,
+                    savingsPerArtist
+                };
+            };
+
+            // Atualizar calculadora de economia
+            const updateBusinessCalculator = () => {
+                const {
+                    individualCost,
+                    savings,
+                    savingsPercentage,
+                    costPerArtist,
+                    savingsPerArtist
+                } = calculateBusinessSavings();
+
+                // Atualizar elementos da calculadora
+                const individualCostElement = document.querySelector('.individual-cost');
+                const savingsElement = document.querySelector('.savings-amount');
+                const percentageElement = document.querySelector('.savings-percentage');
+                const costPerArtistElement = document.querySelector('.cost-per-artist');
+                const savingsPerArtistElement = document.querySelector('.savings-per-artist');
+
+                if (individualCostElement) individualCostElement.textContent =
+                    `${individualCost.toLocaleString()} Kz`;
+                if (savingsElement) savingsElement.textContent = `${savings.toLocaleString()} Kz`;
+                if (percentageElement) percentageElement.textContent = `${savingsPercentage}%`;
+                if (costPerArtistElement) costPerArtistElement.textContent =
+                    `${costPerArtist.toLocaleString()} Kz`;
+                if (savingsPerArtistElement) savingsPerArtistElement.textContent =
+                    `${savingsPerArtist.toLocaleString()} Kz`;
+            };
+
+            // Executar quando a página carregar
+            updateBusinessCalculator();
+
+            // FAQ accordion empresarial
+            const faqItems = document.querySelectorAll('.accordion-button');
+            faqItems.forEach(item => {
+                item.addEventListener('click', function () {
+                    // Adicionar classe de destaque para questões empresariais
+                    this.classList.add('active-business');
+
+                    // Remover após animação
+                    setTimeout(() => {
+                        this.classList.remove('active-business');
+                    }, 300);
+                });
+            });
+
+            // Contador de artistas ativos (simulação)
+            let activeArtists = 0;
+            const artistItems = document.querySelectorAll('.artist-item');
+
+            artistItems.forEach(item => {
+                item.addEventListener('click', function () {
+                    this.classList.toggle('active');
+
+                    if (this.classList.contains('active')) {
+                        activeArtists++;
+                    } else {
+                        activeArtists--;
+                    }
+
+                    // Atualizar badge de artistas ativos
+                    const activeBadge = document.querySelector('.active-artists-count');
+                    if (activeBadge) {
+                        activeBadge.textContent = `${activeArtists} ativos`;
+                    }
+                });
+            });
+        });
+    </script>
+</body>
 
 </html>

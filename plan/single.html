@@ -41,181 +41,185 @@
     <link rel="stylesheet" href="../css/theme.min.css">
     <link rel="stylesheet" href="../js/libs/scrollcue/scrollCue.css" />
     <link rel="stylesheet" href="../css/framework.css">
+        <link rel="stylesheet" href="../css/main.css">
 </head>
 <!-- CSS Adicional -->
 <style>
-:root {
-    --wasom-primary: #FF0089;
-    --wasom-secondary: #e04385;
-    --wasom-gradient: linear-gradient(135deg, var(--wasom-primary), var(--wasom-secondary));
-    --wasom-light: #fff0f7;
-}
-
-/* Hero Section */
-.about-hero {
-    min-height: 70vh;
-    display: flex;
-    align-items: center;
-    padding: 6rem 0;
-}
-
-.hero-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.4));
-    z-index: 1;
-}
-
-/* Stats Counter */
-.stat-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.stat-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
-}
-
-.stat-icon {
-    color: var(--wasom-primary);
-}
-
-.stat-number {
-    background: var(--wasom-gradient);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-}
-
-/* Timeline */
-.timeline {
-    position: relative;
-}
-
-.timeline::before {
-    content: '';
-    position: absolute;
-    left: -1px;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: var(--wasom-gradient);
-}
-
-.timeline-item {
-    position: relative;
-    padding-left: 1.5rem;
-}
-
-.timeline-item::before {
-    content: '';
-    position: absolute;
-    left: -9px;
-    top: 0;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: var(--wasom-primary);
-    border: 3px solid white;
-    box-shadow: 0 0 0 3px var(--wasom-light);
-}
-
-.timeline-date {
-    font-size: 0.9rem;
-    letter-spacing: 0.5px;
-}
-
-/* Cards */
-.hover-lift {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.hover-lift:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
-}
-
-.service-icon {
-    transition: transform 0.3s ease;
-}
-
-.service-card:hover .service-icon {
-    transform: scale(1.1);
-}
-
-/* Brand Section */
-.bg-gradient-wasom {
-    background: var(--wasom-gradient);
-}
-
-.brand-icon {
-    transition: transform 0.3s ease;
-}
-
-.brand-value-item:hover .brand-icon {
-    transform: rotate(10deg);
-}
-
-/* Global Cards */
-.global-card {
-    border: 1px solid #e9ecef;
-    border-radius: 12px;
-    transition: all 0.3s ease;
-}
-
-.global-card:hover {
-    border-color: var(--wasom-primary);
-    box-shadow: 0 10px 25px rgba(255, 0, 137, 0.1);
-}
-
-.global-icon {
-    color: var(--wasom-primary);
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .about-hero {
-        min-height: 50vh;
-        padding: 4rem 0;
+    :root {
+        --wasom-primary: #FF0089;
+        --wasom-secondary: #e04385;
+        --wasom-gradient: linear-gradient(135deg, var(--wasom-primary), var(--wasom-secondary));
+        --wasom-light: #fff0f7;
     }
-    
-    .display-6 {
-        font-size: 2rem;
-    }
-    
-    .display-4 {
-        font-size: 2.5rem;
-    }
-}
 
-/* Animation */
-@keyframes fadeInUp {
-    from {
+    /* Hero */
+    .pricing-single-hero {
+        min-height: 70vh;
+        display: flex;
+        align-items: center;
+        padding: 6rem 0;
+    }
+
+    .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.4));
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 50px;
+        padding: 0.5rem 1rem;
+    }
+
+    .breadcrumb-item a {
+        color: rgba(255, 255, 255, 0.9) !important;
+        text-decoration: none;
+    }
+
+    .breadcrumb-item.active {
+        color: white !important;
+    }
+
+    /* Cards */
+    .pricing-card-main {
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .hover-lift {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .price-display .price-amount {
+        background: var(--wasom-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    /* Progress Bar */
+    .progress-bar.bg-wasom-gradient {
+        background: var(--wasom-gradient) !important;
+    }
+
+    /* Platforms Grid */
+    .platforms-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    .platform-item {
+        background: #f8f9fa;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .platform-item:hover {
+        background: var(--wasom-light);
+        transform: scale(1.05);
+    }
+
+    /* Process Steps */
+    .process-step {
+        transition: transform 0.3s ease;
+    }
+
+    .process-step:hover {
+        transform: translateX(5px);
+    }
+
+    .step-number {
+        flex-shrink: 0;
+    }
+
+    /* CTA Box */
+    .cta-box {
+        border-left: 4px solid var(--wasom-primary);
+    }
+
+    /* Badges */
+    .badge.bg-wasom-gradient {
+        background: var(--wasom-gradient);
+    }
+
+    /* Buttons */
+
+
+    .btn-outline-wasom {
+        border: 2px solid var(--wasom-primary);
+        color: var(--wasom-primary);
+        background: transparent;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-wasom:hover {
+        background: var(--wasom-primary);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    /* Stats Banner */
+    .bg-wasom-gradient {
+        background: var(--wasom-gradient);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .pricing-single-hero {
+            min-height: 50vh;
+            padding: 4rem 0;
+        }
+
+        .display-3 {
+            font-size: 2.5rem;
+        }
+
+        .display-5 {
+            font-size: 2rem;
+        }
+
+        .platforms-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    [data-cue] {
         opacity: 0;
-        transform: translateY(30px);
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
+
+    [data-cue].animated {
+        animation: fadeInUp 0.6s ease forwards;
     }
-}
-
-[data-cue] {
-    opacity: 0;
-}
-
-[data-cue].animated {
-    animation: fadeInUp 0.6s ease forwards;
-}
-
-/* Smooth Scroll */
-.smooth-scroll {
-    scroll-behavior: smooth;
-}
 </style>
+
 <body>
 
     <!-- O processo de carregamento do site em HTML & CSS -->
@@ -254,7 +258,7 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="blog/home" title="Blogue" target="_blank" rel="external"
                                     role="button" data-bs-toggle="link" aria-expanded="false">Blogue</a>
-                                    </li>
+                            </li>
                             <li class="nav-item dropdown active">
                                 <a title="Planos" class="nav-link active" href="#" id="navbarDropdown" role="button"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Planos
@@ -267,7 +271,7 @@
                                                 width="35" height="30" alt="Single">
                                             <div class="ms-3 lh-1">
                                                 <h5 class="mb-1">Single</h5>
-                                                <p class="mb-0 fs-6">Nosso plano Single - 1.150 Kz</p>
+                                                <p class="mb-0 fs-6">Nosso plano Single - 2.000 Kz</p>
                                             </div>
                                         </div>
                                     </a>
@@ -411,8 +415,8 @@
                                             mensagem</a>
                                     </li>
                                     <li><a title="E-mail" class="dropdown-item"
-                                            href="mailto:wasomupfy@gmail.com?subject=Entrando em contacto com equipa de Wasom Upfy.&bcc=wasomupfy@yahoo.com&body=Olá equipa de Wasom Upfy.">
-                                            wasomupfy@gmail.com</a>
+                                            href="mailto:info@wasomupfy.com?subject=Entrando em contacto com equipa de Wasom Upfy.&bcc=suporte@wasomupfy.com&body=Olá equipa de Wasom Upfy.">
+                                            info@wasomupfy.com</a>
                                     </li>
                                     <li><a title="WhatsApp" class="dropdown-item"
                                             href="https://api.whatsapp.com/send/?phone=244922030116&text&type=phone_number&app_absent=0">
@@ -437,149 +441,553 @@
     <!-- Cabecalho da página de navbar fim -->
     <!--Seccão do site inteira até ao perto do footer  -->
     <main>
-
-        <!-- A área de recursos  -->
-       <section class="about-hero jarallax position-relative overflow-hidden" data-jarallax data-speed="0.4">
-            <img class="jarallax-img" src="../assets/img/theme/plan_single.png" alt="Plano Single Wasom Upfy" />
-            <div class="container">
-                <div class="row">
-                    <div class="col-xl-4 col-md-7 mb-4 mt-7" data-cue="fadeIn">
-                        <small class="text-uppercase ls-md fw-semibold">Plano Single</small>
-                        <h2 class="h1 mb-4 mt-4 text-uppercase text-white-stable">Plano para iniciantes.</h2>
-                        <p class="mb-0 text-white-stable">Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                            Quibusdam
-                            fugiat consequatur quisquam consectetur</p>
+        <!-- Hero Section -->
+        <section class="pricing-single-hero jarallax position-relative overflow-hidden py-8" data-jarallax
+            data-speed="0.4">
+            <img class="jarallax-img" src="../assets/img/theme/plan_single.png" alt="Plano Single Wasom Upfy"
+                loading="lazy">
+            <div class="hero-overlay"></div>
+            <div class="container position-relative z-index-2 py-6">
+                <div class="row justify-content-center text-center">
+                    <div class="col-xl-8 col-lg-10" data-cue="fadeIn">
+                        <nav aria-label="breadcrumb" class="d-flex justify-content-center mb-3">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="../index.html" class="text-white">Home</a></li>
+                                <li class="breadcrumb-item"><a href="all-plans.html" class="text-white">Planos</a></li>
+                                <li class="breadcrumb-item active text-white" aria-current="page">Plano Single</li>
+                            </ol>
+                        </nav>
+                        <span class="badge bg-wasomupfy text-white-stable fw-semibold px-4 py-2 mb-3">Perfeito para
+                            Iniciantes</span>
+                        <h1 class="display-4 mb-4 text-white-stable fw-bold">Plano Single</h1>
+                        <p class="lead text-white-stable mb-4 opacity-90">Distribua seu próximo hit em todas as
+                            plataformas por apenas 2.000Kz</p>
+                        <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
+                            <span class="badge bg-white text-dark px-3 py-2">
+                                <i class="bi bi-percent text-success me-1"></i> 90% Royalties
+                            </span>
+                            <span class="badge bg-white text-dark px-3 py-2">
+                                <i class="bi bi-lightning text-success me-1"></i> Lançamento em 72h
+                            </span>
+                            <span class="badge bg-white text-dark px-3 py-2">
+                                <i class="bi bi-headset text-success me-1"></i> Suporte 24/7
+                            </span>
+                        </div>
+                        <a href="#details" class="btn btn-wasomupfy btn-lg mt-2 smooth-scroll">
+                            Ver Detalhes <i class="bi bi-arrow-down ms-2"></i>
+                        </a>
                     </div>
                 </div>
             </div>
         </section>
-        <div class="divider-fade"></div>
-        <!-- Sessão para detalhes de recursos -->
-        <section class="my-xl-4 py-5 bg-ligth-100">
-            <div class="container mb-xl-3" data-cue="fadeIn">
-                <div class="row g-4" data-cue="fadeIn">
-                    <div class="col-lg-6 col-md-6 col-12 m-auto" data-cue="zoomIn">
-                        <!--card-->
-                        <div class="card bg-gray-200 border-0 p-2 mb-5 mb-xl-0">
-                            <div class="card-body bg-white shadow rounded-2">
-                                <div class="mb-5">
-                                    <h3 class="h6 mb-3">Single</h3>
-                                    <h2 class="d-flex align-items-center">
-                                        <span class="text-dark">1.150Kz</span>
-                                        <!-- <del class="text-body-tertiary ms-1">$29</del> -->
-                                    </h2>
-                                </div>
-                                <div class="mb-5">
-                                    <span class="small">80% Royalties</span>
-                                    <div class="progress mt-2" role="progressbar" aria-label="Event Ticket"
-                                        aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="height: 8px">
-                                        <div class="progress-bar bg-pink bg-opacity-50" style="width: 80%"></div>
+
+        <!-- Stats Banner -->
+        <section class="py-4 bg-wasom-gradient text-white" data-cue="fadeIn">
+            <div class="container">
+                <div class="row g-3 text-center">
+                    <div class="col-md-3 col-6">
+                        <div class="stat-item">
+                            <h3 class="h2 fw-bold mb-1">90%</h3>
+                            <p class="small mb-0 opacity-85">Royalties</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="stat-item">
+                            <h3 class="h2 fw-bold mb-1">72h</h3>
+                            <p class="small mb-0 opacity-85">Lançamento</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="stat-item">
+                            <h3 class="h2 fw-bold mb-1">200+</h3>
+                            <p class="small mb-0 opacity-85">Plataformas</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="stat-item">
+                            <h3 class="h2 fw-bold mb-1">24/7</h3>
+                            <p class="small mb-0 opacity-85">Suporte</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Plano Details -->
+        <section id="details" class="py-8 bg-light-100" data-cue="fadeIn">
+            <div class="container">
+                <div class="row justify-content-center mb-6">
+                    <div class="col-lg-10 text-center">
+                        <h2 class="display-5 fw-bold mb-3">Tudo o que você precisa para seu próximo sucesso</h2>
+                        <p class="lead text-muted">O plano perfeito para artistas que estão começando ou querem testar
+                            uma nova música</p>
+                    </div>
+                </div>
+
+                <div class="row g-5">
+                    <!-- Card do Plano -->
+                    <div class="col-lg-8" data-cue="zoomIn">
+                        <div class="pricing-card-main card border-0 shadow-lg hover-lift">
+                            <div class="card-header border-0 pt-5 pb-4 px-5">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <div>
+                                        <h3 class="h2 fw-bold mb-2">Plano Single</h3>
+                                        <p class="text-muted mb-0">Por lançamento</p>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="price-display">
+                                            <span class="price-amount display-3 fw-bold">2.000</span>
+                                            <span class="price-period h4 text-muted fw-normal">Kz</span>
+                                        </div>
+                                        <div class="badge bg-success mt-2">90% Royalties</div>
                                     </div>
                                 </div>
 
-                                <ul class="list-unstyled">
-                                    <li class="mb-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                            fill="currentColor" class="bi bi-check-circle-fill text-success"
-                                            viewBox="0 0 16 16">
-                                            <path
-                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                                        </svg>
-                                        <span class="ms-3">Apenas um lançamento</span>
-                                    </li>
-                                    <li class="mb-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                            fill="currentColor" class="bi bi-check-circle-fill text-success"
-                                            viewBox="0 0 16 16">
-                                            <path
-                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                                        </svg>
-                                        <span class="ms-3">1 Artista</span>
-                                    </li>
-                                    <li class="mb-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                            fill="currentColor" class="bi bi-check-circle-fill text-success"
-                                            viewBox="0 0 16 16">
-                                            <path
-                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                                        </svg>
-                                        <span class="ms-3">Colaboradores 1</span>
-                                    </li>
-                                    <li class="mb-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                            fill="currentColor" class="bi bi-check-circle-fill text-success"
-                                            viewBox="0 0 16 16">
-                                            <path
-                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                                        </svg>
-                                        <span class="ms-3">Acesso a dados Single</span>
-                                    </li>
-                                    <li class="mb-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                            fill="currentColor" class="bi bi-check-circle-fill text-success"
-                                            viewBox="0 0 16 16">
-                                            <path
-                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                                        </svg>
-                                        <span class="ms-3">ISRC e UPC grátis</span>
-                                    </li>
-                                    <li class="mb-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                            fill="currentColor" class="bi bi-check-circle-fill text-success"
-                                            viewBox="0 0 16 16">
-                                            <path
-                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                                        </svg>
-                                        <span class="ms-3">Smartlink e pre-salve</span>
-                                    </li>
-                                    <li class="mb-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                            fill="currentColor" class="bi bi-check-circle-fill text-success"
-                                            viewBox="0 0 16 16">
-                                            <path
-                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                                        </svg>
-                                        <span class="ms-3">1 lançamento mensal obrigatório</span>
-                                    </li>
-                                    <li class="mb-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                            fill="currentColor" class="bi bi-check-circle-fill text-success"
-                                            viewBox="0 0 16 16">
-                                            <path
-                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                                        </svg>
-                                        <span class="ms-3">Lançamento em 72h</span>
-                                    </li>
-                                    <li class="mb-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                            fill="currentColor" class="bi bi-check-circle-fill text-success"
-                                            viewBox="0 0 16 16">
-                                            <path
-                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                                        </svg>
-                                        <span class="ms-3">Suporte (WhatsApp, E-mail)</span>
-                                    </li>
-                                    <li class="mb-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                            fill="currentColor" class="bi bi-check-circle-fill text-success"
-                                            viewBox="0 0 16 16">
-                                            <path
-                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                                        </svg>
-                                        <span class="ms-3">Atendimento rápido</span>
-                                    </li>
-                                </ul>
-                                <div class="d-grid mt-5">
-                                    <a href="#" class="btn btn-wasomupfy">Registrar agora</a>
+                                <!-- Progress Bar -->
+                                <div class="mb-5">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="fw-semibold">Royalty Split</span>
+                                        <span class="fw-bold text-success">90% Artista | 10% Wasom Upfy</span>
+                                    </div>
+                                    <div class="progress" style="height: 12px; border-radius: 6px;">
+                                        <div class="progress-bar bg-wasom-gradient" role="progressbar"
+                                            style="width: 90%" aria-label="Royalties do artista" aria-valuenow="90"
+                                            aria-valuemin="0" aria-valuemax="100">
+                                            <span class="visually-hidden">90% para o artista</span>
+                                        </div>
+                                        <div class="progress-bar bg-secondary" role="progressbar" style="width: 10%"
+                                            aria-label="Royalties da plataforma" aria-valuenow="10" aria-valuemin="0"
+                                            aria-valuemax="100">
+                                            <span class="visually-hidden">10% para a plataforma</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-body pt-4 pb-5 px-5">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h4 class="h5 mb-3 text-dark"><i
+                                                class="bi bi-check-circle-fill text-success me-2"></i> O que está
+                                            incluído:</h4>
+                                        <ul class="list-unstyled mb-4">
+                                            <li class="d-flex align-items-start mb-3">
+                                                <i class="bi bi-check-lg text-success mt-1 me-3"></i>
+                                                <span><strong>1 lançamento</strong> - Apenas uma faixa</span>
+                                            </li>
+                                            <li class="d-flex align-items-start mb-3">
+                                                <i class="bi bi-check-lg text-success mt-1 me-3"></i>
+                                                <span><strong>1 Artista</strong> principal</span>
+                                            </li>
+                                            <li class="d-flex align-items-start mb-3">
+                                                <i class="bi bi-check-lg text-success mt-1 me-3"></i>
+                                                <span><strong>1 Colaborador</strong> por faixa</span>
+                                            </li>
+                                            <li class="d-flex align-items-start mb-3">
+                                                <i class="bi bi-check-lg text-success mt-1 me-3"></i>
+                                                <span><strong>Análise de dados avançados</strong></span>
+                                            </li>
+                                            <li class="d-flex align-items-start mb-3">
+                                                <i class="bi bi-check-lg text-success mt-1 me-3"></i>
+                                                <span><strong>ISRC e UPC grátis</strong></span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h4 class="h5 mb-3 text-dark"><i
+                                                class="bi bi-lightning-fill text-warning me-2"></i> Recursos extras:
+                                        </h4>
+                                        <ul class="list-unstyled mb-4">
+                                            <li class="d-flex align-items-start mb-3">
+                                                <i class="bi bi-check-lg text-success mt-1 me-3"></i>
+                                                <span><strong>Smartlink e pre-salve</strong></span>
+                                            </li>
+                                            <li class="d-flex align-items-start mb-3">
+                                                <i class="bi bi-check-lg text-success mt-1 me-3"></i>
+                                                <span><strong>Lançamento em 72h</strong></span>
+                                            </li>
+                                            <li class="d-flex align-items-start mb-3">
+                                                <i class="bi bi-check-lg text-success mt-1 me-3"></i>
+                                                <span><strong>Suporte local (WhatsApp + E-mail)</strong></span>
+                                            </li>
+                                            <li class="d-flex align-items-start mb-3">
+                                                <i class="bi bi-check-lg text-success mt-1 me-3"></i>
+                                                <span><strong>Atendimento rápido</strong></span>
+                                            </li>
+                                            <li class="d-flex align-items-start mb-3">
+                                                <i class="bi bi-check-lg text-success mt-1 me-3"></i>
+                                                <span><strong>Agendar lançamentos</strong></span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <!-- Call to Action -->
+                                <div class="cta-box bg-wasom-light rounded-4 p-4 mt-5">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-8">
+                                            <h4 class="h5 mb-2">Pronto para lançar sua música?</h4>
+                                            <p class="mb-0 text-muted">Comece agora e tenha sua música em todas as
+                                                plataformas em 72h</p>
+                                        </div>
+                                        <div class="col-md-4 text-md-end">
+                                            <a href="../authentic/register.html?plan=single"
+                                                class="btn btn-wasomupfy btn-lg px-5">
+                                                Começar Agora <i class="bi bi-arrow-right ms-2"></i>
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <!--card-->
+                    </div>
+
+                    <!-- Sidebar com informações adicionais -->
+                    <div class="col-lg-4" data-cue="slideInRight">
+                        <!-- Plataformas -->
+                        <div class="card border-0 shadow-sm mb-4 hover-lift">
+                            <div class="card-body p-4">
+                                <h4 class="h5 mb-3"><i class="bi bi-grid-3x3-gap-fill text-wasom me-2"></i> Plataformas
+                                    Incluídas</h4>
+                                <div class="platforms-grid">
+                                    <div class="platform-item text-center p-2">
+                                        <i class="bi bi-spotify fs-3 text-success"></i>
+                                        <p class="small mb-0 mt-1">Spotify</p>
+                                    </div>
+                                    <div class="platform-item text-center p-2">
+                                        <i class="bi bi-apple fs-3 text-muted"></i>
+                                        <p class="small mb-0 mt-1">Apple Music</p>
+                                    </div>
+                                    <div class="platform-item text-center p-2">
+                                        <i class="bi bi-youtube fs-3 text-danger"></i>
+                                        <p class="small mb-0 mt-1">YouTube Music</p>
+                                    </div>
+                                    <div class="platform-item text-center p-2">
+                                        <i class="bi bi-tiktok fs-3 text-black"></i>
+                                        <p class="small mb-0 mt-1">TikTok</p>
+                                    </div>
+                                    <div class="platform-item text-center p-2">
+                                        <i class="bi bi-instagram fs-3 text-danger"></i>
+                                        <p class="small mb-0 mt-1">Instagram</p>
+                                    </div>
+                                    <div class="platform-item text-center p-2">
+                                        <span class="badge bg-dark text-white">+200</span>
+                                        <p class="small mb-0 mt-1">Outras</p>
+                                    </div>
+                                </div>
+                                <p class="small text-muted mt-3 mb-0">Distribuição global em todas as principais
+                                    plataformas</p>
+                            </div>
+                        </div>
+
+                        <!-- Suporte -->
+                        <div class="card border-0 shadow-sm mb-4 hover-lift">
+                            <div class="card-body p-4">
+                                <h4 class="h5 mb-3"><i class="bi bi-headset text-wasom me-2"></i> Suporte Premium</h4>
+                                <ul class="list-unstyled mb-0">
+                                    <li class="d-flex align-items-start mb-2">
+                                        <i class="bi bi-whatsapp text-success mt-1 me-2"></i>
+                                        <div>
+                                            <span class="fw-medium">WhatsApp</span>
+                                            <p class="small text-muted mb-0">Suporte rápido via WhatsApp</p>
+                                        </div>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-2">
+                                        <i class="bi bi-envelope text-primary mt-1 me-2"></i>
+                                        <div>
+                                            <span class="fw-medium">E-mail</span>
+                                            <p class="small text-muted mb-0">Suporte detalhado por e-mail</p>
+                                        </div>
+                                    </li>
+                                    <li class="d-flex align-items-start">
+                                        <i class="bi bi-clock text-warning mt-1 me-2"></i>
+                                        <div>
+                                            <span class="fw-medium">24/7</span>
+                                            <p class="small text-muted mb-0">Atendimento em tempo útil</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Processo Simples -->
+                        <div class="card border-0 shadow-sm hover-lift">
+                            <div class="card-body p-4">
+                                <h4 class="h5 mb-3"><i class="bi bi-list-check text-wasom me-2"></i> Processo em 3
+                                    Passos</h4>
+                                <div class="process-steps">
+                                    <div class="process-step d-flex mb-3">
+                                        <div class="step-number bg-wasom-gradient text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                                            style="width: 36px; height: 36px;">
+                                            1
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1">Upload da Música</h6>
+                                            <p class="small text-muted mb-0">Envie seus arquivos de áudio e arte</p>
+                                        </div>
+                                    </div>
+                                    <div class="process-step d-flex mb-3">
+                                        <div class="step-number bg-wasom-gradient text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                                            style="width: 36px; height: 36px;">
+                                            2
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1">Revisão e Aprovação</h6>
+                                            <p class="small text-muted mb-0">Nossa equipe revisa em até 24h</p>
+                                        </div>
+                                    </div>
+                                    <div class="process-step d-flex">
+                                        <div class="step-number bg-wasom-gradient text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                                            style="width: 36px; height: 36px;">
+                                            3
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1">Lançamento Global</h6>
+                                            <p class="small text-muted mb-0">Sua música vai ao ar em 72h</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
-        <!-- A área do site fim -->
+
+        <!-- FAQ Section -->
+        <section class="py-8 bg-light-100" data-cue="fadeIn">
+            <div class="container">
+                <div class="row justify-content-center mb-6">
+                    <div class="col-lg-8 text-center">
+                        <span class="badge bg-wasom-gradient text-white fw-semibold px-3 py-2 mb-3">FAQ</span>
+                        <h2 class="display-5 fw-bold mb-4">Perguntas Frequentes sobre o Plano Single</h2>
+                        <p class="text-muted lead">Tire todas as suas dúvidas antes de começar</p>
+                    </div>
+                </div>
+
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        <div class="accordion" id="singleFaqAccordion">
+                            <div class="accordion-item border-0 mb-3 shadow-sm">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button bg-white rounded-3" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#faq1">
+                                        O que exatamente inclui o "1 lançamento"?
+                                    </button>
+                                </h3>
+                                <div id="faq1" class="accordion-collapse collapse show"
+                                    data-bs-parent="#singleFaqAccordion">
+                                    <div class="accordion-body">
+                                        O plano Single inclui a distribuição de uma única faixa musical. Isso inclui
+                                        todos os processos: revisão de metadados, criação de ISRC/UPC, distribuição para
+                                        todas as plataformas, smartlink e pre-salve. Você pode lançar uma música por
+                                        vez, ideal para singles ou testar novas produções.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item border-0 mb-3 shadow-sm">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button bg-white rounded-3 collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#faq2">
+                                        Como funcionam os 90% de royalties?
+                                    </button>
+                                </h3>
+                                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#singleFaqAccordion">
+                                    <div class="accordion-body">
+                                        Você recebe 90% de todo o valor gerado pela sua música nas plataformas de
+                                        streaming (Spotify, Apple Music, Deezer, etc.). Os 10% restantes cobrem nossos
+                                        custos operacionais. Os pagamentos são processados mensalmente e você tem acesso
+                                        a relatórios detalhados na sua conta.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item border-0 mb-3 shadow-sm">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button bg-white rounded-3 collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#faq3">
+                                        Posso adicionar colaboradores na música?
+                                    </button>
+                                </h3>
+                                <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#singleFaqAccordion">
+                                    <div class="accordion-body">
+                                        Sim! O plano Single permite 1 colaborador por faixa. Você pode adicionar
+                                        featuring, produtores, compositores, etc. Todos os colaboradores recebem os
+                                        créditos adequados nas plataformas e podem receber sua parte dos royalties
+                                        através do nosso sistema de split automático.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item border-0 mb-3 shadow-sm">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button bg-white rounded-3 collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#faq4">
+                                        Em quanto tempo minha música estará disponível?
+                                    </button>
+                                </h3>
+                                <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#singleFaqAccordion">
+                                    <div class="accordion-body">
+                                        Após a aprovação, sua música é distribuída em até 72 horas. Você também pode
+                                        agendar lançamentos futuros. Para pré-saves, o smartlink fica disponível
+                                        imediatamente após a aprovação, permitindo que você comece a promover sua música
+                                        antes do lançamento oficial.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item border-0 shadow-sm">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button bg-white rounded-3 collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#faq5">
+                                        E se eu quiser fazer upgrade depois?
+                                    </button>
+                                </h3>
+                                <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#singleFaqAccordion">
+                                    <div class="accordion-body">
+                                        Você pode fazer upgrade para nossos planos Álbum, Artista ou Label a qualquer
+                                        momento. Se fizer upgrade dentro do mesmo mês, o valor pago no Single será
+                                        descontado proporcionalmente do novo plano. Todo o histórico de lançamentos é
+                                        mantido na sua conta.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Outros Planos -->
+        <section class="py-8 bg-light-100" data-cue="fadeIn">
+            <div class="container">
+                <div class="row justify-content-center mb-6">
+                    <div class="col-lg-8 text-center">
+                        <span class="badge bg-wasom-gradient text-white fw-semibold px-3 py-2 mb-3">Compare
+                            Planos</span>
+                        <h2 class="display-5 fw-bold mb-4">Conheça Nossos Outros Planos</h2>
+                        <p class="text-muted lead">Encontre o plano perfeito para suas necessidades</p>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <!-- Álbum -->
+                    <div class="col-md-4" data-cue="zoomIn">
+                        <div class="card border-0 h-100 shadow-sm hover-lift">
+                            <div class="card-body p-4">
+                                <h4 class="h5 mb-3">Plano Álbum</h4>
+                                <div class="price-display mb-3">
+                                    <span class="price-amount h3 fw-bold">4.500</span>
+                                    <span class="price-period text-muted">Kz/álbum</span>
+                                </div>
+                                <ul class="list-unstyled mb-4">
+                                    <li class="d-flex align-items-start mb-2">
+                                        <i class="bi bi-check-lg text-success mt-1 me-2"></i>
+                                        <span>15 faixas por álbum</span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-2">
+                                        <i class="bi bi-check-lg text-success mt-1 me-2"></i>
+                                        <span>Personalizar nome de selo</span>
+                                    </li>
+                                    <li class="d-flex align-items-start">
+                                        <i class="bi bi-check-lg text-success mt-1 me-2"></i>
+                                        <span>Todos os recursos do Single</span>
+                                    </li>
+                                </ul>
+                                <a href="album.html" class="btn btn-outline-wasom w-100">Ver Plano Álbum</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Artista -->
+                    <div class="col-md-4" data-cue="zoomIn" data-delay="100">
+                        <div class="card border-wasom border-3 h-100 shadow-lg hover-lift position-relative">
+                            <div class="position-absolute top-0 start-50 translate-middle">
+                                <span class="badge bg-wasom-gradient text-white fw-semibold px-3 py-2">Mais
+                                    Popular</span>
+                            </div>
+                            <div class="card-body p-4">
+                                <h4 class="h5 mb-3">Plano Artista</h4>
+                                <div class="price-display mb-3">
+                                    <span class="price-amount h3 fw-bold">11.400</span>
+                                    <span class="price-period text-muted">Kz/ano</span>
+                                </div>
+                                <ul class="list-unstyled mb-4">
+                                    <li class="d-flex align-items-start mb-2">
+                                        <i class="bi bi-check-lg text-success mt-1 me-2"></i>
+                                        <span>Faixas ilimitadas</span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-2">
+                                        <i class="bi bi-check-lg text-success mt-1 me-2"></i>
+                                        <span>Lançamentos ilimitados</span>
+                                    </li>
+                                    <li class="d-flex align-items-start">
+                                        <i class="bi bi-check-lg text-success mt-1 me-2"></i>
+                                        <span>Economia de 75% vs Single</span>
+                                    </li>
+                                </ul>
+                                <a href="artist.html" class="btn btn-wasomupfy w-100">Ver Plano Artista</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Label -->
+                    <div class="col-md-4" data-cue="zoomIn" data-delay="200">
+                        <div class="card border-0 h-100 shadow-sm hover-lift">
+                            <div class="card-body p-4">
+                                <h4 class="h5 mb-3">Plano Label</h4>
+                                <div class="price-display mb-3">
+                                    <span class="price-amount h3 fw-bold">70.000</span>
+                                    <span class="price-period text-muted">Kz/ano</span>
+                                </div>
+                                <ul class="list-unstyled mb-4">
+                                    <li class="d-flex align-items-start mb-2">
+                                        <i class="bi bi-check-lg text-success mt-1 me-2"></i>
+                                        <span>10 artistas na conta</span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-2">
+                                        <i class="bi bi-check-lg text-success mt-1 me-2"></i>
+                                        <span>5 colaboradores por faixa</span>
+                                    </li>
+                                    <li class="d-flex align-items-start">
+                                        <i class="bi bi-check-lg text-success mt-1 me-2"></i>
+                                        <span>Ideal para gravadoras</span>
+                                    </li>
+                                </ul>
+                                <a href="label.html" class="btn btn-outline-wasom w-100">Ver Plano Label</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final CTA -->
+        <section class="py-8 bg-gradient-wasom text-white" data-cue="fadeIn">
+            <div class="container">
+                <div class="row justify-content-center text-center">
+                    <div class="col-lg-8">
+                        <h2 class="display-5 fw-bold mb-4">Pronto para lançar sua música?</h2>
+                        <p class="lead mb-5 opacity-90">Comece agora com o Plano Single e tenha seu próximo hit em todas
+                            as plataformas em 72 horas</p>
+                        <div class="d-flex flex-wrap justify-content-center gap-3">
+                            <a href="../authentic/register.html?plan=single"
+                                class="btn btn-light btn-lg px-5 text-wasom fw-semibold">
+                                Começar Agora <i class="bi bi-arrow-right ms-2"></i>
+                            </a>
+                            <a href="contact.html" class="btn btn-outline-light btn-lg px-5">
+                                Falar com Suporte
+                            </a>
+                        </div>
+                        <p class="mt-4 small opacity-75">
+                            <i class="bi bi-shield-check me-1"></i> Pagamento 100% seguro • Sem contrato • Cancelamento
+                            a qualquer momento
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
     <!--Seccão do site inteira até ao perto do footer  fim -->
     <!-- Footer -->
@@ -598,7 +1006,7 @@
                         </svg>
                     </a>
                     <a target="_blank" rel="external" title="Instagram Wasom Upfy"
-                        href="https://www.instagram.com/wasomupfy" class="btn btn-wasomupfy btn-light">
+                        href="https://www.instagram.com/@wasomupfy" class="btn btn-wasomupfy btn-light">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
                             class="bi bi-instagram" viewBox="0 0 16 16">
                             <path
@@ -757,13 +1165,13 @@
 
                                     <li class="mb-2">
                                         <a title="E-mail para pedidos"
-                                            href="mailto:wasomupfy@gmail.com?subject=Preciso fazer um pedido.&bcc=wasomupfy@yahoo.com&body=Olá equipa de Wasom Upfy, estou interessado em fazer um pedido ao Wasom Upfy."
-                                            class="text-decoration-none text-reset">wasomupfy.apoio@gmail.com</a>
+                                            href="mailto:info@wasomupfy.com?subject=Preciso fazer um pedido.&bcc=suporte@wasomupfy.com&body=Olá equipa de Wasom Upfy, estou interessado em fazer um pedido ao Wasom Upfy."
+                                            class="text-decoration-none text-reset">info@wasomupfy.com</a>
                                     </li>
                                     <li class="mb-2">
                                         <a title="E-mail para pedidos"
-                                            href="mailto:wasomupfy@yahoo.com?subject=Preciso fazer um pedido.&bcc=wasomupfy@gmail.com&body=Olá equipa de Wasom Upfy, estou interessado em fazer um pedido ao Wasom Upfy."
-                                            class="text-decoration-none text-reset">wasomupfy@yahoo.com</a>
+                                            href="mailto:suporte@wasomupfy.com?subject=Preciso fazer um pedido.&bcc=info@wasomupfy.com&body=Olá equipa de Wasom Upfy, estou interessado em fazer um pedido ao Wasom Upfy."
+                                            class="text-decoration-none text-reset">suporte@wasomupfy.com</a>
                                     </li>
                                     <li class="mb-2">
                                         <a href="#!" title="Horário do atendimento"
@@ -893,7 +1301,67 @@
                 m)
         }(window, document, "script", "dataLayer")
     </script>
-</body>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Smooth scroll
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Animation on scroll
+            const animateOnScroll = () => {
+                const elements = document.querySelectorAll('[data-cue]');
+                elements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    const elementVisible = 150;
+
+                    if (elementTop < window.innerHeight - elementVisible) {
+                        element.classList.add('animated');
+                    }
+                });
+            };
+
+            window.addEventListener('scroll', animateOnScroll);
+            animateOnScroll();
+
+            // Add plan parameter to register links
+            document.querySelectorAll('a[href*="register.html"]').forEach(link => {
+                if (!link.getAttribute('href').includes('plan=')) {
+                    link.setAttribute('href', link.getAttribute('href') + '?plan=single');
+                }
+            });
+
+            // FAQ accordion
+            const faqItems = document.querySelectorAll('.accordion-button');
+            faqItems.forEach(item => {
+                item.addEventListener('click', function () {
+                    const target = document.querySelector(this.getAttribute('data-bs-target'));
+                    const isExpanded = this.getAttribute('aria-expanded') === 'true';
+
+                    // Add animation class
+                    if (!isExpanded) {
+                        target.classList.add('expanding');
+                        setTimeout(() => {
+                            target.classList.remove('expanding');
+                        }, 300);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
 
 </html>

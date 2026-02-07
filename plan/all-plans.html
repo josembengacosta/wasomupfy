@@ -46,138 +46,139 @@
 </head>
 
 <style>
-:root {
-    --wasom-primary: #FF0089;
-    --wasom-secondary: #e04385;
-    --wasom-gradient: linear-gradient(135deg, var(--wasom-primary), var(--wasom-secondary));
-    --wasom-light: #fff0f7;
-}
+    :root {
+        --wasom-primary: #FF0089;
+        --wasom-secondary: #e04385;
+        --wasom-gradient: linear-gradient(135deg, var(--wasom-primary), var(--wasom-secondary));
+        --wasom-light: #fff0f7;
+    }
 
-/* Hero */
-.pricing-hero {
-   min-height: 70vh;
-    display: flex;
-    align-items: center;
-    padding: 6rem 0;
-}
-
-.hero-overlay {
-  position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.4));
-}
-
-/* Cards de Preço */
-.pricing-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border-radius: 16px;
-    overflow: hidden;
-}
-
-.pricing-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15) !important;
-}
-
-.pricing-card.border-wasom {
-    border-color: var(--wasom-primary) !important;
-}
-
-.price-display .price-amount {
-    background: var(--wasom-gradient);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-}
-
-/* Tabela de Comparação */
-.table th.bg-wasom-light {
-    background-color: var(--wasom-light) !important;
-}
-
-.table td.bg-wasom-light {
-    background-color: var(--wasom-light) !important;
-}
-
-/* Accordion */
-.accordion-button {
-    font-weight: 600;
-    padding: 1.25rem;
-}
-
-.accordion-button:not(.collapsed) {
-    background-color: var(--wasom-light);
-    color: var(--wasom-primary);
-    box-shadow: none;
-}
-
-.accordion-button:focus {
-    border-color: var(--wasom-primary);
-    box-shadow: 0 0 0 0.25rem rgba(255, 0, 137, 0.25);
-}
-
-
-/* Responsivo */
-@media (max-width: 992px) {
+    /* Hero */
     .pricing-hero {
-        min-height: 50vh;
-        padding: 4rem 0;
+        min-height: 70vh;
+        display: flex;
+        align-items: center;
+        padding: 6rem 0;
     }
-    
-    .display-4 {
-        font-size: 2.5rem;
-    }
-    
-    .display-6 {
-        font-size: 2rem;
-    }
-    
-    .table-responsive {
-        font-size: 0.9rem;
-    }
-}
 
-@media (max-width: 768px) {
+    .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.4));
+    }
+
+    /* Cards de Preço */
     .pricing-card {
-        margin-bottom: 2rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 16px;
+        overflow: hidden;
     }
-    
-    .price-amount.display-4 {
-        font-size: 2.5rem;
-    }
-}
 
-/* Animações */
-@keyframes fadeInUp {
-    from {
+    .pricing-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .pricing-card.border-wasom {
+        border-color: var(--wasom-primary) !important;
+    }
+
+    .price-display .price-amount {
+        background: var(--wasom-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    /* Tabela de Comparação */
+    .table th.bg-wasom-light {
+        background-color: var(--wasom-light) !important;
+    }
+
+    .table td.bg-wasom-light {
+        background-color: var(--wasom-light) !important;
+    }
+
+    /* Accordion */
+    .accordion-button {
+        font-weight: 600;
+        padding: 1.25rem;
+    }
+
+    .accordion-button:not(.collapsed) {
+        background-color: var(--wasom-light);
+        color: var(--wasom-primary);
+        box-shadow: none;
+    }
+
+    .accordion-button:focus {
+        border-color: var(--wasom-primary);
+        box-shadow: 0 0 0 0.25rem rgba(255, 0, 137, 0.25);
+    }
+
+
+    /* Responsivo */
+    @media (max-width: 992px) {
+        .pricing-hero {
+            min-height: 50vh;
+            padding: 4rem 0;
+        }
+
+        .display-4 {
+            font-size: 2.5rem;
+        }
+
+        .display-6 {
+            font-size: 2rem;
+        }
+
+        .table-responsive {
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .pricing-card {
+            margin-bottom: 2rem;
+        }
+
+        .price-amount.display-4 {
+            font-size: 2.5rem;
+        }
+    }
+
+    /* Animações */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    [data-cue] {
         opacity: 0;
-        transform: translateY(30px);
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
+
+    [data-cue].animated {
+        animation: fadeInUp 0.6s ease forwards;
     }
-}
 
-[data-cue] {
-    opacity: 0;
-}
+    .hover-lift {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
 
-[data-cue].animated {
-    animation: fadeInUp 0.6s ease forwards;
-}
-
-.hover-lift {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.hover-lift:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
-}
+    .hover-lift:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
+    }
 </style>
 
 
@@ -231,7 +232,7 @@
                                                 width="35" height="30" alt="Single">
                                             <div class="ms-3 lh-1">
                                                 <h5 class="mb-1">Single</h5>
-                                                <p class="mb-0 fs-6">Nosso plano Single - 1.150 Kz</p>
+                                                <p class="mb-0 fs-6">Nosso plano Single - 2.000 Kz</p>
                                             </div>
                                         </div>
                                     </a>
@@ -375,8 +376,8 @@
                                             mensagem</a>
                                     </li>
                                     <li><a title="E-mail" class="dropdown-item"
-                                            href="mailto:wasomupfy@gmail.com?subject=Entrando em contacto com equipa de Wasom Upfy.&bcc=wasomupfy@yahoo.com&body=Olá equipa de Wasom Upfy.">
-                                            wasomupfy@gmail.com</a>
+                                            href="mailto:info@wasomupfy.com?subject=Entrando em contacto com equipa de Wasom Upfy.&bcc=suporte@wasomupfy.com&body=Olá equipa de Wasom Upfy.">
+                                            info@wasomupfy.com</a>
                                     </li>
                                     <li><a title="WhatsApp" class="dropdown-item"
                                             href="https://api.whatsapp.com/send/?phone=244922030116&text&type=phone_number&app_absent=0">
@@ -403,791 +404,852 @@
     <main>
 
         <!-- Hero Section -->
-<section class="pricing-hero jarallax position-relative overflow-hidden" data-jarallax data-speed="0.4">
-    <img class="jarallax-img" src="../assets/img/theme/all_plans.png" alt="Planos Wasom Upfy" loading="lazy">
-    <div class="hero-overlay"></div>
-    <div class="container position-relative z-index-2">
-        <div class="row justify-content-center">
-            <div class="col-xl-6 col-lg-8 col-md-10 text-center" data-cue="fadeIn">
-                <span class="badge bg-wasomupfy text-white-stable fw-semibold px-4 py-2 mb-3">Escolha Seu Plano</span>
-                <h1 class="display-4 mb-4 text-white-stable fw-bold">Planos que Impulsionam sua Música</h1>
-                <p class="lead text-white-stable mb-4 opacity-90">Distribua sua música globalmente com transparência total. 90% dos royalties são seus!</p>
-                <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
-                    <span class="badge bg-white px-3 py-2">
-                        <i class="bi bi-check-circle-fill text-success me-1"></i> ISRC/UPC Grátis
-                    </span>
-                    <span class="badge bg-white px-3 py-2">
-                        <i class="bi bi-check-circle-fill text-success me-1"></i> 90% Royalties
-                    </span>
-                    <span class="badge bg-white px-3 py-2">
-                        <i class="bi bi-check-circle-fill text-success me-1"></i> Suporte Local
-                    </span>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Planos -->
-<section class="py-8 bg-light-100" data-cue="fadeIn">
-    <div class="container">
-        <div class="row justify-content-center mb-6">
-            <div class="col-lg-8 text-center">
-                <h2 class="display-6 fw-bold mb-3">Escolha o plano perfeito para você</h2>
-                <p class="text-muted lead">Temos opções para todos os tipos de artistas, desde iniciantes até gravadoras</p>
-                
-                <!-- Toggle de período (mensal/anual) -->
-                <div class="d-flex justify-content-center align-items-center mb-5">
-                    <span class="me-3 fw-medium">Cobrança por lançamento</span>
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" role="switch" id="billingToggle" checked>
-                        <label class="form-check-label ms-2 fw-medium" for="billingToggle">Anual (Economize)</label>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row g-4 justify-content-center">
-            <!-- Plano Single -->
-            <div class="col-xl-3 col-lg-6" data-cue="zoomIn">
-                <div class="pricing-card card-white border-0 h-100 shadow-lg hover-lift">
-                    <div class="card-header border-0 pt-5 pb-4 text-center">
-                        <span class="badge bg-wasom-light text-wasom fw-semibold px-3 py-2 mb-3">Popular</span>
-                        <h3 class="h2 fw-bold mb-3">Single</h3>
-                        <div class="price-display">
-                            <div class="monthly-price">
-                                <span class="price-amount display-4 fw-bold">1.150</span>
-                                <span class="price-period h5 text-muted fw-normal">Kz/single</span>
-                            </div>
-                            <div class="annual-price d-none">
-                                <span class="price-amount display-4 fw-bold">11.500</span>
-                                <span class="price-period h5 text-muted fw-normal">Kz/10 singles</span>
-                                <div class="badge bg-success mt-2">Economize 15%</div>
-                            </div>
-                        </div>
-                        <p class="text-muted mb-0">Perfeito para seu próximo hit</p>
-                    </div>
-                    <div class="card-body pt-4 pb-5 px-4">
-                        <ul class="list-unstyled mb-4">
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span><strong>90% Royalties</strong> - Você fica com 90%</span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span>Upload de <strong>1 faixa</strong></span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span><strong>1 Artista</strong> principal</span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span><strong>1 Colaborador</strong> por faixa</span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span>Análise de dados <strong>avançados</strong></span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span><strong>ISRC e UPC grátis</strong></span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span>Smartlink e pre-salve</span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span>Lançamento em <strong>72h</strong></span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span>Suporte local (WhatsApp + E-mail)</span>
-                            </li>
-                            <li class="d-flex align-items-start">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span>Agendar lançamentos</span>
-                            </li>
-                        </ul>
-                        <div class="d-grid">
-                            <a href="register.html?plan=single" class="btn btn-wasomupfy btn-lg">Escolher Single</a>
+        <section class="pricing-hero jarallax position-relative overflow-hidden py-8" data-jarallax data-speed="0.4">
+            <img class="jarallax-img" src="../assets/img/theme/all_plans.png" alt="Planos Wasom Upfy" loading="lazy">
+            <div class="hero-overlay"></div>
+            <div class="container position-relative z-index-2">
+                <div class="row justify-content-center">
+                    <div class="col-xl-6 col-lg-8 col-md-10 text-center" data-cue="fadeIn">
+                        <span class="badge bg-wasomupfy text-white-stable fw-semibold px-4 py-2 mb-3">Escolha Seu
+                            Plano</span>
+                        <h1 class="display-4 mb-4 text-white-stable fw-bold">Planos que Impulsionam sua Música</h1>
+                        <p class="lead text-white-stable mb-4 opacity-90">Distribua sua música globalmente com
+                            transparência total. 90% dos royalties são seus!</p>
+                        <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
+                            <span class="badge bg-white px-3 py-2">
+                                <i class="bi bi-check-circle-fill text-success me-1"></i> ISRC/UPC Grátis
+                            </span>
+                            <span class="badge bg-white px-3 py-2">
+                                <i class="bi bi-check-circle-fill text-success me-1"></i> 90% Royalties
+                            </span>
+                            <span class="badge bg-white px-3 py-2">
+                                <i class="bi bi-check-circle-fill text-success me-1"></i> Suporte Local
+                            </span>
                         </div>
                     </div>
                 </div>
             </div>
+        </section>
 
-            <!-- Plano Álbum -->
-            <div class="col-xl-3 col-lg-6" data-cue="zoomIn" data-delay="100">
-                <div class="pricing-card card-white border-0 h-100 shadow-lg hover-lift">
-                    <div class="card-header border-0 pt-5 pb-4 text-center">
-                        <h3 class="h2 fw-bold mb-3">Álbum</h3>
-                        <div class="price-display">
-                            <div class="monthly-price">
-                                <span class="price-amount display-4 fw-bold">4.500</span>
-                                <span class="price-period h5 text-muted fw-normal">Kz/álbum</span>
+        <!-- Planos -->
+        <section class="py-8 bg-light-100" data-cue="fadeIn">
+            <div class="container">
+                <div class="row justify-content-center mb-6">
+                    <div class="col-lg-8 text-center">
+                        <h2 class="display-6 fw-bold mb-3">Escolha o plano perfeito para você</h2>
+                        <p class="text-muted lead">Temos opções para todos os tipos de artistas, desde iniciantes até
+                            gravadoras</p>
+
+                        <!-- Toggle de período (mensal/anual) -->
+                        <div class="d-flex justify-content-center align-items-center mb-5">
+                            <span class="me-3 fw-medium">Cobrança por lançamento</span>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="billingToggle"
+                                    checked>
+                                <label class="form-check-label ms-2 fw-medium" for="billingToggle">Anual
+                                    (Economize)</label>
                             </div>
-                            <div class="annual-price d-none">
-                                <span class="price-amount display-4 fw-bold">40.500</span>
-                                <span class="price-period h5 text-muted fw-normal">Kz/10 álbuns</span>
-                                <div class="badge bg-success mt-2">Economize 10%</div>
-                            </div>
-                        </div>
-                        <p class="text-muted mb-0">Ideal para projetos completos</p>
-                    </div>
-                    <div class="card-body pt-4 pb-5 px-4">
-                        <ul class="list-unstyled mb-4">
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span><strong>90% Royalties</strong> - Você fica com 90%</span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span>Upload de <strong>15 faixas</strong></span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span><strong>1 Artista</strong> principal</span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span><strong>1 Colaborador</strong> por faixa</span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span>Análise de dados <strong>avançados</strong></span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span><strong>ISRC e UPC grátis</strong></span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span>Smartlink e pre-salve</span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span>Lançamento em <strong>72h</strong></span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span>Suporte local (WhatsApp + E-mail)</span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span>Agendar lançamentos</span>
-                            </li>
-                            <li class="d-flex align-items-start">
-                                <i class="bi bi-star-fill text-warning mt-1 me-3"></i>
-                                <span><strong>Personalizar nome de selo</strong></span>
-                            </li>
-                        </ul>
-                        <div class="d-grid">
-                            <a href="register.html?plan=album" class="btn btn-outline-wasom btn-lg">Escolher Álbum</a>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Plano Artista -->
-            <div class="col-xl-3 col-lg-6" data-cue="zoomIn" data-delay="200">
-                <div class="pricing-card card-white border-wasom border-3 h-100 shadow-lg hover-lift position-relative">
-                    <div class="position-absolute top-0 start-50 translate-middle">
-                        <span class="badge bg-wasomupfy text-white fw-semibold px-4 py-2">Melhor Custo-Benefício</span>
-                    </div>
-                    <div class="card-header border-0 pt-6 pb-4 text-center">
-                        <h3 class="h2 fw-bold mb-3">Artista</h3>
-                        <div class="price-display">
-                            <div class="monthly-price">
-                                <span class="price-amount display-4 fw-bold">11.400</span>
-                                <span class="price-period h5 text-muted fw-normal">Kz/ano</span>
+                <div class="row g-4 justify-content-center">
+                    <!-- Plano Single -->
+                    <div class="col-xl-3 col-lg-6" data-cue="zoomIn">
+                        <div class="pricing-card card border-0 h-100 shadow-lg hover-lift">
+                            <div class="card-header border-0 pt-5 pb-4 text-center">
+                                <span class="badge bg-wasom-light text-wasom fw-semibold px-3 py-2 mb-3">Popular</span>
+                                <h3 class="h2 fw-bold mb-3">Single</h3>
+                                <div class="price-display">
+                                    <div class="monthly-price">
+                                        <span class="price-amount display-4 fw-bold">2.000</span>
+                                        <span class="price-period h5 text-muted fw-normal">Kz/single</span>
+                                    </div>
+                                    <div class="annual-price d-none">
+                                        <span class="price-amount display-4 fw-bold">11.500</span>
+                                        <span class="price-period h5 text-muted fw-normal">Kz/10 singles</span>
+                                        <div class="badge bg-success mt-2">Economize 15%</div>
+                                    </div>
+                                </div>
+                                <p class="text-muted mb-0">Perfeito para seu próximo hit</p>
                             </div>
-                        </div>
-                        <p class="text-muted mb-0">Para artistas em crescimento</p>
-                    </div>
-                    <div class="card-body pt-4 pb-5 px-4">
-                        <ul class="list-unstyled mb-4">
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span><strong>90% Royalties</strong> - Você fica com 90%</span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span>Upload de <strong>faixas ilimitadas</strong></span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span><strong>1 Artista</strong> principal</span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span><strong>1 Colaborador</strong> por faixa</span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span>Análise de dados <strong>avançados</strong></span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span><strong>ISRC e UPC grátis</strong></span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span>Smartlink e pre-salve</span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span>Lançamento em <strong>72h</strong></span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span>Suporte local (WhatsApp + E-mail)</span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span>Agendar lançamentos</span>
-                            </li>
-                            <li class="d-flex align-items-start">
-                                <i class="bi bi-star-fill text-warning mt-1 me-3"></i>
-                                <span><strong>Personalizar nome de selo</strong></span>
-                            </li>
-                        </ul>
-                        <div class="d-grid">
-                            <a href="register.html?plan=artist" class="btn btn-wasomupfy btn-lg">Escolher Artista</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Plano Label -->
-            <div class="col-xl-3 col-lg-6" data-cue="zoomIn" data-delay="300">
-                <div class="pricing-card card-white border-0 h-100 shadow-lg hover-lift">
-                    <div class="card-header border-0 pt-5 pb-4 text-center">
-                        <h3 class="h2 fw-bold mb-3">Label</h3>
-                        <div class="price-display">
-                            <div class="monthly-price">
-                                <span class="price-amount display-4 fw-bold">70.000</span>
-                                <span class="price-period h5 text-muted fw-normal">Kz/ano</span>
-                            </div>
-                        </div>
-                        <p class="text-muted mb-0">Para gravadoras e coletivos</p>
-                    </div>
-                    <div class="card-body pt-4 pb-5 px-4">
-                        <ul class="list-unstyled mb-4">
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span><strong>90% Royalties</strong> - Você fica com 90%</span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span>Upload de <strong>faixas ilimitadas</strong></span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span><strong>10 Artistas</strong> na conta</span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span><strong>5 Colaboradores</strong> por faixa</span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span>Análise de dados <strong>avançados</strong></span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span><strong>ISRC e UPC grátis</strong></span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span>Smartlink e pre-salve</span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span>Lançamento em <strong>72h</strong></span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span>Suporte local (WhatsApp + E-mail)</span>
-                            </li>
-                            <li class="d-flex align-items-start mb-3">
-                                <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                <span>Agendar lançamentos</span>
-                            </li>
-                            <li class="d-flex align-items-start">
-                                <i class="bi bi-star-fill text-warning mt-1 me-3"></i>
-                                <span><strong>Personalizar nome de selo</strong></span>
-                            </li>
-                        </ul>
-                        <div class="d-grid">
-                            <a href="register.html?plan=label" class="btn btn-outline-wasom btn-lg">Escolher Label</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Comparação de Planos -->
-<section class="py-8" data-cue="fadeIn">
-    <div class="container">
-        <div class="row justify-content-center mb-6">
-            <div class="col-lg-10 text-center">
-                <span class="badge bg-wasomupfy text-white fw-semibold px-3 py-2 mb-3">Comparação</span>
-                <h2 class="display-6 fw-bold mb-4">Compare Todos os Planos</h2>
-                <p class="text-muted lead mb-5">Veja detalhadamente o que cada plano oferece</p>
-            </div>
-        </div>
-
-        <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead class="">
-                    <tr>
-                        <th class="border-0" style="width: 30%">Recursos</th>
-                        <th class="text-center border-0 py-4">
-                            <h5 class="mb-1">Single</h5>
-                            <div class="text-wasom fw-bold">1.150Kz/single</div>
-                        </th>
-                        <th class="text-center border-0 py-4">
-                            <h5 class="mb-1">Álbum</h5>
-                            <div class="text-wasom fw-bold">4.500Kz/álbum</div>
-                        </th>
-                        <th class="text-center border-0 py-4 bg-wasom-light">
-                            <h5 class="mb-1 text-muted">Artista</h5>
-                            <div class="text-wasom fw-bold">11.400Kz/ano</div>
-                        </th>
-                        <th class="text-center border-0 py-4">
-                            <h5 class="mb-1">Label</h5>
-                            <div class="text-wasom fw-bold">70.000Kz/ano</div>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="fw-semibold">Royalties</td>
-                        <td class="text-center">90%</td>
-                        <td class="text-center">90%</td>
-                        <td class="text-center bg-wasom-light">90%</td>
-                        <td class="text-center">90%</td>
-                    </tr>
-                    <tr>
-                        <td class="fw-semibold">Faixas</td>
-                        <td class="text-center">1 faixa</td>
-                        <td class="text-center">15 faixas</td>
-                        <td class="text-center bg-wasom-light">Ilimitadas</td>
-                        <td class="text-center">Ilimitadas</td>
-                    </tr>
-                    <tr>
-                        <td class="fw-semibold">Artistas</td>
-                        <td class="text-center">1 artista</td>
-                        <td class="text-center">1 artista</td>
-                        <td class="text-center bg-wasom-light">1 artista</td>
-                        <td class="text-center">10 artistas</td>
-                    </tr>
-                    <tr>
-                        <td class="fw-semibold">Colaboradores</td>
-                        <td class="text-center">1 por faixa</td>
-                        <td class="text-center">1 por faixa</td>
-                        <td class="text-center bg-wasom-light">1 por faixa</td>
-                        <td class="text-center">5 por faixa</td>
-                    </tr>
-                    <tr>
-                        <td class="fw-semibold">Análise de Dados</td>
-                        <td class="text-center"><i class="bi bi-check-lg text-success"></i></td>
-                        <td class="text-center"><i class="bi bi-check-lg text-success"></i></td>
-                        <td class="text-center bg-wasom-light"><i class="bi bi-check-lg text-success"></i></td>
-                        <td class="text-center"><i class="bi bi-check-lg text-success"></i></td>
-                    </tr>
-                    <tr>
-                        <td class="fw-semibold">ISRC e UPC</td>
-                        <td class="text-center"><i class="bi bi-check-lg text-success"></i></td>
-                        <td class="text-center"><i class="bi bi-check-lg text-success"></i></td>
-                        <td class="text-center bg-wasom-light"><i class="bi bi-check-lg text-success"></i></td>
-                        <td class="text-center"><i class="bi bi-check-lg text-success"></i></td>
-                    </tr>
-                    <tr>
-                        <td class="fw-semibold">Smartlink e Pre-salve</td>
-                        <td class="text-center"><i class="bi bi-check-lg text-success"></i></td>
-                        <td class="text-center"><i class="bi bi-check-lg text-success"></i></td>
-                        <td class="text-center bg-wasom-light"><i class="bi bi-check-lg text-success"></i></td>
-                        <td class="text-center"><i class="bi bi-check-lg text-success"></i></td>
-                    </tr>
-                    <tr>
-                        <td class="fw-semibold">Tempo de Lançamento</td>
-                        <td class="text-center">72 horas</td>
-                        <td class="text-center">72 horas</td>
-                        <td class="text-center bg-wasom-light">72 horas</td>
-                        <td class="text-center">72 horas</td>
-                    </tr>
-                    <tr>
-                        <td class="fw-semibold">Suporte</td>
-                        <td class="text-center">WhatsApp + E-mail</td>
-                        <td class="text-center">WhatsApp + E-mail</td>
-                        <td class="text-center bg-wasom-light">WhatsApp + E-mail</td>
-                        <td class="text-center">WhatsApp + E-mail</td>
-                    </tr>
-                    <tr>
-                        <td class="fw-semibold">Agendar Lançamentos</td>
-                        <td class="text-center"><i class="bi bi-check-lg text-success"></i></td>
-                        <td class="text-center"><i class="bi bi-check-lg text-success"></i></td>
-                        <td class="text-center bg-wasom-light"><i class="bi bi-check-lg text-success"></i></td>
-                        <td class="text-center"><i class="bi bi-check-lg text-success"></i></td>
-                    </tr>
-                    <tr>
-                        <td class="fw-semibold">Nome do Selo</td>
-                        <td class="text-center"><i class="bi bi-dash text-muted"></i></td>
-                        <td class="text-center"><i class="bi bi-check-lg text-success"></i></td>
-                        <td class="text-center bg-wasom-light"><i class="bi bi-check-lg text-success"></i></td>
-                        <td class="text-center"><i class="bi bi-check-lg text-success"></i></td>
-                    </tr>
-                    <tr>
-                        <td class="fw-semibold"></td>
-                        <td class="text-center pt-4">
-                            <a href="register.html?plan=single" class="btn btn-wasomupfy btn-sm w-100">Escolher</a>
-                        </td>
-                        <td class="text-center pt-4">
-                            <a href="register.html?plan=album" class="btn btn-outline-wasom btn-sm w-100">Escolher</a>
-                        </td>
-                        <td class="text-center pt-4 bg-wasom-light">
-                            <a href="register.html?plan=artist" class="btn btn-wasomupfy btn-sm w-100">Escolher</a>
-                        </td>
-                        <td class="text-center pt-4">
-                            <a href="register.html?plan=label" class="btn btn-outline-wasom btn-sm w-100">Escolher</a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</section>
-
-<!-- FAQ -->
-<section class="py-8 bg-light-100" data-cue="fadeIn">
-    <div class="container">
-        <div class="row justify-content-center mb-6">
-            <div class="col-lg-8 text-center">
-                <span class="badge bg-wasomupfy text-white fw-semibold px-3 py-2 mb-3">FAQ</span>
-                <h2 class="display-6 fw-bold mb-4">Perguntas Frequentes</h2>
-                <p class="text-muted lead">Tire suas dúvidas sobre nossos planos</p>
-            </div>
-        </div>
-
-        <div class="row justify-content-center">
-            <div class="col-lg-10">
-                <div class="accordion" id="faqAccordion">
-                    <div class="accordion-item border-0 mb-3 shadow-sm">
-                        <h3 class="accordion-header">
-                            <button class="accordion-button bg-white rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-                                Como funcionam os 90% de royalties?
-                            </button>
-                        </h3>
-                        <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body">
-                                Você recebe 90% de todo o valor gerado pelas suas músicas nas plataformas de streaming. Os 10% restantes cobrem nossos custos operacionais e de distribuição. Pagamentos são feitos mensalmente.
+                            <div class="card-body pt-4 pb-5 px-4">
+                                <ul class="list-unstyled mb-4">
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span><strong>90% Royalties</strong> - Você fica com 90%</span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span>Upload de <strong>1 faixa</strong></span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span><strong>1 Artista</strong> principal</span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span><strong>1 Colaborador</strong> por faixa</span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span>Análise de dados <strong>avançados</strong></span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span><strong>ISRC e UPC grátis</strong></span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span>Smartlink e pre-salve</span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span>Lançamento em <strong>72h</strong></span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span>Suporte local (WhatsApp + E-mail)</span>
+                                    </li>
+                                    <li class="d-flex align-items-start">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span>Agendar lançamentos</span>
+                                    </li>
+                                </ul>
+                                <div class="d-grid">
+                                    <a href="../authentic/register.html?plan=single"
+                                        class="btn btn-wasomupfy btn-lg">Escolher
+                                        Single</a>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="accordion-item border-0 mb-3 shadow-sm">
-                        <h3 class="accordion-header">
-                            <button class="accordion-button bg-white rounded-3 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
-                                Posso trocar de plano depois?
-                            </button>
-                        </h3>
-                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body">
-                                Sim! Você pode fazer upgrade para um plano superior a qualquer momento. O valor será proporcional ao tempo restante do seu plano atual.
+                    <!-- Plano Álbum -->
+                    <div class="col-xl-3 col-lg-6" data-cue="zoomIn" data-delay="100">
+                        <div class="pricing-card card border-0 h-100 shadow-lg hover-lift">
+                            <div class="card-header border-0 pt-5 pb-4 text-center">
+                                <h3 class="h2 fw-bold mb-3">Álbum</h3>
+                                <div class="price-display">
+                                    <div class="monthly-price">
+                                        <span class="price-amount display-4 fw-bold">4.500</span>
+                                        <span class="price-period h5 text-muted fw-normal">Kz/álbum</span>
+                                    </div>
+                                    <div class="annual-price d-none">
+                                        <span class="price-amount display-4 fw-bold">40.500</span>
+                                        <span class="price-period h5 text-muted fw-normal">Kz/10 álbuns</span>
+                                        <div class="badge bg-success mt-2">Economize 10%</div>
+                                    </div>
+                                </div>
+                                <p class="text-muted mb-0">Ideal para projetos completos</p>
+                            </div>
+                            <div class="card-body pt-4 pb-5 px-4">
+                                <ul class="list-unstyled mb-4">
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span><strong>90% Royalties</strong> - Você fica com 90%</span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span>Upload de <strong>15 faixas</strong></span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span><strong>1 Artista</strong> principal</span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span><strong>1 Colaborador</strong> por faixa</span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span>Análise de dados <strong>avançados</strong></span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span><strong>ISRC e UPC grátis</strong></span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span>Smartlink e pre-salve</span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span>Lançamento em <strong>72h</strong></span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span>Suporte local (WhatsApp + E-mail)</span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span>Agendar lançamentos</span>
+                                    </li>
+                                    <li class="d-flex align-items-start">
+                                        <i class="bi bi-star-fill text-warning mt-1 me-3"></i>
+                                        <span><strong>Personalizar nome de selo</strong></span>
+                                    </li>
+                                </ul>
+                                <div class="d-grid">
+                                    <a href="../authentic/register.html?plan=album"
+                                        class="btn btn-outline-wasom btn-lg">Escolher
+                                        Álbum</a>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="accordion-item border-0 mb-3 shadow-sm">
-                        <h3 class="accordion-header">
-                            <button class="accordion-button bg-white rounded-3 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
-                                O que são ISRC e UPC?
-                            </button>
-                        </h3>
-                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body">
-                                ISRC (International Standard Recording Code) e UPC (Universal Product Code) são códigos únicos que identificam suas músicas e álbuns globalmente. Essenciais para rastrear plays e receber royalties, são fornecidos gratuitamente em todos os nossos planos.
+                    <!-- Plano Artista -->
+                    <div class="col-xl-3 col-lg-6" data-cue="zoomIn" data-delay="200">
+                        <div
+                            class="pricing-card card border-wasom border-3 h-100 shadow-lg hover-lift position-relative">
+                            <div class="position-absolute top-0 start-50 translate-middle">
+                                <span class="badge bg-wasomupfy text-white fw-semibold px-4 py-2">Melhor
+                                    Custo-Benefício</span>
+                            </div>
+                            <div class="card-header border-0 pt-6 pb-4 text-center">
+                                <h3 class="h2 fw-bold mb-3">Artista</h3>
+                                <div class="price-display">
+                                    <div class="monthly-price">
+                                        <span class="price-amount display-4 fw-bold">11.400</span>
+                                        <span class="price-period h5 text-muted fw-normal">Kz/ano</span>
+                                    </div>
+                                </div>
+                                <p class="text-muted mb-0">Para artistas em crescimento</p>
+                            </div>
+                            <div class="card-body pt-4 pb-5 px-4">
+                                <ul class="list-unstyled mb-4">
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span><strong>90% Royalties</strong> - Você fica com 90%</span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span>Upload de <strong>faixas ilimitadas</strong></span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span><strong>1 Artista</strong> principal</span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span><strong>1 Colaborador</strong> por faixa</span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span>Análise de dados <strong>avançados</strong></span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span><strong>ISRC e UPC grátis</strong></span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span>Smartlink e pre-salve</span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span>Lançamento em <strong>72h</strong></span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span>Suporte local (WhatsApp + E-mail)</span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span>Agendar lançamentos</span>
+                                    </li>
+                                    <li class="d-flex align-items-start">
+                                        <i class="bi bi-star-fill text-warning mt-1 me-3"></i>
+                                        <span><strong>Personalizar nome de selo</strong></span>
+                                    </li>
+                                </ul>
+                                <div class="d-grid">
+                                    <a href="../authentic/register.html?plan=artist"
+                                        class="btn btn-wasomupfy btn-lg">Escolher
+                                        Artista</a>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="accordion-item border-0 mb-3 shadow-sm">
-                        <h3 class="accordion-header">
-                            <button class="accordion-button bg-white rounded-3 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
-                                Em quanto tempo minha música é lançada?
-                            </button>
-                        </h3>
-                        <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body">
-                                Seu lançamento é processado e distribuído em até 72 horas após a aprovação. Você pode agendar lançamentos futuros conforme sua estratégia.
+                    <!-- Plano Label -->
+                    <div class="col-xl-3 col-lg-6" data-cue="zoomIn" data-delay="300">
+                        <div class="pricing-card card border-0 h-100 shadow-lg hover-lift">
+                            <div class="card-header border-0 pt-5 pb-4 text-center">
+                                <h3 class="h2 fw-bold mb-3">Label</h3>
+                                <div class="price-display">
+                                    <div class="monthly-price">
+                                        <span class="price-amount display-4 fw-bold">70.000</span>
+                                        <span class="price-period h5 text-muted fw-normal">Kz/ano</span>
+                                    </div>
+                                </div>
+                                <p class="text-muted mb-0">Para gravadoras e coletivos</p>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item border-0 shadow-sm">
-                        <h3 class="accordion-header">
-                            <button class="accordion-button bg-white rounded-3 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
-                                Como funciona o suporte?
-                            </button>
-                        </h3>
-                        <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body">
-                                Oferecemos suporte por WhatsApp e E-mail em horário comercial. Para planos Artista e Label, o tempo de resposta é ainda mais rápido. Estamos aqui para ajudar em todas as etapas do seu lançamento.
+                            <div class="card-body pt-4 pb-5 px-4">
+                                <ul class="list-unstyled mb-4">
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span><strong>90% Royalties</strong> - Você fica com 90%</span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span>Upload de <strong>faixas ilimitadas</strong></span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span><strong>10 Artistas</strong> na conta</span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span><strong>5 Colaboradores</strong> por faixa</span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span>Análise de dados <strong>avançados</strong></span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span><strong>ISRC e UPC grátis</strong></span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span>Smartlink e pre-salve</span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span>Lançamento em <strong>72h</strong></span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span>Suporte local (WhatsApp + E-mail)</span>
+                                    </li>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                        <span>Agendar lançamentos</span>
+                                    </li>
+                                    <li class="d-flex align-items-start">
+                                        <i class="bi bi-star-fill text-warning mt-1 me-3"></i>
+                                        <span><strong>Personalizar nome de selo</strong></span>
+                                    </li>
+                                </ul>
+                                <div class="d-grid">
+                                    <a href="../authentic/register.html?plan=label"
+                                        class="btn btn-outline-wasom btn-lg">Escolher
+                                        Label</a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</section>
+        </section>
 
-<!-- CTA Final -->
-<section class="py-8 bg-gradient-wasom text-white" data-cue="fadeIn">
-    <div class="container">
-        <div class="row justify-content-center text-center">
-            <div class="col-lg-8">
-                <h2 class="display-6 fw-bold mb-4">Pronto para distribuir sua música?</h2>
-                <p class="lead mb-5 opacity-90 text-muted">Junte-se a milhares de artistas que já alcançaram o mundo com a Wasom Upfy</p>
-                <div class="d-flex flex-wrap justify-content-center gap-3">
-                    <a href="register.html" class="btn btn-light btn-lg px-5 text-wasom fw-semibold">
-                        Começar Agora <i class="bi bi-arrow-right ms-2"></i>
-                    </a>
-                    <a href="contact.html" class="btn btn-outline-wasomupfy btn-lg px-5">
-                        Fazer uma Pergunta
-                    </a>
+        <!-- Comparação de Planos -->
+        <section class="py-8" data-cue="fadeIn">
+            <div class="container">
+                <div class="row justify-content-center mb-6">
+                    <div class="col-lg-10 text-center">
+                        <span class="badge bg-wasomupfy text-white fw-semibold px-3 py-2 mb-3">Comparação</span>
+                        <h2 class="display-6 fw-bold mb-4">Compare Todos os Planos</h2>
+                        <p class="text-muted lead mb-5">Veja detalhadamente o que cada plano oferece</p>
+                    </div>
                 </div>
-                <p class="mt-4 small opacity-75 text-muted">
-                    <i class="bi bi-shield-check me-1"></i> Pagamento 100% seguro • Cancelamento a qualquer momento • Suporte em Português
-                </p>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="">
+                            <tr>
+                                <th class="border-0" style="width: 30%">Recursos</th>
+                                <th class="text-center border-0 py-4">
+                                    <h5 class="mb-1">Single</h5>
+                                    <div class="text-wasom fw-bold">2.000Kz/single</div>
+                                </th>
+                                <th class="text-center border-0 py-4">
+                                    <h5 class="mb-1">Álbum</h5>
+                                    <div class="text-wasom fw-bold">4.500Kz/álbum</div>
+                                </th>
+                                <th class="text-center border-0 py-4 bg-wasom-light">
+                                    <h5 class="mb-1 text-muted">Artista</h5>
+                                    <div class="text-wasom fw-bold">11.400Kz/ano</div>
+                                </th>
+                                <th class="text-center border-0 py-4">
+                                    <h5 class="mb-1">Label</h5>
+                                    <div class="text-wasom fw-bold">70.000Kz/ano</div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="fw-semibold">Royalties</td>
+                                <td class="text-center">90%</td>
+                                <td class="text-center">90%</td>
+                                <td class="text-center bg-wasom-light">90%</td>
+                                <td class="text-center">90%</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold">Faixas</td>
+                                <td class="text-center">1 faixa</td>
+                                <td class="text-center">15 faixas</td>
+                                <td class="text-center bg-wasom-light">Ilimitadas</td>
+                                <td class="text-center">Ilimitadas</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold">Artistas</td>
+                                <td class="text-center">1 artista</td>
+                                <td class="text-center">1 artista</td>
+                                <td class="text-center bg-wasom-light">1 artista</td>
+                                <td class="text-center">10 artistas</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold">Colaboradores</td>
+                                <td class="text-center">1 por faixa</td>
+                                <td class="text-center">1 por faixa</td>
+                                <td class="text-center bg-wasom-light">1 por faixa</td>
+                                <td class="text-center">5 por faixa</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold">Análise de Dados</td>
+                                <td class="text-center"><i class="bi bi-check-lg text-success"></i></td>
+                                <td class="text-center"><i class="bi bi-check-lg text-success"></i></td>
+                                <td class="text-center bg-wasom-light"><i class="bi bi-check-lg text-success"></i></td>
+                                <td class="text-center"><i class="bi bi-check-lg text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold">ISRC e UPC</td>
+                                <td class="text-center"><i class="bi bi-check-lg text-success"></i></td>
+                                <td class="text-center"><i class="bi bi-check-lg text-success"></i></td>
+                                <td class="text-center bg-wasom-light"><i class="bi bi-check-lg text-success"></i></td>
+                                <td class="text-center"><i class="bi bi-check-lg text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold">Smartlink e Pre-salve</td>
+                                <td class="text-center"><i class="bi bi-check-lg text-success"></i></td>
+                                <td class="text-center"><i class="bi bi-check-lg text-success"></i></td>
+                                <td class="text-center bg-wasom-light"><i class="bi bi-check-lg text-success"></i></td>
+                                <td class="text-center"><i class="bi bi-check-lg text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold">Tempo de Lançamento</td>
+                                <td class="text-center">72 horas</td>
+                                <td class="text-center">72 horas</td>
+                                <td class="text-center bg-wasom-light">72 horas</td>
+                                <td class="text-center">72 horas</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold">Suporte</td>
+                                <td class="text-center">WhatsApp + E-mail</td>
+                                <td class="text-center">WhatsApp + E-mail</td>
+                                <td class="text-center bg-wasom-light">WhatsApp + E-mail</td>
+                                <td class="text-center">WhatsApp + E-mail</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold">Agendar Lançamentos</td>
+                                <td class="text-center"><i class="bi bi-check-lg text-success"></i></td>
+                                <td class="text-center"><i class="bi bi-check-lg text-success"></i></td>
+                                <td class="text-center bg-wasom-light"><i class="bi bi-check-lg text-success"></i></td>
+                                <td class="text-center"><i class="bi bi-check-lg text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold">Nome do Selo</td>
+                                <td class="text-center"><i class="bi bi-dash text-muted"></i></td>
+                                <td class="text-center"><i class="bi bi-check-lg text-success"></i></td>
+                                <td class="text-center bg-wasom-light"><i class="bi bi-check-lg text-success"></i></td>
+                                <td class="text-center"><i class="bi bi-check-lg text-success"></i></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold"></td>
+                                <td class="text-center pt-4">
+                                    <a href="../authentic/register.html?plan=single"
+                                        class="btn btn-wasomupfy btn-sm w-100">Escolher</a>
+                                </td>
+                                <td class="text-center pt-4">
+                                    <a href="../authentic/register.html?plan=album"
+                                        class="btn btn-outline-wasom btn-sm w-100">Escolher</a>
+                                </td>
+                                <td class="text-center pt-4 bg-wasom-light">
+                                    <a href="../authentic/register.html?plan=artist"
+                                        class="btn btn-wasomupfy btn-sm w-100">Escolher</a>
+                                </td>
+                                <td class="text-center pt-4">
+                                    <a href="../authentic/register.html?plan=label"
+                                        class="btn btn-outline-wasom btn-sm w-100">Escolher</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
-    </div>
-</section>
+        </section>
 
+        <!-- FAQ -->
+        <section class="py-8 bg-light-100" data-cue="fadeIn">
+            <div class="container">
+                <div class="row justify-content-center mb-6">
+                    <div class="col-lg-8 text-center">
+                        <span class="badge bg-wasomupfy text-white fw-semibold px-3 py-2 mb-3">FAQ</span>
+                        <h2 class="display-6 fw-bold mb-4">Perguntas Frequentes</h2>
+                        <p class="text-muted lead">Tire suas dúvidas sobre nossos planos</p>
+                    </div>
+                </div>
 
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        <div class="accordion" id="faqAccordion">
+                            <div class="accordion-item border-0 mb-3 shadow-sm">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button bg-white rounded-3" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#faq1">
+                                        Como funcionam os 90% de royalties?
+                                    </button>
+                                </h3>
+                                <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        Você recebe 90% de todo o valor gerado pelas suas músicas nas plataformas de
+                                        streaming. Os 10% restantes cobrem nossos custos operacionais e de distribuição.
+                                        Pagamentos são feitos mensalmente.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item border-0 mb-3 shadow-sm">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button bg-white rounded-3 collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#faq2">
+                                        Posso trocar de plano depois?
+                                    </button>
+                                </h3>
+                                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        Sim! Você pode fazer upgrade para um plano superior a qualquer momento. O valor
+                                        será proporcional ao tempo restante do seu plano atual.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item border-0 mb-3 shadow-sm">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button bg-white rounded-3 collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#faq3">
+                                        O que são ISRC e UPC?
+                                    </button>
+                                </h3>
+                                <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        ISRC (International Standard Recording Code) e UPC (Universal Product Code) são
+                                        códigos únicos que identificam suas músicas e álbuns globalmente. Essenciais
+                                        para rastrear plays e receber royalties, são fornecidos gratuitamente em todos
+                                        os nossos planos.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item border-0 mb-3 shadow-sm">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button bg-white rounded-3 collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#faq4">
+                                        Em quanto tempo minha música é lançada?
+                                    </button>
+                                </h3>
+                                <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        Seu lançamento é processado e distribuído em até 72 horas após a aprovação. Você
+                                        pode agendar lançamentos futuros conforme sua estratégia.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item border-0 shadow-sm">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button bg-white rounded-3 collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#faq5">
+                                        Como funciona o suporte?
+                                    </button>
+                                </h3>
+                                <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        Oferecemos suporte por WhatsApp e E-mail em horário comercial. Para planos
+                                        Artista e Label, o tempo de resposta é ainda mais rápido. Estamos aqui para
+                                        ajudar em todas as etapas do seu lançamento.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Final -->
+        <section class="py-8 bg-gradient-wasom text-white" data-cue="fadeIn">
+            <div class="container">
+                <div class="row justify-content-center text-center">
+                    <div class="col-lg-8">
+                        <h2 class="display-6 fw-bold mb-4">Pronto para distribuir sua música?</h2>
+                        <p class="lead mb-5 opacity-90 text-muted">Junte-se a milhares de artistas que já alcançaram o
+                            mundo com a Wasom Upfy</p>
+                        <div class="d-flex flex-wrap justify-content-center gap-3">
+                            <a href="register.html" class="btn btn-light btn-lg px-5 text-wasom fw-semibold">
+                                Começar Agora <i class="bi bi-arrow-right ms-2"></i>
+                            </a>
+                            <a href="contact.html" class="btn btn-outline-wasomupfy btn-lg px-5">
+                                Fazer uma Pergunta
+                            </a>
+                        </div>
+                        <p class="mt-4 small opacity-75 text-muted">
+                            <i class="bi bi-shield-check me-1"></i> Pagamento 100% seguro • Cancelamento a qualquer
+                            momento • Suporte em Português
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
+
     <!--Seccão do site inteira até ao perto do footer  fim -->
+
     <!-- Footer -->
     <div class="divider-fade"></div>
-    <footer class="pt-4">
+
+    <!-- Footer -->
+    <footer class="pt-4 bg-light-100" role="contentinfo" aria-label="Rodapé do site">
         <div class="container">
-            <div class="text-center">
-                <h4 class="">Acompanhe-nos</h4>
-                <div class="gap-2 mb-4">
-                    <a target="_blank" rel="external" title="Facebook Wasom Upfy"
-                        href="https://www.facebook.com/wasom.official" class="btn btn-wasomupfy">
+            <!-- Redes Sociais -->
+            <div class="text-center mb-5">
+                <h2 class="h4 mb-3">Acompanhe-nos</h2>
+                <div class="social-links d-flex flex-wrap justify-content-center gap-3 mb-4" role="list"
+                    aria-label="Redes sociais">
+                    <a target="_blank" rel="external noopener noreferrer"
+                        aria-label="Facebook da Wasom Upfy (abre em nova janela)"
+                        href="https://www.facebook.com/wasom.official" class="btn btn-wasomupfy btn-social"
+                        role="listitem">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                            class="bi bi-facebook" viewBox="0 0 16 16">
+                            aria-hidden="true" focusable="false" viewBox="0 0 24 24">
                             <path
                                 d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z" />
                         </svg>
+                        <span class="visually-hidden">Facebook</span>
                     </a>
-                    <a target="_blank" rel="external" title="Instagram Wasom Upfy"
-                        href="https://www.instagram.com/wasomupfy" class="btn btn-wasomupfy btn-light">
+
+                    <a target="_blank" rel="external noopener noreferrer"
+                        aria-label="Instagram da Wasom Upfy (abre em nova janela)"
+                        href="https://www.instagram.com/@wasomupfy" class="btn btn-wasomupfy btn-social"
+                        role="listitem">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                            class="bi bi-instagram" viewBox="0 0 16 16">
+                            aria-hidden="true" focusable="false" viewBox="0 0 24 24">
                             <path
                                 d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z" />
                         </svg>
+                        <span class="visually-hidden">Instagram</span>
                     </a>
-                    <a target="_blank" rel="external" title="Twitter (X) Wasom Upfy"
-                        href="https://www.twitter.com/wasomupfy" class="btn btn-wasomupfy">
+
+                    <a target="_blank" rel="external noopener noreferrer"
+                        aria-label="WhatsApp da Wasom Upfy (abre em nova janela)" href="https://wa.me/244923456789"
+                        class="btn btn-wasomupfy btn-social" role="listitem">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                            class="bi bi-twitter-x" viewBox="0 0 16 16">
+                            aria-hidden="true" focusable="false" viewBox="0 0 24 24">
                             <path
-                                d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865l8.875 11.633Z" />
+                                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.76.982.998-3.677-.236-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.9 6.994c-.004 5.45-4.437 9.88-9.885 9.88m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.333.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.333 11.893-11.893 0-3.18-1.24-6.162-3.495-8.411" />
                         </svg>
+                        <span class="visually-hidden">WhatsApp</span>
                     </a>
-                    <a target="_blank" rel="external" title="Youtube Wasom Upfy"
-                        href="https://www.youtube.com/@WasomUpfy" class="btn btn-wasomupfy">
+
+                    <a target="_blank" rel="external noopener noreferrer"
+                        aria-label="YouTube da Wasom Upfy (abre em nova janela)"
+                        href="https://www.youtube.com/@WasomUpfy" class="btn btn-wasomupfy btn-social" role="listitem">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                            class="bi bi-youtube" viewBox="0 0 16 16">
+                            aria-hidden="true" focusable="false" viewBox="0 0 24 24">
                             <path
                                 d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.007 2.007 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.007 2.007 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31.4 31.4 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.007 2.007 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A99.788 99.788 0 0 1 7.858 2h.193zM6.4 5.209v4.818l4.157-2.408L6.4 5.209z" />
                         </svg>
+                        <span class="visually-hidden">YouTube</span>
                     </a>
-                    <a target="_blank" rel="external" title="Tiktok Wasom Upfy" href="https://www.tiktok.com/@wasomupfy"
-                        class="btn btn-wasomupfy">
+
+                    <a target="_blank" rel="external noopener noreferrer"
+                        aria-label="LinkedIn da Wasom Upfy (abre em nova janela)"
+                        href="https://linkedin.com/company/wasom-upfy" class="btn btn-wasomupfy btn-social"
+                        role="listitem">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                            class="bi bi-tiktok" viewBox="0 0 16 16">
+                            aria-hidden="true" focusable="false" viewBox="0 0 24 24">
                             <path
-                                d="M9 0h1.98c.144.715.54 1.617 1.235 2.512C12.895 3.389 13.797 4 15 4v2c-1.753 0-3.07-.814-4-1.829V11a5 5 0 1 1-5-5v2a3 3 0 1 0 3 3V0Z" />
+                                d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
                         </svg>
-                    </a>
-                    <a target="_blank" rel="external" title="Threads Wasom Upfy"
-                        href="https://www.threads.net/wasomupfy" class="btn btn-wasomupfy">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                            class="bi bi-threads" viewBox="0 0 16 16">
-                            <path
-                                d="M6.321 6.016c-.27-.18-1.166-.802-1.166-.802.756-1.081 1.753-1.502 3.132-1.502.975 0 1.803.327 2.394.948.591.621.928 1.509 1.005 2.644.328.138.63.299.905.484 1.109.745 1.719 1.86 1.719 3.137 0 2.716-2.226 5.075-6.256 5.075C4.594 16 1 13.987 1 7.994 1 2.034 4.482 0 8.044 0 9.69 0 13.55.243 15 5.036l-1.36.353C12.516 1.974 10.163 1.43 8.006 1.43c-3.565 0-5.582 2.171-5.582 6.79 0 4.143 2.254 6.343 5.63 6.343 2.777 0 4.847-1.443 4.847-3.556 0-1.438-1.208-2.127-1.27-2.127-.236 1.234-.868 3.31-3.644 3.31-1.618 0-3.013-1.118-3.013-2.582 0-2.09 1.984-2.847 3.55-2.847.586 0 1.294.04 1.663.114 0-.637-.54-1.728-1.9-1.728-1.25 0-1.566.405-1.967.868ZM8.716 8.19c-2.04 0-2.304.87-2.304 1.416 0 .878 1.043 1.168 1.6 1.168 1.02 0 2.067-.282 2.232-2.423a6.217 6.217 0 0 0-1.528-.161Z" />
-                        </svg>
+                        <span class="visually-hidden">LinkedIn</span>
                     </a>
                 </div>
-
             </div>
-            <!-- Footer 4 column -->
-            <div class="row">
-                <div class="col-lg-12 col-12">
-                    <div class="row" id="ft-links">
 
-                        <div class="col-lg-3 col-12">
-
-                            <div
-                                class="mb-3 pb-2 d-flex justify-content-between border-bottom border-bottom-lg-0 position-relative">
-                                <h4 class="">Sobre Nós</h4>
-                                <a class="d-block d-lg-none stretched-link text-body" title="collapse"
-                                    data-bs-toggle="collapse" href="#collapseAccounts" role="button"
-                                    aria-expanded="false" aria-controls="collapseAccounts">
-                                    <i data-feather="chevron-down"></i>
-                                </a>
-                            </div>
-                            <div class="collapse d-lg-block" id="collapseAccounts" data-bs-parent="#ft-links">
-                                <ul class="list-unstyled mb-0 py-3 py-lg-0">
-                                    <li class="mb-2">
-                                        <a href="blog/home" title="Blogue"
-                                            class="text-decoration-none text-reset">Blogue</a>
-                                    </li>
-                                    <li class="mb-2">
-                                        <a href="services" title="Serviços"
-                                            class="text-decoration-none text-reset">Serviços</a>
-                                    </li>
-                                    <li class="mb-2">
-                                        <a href="../about.html" title="Sobre"
-                                            class="text-decoration-none text-reset">Sobre</a>
-                                    </li>
-                                    <li class="mb-2">
-                                        <a href="about#mark" title="A nossa marca"
-                                            class="text-decoration-none text-reset">A
-                                            nossa marca</a>
-                                    </li>
-                                </ul>
-                            </div>
-
+            <!-- Navegação do Footer -->
+            <nav aria-label="Navegação do rodapé">
+                <div class="row" id="ft-links">
+                    <!-- Sobre Nós -->
+                    <div class="col-lg-3 col-12 mb-4 mb-lg-0">
+                        <div class="mb-3 pb-2 d-flex justify-content-between border-bottom border-bottom-lg-0">
+                            <h3 class="h5 mb-0">Sobre Nós</h3>
+                            <button class="d-block d-lg-none btn btn-link p-0 text-body" type="button"
+                                aria-expanded="false" aria-controls="collapseAccounts" data-bs-toggle="collapse"
+                                data-bs-target="#collapseAccounts">
+                                <i data-feather="chevron-down" aria-hidden="true"></i>
+                                <span class="visually-hidden">Expandir seção Sobre Nós</span>
+                            </button>
                         </div>
-                        <div class="col-lg-3 col-12">
-                            <div
-                                class="mb-3 pb-2 d-flex justify-content-between border-bottom border-bottom-lg-0 position-relative">
-                                <h4 class="">Suporte</h4>
-                                <a class="d-block d-lg-none stretched-link text-body" title="collapse"
-                                    data-bs-toggle="collapse" href="#collapseResources" role="button"
-                                    aria-expanded="false" aria-controls="collapseResources">
-                                    <i data-feather="chevron-down"></i>
-                                </a>
-                            </div>
-                            <div class="collapse d-lg-block" id="collapseResources" data-bs-parent="#ft-links">
-                                <ul class="list-unstyled mb-0 py-3 py-lg-0">
-                                    <li class="mb-2">
-                                        <a title="Atendimento pelo facebook"
-                                            href="https://www.facebook.com/m.me/2007900989425052"
-                                            class="text-decoration-none text-reset">Atendimento</a>
-                                    </li>
-                                    <li class="mb-2">
-                                        <a title="Ajuda" href="../page/support/help"
-                                            class="text-decoration-none text-reset">Ajuda</a>
-                                    </li>
-                                    <li class="mb-2">
-                                        <a title="Contacto-nos" href="contact"
-                                            class="text-decoration-none text-reset">Contacta-nos</a>
-                                    </li>
-                                    <li class="mb-2">
-                                        <a title="Trabalhar connosco" href="blog/careers"
-                                            class="text-decoration-none text-reset">Trabalhar connosco</a>
-                                    </li>
-                                </ul>
-                            </div>
+                        <div class="collapse d-lg-block" id="collapseAccounts" data-bs-parent="#ft-links">
+                            <ul class="list-unstyled mb-0 py-3 py-lg-0">
+                                <li class="mb-2">
+                                    <a href="/blog/home" class="text-decoration-none text-reset hover-primary">
+                                        Blogue
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a href="/services" class="text-decoration-none text-reset hover-primary">
+                                        Serviços
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a href="/about" class="text-decoration-none text-reset hover-primary">
+                                        Sobre
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a href="/about#mark" class="text-decoration-none text-reset hover-primary">
+                                        A nossa marca
+                                    </a>
+                                </li>
+                            </ul>
                         </div>
-                        <div class="col-lg-3 col-12">
-                            <div
-                                class="mb-3 pb-2 d-flex justify-content-between border-bottom border-bottom-lg-0 position-relative">
-                                <h4 class="">Localidades</h4>
-                                <a class="d-block d-lg-none stretched-link text-body" title="collapse"
-                                    data-bs-toggle="collapse" href="#collapseLocations" role="button"
-                                    aria-expanded="false" aria-controls="collapseLocations">
-                                    <i data-feather="chevron-down"></i>
-                                </a>
-                            </div>
-                            <div class="collapse d-lg-block" id="collapseLocations" data-bs-parent="#ft-links">
-                                <ul class="list-unstyled mb-0 py-3 py-lg-0">
-                                    <li class="mb-2">
-                                        <a title="Africa do Sul - Joanesburgo" href=""
-                                            class="text-decoration-none text-reset">Africa do
-                                            Sul - Joanesburgo</a>
-                                    </li>
-                                    <li class="mb-2">
-                                        <a title="Angola - Luanda" target="_blank" rel="external" href="#!"
-                                            class="text-decoration-none text-reset">Angola - Luanda</a>
-                                    </li>
-                                    <li class="mb-2">
-                                        <a title="Brasil - Rio Grande do Sul" href="./changelog"
-                                            class="text-decoration-none text-reset">Brasil - Rio
-                                            Grande do Sul</a>
-                                    </li>
+                    </div>
 
-                                </ul>
-                            </div>
+                    <!-- Suporte -->
+                    <div class="col-lg-3 col-12 mb-4 mb-lg-0">
+                        <div class="mb-3 pb-2 d-flex justify-content-between border-bottom border-bottom-lg-0">
+                            <h3 class="h5 mb-0">Suporte</h3>
+                            <button class="d-block d-lg-none btn btn-link p-0 text-body" type="button"
+                                aria-expanded="false" aria-controls="collapseResources" data-bs-toggle="collapse"
+                                data-bs-target="#collapseResources">
+                                <i data-feather="chevron-down" aria-hidden="true"></i>
+                                <span class="visually-hidden">Expandir seção Suporte</span>
+                            </button>
                         </div>
+                        <div class="collapse d-lg-block" id="collapseResources" data-bs-parent="#ft-links">
+                            <ul class="list-unstyled mb-0 py-3 py-lg-0">
+                                <li class="mb-2">
+                                    <a href="https://www.facebook.com/m.me/2007900989425052" target="_blank"
+                                        rel="external noopener noreferrer"
+                                        class="text-decoration-none text-reset hover-primary">
+                                        Atendimento
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a href="/page/support/help" class="text-decoration-none text-reset hover-primary">
+                                        Ajuda
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a href="/contact" class="text-decoration-none text-reset hover-primary">
+                                        Contacta-nos
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a href="/blog/careers" class="text-decoration-none text-reset hover-primary">
+                                        Trabalhar connosco
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
 
-                        <div class="col-lg-3 col-12">
-                            <div
-                                class="mb-3 pb-2 d-flex justify-content-between border-bottom border-bottom-lg-0 position-relative">
-                                <h4 class="">Dados de Contacto</h4>
-                                <a class="d-block d-lg-none stretched-link text-body" title="collapse"
-                                    data-bs-toggle="collapse" href="#collapseContacto" role="button"
-                                    aria-expanded="false" aria-controls="collapseContacto">
-                                    <i data-feather="chevron-down"></i>
-                                </a>
-                            </div>
-                            <div class="collapse d-lg-block" id="collapseContacto" data-bs-parent="#ft-links">
-                                <ul class="list-unstyled mb-0 py-3 py-lg-0">
+                    <!-- Localidades -->
+                    <div class="col-lg-3 col-12 mb-4 mb-lg-0">
+                        <div class="mb-3 pb-2 d-flex justify-content-between border-bottom border-bottom-lg-0">
+                            <h3 class="h5 mb-0">Localidades</h3>
+                            <button class="d-block d-lg-none btn btn-link p-0 text-body" type="button"
+                                aria-expanded="false" aria-controls="collapseLocations" data-bs-toggle="collapse"
+                                data-bs-target="#collapseLocations">
+                                <i data-feather="chevron-down" aria-hidden="true"></i>
+                                <span class="visually-hidden">Expandir seção Localidades</span>
+                            </button>
+                        </div>
+                        <div class="collapse d-lg-block" id="collapseLocations" data-bs-parent="#ft-links">
+                            <ul class="list-unstyled mb-0 py-3 py-lg-0">
+                                <li class="mb-2">
+                                    <span class="text-reset">Angola - Luanda</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
 
-                                    <li class="mb-2">
-                                        <a title="E-mail para pedidos"
-                                            href="mailto:wasomupfy@gmail.com?subject=Preciso fazer um pedido.&bcc=wasomupfy@yahoo.com&body=Olá equipa de Wasom Upfy, estou interessado em fazer um pedido ao Wasom Upfy."
-                                            class="text-decoration-none text-reset">wasomupfy.apoio@gmail.com</a>
-                                    </li>
-                                    <li class="mb-2">
-                                        <a title="E-mail para pedidos"
-                                            href="mailto:wasomupfy@yahoo.com?subject=Preciso fazer um pedido.&bcc=wasomupfy@gmail.com&body=Olá equipa de Wasom Upfy, estou interessado em fazer um pedido ao Wasom Upfy."
-                                            class="text-decoration-none text-reset">wasomupfy@yahoo.com</a>
-                                    </li>
-                                    <li class="mb-2">
-                                        <a href="#!" title="Horário do atendimento"
-                                            class="text-decoration-none text-reset">De Seg. à
-                                            Sex. das 10h
-                                            às 18h</a>
-                                    </li>
-
-                                </ul>
-                            </div>
+                    <!-- Dados de Contacto -->
+                    <div class="col-lg-3 col-12 mb-4 mb-lg-0">
+                        <div class="mb-3 pb-2 d-flex justify-content-between border-bottom border-bottom-lg-0">
+                            <h3 class="h5 mb-0">Dados de Contacto</h3>
+                            <button class="d-block d-lg-none btn btn-link p-0 text-body" type="button"
+                                aria-expanded="false" aria-controls="collapseContacto" data-bs-toggle="collapse"
+                                data-bs-target="#collapseContacto">
+                                <i data-feather="chevron-down" aria-hidden="true"></i>
+                                <span class="visually-hidden">Expandir seção Dados de Contacto</span>
+                            </button>
+                        </div>
+                        <div class="collapse d-lg-block" id="collapseContacto" data-bs-parent="#ft-links">
+                            <ul class="list-unstyled mb-0 py-3 py-lg-0">
+                                <li class="mb-2">
+                                    <a href="mailto:info@wasomupfy.com?subject=Contacto%20Wasom%20Upfy"
+                                        class="text-decoration-none text-reset hover-primary d-inline-flex align-items-center gap-1">
+                                        <i data-feather="mail" width="16" height="16" aria-hidden="true"></i>
+                                        info@wasomupfy.com
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a href="mailto:suporte@wasomupfy.com?subject=Contacto%20Wasom%20Upfy"
+                                        class="text-decoration-none text-reset hover-primary d-inline-flex align-items-center gap-1">
+                                        <i data-feather="mail" width="16" height="16" aria-hidden="true"></i>
+                                        suporte@wasomupfy.com
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <span class="text-reset d-inline-flex align-items-center gap-1">
+                                        <i data-feather="clock" width="16" height="16" aria-hidden="true"></i>
+                                        Segunda a Sexta: 10h às 18h
+                                    </span>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
+            </nav>
 
-            </div>
-        </div>
-        <hr class="divider divider-fade divider-dark">
-        <div class="container mt-4 pt-lg-3 pb-0">
-            <div class="row align-items-center">
-                <div class="col-md-12">
-                    <div class=" mb-5 mb-lg-0 text-lg-center rodape">
-                        All rights Reserved <br> <a title="Privacidades" class="link" target="_blank" rel="internal"
-                            href="../page/politicies/privacy.html">Privacidade</a> | <a title="Termos de Uso"
-                            class="link" target="_blank" rel="internal" href="../page/politicies/terms.html">Termos de
-                            Uso</a> | <a title="Cookies" class="link" href="../page/politicies/cookies.html"
-                            target="_blank" rel="internal">Cookies</a> | Designed by <a title="Criado" class="link"
-                            href="https://www.linkedin.com/company/voosoft/" target="_blank" rel="internal">VooSoft</a>
-                        <br />&copy; Copyright 2026 Wasom Upfy
+            <hr class="divider divider-fade divider-dark my-4" />
+
+            <!-- Rodapé Inferior -->
+            <div class="container mt-4 pt-lg-3 pb-0">
+                <div class="row align-items-center">
+                    <div class="col-md-12">
+                        <div class="text-center text-lg-center rodape">
+                            <p class="mb-2">
+                                Todos os direitos reservados
+                            </p>
+                            <nav class="d-flex flex-wrap justify-content-center gap-3 mb-2" aria-label="Legal">
+                                <a href="/page/politicies/privacy.html"
+                                    class="link text-muted text-decoration-none hover-primary">
+                                    Política de Privacidade
+                                </a>
+                                <span class="text-muted">|</span>
+                                <a href="/page/politicies/terms.html"
+                                    class="link text-muted text-decoration-none hover-primary">
+                                    Termos de Uso
+                                </a>
+                                <span class="text-muted">|</span>
+                                <a href="/page/politicies/cookies.html"
+                                    class="link text-muted text-decoration-none hover-primary">
+                                    Cookies
+                                </a>
+                            </nav>
+                            &copy;
+                            <span id="current-year">2026</span> Wasom Upfy
+                        </div>
                     </div>
                 </div>
-
             </div>
         </div>
-
     </footer>
     <!-- Footer fim -->
 
@@ -1284,71 +1346,73 @@
         }(window, document, "script", "dataLayer")
     </script>
     <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Toggle de período de cobrança
-    const billingToggle = document.getElementById('billingToggle');
-    const monthlyPrices = document.querySelectorAll('.monthly-price');
-    const annualPrices = document.querySelectorAll('.annual-price');
-    
-    if (billingToggle) {
-        billingToggle.addEventListener('change', function() {
-            const isAnnual = this.checked;
-            
-            monthlyPrices.forEach(price => {
-                price.classList.toggle('d-none', isAnnual);
-            });
-            
-            annualPrices.forEach(price => {
-                price.classList.toggle('d-none', !isAnnual);
-            });
-        });
-    }
-    
-    // Animações no scroll
-    const animateOnScroll = () => {
-        const elements = document.querySelectorAll('[data-cue]');
-        elements.forEach(element => {
-            const elementTop = element.getBoundingClientRect().top;
-            const elementVisible = 150;
-            
-            if (elementTop < window.innerHeight - elementVisible) {
-                element.classList.add('animated');
-            }
-        });
-    };
-    
-    window.addEventListener('scroll', animateOnScroll);
-    animateOnScroll();
-    
-    // Smooth scroll para âncoras
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            const href = this.getAttribute('href');
-            if (href === '#' || href.startsWith('#faq')) return;
-            
-            e.preventDefault();
-            const targetElement = document.querySelector(href);
-            if (targetElement) {
-                window.scrollTo({
-                    top: targetElement.offsetTop - 80,
-                    behavior: 'smooth'
+        document.addEventListener('DOMContentLoaded', function () {
+            // Toggle de período de cobrança
+            const billingToggle = document.getElementById('billingToggle');
+            const monthlyPrices = document.querySelectorAll('.monthly-price');
+            const annualPrices = document.querySelectorAll('.annual-price');
+
+            if (billingToggle) {
+                billingToggle.addEventListener('change', function () {
+                    const isAnnual = this.checked;
+
+                    monthlyPrices.forEach(price => {
+                        price.classList.toggle('d-none', isAnnual);
+                    });
+
+                    annualPrices.forEach(price => {
+                        price.classList.toggle('d-none', !isAnnual);
+                    });
                 });
             }
+
+            // Animações no scroll
+            const animateOnScroll = () => {
+                const elements = document.querySelectorAll('[data-cue]');
+                elements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    const elementVisible = 150;
+
+                    if (elementTop < window.innerHeight - elementVisible) {
+                        element.classList.add('animated');
+                    }
+                });
+            };
+
+            window.addEventListener('scroll', animateOnScroll);
+            animateOnScroll();
+
+            // Smooth scroll para âncoras
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    const href = this.getAttribute('href');
+                    if (href === '#' || href.startsWith('#faq')) return;
+
+                    e.preventDefault();
+                    const targetElement = document.querySelector(href);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Adicionar parâmetro de plano nos links
+            document.querySelectorAll('a[href*="register.html"]').forEach(link => {
+                const href = link.getAttribute('href');
+                if (!href.includes('plan=')) {
+                    const plan = href.includes('?') ?
+                        href + '&plan=' + link.textContent.toLowerCase().replace('escolher ', '')
+                        .replace(' ', '') :
+                        href + '?plan=' + link.textContent.toLowerCase().replace('escolher ', '')
+                        .replace(' ', '');
+                    link.setAttribute('href', plan);
+                }
+            });
         });
-    });
-    
-    // Adicionar parâmetro de plano nos links
-    document.querySelectorAll('a[href*="register.html"]').forEach(link => {
-        const href = link.getAttribute('href');
-        if (!href.includes('plan=')) {
-            const plan = href.includes('?') ? 
-                href + '&plan=' + link.textContent.toLowerCase().replace('escolher ', '').replace(' ', '') :
-                href + '?plan=' + link.textContent.toLowerCase().replace('escolher ', '').replace(' ', '');
-            link.setAttribute('href', plan);
-        }
-    });
-});
-</script>
+    </script>
 </body>
 
 
