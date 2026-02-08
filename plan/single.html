@@ -41,185 +41,8 @@
     <link rel="stylesheet" href="../css/theme.min.css">
     <link rel="stylesheet" href="../js/libs/scrollcue/scrollCue.css" />
     <link rel="stylesheet" href="../css/framework.css">
-        <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/main.css">
 </head>
-<!-- CSS Adicional -->
-<style>
-    :root {
-        --wasom-primary: #FF0089;
-        --wasom-secondary: #e04385;
-        --wasom-gradient: linear-gradient(135deg, var(--wasom-primary), var(--wasom-secondary));
-        --wasom-light: #fff0f7;
-    }
-
-    /* Hero */
-    .pricing-single-hero {
-        min-height: 70vh;
-        display: flex;
-        align-items: center;
-        padding: 6rem 0;
-    }
-
-    .hero-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.4));
-    }
-
-    /* Breadcrumb */
-    .breadcrumb {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        border-radius: 50px;
-        padding: 0.5rem 1rem;
-    }
-
-    .breadcrumb-item a {
-        color: rgba(255, 255, 255, 0.9) !important;
-        text-decoration: none;
-    }
-
-    .breadcrumb-item.active {
-        color: white !important;
-    }
-
-    /* Cards */
-    .pricing-card-main {
-        border-radius: 20px;
-        overflow: hidden;
-    }
-
-    .hover-lift {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .hover-lift:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
-    }
-
-    .price-display .price-amount {
-        background: var(--wasom-gradient);
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-    }
-
-    /* Progress Bar */
-    .progress-bar.bg-wasom-gradient {
-        background: var(--wasom-gradient) !important;
-    }
-
-    /* Platforms Grid */
-    .platforms-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-    }
-
-    .platform-item {
-        background: #f8f9fa;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-    }
-
-    .platform-item:hover {
-        background: var(--wasom-light);
-        transform: scale(1.05);
-    }
-
-    /* Process Steps */
-    .process-step {
-        transition: transform 0.3s ease;
-    }
-
-    .process-step:hover {
-        transform: translateX(5px);
-    }
-
-    .step-number {
-        flex-shrink: 0;
-    }
-
-    /* CTA Box */
-    .cta-box {
-        border-left: 4px solid var(--wasom-primary);
-    }
-
-    /* Badges */
-    .badge.bg-wasom-gradient {
-        background: var(--wasom-gradient);
-    }
-
-    /* Buttons */
-
-
-    .btn-outline-wasom {
-        border: 2px solid var(--wasom-primary);
-        color: var(--wasom-primary);
-        background: transparent;
-        padding: 0.75rem 2rem;
-        font-weight: 600;
-        border-radius: 12px;
-        transition: all 0.3s ease;
-    }
-
-    .btn-outline-wasom:hover {
-        background: var(--wasom-primary);
-        color: white;
-        transform: translateY(-2px);
-    }
-
-    /* Stats Banner */
-    .bg-wasom-gradient {
-        background: var(--wasom-gradient);
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-        .pricing-single-hero {
-            min-height: 50vh;
-            padding: 4rem 0;
-        }
-
-        .display-3 {
-            font-size: 2.5rem;
-        }
-
-        .display-5 {
-            font-size: 2rem;
-        }
-
-        .platforms-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-
-    /* Animations */
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    [data-cue] {
-        opacity: 0;
-    }
-
-    [data-cue].animated {
-        animation: fadeInUp 0.6s ease forwards;
-    }
-</style>
-
 <body>
 
     <!-- O processo de carregamento do site em HTML & CSS -->
@@ -283,7 +106,7 @@
                                                 <h5 class="mb-1">
                                                     Álbum
                                                 </h5>
-                                                <p class="mb-0 fs-6">Nosso plano Álbum - 4.500 Kz</p>
+                                                <p class="mb-0 fs-6">Nosso plano Álbum - 5.000 Kz</p>
                                             </div>
                                         </div>
                                     </a>
@@ -442,7 +265,7 @@
     <!--Seccão do site inteira até ao perto do footer  -->
     <main>
         <!-- Hero Section -->
-        <section class="pricing-single-hero jarallax position-relative overflow-hidden py-8" data-jarallax
+        <section class="pricing-hero jarallax position-relative overflow-hidden py-5" data-jarallax
             data-speed="0.4">
             <img class="jarallax-img" src="../assets/img/theme/plan_single.png" alt="Plano Single Wasom Upfy"
                 loading="lazy">
@@ -452,24 +275,24 @@
                     <div class="col-xl-8 col-lg-10" data-cue="fadeIn">
                         <nav aria-label="breadcrumb" class="d-flex justify-content-center mb-3">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="../index.html" class="text-white">Home</a></li>
-                                <li class="breadcrumb-item"><a href="all-plans.html" class="text-white">Planos</a></li>
-                                <li class="breadcrumb-item active text-white" aria-current="page">Plano Single</li>
+                                <li class="breadcrumb-item"><a href="../home.html" class="text-muted">Home</a></li>
+                                <li class="breadcrumb-item"><a href="all-plans.html" class="text-muted">Planos</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Plano Single</li>
                             </ol>
                         </nav>
-                        <span class="badge bg-wasomupfy text-white-stable fw-semibold px-4 py-2 mb-3">Perfeito para
-                            Iniciantes</span>
+                        <!-- <span class="badge bg-wasomupfy text-white-stable fw-semibold px-4 py-2 mb-3">Perfeito para
+                            Iniciantes</span> -->
                         <h1 class="display-4 mb-4 text-white-stable fw-bold">Plano Single</h1>
                         <p class="lead text-white-stable mb-4 opacity-90">Distribua seu próximo hit em todas as
                             plataformas por apenas 2.000Kz</p>
                         <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
-                            <span class="badge bg-white text-dark px-3 py-2">
+                            <span class="badge bg-secondary text-black fw-semibold px-3 py-2">
                                 <i class="bi bi-percent text-success me-1"></i> 90% Royalties
                             </span>
-                            <span class="badge bg-white text-dark px-3 py-2">
+                            <span class="badge bg-secondary text-black fw-semibold px-3 py-2">
                                 <i class="bi bi-lightning text-success me-1"></i> Lançamento em 72h
                             </span>
-                            <span class="badge bg-white text-dark px-3 py-2">
+                            <span class="badge bg-secondary text-black fw-semibold px-3 py-2">
                                 <i class="bi bi-headset text-success me-1"></i> Suporte 24/7
                             </span>
                         </div>
@@ -514,7 +337,7 @@
         </section>
 
         <!-- Plano Details -->
-        <section id="details" class="py-8 bg-light-100" data-cue="fadeIn">
+        <section id="details" class="py-6 bg-light-100" data-cue="fadeIn">
             <div class="container">
                 <div class="row justify-content-center mb-6">
                     <div class="col-lg-10 text-center">
@@ -755,11 +578,11 @@
         </section>
 
         <!-- FAQ Section -->
-        <section class="py-8 bg-light-100" data-cue="fadeIn">
+        <section class="py-6 bg-light-100" data-cue="fadeIn">
             <div class="container">
                 <div class="row justify-content-center mb-6">
                     <div class="col-lg-8 text-center">
-                        <span class="badge bg-wasom-gradient text-white fw-semibold px-3 py-2 mb-3">FAQ</span>
+                        <span class="badge bg-wasomupfy text-white fw-semibold px-3 py-2 mb-3">FAQ</span>
                         <h2 class="display-5 fw-bold mb-4">Perguntas Frequentes sobre o Plano Single</h2>
                         <p class="text-muted lead">Tire todas as suas dúvidas antes de começar</p>
                     </div>
@@ -770,7 +593,7 @@
                         <div class="accordion" id="singleFaqAccordion">
                             <div class="accordion-item border-0 mb-3 shadow-sm">
                                 <h3 class="accordion-header">
-                                    <button class="accordion-button bg-white rounded-3" type="button"
+                                    <button class="accordion-button bg-wasomupfy rounded-3" type="button"
                                         data-bs-toggle="collapse" data-bs-target="#faq1">
                                         O que exatamente inclui o "1 lançamento"?
                                     </button>
@@ -788,7 +611,7 @@
 
                             <div class="accordion-item border-0 mb-3 shadow-sm">
                                 <h3 class="accordion-header">
-                                    <button class="accordion-button bg-white rounded-3 collapsed" type="button"
+                                    <button class="accordion-button bg-wasomupfy rounded-3 collapsed" type="button"
                                         data-bs-toggle="collapse" data-bs-target="#faq2">
                                         Como funcionam os 90% de royalties?
                                     </button>
@@ -805,7 +628,7 @@
 
                             <div class="accordion-item border-0 mb-3 shadow-sm">
                                 <h3 class="accordion-header">
-                                    <button class="accordion-button bg-white rounded-3 collapsed" type="button"
+                                    <button class="accordion-button bg-wasomupfy rounded-3 collapsed" type="button"
                                         data-bs-toggle="collapse" data-bs-target="#faq3">
                                         Posso adicionar colaboradores na música?
                                     </button>
@@ -822,7 +645,7 @@
 
                             <div class="accordion-item border-0 mb-3 shadow-sm">
                                 <h3 class="accordion-header">
-                                    <button class="accordion-button bg-white rounded-3 collapsed" type="button"
+                                    <button class="accordion-button bg-wasomupfy rounded-3 collapsed" type="button"
                                         data-bs-toggle="collapse" data-bs-target="#faq4">
                                         Em quanto tempo minha música estará disponível?
                                     </button>
@@ -839,7 +662,7 @@
 
                             <div class="accordion-item border-0 shadow-sm">
                                 <h3 class="accordion-header">
-                                    <button class="accordion-button bg-white rounded-3 collapsed" type="button"
+                                    <button class="accordion-button bg-wasomupfy rounded-3 collapsed" type="button"
                                         data-bs-toggle="collapse" data-bs-target="#faq5">
                                         E se eu quiser fazer upgrade depois?
                                     </button>
@@ -860,11 +683,11 @@
         </section>
 
         <!-- Outros Planos -->
-        <section class="py-8 bg-light-100" data-cue="fadeIn">
+        <section class="py-6 bg-light-100" data-cue="fadeIn">
             <div class="container">
                 <div class="row justify-content-center mb-6">
                     <div class="col-lg-8 text-center">
-                        <span class="badge bg-wasom-gradient text-white fw-semibold px-3 py-2 mb-3">Compare
+                        <span class="badge bg-wasomupfy text-white fw-semibold px-3 py-2 mb-3">Compare
                             Planos</span>
                         <h2 class="display-5 fw-bold mb-4">Conheça Nossos Outros Planos</h2>
                         <p class="text-muted lead">Encontre o plano perfeito para suas necessidades</p>
@@ -878,7 +701,7 @@
                             <div class="card-body p-4">
                                 <h4 class="h5 mb-3">Plano Álbum</h4>
                                 <div class="price-display mb-3">
-                                    <span class="price-amount h3 fw-bold">4.500</span>
+                                    <span class="price-amount h3 fw-bold">5.000</span>
                                     <span class="price-period text-muted">Kz/álbum</span>
                                 </div>
                                 <ul class="list-unstyled mb-4">
@@ -895,7 +718,7 @@
                                         <span>Todos os recursos do Single</span>
                                     </li>
                                 </ul>
-                                <a href="album.html" class="btn btn-outline-wasom w-100">Ver Plano Álbum</a>
+                                <a href="album.html" class="btn btn-outline-primary w-100">Ver Plano Álbum</a>
                             </div>
                         </div>
                     </div>
@@ -904,7 +727,7 @@
                     <div class="col-md-4" data-cue="zoomIn" data-delay="100">
                         <div class="card border-wasom border-3 h-100 shadow-lg hover-lift position-relative">
                             <div class="position-absolute top-0 start-50 translate-middle">
-                                <span class="badge bg-wasom-gradient text-white fw-semibold px-3 py-2">Mais
+                                <span class="badge bg-wasomupfy text-white fw-semibold px-3 py-2">Mais
                                     Popular</span>
                             </div>
                             <div class="card-body p-4">
@@ -955,7 +778,7 @@
                                         <span>Ideal para gravadoras</span>
                                     </li>
                                 </ul>
-                                <a href="label.html" class="btn btn-outline-wasom w-100">Ver Plano Label</a>
+                                <a href="label.html" class="btn btn-outline-primary w-100">Ver Plano Label</a>
                             </div>
                         </div>
                     </div>
@@ -964,25 +787,24 @@
         </section>
 
         <!-- Final CTA -->
-        <section class="py-8 bg-gradient-wasom text-white" data-cue="fadeIn">
+        <section class="py-6 bg-light-100" data-cue="fadeIn">
             <div class="container">
                 <div class="row justify-content-center text-center">
                     <div class="col-lg-8">
-                        <h2 class="display-5 fw-bold mb-4">Pronto para lançar sua música?</h2>
+                        <h2 class="display-5 fw-bold mb-4 text-">Pronto para lançar sua música?</h2>
                         <p class="lead mb-5 opacity-90">Comece agora com o Plano Single e tenha seu próximo hit em todas
                             as plataformas em 72 horas</p>
                         <div class="d-flex flex-wrap justify-content-center gap-3">
                             <a href="../authentic/register.html?plan=single"
-                                class="btn btn-light btn-lg px-5 text-wasom fw-semibold">
+                                class="btn btn-wasomupfy btn-lg px-5 text-wasom fw-semibold">
                                 Começar Agora <i class="bi bi-arrow-right ms-2"></i>
                             </a>
-                            <a href="contact.html" class="btn btn-outline-light btn-lg px-5">
+                            <a href="contact.html" class="btn btn-outline-secondary btn-lg px-5">
                                 Falar com Suporte
                             </a>
                         </div>
                         <p class="mt-4 small opacity-75">
-                            <i class="bi bi-shield-check me-1"></i> Pagamento 100% seguro • Sem contrato • Cancelamento
-                            a qualquer momento
+                            <i class="bi bi-shield-check me-1 text-success"></i> Pagamento 100% seguro • Sem contrato
                         </p>
                     </div>
                 </div>
@@ -996,216 +818,350 @@
         <div class="container">
             <div class="text-center">
                 <h4 class="">Acompanhe-nos</h4>
-                <div class="gap-2 mb-4">
-                    <a target="_blank" rel="external" title="Facebook Wasom Upfy"
-                        href="https://www.facebook.com/wasom.official" class="btn btn-wasomupfy">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                            class="bi bi-facebook" viewBox="0 0 16 16">
-                            <path
-                                d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z" />
-                        </svg>
-                    </a>
-                    <a target="_blank" rel="external" title="Instagram Wasom Upfy"
-                        href="https://www.instagram.com/@wasomupfy" class="btn btn-wasomupfy btn-light">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                            class="bi bi-instagram" viewBox="0 0 16 16">
-                            <path
-                                d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z" />
-                        </svg>
-                    </a>
-                    <a target="_blank" rel="external" title="Twitter (X) Wasom Upfy"
-                        href="https://www.twitter.com/wasomupfy" class="btn btn-wasomupfy">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                            class="bi bi-twitter-x" viewBox="0 0 16 16">
-                            <path
-                                d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865l8.875 11.633Z" />
-                        </svg>
-                    </a>
-                    <a target="_blank" rel="external" title="Youtube Wasom Upfy"
-                        href="https://www.youtube.com/@WasomUpfy" class="btn btn-wasomupfy">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                            class="bi bi-youtube" viewBox="0 0 16 16">
-                            <path
-                                d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.007 2.007 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.007 2.007 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31.4 31.4 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.007 2.007 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A99.788 99.788 0 0 1 7.858 2h.193zM6.4 5.209v4.818l4.157-2.408L6.4 5.209z" />
-                        </svg>
-                    </a>
-                    <a target="_blank" rel="external" title="Tiktok Wasom Upfy" href="https://www.tiktok.com/@wasomupfy"
-                        class="btn btn-wasomupfy">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                            class="bi bi-tiktok" viewBox="0 0 16 16">
-                            <path
-                                d="M9 0h1.98c.144.715.54 1.617 1.235 2.512C12.895 3.389 13.797 4 15 4v2c-1.753 0-3.07-.814-4-1.829V11a5 5 0 1 1-5-5v2a3 3 0 1 0 3 3V0Z" />
-                        </svg>
-                    </a>
-                    <a target="_blank" rel="external" title="Threads Wasom Upfy"
-                        href="https://www.threads.net/wasomupfy" class="btn btn-wasomupfy">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                            class="bi bi-threads" viewBox="0 0 16 16">
-                            <path
-                                d="M6.321 6.016c-.27-.18-1.166-.802-1.166-.802.756-1.081 1.753-1.502 3.132-1.502.975 0 1.803.327 2.394.948.591.621.928 1.509 1.005 2.644.328.138.63.299.905.484 1.109.745 1.719 1.86 1.719 3.137 0 2.716-2.226 5.075-6.256 5.075C4.594 16 1 13.987 1 7.994 1 2.034 4.482 0 8.044 0 9.69 0 13.55.243 15 5.036l-1.36.353C12.516 1.974 10.163 1.43 8.006 1.43c-3.565 0-5.582 2.171-5.582 6.79 0 4.143 2.254 6.343 5.63 6.343 2.777 0 4.847-1.443 4.847-3.556 0-1.438-1.208-2.127-1.27-2.127-.236 1.234-.868 3.31-3.644 3.31-1.618 0-3.013-1.118-3.013-2.582 0-2.09 1.984-2.847 3.55-2.847.586 0 1.294.04 1.663.114 0-.637-.54-1.728-1.9-1.728-1.25 0-1.566.405-1.967.868ZM8.716 8.19c-2.04 0-2.304.87-2.304 1.416 0 .878 1.043 1.168 1.6 1.168 1.02 0 2.067-.282 2.232-2.423a6.217 6.217 0 0 0-1.528-.161Z" />
-                        </svg>
-                    </a>
-                </div>
+                <div
+            class="social-links d-flex flex-wrap justify-content-center gap-3 mb-4"
+            role="list"
+            aria-label="Redes sociais"
+          >
+            <!-- Facebook -->
+            <a
+              target="_blank"
+              rel="external noopener noreferrer"
+              aria-label="Facebook da Wasom Upfy (abre em nova janela)"
+              href="https://www.facebook.com/wasom.official"
+              class="btn btn-wasomupfy btn-social"
+              role="listitem"
+            >
+              <i class="bi bi-facebook fs-5"></i>
+              <span class="visually-hidden">Facebook</span>
+            </a>
+
+            <!-- Instagram -->
+            <a
+              target="_blank"
+              rel="external noopener noreferrer"
+              aria-label="Instagram da Wasom Upfy (abre em nova janela)"
+              href="https://www.instagram.com/@wasomupfy"
+              class="btn btn-wasomupfy btn-social"
+              role="listitem"
+            >
+              <i class="bi bi-instagram fs-5"></i>
+              <span class="visually-hidden">Instagram</span>
+            </a>
+
+            <!-- WhatsApp -->
+            <a
+              target="_blank"
+              rel="external noopener noreferrer"
+              aria-label="WhatsApp da Wasom Upfy (abre em nova janela)"
+              href="https://wa.me/244923456789"
+              class="btn btn-wasomupfy btn-social"
+              role="listitem"
+            >
+              <i class="bi bi-whatsapp fs-5"></i>
+              <span class="visually-hidden">WhatsApp</span>
+            </a>
+
+            <!-- YouTube -->
+            <a
+              target="_blank"
+              rel="external noopener noreferrer"
+              aria-label="YouTube da Wasom Upfy (abre em nova janela)"
+              href="https://www.youtube.com/@wasomupfy"
+              class="btn btn-wasomupfy btn-social"
+              role="listitem"
+            >
+              <i class="bi bi-youtube fs-5"></i>
+              <span class="visually-hidden">YouTube</span>
+            </a>
+
+            <!-- LinkedIn -->
+            <a
+              target="_blank"
+              rel="external noopener noreferrer"
+              aria-label="LinkedIn da Wasom Upfy (abre em nova janela)"
+              href="https://linkedin.com/company/wasom-upfy"
+              class="btn btn-wasomupfy btn-social"
+              role="listitem"
+            >
+              <i class="bi bi-linkedin fs-5"></i>
+              <span class="visually-hidden">LinkedIn</span>
+            </a>
+          </div>
 
             </div>
-            <!-- Footer 4 column -->
-            <div class="row">
-                <div class="col-lg-12 col-12">
-                    <div class="row" id="ft-links">
 
-                        <div class="col-lg-3 col-12">
-
-                            <div
-                                class="mb-3 pb-2 d-flex justify-content-between border-bottom border-bottom-lg-0 position-relative">
-                                <h4 class="">Sobre Nós</h4>
-                                <a class="d-block d-lg-none stretched-link text-body" title="collapse"
-                                    data-bs-toggle="collapse" href="#collapseAccounts" role="button"
-                                    aria-expanded="false" aria-controls="collapseAccounts">
-                                    <i data-feather="chevron-down"></i>
-                                </a>
-                            </div>
-                            <div class="collapse d-lg-block" id="collapseAccounts" data-bs-parent="#ft-links">
-                                <ul class="list-unstyled mb-0 py-3 py-lg-0">
-                                    <li class="mb-2">
-                                        <a href="blog/home" title="Blogue"
-                                            class="text-decoration-none text-reset">Blogue</a>
-                                    </li>
-                                    <li class="mb-2">
-                                        <a href="services" title="Serviços"
-                                            class="text-decoration-none text-reset">Serviços</a>
-                                    </li>
-                                    <li class="mb-2">
-                                        <a href="../about.html" title="Sobre"
-                                            class="text-decoration-none text-reset">Sobre</a>
-                                    </li>
-                                    <li class="mb-2">
-                                        <a href="about#mark" title="A nossa marca"
-                                            class="text-decoration-none text-reset">A
-                                            nossa marca</a>
-                                    </li>
-                                </ul>
-                            </div>
-
-                        </div>
-                        <div class="col-lg-3 col-12">
-                            <div
-                                class="mb-3 pb-2 d-flex justify-content-between border-bottom border-bottom-lg-0 position-relative">
-                                <h4 class="">Suporte</h4>
-                                <a class="d-block d-lg-none stretched-link text-body" title="collapse"
-                                    data-bs-toggle="collapse" href="#collapseResources" role="button"
-                                    aria-expanded="false" aria-controls="collapseResources">
-                                    <i data-feather="chevron-down"></i>
-                                </a>
-                            </div>
-                            <div class="collapse d-lg-block" id="collapseResources" data-bs-parent="#ft-links">
-                                <ul class="list-unstyled mb-0 py-3 py-lg-0">
-                                    <li class="mb-2">
-                                        <a title="Atendimento pelo facebook"
-                                            href="https://www.facebook.com/m.me/2007900989425052"
-                                            class="text-decoration-none text-reset">Atendimento</a>
-                                    </li>
-                                    <li class="mb-2">
-                                        <a title="Ajuda" href="../page/support/help"
-                                            class="text-decoration-none text-reset">Ajuda</a>
-                                    </li>
-                                    <li class="mb-2">
-                                        <a title="Contacto-nos" href="contact"
-                                            class="text-decoration-none text-reset">Contacta-nos</a>
-                                    </li>
-                                    <li class="mb-2">
-                                        <a title="Trabalhar connosco" href="blog/careers"
-                                            class="text-decoration-none text-reset">Trabalhar connosco</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-12">
-                            <div
-                                class="mb-3 pb-2 d-flex justify-content-between border-bottom border-bottom-lg-0 position-relative">
-                                <h4 class="">Localidades</h4>
-                                <a class="d-block d-lg-none stretched-link text-body" title="collapse"
-                                    data-bs-toggle="collapse" href="#collapseLocations" role="button"
-                                    aria-expanded="false" aria-controls="collapseLocations">
-                                    <i data-feather="chevron-down"></i>
-                                </a>
-                            </div>
-                            <div class="collapse d-lg-block" id="collapseLocations" data-bs-parent="#ft-links">
-                                <ul class="list-unstyled mb-0 py-3 py-lg-0">
-                                    <li class="mb-2">
-                                        <a title="Africa do Sul - Joanesburgo" href=""
-                                            class="text-decoration-none text-reset">Africa do
-                                            Sul - Joanesburgo</a>
-                                    </li>
-                                    <li class="mb-2">
-                                        <a title="Angola - Luanda" target="_blank" rel="external" href="#!"
-                                            class="text-decoration-none text-reset">Angola - Luanda</a>
-                                    </li>
-                                    <li class="mb-2">
-                                        <a title="Brasil - Rio Grande do Sul" href="./changelog"
-                                            class="text-decoration-none text-reset">Brasil - Rio
-                                            Grande do Sul</a>
-                                    </li>
-
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-3 col-12">
-                            <div
-                                class="mb-3 pb-2 d-flex justify-content-between border-bottom border-bottom-lg-0 position-relative">
-                                <h4 class="">Dados de Contacto</h4>
-                                <a class="d-block d-lg-none stretched-link text-body" title="collapse"
-                                    data-bs-toggle="collapse" href="#collapseContacto" role="button"
-                                    aria-expanded="false" aria-controls="collapseContacto">
-                                    <i data-feather="chevron-down"></i>
-                                </a>
-                            </div>
-                            <div class="collapse d-lg-block" id="collapseContacto" data-bs-parent="#ft-links">
-                                <ul class="list-unstyled mb-0 py-3 py-lg-0">
-
-                                    <li class="mb-2">
-                                        <a title="E-mail para pedidos"
-                                            href="mailto:info@wasomupfy.com?subject=Preciso fazer um pedido.&bcc=suporte@wasomupfy.com&body=Olá equipa de Wasom Upfy, estou interessado em fazer um pedido ao Wasom Upfy."
-                                            class="text-decoration-none text-reset">info@wasomupfy.com</a>
-                                    </li>
-                                    <li class="mb-2">
-                                        <a title="E-mail para pedidos"
-                                            href="mailto:suporte@wasomupfy.com?subject=Preciso fazer um pedido.&bcc=info@wasomupfy.com&body=Olá equipa de Wasom Upfy, estou interessado em fazer um pedido ao Wasom Upfy."
-                                            class="text-decoration-none text-reset">suporte@wasomupfy.com</a>
-                                    </li>
-                                    <li class="mb-2">
-                                        <a href="#!" title="Horário do atendimento"
-                                            class="text-decoration-none text-reset">De Seg. à
-                                            Sex. das 10h
-                                            às 18h</a>
-                                    </li>
-
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+            <!-- Navegação do Footer -->
+        <nav aria-label="Navegação do rodapé">
+          <div class="row" id="ft-links">
+            <!-- Sobre Nós -->
+            <div class="col-lg-3 col-12 mb-4 mb-lg-0">
+              <div
+                class="mb-3 pb-2 d-flex justify-content-between border-bottom border-bottom-lg-0"
+              >
+                <h3 class="h5 mb-0">Sobre Nós</h3>
+                <button
+                  class="d-block d-lg-none btn btn-link p-0 text-body"
+                  type="button"
+                  aria-expanded="false"
+                  aria-controls="collapseAccounts"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapseAccounts"
+                >
+                  <i data-feather="chevron-down" aria-hidden="true"></i>
+                  <span class="visually-hidden">Expandir seção Sobre Nós</span>
+                </button>
+              </div>
+              <div
+                class="collapse d-lg-block"
+                id="collapseAccounts"
+                data-bs-parent="#ft-links"
+              >
+                <ul class="list-unstyled mb-0 py-3 py-lg-0">
+                  <li class="mb-2">
+                    <a
+                      href="/blog/home"
+                      class="text-decoration-none text-reset hover-primary"
+                    >
+                      Blogue
+                    </a>
+                  </li>
+                  <li class="mb-2">
+                    <a
+                      href="/services"
+                      class="text-decoration-none text-reset hover-primary"
+                    >
+                      Serviços
+                    </a>
+                  </li>
+                  <li class="mb-2">
+                    <a
+                      href="/about.html"
+                      class="text-decoration-none text-reset hover-primary"
+                    >
+                      Sobre
+                    </a>
+                  </li>
+                  <li class="mb-2">
+                    <a
+                      href="/about.html#mark"
+                      class="text-decoration-none text-reset hover-primary"
+                    >
+                      A nossa marca
+                    </a>
+                  </li>
+                </ul>
+              </div>
             </div>
-        </div>
-        <hr class="divider divider-fade divider-dark">
+
+            <!-- Suporte -->
+            <div class="col-lg-3 col-12 mb-4 mb-lg-0">
+              <div
+                class="mb-3 pb-2 d-flex justify-content-between border-bottom border-bottom-lg-0"
+              >
+                <h3 class="h5 mb-0">Suporte</h3>
+                <button
+                  class="d-block d-lg-none btn btn-link p-0 text-body"
+                  type="button"
+                  aria-expanded="false"
+                  aria-controls="collapseResources"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapseResources"
+                >
+                  <i data-feather="chevron-down" aria-hidden="true"></i>
+                  <span class="visually-hidden">Expandir seção Suporte</span>
+                </button>
+              </div>
+              <div
+                class="collapse d-lg-block"
+                id="collapseResources"
+                data-bs-parent="#ft-links"
+              >
+                <ul class="list-unstyled mb-0 py-3 py-lg-0">
+                  <li class="mb-2">
+                    <a
+                      href="https://www.facebook.com/m.me/2007900989425052"
+                      target="_blank"
+                      rel="external noopener noreferrer"
+                      class="text-decoration-none text-reset hover-primary"
+                    >
+                      Atendimento
+                    </a>
+                  </li>
+                  <li class="mb-2">
+                    <a
+                      href="/page/support/help.html"
+                      class="text-decoration-none text-reset hover-primary"
+                    >
+                      Ajuda
+                    </a>
+                  </li>
+                  <li class="mb-2">
+                    <a
+                      href="/contact.html"
+                      class="text-decoration-none text-reset hover-primary"
+                    >
+                      Contacta-nos
+                    </a>
+                  </li>
+                  <li class="mb-2">
+                    <a
+                      href="/blog/careers.html"
+                      class="text-decoration-none text-reset hover-primary"
+                    >
+                      Trabalhar connosco
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Localidades -->
+            <div class="col-lg-3 col-12 mb-4 mb-lg-0">
+              <div
+                class="mb-3 pb-2 d-flex justify-content-between border-bottom border-bottom-lg-0"
+              >
+                <h3 class="h5 mb-0">Localidades</h3>
+                <button
+                  class="d-block d-lg-none btn btn-link p-0 text-body"
+                  type="button"
+                  aria-expanded="false"
+                  aria-controls="collapseLocations"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapseLocations"
+                >
+                  <i data-feather="chevron-down" aria-hidden="true"></i>
+                  <span class="visually-hidden"
+                    >Expandir seção Localidades</span
+                  >
+                </button>
+              </div>
+              <div
+                class="collapse d-lg-block"
+                id="collapseLocations"
+                data-bs-parent="#ft-links"
+              >
+                <ul class="list-unstyled mb-0 py-3 py-lg-0">
+                  <li class="mb-2">
+                    <span class="text-reset">Angola - Luanda</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Dados de Contacto -->
+            <div class="col-lg-3 col-12 mb-4 mb-lg-0">
+              <div
+                class="mb-3 pb-2 d-flex justify-content-between border-bottom border-bottom-lg-0"
+              >
+                <h3 class="h5 mb-0">Dados de Contacto</h3>
+                <button
+                  class="d-block d-lg-none btn btn-link p-0 text-body"
+                  type="button"
+                  aria-expanded="false"
+                  aria-controls="collapseContacto"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapseContacto"
+                >
+                  <i data-feather="chevron-down" aria-hidden="true"></i>
+                  <span class="visually-hidden"
+                    >Expandir seção Dados de Contacto</span
+                  >
+                </button>
+              </div>
+              <div
+                class="collapse d-lg-block"
+                id="collapseContacto"
+                data-bs-parent="#ft-links"
+              >
+                <ul class="list-unstyled mb-0 py-3 py-lg-0">
+                  <li class="mb-2">
+                    <a
+                      href="mailto:info@wasomupfy.com?subject=Contacto%20Wasom%20Upfy"
+                      class="text-decoration-none text-reset hover-primary d-inline-flex align-items-center gap-1"
+                    >
+                      <i
+                        data-feather="mail"
+                        width="16"
+                        height="16"
+                        aria-hidden="true"
+                      ></i>
+                      info@wasomupfy.com
+                    </a>
+                  </li>
+                  <li class="mb-2">
+                    <a
+                      href="mailto:suporte@wasomupfy.com?subject=Contacto%20Wasom%20Upfy"
+                      class="text-decoration-none text-reset hover-primary d-inline-flex align-items-center gap-1"
+                    >
+                      <i
+                        data-feather="mail"
+                        width="16"
+                        height="16"
+                        aria-hidden="true"
+                      ></i>
+                      suporte@wasomupfy.com
+                    </a>
+                  </li>
+                  <li class="mb-2">
+                    <span
+                      class="text-reset d-inline-flex align-items-center gap-1"
+                    >
+                      <i
+                        data-feather="clock"
+                        width="16"
+                        height="16"
+                        aria-hidden="true"
+                      ></i>
+                      Segunda a Sexta: 10h às 18h
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </nav>
+
+        <hr class="divider divider-fade divider-dark my-4" />
+
+        <!-- Rodapé Inferior -->
         <div class="container mt-4 pt-lg-3 pb-0">
-            <div class="row align-items-center">
-                <div class="col-md-12">
-                    <div class=" mb-5 mb-lg-0 text-lg-center rodape">
-                        All rights Reserved <br> <a title="Privacidades" class="link" target="_blank" rel="internal"
-                            href="../page/politicies/privacy.html">Privacidade</a> | <a title="Termos de Uso"
-                            class="link" target="_blank" rel="internal" href="../page/politicies/terms.html">Termos de
-                            Uso</a> | <a title="Cookies" class="link" href="../page/politicies/cookies.html"
-                            target="_blank" rel="internal">Cookies</a> | Designed by <a title="Criado" class="link"
-                            href="https://www.linkedin.com/company/voosoft/" target="_blank" rel="internal">VooSoft</a>
-                        <br />&copy; Copyright 2026 Wasom Upfy
-                    </div>
-                </div>
-
+          <div class="row align-items-center">
+            <div class="col-md-12">
+              <div class="text-center text-lg-center rodape">
+                <p class="mb-2">Todos os direitos reservados</p>
+                <nav
+                  class="d-flex flex-wrap justify-content-center gap-3 mb-2"
+                  aria-label="Legal"
+                >
+                  <a
+                    href="/page/politicies/privacy.html"
+                    class="link text-muted text-decoration-none hover-primary"
+                  >
+                    Política de Privacidade
+                  </a>
+                  <span class="text-muted">|</span>
+                  <a
+                    href="/page/politicies/terms.html"
+                    class="link text-muted text-decoration-none hover-primary"
+                  >
+                    Termos de Uso
+                  </a>
+                  <span class="text-muted">|</span>
+                  <a
+                    href="/page/politicies/cookies.html"
+                    class="link text-muted text-decoration-none hover-primary"
+                  >
+                    Cookies
+                  </a>
+                </nav>
+                &copy;
+                <span id="current-year">2026</span> Wasom Upfy
+              </div>
             </div>
+          </div>
         </div>
-
+      </div>
     </footer>
     <!-- Footer fim -->
 
@@ -1221,7 +1177,7 @@
     <div class="customizer_1">
         <div class="position-absolute end-0 bottom-0 m-4 fixed">
             <div class="dropdown">
-                <button class="btn btn-light rounded-circle d-flex align-items-center" type="button"
+                <button class="btn btn-wasomupfy rounded-circle d-flex align-items-center" type="button"
                     aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                         class="bi bi-paint-bucket" viewBox="0 0 16 16">

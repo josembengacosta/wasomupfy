@@ -56,225 +56,442 @@
 
     <!-- Cabecalho da página de navbar -->
     <header>
-        <nav class="navbar navbar-expand-lg transparent navbar-transparent navbar-dark">
-            <div class="container px-3">
-                <a class="navbar-brand" href="home.html" title="Home"><img src="assets/img/brand/wasomupfy_brand.png"
-                        width="65" class="img-logo" height="60" alt="Logo Wasom Upfy" /></a>
-                <button class="navbar-toggler offcanvas-nav-btn" type="button">
-                    <i class="bi bi-list"></i>
-                </button>
-                <div class="offcanvas offcanvas-start offcanvas-nav" style="width: 20rem">
-                    <div class="offcanvas-header">
-                        <a title="Home" href="home.html"><img width="65" src="assets/img/brand/wasomupfy_brand.png"
-                                alt="Logo Wasom Upfy" /></a>
-                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                    </div>
-                    <div class="offcanvas-body pt-0 align-items-center">
-                        <ul class="navbar-nav mx-auto align-items-lg-center">
-                            <li class="nav-item">
-                                <a class="nav-link" href="home.html" title="Inicio" role="button" data-bs-toggle="link"
-                                    aria-expanded="false">Início</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link active" href="about.html" title="Sobre" role="button"
-                                    data-bs-toggle="link" aria-expanded="false">Sobre</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="blog/home" title="Blogue" target="_blank" rel="external"
-                                    role="button" data-bs-toggle="link" aria-expanded="false">Blogue</a>
-                            <li class="nav-item dropdown">
-                                <a title="Planos" class="nav-link" href="#" id="navbarDropdown" role="button"
-                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Planos
-                                    <i data-feather="chevron-down"></i></a>
-                                <div class="dropdown-menu dropdown-menu-md" aria-labelledby="navbarDropdown">
-
-                                    <a title="Single" class="dropdown-item mb-3 text-body" href="plan/single.html">
-                                        <div class="d-flex align-items-center">
-                                            <img src="assets/img/icones/plan_single.png" class="svg-inject" width="35"
-                                                height="30" alt="Single">
-                                            <div class="ms-3 lh-1">
-                                                <h5 class="mb-1">Single</h5>
-                                                <p class="mb-0 fs-6">Nosso plano Single - 2.000 Kz</p>
-                                            </div>
-                                        </div>
-                                    </a>
-                                    <a title="Álbum" class="dropdown-item mb-3 text-body" href="plan/album.html">
-                                        <div class="d-flex align-items-center">
-                                            <img src="assets/img/icones/plan_album.png" class="svg-inject" width="32"
-                                                height="32" alt="Album">
-                                            <div class="ms-3 lh-1">
-                                                <h5 class="mb-1">
-                                                    Álbum
-                                                </h5>
-                                                <p class="mb-0 fs-6">Nosso plano Álbum - 4.500 Kz</p>
-                                            </div>
-                                        </div>
-                                    </a>
-                                    <a title="Artista" class="dropdown-item mb-3 text-body" href="plan/artist.html">
-                                        <div class="d-flex align-items-center">
-                                            <img src="assets/img/icones/plan_artist.png" class="svg-inject" width="32"
-                                                height="32" alt="Artist">
-                                            <div class="ms-3 lh-1">
-                                                <h5 class="mb-1">Artista</h5>
-                                                <p class="mb-0 fs-6">Nosso plano Artista - 11.400 Kz/2ano</p>
-                                            </div>
-                                        </div>
-                                    </a>
-                                    <a title="Label" class="dropdown-item mb-3 text-body" href="plan/label.html">
-                                        <div class="d-flex align-items-center">
-                                            <img src="assets/img/icones/plan_label.png" class="svg-inject" width="32"
-                                                height="32" alt="Parceiro">
-                                            <div class="ms-3 lh-1">
-                                                <h5 class="mb-1">Label</h5>
-                                                <p class="mb-0 fs-6">Nosso plano Label - 70.000 Kz/2ano</p>
-                                            </div>
-                                        </div>
-                                    </a>
-                                    <a title="Todos os planos" class="dropdown-item mb-3 text-body"
-                                        href="plan/all-plans.html">
-                                        <div class="d-flex align-items-center">
-                                            <img src="assets/img/icones/all_plans.png" class="svg-inject" width="32"
-                                                height="32" alt="Todos os planos">
-                                            <div class="ms-3 lh-1">
-                                                <h5 class="mb-1">Todos os planos</h5>
-                                                <p class="mb-0 fs-6">Todos os nossos planos</p>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a title="Páginas" class="nav-link" href="#" role="button" data-bs-toggle="dropdown"
-                                    aria-expanded="false">Páginas <i data-feather="chevron-down"></i></span></a>
-                                <div class="dropdown-menu dropdown-menu-xxl">
-                                    <div class="row row-cols-lg-3">
-                                        <div class="col">
-                                            <div>
-                                                <div>
-                                                    <div class="dropdown-header">Blog</div>
-                                                    <a title="Destaque dos Melhores" class="dropdown-item"
-                                                        href="blog/news.html">Novidades</a>
-                                                    <a title="Passatempo Wasom Upfy" class="dropdown-item"
-                                                        href="blog/freetime">Passatempo</a>
-                                                    <a title="Trabalhar connosco" class="dropdown-item"
-                                                        href="blog/careers">Trabalhar connosco</a>
-                                                </div>
-                                                <div class="mt-3">
-                                                    <div class="dropdown-header">Sobre</div>
-                                                    <a title="A nossa marca" class="dropdown-item"
-                                                        href="about.html?#nossamarca">A
-                                                        nossa marca</a>
-                                                    <a title="Parcerias" class="dropdown-item"
-                                                        href="partnership.html">Parcerias</a>
-                                                    <a title="Quem somos" class="dropdown-item" href="about.html">Quem
-                                                        somos</a>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col">
-                                            <div class="mt-3 mt-lg-0">
-                                                <div>
-                                                    <div class="dropdown-header">Serviços</div>
-                                                    <a title="Propagandas" class="dropdown-item" href="#!">Distribuição
-                                                        de música</a>
-                                                    <a title="Parcerias" class="dropdown-item"
-                                                        href="./advertising-music.html">Promoção de música <span
-                                                            class="badge bg-success">Novo</span></a>
-                                                    <a title="Indisponível" class="dropdown-item" href="#!">Serviços
-                                                        personalizados
-                                                        <span class="badge bg-warning">Indisponível</span></a>
-                                                </div>
-
-                                                <div class="mt-3">
-                                                    <div class="dropdown-header">Contactos</div>
-                                                    <a title="Atendimento pelo Facebook" class="dropdown-item"
-                                                        href="https://www.facebook.com/m.me/2007900989425052">Atendimento</a>
-                                                    <a title="Contacto-nos" class="dropdown-item"
-                                                        href="contact.html">Contacta-nos</a>
-                                                    <a title="Grupo Privado" class="dropdown-item"
-                                                        href="https://www.facebook.com/groups/wasomupfy">Grupo</a>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col">
-                                            <div class="mt-3 mt-lg-0">
-                                                <div>
-                                                    <div class="dropdown-header">Sugestões</div>
-                                                    <a title="Apoia-nos" class="dropdown-item"
-                                                        href="page/support/support-us.html">Apoia-nós <span
-                                                            class="badge bg-success">Novo</span></a>
-                                                    <a title="Feedback" class="dropdown-item"
-                                                        href="page/support/feedback.html">Feedback</a>
-                                                    <a title="Indisponível" class="dropdown-item" href="#!">Indisponível
-                                                        <span class="badge bg-warning">Indisponível</span></a>
-                                                </div>
-                                                <div class="mt-3">
-                                                    <div class="dropdown-header">Ajuda</div>
-                                                    <a title="Tutorial" class="dropdown-item"
-                                                        href="page/support/tutorial.html">Tutorial <span
-                                                            class="badge bg-success">Novo</span></a>
-                                                    <a title="Ocorreu um erro" class="dropdown-item"
-                                                        href="page/support/support.html">Suporte técnico</a>
-                                                    <a title="Preciso de ajuda" class="dropdown-item"
-                                                        href="page/support/faq.html">Perguntas frequentes</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link" href="resources.html" title="Video" role="button"
-                                    data-bs-toggle="link" aria-expanded="false"> Recursos</a>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a title="Contacto" class="nav-link" href="#" role="button" data-bs-toggle="dropdown"
-                                    aria-expanded="false">Contactar <i data-feather="chevron-down"></i></a>
-                                <ul class="dropdown-menu">
-                                    <li><a title="Caixa de mensagem" class="dropdown-item" href="contact.html"> Caixa de
-                                            mensagem</a>
-                                    </li>
-                                    <li><a title="E-mail" class="dropdown-item"
-                                            href="mailto:info@wasomupfy.com?subject=Entrando em contacto com equipa de Wasom Upfy.&bcc=suporte@wasomupfy.com&body=Olá equipa de Wasom Upfy.">
-                                            info@wasomupfy.com</a>
-                                    </li>
-                                    <li><a title="WhatsApp" class="dropdown-item"
-                                            href="https://api.whatsapp.com/send/?phone=244922030116&text&type=phone_number&app_absent=0">
-                                            WhatsApp </a>
-                                    </li>
-                                </ul>
-                            </li>
-                            </li>
-                        </ul>
-                        <div class="mt-3 mt-lg-0 d-flex align-items-center">
-                            <a title="Sign-in" href="authentic/login.html" class="btn btn-secondary mx-2">Entrar
-                                <i data-feather="log-in"></i>
-                            </a>
-                            <a title="Sign-up" href="authentic/register.html" class="btn btn-wasomupfy">Inscreva-se
-                            </a>
-                        </div>
-                    </div>
-                </div>
+      <nav
+        class="navbar navbar-expand-lg transparent navbar-transparent navbar-dark"
+      >
+        <div class="container px-3">
+          <a class="navbar-brand" href="home.html" title="Home"
+            ><img
+              src="assets/img/brand/wasomupfy_brand.png"
+              width="65"
+              class="img-logo"
+              height="60"
+              alt="Logo Wasom Upfy"
+          /></a>
+          <button class="navbar-toggler offcanvas-nav-btn" type="button">
+            <i class="bi bi-list"></i>
+          </button>
+          <div
+            class="offcanvas offcanvas-start offcanvas-nav"
+            style="width: 20rem"
+          >
+            <div class="offcanvas-header">
+              <a title="Logotipo" href="home.html"
+                ><img
+                  width="65"
+                  src="assets/img/brand/wasomupfy_brand.png"
+                  alt="Logo Wasom Upfy"
+              /></a>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="offcanvas"
+                aria-label="Close"
+              ></button>
             </div>
-        </nav>
+            <div class="offcanvas-body pt-0 align-items-center">
+              <ul class="navbar-nav mx-auto align-items-lg-center">
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    href="home.html"
+                    title="Inicio"
+                    role="button"
+                    data-bs-toggle="link"
+                    aria-expanded="false"
+                    >Início</a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link active"
+                    href="about.html"
+                    title="Sobre"
+                    role="button"
+                    data-bs-toggle="link"
+                    aria-expanded="false"
+                    >Sobre</a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    href="blog/home"
+                    title="Blogue"
+                    target="_blank"
+                    rel="external"
+                    role="button"
+                    data-bs-toggle="link"
+                    aria-expanded="false"
+                    >Blogue</a
+                  >
+                </li>
+                <li class="nav-item dropdown">
+                  <a
+                    title="Planos"
+                    class="nav-link"
+                    href="#"
+                    id="navbarDropdown"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                    >Planos <i data-feather="chevron-down"></i
+                  ></a>
+                  <div
+                    class="dropdown-menu dropdown-menu-md"
+                    aria-labelledby="navbarDropdown"
+                  >
+                    <a
+                      title="Single"
+                      class="dropdown-item mb-3 text-body"
+                      href="plan/single.html"
+                    >
+                      <div class="d-flex align-items-center">
+                        <img
+                          src="assets/img/icones/plan_single.png"
+                          class="svg-inject"
+                          width="35"
+                          height="30"
+                          alt="Single"
+                        />
+                        <div class="ms-3 lh-1">
+                          <h5 class="mb-1">Single</h5>
+                          <p class="mb-0 fs-6">Nosso plano Single - 2.000 Kz</p>
+                        </div>
+                      </div>
+                    </a>
+                    <a
+                      title="Álbum"
+                      class="dropdown-item mb-3 text-body"
+                      href="plan/album.html"
+                    >
+                      <div class="d-flex align-items-center">
+                        <img
+                          src="assets/img/icones/plan_album.png"
+                          class="svg-inject"
+                          width="32"
+                          height="32"
+                          alt="Album"
+                        />
+                        <div class="ms-3 lh-1">
+                          <h5 class="mb-1">Álbum</h5>
+                          <p class="mb-0 fs-6">Nosso plano Álbum - 5.000 Kz</p>
+                        </div>
+                      </div>
+                    </a>
+                    <a
+                      title="Artista"
+                      class="dropdown-item mb-3 text-body"
+                      href="plan/artist.html"
+                    >
+                      <div class="d-flex align-items-center">
+                        <img
+                          src="assets/img/icones/plan_artist.png"
+                          class="svg-inject"
+                          width="32"
+                          height="32"
+                          alt="Artist"
+                        />
+                        <div class="ms-3 lh-1">
+                          <h5 class="mb-1">Artista</h5>
+                          <p class="mb-0 fs-6">
+                            Nosso plano Artista - 11.400 Kz/2ano
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+                    <a
+                      title="Label"
+                      class="dropdown-item mb-3 text-body"
+                      href="plan/label.html"
+                    >
+                      <div class="d-flex align-items-center">
+                        <img
+                          src="assets/img/icones/plan_label.png"
+                          class="svg-inject"
+                          width="32"
+                          height="32"
+                          alt="Parceiro"
+                        />
+                        <div class="ms-3 lh-1">
+                          <h5 class="mb-1">Label</h5>
+                          <p class="mb-0 fs-6">
+                            Nosso plano Label - 70.000 Kz/2ano
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+                    <a
+                      title="Todos os planos"
+                      class="dropdown-item mb-3 text-body"
+                      href="plan/all-plans.html"
+                    >
+                      <div class="d-flex align-items-center">
+                        <img
+                          src="assets/img/icones/all_plans.png"
+                          class="svg-inject"
+                          width="32"
+                          height="32"
+                          alt="Todos os planos"
+                        />
+                        <div class="ms-3 lh-1">
+                          <h5 class="mb-1">Todos os planos</h5>
+                          <p class="mb-0 fs-6">Todos os nossos planos</p>
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                </li>
+                <li class="nav-item dropdown">
+                  <a
+                    title="Páginas"
+                    class="nav-link"
+                    href="#"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    >Páginas <i data-feather="chevron-down"></i
+                  ></a>
+                  <div class="dropdown-menu dropdown-menu-xxl">
+                    <div class="row row-cols-lg-3">
+                      <div class="col">
+                        <div class="dropdown-header">Blog</div>
+                        <a
+                          title="Destaque dos Melhores"
+                          class="dropdown-item"
+                          href="blog/news.html"
+                          >Novidades</a
+                        >
+                        <a
+                          title="Passatempo Wasom Upfy"
+                          class="dropdown-item"
+                          href="blog/freetime"
+                          >Passatempo</a
+                        >
+                        <a
+                          title="Trabalhar connosco"
+                          class="dropdown-item"
+                          href="blog/careers"
+                          >Trabalhar connosco</a
+                        >
+
+                        <div class="mt-3">
+                          <div class="dropdown-header">Sobre</div>
+                          <a
+                            title="A nossa marca"
+                            class="dropdown-item"
+                            href="about.html?#nossamarca"
+                            >A nossa marca</a
+                          >
+                          <a
+                            title="Parcerias"
+                            class="dropdown-item"
+                            href="partnership.html"
+                            >Parcerias</a
+                          >
+                          <a
+                            title="Quem somos"
+                            class="dropdown-item"
+                            href="about.html"
+                            >Quem somos</a
+                          >
+                        </div>
+                      </div>
+
+                      <div class="col">
+                        <div class="mt-3 mt-lg-0">
+                          <div class="dropdown-header">Serviços</div>
+                          <a title="Propagandas" class="dropdown-item" href="#!"
+                            >Distribuição de música</a
+                          >
+                          <a
+                            title="Parcerias"
+                            class="dropdown-item"
+                            href="./advertising-music.html"
+                            >Promoção de música
+                            <span class="badge bg-success">Novo</span></a
+                          >
+                          <a
+                            title="Indisponível"
+                            class="dropdown-item"
+                            href="#!"
+                            >Serviços personalizados
+                            <span class="badge bg-warning"
+                              >Indisponível</span
+                            ></a
+                          >
+                        </div>
+
+                        <div class="mt-3">
+                          <div class="dropdown-header">Contactos</div>
+                          <a
+                            title="Atendimento pelo Facebook"
+                            class="dropdown-item"
+                            href="https://www.facebook.com/m.me/2007900989425052"
+                            >Atendimento</a
+                          >
+                          <a
+                            title="Contacto-nos"
+                            class="dropdown-item"
+                            href="contact.html"
+                            >Contacta-nos</a
+                          >
+                          <a
+                            title="Grupo Privado"
+                            class="dropdown-item"
+                            href="https://www.facebook.com/groups/wasomupfy"
+                            >Grupo</a
+                          >
+                        </div>
+                      </div>
+
+                      <div class="col">
+                        <div class="mt-3 mt-lg-0">
+                          <div>
+                            <div class="dropdown-header">Sugestões</div>
+                            <a
+                              title="Apoia-nos"
+                              class="dropdown-item"
+                              href="page/support/support-us.html"
+                              >Apoia-nós
+                              <span class="badge bg-success">Novo</span></a
+                            >
+                            <a
+                              title="Feedback"
+                              class="dropdown-item"
+                              href="page/support/feedback.html"
+                              >Feedback</a
+                            >
+                            <a
+                              title="Indisponível"
+                              class="dropdown-item"
+                              href="#!"
+                              >Indisponível
+                              <span class="badge bg-warning"
+                                >Indisponível</span
+                              ></a
+                            >
+                          </div>
+                          <div class="mt-3">
+                            <div class="dropdown-header">Ajuda</div>
+                            <a
+                              title="Tutorial"
+                              class="dropdown-item"
+                              href="page/support/tutorial.html"
+                              >Tutorial
+                              <span class="badge bg-success">Novo</span></a
+                            >
+                            <a
+                              title="Ocorreu um erro"
+                              class="dropdown-item"
+                              href="page/support/support.html"
+                              >Suporte técnico</a
+                            >
+                            <a
+                              title="Preciso de ajuda"
+                              class="dropdown-item"
+                              href="page/support/faq.html"
+                              >Perguntas frequentes</a
+                            >
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    href="resources.html"
+                    title="Video"
+                    role="button"
+                    data-bs-toggle="link"
+                    aria-expanded="false"
+                  >
+                    Recursos</a
+                  >
+                </li>
+                <li class="nav-item dropdown">
+                  <a
+                    title="Contacto"
+                    class="nav-link"
+                    href="#"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    >Contactar <i data-feather="chevron-down"></i
+                  ></a>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a
+                        title="Caixa de mensagem"
+                        class="dropdown-item"
+                        href="contact.html"
+                      >
+                        Caixa de mensagem</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        title="E-mail"
+                        class="dropdown-item"
+                        href="mailto:info@wasomupfy.com?subject=Entrando em contacto com equipa de Wasom Upfy.&bcc=suporte@wasomupfy.com&body=Olá equipa de Wasom Upfy."
+                      >
+                        info@wasomupfy.com</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        title="WhatsApp"
+                        class="dropdown-item"
+                        href="https://api.whatsapp.com/send/?phone=244922030116&text&type=phone_number&app_absent=0"
+                      >
+                        WhatsApp
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+              <div class="mt-3 mt-lg-0 d-flex align-items-center">
+                <a
+                  title="Sign-in"
+                  href="authentic/login.html"
+                  class="btn btn-secondary mx-2"
+                  >Entrar
+                  <i data-feather="log-in"></i>
+                </a>
+                <a
+                  title="Sign-up"
+                  href="authentic/register.html"
+                  class="btn btn-wasomupfy"
+                  >Inscreva-se
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
     </header>
     <!-- Cabecalho da página de navbar fim -->
 
     <!--Seccão do site inteira até ao perto do footer  -->
     <main>
         <!-- Hero Section com parallax -->
-        <section class="about-hero jarallax position-relative overflow-hidden" data-jarallax data-speed="0.4">
+        <section class="about-hero jarallax position-relative overflow-hidden py-5" data-jarallax data-speed="0.4">
             <img class="jarallax-img" src="assets/img/theme/about.png" alt="Sobre Wasom Upfy" loading="lazy">
             <div class="hero-overlay"></div>
-            <div class="container position-relative z-index-2">
-                <div class="row justify-content-center">
-                    <div class="col-xl-6 col-lg-8 col-md-10 text-center" data-cue="fadeIn">
-                        <span class="badge bg-wasom-gradient text-white-stable fw-semibold px-4 py-2 mb-3">Sobre
-                            Nós</span>
-                        <h1 class="display-4 mb-4 fw-bold text-white-stable">Conheça a Wasom Upfy</h1>
+            <div class="container position-relative z-index-2 py-6">
+                <div class="row justify-content-center text-center">
+                    <div class="col-xl-8 col-lg-10 text-center" data-cue="fadeIn">
+                        <nav aria-label="breadcrumb" class="d-flex justify-content-center mb-3">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="home.html" class="text-muted">Home</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Sobre Nós</li>
+                            </ol>
+                        </nav>
+                        <h1 class="display-4 mb-4 text-white-stable fw-bold">Conheça a Wasom Upfy</h1>
                         <p class="lead text-white-stable mb-4 opacity-90">Transformando talentos musicais em sucessos
                             globais desde 2022</p>
                         <a href="#nossa-historia" class="btn btn-wasomupfy btn-lg mt-2 smooth-scroll">
@@ -286,13 +503,13 @@
         </section>
 
         <!-- Stats Counter -->
-        <section class="py-5 bg-light-100" data-cue="fadeIn">
+        <section class="py-4 bg-light-100" data-cue="fadeIn">
             <div class="container">
                 <div class="row g-4 text-center">
                     <div class="col-md-3 col-6" data-cue="zoomIn">
                         <div class="stat-card p-4 rounded-4 shadow-sm">
                             <div class="stat-icon mb-3">
-                                <i class="bi bi-globe-americas fs-1 text-wasom"></i>
+                                <i class="bi bi-globe-americas fs-1 text-wasomupfy"></i>
                             </div>
                             <h3 class="stat-number display-5 fw-bold text-dark mb-2" data-counter="150">0</h3>
                             <p class="stat-label text-muted mb-0">Plataformas Globais</p>
@@ -301,7 +518,7 @@
                     <div class="col-md-3 col-6" data-cue="zoomIn" data-delay="100">
                         <div class="stat-card p-4 rounded-4 shadow-sm">
                             <div class="stat-icon mb-3">
-                                <i class="bi bi-music-note-beamed fs-1 text-wasom"></i>
+                                <i class="bi bi-music-note-beamed fs-1 text-wasomupfy"></i>
                             </div>
                             <h3 class="stat-number display-5 fw-bold text-dark mb-2" data-counter="500">0</h3>
                             <p class="stat-label text-muted mb-0">Artistas Atendidos</p>
@@ -310,7 +527,7 @@
                     <div class="col-md-3 col-6" data-cue="zoomIn" data-delay="200">
                         <div class="stat-card p-4 rounded-4 shadow-sm">
                             <div class="stat-icon mb-3">
-                                <i class="bi bi-headphones fs-1 text-wasom"></i>
+                                <i class="bi bi-headphones fs-1 text-wasomupfy"></i>
                             </div>
                             <h3 class="stat-number display-5 fw-bold text-dark mb-2" data-counter="2500">0</h3>
                             <p class="stat-label text-muted mb-0">Milhões de Streams</p>
@@ -319,7 +536,7 @@
                     <div class="col-md-3 col-6" data-cue="zoomIn" data-delay="300">
                         <div class="stat-card p-4 rounded-4 shadow-sm">
                             <div class="stat-icon mb-3">
-                                <i class="bi bi-flag fs-1 text-wasom"></i>
+                                <i class="bi bi-flag fs-1 text-wasomupfy"></i>
                             </div>
                             <h3 class="stat-number display-5 fw-bold text-dark mb-2" data-counter="50">0</h3>
                             <p class="stat-label text-muted mb-0">Países Alcançados</p>
@@ -330,31 +547,31 @@
         </section>
 
         <!-- Nossa História -->
-        <section id="nossa-historia" class="py-7" data-cue="fadeIn">
+        <section id="nossa-historia" class="py-5" data-cue="fadeIn">
             <div class="container">
                 <div class="row align-items-center g-5">
                     <div class="col-lg-6" data-cue="slideInLeft">
                         <span
-                            class="badge bg-wasomupfy bg-opacity-10 text-wasomupfy rounded-pill px-4 py-2 mb-3 d-inline-block">
+                            class="badge bg-wasomupfy bg-opacity-10 text-wasomupfyupfy rounded-pill px-4 py-2 mb-3 d-inline-block">
                             Nossa Origem
                         </span>
                         <h2 class="display-6 fw-bold mb-4">Quem Somos?</h2>
                         <div class="timeline ps-3 border-start border-wasom">
                             <div class="timeline-item mb-4">
-                                <div class="timeline-date text-wasom fw-semibold">2022</div>
+                                <div class="timeline-date text-wasomupfy fw-semibold">2022</div>
                                 <h4 class="h5 mb-2">Nasce uma Ideia</h4>
-                                <p>Fundada por <a href="#" class="text-wasom fw-semibold">Cristiano Amadeu</a>, a Wasom
+                                <p>Fundada por <a href="#" class="text-wasomupfy fw-semibold">Cristiano Amadeu</a>, a Wasom
                                     Upfy surge em Luanda, Angola, com a missão de democratizar o acesso ao mercado
                                     musical global.</p>
                             </div>
                             <div class="timeline-item mb-4">
-                                <div class="timeline-date text-wasom fw-semibold">2023</div>
+                                <div class="timeline-date text-wasomupfy fw-semibold">2023</div>
                                 <h4 class="h5 mb-2">Expansão Digital</h4>
                                 <p>Implementamos tecnologia própria e expandimos para mais de 150 países, conectando
                                     artistas africanos com audiências internacionais.</p>
                             </div>
                             <div class="timeline-item">
-                                <div class="timeline-date text-wasom fw-semibold">2024</div>
+                                <div class="timeline-date text-wasomupfy fw-semibold">2024</div>
                                 <h4 class="h5 mb-2">Reconhecimento Global</h4>
                                 <p>Tornamo-nos referência em distribuição digital africana, com presença em todas as
                                     principais plataformas de streaming.</p>
@@ -366,9 +583,9 @@
                             <img src="assets/img/theme/about.png" alt="Equipe Wasom Upfy"
                                 class="rounded-4 img-fluid shadow-lg" loading="lazy">
                             <div
-                                class="about-badge bg-wasom text-white rounded-3 p-3 shadow position-absolute bottom-0 start-0 translate-middle">
+                                class="about-badge bg-wasom text-wasomupfy rounded-3 p-3 shadow position-absolute bottom-0 start-0 translate-middle">
                                 <h5 class="mb-1">+500 Artistas</h5>
-                                <p class="small mb-0 opacity-75 text-wasomupfy font-bolder">Empoderados</p>
+                                <p class="small mb-0 opacity-75 text-wasomupfyupfy font-bolder">Empoderados</p>
                             </div>
                         </div>
                     </div>
@@ -377,17 +594,17 @@
         </section>
 
         <!-- Missão, Visão e Valores -->
-        <section class="py-7 bg-light-100" data-cue="fadeIn">
+        <section class="py-5 bg-light-100" data-cue="fadeIn">
             <div class="container">
                 <div class="row g-5">
                     <!-- Missão -->
                     <div class="col-lg-4" data-cue="zoomIn">
                         <div class="card border-0 h-100 shadow-sm hover-lift">
-                            <div class="card-dark p-4">
-                                <div class="icon-wrapper bg-wasom-light rounded-3 p-3 mb-4 d-inline-flex">
-                                    <i class="bi bi-bullseye fs-3 text-wasom"></i>
+                            <div class="card-body p-3">
+                                <div class="icon-wrapper bg-wasom-light rounded-3 p-2 mb-3 d-inline-flex">
+                                    <i class="bi bi-bullseye fs-1 text-wasomupfy"></i>
                                 </div>
-                                <h3 class="h4 mb-3 text-muted">Nossa Missão</h3>
+                                <h3 class="h4 mb-3">Nossa Missão</h3>
                                 <p class="mb-0">Empoderar artistas independentes através de soluções digitais
                                     inovadoras, garantindo que cada voz seja ouvida em escala global com
                                     profissionalismo e transparência.</p>
@@ -398,11 +615,11 @@
                     <!-- Visão -->
                     <div class="col-lg-4" data-cue="zoomIn" data-delay="100">
                         <div class="card border-0 h-100 shadow-sm hover-lift">
-                            <div class="card-dark p-4">
-                                <div class="icon-wrapper bg-wasom-light rounded-3 p-3 mb-4 d-inline-flex">
-                                    <i class="bi bi-eye fs-3 text-wasom"></i>
+                            <div class="card-body p-3">
+                                <div class="icon-wrapper bg-wasom-light rounded-3 p-2 mb-3 d-inline-flex">
+                                    <i class="bi bi-eye fs-1 text-wasomupfy"></i>
                                 </div>
-                                <h3 class="h4 mb-3 text-muted">Nossa Visão</h3>
+                                <h3 class="h4 mb-3">Nossa Visão</h3>
                                 <p class="mb-0">Ser a principal plataforma de transformação digital da música africana,
                                     tornando-a acessível mundialmente enquanto preservamos a essência cultural e a
                                     justiça artística.</p>
@@ -413,26 +630,26 @@
                     <!-- Valores -->
                     <div class="col-lg-4" data-cue="zoomIn" data-delay="200">
                         <div class="card border-0 h-100 shadow-sm hover-lift">
-                            <div class="card-dark p-4">
-                                <div class="icon-wrapper bg-wasom-light rounded-3 p-3 mb-4 d-inline-flex">
-                                    <i class="bi bi-heart fs-3 text-wasom"></i>
+                            <div class="card-body p-3">
+                                <div class="icon-wrapper bg-wasom-light rounded-3 p-2 mb-3 d-inline-flex">
+                                    <i class="bi bi-heart fs-1 text-wasomupfy"></i>
                                 </div>
-                                <h3 class="h4 mb-3 text-muted">Nossos Valores</h3>
+                                <h3 class="h4 mb-3">Nossos Valores</h3>
                                 <ul class="list-unstyled mb-0">
                                     <li class="d-flex align-items-start mb-2">
-                                        <i class="bi bi-check-circle-fill text-wasom me-2 mt-1"></i>
+                                        <i class="bi bi-check-circle-fill text-wasomupfy me-2 mt-1"></i>
                                         <span>Inovação Constante</span>
                                     </li>
                                     <li class="d-flex align-items-start mb-2">
-                                        <i class="bi bi-check-circle-fill text-wasom me-2 mt-1"></i>
+                                        <i class="bi bi-check-circle-fill text-wasomupfy me-2 mt-1"></i>
                                         <span>Transparência Total</span>
                                     </li>
                                     <li class="d-flex align-items-start mb-2">
-                                        <i class="bi bi-check-circle-fill text-wasom me-2 mt-1"></i>
+                                        <i class="bi bi-check-circle-fill text-wasomupfy me-2 mt-1"></i>
                                         <span>Empoderamento Artístico</span>
                                     </li>
                                     <li class="d-flex align-items-start">
-                                        <i class="bi bi-check-circle-fill text-wasom me-2 mt-1"></i>
+                                        <i class="bi bi-check-circle-fill text-wasomupfy me-2 mt-1"></i>
                                         <span>Excelência em Serviço</span>
                                     </li>
                                 </ul>
@@ -444,12 +661,12 @@
         </section>
 
         <!-- O Que Fazemos -->
-        <section id="oque-fazemos" class="py-7" data-cue="fadeIn">
+        <section id="oque-fazemos" class="py-6" data-cue="fadeIn">
             <div class="container">
                 <div class="row justify-content-center mb-5">
                     <div class="col-lg-8 text-center">
                         <span
-                            class="badge bg-wasomupfy bg-opacity-10 text-wasomupfy rounded-pill px-3 py-2 mb-3 d-inline-block">Nossos
+                            class="badge bg-wasomupfy bg-opacity-10 text-wasomupfyupfy rounded-pill px-3 py-2 mb-3 d-inline-block">Nossos
                             Serviços</span>
                         <h2 class="display-6 fw-bold mb-4">O Que Fazemos?</h2>
                         <p class="lead text-muted">Oferecemos soluções completas para levar sua música ao mundo</p>
@@ -460,32 +677,32 @@
                     <!-- Distribuição Digital -->
                     <div class="col-md-6" data-cue="slideInUp">
                         <div class="service-card card border-0 h-100 shadow-sm hover-lift">
-                            <div class="card-dark p-4">
+                            <div class="card-body p-3">
                                 <div class="d-flex align-items-start mb-4">
-                                    <div class="service-icon bg-wasom-gradient text-white rounded-3 p-3 me-3">
-                                        <i class="bi bi-cloud-upload fs-3"></i>
+                                    <div class="service-icon bg-wasom-gradient text-wasomupfy rounded-3 p-3 me-3">
+                                        <i class="bi bi-cloud-upload fs-1"></i>
                                     </div>
                                     <div>
-                                        <h3 class="h4 mb-2 text-muted">Distribuição Digital Global</h3>
+                                        <h3 class="h4 mb-2">Distribuição Digital Global</h3>
                                         <p class="text-muted mb-0">Levamos sua música para todas as plataformas
                                             principais</p>
                                     </div>
                                 </div>
                                 <ul class="list-unstyled mb-0">
                                     <li class="d-flex align-items-center mb-2">
-                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                        <i class="bi bi-check-circle-fill text-wasomupfy me-2"></i>
                                         <span>Spotify, Apple Music, Deezer, Tidal</span>
                                     </li>
                                     <li class="d-flex align-items-center mb-2">
-                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                        <i class="bi bi-check-circle-fill text-wasomupfy me-2"></i>
                                         <span>YouTube, TikTok, Instagram Music</span>
                                     </li>
                                     <li class="d-flex align-items-center mb-2">
-                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                        <i class="bi bi-check-circle-fill text-wasomupfy me-2"></i>
                                         <span>Mais de 200 serviços mundiais</span>
                                     </li>
                                     <li class="d-flex align-items-center">
-                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                        <i class="bi bi-check-circle-fill text-wasomupfy me-2"></i>
                                         <span>Distribuição em 24-48 horas</span>
                                     </li>
                                 </ul>
@@ -496,32 +713,32 @@
                     <!-- Marketing Musical -->
                     <div class="col-md-6" data-cue="slideInUp" data-delay="100">
                         <div class="service-card card border-0 h-100 shadow-sm hover-lift">
-                            <div class="card-dark p-4">
+                            <div class="card-body p-3">
                                 <div class="d-flex align-items-start mb-4">
-                                    <div class="service-icon bg-wasom-gradient text-white rounded-3 p-3 me-3">
-                                        <i class="bi bi-bar-chart fs-3"></i>
+                                    <div class="service-icon bg-wasom-gradient text-wasomupfy rounded-3 p-3 me-3">
+                                        <i class="bi bi-bar-chart fs-1"></i>
                                     </div>
                                     <div>
-                                        <h3 class="h4 mb-2 text-muted">Marketing Musical Estratégico</h3>
+                                        <h3 class="h4 mb-2">Marketing Musical Estratégico</h3>
                                         <p class="text-muted mb-0">Maximizamos seu alcance com campanhas inteligentes
                                         </p>
                                     </div>
                                 </div>
                                 <ul class="list-unstyled mb-0">
                                     <li class="d-flex align-items-center mb-2">
-                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                        <i class="bi bi-check-circle-fill text-wasomupfy me-2"></i>
                                         <span>Campanhas segmentadas em redes sociais</span>
                                     </li>
                                     <li class="d-flex align-items-center mb-2">
-                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                        <i class="bi bi-check-circle-fill text-wasomupfy me-2"></i>
                                         <span>Otimização para algoritmos de streaming</span>
                                     </li>
                                     <li class="d-flex align-items-center mb-2">
-                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                        <i class="bi bi-check-circle-fill text-wasomupfy me-2"></i>
                                         <span>Gestão de tráfego pago (Ads)</span>
                                     </li>
                                     <li class="d-flex align-items-center">
-                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                        <i class="bi bi-check-circle-fill text-wasomupfy me-2"></i>
                                         <span>Parcerias com influenciadores</span>
                                     </li>
                                 </ul>
@@ -532,31 +749,31 @@
                     <!-- Curadoria -->
                     <div class="col-md-6" data-cue="slideInUp" data-delay="200">
                         <div class="service-card card border-0 h-100 shadow-sm hover-lift">
-                            <div class="card-dark p-4">
+                            <div class="card-body p-3">
                                 <div class="d-flex align-items-start mb-4">
-                                    <div class="service-icon bg-wasom-gradient text-white rounded-3 p-3 me-3">
-                                        <i class="bi bi-music-note-list fs-3"></i>
+                                    <div class="service-icon bg-wasom-gradient text-wasomupfy rounded-3 p-3 me-3">
+                                        <i class="bi bi-music-note-list fs-1"></i>
                                     </div>
                                     <div>
-                                        <h3 class="h4 mb-2 text-muted">Curadoria & Playlisting</h3>
+                                        <h3 class="h4 mb-2">Curadoria & Playlisting</h3>
                                         <p class="text-muted mb-0">Colocamos sua música nas playlists certas</p>
                                     </div>
                                 </div>
                                 <ul class="list-unstyled mb-0">
                                     <li class="d-flex align-items-center mb-2">
-                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                        <i class="bi bi-check-circle-fill text-wasomupfy me-2"></i>
                                         <span>Inclusão em playlists temáticas próprias</span>
                                     </li>
                                     <li class="d-flex align-items-center mb-2">
-                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                        <i class="bi bi-check-circle-fill text-wasomupfy me-2"></i>
                                         <span>Pitch para editores de Spotify/Apple Music</span>
                                     </li>
                                     <li class="d-flex align-items-center mb-2">
-                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                        <i class="bi bi-check-circle-fill text-wasomupfy me-2"></i>
                                         <span>Parcerias com curadores independentes</span>
                                     </li>
                                     <li class="d-flex align-items-center">
-                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                        <i class="bi bi-check-circle-fill text-wasomupfy me-2"></i>
                                         <span>Análise de dados para otimização</span>
                                     </li>
                                 </ul>
@@ -567,31 +784,31 @@
                     <!-- Assessoria -->
                     <div class="col-md-6" data-cue="slideInUp" data-delay="300">
                         <div class="service-card card border-0 h-100 shadow-sm hover-lift">
-                            <div class="card-dark p-4">
+                            <div class="card-body p-3">
                                 <div class="d-flex align-items-start mb-4">
-                                    <div class="service-icon bg-wasom-gradient text-white rounded-3 p-3 me-3">
-                                        <i class="bi bi-person-badge fs-3"></i>
+                                    <div class="service-icon bg-wasom-gradient text-wasomupfy rounded-3 p-3 me-3">
+                                        <i class="bi bi-person-badge fs-1"></i>
                                     </div>
                                     <div>
-                                        <h3 class="h4 mb-2 text-muted">Assessoria Artística</h3>
+                                        <h3 class="h4 mb-2">Assessoria Artística</h3>
                                         <p class="text-muted mb-0">Desenvolvemos sua carreira musical</p>
                                     </div>
                                 </div>
                                 <ul class="list-unstyled mb-0">
                                     <li class="d-flex align-items-center mb-2">
-                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                        <i class="bi bi-check-circle-fill text-wasomupfy me-2"></i>
                                         <span>Desenvolvimento de identidade visual/sonora</span>
                                     </li>
                                     <li class="d-flex align-items-center mb-2">
-                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                        <i class="bi bi-check-circle-fill text-wasomupfy me-2"></i>
                                         <span>Planejamento estratégico de carreira</span>
                                     </li>
                                     <li class="d-flex align-items-center mb-2">
-                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                        <i class="bi bi-check-circle-fill text-wasomupfy me-2"></i>
                                         <span>Gestão de branding e comunicação</span>
                                     </li>
                                     <li class="d-flex align-items-center">
-                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                        <i class="bi bi-check-circle-fill text-wasomupfy me-2"></i>
                                         <span>Consultoria para lançamentos</span>
                                     </li>
                                 </ul>
@@ -603,21 +820,21 @@
         </section>
 
         <!-- Nossa Marca -->
-        <section id="nossa-marca" class="py-7 bg-gradient-wasom text-white" data-cue="fadeIn">
+        <section id="nossa-marca" class="py-6" data-cue="fadeIn">
             <div class="container">
                 <div class="row align-items-center g-5">
                     <div class="col-lg-6" data-cue="slideInLeft">
-                        <span class="badge text-white rounded-pill px-3 py-2 mb-3 d-inline-block">Identidade</span>
-                        <h2 class="display-6 fw-bold mb-4 text-white-stable">Nossa Marca</h2>
-                        <p class="lead mb-4 opacity-90 text-white-stable">Mais que uma empresa, somos uma
+                        <span class="badge bg-wasomupfy rounded-pill px-3 py-2 mb-3 d-inline-block">Identidade</span>
+                        <h2 class="display-6 fw-bold mb-4">Nossa Marca</h2>
+                        <p class="lead mb-4 opacity-90">Mais que uma empresa, somos uma
                             <strong>plataforma de expressão artística</strong> que conecta talento, inovação e impacto
                             global.
                         </p>
 
                         <div class="brand-values">
                             <div class="brand-value-item d-flex align-items-start mb-3">
-                                <div class="brand-icon text-wasom rounded-2 p-2 me-3">
-                                    <i class="bi bi-lightning-charge"></i>
+                                <div class="brand-icon text-wasomupfy rounded-2 p-2 me-3">
+                                    <i class="bi bi-lightning-charge fs-1"></i>
                                 </div>
                                 <div>
                                     <h4 class="h5 mb-1">Energia</h4>
@@ -625,8 +842,8 @@
                                 </div>
                             </div>
                             <div class="brand-value-item d-flex align-items-start mb-3">
-                                <div class="brand-icon text-wasom rounded-2 p-2 me-3">
-                                    <i class="bi bi-people"></i>
+                                <div class="brand-icon text-wasomupfy rounded-2 p-2 me-3">
+                                    <i class="bi bi-people fs-1"></i>
                                 </div>
                                 <div>
                                     <h4 class="h5 mb-1">Empoderamento</h4>
@@ -634,8 +851,8 @@
                                 </div>
                             </div>
                             <div class="brand-value-item d-flex align-items-start">
-                                <div class="brand-icon text-wasom rounded-2 p-2 me-3">
-                                    <i class="bi bi-globe2"></i>
+                                <div class="brand-icon text-wasomupfy rounded-2 p-2 me-3">
+                                    <i class="bi bi-globe2 fs-1"></i>
                                 </div>
                                 <div>
                                     <h4 class="h5 mb-1">Impacto Global</h4>
@@ -650,17 +867,17 @@
                             <div class="brand-card card rounded-4 p-4 shadow-lg mb-4">
                                 <div class="text-center">
                                     <img src="assets/img/brand/wasomupfy_brand.png" alt="Logo Wasom Upfy"
-                                        class="img-fluid mb-3 text-black-50" width="200" loading="lazy"
+                                        class="img-fluid mb-3" width="200" loading="lazy"
                                         style="border-radius: 50%;">
-                                    <h5 class="mb-2 text-black-50">Wasom Upfy</h5>
-                                    <p class="small text-black-50 mb-3">Onde música encontra propósito</p>
-                                    <a href="https://www.youtube.com/@WasomUpfyoficial" target="_blank"
+                                    <h5 class="mb-2">Wasom Upfy</h5>
+                                    <p class="small mb-3">Onde música encontra propósito</p>
+                                    <a href="https://www.youtube.com/@wasomupfy" target="_blank"
                                         rel="noopener noreferrer" class="btn btn-danger btn-sm">
                                         <i class="bi bi-youtube me-1"></i> Canal Oficial
                                     </a>
                                 </div>
                             </div>
-                            <p class="text-center opacity-75">Cada detalhe da nossa marca foi pensado para refletir
+                            <p class="text-center">Cada detalhe da nossa marca foi pensado para refletir
                                 <strong>autenticidade</strong>, <strong>modernidade</strong> e
                                 <strong>compromisso</strong> com a diversidade sonora.
                             </p>
@@ -671,12 +888,12 @@
         </section>
 
         <!-- Presença Global -->
-        <section class="py-7" data-cue="fadeIn">
+        <section class="py-6" data-cue="fadeIn">
             <div class="container">
                 <div class="row justify-content-center mb-5">
                     <div class="col-lg-8 text-center">
                         <span
-                            class="badge bg-wasomupfy bg-opacity-10 text-wasomupfy rounded-pill px-3 py-2 mb-3 d-inline-block">Alcance
+                            class="badge bg-wasomupfy bg-opacity-10 text-wasomupfyupfy rounded-pill px-3 py-2 mb-3 d-inline-block">Alcance
                             Mundial</span>
                         <h2 class="display-6 fw-bold mb-4">Presença Global</h2>
                         <p class="lead text-muted">Sediados em Luanda, alcançamos o mundo através da tecnologia</p>
@@ -687,7 +904,7 @@
                     <div class="col-md-4" data-cue="zoomIn">
                         <div class="global-card text-center p-4">
                             <div class="global-icon mb-3">
-                                <i class="bi bi-cpu fs-1 text-wasom"></i>
+                                <i class="bi bi-cpu fs-1 text-wasomupfy"></i>
                             </div>
                             <h4 class="h5 mb-3">Tecnologia Própria</h4>
                             <p class="text-muted mb-0">Desenvolvemos soluções digitais exclusivas que automatizam
@@ -698,7 +915,7 @@
                     <div class="col-md-4" data-cue="zoomIn" data-delay="100">
                         <div class="global-card text-center p-4">
                             <div class="global-icon mb-3">
-                                <i class="bi bi-diagram-3 fs-1 text-wasom"></i>
+                                <i class="bi bi-diagram-3 fs-1 text-wasomupfy"></i>
                             </div>
                             <h4 class="h5 mb-3">Rede Estratégica</h4>
                             <p class="text-muted mb-0">Parcerias com plataformas, curadores e influenciadores em todos
@@ -709,7 +926,7 @@
                     <div class="col-md-4" data-cue="zoomIn" data-delay="200">
                         <div class="global-card text-center p-4">
                             <div class="global-icon mb-3">
-                                <i class="bi bi-shield-check fs-1 text-wasom"></i>
+                                <i class="bi bi-shield-check fs-1 text-wasomupfy"></i>
                             </div>
                             <h4 class="h5 mb-3">Sustentabilidade Artística</h4>
                             <p class="text-muted mb-0">Modelos de negócio que valorizam o trabalho criativo e garantem
@@ -721,7 +938,7 @@
         </section>
 
         <!-- CTA Final -->
-        <section class="py-7 bg-light-100" data-cue="fadeIn">
+        <section class="py-6 bg-light-100" data-cue="fadeIn">
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-lg-8 text-center">
@@ -729,10 +946,10 @@
                         <p class="lead text-muted mb-5">Junte-se a centenas de artistas que já transformaram suas
                             carreiras com a Wasom Upfy.</p>
                         <div class="d-flex flex-wrap justify-content-center gap-3">
-                            <a href="register.html" class="btn btn-wasomupfy btn-lg px-5">
+                            <a href="authentic/register.html" class="btn btn-wasomupfy btn-lg px-5">
                                 Começar Agora <i class="bi bi-arrow-right ms-2"></i>
                             </a>
-                            <a href="contact.html" class="btn btn-outline-wasom btn-lg px-5">
+                            <a href="contact.html" class="btn btn-outline-secondary btn-lg px-5">
                                 Fale Conosco
                             </a>
                         </div>
@@ -742,252 +959,6 @@
         </section>
     </main>
 
-    <!-- CSS Adicional -->
-    <style>
-        :root {
-            --wasom-primary: #FF0089;
-            --wasom-secondary: #e04385;
-            --wasom-gradient: linear-gradient(135deg, var(--wasom-primary), var(--wasom-secondary));
-            --wasom-light: #fff0f7;
-        }
-
-        /* Hero Section */
-        .about-hero {
-            min-height: 70vh;
-            display: flex;
-            align-items: center;
-            padding: 6rem 0;
-        }
-
-        .hero-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.4));
-
-        }
-
-        /* Stats Counter */
-        .stat-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
-        }
-
-        .stat-icon {
-            color: var(--wasom-primary);
-        }
-
-        .stat-number {
-            background: var(--wasom-gradient);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        /* Timeline */
-        .timeline {
-            position: relative;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: -1px;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: var(--wasom-gradient);
-        }
-
-        .timeline-item {
-            position: relative;
-            padding-left: 1.5rem;
-        }
-
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -9px;
-            top: 0;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: var(--wasom-primary);
-            border: 3px solid white;
-            box-shadow: 0 0 0 3px var(--wasom-light);
-        }
-
-        .timeline-date {
-            font-size: 0.9rem;
-            letter-spacing: 0.5px;
-        }
-
-        /* Cards */
-        .hover-lift {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .hover-lift:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
-        }
-
-        .service-icon {
-            transition: transform 0.3s ease;
-        }
-
-        .service-card:hover .service-icon {
-            transform: scale(1.1);
-        }
-
-        /* Brand Section */
-        .bg-gradient-wasom {
-            background: var(--wasom-gradient);
-        }
-
-        .brand-icon {
-            transition: transform 0.3s ease;
-        }
-
-        .brand-value-item:hover .brand-icon {
-            transform: rotate(10deg);
-        }
-
-        /* Global Cards */
-        .global-card {
-            border: 1px solid #e9ecef;
-            border-radius: 12px;
-            transition: all 0.3s ease;
-        }
-
-        .global-card:hover {
-            border-color: var(--wasom-primary);
-            box-shadow: 0 10px 25px rgba(255, 0, 137, 0.1);
-        }
-
-        .global-icon {
-            color: var(--wasom-primary);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .about-hero {
-                min-height: 50vh;
-                padding: 4rem 0;
-            }
-
-            .display-6 {
-                font-size: 2rem;
-            }
-
-            .display-4 {
-                font-size: 2.5rem;
-            }
-        }
-
-        /* Animation */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        [data-cue] {
-            opacity: 0;
-        }
-
-        [data-cue].animated {
-            animation: fadeInUp 0.6s ease forwards;
-        }
-
-        /* Smooth Scroll */
-        .smooth-scroll {
-            scroll-behavior: smooth;
-        }
-    </style>
-
-    <!-- JavaScript para animações -->
-    <script>
-        // Counter Animation
-        document.addEventListener('DOMContentLoaded', function () {
-            // Stats Counter
-            const counters = document.querySelectorAll('[data-counter]');
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const counter = entry.target;
-                        const target = parseInt(counter.getAttribute('data-counter'));
-                        const duration = 2000; // 2 seconds
-                        const step = target / (duration / 16); // 60fps
-                        let current = 0;
-
-                        const timer = setInterval(() => {
-                            current += step;
-                            if (current >= target) {
-                                counter.textContent = target + (target >= 100 ? '+' :
-                                    '');
-                                clearInterval(timer);
-                            } else {
-                                counter.textContent = Math.floor(current);
-                            }
-                        }, 16);
-
-                        observer.unobserve(counter);
-                    }
-                });
-            }, {
-                threshold: 0.5
-            });
-
-            counters.forEach(counter => observer.observe(counter));
-
-            // Scroll animations
-            const animateOnScroll = () => {
-                const elements = document.querySelectorAll('[data-cue]');
-                elements.forEach(element => {
-                    const elementTop = element.getBoundingClientRect().top;
-                    const elementVisible = 150;
-
-                    if (elementTop < window.innerHeight - elementVisible) {
-                        element.classList.add('animated');
-                    }
-                });
-            };
-
-            window.addEventListener('scroll', animateOnScroll);
-            animateOnScroll(); // Initial check
-
-            // Smooth scroll for anchor links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const targetId = this.getAttribute('href');
-                    if (targetId === '#') return;
-
-                    const targetElement = document.querySelector(targetId);
-                    if (targetElement) {
-                        window.scrollTo({
-                            top: targetElement.offsetTop - 80,
-                            behavior: 'smooth'
-                        });
-                    }
-                });
-            });
-        });
-    </script>
     <!--Seccão do site inteira até ao perto do footer  fim -->
     <!-- Footer -->
     <div class="divider-fade"></div>
@@ -997,68 +968,54 @@
         <div class="container">
             <!-- Redes Sociais -->
             <div class="text-center mb-5">
-                <h2 class="h4 mb-3">Acompanhe-nos</h2>
-                <div class="social-links d-flex flex-wrap justify-content-center gap-3 mb-4" role="list"
-                    aria-label="Redes sociais">
-                    <a target="_blank" rel="external noopener noreferrer"
-                        aria-label="Facebook da Wasom Upfy (abre em nova janela)"
-                        href="https://www.facebook.com/wasom.official" class="btn btn-wasomupfy btn-social"
-                        role="listitem">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                            aria-hidden="true" focusable="false" viewBox="0 0 24 24">
-                            <path
-                                d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z" />
-                        </svg>
-                        <span class="visually-hidden">Facebook</span>
-                    </a>
+    <h2 class="h4 mb-3">Acompanhe-nos</h2>
+    <div class="social-links d-flex flex-wrap justify-content-center gap-3 mb-4" role="list"
+        aria-label="Redes sociais">
+        
+        <!-- Facebook -->
+        <a target="_blank" rel="external noopener noreferrer"
+            aria-label="Facebook da Wasom Upfy (abre em nova janela)"
+            href="https://www.facebook.com/wasom.official" class="btn btn-wasomupfy btn-social"
+            role="listitem">
+            <i class="bi bi-facebook fs-5"></i>
+            <span class="visually-hidden">Facebook</span>
+        </a>
 
-                    <a target="_blank" rel="external noopener noreferrer"
-                        aria-label="Instagram da Wasom Upfy (abre em nova janela)"
-                        href="https://www.instagram.com/@wasomupfy" class="btn btn-wasomupfy btn-social"
-                        role="listitem">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                            aria-hidden="true" focusable="false" viewBox="0 0 24 24">
-                            <path
-                                d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z" />
-                        </svg>
-                        <span class="visually-hidden">Instagram</span>
-                    </a>
+        <!-- Instagram -->
+        <a target="_blank" rel="external noopener noreferrer"
+            aria-label="Instagram da Wasom Upfy (abre em nova janela)"
+            href="https://www.instagram.com/@wasomupfy" class="btn btn-wasomupfy btn-social"
+            role="listitem">
+            <i class="bi bi-instagram fs-5"></i>
+            <span class="visually-hidden">Instagram</span>
+        </a>
 
-                    <a target="_blank" rel="external noopener noreferrer"
-                        aria-label="WhatsApp da Wasom Upfy (abre em nova janela)" href="https://wa.me/244923456789"
-                        class="btn btn-wasomupfy btn-social" role="listitem">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                            aria-hidden="true" focusable="false" viewBox="0 0 24 24">
-                            <path
-                                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.76.982.998-3.677-.236-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.9 6.994c-.004 5.45-4.437 9.88-9.885 9.88m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.333.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.333 11.893-11.893 0-3.18-1.24-6.162-3.495-8.411" />
-                        </svg>
-                        <span class="visually-hidden">WhatsApp</span>
-                    </a>
+        <!-- WhatsApp -->
+        <a target="_blank" rel="external noopener noreferrer"
+            aria-label="WhatsApp da Wasom Upfy (abre em nova janela)" href="https://wa.me/244923456789"
+            class="btn btn-wasomupfy btn-social" role="listitem">
+            <i class="bi bi-whatsapp fs-5"></i>
+            <span class="visually-hidden">WhatsApp</span>
+        </a>
 
-                    <a target="_blank" rel="external noopener noreferrer"
-                        aria-label="YouTube da Wasom Upfy (abre em nova janela)"
-                        href="https://www.youtube.com/@WasomUpfy" class="btn btn-wasomupfy btn-social" role="listitem">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                            aria-hidden="true" focusable="false" viewBox="0 0 24 24">
-                            <path
-                                d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.007 2.007 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.007 2.007 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31.4 31.4 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.007 2.007 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A99.788 99.788 0 0 1 7.858 2h.193zM6.4 5.209v4.818l4.157-2.408L6.4 5.209z" />
-                        </svg>
-                        <span class="visually-hidden">YouTube</span>
-                    </a>
+        <!-- YouTube -->
+        <a target="_blank" rel="external noopener noreferrer"
+            aria-label="YouTube da Wasom Upfy (abre em nova janela)"
+            href="https://www.youtube.com/@wasomupfy" class="btn btn-wasomupfy btn-social" role="listitem">
+            <i class="bi bi-youtube fs-5"></i>
+            <span class="visually-hidden">YouTube</span>
+        </a>
 
-                    <a target="_blank" rel="external noopener noreferrer"
-                        aria-label="LinkedIn da Wasom Upfy (abre em nova janela)"
-                        href="https://linkedin.com/company/wasom-upfy" class="btn btn-wasomupfy btn-social"
-                        role="listitem">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                            aria-hidden="true" focusable="false" viewBox="0 0 24 24">
-                            <path
-                                d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                        </svg>
-                        <span class="visually-hidden">LinkedIn</span>
-                    </a>
-                </div>
-            </div>
+        <!-- LinkedIn -->
+        <a target="_blank" rel="external noopener noreferrer"
+            aria-label="LinkedIn da Wasom Upfy (abre em nova janela)"
+            href="https://linkedin.com/company/wasom-upfy" class="btn btn-wasomupfy btn-social"
+            role="listitem">
+            <i class="bi bi-linkedin fs-5"></i>
+            <span class="visually-hidden">LinkedIn</span>
+        </a>
+    </div>
+</div>
 
             <!-- Navegação do Footer -->
             <nav aria-label="Navegação do rodapé">
@@ -1246,7 +1203,7 @@
     <div class="customizer_1">
         <div class="position-absolute end-0 bottom-0 m-4 fixed">
             <div class="dropdown">
-                <button class="btn btn-light rounded-circle d-flex align-items-center" type="button"
+                <button class="btn btn-wasomupfy rounded-circle d-flex align-items-center" type="button"
                     aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                         class="bi bi-paint-bucket" viewBox="0 0 16 16">
@@ -1326,7 +1283,76 @@
                 m)
         }(window, document, "script", "dataLayer")
     </script>
+
+     <!-- JavaScript para animações -->
+    <script>
+        // Counter Animation
+        document.addEventListener('DOMContentLoaded', function () {
+            // Stats Counter
+            const counters = document.querySelectorAll('[data-counter]');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const counter = entry.target;
+                        const target = parseInt(counter.getAttribute('data-counter'));
+                        const duration = 2000; // 2 seconds
+                        const step = target / (duration / 16); // 60fps
+                        let current = 0;
+
+                        const timer = setInterval(() => {
+                            current += step;
+                            if (current >= target) {
+                                counter.textContent = target + (target >= 100 ? '+' :
+                                    '');
+                                clearInterval(timer);
+                            } else {
+                                counter.textContent = Math.floor(current);
+                            }
+                        }, 16);
+
+                        observer.unobserve(counter);
+                    }
+                });
+            }, {
+                threshold: 0.5
+            });
+
+            counters.forEach(counter => observer.observe(counter));
+
+            // Scroll animations
+            const animateOnScroll = () => {
+                const elements = document.querySelectorAll('[data-cue]');
+                elements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    const elementVisible = 150;
+
+                    if (elementTop < window.innerHeight - elementVisible) {
+                        element.classList.add('animated');
+                    }
+                });
+            };
+
+            window.addEventListener('scroll', animateOnScroll);
+            animateOnScroll(); // Initial check
+
+            // Smooth scroll for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
 </body>
-
-
 </html>
