@@ -433,6 +433,15 @@
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+  .team-card {
+        transition: transform 0.3s ease, shadow 0.3s ease;
+        border: 1px solid transparent !important;
+    }
+    .team-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 1rem 3rem rgba(0,0,0,0.1) !important;
+        border-color: rgba(255, 16, 147, 0.484) !important;
+     }
 .hover-lift:hover {
     transform: translateY(-8px);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
@@ -518,7 +527,7 @@
    SEÇÕES ESPECÍFICAS
    ============================================ */
 /* Hero Section */
-.about-hero {
+.about-hero .partnership-hero .resources-hero {
     min-height: 70vh;
     display: flex;
     align-items: center;
@@ -880,7 +889,7 @@ button:focus-visible {
         font-size: 1rem;
     }
     
-    .about-hero {
+    .about-hero .partnership-hero .resources-hero {
         min-height: 50vh;
         padding: 4rem 0;
     }

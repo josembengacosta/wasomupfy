@@ -127,3 +127,21 @@
                 padding: 6px 12px;
             }
         }
+
+            /* Estilo para manter o padrão visual Wasom */
+    .icon-box {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 52px;
+        height: 52px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid rgba(255, 102, 0, 0.1);
+    }
+    
+    li:hover .icon-box {
+        background-color: #FF009D !important;
+        color: white !important;
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(255, 0, 157, 0.3) !important;
+    }
