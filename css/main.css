@@ -527,7 +527,7 @@
    SEÇÕES ESPECÍFICAS
    ============================================ */
 /* Hero Section */
-.about-hero .partnership-hero .resources-hero {
+.about-hero .partnership-hero .resources-hero .tutorial-hero .faq-hero .distribution-hero .promotion-hero .contact-hero .privacy-hero .cookies-hero .terms-hero{
     min-height: 70vh;
     display: flex;
     align-items: center;
@@ -889,7 +889,7 @@ button:focus-visible {
         font-size: 1rem;
     }
     
-    .about-hero .partnership-hero .resources-hero {
+    .about-hero .partnership-hero .resources-hero .tutorial-hero .faq-hero .distribution-hero .promotion-hero .contact-hero .privacy-hero .cookies-hero .terms-hero{
         min-height: 50vh;
         padding: 4rem 0;
     }

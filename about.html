@@ -150,8 +150,10 @@
                       <div class="dropdown-header">Blog</div>
                       <a title="Destaque dos Melhores" class="dropdown-item" href="blog/news.html">Novidades</a>
                       <a title="Passatempo Wasom Upfy" class="dropdown-item" href="blog/freetime">Passatempo</a>
-                      <a title="Trabalhar connosco" class="dropdown-item" href="blog/careers">Trabalhar connosco</a>
-
+                       <a title="Indisponível" class="dropdown-item" href="#!"
+                          >Indisponível
+                          <span class="badge bg-warning">Indisponível</span></a
+                        >
                       <div class="mt-3">
                         <div class="dropdown-header">Sobre</div>
                         <a title="A nossa marca" class="dropdown-item" href="about.html?#nossamarca">A nossa marca</a>
@@ -162,13 +164,27 @@
 
                     <div class="col">
                       <div class="mt-3 mt-lg-0">
-                        <div class="dropdown-header">Serviços</div>
-                        <a title="Propagandas" class="dropdown-item" href="#!">Distribuição de música</a>
-                        <a title="Parcerias" class="dropdown-item" href="./advertising-music.html">Promoção de música
-                          <span class="badge bg-success">Novo</span></a>
-                        <a title="Indisponível" class="dropdown-item" href="#!">Serviços personalizados
-                          <span class="badge bg-warning">Indisponível</span></a>
-                      </div>
+                          <div class="dropdown-header">Serviços</div>
+                          <a title="Propagandas" class="dropdown-item" href="page/services/music-distribution.html"
+                            >Distribuição de música</a
+                          >
+                          <a
+                            title="Parcerias"
+                            class="dropdown-item"
+                            href="page/services/music-promotion.html"
+                            >Promoção de música
+                            <span class="badge bg-success">Novo</span></a
+                          >
+                          <a
+                            title="Indisponível"
+                            class="dropdown-item"
+                            href="page/services/customized-services.html"
+                            >Serviços personalizados
+                            <span class="badge bg-warning"
+                              >Indisponível</span
+                            ></a
+                          >
+                        </div>
 
                       <div class="mt-3">
                         <div class="dropdown-header">Contactos</div>
@@ -411,7 +427,7 @@
           </div>
           <div class="col-lg-6" data-cue="slideInRight">
             <div class="about-image-wrapper position-relative">
-              <img src="assets/img/theme/about.png" alt="Equipe Wasom Upfy" class="rounded-4 img-fluid shadow-lg"
+              <img src="assets/img/theme/story.png" alt="Equipe Wasom Upfy" class="rounded-4 img-fluid shadow-lg"
                 loading="lazy" />
               <div
                 class="about-badge bg-wasom text-wasomupfy rounded-3 p-3 shadow position-absolute bottom-0 start-0 translate-middle">
@@ -781,7 +797,7 @@
     </section>
 
     <!-- Nossa Marca -->
-    <section id="nossa-marca" class="py-6" data-cue="fadeIn">
+    <section id="nossamarca" class="py-6" data-cue="fadeIn">
       <div class="container">
         <div class="row align-items-center g-5">
           <div class="col-lg-6" data-cue="slideInLeft">
@@ -954,18 +970,14 @@
                     Blogue
                   </a>
                 </li>
-                <li class="mb-2">
-                  <a href="/services" class="text-decoration-none text-reset hover-primary">
-                    Serviços
-                  </a>
-                </li>
+                
                 <li class="mb-2">
                   <a href="/about.html" class="text-decoration-none text-reset hover-primary">
                     Sobre
                   </a>
                 </li>
                 <li class="mb-2">
-                  <a href="/about#mark" class="text-decoration-none text-reset hover-primary">
+                  <a href="/about.html#nossamarca" class="text-decoration-none text-reset hover-primary">
                     A nossa marca
                   </a>
                 </li>
@@ -1001,11 +1013,7 @@
                     Contacta-nos
                   </a>
                 </li>
-                <li class="mb-2">
-                  <a href="/blog/careers" class="text-decoration-none text-reset hover-primary">
-                    Trabalhar connosco
-                  </a>
-                </li>
+                
               </ul>
             </div>
           </div>
@@ -1142,6 +1150,54 @@
     </div>
   </div>
   <!-- Mudar de do tema da so site fim-->
+<div class="modal fade" id="modalFeedback" tabindex="-1" aria-labelledby="modalFeedbackLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-wasomupfy text-white border-0">
+                <h5 class="modal-title fw-bold" id="modalFeedbackLabel">
+                    <i class="fa-solid fa-bullhorn me-2"></i> Sua opinião importa!
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body p-4">
+                <p class="text-muted">Como tem sido sua experiência com a <strong>Wasom Upfy</strong>? Suas sugestões nos ajudam a evoluir.</p>
+                
+                <form id="formFeedback">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-dark">Seu Nome</label>
+                        <input type="text" class="form-control" placeholder="Ex: André Wasom" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-dark">Assunto</label>
+                        <select class="form-select">
+                            <option selected>Sugestão de melhoria</option>
+                            <option>Elogio</option>
+                            <option>Relatar um problema</option>
+                            <option>Outros</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-dark">Sua Mensagem</label>
+                        <textarea class="form-control" rows="4" placeholder="Conte-nos em detalhes..." required></textarea>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-wasomupfy btn-lg">
+                            Enviar Feedback <i class="fa-solid fa-paper-plane ms-2"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-footer border-0 justify-content-center pb-4">
+                <small class="text-muted">A Wasom Upfy agradece sua parceria!</small>
+            </div>
+        </div>
+    </div>
+</div>
 
   <!-- Libs JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
