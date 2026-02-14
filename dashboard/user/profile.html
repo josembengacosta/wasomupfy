@@ -1,30 +1,47 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="robots" content="noindex, nofollow">
+    <meta name="robots" content="noindex, nofollow" />
     <meta name="author" content="Voosoft" />
-    <meta name="theme-color" content="#FF0089">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="../../assets/img/icones/wasomupfy_fiv_512.png">
-    <link rel="apple-touch-startup-image" href="../../assets/img/screenshots/splash.png">
-    <link rel="manifest" href="../manifest.json">
+    <meta name="theme-color" content="#FF0089" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <link
+      rel="apple-touch-icon"
+      href="../../assets/img/icones/wasomupfy_fiv_512.png"
+    />
+    <link
+      rel="apple-touch-startup-image"
+      href="../../assets/img/screenshots/splash.png"
+    />
+    <link rel="manifest" href="../manifest.json" />
     <title>Perfil - Wasom Upfy</title>
-    <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
-    <link href="
+    <link
+      rel="shortcut icon"
+      href="../../assets/img/icones/wasomupfy_fiv.png"
+      type="image/x-icon"
+    />
+    <link
+      href="
 https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css
-" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="../../css/dashboard-style.css">
-    <link rel="stylesheet" href="../../css/account-style.css">
-</head>
+"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+    />
+    <link rel="stylesheet" href="../../css/dashboard-style.css" />
+    <link rel="stylesheet" href="../../css/account-style.css" />
+  </head>
 
-<body>
-
+  <body>
     <!-- Tela de Carregamento -->
     <!-- <div class="loading-screen" id="loadingScreen">
       <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg" class="loading-logo">
@@ -36,425 +53,762 @@ https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <!-- Menu Button (Left) -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu"
-                aria-controls="offcanvasMenu">
-                <span class="navbar-toggler-icon"><i class="bi bi-list text-white fs-1"></i></span>
-            </button>
+      <div class="container-fluid">
+        <!-- Menu Button (Left) -->
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#offcanvasMenu"
+          aria-controls="offcanvasMenu"
+        >
+          <span class="navbar-toggler-icon"
+            ><i class="bi bi-list text-white fs-1"></i
+          ></span>
+        </button>
 
-            <!-- Logo (Center on Mobile, Left on Desktop) -->
-            <a class="navbar-brand" href="../painel.html">
-                <!-- SVG Logo Wasom Upfy -->
-                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+        <!-- Logo (Center on Mobile, Left on Desktop) -->
+        <a class="navbar-brand" href="../painel.html">
+          <!-- SVG Logo Wasom Upfy -->
+          <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
                     <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
                     <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
                         fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
                 </svg> -->
-                <span class="text-light"
-                    style="font-weight: bold; box-sizing: border-box; text-transform: capitalize; font-family:Arial, sans-serif">WASOM
-                    UPFY</span>
-            </a>
+          <span
+            class="text-light"
+            style="
+              font-weight: bold;
+              box-sizing: border-box;
+              text-transform: capitalize;
+              font-family: Arial, sans-serif;
+            "
+            >WASOM UPFY</span
+          >
+        </a>
 
-
-            <!-- Desktop Menu -->
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav m-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="../painel.html"><i class="bi bi-speedometer2"></i>
-                            Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../launch/releases.html"><i class="bi bi-disc"></i>
-                            Lançamentos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../analytics/statistics.html"><i
-                                class="bi bi-bar-chart"></i>
-                            Estatísticas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../finances/overview.html"><i
-                                class="bi bi-currency-dollar"></i>
-                            Finanças</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../artists/artists-list.html"><i
-                                class="bi bi-person"></i>
-                            Artistas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="youtube.html"><i class="bi bi-youtube"></i>
-                            Unificação de canal YouTube</a></li>
-                </ul>
-            </div>
-
-            <!-- User Icon (Right) -->
-            <div class="user-menu d-flex align-items-center">
-                <!-- Theme Toggle Button -->
-                <a class="theme-toggle text-white me-2" id="themeToggle">
-                    <i class="bi bi-sun" id="themeIcon"></i>
-                </a>
-                <a href="../notifications.html" class="text-white me-2" aria-label="Notificações">
-                    <i class="bi bi-bell fs-4"></i>
-                    <span class="badge bg-danger">9</span>
-                </a>
-                <a href="#" class="text-white" data-bs-toggle="dropdown">
-                    <i class="bi bi-person-circle fs-4"></i>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="../user/profile.html"><i class="bi bi-person me-2"></i>
-                            <strong>Eleven
-                                Records</strong></a>
-                        <div class="text-white-50"> &nbsp; &nbsp; &nbsp; &nbsp;
-                            (Conta 560108)</div>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item" href="../user/profile.html"><i class="bi bi-person me-2"></i> Meu
-                            Perfil</a>
-                    </li>
-                    <li><a class="dropdown-item" href="../account/manage-account.html"><i class="bi bi-tools me-2"></i>
-                            Gestão de Conta</a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item" href="../page/settings.html"><i class="bi bi-gear me-2"></i>
-                            Configurações</a></li>
-                    <li><a class="dropdown-item" href="../page/notifications.html"><i class="bi bi-bell me-2"></i>
-                            Notificações</a></li>
-                    <li><a class="dropdown-item" href="../services/available-services.html"><i
-                                class="bi bi-star me-2"></i> Conta e serviços disponíveis</a></li>
-                    <li><a class="dropdown-item" href="#?logout-wasomupfy" data-bs-toggle="modal"
-                            data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right me-2"></i>
-                            Desconectar-se</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item" href="../page/sobre.html"><i class="bi bi-info-circle me-2"></i>
-                            Sobre</a>
-                    </li>
-                    <li><a class="dropdown-item" href="../page/support.html"><i class="bi bi-headset me-2"></i> Enviar
-                            pedido de suporte</a></li>
-                    <li><a class="dropdown-item" href="../page/faq.html"><i class="bi bi-chat-left-text me-2"></i>
-                            Perguntas frequentes</a></li>
-                    <li><a class="dropdown-item" href="../page/help.html"><i class="bi bi-question-circle me-2"></i>
-                            Ajuda</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><span class="dropdown-item-text" id="versionDropdown"></span></li>
-                </ul>
-            </div>
+        <!-- Desktop Menu -->
+        <div class="collapse navbar-collapse">
+          <ul class="navbar-nav m-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" href="../painel.html"
+                ><i class="bi bi-speedometer2"></i> Dashboard</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../launch/releases.html"
+                ><i class="bi bi-disc"></i> Lançamentos</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../analytics/statistics.html"
+                ><i class="bi bi-bar-chart"></i> Estatísticas</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../finances/overview.html"
+                ><i class="bi bi-currency-dollar"></i> Finanças</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../artists/artists-list.html"
+                ><i class="bi bi-person"></i> Artistas</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="youtube.html"
+                ><i class="bi bi-youtube"></i> Unificação de canal YouTube</a
+              >
+            </li>
+          </ul>
         </div>
+
+        <!-- User Icon (Right) -->
+        <div class="user-menu d-flex align-items-center">
+          <!-- Theme Toggle Button -->
+          <a class="theme-toggle text-white me-2" id="themeToggle">
+            <i class="bi bi-sun" id="themeIcon"></i>
+          </a>
+          <a
+            href="../notifications.html"
+            class="text-white me-2"
+            aria-label="Notificações"
+          >
+            <i class="bi bi-bell fs-4"></i>
+            <span class="badge bg-danger">9</span>
+          </a>
+          <a href="#" class="text-white" data-bs-toggle="dropdown">
+            <i class="bi bi-person-circle fs-4"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+              <a class="dropdown-item" href="../user/profile.html"
+                ><i class="bi bi-person me-2"></i>
+                <strong>Eleven Records</strong></a
+              >
+              <div class="text-white-50">
+                &nbsp; &nbsp; &nbsp; &nbsp; (Conta 560108)
+              </div>
+            </li>
+            <li>
+              <hr class="dropdown-divider" />
+            </li>
+            <li>
+              <a class="dropdown-item" href="../user/profile.html"
+                ><i class="bi bi-person me-2"></i> Meu Perfil</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="../account/manage-account.html"
+                ><i class="bi bi-tools me-2"></i> Gestão de Conta</a
+              >
+            </li>
+            <li>
+              <hr class="dropdown-divider" />
+            </li>
+            <li>
+              <a class="dropdown-item" href="../page/settings.html"
+                ><i class="bi bi-gear me-2"></i> Configurações</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="../page/notifications.html"
+                ><i class="bi bi-bell me-2"></i> Notificações</a
+              >
+            </li>
+            <li>
+              <a
+                class="dropdown-item"
+                href="../services/available-services.html"
+                ><i class="bi bi-star me-2"></i> Conta e serviços disponíveis</a
+              >
+            </li>
+            <li>
+              <a
+                class="dropdown-item"
+                href="#?logout-wasomupfy"
+                data-bs-toggle="modal"
+                data-bs-target="#logoutwasomupfy"
+                ><i class="bi bi-box-arrow-right me-2"></i> Desconectar-se</a
+              >
+            </li>
+            <li>
+              <hr class="dropdown-divider" />
+            </li>
+            <li>
+              <a class="dropdown-item" href="../page/sobre.html"
+                ><i class="bi bi-info-circle me-2"></i> Sobre</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="../page/support.html"
+                ><i class="bi bi-headset me-2"></i> Enviar pedido de suporte</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="../page/faq.html"
+                ><i class="bi bi-chat-left-text me-2"></i> Perguntas
+                frequentes</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="../page/help.html"
+                ><i class="bi bi-question-circle me-2"></i> Ajuda</a
+              >
+            </li>
+            <li>
+              <hr class="dropdown-divider" />
+            </li>
+            <li>
+              <span class="dropdown-item-text" id="versionDropdown"></span>
+            </li>
+          </ul>
+        </div>
+      </div>
     </nav>
 
     <!-- Modal logout -->
-    <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">Terminar sessão</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div
+      class="modal fade"
+      id="logoutwasomupfy"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="logoutwasomupfyLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">
+              Terminar sessão
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="container">
+              <div class="row justify-content-center text-center">
+                <div
+                  class="col-md-12 content-center justify-center text-center"
+                >
+                  <p class="text-center text-dark">
+                    @josembengadacosta você tem certeza de que desejas terminar
+                    sessão?
+                  </p>
                 </div>
-                <div class="modal-body">
-                    <div class="container">
-                        <div class="row justify-content-center text-center">
-                            <div class="col-md-12 content-center justify-center text-center">
-                                <p class="text-center text-dark">@josembengadacosta você tem
-                                    certeza
-                                    de que desejas terminar
-                                    sessão?</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <div>
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Não, continuar</button>
-                    </div>
-                    <div>
-                        <button class="btn btn-danger" type="button" name="logout_wasomupfy"
-                            onclick="logout_wasomupfy()">Sim, terminar
-                            sessão</button>
-                    </div>
-                    <script type="text/javascript">
-                        function logout_wasomupfy() {
-                            window.location = '../logout';
-                        }
-                    </script>
-                </div>
+              </div>
             </div>
+          </div>
+          <div class="modal-footer">
+            <div>
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-bs-dismiss="modal"
+              >
+                Não, continuar
+              </button>
+            </div>
+            <div>
+              <button
+                class="btn btn-danger"
+                type="button"
+                name="logout_wasomupfy"
+                onclick="logout_wasomupfy()"
+              >
+                Sim, terminar sessão
+              </button>
+            </div>
+            <script type="text/javascript">
+              function logout_wasomupfy() {
+                window.location = "../logout";
+              }
+            </script>
+          </div>
         </div>
+      </div>
     </div>
     <!-- Modal logout fim -->
 
     <!-- Offcanvas Menu para Mobile e Desktop -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasMenuLabel">
-                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+    <div
+      class="offcanvas offcanvas-start"
+      tabindex="-1"
+      id="offcanvasMenu"
+      aria-labelledby="offcanvasMenuLabel"
+    >
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasMenuLabel">
+          <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
                     <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
                     <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
                         fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
                 </svg> -->
-                <span class="text-light"
-                    style="font-weight: bold; box-sizing: border-box; text-transform: capitalize; font-family:Arial, sans-serif">WASOM
-                    UPFY</span>
-            </h5>
-            <button type="button" class="btn-close text-white" data-bs-dismiss="offcanvas" aria-label="Close">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-        <div class="offcanvas-body">
-            <ul class="nav flex-column">
-                <li class="nav-item"><a class="nav-link" href="../painel.html"><i class="bi bi-speedometer2"></i>
-                        Dashboard</a></li>
-                <li class="nav-item"><a class="nav-link" href="../launch/releases.html"><i class="bi bi-disc"></i>
-                        Lançamentos</a></li>
-                <li class="nav-item"><a class="nav-link" href="../analytics/statistics.html"><i
-                            class="bi bi-bar-chart"></i> Estatísticas</a></li>
-                <li class="nav-item"><a class="nav-link" href="../finances/overview.html"><i
-                            class="bi bi-currency-dollar"></i> Finanças</a></li>
-                <li class="nav-item"><a class="nav-link" href="../artists/artists-list.html"><i
-                            class="bi bi-person"></i>
-                        Artistas</a></li>
-                <li class="nav-item"><a class="nav-link" href="../youtube.html"><i class="bi bi-youtube"></i> Unificação
-                        de
-                        canal YouTube</a></li>
-                <!-- Links secundários exibidos apenas em mobile -->
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../user/profile.html"><i
-                            class="bi bi-person-circle"></i> Meu Perfil</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link active" href="../page/settings.html"><i
-                            class="bi bi-gear"></i> Configurações</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/notifications.html"><i
-                            class="bi bi-bell"></i> Notificações</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/sobre.html"><i
-                            class="bi bi-info-circle"></i> Sobre</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../services/available-services.html"><i
-                            class="bi bi-star"></i>
-                        Conta e serviços disponíveis</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/help.html"><i
-                            class="bi bi-question-circle"></i> Ajuda</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="#?logout-wasomupfy" data-bs-toggle="modal"
-                        data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right"></i> Desconectar-se</a></li>
-            </ul>
-        </div>
+          <span
+            class="text-light"
+            style="
+              font-weight: bold;
+              box-sizing: border-box;
+              text-transform: capitalize;
+              font-family: Arial, sans-serif;
+            "
+            >WASOM UPFY</span
+          >
+        </h5>
+        <button
+          type="button"
+          class="btn-close text-white"
+          data-bs-dismiss="offcanvas"
+          aria-label="Close"
+        >
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      <div class="offcanvas-body">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link" href="../painel.html"
+              ><i class="bi bi-speedometer2"></i> Dashboard</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../launch/releases.html"
+              ><i class="bi bi-disc"></i> Lançamentos</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../analytics/statistics.html"
+              ><i class="bi bi-bar-chart"></i> Estatísticas</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../finances/overview.html"
+              ><i class="bi bi-currency-dollar"></i> Finanças</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../artists/artists-list.html"
+              ><i class="bi bi-person"></i> Artistas</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../youtube.html"
+              ><i class="bi bi-youtube"></i> Unificação de canal YouTube</a
+            >
+          </li>
+          <!-- Links secundários exibidos apenas em mobile -->
+          <li class="nav-item d-lg-none">
+            <a class="nav-link" href="../user/profile.html"
+              ><i class="bi bi-person-circle"></i> Meu Perfil</a
+            >
+          </li>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link active" href="../page/settings.html"
+              ><i class="bi bi-gear"></i> Configurações</a
+            >
+          </li>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link" href="../page/notifications.html"
+              ><i class="bi bi-bell"></i> Notificações</a
+            >
+          </li>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link" href="../page/sobre.html"
+              ><i class="bi bi-info-circle"></i> Sobre</a
+            >
+          </li>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link" href="../services/available-services.html"
+              ><i class="bi bi-star"></i> Conta e serviços disponíveis</a
+            >
+          </li>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link" href="../page/help.html"
+              ><i class="bi bi-question-circle"></i> Ajuda</a
+            >
+          </li>
+          <li class="nav-item d-lg-none">
+            <a
+              class="nav-link"
+              href="#?logout-wasomupfy"
+              data-bs-toggle="modal"
+              data-bs-target="#logoutwasomupfy"
+              ><i class="bi bi-box-arrow-right"></i> Desconectar-se</a
+            >
+          </li>
+        </ul>
+      </div>
     </div>
 
     <!-- Toast para Notificações de Status -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="connectionToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <strong class="me-auto">Conexão</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Fechar"></button>
-            </div>
-            <div class="toast-body">
-                Você está offline. Alguns dados podem estar desatualizados.
-                <div class="mt-2">
-                    <button class="btn btn-pink btn-sm" onclick="tryReconnect()">Tentar Reconectar</button>
-                </div>
-            </div>
+      <div
+        id="connectionToast"
+        class="toast"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="toast-header">
+          <strong class="me-auto">Conexão</strong>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="toast"
+            aria-label="Fechar"
+          ></button>
         </div>
+        <div class="toast-body">
+          Você está offline. Alguns dados podem estar desatualizados.
+          <div class="mt-2">
+            <button class="btn btn-pink btn-sm" onclick="tryReconnect()">
+              Tentar Reconectar
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
-
 
     <!-- Main Content -->
     <div class="container my-4">
-        <h1>Meu perfil</h1>
+      <h1>Meu perfil</h1>
 
-        <!-- Profile Information -->
-        <div class="profile-card fade-in-custom">
-            <h2>Informações do Perfil</h2>
-            <div class="text-center">
-                <img id="profilePicPreview" src="https://via.placeholder.com/120" alt="Foto de Perfil"
-                    class="profile-pic">
-                <div class="mb-3">
-                    <label for="profilePic" class="form-label">Alterar Foto de Perfil</label>
-                    <input type="file" class="form-control" id="profilePic" accept="image/*">
-                </div>
+      <!-- Profile Information -->
+      <div class="profile-card fade-in-custom">
+        <h2>Informações do Perfil</h2>
+        <div class="text-center">
+          <img
+            id="profilePicPreview"
+            src="https://via.placeholder.com/120"
+            alt="Foto de Perfil"
+            class="profile-pic"
+          />
+          <div class="mb-3">
+            <label for="profilePic" class="form-label"
+              >Alterar Foto de Perfil</label
+            >
+            <input
+              type="file"
+              class="form-control"
+              id="profilePic"
+              accept="image/*"
+            />
+          </div>
+        </div>
+        <form id="profileForm" class="needs-validation" novalidate>
+          <div class="mb-3">
+            <label for="name" class="form-label">Nome de Usuário</label>
+            <input
+              type="text"
+              class="form-control"
+              id="name"
+              value="Cristiano Amadeu"
+              required
+            />
+            <div class="invalid-feedback">
+              Por favor, insira seu nome completo.
             </div>
-            <form id="profileForm" class="needs-validation" novalidate>
-                <div class="mb-3">
-                    <label for="name" class="form-label">Nome de Usuário</label>
-                    <input type="text" class="form-control" id="name" value="Cristiano Amadeu" required>
-                    <div class="invalid-feedback">Por favor, insira seu nome completo.</div>
-                </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">E-mail do Usuário</label>
-                    <input type="email" class="form-control" id="email" value="cristiano@elevenrecords.com" required>
-                    <div class="invalid-feedback">Por favor, insira um e-mail válido.</div>
-                </div>
-                <div class="mb-3">
-                    <label for="company" class="form-label">Conta</label>
-                    <input type="text" class="form-control" id="company" value="Eleven Records" required>
-                    <div class="invalid-feedback">Por favor, insira o nome da conta.</div>
-                </div>
-                <div class="mb-3">
-                    <label for="role" class="form-label">Função</label>
-                    <select class="form-select" id="role" required>
-                        <option value="Administrador" selected>Administrador</option>
-                        <option value="Gerente">Gerente</option>
-                        <option value="Editor">Editor</option>
-                        <option value="Colaborador">Colaborador</option>
-                    </select>
-                    <div class="invalid-feedback">Por favor, selecione sua função.</div>
-                </div>
-                <button type="submit" class="btn-custom">Salvar Perfil</button>
-            </form>
-        </div>
-
-        <!-- Password Change -->
-        <div class="profile-card" id="password">
-            <h2>Alterar Senha</h2>
-            <form id="passwordForm" class="needs-validation" novalidate>
-                <div class="mb-3 position-relative">
-                    <label for="oldPassword" class="form-label">Senha Antiga</label>
-                    <div class="d-flex align-items-center">
-                        <input type="password" class="form-control" id="oldPassword"
-                            placeholder="Insira a sua antiga senha" required>
-                        <span class="toggle-password" onclick="togglePassword('oldPassword')"><i
-                                class="bi bi-eye-slash"></i></span>
-                    </div>
-                    <div class="invalid-feedback">Por favor, insira sua senha antiga.</div>
-                </div>
-                <div class="mb-3 position-relative">
-                    <label for="newPassword" class="form-label">Senha Nova</label>
-                    <div class="d-flex align-items-center">
-                        <input type="password" class="form-control" id="newPassword"
-                            placeholder="Insira a sua nova senha" required>
-                        <span class="toggle-password" onclick="togglePassword('newPassword')"><i
-                                class="bi bi-eye-slash"></i></span>
-                    </div>
-                    <div class="invalid-feedback">Por favor, insira uma nova senha.</div>
-                </div>
-                <button type="submit" class="btn-custom">Salvar senha</button>
-            </form>
-        </div>
-
-        <!-- Recovery Key -->
-        <div class="profile-card">
-            <h2>Chave de Recuperação</h2>
-            <p>Gerar uma chave de recuperação permite recuperar sua conta em caso de perda de acesso.</p>
-            <button type="button" class="btn-custom" id="generateRecoveryKeyBtn">Gerar Chave de Recuperação</button>
-            <div id="recoveryKeySection" class="recovery-key">
-                <p>Sua Chave de Recuperação: <span id="recoveryKey"></span></p>
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">E-mail do Usuário</label>
+            <input
+              type="email"
+              class="form-control"
+              id="email"
+              value="cristiano@elevenrecords.com"
+              required
+            />
+            <div class="invalid-feedback">
+              Por favor, insira um e-mail válido.
             </div>
-            <form id="verifyRecoveryForm" class="mt-3 needs-validation" novalidate style="display: none;">
-                <div class="mb-3">
-                    <label for="verifyRecoveryKey" class="form-label">Insira a Chave de Recuperação</label>
-                    <input type="text" class="form-control" id="verifyRecoveryKey" required>
-                    <div class="invalid-feedback">Por favor, insira a chave de recuperação.</div>
-                </div>
-                <button type="submit" class="btn-custom">Verificar</button>
-            </form>
-        </div>
-
-        <!-- Notification Settings -->
-        <div class="profile-card">
-            <h2>Configurações de Notificações</h2>
-            <form id="notificationForm">
-                <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
-                    <label class="form-check-label" for="emailNotifications">Receber notificações por e-mail</label>
-                </div>
-                <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" id="pushNotifications">
-                    <label class="form-check-label" for="pushNotifications">Receber notificações push</label>
-                </div>
-                <button type="submit" class="btn-custom">Salvar configurações</button>
-            </form>
-        </div>
-
-        <!-- Two-Factor Authentication -->
-        <div class="profile-card">
-            <h2>Autenticação de Dois Fatores (2FA)</h2>
-            <p>Adicione uma camada extra de segurança à sua conta.</p>
-            <div class="form-check form-switch mb-3">
-                <input class="form-check-input" type="checkbox" id="twoFactorAuth" onchange="toggle2FA()">
-                <label class="form-check-label" for="twoFactorAuth">Ativar Autenticação de Dois Fatores</label>
+          </div>
+          <div class="mb-3">
+            <label for="company" class="form-label">Conta</label>
+            <input
+              type="text"
+              class="form-control"
+              id="company"
+              value="Eleven Records"
+              required
+            />
+            <div class="invalid-feedback">
+              Por favor, insira o nome da conta.
             </div>
-            <div id="twoFactorSetup" class="mt-3" style="display: none;">
-                <p>Escaneie este QR Code com seu aplicativo de autenticação:</p>
-                <img src="https://via.placeholder.com/150" alt="QR Code" class="img-fluid mb-3">
-                <p>Ou insira este código manualmente: <strong>XYZ-123-ABC</strong></p>
+          </div>
+          <div class="mb-3">
+            <label for="role" class="form-label">Função</label>
+            <select class="form-select" id="role" required>
+              <option value="Administrador" selected>Administrador</option>
+              <option value="Gerente">Gerente</option>
+              <option value="Editor">Editor</option>
+              <option value="Colaborador">Colaborador</option>
+            </select>
+            <div class="invalid-feedback">Por favor, selecione sua função.</div>
+          </div>
+          <button type="submit" class="btn-custom">Salvar Perfil</button>
+        </form>
+      </div>
+
+      <!-- Password Change -->
+      <div class="profile-card" id="password">
+        <h2>Alterar Senha</h2>
+        <form id="passwordForm" class="needs-validation" novalidate>
+          <div class="mb-3 position-relative">
+            <label for="oldPassword" class="form-label">Senha Antiga</label>
+            <div class="d-flex align-items-center">
+              <input
+                type="password"
+                class="form-control"
+                id="oldPassword"
+                placeholder="Insira a sua antiga senha"
+                required
+              />
+              <span
+                class="toggle-password"
+                onclick="togglePassword('oldPassword')"
+                ><i class="bi bi-eye-slash"></i
+              ></span>
             </div>
-        </div>
-
-        <!-- Login History -->
-        <div class="profile-card">
-            <h2>Histórico de Login</h2>
-            <div class="login-history">
-                <ul>
-                    <li>08/05/2025 14:32 - Lisboa, Portugal</li>
-                    <li>07/05/2025 09:15 - Lisboa, Portugal</li>
-                    <li>05/05/2025 18:47 - Porto, Portugal</li>
-                </ul>
+            <div class="invalid-feedback">
+              Por favor, insira sua senha antiga.
             </div>
+          </div>
+          <div class="mb-3 position-relative">
+            <label for="newPassword" class="form-label">Senha Nova</label>
+            <div class="d-flex align-items-center">
+              <input
+                type="password"
+                class="form-control"
+                id="newPassword"
+                placeholder="Insira a sua nova senha"
+                required
+              />
+              <span
+                class="toggle-password"
+                onclick="togglePassword('newPassword')"
+                ><i class="bi bi-eye-slash"></i
+              ></span>
+            </div>
+            <div class="invalid-feedback">
+              Por favor, insira uma nova senha.
+            </div>
+          </div>
+          <button type="submit" class="btn-custom">Salvar senha</button>
+        </form>
+      </div>
+
+      <!-- Recovery Key -->
+      <div class="profile-card">
+        <h2>Chave de Recuperação</h2>
+        <p>
+          Gerar uma chave de recuperação permite recuperar sua conta em caso de
+          perda de acesso.
+        </p>
+        <button type="button" class="btn-custom" id="generateRecoveryKeyBtn">
+          Gerar Chave de Recuperação
+        </button>
+        <div id="recoveryKeySection" class="recovery-key">
+          <p>Sua Chave de Recuperação: <span id="recoveryKey"></span></p>
         </div>
+        <form
+          id="verifyRecoveryForm"
+          class="mt-3 needs-validation"
+          novalidate
+          style="display: none"
+        >
+          <div class="mb-3">
+            <label for="verifyRecoveryKey" class="form-label"
+              >Insira a Chave de Recuperação</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              id="verifyRecoveryKey"
+              required
+            />
+            <div class="invalid-feedback">
+              Por favor, insira a chave de recuperação.
+            </div>
+          </div>
+          <button type="submit" class="btn-custom">Verificar</button>
+        </form>
+      </div>
 
-        <!-- Delete Account -->
-        <div class="profile-card" id="deleteAccount">
-            <h2>Desactivar Conta</h2>
-            <p>Você está prestes a inciar o processo de desativação da sua conta Wasom Upfy. Seu nome, nome de usuário,
-                dados relacionadas a sua conta entre
-                outras informações não serão mais visiveis em Wasom Upfy.</p>
-            <h2>O que mais você
-                deveria saber
-            </h2>
-            <p>Você tem até 29 dias para restaurar sua conta Wasom Upfy caso ela tenha sido desativado por acidente ou
-                erro.</p>
+      <!-- Notification Settings -->
+      <div class="profile-card">
+        <h2>Configurações de Notificações</h2>
+        <form id="notificationForm">
+          <div class="form-check mb-3">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="emailNotifications"
+              checked
+            />
+            <label class="form-check-label" for="emailNotifications"
+              >Receber notificações por e-mail</label
+            >
+          </div>
+          <div class="form-check mb-3">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="pushNotifications"
+            />
+            <label class="form-check-label" for="pushNotifications"
+              >Receber notificações push</label
+            >
+          </div>
+          <button type="submit" class="btn-custom">Salvar configurações</button>
+        </form>
+      </div>
 
-            <h2>Pedido de dados da
-                conta</h2>
-            <p>Se você quiser baixar seus dados do Wasom Upfy, precisará preencher a
-                solicitação e concluir o processo de download antes de desativar a
-                sua conta. <a href="">Clica aqui</a> para preencher o campo para o
-                download</p>
-
-            <form id="passwordForm" class="needs-validation" novalidate>
-                <div class="mb-3 position-relative">
-                    <label for="oldPassword" class="form-label">Senha</label>
-                    <div class="d-flex align-items-center">
-                        <input type="password" class="form-control" id="oldPassword" placeholder="Insira a sua senha"
-                            required>
-                        <span class="toggle-password" onclick="togglePassword('oldPassword')"><i
-                                class="bi bi-eye-slash"></i></span>
-                    </div>
-                    <div class="invalid-feedback">Por favor, insira sua senha.</div>
-                </div>
-                <button type="button" class="btn-danger-custom" data-bs-toggle="modal"
-                    data-bs-target="#deleteAccountModal">Excluir conta</button>
-            </form>
+      <!-- Two-Factor Authentication -->
+      <div class="profile-card">
+        <h2>Autenticação de Dois Fatores (2FA)</h2>
+        <p>Adicione uma camada extra de segurança à sua conta.</p>
+        <div class="form-check form-switch mb-3">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="twoFactorAuth"
+            onchange="toggle2FA()"
+          />
+          <label class="form-check-label" for="twoFactorAuth"
+            >Ativar Autenticação de Dois Fatores</label
+          >
         </div>
+        <div id="twoFactorSetup" class="mt-3" style="display: none">
+          <p>Escaneie este QR Code com seu aplicativo de autenticação:</p>
+          <img
+            src="https://via.placeholder.com/150"
+            alt="QR Code"
+            class="img-fluid mb-3"
+          />
+          <p>Ou insira este código manualmente: <strong>XYZ-123-ABC</strong></p>
+        </div>
+      </div>
+
+      <!-- Login History -->
+      <div class="profile-card">
+        <h2>Histórico de Login</h2>
+        <div class="login-history">
+          <ul>
+            <li>08/05/2025 14:32 - Lisboa, Portugal</li>
+            <li>07/05/2025 09:15 - Lisboa, Portugal</li>
+            <li>05/05/2025 18:47 - Porto, Portugal</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Delete Account -->
+      <div class="profile-card" id="deleteAccount">
+        <h2>Desactivar Conta</h2>
+        <p>
+          Você está prestes a inciar o processo de desativação da sua conta
+          Wasom Upfy. Seu nome, nome de usuário, dados relacionadas a sua conta
+          entre outras informações não serão mais visiveis em Wasom Upfy.
+        </p>
+        <h2>O que mais você deveria saber</h2>
+        <p>
+          Você tem até 29 dias para restaurar sua conta Wasom Upfy caso ela
+          tenha sido desativado por acidente ou erro.
+        </p>
+
+        <h2>Pedido de dados da conta</h2>
+        <p>
+          Se você quiser baixar seus dados do Wasom Upfy, precisará preencher a
+          solicitação e concluir o processo de download antes de desativar a sua
+          conta. <a href="">Clica aqui</a> para preencher o campo para o
+          download
+        </p>
+
+        <form id="passwordForm" class="needs-validation" novalidate>
+          <div class="mb-3 position-relative">
+            <label for="oldPassword" class="form-label">Senha</label>
+            <div class="d-flex align-items-center">
+              <input
+                type="password"
+                class="form-control"
+                id="oldPassword"
+                placeholder="Insira a sua senha"
+                required
+              />
+              <span
+                class="toggle-password"
+                onclick="togglePassword('oldPassword')"
+                ><i class="bi bi-eye-slash"></i
+              ></span>
+            </div>
+            <div class="invalid-feedback">Por favor, insira sua senha.</div>
+          </div>
+          <button
+            type="button"
+            class="btn-danger-custom"
+            data-bs-toggle="modal"
+            data-bs-target="#deleteAccountModal"
+          >
+            Excluir conta
+          </button>
+        </form>
+      </div>
     </div>
 
     <!-- Modal for Delete Account Confirmation -->
-    <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteAccountModalLabel">Confirmar Exclusão de Conta</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Tem certeza de que deseja excluir sua conta? Esta ação não pode ser desfeita.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger" onclick="deleteAccount()">Excluir</button>
-                </div>
-            </div>
+    <div
+      class="modal fade"
+      id="deleteAccountModal"
+      tabindex="-1"
+      aria-labelledby="deleteAccountModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteAccountModalLabel">
+              Confirmar Exclusão de Conta
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p>
+              Tem certeza de que deseja excluir sua conta? Esta ação não pode
+              ser desfeita.
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger"
+              onclick="deleteAccount()"
+            >
+              Excluir
+            </button>
+          </div>
         </div>
+      </div>
     </div>
 
-
     <nav class="bottom-nav d-lg-none">
-        <ul class="nav justify-content-around">
-            <li class="nav-item"><a class="nav-link" href="../painel.html" aria-label="Ir para Dashboard"><i
-                        class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../launch/releases.html" aria-label="Ir para Lançamentos"><i
-                        class="bi bi-disc"></i><span>Lançamentos</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../analytics/statistics.html"
-                    aria-label="Ir para Estatísticas"><i class="bi bi-bar-chart"></i><span>Estatísticas</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../finances/overview.html" aria-label="Ir para Finanças"><i
-                        class="bi bi-currency-dollar"></i><span>Finanças</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../artists/artists-list.html"
-                    aria-label="Ir para Artistas"><i class="bi bi-person"></i><span>Artistas</span></a></li>
-        </ul>
+      <ul class="nav justify-content-around">
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="../painel.html"
+            aria-label="Ir para Dashboard"
+            ><i class="bi bi-speedometer2"></i><span>Dashboard</span></a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="../launch/releases.html"
+            aria-label="Ir para Lançamentos"
+            ><i class="bi bi-disc"></i><span>Lançamentos</span></a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="../analytics/statistics.html"
+            aria-label="Ir para Estatísticas"
+            ><i class="bi bi-bar-chart"></i><span>Estatísticas</span></a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="../finances/overview.html"
+            aria-label="Ir para Finanças"
+            ><i class="bi bi-currency-dollar"></i><span>Finanças</span></a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="../artists/artists-list.html"
+            aria-label="Ir para Artistas"
+            ><i class="bi bi-person"></i><span>Artistas</span></a
+          >
+        </li>
+      </ul>
     </nav>
 
     <!-- Bootstrap JS and Popper.js -->
@@ -463,147 +817,166 @@ https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css
     <script src="../../js/theme.wp.js"></script>
     <script src="../../js/wp.tools.js"></script>
     <script>
-        // Validação de formulário
-        (function () {
-            'use strict';
-            const forms = document.querySelectorAll('.needs-validation');
-            Array.from(forms).forEach(form => {
-                form.addEventListener('submit', event => {
-                    if (!form.checkValidity()) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                    } else {
-                        event.preventDefault();
-                        alert('Dados salvos com sucesso!');
-                        form.reset();
-                    }
-                    form.classList.add('was-validated');
-                }, false);
-            });
-        })();
+      // Validação de formulário
+      (function () {
+        "use strict";
+        const forms = document.querySelectorAll(".needs-validation");
+        Array.from(forms).forEach((form) => {
+          form.addEventListener(
+            "submit",
+            (event) => {
+              if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+              } else {
+                event.preventDefault();
+                alert("Dados salvos com sucesso!");
+                form.reset();
+              }
+              form.classList.add("was-validated");
+            },
+            false
+          );
+        });
+      })();
 
-        // Toggle visibilidade da senha
-        function togglePassword(fieldId) {
-            const field = document.getElementById(fieldId);
-            const icon = field.nextElementSibling.querySelector('i');
-            if (field.type === 'password') {
-                field.type = 'text';
-                icon.classList.remove('bi-eye-slash');
-                icon.classList.add('bi-eye');
-            } else {
-                field.type = 'password';
-                icon.classList.remove('bi-eye');
-                icon.classList.add('bi-eye-slash');
-            }
+      // Toggle visibilidade da senha
+      function togglePassword(fieldId) {
+        const field = document.getElementById(fieldId);
+        const icon = field.nextElementSibling.querySelector("i");
+        if (field.type === "password") {
+          field.type = "text";
+          icon.classList.remove("bi-eye-slash");
+          icon.classList.add("bi-eye");
+        } else {
+          field.type = "password";
+          icon.classList.remove("bi-eye");
+          icon.classList.add("bi-eye-slash");
         }
+      }
 
-        // Pré-visualização da foto de perfil
-        document.getElementById('profilePic').addEventListener('change', function (e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    document.getElementById('profilePicPreview').src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
+      // Pré-visualização da foto de perfil
+      document
+        .getElementById("profilePic")
+        .addEventListener("change", function (e) {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+              document.getElementById("profilePicPreview").src =
+                e.target.result;
+            };
+            reader.readAsDataURL(file);
+          }
         });
 
-        // Gerar Chave de Recuperação
-        function generateRecoveryKey() {
-            const key = Array(16).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join('');
-            document.getElementById('recoveryKey').textContent = key;
-            document.getElementById('recoveryKeySection').style.display = 'block';
-            document.getElementById('verifyRecoveryForm').style.display = 'block';
-            document.getElementById('generateRecoveryKeyBtn').disabled = true;
+      // Gerar Chave de Recuperação
+      function generateRecoveryKey() {
+        const key = Array(16)
+          .fill(0)
+          .map(() => Math.floor(Math.random() * 16).toString(16))
+          .join("");
+        document.getElementById("recoveryKey").textContent = key;
+        document.getElementById("recoveryKeySection").style.display = "block";
+        document.getElementById("verifyRecoveryForm").style.display = "block";
+        document.getElementById("generateRecoveryKeyBtn").disabled = true;
+      }
+
+      // Verificar Chave de Recuperação
+      function verifyRecoveryKey(e) {
+        e.preventDefault();
+        const inputKey = document.getElementById("verifyRecoveryKey").value;
+        const generatedKey = document.getElementById("recoveryKey").textContent;
+        if (inputKey === generatedKey) {
+          alert("Chave de Recuperação verificada com sucesso!");
+          document.getElementById("verifyRecoveryForm").reset();
+          document
+            .getElementById("verifyRecoveryForm")
+            .classList.remove("was-validated");
+        } else {
+          alert("Chave de Recuperação inválida. Tente novamente.");
         }
+      }
 
-        // Verificar Chave de Recuperação
-        function verifyRecoveryKey(e) {
-            e.preventDefault();
-            const inputKey = document.getElementById('verifyRecoveryKey').value;
-            const generatedKey = document.getElementById('recoveryKey').textContent;
-            if (inputKey === generatedKey) {
-                alert('Chave de Recuperação verificada com sucesso!');
-                document.getElementById('verifyRecoveryForm').reset();
-                document.getElementById('verifyRecoveryForm').classList.remove('was-validated');
-            } else {
-                alert('Chave de Recuperação inválida. Tente novamente.');
-            }
-        }
+      // Toggle 2FA Setup
+      function toggle2FA() {
+        const twoFactorSetup = document.getElementById("twoFactorSetup");
+        const twoFactorAuth = document.getElementById("twoFactorAuth");
+        twoFactorSetup.style.display = twoFactorAuth.checked ? "block" : "none";
+      }
 
-        // Toggle 2FA Setup
-        function toggle2FA() {
-            const twoFactorSetup = document.getElementById('twoFactorSetup');
-            const twoFactorAuth = document.getElementById('twoFactorAuth');
-            twoFactorSetup.style.display = twoFactorAuth.checked ? 'block' : 'none';
-        }
+      // Excluir Conta
+      function deleteAccount() {
+        alert("Conta excluída com sucesso! Você será desconectado.");
+        window.location.href = "logout.html";
+      }
 
-        // Excluir Conta
-        function deleteAccount() {
-            alert('Conta excluída com sucesso! Você será desconectado.');
-            window.location.href = 'logout.html';
-        }
+      // Eventos
+      document
+        .getElementById("generateRecoveryKeyBtn")
+        .addEventListener("click", generateRecoveryKey);
+      document
+        .getElementById("verifyRecoveryForm")
+        .addEventListener("submit", verifyRecoveryKey);
 
-        // Eventos
-        document.getElementById('generateRecoveryKeyBtn').addEventListener('click', generateRecoveryKey);
-        document.getElementById('verifyRecoveryForm').addEventListener('submit', verifyRecoveryKey);
+      // // Tema
+      // function applyTheme(theme) {
+      //     if (theme === 'auto') {
+      //         if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      //             document.body.classList.remove('light-mode');
+      //             document.body.classList.add('dark-mode');
+      //         } else {
+      //             document.body.classList.remove('dark-mode');
+      //             document.body.classList.add('light-mode');
+      //         }
+      //     } else if (theme === 'dark') {
+      //         document.body.classList.remove('light-mode');
+      //         document.body.classList.add('dark-mode');
+      //     } else {
+      //         document.body.classList.remove('dark-mode');
+      //         document.body.classList.add('light-mode');
+      //     }
+      // }
 
-        // // Tema
-        // function applyTheme(theme) {
-        //     if (theme === 'auto') {
-        //         if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        //             document.body.classList.remove('light-mode');
-        //             document.body.classList.add('dark-mode');
-        //         } else {
-        //             document.body.classList.remove('dark-mode');
-        //             document.body.classList.add('light-mode');
-        //         }
-        //     } else if (theme === 'dark') {
-        //         document.body.classList.remove('light-mode');
-        //         document.body.classList.add('dark-mode');
-        //     } else {
-        //         document.body.classList.remove('dark-mode');
-        //         document.body.classList.add('light-mode');
-        //     }
-        // }
+      // function setTheme(theme) {
+      //     localStorage.setItem('theme', theme);
+      //     applyTheme(theme);
+      // }
 
-        // function setTheme(theme) {
-        //     localStorage.setItem('theme', theme);
-        //     applyTheme(theme);
-        // }
+      // const savedTheme = localStorage.getItem('theme') || 'auto';
+      // applyTheme(savedTheme);
 
-        // const savedTheme = localStorage.getItem('theme') || 'auto';
-        // applyTheme(savedTheme);
+      // if (savedTheme === 'auto') {
+      //     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+      //         applyTheme('auto');
+      //     });
+      // }
 
-        // if (savedTheme === 'auto') {
-        //     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-        //         applyTheme('auto');
-        //     });
-        // }
+      // Inicializa o tema ao carregar a página
+      window.addEventListener("load", () => {
+        changeTheme("auto");
+        updateProgressBar();
+      });
 
-        // Inicializa o tema ao carregar a página
-        window.addEventListener('load', () => {
-            changeTheme('auto');
-            updateProgressBar();
+      // Atualiza o tema se a preferência do sistema mudar
+      window
+        .matchMedia("(prefers-color-scheme: dark)")
+        .addEventListener("change", (e) => {
+          if (
+            !document.querySelector(".theme-btn.active") ||
+            document.querySelector(".theme-btn.active").dataset.theme === "auto"
+          ) {
+            changeTheme("auto");
+          }
         });
 
-        // Atualiza o tema se a preferência do sistema mudar
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-            if (!document.querySelector('.theme-btn.active') || document.querySelector('.theme-btn.active')
-                .dataset.theme === 'auto') {
-                changeTheme('auto');
-            }
-        });
-
-        // Tela de Carregamento
-        window.addEventListener('load', () => {
-            const loadingScreen = document.getElementById('loadingScreen');
-            setTimeout(() => {
-                loadingScreen.classList.add('fade-out');
-            }, 200);
-        });
+      // Tela de Carregamento
+      window.addEventListener("load", () => {
+        const loadingScreen = document.getElementById("loadingScreen");
+        setTimeout(() => {
+          loadingScreen.classList.add("fade-out");
+        }, 200);
+      });
     </script>
-</body>
-
+  </body>
 </html>

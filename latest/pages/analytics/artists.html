@@ -1,1290 +1,1806 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="robots" content="noindex, nofollow">
+    <meta name="robots" content="noindex, nofollow" />
     <meta name="author" content="Voosoft" />
-    <meta name="theme-color" content="#FF0089">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="#FF0089">
-    <link rel="apple-touch-icon" href="../../../assets/img/icones/wasomupfy_fiv_512.png">
-    <link rel="apple-touch-startup-image" href="../../../assets/img/screenshots/splash.png">
-    <link rel="manifest" href="../../manifest.json">
+    <meta name="theme-color" content="#FF0089" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="#FF0089" />
+    <link
+      rel="apple-touch-icon"
+      href="../../../assets/img/icones/wasomupfy_fiv_512.png"
+    />
+    <link
+      rel="apple-touch-startup-image"
+      href="../../../assets/img/screenshots/splash.png"
+    />
+    <link rel="manifest" href="../../manifest.json" />
     <title>Desempenho por Artista - Wasom Upfy</title>
-    <link rel="shortcut icon" href="../../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
-    <link rel="stylesheet" href="../../../css/libs/plugins.css">
-    <link rel="stylesheet" href="../../../css/libs/scrollue.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
-    <link rel="stylesheet" href="../../../css/lastest-style.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link
+      rel="shortcut icon"
+      href="../../../assets/img/icones/wasomupfy_fiv.png"
+      type="image/x-icon"
+    />
+    <link rel="stylesheet" href="../../../css/libs/plugins.css" />
+    <link rel="stylesheet" href="../../../css/libs/scrollue.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css"
+    />
+    <link rel="stylesheet" href="../../../css/lastest-style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+    />
     <!-- Google Fonts - Poppins -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
     <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap5.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap5.min.css"
+    />
     <!-- Flag Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css"
+    />
     <style>
-        .fade-in-custom {
-            animation: fadeIn 0.5s ease-in-out;
+      .fade-in-custom {
+        animation: fadeIn 0.5s ease-in-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
+      }
 
+      .stats-card {
+        border-radius: 10px;
+        border: none;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s;
+      }
 
-        .stats-card {
-            border-radius: 10px;
-            border: none;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s;
-        }
+      .stats-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
 
-        .stats-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        }
+      .platform-badge {
+        font-size: 0.75em;
+        padding: 4px 8px;
+        border-radius: 20px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
 
+      .platform-spotify {
+        background-color: #1db954;
+        color: white;
+      }
 
+      .platform-deezer {
+        background-color: #00c7f2;
+        color: white;
+      }
 
-        .platform-badge {
-            font-size: 0.75em;
-            padding: 4px 8px;
-            border-radius: 20px;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
+      .platform-apple {
+        background-color: #000000;
+        color: white;
+      }
 
-        .platform-spotify {
-            background-color: #1DB954;
-            color: white;
-        }
+      .platform-youtube {
+        background-color: #ff0000;
+        color: white;
+      }
 
-        .platform-deezer {
-            background-color: #00C7F2;
-            color: white;
-        }
+      .platform-discogs {
+        background-color: #333333;
+        color: white;
+      }
 
-        .platform-apple {
-            background-color: #000000;
-            color: white;
-        }
+      .platform-tidal {
+        background-color: #00ffff;
+        color: black;
+      }
 
-        .platform-youtube {
-            background-color: #FF0000;
-            color: white;
-        }
+      .platform-amazon {
+        background-color: #ff9900;
+        color: black;
+      }
 
-        .platform-discogs {
-            background-color: #333333;
-            color: white;
-        }
+      .territory-flag {
+        font-size: 1.2em;
+        margin-right: 5px;
+      }
 
-        .platform-tidal {
-            background-color: #00FFFF;
-            color: black;
-        }
+      .stream-count {
+        font-weight: 600;
+        color: #6c5ce7;
+      }
 
-        .platform-amazon {
-            background-color: #FF9900;
-            color: black;
-        }
+      .account-badge {
+        font-size: 0.7em;
+        padding: 3px 6px;
+        border-radius: 10px;
+        margin-right: 5px;
+      }
 
-        .territory-flag {
-            font-size: 1.2em;
-            margin-right: 5px;
-        }
+      .account-pro {
+        background-color: #8b5cf6;
+        color: white;
+      }
 
-        .stream-count {
-            font-weight: 600;
-            color: #6c5ce7;
-        }
+      .account-basic {
+        background-color: #10b981;
+        color: white;
+      }
 
-        .account-badge {
-            font-size: 0.7em;
-            padding: 3px 6px;
-            border-radius: 10px;
-            margin-right: 5px;
-        }
+      .account-international {
+        background-color: #f59e0b;
+        color: black;
+      }
 
-        .account-pro {
-            background-color: #8b5cf6;
-            color: white;
-        }
+      .account-intl {
+        background-color: #ef4444;
+        color: white;
+      }
 
-        .account-basic {
-            background-color: #10b981;
-            color: white;
-        }
+      .artist-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 10px;
+      }
 
-        .account-international {
-            background-color: #f59e0b;
-            color: black;
-        }
+      .trend-up {
+        color: #10b981;
+      }
 
-        .account-intl {
-            background-color: #ef4444;
-            color: white;
-        }
+      .trend-down {
+        color: #ef4444;
+      }
 
-        .artist-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 10px;
-        }
+      .trend-neutral {
+        color: #6b7280;
+      }
 
-        .trend-up {
-            color: #10b981;
-        }
+      .filter-section {
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+      }
 
-        .trend-down {
-            color: #ef4444;
-        }
+      .date-range-picker {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
 
-        .trend-neutral {
-            color: #6b7280;
-        }
+      .date-range-picker input {
+        flex: 1;
+      }
 
-        .filter-section {
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-        }
+      .export-buttons .btn {
+        padding: 6px 12px;
+        font-size: 0.875rem;
+      }
 
-        .date-range-picker {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
+      .performance-chart {
+        height: 300px;
+        background-color: white;
+        border-radius: 8px;
+        padding: 15px;
+      }
 
-        .date-range-picker input {
-            flex: 1;
-        }
+      .toast-container {
+        z-index: 9999;
+      }
 
-        .export-buttons .btn {
-            padding: 6px 12px;
-            font-size: 0.875rem;
-        }
+      .music-icon {
+        color: #6c5ce7;
+        font-size: 1.2em;
+        margin-right: 5px;
+      }
 
-        .performance-chart {
-            height: 300px;
-            background-color: white;
-            border-radius: 8px;
-            padding: 15px;
-        }
+      .playlist-badge {
+        background-color: #e0e7ff;
+        color: #3730a3;
+        font-size: 0.75em;
+        padding: 3px 8px;
+        border-radius: 12px;
+        display: inline-block;
+      }
 
-        .toast-container {
-            z-index: 9999;
-        }
+      .trend-indicator {
+        display: inline-flex;
+        align-items: center;
+        font-size: 0.875em;
+        padding: 2px 6px;
+        border-radius: 10px;
+      }
 
-        .music-icon {
-            color: #6c5ce7;
-            font-size: 1.2em;
-            margin-right: 5px;
-        }
+      .action-buttons .btn {
+        padding: 4px 8px;
+        font-size: 0.875rem;
+      }
 
-        .playlist-badge {
-            background-color: #e0e7ff;
-            color: #3730a3;
-            font-size: 0.75em;
-            padding: 3px 8px;
-            border-radius: 12px;
-            display: inline-block;
-        }
+      .performance-metric {
+        font-size: 1rem;
+        font-weight: 700;
+      }
 
-        .trend-indicator {
-            display: inline-flex;
-            align-items: center;
-            font-size: 0.875em;
-            padding: 2px 6px;
-            border-radius: 10px;
-        }
+      .performance-change {
+        font-size: 0.875rem;
+      }
 
-        .action-buttons .btn {
-            padding: 4px 8px;
-            font-size: 0.875rem;
-        }
+      .platform-icon {
+        font-size: 1.2em;
+        margin-right: 5px;
+      }
 
-        .performance-metric {
-            font-size: 1rem;
-            font-weight: 700;
-        }
+      .compare-btn {
+        position: relative;
+      }
 
-        .performance-change {
-            font-size: 0.875rem;
-        }
+      .compare-btn.active {
+        background-color: #6c5ce7;
+        color: white;
+      }
 
-        .platform-icon {
-            font-size: 1.2em;
-            margin-right: 5px;
-        }
+      .comparison-panel {
+        border: 2px solid #6c5ce7;
+        border-radius: 8px;
+        padding: 15px;
+        margin-top: 20px;
+        background-color: rgba(108, 92, 231, 0.05);
+      }
 
-        .compare-btn {
-            position: relative;
-        }
+      .quick-filter {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+      }
 
-        .compare-btn.active {
-            background-color: #6c5ce7;
-            color: white;
-        }
+      .quick-filter .btn {
+        font-size: 0.875rem;
+        padding: 4px 12px;
+      }
 
-        .comparison-panel {
-            border: 2px solid #6c5ce7;
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 20px;
-            background-color: rgba(108, 92, 231, 0.05);
-        }
+      .custom-select-checkbox {
+        position: relative;
+        padding-left: 30px;
+        cursor: pointer;
+      }
 
-        .quick-filter {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-top: 10px;
-        }
+      .custom-select-checkbox input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+      }
 
-        .quick-filter .btn {
-            font-size: 0.875rem;
-            padding: 4px 12px;
-        }
+      .checkmark {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 20px;
+        width: 20px;
+        background-color: #eee;
+        border-radius: 4px;
+      }
 
-        .custom-select-checkbox {
-            position: relative;
-            padding-left: 30px;
-            cursor: pointer;
-        }
+      .custom-select-checkbox:hover input ~ .checkmark {
+        background-color: #ccc;
+      }
 
-        .custom-select-checkbox input {
-            position: absolute;
-            opacity: 0;
-            cursor: pointer;
-        }
+      .custom-select-checkbox input:checked ~ .checkmark {
+        background-color: #6c5ce7;
+      }
 
-        .checkmark {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 20px;
-            width: 20px;
-            background-color: #eee;
-            border-radius: 4px;
-        }
+      .checkmark:after {
+        content: "";
+        position: absolute;
+        display: none;
+      }
 
-        .custom-select-checkbox:hover input~.checkmark {
-            background-color: #ccc;
-        }
+      .custom-select-checkbox input:checked ~ .checkmark:after {
+        display: block;
+        left: 7px;
+        top: 3px;
+        width: 5px;
+        height: 10px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+      }
 
-        .custom-select-checkbox input:checked~.checkmark {
-            background-color: #6c5ce7;
-        }
+      .platform-selector {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 10px;
+        margin-top: 10px;
+      }
 
-        .checkmark:after {
-            content: "";
-            position: absolute;
-            display: none;
-        }
+      .platform-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
 
-        .custom-select-checkbox input:checked~.checkmark:after {
-            display: block;
-            left: 7px;
-            top: 3px;
-            width: 5px;
-            height: 10px;
-            border: solid white;
-            border-width: 0 2px 2px 0;
-            transform: rotate(45deg);
-        }
+      .platform-option:hover {
+        border-color: #6c5ce7;
+        background-color: rgba(108, 92, 231, 0.05);
+      }
 
-        .platform-selector {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 10px;
-            margin-top: 10px;
-        }
+      .platform-option.selected {
+        border-color: #6c5ce7;
+        background-color: rgba(108, 92, 231, 0.1);
+      }
 
-        .platform-option {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+      .advanced-filters {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+      }
 
-        .platform-option:hover {
-            border-color: #6c5ce7;
-            background-color: rgba(108, 92, 231, 0.05);
-        }
-
-        .platform-option.selected {
-            border-color: #6c5ce7;
-            background-color: rgba(108, 92, 231, 0.1);
-        }
-
-        .advanced-filters {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-        }
-
-        .advanced-filters.show {
-            max-height: 500px;
-            transition: max-height 0.5s ease-in;
-        }
+      .advanced-filters.show {
+        max-height: 500px;
+        transition: max-height 0.5s ease-in;
+      }
     </style>
-</head>
+  </head>
 
-<body>
-
+  <body>
     <div class="wrapper">
-        <!-- Sidebar Overlay -->
-        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+      <!-- Sidebar Overlay -->
+      <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-        <!-- Sidebar -->
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="d-flex align-items-center">
-                    <img src="../../../assets/img/brand/wasomupfy_brand.png" alt="Logo Wasom Upfy"
-                        class="rounded-circle me-2" style="height: 40px;">
-                    <span class="brand-text">Wasom Upfy</span>
-                </div>
-                <i class="bi bi-chevron-left toggle-icon" id="sidebarCollapse" title="Colapsar/Expandir Menu"
-                    aria-label="Colapsar/Expandir Menu"></i>
-            </div>
-            <ul class="nav flex-column mt-3">
-                <li class="nav-item">
-                    <a href="../../home.html" class="nav-link">
-                        <i class="bi bi-speedometer2"></i>
-                        <span>Painel de Controle</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseAnalytics" class="nav-link active" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseAnalytics">
-                        <i class="bi bi-graph-up"></i>
-                        <span>Estatísticas e Análises</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseAnalytics">
-                        <a href="../analytics/home.html" class="nav-link">
-                            <i class="bi bi-bar-chart-line"></i>
-                            <span>Visão Geral</span>
-                        </a>
-                        <a href="../analytics/artists.html" class="nav-link active">
-                            <i class="bi bi-person-lines-fill"></i>
-                            <span>Desempenho por Artista</span>
-                        </a>
-                        <a href="../analytics/stores.html" class="nav-link">
-                            <i class="bi bi-shop"></i>
-                            <span>Desempenho por Loja Digital</span>
-                        </a>
-                        <a href="../analytics/reports.html" class="nav-link">
-                            <i class="bi bi-file-earmark-bar-graph"></i>
-                            <span>Relatórios Personalizados</span>
-                        </a>
-                    </div>
-                </li>
-
-                <li class="nav-item">
-                    <a href="#collapseAdmins" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseAdmins">
-                        <i class="bi bi-person-gear"></i>
-                        <span>Gestão de Admins</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseAdmins">
-                        <a href="../employees/all-employees.html" class="nav-link">
-                            <i class="bi bi-people"></i>
-                            <span>Listar Admins</span>
-                        </a>
-                        <a href="../employees/add.html" class="nav-link">
-                            <i class="bi bi-person-plus"></i>
-                            <span>Adicionar</span>
-                        </a>
-                        <a href="../employees/edit.html" class="nav-link">
-                            <i class="bi bi-person-gear"></i>
-                            <span>Editar</span>
-                        </a>
-                        <a href="../employees/delete.html" class="nav-link">
-                            <i class="bi bi-person-x"></i>
-                            <span>Excluir</span>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseUsers" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseUsers">
-                        <i class="bi bi-person-gear"></i>
-                        <span>Gestão de Usuários</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseUsers">
-                        <a href="../users/all-users.html" class="nav-link">
-                            <i class="bi bi-people"></i>
-                            <span>Todos Usuários</span>
-                        </a>
-                        <a href="../users/add.html" class="nav-link">
-                            <i class="bi bi-person-plus"></i>
-                            <span>Adicionar</span>
-                        </a>
-                        <a href="../users/edit.html" class="nav-link">
-                            <i class="bi bi-person-gear"></i>
-                            <span>Editar</span>
-                        </a>
-                        <a href="../users/delete.html" class="nav-link">
-                            <i class="bi bi-person-x"></i>
-                            <span>Excluir</span>
-                        </a>
-                        <a href="../users/available-account.html" class="nav-link">
-                            <i class="bi bi-person-check"></i>
-                            <span>Contas Disponíveis</span>
-                        </a>
-                        <a href="../users/unavailable-account.html" class="nav-link">
-                            <i class="bi bi-person-exclamation"></i>
-                            <span>Contas Indisponíveis</span>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseSongs" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseSongs">
-                        <i class="bi bi-music-note-list"></i>
-                        <span>Gestão de Músicas</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseSongs">
-                        <a href="../music/revise.html" class="nav-link">
-                            <i class="bi bi-eye"></i>
-                            <span>Revisar Envios</span>
-                        </a>
-                        <a href="../music/approve.html" class="nav-link">
-                            <i class="bi bi-check-circle"></i>
-                            <span>Aprovar</span>
-                        </a>
-                        <a href="../music/reject.html" class="nav-link">
-                            <i class="bi bi-x-circle"></i>
-                            <span>Rejeitar</span>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="../artist/accounts-users.html" class="nav-link">
-                        <i class="bi bi-person-check"></i>
-                        <span>Contas e Usuários</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="../artist/collaborators-artist.html" class="nav-link">
-                        <i class="bi bi-people"></i>
-                        <span>Artistas e Colaboradores</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseDistribution" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseDistribution">
-                        <i class="bi bi-globe"></i>
-                        <span>Distribuição</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseDistribution">
-                        <a href="../distribution/releases.html" class="nav-link">
-                            <i class="bi bi-rocket-takeoff"></i>
-                            <span>Lançamentos</span>
-                        </a>
-                        <a href="../distribution/store.html" class="nav-link">
-                            <i class="bi bi-shop"></i>
-                            <span>Lojas Digitais</span>
-                        </a>
-                        <a href="../distribution/schedule.html" class="nav-link">
-                            <i class="bi bi-calendar-event"></i>
-                            <span>Agendar Lançamento</span>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="../manager/gestion.html" class="nav-link">
-                        <i class="bi bi-star"></i>
-                        <span>Gestão Geral</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="../finances/payments.html" class="nav-link">
-                        <i class="bi bi-wallet2"></i>
-                        <span>Pagamentos</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="../finances/earnings.html" class="nav-link">
-                        <i class="bi bi-currency-dollar"></i>
-                        <span>Finanças e Rendimentos</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseIntegration" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseIntegration">
-                        <i class="bi bi-youtube"></i>
-                        <span>Unificação e V. Youtube</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseIntegration">
-                        <a href="../integration/youtube.html" class="nav-link">
-                            <i class="bi bi-gear"></i>
-                            <span>Configurar Integração</span>
-                        </a>
-                        <a href="../integration/verify.html" class="nav-link">
-                            <i class="bi bi-check2-all"></i>
-                            <span>Verificar Canais</span>
-                        </a>
-                        <a href="../integration/monetization.html" class="nav-link">
-                            <i class="bi bi-youtube"></i>
-                            <span>Gerenciamento de Conteúdo Monetizado</span>
-                        </a>
-                    </div>
-                </li>
-
-                <li class="nav-item">
-                    <a href="#collapseSupport" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseSupport">
-                        <i class="bi bi-headset"></i>
-                        <span>Suporte</span>
-                        <span class="badge bg-danger badge-notification">3</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseSupport">
-                        <a href="../messages/inbox.html" class="nav-link">
-                            <i class="bi bi-envelope"></i>
-                            <span>Caixa de entrada</span>
-                        </a>
-                        <a href="../messages/compose.html" class="nav-link">
-                            <i class="bi bi-pencil"></i>
-                            <span>Enviar mensagens</span>
-                        </a>
-                    </div>
-                </li>
-
-                <li class="nav-item">
-                    <a href="#collapseHelp" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseHelp">
-                        <i class="bi bi-question-circle"></i>
-                        <span>Ajuda</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseHelp">
-                        <a href="../help/faqs.html" class="nav-link">
-                            <i class="bi bi-messenger"></i>
-                            <span>FAQs</span>
-                        </a>
-                        <a href="../help/tutorials.html" class="nav-link">
-                            <i class="bi bi-book"></i>
-                            <span>Tutoriais</span>
-                        </a>
-                        <a href="../help/contact.html" class="nav-link">
-                            <i class="bi bi-telephone"></i>
-                            <span>Contacto com suporte</span>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="../settings/config.html" class="nav-link">
-                        <i class="bi bi-sliders"></i>
-                        <span>Configurações</span>
-                    </a>
-                </li>
-                <li class="nav-item mt-4">
-                    <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#logoutwasomupfy">
-                        <i class="bi bi-box-arrow-right"></i>
-                        <span>Logout</span>
-                    </a>
-                </li>
-                <li class="nav-item mt-4">
-                    <a href="http://localhost:5500/home.html" target="_blank" class="nav-link">
-                        <i class="bi bi-box-arrow-in-up-right"></i>
-                        <span>Visitar Site</span>
-                    </a>
-                </li>
-            </ul>
+      <!-- Sidebar -->
+      <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <div class="d-flex align-items-center">
+            <img
+              src="../../../assets/img/brand/wasomupfy_brand.png"
+              alt="Logo Wasom Upfy"
+              class="rounded-circle me-2"
+              style="height: 40px"
+            />
+            <span class="brand-text">Wasom Upfy</span>
+          </div>
+          <i
+            class="bi bi-chevron-left toggle-icon"
+            id="sidebarCollapse"
+            title="Colapsar/Expandir Menu"
+            aria-label="Colapsar/Expandir Menu"
+          ></i>
         </div>
+        <ul class="nav flex-column mt-3">
+          <li class="nav-item">
+            <a href="../../home.html" class="nav-link">
+              <i class="bi bi-speedometer2"></i>
+              <span>Painel de Controle</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              href="#collapseAnalytics"
+              class="nav-link active"
+              data-bs-toggle="collapse"
+              aria-expanded="false"
+              aria-controls="collapseAnalytics"
+            >
+              <i class="bi bi-graph-up"></i>
+              <span>Estatísticas e Análises</span>
+              <i
+                class="bi bi-chevron-down ms-auto"
+                style="font-size: 0.8rem"
+              ></i>
+            </a>
+            <div class="collapse" id="collapseAnalytics">
+              <a href="../analytics/home.html" class="nav-link">
+                <i class="bi bi-bar-chart-line"></i>
+                <span>Visão Geral</span>
+              </a>
+              <a href="../analytics/artists.html" class="nav-link active">
+                <i class="bi bi-person-lines-fill"></i>
+                <span>Desempenho por Artista</span>
+              </a>
+              <a href="../analytics/stores.html" class="nav-link">
+                <i class="bi bi-shop"></i>
+                <span>Desempenho por Loja Digital</span>
+              </a>
+              <a href="../analytics/reports.html" class="nav-link">
+                <i class="bi bi-file-earmark-bar-graph"></i>
+                <span>Relatórios Personalizados</span>
+              </a>
+            </div>
+          </li>
 
-        <!-- Content -->
-        <div class="content w-100" id="mainContent">
-            <nav class="navbar navbar-expand-lg">
-                <button class="navbar-toggler" type="button" id="sidebarToggle" aria-label="Abrir/Fechar Menu">
-                    <i class="bi bi-list text-white"></i>
+          <li class="nav-item">
+            <a
+              href="#collapseAdmins"
+              class="nav-link"
+              data-bs-toggle="collapse"
+              aria-expanded="false"
+              aria-controls="collapseAdmins"
+            >
+              <i class="bi bi-person-gear"></i>
+              <span>Gestão de Admins</span>
+              <i
+                class="bi bi-chevron-down ms-auto"
+                style="font-size: 0.8rem"
+              ></i>
+            </a>
+            <div class="collapse" id="collapseAdmins">
+              <a href="../employees/all-employees.html" class="nav-link">
+                <i class="bi bi-people"></i>
+                <span>Listar Admins</span>
+              </a>
+              <a href="../employees/add.html" class="nav-link">
+                <i class="bi bi-person-plus"></i>
+                <span>Adicionar</span>
+              </a>
+              <a href="../employees/edit.html" class="nav-link">
+                <i class="bi bi-person-gear"></i>
+                <span>Editar</span>
+              </a>
+              <a href="../employees/delete.html" class="nav-link">
+                <i class="bi bi-person-x"></i>
+                <span>Excluir</span>
+              </a>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a
+              href="#collapseUsers"
+              class="nav-link"
+              data-bs-toggle="collapse"
+              aria-expanded="false"
+              aria-controls="collapseUsers"
+            >
+              <i class="bi bi-person-gear"></i>
+              <span>Gestão de Usuários</span>
+              <i
+                class="bi bi-chevron-down ms-auto"
+                style="font-size: 0.8rem"
+              ></i>
+            </a>
+            <div class="collapse" id="collapseUsers">
+              <a href="../users/all-users.html" class="nav-link">
+                <i class="bi bi-people"></i>
+                <span>Todos Usuários</span>
+              </a>
+              <a href="../users/add.html" class="nav-link">
+                <i class="bi bi-person-plus"></i>
+                <span>Adicionar</span>
+              </a>
+              <a href="../users/edit.html" class="nav-link">
+                <i class="bi bi-person-gear"></i>
+                <span>Editar</span>
+              </a>
+              <a href="../users/delete.html" class="nav-link">
+                <i class="bi bi-person-x"></i>
+                <span>Excluir</span>
+              </a>
+              <a href="../users/available-account.html" class="nav-link">
+                <i class="bi bi-person-check"></i>
+                <span>Contas Disponíveis</span>
+              </a>
+              <a href="../users/unavailable-account.html" class="nav-link">
+                <i class="bi bi-person-exclamation"></i>
+                <span>Contas Indisponíveis</span>
+              </a>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a
+              href="#collapseSongs"
+              class="nav-link"
+              data-bs-toggle="collapse"
+              aria-expanded="false"
+              aria-controls="collapseSongs"
+            >
+              <i class="bi bi-music-note-list"></i>
+              <span>Gestão de Músicas</span>
+              <i
+                class="bi bi-chevron-down ms-auto"
+                style="font-size: 0.8rem"
+              ></i>
+            </a>
+            <div class="collapse" id="collapseSongs">
+              <a href="../music/revise.html" class="nav-link">
+                <i class="bi bi-eye"></i>
+                <span>Revisar Envios</span>
+              </a>
+              <a href="../music/approve.html" class="nav-link">
+                <i class="bi bi-check-circle"></i>
+                <span>Aprovar</span>
+              </a>
+              <a href="../music/reject.html" class="nav-link">
+                <i class="bi bi-x-circle"></i>
+                <span>Rejeitar</span>
+              </a>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a href="../artist/accounts-users.html" class="nav-link">
+              <i class="bi bi-person-check"></i>
+              <span>Contas e Usuários</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="../artist/collaborators-artist.html" class="nav-link">
+              <i class="bi bi-people"></i>
+              <span>Artistas e Colaboradores</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              href="#collapseDistribution"
+              class="nav-link"
+              data-bs-toggle="collapse"
+              aria-expanded="false"
+              aria-controls="collapseDistribution"
+            >
+              <i class="bi bi-globe"></i>
+              <span>Distribuição</span>
+              <i
+                class="bi bi-chevron-down ms-auto"
+                style="font-size: 0.8rem"
+              ></i>
+            </a>
+            <div class="collapse" id="collapseDistribution">
+              <a href="../distribution/releases.html" class="nav-link">
+                <i class="bi bi-rocket-takeoff"></i>
+                <span>Lançamentos</span>
+              </a>
+              <a href="../distribution/store.html" class="nav-link">
+                <i class="bi bi-shop"></i>
+                <span>Lojas Digitais</span>
+              </a>
+              <a href="../distribution/schedule.html" class="nav-link">
+                <i class="bi bi-calendar-event"></i>
+                <span>Agendar Lançamento</span>
+              </a>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a href="../manager/gestion.html" class="nav-link">
+              <i class="bi bi-star"></i>
+              <span>Gestão Geral</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="../finances/payments.html" class="nav-link">
+              <i class="bi bi-wallet2"></i>
+              <span>Pagamentos</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="../finances/earnings.html" class="nav-link">
+              <i class="bi bi-currency-dollar"></i>
+              <span>Finanças e Rendimentos</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              href="#collapseIntegration"
+              class="nav-link"
+              data-bs-toggle="collapse"
+              aria-expanded="false"
+              aria-controls="collapseIntegration"
+            >
+              <i class="bi bi-youtube"></i>
+              <span>Unificação e V. Youtube</span>
+              <i
+                class="bi bi-chevron-down ms-auto"
+                style="font-size: 0.8rem"
+              ></i>
+            </a>
+            <div class="collapse" id="collapseIntegration">
+              <a href="../integration/youtube.html" class="nav-link">
+                <i class="bi bi-gear"></i>
+                <span>Configurar Integração</span>
+              </a>
+              <a href="../integration/verify.html" class="nav-link">
+                <i class="bi bi-check2-all"></i>
+                <span>Verificar Canais</span>
+              </a>
+              <a href="../integration/monetization.html" class="nav-link">
+                <i class="bi bi-youtube"></i>
+                <span>Gerenciamento de Conteúdo Monetizado</span>
+              </a>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <a
+              href="#collapseSupport"
+              class="nav-link"
+              data-bs-toggle="collapse"
+              aria-expanded="false"
+              aria-controls="collapseSupport"
+            >
+              <i class="bi bi-headset"></i>
+              <span>Suporte</span>
+              <span class="badge bg-danger badge-notification">3</span>
+              <i
+                class="bi bi-chevron-down ms-auto"
+                style="font-size: 0.8rem"
+              ></i>
+            </a>
+            <div class="collapse" id="collapseSupport">
+              <a href="../messages/inbox.html" class="nav-link">
+                <i class="bi bi-envelope"></i>
+                <span>Caixa de entrada</span>
+              </a>
+              <a href="../messages/compose.html" class="nav-link">
+                <i class="bi bi-pencil"></i>
+                <span>Enviar mensagens</span>
+              </a>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <a
+              href="#collapseHelp"
+              class="nav-link"
+              data-bs-toggle="collapse"
+              aria-expanded="false"
+              aria-controls="collapseHelp"
+            >
+              <i class="bi bi-question-circle"></i>
+              <span>Ajuda</span>
+              <i
+                class="bi bi-chevron-down ms-auto"
+                style="font-size: 0.8rem"
+              ></i>
+            </a>
+            <div class="collapse" id="collapseHelp">
+              <a href="../help/faqs.html" class="nav-link">
+                <i class="bi bi-messenger"></i>
+                <span>FAQs</span>
+              </a>
+              <a href="../help/tutorials.html" class="nav-link">
+                <i class="bi bi-book"></i>
+                <span>Tutoriais</span>
+              </a>
+              <a href="../help/contact.html" class="nav-link">
+                <i class="bi bi-telephone"></i>
+                <span>Contacto com suporte</span>
+              </a>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a href="../settings/config.html" class="nav-link">
+              <i class="bi bi-sliders"></i>
+              <span>Configurações</span>
+            </a>
+          </li>
+          <li class="nav-item mt-4">
+            <a
+              href="#"
+              class="nav-link"
+              data-bs-toggle="modal"
+              data-bs-target="#logoutwasomupfy"
+            >
+              <i class="bi bi-box-arrow-right"></i>
+              <span>Logout</span>
+            </a>
+          </li>
+          <li class="nav-item mt-4">
+            <a
+              href="http://localhost:5500/home.html"
+              target="_blank"
+              class="nav-link"
+            >
+              <i class="bi bi-box-arrow-in-up-right"></i>
+              <span>Visitar Site</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Content -->
+      <div class="content w-100" id="mainContent">
+        <nav class="navbar navbar-expand-lg">
+          <button
+            class="navbar-toggler"
+            type="button"
+            id="sidebarToggle"
+            aria-label="Abrir/Fechar Menu"
+          >
+            <i class="bi bi-list text-white"></i>
+          </button>
+          <div class="ms-auto d-flex align-items-center">
+            <button
+              class="btn btn-outline-light btn-sm me-2"
+              onclick="toggleDarkMode()"
+              aria-label="Alternar Modo Escuro"
+            >
+              <i class="bi bi-moon"></i>
+            </button>
+            <div class="dropdown me-2 position-relative">
+              <button
+                class="btn btn-outline-light btn-sm position-relative"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-label="Notificações"
+              >
+                <i class="bi bi-bell"></i>
+                <span
+                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                  >5</span
+                >
+              </button>
+              <ul
+                class="dropdown-menu dropdown-menu-start p-0"
+                style="min-width: 250px"
+              >
+                <li class="dropdown-header bg-dark text-white p-2">
+                  Notificações (5)
+                </li>
+                <li>
+                  <a class="dropdown-item p-2" href="#"
+                    >Novo artista registrado</a
+                  >
+                </li>
+                <li>
+                  <a class="dropdown-item p-2" href="#"
+                    >Música atingiu 1000 plays</a
+                  >
+                </li>
+                <li>
+                  <a class="dropdown-item p-2" href="#"
+                    >Atualização do sistema disponível</a
+                  >
+                </li>
+                <li class="dropdown-footer text-center p-2">
+                  <a href="#" class="text-primary">Ver todas</a>
+                </li>
+              </ul>
+            </div>
+            <div class="dropdown me-2 position-relative">
+              <button
+                class="btn btn-outline-light btn-sm position-relative"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-label="Mensagens"
+              >
+                <i class="bi bi-envelope"></i>
+                <span
+                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                  >2</span
+                >
+              </button>
+              <ul
+                class="dropdown-menu dropdown-menu-start p-0"
+                style="min-width: 250px"
+              >
+                <li class="dropdown-header bg-dark text-white p-2">
+                  Mensagens (2)
+                </li>
+                <li>
+                  <a class="dropdown-item p-2" href="#"
+                    >Suporte #4521 - Novo ticket</a
+                  >
+                </li>
+                <li>
+                  <a class="dropdown-item p-2" href="#">Mensagem de artista</a>
+                </li>
+                <li class="dropdown-footer text-center p-2">
+                  <a href="#" class="text-primary">Ver todas</a>
+                </li>
+              </ul>
+            </div>
+            <div class="dropdown">
+              <button
+                class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-label="Menu do Usuário"
+              >
+                <img
+                  src="../../../assets/img/avatar/avatar.png"
+                  alt="Usuário"
+                  class="rounded-circle me-1"
+                  style="height: 24px"
+                />
+                <span>Cristiano Amadeu</span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                  <a class="dropdown-item" href="../user/profile.html"
+                    ><i class="bi bi-person me-2"></i>Perfil</a
+                  >
+                </li>
+                <li>
+                  <a class="dropdown-item" href="../settings/config.html"
+                    ><i class="bi bi-sliders me-2"></i>Configurações</a
+                  >
+                </li>
+                <li>
+                  <a class="dropdown-item" href="../help/help.html"
+                    ><i class="bi bi-question-circle me-2"></i>Ajuda</a
+                  >
+                </li>
+                <li>
+                  <hr class="dropdown-divider" />
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    data-bs-toggle="modal"
+                    data-bs-target="#logoutwasomupfy"
+                    href="#"
+                    ><i class="bi bi-box-arrow-right me-2"></i>Sair</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+
+        <!-- Adicione isso dentro da tag <nav class="bottom-nav"> -->
+        <div class="connection-status" id="connectionStatus"></div>
+        <div class="status-notification" id="statusNotification"></div>
+
+        <!-- Modal logout -->
+        <div
+          class="modal fade"
+          id="logoutwasomupfy"
+          data-bs-backdrop="static"
+          data-bs-keyboard="false"
+          tabindex="-1"
+          aria-labelledby="logoutwasomupfyLabel"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog">
+            <div class="modal-content modal-bottom">
+              <div class="modal-header">
+                <h1
+                  class="modal-title fs-5 text-dark"
+                  id="logoutwasomupfyLabel"
+                >
+                  Terminar sessão
+                </h1>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body">
+                <div class="container">
+                  <div class="row justify-content-center text-center">
+                    <div
+                      class="col-md-12 content-center justify-center text-center"
+                    >
+                      <p class="text-center text-dark">
+                        @josembengadacosta você tem certeza de que desejas
+                        terminar sessão?
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <div>
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    data-bs-dismiss="modal"
+                  >
+                    Não, continuar
+                  </button>
+                </div>
+                <div>
+                  <button
+                    class="btn btn-danger"
+                    type="button"
+                    name="logout_wasomupfy"
+                    onclick="logout_wasomupfy()"
+                  >
+                    Sim, terminar
+                  </button>
+                </div>
+                <script type="text/javascript">
+                  function logout_wasomupfy() {
+                    window.location = "logout";
+                  }
+                </script>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Modal logout fim -->
+
+        <div class="container-fluid py-0">
+          <div class="row mb-3 mt-2">
+            <div class="welcome-text col-auto d-sm-block">
+              <h2 class="h4 mb-2">
+                <i class="bi bi-person-lines-fill me-2"></i>Desempenho por
+                Artista
+              </h2>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                  <li class="breadcrumb-item">
+                    <a href="../../home.html" class="text-secondary"
+                      >Dashboard</a
+                    >
+                  </li>
+                  <li class="breadcrumb-item">
+                    <a href="../analytics/home.html" class="text-secondary"
+                      >Analytics</a
+                    >
+                  </li>
+                  <li
+                    class="breadcrumb-item active text-white-stable"
+                    aria-current="page"
+                  >
+                    Artistas
+                  </li>
+                </ol>
+              </nav>
+            </div>
+            <div class="col-auto ms-auto text-end mt-n1 mt-3 mb-2">
+              <div class="btn-group">
+                <button
+                  class="btn btn-wasomupfy text-white shadow-sm"
+                  id="refresh-data-btn"
+                >
+                  <i class="bi bi-arrow-clockwise me-2"></i> Atualizar
                 </button>
-                <div class="ms-auto d-flex align-items-center">
-                    <button class="btn btn-outline-light btn-sm me-2" onclick="toggleDarkMode()"
-                        aria-label="Alternar Modo Escuro">
-                        <i class="bi bi-moon"></i>
-                    </button>
-                    <div class="dropdown me-2 position-relative">
-                        <button class="btn btn-outline-light btn-sm position-relative" type="button"
-                            data-bs-toggle="dropdown" aria-label="Notificações">
-                            <i class="bi bi-bell"></i>
-                            <span
-                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">5</span>
+                <button
+                  class="btn btn-outline-primary shadow-sm"
+                  id="compare-artists-btn"
+                >
+                  <i class="bi bi-bar-chart me-2"></i> Comparar
+                </button>
+                <button
+                  class="btn btn-success shadow-sm"
+                  id="export-data-btn"
+                  data-bs-toggle="modal"
+                  data-bs-target="#exportModal"
+                >
+                  <i class="bi bi-download me-2"></i> Exportar
+                </button>
+              </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row g-3 mt-2 mb-4">
+              <div class="col-md-3 d-flex">
+                <div class="card stats-card-primary flex-fill">
+                  <div class="card-body">
+                    <div
+                      class="d-flex justify-content-between align-items-center"
+                    >
+                      <div>
+                        <h5 class="card-subtitle mb-2 text-white-stable">
+                          Total Streams
+                        </h5>
+                        <h3
+                          class="performance-metric badge badge-soft-pink"
+                          id="total-streams"
+                        >
+                          0
+                        </h3>
+                        <span
+                          class="performance-change trend-up"
+                          id="streams-change"
+                        >
+                          <i class="bi bi-arrow-up-right me-1"></i>12.5%
+                        </span>
+                      </div>
+                      <div class="stat">
+                        <i class="bi bi-play-circle card-icon align-middle"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 d-flex">
+                <div class="card stats-card-primary flex-fill">
+                  <div class="card-body">
+                    <div
+                      class="d-flex justify-content-between align-items-center"
+                    >
+                      <div>
+                        <h5 class="card-subtitle mb-2 text-white-stable">
+                          Artistas Ativos
+                        </h5>
+                        <h3
+                          class="performance-metric badge badge-soft-pink"
+                          id="active-artists"
+                        >
+                          0
+                        </h3>
+                        <span
+                          class="performance-change trend-up"
+                          id="artists-change"
+                        >
+                          <i class="bi bi-arrow-up-right me-1"></i>8.3%
+                        </span>
+                      </div>
+                      <div class="stats-icon">
+                        <i
+                          class="bi bi-person-badge card-icon align-middle"
+                        ></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 d-flex">
+                <div class="card stats-card-primary flex-fill">
+                  <div class="card-body">
+                    <div
+                      class="d-flex justify-content-between align-items-center"
+                    >
+                      <div>
+                        <h5 class="card-subtitle mb-2 text-white-stable">
+                          Músicas em Playlists
+                        </h5>
+                        <h3
+                          class="performance-metric badge badge-soft-pink"
+                          id="playlist-tracks"
+                        >
+                          0
+                        </h3>
+                        <span
+                          class="performance-change trend-up"
+                          id="playlist-change"
+                        >
+                          <i class="bi bi-arrow-up-right me-1"></i>15.2%
+                        </span>
+                      </div>
+                      <div class="stats-icon">
+                        <i
+                          class="bi bi-music-note-list card-icon align-middle"
+                        ></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 d-flex">
+                <div class="card stats-card-primary flex-fill">
+                  <div class="card-body">
+                    <div
+                      class="d-flex justify-content-between align-items-center"
+                    >
+                      <div>
+                        <h5 class="card-subtitle mb-2 text-white-stable">
+                          Receita Total
+                        </h5>
+                        <h3
+                          class="performance-metric badge badge-soft-pink"
+                          id="total-revenue"
+                        >
+                          $0
+                        </h3>
+                        <span
+                          class="performance-change trend-up"
+                          id="revenue-change"
+                        >
+                          <i class="bi bi-arrow-up-right me-1"></i>18.7%
+                        </span>
+                      </div>
+                      <div class="stats-icon">
+                        <i
+                          class="bi bi-currency-dollar card-icon align-middle"
+                        ></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Filtros Avançados -->
+            <div class="filter-section fade-in-custom">
+              <div
+                class="d-flex justify-content-between align-items-center mb-3"
+              >
+                <h5 class="mb-0">
+                  <i class="bi bi-funnel me-2"></i>Filtros Avançados
+                </h5>
+                <button class="btn btn-link" id="toggle-advanced-filters">
+                  <i class="bi bi-chevron-down me-1"></i> Mais Opções
+                </button>
+              </div>
+
+              <!-- Filtros Principais -->
+              <div class="row g-3">
+                <div class="col-md-3">
+                  <label for="filter-artist">Artista:</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="filter-artist"
+                    placeholder="Nome do artista"
+                  />
+                </div>
+                <div class="col-md-3">
+                  <label for="filter-track">Música:</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="filter-track"
+                    placeholder="Nome da música"
+                  />
+                </div>
+                <div class="col-md-3">
+                  <label for="filter-account">Conta:</label>
+                  <select class="form-select" id="filter-account">
+                    <option value="">Todas</option>
+                    <option value="pro">Conta Pro</option>
+                    <option value="basic">Conta Basic</option>
+                    <option value="international">Conta Internacional</option>
+                    <option value="intl">Conta Intl</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label for="filter-platform">Plataforma:</label>
+                  <select class="form-select" id="filter-platform">
+                    <option value="">Todas</option>
+                    <option value="spotify">Spotify</option>
+                    <option value="deezer">Deezer</option>
+                    <option value="apple">Apple Music</option>
+                    <option value="youtube">YouTube</option>
+                    <option value="discogs">Discogs</option>
+                    <option value="tidal">Tidal</option>
+                    <option value="amazon">Amazon Music</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label for="filter-territory">Território:</label>
+                  <select class="form-select" id="filter-territory">
+                    <option value="">Todos</option>
+                    <option value="AO">🇦🇴 Angola</option>
+                    <option value="PT">🇵🇹 Portugal</option>
+                    <option value="BR">🇧🇷 Brasil</option>
+                    <option value="MZ">🇲🇿 Moçambique</option>
+                    <option value="ES">🇪🇸 Espanha</option>
+                    <option value="US">🇺🇸 Estados Unidos</option>
+                    <option value="FR">🇫🇷 França</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label for="filter-playlist">Playlist:</label>
+                  <select class="form-select" id="filter-playlist">
+                    <option value="">Todas</option>
+                    <option value="top50">Top 50</option>
+                    <option value="editorial">Editorial</option>
+                    <option value="viral">Viral</option>
+                    <option value="none">Sem playlist</option>
+                    <option value="new_music">New Music Friday</option>
+                    <option value="radar">Radar</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label>Período:</label>
+                  <div class="date-range-picker">
+                    <input
+                      type="date"
+                      class="form-control"
+                      id="date-from"
+                      value="2025-06-01"
+                    />
+                    <span class="text-muted">até</span>
+                    <input
+                      type="date"
+                      class="form-control"
+                      id="date-to"
+                      value="2025-06-30"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Filtros Avançados (Expandidos) -->
+              <div class="advanced-filters" id="advanced-filters">
+                <div class="row g-3 mt-3 pt-3 border-top">
+                  <div class="col-md-4">
+                    <label>Faixa de Streams:</label>
+                    <div class="row g-2">
+                      <div class="col">
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="streams-min"
+                          placeholder="Mín"
+                        />
+                      </div>
+                      <div class="col-auto align-self-center">
+                        <span class="text-muted">-</span>
+                      </div>
+                      <div class="col">
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="streams-max"
+                          placeholder="Máx"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <label>Ordenar por:</label>
+                    <select class="form-select" id="sort-by">
+                      <option value="streams">Streams (maior primeiro)</option>
+                      <option value="streams_asc">
+                        Streams (menor primeiro)
+                      </option>
+                      <option value="date">Data (mais recente)</option>
+                      <option value="date_asc">Data (mais antiga)</option>
+                      <option value="artist">Artista (A-Z)</option>
+                      <option value="track">Música (A-Z)</option>
+                    </select>
+                  </div>
+                  <div class="col-md-4">
+                    <label>Visualizar por:</label>
+                    <select class="form-select" id="group-by">
+                      <option value="none">Itens individuais</option>
+                      <option value="artist">Agrupar por artista</option>
+                      <option value="platform">Agrupar por plataforma</option>
+                      <option value="territory">Agrupar por território</option>
+                      <option value="playlist">Agrupar por playlist</option>
+                    </select>
+                  </div>
+                  <div class="col-md-12">
+                    <label class="mb-2">Selecionar Plataformas:</label>
+                    <div class="platform-selector" id="platform-selector">
+                      <!-- Plataformas serão carregadas dinamicamente -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Filtros Rápidos -->
+              <div class="quick-filter mt-3">
+                <span class="text-muted me-2">Visualizar:</span>
+                <button
+                  class="btn btn-outline-primary btn-sm filter-quick"
+                  data-filter="today"
+                >
+                  Hoje
+                </button>
+                <button
+                  class="btn btn-outline-primary btn-sm filter-quick"
+                  data-filter="week"
+                >
+                  Esta Semana
+                </button>
+                <button
+                  class="btn btn-outline-primary btn-sm filter-quick"
+                  data-filter="month"
+                  data-active="true"
+                >
+                  Este Mês
+                </button>
+                <button
+                  class="btn btn-outline-primary btn-sm filter-quick"
+                  data-filter="quarter"
+                >
+                  Este Trimestre
+                </button>
+                <button
+                  class="btn btn-outline-primary btn-sm filter-quick"
+                  data-filter="year"
+                >
+                  Este Ano
+                </button>
+                <button
+                  class="btn btn-outline-primary btn-sm filter-quick"
+                  data-filter="all"
+                >
+                  Todo Período
+                </button>
+              </div>
+
+              <div
+                class="d-flex justify-content-between align-items-center mt-3"
+              >
+                <button class="btn btn-wasomupfy text-white" id="apply-filters">
+                  <i class="bi bi-funnel me-2"></i> Aplicar Filtros
+                </button>
+                <div>
+                  <button
+                    class="btn btn-outline-secondary me-2"
+                    id="clear-filters"
+                  >
+                    <i class="bi bi-eraser me-2"></i> Limpar
+                  </button>
+                  <button class="btn btn-outline-success" id="save-filter-btn">
+                    <i class="bi bi-bookmark me-2"></i> Salvar Filtro
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Painel de Comparação -->
+            <div
+              class="comparison-panel"
+              id="comparison-panel"
+              style="display: none"
+            >
+              <div
+                class="d-flex justify-content-between align-items-center mb-3"
+              >
+                <h5 class="mb-0">
+                  <i class="bi bi-bar-chart me-2"></i>Comparação de Artistas
+                </h5>
+                <button class="btn-close" id="close-comparison"></button>
+              </div>
+              <div id="comparison-content">
+                <!-- Conteúdo da comparação será carregado dinamicamente -->
+              </div>
+            </div>
+
+            <!-- Gráfico de Desempenho -->
+            <div class="row mb-4">
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="card-title mb-0">
+                      <i class="bi bi-bar-chart-line me-2"></i>Desempenho por
+                      Período
+                    </h5>
+                  </div>
+                  <div class="card-body">
+                    <div class="performance-chart" id="performance-chart">
+                      <!-- Gráfico será carregado dinamicamente -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Ações em Massa -->
+            <div class="row mb-3">
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-body py-2">
+                    <div
+                      class="d-flex justify-content-between align-items-center"
+                    >
+                      <div>
+                        <div class="form-check form-check-inline">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="select-all-tracks"
+                          />
+                          <label
+                            class="form-check-label"
+                            for="select-all-tracks"
+                            >Selecionar Todos</label
+                          >
+                        </div>
+                        <span class="text-muted ms-3" id="selected-tracks-count"
+                          >0 selecionados</span
+                        >
+                      </div>
+                      <div class="btn-group export-buttons">
+                        <button
+                          class="btn btn-outline-primary btn-sm"
+                          id="export-selected-btn"
+                        >
+                          <i class="bi bi-download me-1"></i> Exportar
+                          Selecionados
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-start p-0" style="min-width: 250px;">
-                            <li class="dropdown-header bg-dark text-white p-2">Notificações (5)</li>
-                            <li><a class="dropdown-item p-2" href="#">Novo artista registrado</a></li>
-                            <li><a class="dropdown-item p-2" href="#">Música atingiu 1000 plays</a></li>
-                            <li><a class="dropdown-item p-2" href="#">Atualização do sistema disponível</a></li>
-                            <li class="dropdown-footer text-center p-2"><a href="#" class="text-primary">Ver todas</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="dropdown me-2 position-relative">
-                        <button class="btn btn-outline-light btn-sm position-relative" type="button"
-                            data-bs-toggle="dropdown" aria-label="Mensagens">
-                            <i class="bi bi-envelope"></i>
-                            <span
-                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">2</span>
+                        <button
+                          class="btn btn-outline-success btn-sm"
+                          id="generate-report-btn"
+                        >
+                          <i class="bi bi-file-earmark-bar-graph me-1"></i>
+                          Gerar Relatório
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-start p-0" style="min-width: 250px;">
-                            <li class="dropdown-header bg-dark text-white p-2">Mensagens (2)</li>
-                            <li><a class="dropdown-item p-2" href="#">Suporte #4521 - Novo ticket</a></li>
-                            <li><a class="dropdown-item p-2" href="#">Mensagem de artista</a></li>
-                            <li class="dropdown-footer text-center p-2"><a href="#" class="text-primary">Ver todas</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="dropdown">
-                        <button class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center"
-                            type="button" data-bs-toggle="dropdown" aria-label="Menu do Usuário">
-                            <img src="../../../assets/img/avatar/avatar.png" alt="Usuário" class="rounded-circle me-1"
-                                style="height: 24px;">
-                            <span>Cristiano Amadeu</span>
+                        <button
+                          class="btn btn-outline-warning btn-sm"
+                          id="compare-selected-btn"
+                        >
+                          <i class="bi bi-bar-chart me-1"></i> Comparar
+                          Selecionados
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="../user/profile.html"><i
-                                        class="bi bi-person me-2"></i>Perfil</a></li>
-                            <li><a class="dropdown-item" href="../settings/config.html"><i
-                                        class="bi bi-sliders me-2"></i>Configurações</a></li>
-                            <li><a class="dropdown-item" href="../help/help.html"><i
-                                        class="bi bi-question-circle me-2"></i>Ajuda</a>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutwasomupfy"
-                                    href="#"><i class="bi bi-box-arrow-right me-2"></i>Sair</a>
-                            </li>
-                        </ul>
+                      </div>
                     </div>
+                  </div>
                 </div>
-            </nav>
-
-            <!-- Adicione isso dentro da tag <nav class="bottom-nav"> -->
-            <div class="connection-status" id="connectionStatus"></div>
-            <div class="status-notification" id="statusNotification"></div>
-
-            <!-- Modal logout -->
-            <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false"
-                tabindex="-1" aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content modal-bottom">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">Terminar sessão</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="container">
-                                <div class="row justify-content-center text-center">
-                                    <div class="col-md-12 content-center justify-center text-center">
-                                        <p class="text-center text-dark">@josembengadacosta você tem
-                                            certeza
-                                            de que desejas terminar
-                                            sessão?</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <div>
-                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Não,
-                                    continuar</button>
-                            </div>
-                            <div>
-                                <button class="btn btn-danger" type="button" name="logout_wasomupfy"
-                                    onclick="logout_wasomupfy()">Sim, terminar</button>
-                            </div>
-                            <script type="text/javascript">
-                                function logout_wasomupfy() {
-                                    window.location = 'logout';
-                                }
-                            </script>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Modal logout fim -->
-
-            <div class="container-fluid py-0">
-                <div class="row mb-3 mt-2">
-                    <div class="welcome-text col-auto d-sm-block">
-                        <h2 class="h4 mb-2"><i class="bi bi-person-lines-fill me-2"></i>Desempenho por Artista</h2>
-                        <nav aria-label="breadcrumb">
-                            <ol class="breadcrumb mb-0">
-                                <li class="breadcrumb-item"><a href="../../home.html"
-                                        class="text-secondary">Dashboard</a>
-                                </li>
-                                <li class="breadcrumb-item"><a href="../analytics/home.html"
-                                        class="text-secondary">Analytics</a>
-                                </li>
-                                <li class="breadcrumb-item active text-white-stable" aria-current="page">Artistas</li>
-                            </ol>
-                        </nav>
-                    </div>
-                    <div class="col-auto ms-auto text-end mt-n1 mt-3 mb-2">
-                        <div class="btn-group">
-                            <button class="btn btn-wasomupfy text-white shadow-sm" id="refresh-data-btn">
-                                <i class="bi bi-arrow-clockwise me-2"></i> Atualizar
-                            </button>
-                            <button class="btn btn-outline-primary shadow-sm" id="compare-artists-btn">
-                                <i class="bi bi-bar-chart me-2"></i> Comparar
-                            </button>
-                            <button class="btn btn-success shadow-sm" id="export-data-btn" data-bs-toggle="modal"
-                                data-bs-target="#exportModal">
-                                <i class="bi bi-download me-2"></i> Exportar
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Stats Cards -->
-                    <div class="row g-3 mt-2 mb-4">
-                        <div class="col-md-3 d-flex">
-                            <div class="card stats-card-primary flex-fill">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h5 class="card-subtitle mb-2 text-white-stable">Total Streams</h5>
-                                            <h3 class="performance-metric badge badge-soft-pink" id="total-streams">0
-                                            </h3>
-                                            <span class="performance-change trend-up" id="streams-change">
-                                                <i class="bi bi-arrow-up-right me-1"></i>12.5%
-                                            </span>
-                                        </div>
-                                        <div class="stat">
-                                            <i class="bi bi-play-circle card-icon align-middle"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 d-flex">
-                            <div class="card stats-card-primary flex-fill">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h5 class="card-subtitle mb-2 text-white-stable">Artistas Ativos</h5>
-                                            <h3 class="performance-metric badge badge-soft-pink" id="active-artists">0
-                                            </h3>
-                                            <span class="performance-change trend-up" id="artists-change">
-                                                <i class="bi bi-arrow-up-right me-1"></i>8.3%
-                                            </span>
-                                        </div>
-                                        <div class="stats-icon">
-                                            <i class="bi bi-person-badge card-icon align-middle"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 d-flex">
-                            <div class="card stats-card-primary flex-fill">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h5 class="card-subtitle mb-2 text-white-stable">Músicas em Playlists</h5>
-                                            <h3 class="performance-metric badge badge-soft-pink" id="playlist-tracks">0
-                                            </h3>
-                                            <span class="performance-change trend-up" id="playlist-change">
-                                                <i class="bi bi-arrow-up-right me-1"></i>15.2%
-                                            </span>
-                                        </div>
-                                        <div class="stats-icon">
-                                            <i class="bi bi-music-note-list card-icon align-middle"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 d-flex">
-                            <div class="card stats-card-primary flex-fill">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h5 class="card-subtitle mb-2 text-white-stable">Receita Total</h5>
-                                            <h3 class="performance-metric badge badge-soft-pink" id="total-revenue">$0
-                                            </h3>
-                                            <span class="performance-change trend-up" id="revenue-change">
-                                                <i class="bi bi-arrow-up-right me-1"></i>18.7%
-                                            </span>
-                                        </div>
-                                        <div class="stats-icon">
-                                            <i class="bi bi-currency-dollar card-icon align-middle"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Filtros Avançados -->
-                    <div class="filter-section fade-in-custom">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="mb-0"><i class="bi bi-funnel me-2"></i>Filtros Avançados</h5>
-                            <button class="btn btn-link" id="toggle-advanced-filters">
-                                <i class="bi bi-chevron-down me-1"></i> Mais Opções
-                            </button>
-                        </div>
-
-                        <!-- Filtros Principais -->
-                        <div class="row g-3">
-                            <div class="col-md-3">
-                                <label for="filter-artist">Artista:</label>
-                                <input type="text" class="form-control" id="filter-artist"
-                                    placeholder="Nome do artista">
-                            </div>
-                            <div class="col-md-3">
-                                <label for="filter-track">Música:</label>
-                                <input type="text" class="form-control" id="filter-track" placeholder="Nome da música">
-                            </div>
-                            <div class="col-md-3">
-                                <label for="filter-account">Conta:</label>
-                                <select class="form-select" id="filter-account">
-                                    <option value="">Todas</option>
-                                    <option value="pro">Conta Pro</option>
-                                    <option value="basic">Conta Basic</option>
-                                    <option value="international">Conta Internacional</option>
-                                    <option value="intl">Conta Intl</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label for="filter-platform">Plataforma:</label>
-                                <select class="form-select" id="filter-platform">
-                                    <option value="">Todas</option>
-                                    <option value="spotify">Spotify</option>
-                                    <option value="deezer">Deezer</option>
-                                    <option value="apple">Apple Music</option>
-                                    <option value="youtube">YouTube</option>
-                                    <option value="discogs">Discogs</option>
-                                    <option value="tidal">Tidal</option>
-                                    <option value="amazon">Amazon Music</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label for="filter-territory">Território:</label>
-                                <select class="form-select" id="filter-territory">
-                                    <option value="">Todos</option>
-                                    <option value="AO">🇦🇴 Angola</option>
-                                    <option value="PT">🇵🇹 Portugal</option>
-                                    <option value="BR">🇧🇷 Brasil</option>
-                                    <option value="MZ">🇲🇿 Moçambique</option>
-                                    <option value="ES">🇪🇸 Espanha</option>
-                                    <option value="US">🇺🇸 Estados Unidos</option>
-                                    <option value="FR">🇫🇷 França</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label for="filter-playlist">Playlist:</label>
-                                <select class="form-select" id="filter-playlist">
-                                    <option value="">Todas</option>
-                                    <option value="top50">Top 50</option>
-                                    <option value="editorial">Editorial</option>
-                                    <option value="viral">Viral</option>
-                                    <option value="none">Sem playlist</option>
-                                    <option value="new_music">New Music Friday</option>
-                                    <option value="radar">Radar</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label>Período:</label>
-                                <div class="date-range-picker">
-                                    <input type="date" class="form-control" id="date-from" value="2025-06-01">
-                                    <span class="text-muted">até</span>
-                                    <input type="date" class="form-control" id="date-to" value="2025-06-30">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Filtros Avançados (Expandidos) -->
-                        <div class="advanced-filters" id="advanced-filters">
-                            <div class="row g-3 mt-3 pt-3 border-top">
-                                <div class="col-md-4">
-                                    <label>Faixa de Streams:</label>
-                                    <div class="row g-2">
-                                        <div class="col">
-                                            <input type="number" class="form-control" id="streams-min"
-                                                placeholder="Mín">
-                                        </div>
-                                        <div class="col-auto align-self-center">
-                                            <span class="text-muted">-</span>
-                                        </div>
-                                        <div class="col">
-                                            <input type="number" class="form-control" id="streams-max"
-                                                placeholder="Máx">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <label>Ordenar por:</label>
-                                    <select class="form-select" id="sort-by">
-                                        <option value="streams">Streams (maior primeiro)</option>
-                                        <option value="streams_asc">Streams (menor primeiro)</option>
-                                        <option value="date">Data (mais recente)</option>
-                                        <option value="date_asc">Data (mais antiga)</option>
-                                        <option value="artist">Artista (A-Z)</option>
-                                        <option value="track">Música (A-Z)</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4">
-                                    <label>Visualizar por:</label>
-                                    <select class="form-select" id="group-by">
-                                        <option value="none">Itens individuais</option>
-                                        <option value="artist">Agrupar por artista</option>
-                                        <option value="platform">Agrupar por plataforma</option>
-                                        <option value="territory">Agrupar por território</option>
-                                        <option value="playlist">Agrupar por playlist</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-12">
-                                    <label class="mb-2">Selecionar Plataformas:</label>
-                                    <div class="platform-selector" id="platform-selector">
-                                        <!-- Plataformas serão carregadas dinamicamente -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Filtros Rápidos -->
-                        <div class="quick-filter mt-3">
-                            <span class="text-muted me-2">Visualizar:</span>
-                            <button class="btn btn-outline-primary btn-sm filter-quick"
-                                data-filter="today">Hoje</button>
-                            <button class="btn btn-outline-primary btn-sm filter-quick" data-filter="week">Esta
-                                Semana</button>
-                            <button class="btn btn-outline-primary btn-sm filter-quick" data-filter="month"
-                                data-active="true">Este Mês</button>
-                            <button class="btn btn-outline-primary btn-sm filter-quick" data-filter="quarter">Este
-                                Trimestre</button>
-                            <button class="btn btn-outline-primary btn-sm filter-quick" data-filter="year">Este
-                                Ano</button>
-                            <button class="btn btn-outline-primary btn-sm filter-quick" data-filter="all">Todo
-                                Período</button>
-                        </div>
-
-                        <div class="d-flex justify-content-between align-items-center mt-3">
-                            <button class="btn btn-wasomupfy text-white" id="apply-filters">
-                                <i class="bi bi-funnel me-2"></i> Aplicar Filtros
-                            </button>
-                            <div>
-                                <button class="btn btn-outline-secondary me-2" id="clear-filters">
-                                    <i class="bi bi-eraser me-2"></i> Limpar
-                                </button>
-                                <button class="btn btn-outline-success" id="save-filter-btn">
-                                    <i class="bi bi-bookmark me-2"></i> Salvar Filtro
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Painel de Comparação -->
-                    <div class="comparison-panel" id="comparison-panel" style="display: none;">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="mb-0"><i class="bi bi-bar-chart me-2"></i>Comparação de Artistas</h5>
-                            <button class="btn-close" id="close-comparison"></button>
-                        </div>
-                        <div id="comparison-content">
-                            <!-- Conteúdo da comparação será carregado dinamicamente -->
-                        </div>
-                    </div>
-
-                    <!-- Gráfico de Desempenho -->
-                    <div class="row mb-4">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5 class="card-title mb-0"><i class="bi bi-bar-chart-line me-2"></i>Desempenho por
-                                        Período</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="performance-chart" id="performance-chart">
-                                        <!-- Gráfico será carregado dinamicamente -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Ações em Massa -->
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-body py-2">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="checkbox" id="select-all-tracks">
-                                                <label class="form-check-label" for="select-all-tracks">Selecionar
-                                                    Todos</label>
-                                            </div>
-                                            <span class="text-muted ms-3" id="selected-tracks-count">0
-                                                selecionados</span>
-                                        </div>
-                                        <div class="btn-group export-buttons">
-                                            <button class="btn btn-outline-primary btn-sm" id="export-selected-btn">
-                                                <i class="bi bi-download me-1"></i> Exportar Selecionados
-                                            </button>
-                                            <button class="btn btn-outline-success btn-sm" id="generate-report-btn">
-                                                <i class="bi bi-file-earmark-bar-graph me-1"></i> Gerar Relatório
-                                            </button>
-                                            <button class="btn btn-outline-warning btn-sm" id="compare-selected-btn">
-                                                <i class="bi bi-bar-chart me-1"></i> Comparar Selecionados
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Tabela de Desempenho -->
-                    <div class="card fade-in-custom">
-                        <div class="card-header">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h5 class="card-title mb-0"><i class="bi bi-table me-2"></i>Desempenho de Músicas</h5>
-                                <span class="badge bg-primary" id="performance-results-count">0 resultados</span>
-                            </div>
-                        </div>
-                        <div class="table-responsive">
-                            <table id="performance-table" class="table table-striped table-hover">
-                                <thead>
-                                    <tr>
-                                        <th width="30">
-                                            <input type="checkbox" class="form-check-input" id="select-all-header">
-                                        </th>
-                                        <th style="">ID</th>
-                                        <th>Conta</th>
-                                        <th>Música & Artista</th>
-                                        <th>Streams</th>
-                                        <th>Plataforma</th>
-                                        <th>Playlist</th>
-                                        <th>Território</th>
-                                        <th>Data de Reprodução</th>
-                                        <th>Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="performance-list">
-                                    <!-- Dados serão carregados via JavaScript -->
-                                    <tr>
-                                        <td colspan="10" class="text-center">Carregando dados de desempenho...</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <nav aria-label="Page navigation">
-                            <ul class="pagination justify-content-center" id="performance-pagination"></ul>
-                        </nav>
-                    </div>
-
-                    <!-- Top Artistas e Plataformas -->
-                    <div class="row mt-4">
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5 class="card-title mb-0"><i class="bi bi-trophy me-2"></i>Top 5 Artistas</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div id="top-artists">
-                                        <!-- Top artistas será carregado dinamicamente -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5 class="card-title mb-0"><i class="bi bi-pie-chart me-2"></i>Distribuição por
-                                        Plataforma</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div id="platform-distribution">
-                                        <!-- Distribuição será carregada dinamicamente -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+              </div>
             </div>
 
-            <!-- Modal de Exportação -->
-            <div class="modal fade" id="exportModal" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title"><i class="bi bi-download me-2"></i>Exportar Dados</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <form id="export-form">
-                            <div class="modal-body">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="export-format" class="form-label">Formato*</label>
-                                            <select class="form-select" id="export-format" required>
-                                                <option value="csv">CSV (Excel)</option>
-                                                <option value="excel">Excel (XLSX)</option>
-                                                <option value="pdf">PDF</option>
-                                                <option value="json">JSON</option>
-                                            </select>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label for="export-date-range" class="form-label">Período*</label>
-                                            <select class="form-select" id="export-date-range" required>
-                                                <option value="filtered">Período filtrado</option>
-                                                <option value="all">Todo o histórico</option>
-                                                <option value="month">Último mês</option>
-                                                <option value="quarter">Último trimestre</option>
-                                                <option value="year">Último ano</option>
-                                                <option value="custom">Personalizado</option>
-                                            </select>
-                                        </div>
-
-                                        <div class="mb-3" id="custom-date-range" style="display: none;">
-                                            <label class="form-label">Datas Personalizadas</label>
-                                            <div class="date-range-picker">
-                                                <input type="date" class="form-control" id="export-date-from">
-                                                <span class="text-muted">até</span>
-                                                <input type="date" class="form-control" id="export-date-to">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label">Colunas a Incluir*</label>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="col-id" checked>
-                                                <label class="form-check-label" for="col-id">ID</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="col-account"
-                                                    checked>
-                                                <label class="form-check-label" for="col-account">Conta</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="col-track" checked>
-                                                <label class="form-check-label" for="col-track">Música</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="col-artist" checked>
-                                                <label class="form-check-label" for="col-artist">Artista</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="col-streams"
-                                                    checked>
-                                                <label class="form-check-label" for="col-streams">Streams</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="col-platform"
-                                                    checked>
-                                                <label class="form-check-label" for="col-platform">Plataforma</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="col-playlist"
-                                                    checked>
-                                                <label class="form-check-label" for="col-playlist">Playlist</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="col-territory"
-                                                    checked>
-                                                <label class="form-check-label" for="col-territory">Território</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="col-date" checked>
-                                                <label class="form-check-label" for="col-date">Data</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="alert alert-info">
-                                    <i class="bi bi-info-circle me-2"></i>
-                                    <strong>Itens para exportar:</strong> <span id="export-item-count">0</span> item(s)
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="export-filename" class="form-label">Nome do Arquivo</label>
-                                    <input type="text" class="form-control" id="export-filename"
-                                        value="desempenho_artistas">
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary"
-                                    data-bs-dismiss="modal">Cancelar</button>
-                                <button type="submit" class="btn btn-success">
-                                    <i class="bi bi-download me-2"></i> Exportar Dados
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+            <!-- Tabela de Desempenho -->
+            <div class="card fade-in-custom">
+              <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                  <h5 class="card-title mb-0">
+                    <i class="bi bi-table me-2"></i>Desempenho de Músicas
+                  </h5>
+                  <span class="badge bg-primary" id="performance-results-count"
+                    >0 resultados</span
+                  >
                 </div>
+              </div>
+              <div class="table-responsive">
+                <table
+                  id="performance-table"
+                  class="table table-striped table-hover"
+                >
+                  <thead>
+                    <tr>
+                      <th width="30">
+                        <input
+                          type="checkbox"
+                          class="form-check-input"
+                          id="select-all-header"
+                        />
+                      </th>
+                      <th style="">ID</th>
+                      <th>Conta</th>
+                      <th>Música & Artista</th>
+                      <th>Streams</th>
+                      <th>Plataforma</th>
+                      <th>Playlist</th>
+                      <th>Território</th>
+                      <th>Data de Reprodução</th>
+                      <th>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody id="performance-list">
+                    <!-- Dados serão carregados via JavaScript -->
+                    <tr>
+                      <td colspan="10" class="text-center">
+                        Carregando dados de desempenho...
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <nav aria-label="Page navigation">
+                <ul
+                  class="pagination justify-content-center"
+                  id="performance-pagination"
+                ></ul>
+              </nav>
             </div>
 
-            <!-- Modal de Detalhes -->
-            <div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title"><i class="bi bi-info-circle me-2"></i>Detalhes do Desempenho</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body" id="detail-content">
-                            <!-- Conteúdo será preenchido via JavaScript -->
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                            <button type="button" class="btn btn-wasomupfy" id="export-detail-btn">
-                                <i class="bi bi-download me-2"></i> Exportar Detalhes
-                            </button>
-                        </div>
+            <!-- Top Artistas e Plataformas -->
+            <div class="row mt-4">
+              <div class="col-md-6">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="card-title mb-0">
+                      <i class="bi bi-trophy me-2"></i>Top 5 Artistas
+                    </h5>
+                  </div>
+                  <div class="card-body">
+                    <div id="top-artists">
+                      <!-- Top artistas será carregado dinamicamente -->
                     </div>
+                  </div>
                 </div>
+              </div>
+              <div class="col-md-6">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="card-title mb-0">
+                      <i class="bi bi-pie-chart me-2"></i>Distribuição por
+                      Plataforma
+                    </h5>
+                  </div>
+                  <div class="card-body">
+                    <div id="platform-distribution">
+                      <!-- Distribuição será carregada dinamicamente -->
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
+          </div>
         </div>
-    </div>
 
+        <!-- Modal de Exportação -->
+        <div
+          class="modal fade"
+          id="exportModal"
+          tabindex="-1"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">
+                  <i class="bi bi-download me-2"></i>Exportar Dados
+                </h5>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <form id="export-form">
+                <div class="modal-body">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="mb-3">
+                        <label for="export-format" class="form-label"
+                          >Formato*</label
+                        >
+                        <select class="form-select" id="export-format" required>
+                          <option value="csv">CSV (Excel)</option>
+                          <option value="excel">Excel (XLSX)</option>
+                          <option value="pdf">PDF</option>
+                          <option value="json">JSON</option>
+                        </select>
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="export-date-range" class="form-label"
+                          >Período*</label
+                        >
+                        <select
+                          class="form-select"
+                          id="export-date-range"
+                          required
+                        >
+                          <option value="filtered">Período filtrado</option>
+                          <option value="all">Todo o histórico</option>
+                          <option value="month">Último mês</option>
+                          <option value="quarter">Último trimestre</option>
+                          <option value="year">Último ano</option>
+                          <option value="custom">Personalizado</option>
+                        </select>
+                      </div>
+
+                      <div
+                        class="mb-3"
+                        id="custom-date-range"
+                        style="display: none"
+                      >
+                        <label class="form-label">Datas Personalizadas</label>
+                        <div class="date-range-picker">
+                          <input
+                            type="date"
+                            class="form-control"
+                            id="export-date-from"
+                          />
+                          <span class="text-muted">até</span>
+                          <input
+                            type="date"
+                            class="form-control"
+                            id="export-date-to"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="mb-3">
+                        <label class="form-label">Colunas a Incluir*</label>
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="col-id"
+                            checked
+                          />
+                          <label class="form-check-label" for="col-id"
+                            >ID</label
+                          >
+                        </div>
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="col-account"
+                            checked
+                          />
+                          <label class="form-check-label" for="col-account"
+                            >Conta</label
+                          >
+                        </div>
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="col-track"
+                            checked
+                          />
+                          <label class="form-check-label" for="col-track"
+                            >Música</label
+                          >
+                        </div>
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="col-artist"
+                            checked
+                          />
+                          <label class="form-check-label" for="col-artist"
+                            >Artista</label
+                          >
+                        </div>
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="col-streams"
+                            checked
+                          />
+                          <label class="form-check-label" for="col-streams"
+                            >Streams</label
+                          >
+                        </div>
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="col-platform"
+                            checked
+                          />
+                          <label class="form-check-label" for="col-platform"
+                            >Plataforma</label
+                          >
+                        </div>
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="col-playlist"
+                            checked
+                          />
+                          <label class="form-check-label" for="col-playlist"
+                            >Playlist</label
+                          >
+                        </div>
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="col-territory"
+                            checked
+                          />
+                          <label class="form-check-label" for="col-territory"
+                            >Território</label
+                          >
+                        </div>
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="col-date"
+                            checked
+                          />
+                          <label class="form-check-label" for="col-date"
+                            >Data</label
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>Itens para exportar:</strong>
+                    <span id="export-item-count">0</span> item(s)
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="export-filename" class="form-label"
+                      >Nome do Arquivo</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="export-filename"
+                      value="desempenho_artistas"
+                    />
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Cancelar
+                  </button>
+                  <button type="submit" class="btn btn-success">
+                    <i class="bi bi-download me-2"></i> Exportar Dados
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal de Detalhes -->
+        <div
+          class="modal fade"
+          id="detailModal"
+          tabindex="-1"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">
+                  <i class="bi bi-info-circle me-2"></i>Detalhes do Desempenho
+                </h5>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body" id="detail-content">
+                <!-- Conteúdo será preenchido via JavaScript -->
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Fechar
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-wasomupfy"
+                  id="export-detail-btn"
+                >
+                  <i class="bi bi-download me-2"></i> Exportar Detalhes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Footer -->
     <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-12 text-center">
-                    <p class="mb-2">© 2026 Wasom Upfy. Todos os direitos reservados.</p>
-                    <a href="#" class="me-2">Termos de Uso</a>
-                    <a href="#" class="me-2">Privacidade</a>
-                    <a href="#">Suporte</a>
-                </div>
-            </div>
+      <div class="container">
+        <div class="row">
+          <div class="col-12 text-center">
+            <p class="mb-2">© 2026 Wasom Upfy. Todos os direitos reservados.</p>
+            <a href="#" class="me-2">Termos de Uso</a>
+            <a href="#" class="me-2">Privacidade</a>
+            <a href="#">Suporte</a>
+          </div>
         </div>
+      </div>
     </footer>
 
     <!-- Bottom Navigation -->
@@ -1323,14 +1839,17 @@
     </ul>
 </nav> -->
 
-
     <div class="page-loader" id="pageLoader">
-        <div class="loader-content">
-            <!-- Sua imagem pulsante -->
-            <img src="../../../assets/img/brand/wasomupfy_brand.png" class="loader-image" alt="Carregando">
-            <!-- Barra de progresso agora perfeitamente centralizada -->
-            <div class="loader-progress"></div>
-        </div>
+      <div class="loader-content">
+        <!-- Sua imagem pulsante -->
+        <img
+          src="../../../assets/img/brand/wasomupfy_brand.png"
+          class="loader-image"
+          alt="Carregando"
+        />
+        <!-- Barra de progresso agora perfeitamente centralizada -->
+        <div class="loader-progress"></div>
+      </div>
     </div>
 
     <!-- Bootstrap Bundle with Popper -->
@@ -1348,7 +1867,5 @@
     <!-- SheetJS para Excel -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="js/artist-performance.js"></script>
-
-</body>
-
+  </body>
 </html>

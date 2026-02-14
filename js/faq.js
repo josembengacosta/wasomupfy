@@ -7,7 +7,7 @@ const translations = {
     faq_title: "Perguntas frequentes",
     faq_description:
       "Encontre respostas para as perguntas mais comuns sobre o uso da plataforma Wasom Upfy. <br> Não encontrou o que procurava? Entre em contato com nosso suporte!",
-    faq_update_date: "Última atualização: 26 de junho de 2025",
+    faq_update_date: "Última atualização: 14 de Fevereiro de 2026",
     download_pdf: "Baixar em PDF",
     print: "Imprimir",
     search_placeholder: "Pesquisar perguntas...",

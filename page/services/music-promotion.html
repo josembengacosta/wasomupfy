@@ -274,7 +274,7 @@
                       <div class="col">
                         <div class="dropdown-header">Blog</div>
                         <a
-                          title="Destaque dos Melhores"
+                          title="Novidades"
                           class="dropdown-item"
                           href="../../blog/news.html"
                           >Novidades</a
@@ -285,7 +285,7 @@
                           href="../../blog/freetime"
                           >Passatempo</a
                         >
-                         <a title="Indisponível" class="dropdown-item" href="#!"
+                        <a title="Indisponível" class="dropdown-item" href="#!"
                           >Indisponível
                           <span class="badge bg-warning">Indisponível</span></a
                         >
@@ -306,7 +306,7 @@
                           <a
                             title="Quem somos"
                             class="dropdown-item"
-                            href="../../about.html"
+                            href="../../about.html#nossa-historia"
                             >Quem somos</a
                           >
                         </div>
@@ -345,6 +345,8 @@
                             title="Atendimento pelo Facebook"
                             class="dropdown-item"
                             href="https://www.facebook.com/m.me/2007900989425052"
+                            target="_blank"
+                            rel="external noopener noreferrer"
                             >Atendimento</a
                           >
                           <a
@@ -354,10 +356,12 @@
                             >Contacta-nos</a
                           >
                           <a
-                            title="Grupo Privado"
+                            title="Canal WhatsApp"
                             class="dropdown-item"
-                            href="https://www.facebook.com/groups/wasomupfy"
-                            >Grupo</a
+                            href="https://whatsapp.com/channel/0029VaCEDqo59PwWpU0nGa04"
+                            target="_blank"
+                            rel="external noopener noreferrer"
+                            >Canal WhatsApp</a
                           >
                         </div>
                       </div>
@@ -367,17 +371,20 @@
                           <div>
                             <div class="dropdown-header">Sugestões</div>
                             <a
-                              title="Apoia-nos"
+                              title="Ajuda"
                               class="dropdown-item"
-                              href="page/support/support-us.html"
-                              >Apoia-nós
+                              href="../support/help.html"
+                              >Ajuda
                               <span class="badge bg-success">Novo</span></a
                             >
                             <a
                               title="Feedback"
                               class="dropdown-item"
-                              href="page/support/feedback.html"
-                              >Feedback</a
+                              href="#"
+                              data-bs-toggle="modal"
+                              data-bs-target="#modalFeedback"
+                            >
+                              Feedback</a
                             >
                             <a
                               title="Indisponível"
@@ -394,20 +401,20 @@
                             <a
                               title="Tutorial"
                               class="dropdown-item"
-                              href="page/support/tutorial.html"
+                              href="../support/tutorial.html"
                               >Tutorial
                               <span class="badge bg-success">Novo</span></a
                             >
                             <a
                               title="Ocorreu um erro"
                               class="dropdown-item"
-                              href="page/support/support.html"
+                              href="../support/support.html"
                               >Suporte técnico</a
                             >
                             <a
-                              title="Preciso de ajuda"
+                              title="Perguntas frequentes"
                               class="dropdown-item"
-                              href="page/support/faq.html"
+                              href="../support/faq.html"
                               >Perguntas frequentes</a
                             >
                           </div>
@@ -421,7 +428,7 @@
                   <a
                     class="nav-link"
                     href="../../resources.html"
-                    title="Video"
+                    title="Recursos"
                     role="button"
                     data-bs-toggle="link"
                     aria-expanded="false"
@@ -540,7 +547,7 @@
             <div class="col-lg-6" data-cue="slideInLeft">
               <div class="position-relative">
                 <img
-                  src="../../assets/img/theme/story.png"
+                  src="../../assets/img/theme/meeting.png"
                   class="img-fluid rounded-3 shadow-lg"
                   alt="Estatísticas de Crescimento"
                 />
@@ -813,7 +820,7 @@
         </div>
       </section>
 
-      <section class="py-6 bg-light-100 border-top">
+      <section class="py-5 bg-light-100 border-top">
         <div class="container text-center">
           <div class="row justify-content-center">
             <div class="col-lg-8">
@@ -1025,7 +1032,6 @@
                       Contacta-nos
                     </a>
                   </li>
-                
                 </ul>
               </div>
             </div>
@@ -1149,21 +1155,21 @@
                   aria-label="Legal"
                 >
                   <a
-                    href="/page/politicies/privacy.html"
+                    href="../politicies/privacy.html"
                     class="link text-muted text-decoration-none hover-primary"
                   >
                     Política de Privacidade
                   </a>
                   <span class="text-muted">|</span>
                   <a
-                    href="/page/politicies/terms.html"
+                    href="../politicies/terms.html"
                     class="link text-muted text-decoration-none hover-primary"
                   >
                     Termos de Uso
                   </a>
                   <span class="text-muted">|</span>
                   <a
-                    href="/page/politicies/cookies.html"
+                    href="../politicies/cookies.html"
                     class="link text-muted text-decoration-none hover-primary"
                   >
                     Cookies
@@ -1198,7 +1204,7 @@
       <div class="position-absolute end-0 bottom-0 m-4 fixed">
         <div class="dropdown">
           <button
-            class="btn btn-wasomupfy rounded-circle d-flex align-items-center btn-lg"
+            class="btn btn-wasomupfy rounded-circle d-flex align-items-center"
             type="button"
             aria-expanded="false"
             data-bs-toggle="dropdown"

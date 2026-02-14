@@ -1,746 +1,1186 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="robots" content="noindex, nofollow">
+    <meta name="robots" content="noindex, nofollow" />
     <meta name="author" content="Voosoft" />
-    <meta name="theme-color" content="#FF0089">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="../../assets/img/icones/wasomupfy_fiv_512.png">
-    <link rel="apple-touch-startup-image" href="../../assets/img/screenshots/splash.png">
-    <link rel="manifest" href="../manifest.json">
+    <meta name="theme-color" content="#FF0089" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <link
+      rel="apple-touch-icon"
+      href="../../assets/img/icones/wasomupfy_fiv_512.png"
+    />
+    <link
+      rel="apple-touch-startup-image"
+      href="../../assets/img/screenshots/splash.png"
+    />
+    <link rel="manifest" href="../manifest.json" />
     <title>Configurações - Wasom Upfy</title>
-    <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
-    <link href="
+    <link
+      rel="shortcut icon"
+      href="../../assets/img/icones/wasomupfy_fiv.png"
+      type="image/x-icon"
+    />
+    <link
+      href="
 https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css
-" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="../../css/dashboard-style.css">
-    <link rel="stylesheet" href="../../css/lastest-style.css">
+"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+    />
+    <link rel="stylesheet" href="../../css/dashboard-style.css" />
+    <link rel="stylesheet" href="../../css/lastest-style.css" />
     <style>
-        /* Estilos específicos da página de configurações */
+      /* Estilos específicos da página de configurações */
 
-        .form-check-input:checked {
-            background-color: #ff0089;
-            border-color: #ff0089;
+      .form-check-input:checked {
+        background-color: #ff0089;
+        border-color: #ff0089;
+      }
+
+      .form-select:focus {
+        border-color: #ff0089;
+        box-shadow: 0 0 0 0.2rem rgba(255, 0, 137, 0.25);
+      }
+
+      .related-links .nav-link {
+        color: #b3b3b3;
+      }
+
+      .related-links .nav-link:hover {
+        color: #ff0089;
+      }
+
+      .version-info {
+        color: #b3b3b3;
+      }
+
+      /* Footer Version */
+      .footer-version {
+        text-align: center;
+        padding: 10px 0;
+        font-size: 0.875rem;
+        color: #b3b3b3;
+        background-color: #181818;
+        position: relative;
+        bottom: 0;
+        width: 100%;
+      }
+
+      /* Evitar sobreposição com a barra inferior em mobile */
+      @media (max-width: 991px) {
+        .container.my-4 {
+          padding-bottom: 80px;
         }
 
-        .form-select:focus {
-            border-color: #ff0089;
-            box-shadow: 0 0 0 0.2rem rgba(255, 0, 137, 0.25);
-        }
-
-        .related-links .nav-link {
-            color: #b3b3b3;
-        }
-
-        .related-links .nav-link:hover {
-            color: #ff0089;
-        }
-
-        .version-info {
-            color: #b3b3b3;
-        }
-
-        /* Footer Version */
         .footer-version {
-            text-align: center;
-            padding: 10px 0;
-            font-size: 0.875rem;
-            color: #b3b3b3;
-            background-color: #181818;
-            position: relative;
-            bottom: 0;
-            width: 100%;
+          margin-bottom: 80px;
         }
-
-        /* Evitar sobreposição com a barra inferior em mobile */
-        @media (max-width: 991px) {
-            .container.my-4 {
-                padding-bottom: 80px;
-            }
-
-            .footer-version {
-                margin-bottom: 80px;
-            }
-        }
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <!-- Menu Button (Left) -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu"
-                aria-controls="offcanvasMenu">
-                <span class="navbar-toggler-icon"><i class="bi bi-list text-white fs-1"></i></span>
-            </button>
-            <!-- Logo -->
-            <a class="navbar-brand" href="../painel.html">
-                <span class="text-light"
-                    style="font-weight: bold; box-sizing: border-box; text-transform: capitalize; font-family:Arial, sans-serif">WASOM
-                    UPFY</span>
-            </a>
-            <!-- Desktop Menu -->
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav m-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="../painel.html"><i class="bi bi-speedometer2"></i>
-                            Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../launch/releases.html"><i class="bi bi-disc"></i>
-                            Lançamentos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../analytics/statistics.html"><i
-                                class="bi bi-bar-chart"></i> Estatísticas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../finances/overview.html"><i
-                                class="bi bi-currency-dollar"></i> Finanças</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../artists/artists-list.html"><i
-                                class="bi bi-person"></i> Artistas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../youtube.html"><i class="bi bi-youtube"></i>
-                            Unificação de canal YouTube</a></li>
-                </ul>
-            </div>
-            <!-- User Icon (Right) -->
-            <div class="user-menu d-flex align-items-center">
-                <!-- Theme Toggle Button -->
-                <a class="theme-toggle text-white me-2" id="themeToggle">
-                    <i class="bi bi-sun" id="themeIcon"></i>
-                </a>
-                <a href="../notifications.html" class="text-white me-2" aria-label="Notificações">
-                    <i class="bi bi-bell fs-4"></i>
-                    <span class="badge bg-danger">9</span>
-                </a>
-                <a href="#" class="text-white" data-bs-toggle="dropdown">
-                    <i class="bi bi-person-circle fs-4"></i>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="../user/profile.html"><i class="bi bi-person me-2"></i>
-                            <strong>Eleven
-                                Records</strong></a>
-                        <div class="text-white-50"> &nbsp; &nbsp; &nbsp; &nbsp;
-                            (Conta 560108)</div>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item" href="../user/profile.html"><i class="bi bi-person me-2"></i> Meu
-                            Perfil</a>
-                    </li>
-                    <li><a class="dropdown-item" href="../account/manage-account.html"><i class="bi bi-tools me-2"></i>
-                            Gestão de Conta</a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item" href="../page/settings.html"><i class="bi bi-gear me-2"></i>
-                            Configurações</a></li>
-                    <li><a class="dropdown-item" href="../page/notifications.html"><i class="bi bi-bell me-2"></i>
-                            Notificações</a></li>
-                    <li><a class="dropdown-item" href="../services/available-services.html"><i
-                                class="bi bi-star me-2"></i> Conta e serviços disponíveis</a></li>
-                    <li><a class="dropdown-item" href="#?logout-wasomupfy" data-bs-toggle="modal"
-                            data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right me-2"></i>
-                            Desconectar-se</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item" href="../page/sobre.html"><i class="bi bi-info-circle me-2"></i>
-                            Sobre</a>
-                    </li>
-                    <li><a class="dropdown-item" href="../page/support.html"><i class="bi bi-headset me-2"></i> Enviar
-                            pedido de suporte</a></li>
-                    <li><a class="dropdown-item" href="../page/faq.html"><i class="bi bi-chat-left-text me-2"></i>
-                            Perguntas frequentes</a></li>
-                    <li><a class="dropdown-item" href="../page/help.html"><i class="bi bi-question-circle me-2"></i>
-                            Ajuda</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><span class="dropdown-item-text" id="versionDropdown"></span></li>
-                </ul>
-            </div>
+      <div class="container-fluid">
+        <!-- Menu Button (Left) -->
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#offcanvasMenu"
+          aria-controls="offcanvasMenu"
+        >
+          <span class="navbar-toggler-icon"
+            ><i class="bi bi-list text-white fs-1"></i
+          ></span>
+        </button>
+        <!-- Logo -->
+        <a class="navbar-brand" href="../painel.html">
+          <span
+            class="text-light"
+            style="
+              font-weight: bold;
+              box-sizing: border-box;
+              text-transform: capitalize;
+              font-family: Arial, sans-serif;
+            "
+            >WASOM UPFY</span
+          >
+        </a>
+        <!-- Desktop Menu -->
+        <div class="collapse navbar-collapse">
+          <ul class="navbar-nav m-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" href="../painel.html"
+                ><i class="bi bi-speedometer2"></i> Dashboard</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../launch/releases.html"
+                ><i class="bi bi-disc"></i> Lançamentos</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../analytics/statistics.html"
+                ><i class="bi bi-bar-chart"></i> Estatísticas</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../finances/overview.html"
+                ><i class="bi bi-currency-dollar"></i> Finanças</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../artists/artists-list.html"
+                ><i class="bi bi-person"></i> Artistas</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../youtube.html"
+                ><i class="bi bi-youtube"></i> Unificação de canal YouTube</a
+              >
+            </li>
+          </ul>
         </div>
+        <!-- User Icon (Right) -->
+        <div class="user-menu d-flex align-items-center">
+          <!-- Theme Toggle Button -->
+          <a class="theme-toggle text-white me-2" id="themeToggle">
+            <i class="bi bi-sun" id="themeIcon"></i>
+          </a>
+          <a
+            href="../notifications.html"
+            class="text-white me-2"
+            aria-label="Notificações"
+          >
+            <i class="bi bi-bell fs-4"></i>
+            <span class="badge bg-danger">9</span>
+          </a>
+          <a href="#" class="text-white" data-bs-toggle="dropdown">
+            <i class="bi bi-person-circle fs-4"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+              <a class="dropdown-item" href="../user/profile.html"
+                ><i class="bi bi-person me-2"></i>
+                <strong>Eleven Records</strong></a
+              >
+              <div class="text-white-50">
+                &nbsp; &nbsp; &nbsp; &nbsp; (Conta 560108)
+              </div>
+            </li>
+            <li>
+              <hr class="dropdown-divider" />
+            </li>
+            <li>
+              <a class="dropdown-item" href="../user/profile.html"
+                ><i class="bi bi-person me-2"></i> Meu Perfil</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="../account/manage-account.html"
+                ><i class="bi bi-tools me-2"></i> Gestão de Conta</a
+              >
+            </li>
+            <li>
+              <hr class="dropdown-divider" />
+            </li>
+            <li>
+              <a class="dropdown-item" href="../page/settings.html"
+                ><i class="bi bi-gear me-2"></i> Configurações</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="../page/notifications.html"
+                ><i class="bi bi-bell me-2"></i> Notificações</a
+              >
+            </li>
+            <li>
+              <a
+                class="dropdown-item"
+                href="../services/available-services.html"
+                ><i class="bi bi-star me-2"></i> Conta e serviços disponíveis</a
+              >
+            </li>
+            <li>
+              <a
+                class="dropdown-item"
+                href="#?logout-wasomupfy"
+                data-bs-toggle="modal"
+                data-bs-target="#logoutwasomupfy"
+                ><i class="bi bi-box-arrow-right me-2"></i> Desconectar-se</a
+              >
+            </li>
+            <li>
+              <hr class="dropdown-divider" />
+            </li>
+            <li>
+              <a class="dropdown-item" href="../page/sobre.html"
+                ><i class="bi bi-info-circle me-2"></i> Sobre</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="../page/support.html"
+                ><i class="bi bi-headset me-2"></i> Enviar pedido de suporte</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="../page/faq.html"
+                ><i class="bi bi-chat-left-text me-2"></i> Perguntas
+                frequentes</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="../page/help.html"
+                ><i class="bi bi-question-circle me-2"></i> Ajuda</a
+              >
+            </li>
+            <li>
+              <hr class="dropdown-divider" />
+            </li>
+            <li>
+              <span class="dropdown-item-text" id="versionDropdown"></span>
+            </li>
+          </ul>
+        </div>
+      </div>
     </nav>
 
     <!-- Toast para Notificações de Status -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="connectionToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <strong class="me-auto">Conexão</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Fechar"></button>
-            </div>
-            <div class="toast-body">
-                Você está offline. Alguns dados podem estar desatualizados.
-                <div class="mt-2">
-                    <button class="btn btn-pink btn-sm" onclick="tryReconnect()">Tentar Reconectar</button>
-                </div>
-            </div>
+      <div
+        id="connectionToast"
+        class="toast"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="toast-header">
+          <strong class="me-auto">Conexão</strong>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="toast"
+            aria-label="Fechar"
+          ></button>
         </div>
+        <div class="toast-body">
+          Você está offline. Alguns dados podem estar desatualizados.
+          <div class="mt-2">
+            <button class="btn btn-pink btn-sm" onclick="tryReconnect()">
+              Tentar Reconectar
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Modal Logout -->
-    <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">Terminar sessão</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p class="text-center text-dark">@josembengadacosta, você tem certeza de que deseja terminar sessão?
-                    </p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Não, continuar</button>
-                    <button class="btn btn-danger" type="button" name="logout_wasomupfy"
-                        onclick="logout_wasomupfy()">Sim, terminar</button>
-                </div>
-            </div>
+    <div
+      class="modal fade"
+      id="logoutwasomupfy"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="logoutwasomupfyLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">
+              Terminar sessão
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p class="text-center text-dark">
+              @josembengadacosta, você tem certeza de que deseja terminar
+              sessão?
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-bs-dismiss="modal"
+            >
+              Não, continuar
+            </button>
+            <button
+              class="btn btn-danger"
+              type="button"
+              name="logout_wasomupfy"
+              onclick="logout_wasomupfy()"
+            >
+              Sim, terminar
+            </button>
+          </div>
         </div>
+      </div>
     </div>
 
     <!-- Offcanvas Menu par Mobile e Desktop -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasMenuLabel">
-                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+    <div
+      class="offcanvas offcanvas-start"
+      tabindex="-1"
+      id="offcanvasMenu"
+      aria-labelledby="offcanvasMenuLabel"
+    >
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasMenuLabel">
+          <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
                     <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
                     <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
                         fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
                 </svg> -->
-                <span class="text-light"
-                    style="font-weight: bold; box-sizing: border-box; text-transform: capitalize; font-family:Arial, sans-serif">WASOM
-                    UPFY</span>
-            </h5>
-            <button type="button" class="btn-close text-white" data-bs-dismiss="offcanvas" aria-label="Close">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-        <div class="offcanvas-body">
-            <ul class="nav flex-column">
-                <li class="nav-item"><a class="nav-link" href="../painel.html"><i class="bi bi-speedometer2"></i>
-                        Dashboard</a></li>
-                <li class="nav-item"><a class="nav-link" href="../launch/releases.html"><i class="bi bi-disc"></i>
-                        Lançamentos</a></li>
-                <li class="nav-item"><a class="nav-link" href="../analytics/statistics.html"><i
-                            class="bi bi-bar-chart"></i> Estatísticas</a></li>
-                <li class="nav-item"><a class="nav-link" href="../finances/overview.html"><i
-                            class="bi bi-currency-dollar"></i> Finanças</a></li>
-                <li class="nav-item"><a class="nav-link" href="../artists/artists-list.html"><i
-                            class="bi bi-person"></i>
-                        Artistas</a></li>
-                <li class="nav-item"><a class="nav-link" href="../youtube.html"><i class="bi bi-youtube"></i> Unificação
-                        de
-                        canal YouTube</a></li>
-                <!-- Links secundários exibidos apenas em mobile -->
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../user/profile.html"><i
-                            class="bi bi-person-circle"></i> Meu Perfil</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link active" href="settings.html"><i
-                            class="bi bi-gear"></i> Configurações</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/notifications.html"><i
-                            class="bi bi-bell"></i> Notificações</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/sobre.html"><i
-                            class="bi bi-info-circle"></i> Sobre</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/plans.html"><i class="bi bi-star"></i>
-                        Planos</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/help.html"><i
-                            class="bi bi-question-circle"></i> Ajuda</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="#?logout-wasomupfy" data-bs-toggle="modal"
-                        data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right"></i> Desconectar-se</a></li>
-            </ul>
-        </div>
+          <span
+            class="text-light"
+            style="
+              font-weight: bold;
+              box-sizing: border-box;
+              text-transform: capitalize;
+              font-family: Arial, sans-serif;
+            "
+            >WASOM UPFY</span
+          >
+        </h5>
+        <button
+          type="button"
+          class="btn-close text-white"
+          data-bs-dismiss="offcanvas"
+          aria-label="Close"
+        >
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      <div class="offcanvas-body">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link" href="../painel.html"
+              ><i class="bi bi-speedometer2"></i> Dashboard</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../launch/releases.html"
+              ><i class="bi bi-disc"></i> Lançamentos</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../analytics/statistics.html"
+              ><i class="bi bi-bar-chart"></i> Estatísticas</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../finances/overview.html"
+              ><i class="bi bi-currency-dollar"></i> Finanças</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../artists/artists-list.html"
+              ><i class="bi bi-person"></i> Artistas</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../youtube.html"
+              ><i class="bi bi-youtube"></i> Unificação de canal YouTube</a
+            >
+          </li>
+          <!-- Links secundários exibidos apenas em mobile -->
+          <li class="nav-item d-lg-none">
+            <a class="nav-link" href="../user/profile.html"
+              ><i class="bi bi-person-circle"></i> Meu Perfil</a
+            >
+          </li>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link active" href="settings.html"
+              ><i class="bi bi-gear"></i> Configurações</a
+            >
+          </li>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link" href="../page/notifications.html"
+              ><i class="bi bi-bell"></i> Notificações</a
+            >
+          </li>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link" href="../page/sobre.html"
+              ><i class="bi bi-info-circle"></i> Sobre</a
+            >
+          </li>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link" href="../page/plans.html"
+              ><i class="bi bi-star"></i> Planos</a
+            >
+          </li>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link" href="../page/help.html"
+              ><i class="bi bi-question-circle"></i> Ajuda</a
+            >
+          </li>
+          <li class="nav-item d-lg-none">
+            <a
+              class="nav-link"
+              href="#?logout-wasomupfy"
+              data-bs-toggle="modal"
+              data-bs-target="#logoutwasomupfy"
+              ><i class="bi bi-box-arrow-right"></i> Desconectar-se</a
+            >
+          </li>
+        </ul>
+      </div>
     </div>
 
     <!-- Toast para Notificações de Status -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="connectionToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <strong class="me-auto">Conexão</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Fechar"></button>
-            </div>
-            <div class="toast-body">
-                Você está offline. Alguns dados podem estar desatualizados.
-                <div class="mt-2">
-                    <button class="btn btn-pink btn-sm" onclick="tryReconnect()">Tentar Reconectar</button>
-                </div>
-            </div>
+      <div
+        id="connectionToast"
+        class="toast"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="toast-header">
+          <strong class="me-auto">Conexão</strong>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="toast"
+            aria-label="Fechar"
+          ></button>
         </div>
+        <div class="toast-body">
+          Você está offline. Alguns dados podem estar desatualizados.
+          <div class="mt-2">
+            <button class="btn btn-pink btn-sm" onclick="tryReconnect()">
+              Tentar Reconectar
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Main Content -->
     <div class="container my-4">
-        <!-- Settings Header -->
-        <div class="welcome-text col-auto d-sm-block support-header text-center">
-            <h1>Configurações</h1>
-            <p>Personalize sua experiência no Wasom Upfy, gerencie preferências de conta, notificações, exibição e
-                privacidade.</p>
-        </div>
+      <!-- Settings Header -->
+      <div class="welcome-text col-auto d-sm-block support-header text-center">
+        <h1>Configurações</h1>
+        <p>
+          Personalize sua experiência no Wasom Upfy, gerencie preferências de
+          conta, notificações, exibição e privacidade.
+        </p>
+      </div>
 
-        <!-- Profile Settings -->
-        <div class="profile-settings">
-            <h2>Perfil</h2>
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Informações da Conta</h5>
-                    <p class="card-text"><strong>Nome:</strong> José da Costa</p>
-                    <p class="card-text"><strong>Conta:</strong> Eleven Records (ID: 560108)</p>
-                    <p class="card-text"><strong>E-mail:</strong> jose@exemplo.com</p>
-                    <a href="../user/profile.html" class="btn btn-pink">Editar Perfil</a>
-                    <a href="../user/profile.html?#password" class="btn btn-dark ms-2">Alterar Senha</a>
-                </div>
+      <!-- Profile Settings -->
+      <div class="profile-settings">
+        <h2>Perfil</h2>
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Informações da Conta</h5>
+            <p class="card-text"><strong>Nome:</strong> José da Costa</p>
+            <p class="card-text">
+              <strong>Conta:</strong> Eleven Records (ID: 560108)
+            </p>
+            <p class="card-text"><strong>E-mail:</strong> jose@exemplo.com</p>
+            <a href="../user/profile.html" class="btn btn-pink"
+              >Editar Perfil</a
+            >
+            <a href="../user/profile.html?#password" class="btn btn-dark ms-2"
+              >Alterar Senha</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Notification Settings -->
+      <div class="notification-settings mt-4">
+        <h2>Notificações</h2>
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Preferências de Notificação</h5>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="emailNotifications"
+                checked
+              />
+              <label
+                class="form-check-label"
+                for="emailNotifications"
+                aria-label="Ativar notificações por e-mail"
+                >Receber notificações por e-mail (saques, streams,
+                suporte)</label
+              >
             </div>
-        </div>
-
-        <!-- Notification Settings -->
-        <div class="notification-settings mt-4">
-            <h2>Notificações</h2>
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Preferências de Notificação</h5>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
-                        <label class="form-check-label" for="emailNotifications"
-                            aria-label="Ativar notificações por e-mail">Receber notificações por e-mail (saques,
-                            streams, suporte)</label>
-                    </div>
-                    <div class="form-check mt-2">
-                        <input class="form-check-input" type="checkbox" id="pushNotifications">
-                        <label class="form-check-label" for="pushNotifications"
-                            aria-label="Ativar notificações push">Receber notificações push no navegador</label>
-                    </div>
-                    <div class="form-check mt-2">
-                        <input class="form-check-input" type="checkbox" id="highStreamNotifications">
-                        <label class="form-check-label" for="highStreamNotifications"
-                            aria-label="Notificações para streams altos">Notificar streams acima de 1.000</label>
-                    </div>
-                    <button class="btn btn-pink mt-3" onclick="testPushNotification()">Testar Notificação Push</button>
-                    <a href="../notifications.html" class="btn btn-pink mt-3">Ver Notificações</a>
-                </div>
+            <div class="form-check mt-2">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="pushNotifications"
+              />
+              <label
+                class="form-check-label"
+                for="pushNotifications"
+                aria-label="Ativar notificações push"
+                >Receber notificações push no navegador</label
+              >
             </div>
-        </div>
-
-        <!-- Theme Settings -->
-        <div class="theme-settings mt-4">
-            <h2>Tema</h2>
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Personalizar Tema</h5>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="themeOptions" id="themeDark" value="dark"
-                            checked>
-                        <label class="form-check-label" for="themeDark" aria-label="Selecionar modo escuro">Modo
-                            Escuro</label>
-                    </div>
-                    <div class="form-check mt-2">
-                        <input class="form-check-input" type="radio" name="themeOptions" id="themeLight" value="light">
-                        <label class="form-check-label" for="themeLight" aria-label="Selecionar modo claro">Modo
-                            Claro</label>
-                    </div>
-                    <div class="form-check mt-2">
-                        <input class="form-check-input" type="radio" name="themeOptions" id="themeSystem"
-                            value="system">
-                        <label class="form-check-label" for="themeSystem" aria-label="Usar tema do sistema">Usar tema do
-                            sistema</label>
-                    </div>
-                </div>
+            <div class="form-check mt-2">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="highStreamNotifications"
+              />
+              <label
+                class="form-check-label"
+                for="highStreamNotifications"
+                aria-label="Notificações para streams altos"
+                >Notificar streams acima de 1.000</label
+              >
             </div>
+            <button class="btn btn-pink mt-3" onclick="testPushNotification()">
+              Testar Notificação Push
+            </button>
+            <a href="../notifications.html" class="btn btn-pink mt-3"
+              >Ver Notificações</a
+            >
+          </div>
         </div>
+      </div>
 
-        <!-- Dashboard Display Settings -->
-        <div class="display-settings mt-4">
-            <h2>Exibição do Dashboard</h2>
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Personalizar Dashboard</h5>
-                    <p class="card-text">Escolha quais widgets exibir na página inicial.</p>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="showStreamChart" checked>
-                        <label class="form-check-label" for="showStreamChart"
-                            aria-label="Exibir gráfico de streams">Mostrar gráfico de streams</label>
-                    </div>
-                    <div class="form-check mt-2">
-                        <input class="form-check-input" type="checkbox" id="showFinancialSummary" checked>
-                        <label class="form-check-label" for="showFinancialSummary"
-                            aria-label="Exibir resumo financeiro">Mostrar resumo financeiro</label>
-                    </div>
-                    <div class="form-check mt-2">
-                        <input class="form-check-input" type="checkbox" id="showRecentReleases">
-                        <label class="form-check-label" for="showRecentReleases"
-                            aria-label="Exibir lançamentos recentes">Mostrar lançamentos recentes</label>
-                    </div>
-                    <button class="btn btn-pink mt-3" onclick="saveDisplaySettings()">Salvar Configurações</button>
-                </div>
+      <!-- Theme Settings -->
+      <div class="theme-settings mt-4">
+        <h2>Tema</h2>
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Personalizar Tema</h5>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="themeOptions"
+                id="themeDark"
+                value="dark"
+                checked
+              />
+              <label
+                class="form-check-label"
+                for="themeDark"
+                aria-label="Selecionar modo escuro"
+                >Modo Escuro</label
+              >
             </div>
-        </div>
-
-        <!-- Data Export Settings -->
-        <div class="export-settings mt-4">
-            <h2>Exportação de Dados</h2>
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Configurar Exportações</h5>
-                    <p class="card-text">Escolha o formato para exportar seus relatórios.</p>
-                    <div class="mb-3">
-                        <label for="exportFormat" class="form-label">Formato de Exportação</label>
-                        <select class="form-select" id="exportFormat" aria-label="Selecionar formato de exportação">
-                            <option value="csv" selected>CSV</option>
-                            <option value="pdf">PDF</option>
-                        </select>
-                    </div>
-                    <button class="btn btn-pink" onclick="exportData()">Exportar Relatório de Exemplo</button>
-                </div>
+            <div class="form-check mt-2">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="themeOptions"
+                id="themeLight"
+                value="light"
+              />
+              <label
+                class="form-check-label"
+                for="themeLight"
+                aria-label="Selecionar modo claro"
+                >Modo Claro</label
+              >
             </div>
-        </div>
-
-        <!-- Privacy Settings -->
-        <div class="privacy-settings mt-4">
-            <h2>Privacidade</h2>
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Configurações de Privacidade</h5>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="privateStats" checked>
-                        <label class="form-check-label" for="privateStats"
-                            aria-label="Tornar estatísticas privadas">Estatísticas visíveis apenas para mim</label>
-                    </div>
-                    <div class="form-check mt-2">
-                        <input class="form-check-input" type="checkbox" id="acceptCookies">
-                        <label class="form-check-label" for="acceptCookies"
-                            aria-label="Aceitar cookies analíticos">Aceitar cookies analíticos</label>
-                    </div>
-                    <button class="btn btn-pink mt-3" onclick="savePrivacySettings()">Salvar Configurações</button>
-                </div>
+            <div class="form-check mt-2">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="themeOptions"
+                id="themeSystem"
+                value="system"
+              />
+              <label
+                class="form-check-label"
+                for="themeSystem"
+                aria-label="Usar tema do sistema"
+                >Usar tema do sistema</label
+              >
             </div>
+          </div>
         </div>
+      </div>
 
-        <!-- Integration Settings -->
-        <div class="integration-settings mt-4">
-            <h2>Integrações</h2>
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Conectar Plataformas</h5>
-                    <p class="card-text">Conecte suas contas para gerenciar conteúdo e pagamentos.</p>
-                    <a href="../youtube.html" class="btn btn-pink">Conectar YouTube</a>
-                    <a href="../account/payment-methods.html" class="btn btn-dark ms-2">Configurar Pagamentos</a>
-                </div>
+      <!-- Dashboard Display Settings -->
+      <div class="display-settings mt-4">
+        <h2>Exibição do Dashboard</h2>
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Personalizar Dashboard</h5>
+            <p class="card-text">
+              Escolha quais widgets exibir na página inicial.
+            </p>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="showStreamChart"
+                checked
+              />
+              <label
+                class="form-check-label"
+                for="showStreamChart"
+                aria-label="Exibir gráfico de streams"
+                >Mostrar gráfico de streams</label
+              >
             </div>
-        </div>
-
-        <!-- Language and Region Settings -->
-        <div class="language-settings mt-4">
-            <h2>Idioma e Região</h2>
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Personalizar Idioma e Moeda</h5>
-                    <div class="mb-3">
-                        <label for="languageSelect" class="form-label">Idioma</label>
-                        <select class="form-select" id="languageSelect" aria-label="Selecionar idioma">
-                            <option value="pt-br" selected>Português (Brasil)</option>
-                            <option value="en">English</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="currencySelect" class="form-label">Moeda</label>
-                        <select class="form-select" id="currencySelect" aria-label="Selecionar moeda">
-                            <option value="BRL" selected>BRL (Real Brasileiro)</option>
-                            <option value="USD">USD (Dólar Americano)</option>
-                        </select>
-                    </div>
-                    <button class="btn btn-pink" onclick="saveLanguageSettings()">Salvar Configurações</button>
-                </div>
+            <div class="form-check mt-2">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="showFinancialSummary"
+                checked
+              />
+              <label
+                class="form-check-label"
+                for="showFinancialSummary"
+                aria-label="Exibir resumo financeiro"
+                >Mostrar resumo financeiro</label
+              >
             </div>
-        </div>
-
-        <!-- Account Settings -->
-        <div class="account-settings mt-4">
-            <h2>Conta</h2>
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Gerenciar Conta</h5>
-                    <p class="card-text">Atualize seu plano ou gerencie sua conta.</p>
-                    <a href="../../planos.html" class="btn btn-pink">Ver Planos</a>
-                    <a href="../account/manage-account.html" class="btn btn-dark ms-2">Gerenciar Conta</a>
-                    <a href="../user/profile.html#deleteAccount" class="btn btn-danger ms-2">Excluir Conta</a>
-                </div>
+            <div class="form-check mt-2">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="showRecentReleases"
+              />
+              <label
+                class="form-check-label"
+                for="showRecentReleases"
+                aria-label="Exibir lançamentos recentes"
+                >Mostrar lançamentos recentes</label
+              >
             </div>
+            <button class="btn btn-pink mt-3" onclick="saveDisplaySettings()">
+              Salvar Configurações
+            </button>
+          </div>
         </div>
+      </div>
 
-        <!-- Related Links -->
-        <div class="related-links mt-4">
-            <h2>Mais Informações</h2>
-            <ul class="nav flex-column">
-                <li class="nav-item"><a class="nav-link" href="help.html"><i class="bi bi-question-circle"></i>
-                        Ajuda</a></li>
-                <li class="nav-item"><a class="nav-link" href="support.html"><i class="bi bi-headset"></i> Suporte</a>
-                </li>
-                <li class="nav-item"><a class="nav-link" href="faq.html"><i class="bi bi-chat-left-text"></i> Perguntas
-                        Frequentes</a></li>
-                <li class="nav-item"><a class="nav-link" href="../../sobre.html"><i class="bi bi-info-circle"></i>
-                        Sobre</a></li>
-                <li class="nav-item"><a class="nav-link" href="../../contatos.html"><i class="bi bi-headset"></i>
-                        Contatos</a></li>
-                <li class="nav-item"><a class="nav-link" href="politicies/terms.html"><i class="bi bi-book"></i>
-                        Políticas de Privacidade</a></li>
-                <li class="nav-item"><a class="nav-link" href="politicies/terms.html"><i class="bi bi-newspaper"></i>
-                        Termos de Uso e de Condições</a></li>
-            </ul>
+      <!-- Data Export Settings -->
+      <div class="export-settings mt-4">
+        <h2>Exportação de Dados</h2>
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Configurar Exportações</h5>
+            <p class="card-text">
+              Escolha o formato para exportar seus relatórios.
+            </p>
+            <div class="mb-3">
+              <label for="exportFormat" class="form-label"
+                >Formato de Exportação</label
+              >
+              <select
+                class="form-select"
+                id="exportFormat"
+                aria-label="Selecionar formato de exportação"
+              >
+                <option value="csv" selected>CSV</option>
+                <option value="pdf">PDF</option>
+              </select>
+            </div>
+            <button class="btn btn-pink" onclick="exportData()">
+              Exportar Relatório de Exemplo
+            </button>
+          </div>
         </div>
+      </div>
 
-        <!-- Version Info -->
-        <div class="version-info mt-4">
-            <p><strong>Versão do Dashboard:</strong> 2.0 (2025)</p>
+      <!-- Privacy Settings -->
+      <div class="privacy-settings mt-4">
+        <h2>Privacidade</h2>
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Configurações de Privacidade</h5>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="privateStats"
+                checked
+              />
+              <label
+                class="form-check-label"
+                for="privateStats"
+                aria-label="Tornar estatísticas privadas"
+                >Estatísticas visíveis apenas para mim</label
+              >
+            </div>
+            <div class="form-check mt-2">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="acceptCookies"
+              />
+              <label
+                class="form-check-label"
+                for="acceptCookies"
+                aria-label="Aceitar cookies analíticos"
+                >Aceitar cookies analíticos</label
+              >
+            </div>
+            <button class="btn btn-pink mt-3" onclick="savePrivacySettings()">
+              Salvar Configurações
+            </button>
+          </div>
         </div>
+      </div>
+
+      <!-- Integration Settings -->
+      <div class="integration-settings mt-4">
+        <h2>Integrações</h2>
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Conectar Plataformas</h5>
+            <p class="card-text">
+              Conecte suas contas para gerenciar conteúdo e pagamentos.
+            </p>
+            <a href="../youtube.html" class="btn btn-pink">Conectar YouTube</a>
+            <a href="../account/payment-methods.html" class="btn btn-dark ms-2"
+              >Configurar Pagamentos</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Language and Region Settings -->
+      <div class="language-settings mt-4">
+        <h2>Idioma e Região</h2>
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Personalizar Idioma e Moeda</h5>
+            <div class="mb-3">
+              <label for="languageSelect" class="form-label">Idioma</label>
+              <select
+                class="form-select"
+                id="languageSelect"
+                aria-label="Selecionar idioma"
+              >
+                <option value="pt-br" selected>Português (Brasil)</option>
+                <option value="en">English</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="currencySelect" class="form-label">Moeda</label>
+              <select
+                class="form-select"
+                id="currencySelect"
+                aria-label="Selecionar moeda"
+              >
+                <option value="BRL" selected>BRL (Real Brasileiro)</option>
+                <option value="USD">USD (Dólar Americano)</option>
+              </select>
+            </div>
+            <button class="btn btn-pink" onclick="saveLanguageSettings()">
+              Salvar Configurações
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Account Settings -->
+      <div class="account-settings mt-4">
+        <h2>Conta</h2>
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Gerenciar Conta</h5>
+            <p class="card-text">Atualize seu plano ou gerencie sua conta.</p>
+            <a href="../../planos.html" class="btn btn-pink">Ver Planos</a>
+            <a href="../account/manage-account.html" class="btn btn-dark ms-2"
+              >Gerenciar Conta</a
+            >
+            <a
+              href="../user/profile.html#deleteAccount"
+              class="btn btn-danger ms-2"
+              >Excluir Conta</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Related Links -->
+      <div class="related-links mt-4">
+        <h2>Mais Informações</h2>
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link" href="help.html"
+              ><i class="bi bi-question-circle"></i> Ajuda</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="support.html"
+              ><i class="bi bi-headset"></i> Suporte</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="faq.html"
+              ><i class="bi bi-chat-left-text"></i> Perguntas Frequentes</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../../sobre.html"
+              ><i class="bi bi-info-circle"></i> Sobre</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../../contatos.html"
+              ><i class="bi bi-headset"></i> Contatos</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="politicies/terms.html"
+              ><i class="bi bi-book"></i> Políticas de Privacidade</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="politicies/terms.html"
+              ><i class="bi bi-newspaper"></i> Termos de Uso e de Condições</a
+            >
+          </li>
+        </ul>
+      </div>
+
+      <!-- Version Info -->
+      <div class="version-info mt-4">
+        <p><strong>Versão do Dashboard:</strong> 2.0 (2025)</p>
+      </div>
     </div>
 
     <!-- Bottom Navigation for Mobile -->
     <nav class="bottom-nav d-lg-none">
-        <ul class="nav justify-content-around">
-            <li class="nav-item"><a class="nav-link" href="../painel.html" aria-label="Ir para Dashboard"><i
-                        class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../launch/releases.html" aria-label="Ir para Lançamentos"><i
-                        class="bi bi-disc"></i><span>Lançamentos</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../analytics/statistics.html"
-                    aria-label="Ir para Estatísticas"><i class="bi bi-bar-chart"></i><span>Estatísticas</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../finances/overview.html" aria-label="Ir para Finanças"><i
-                        class="bi bi-currency-dollar"></i><span>Finanças</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../artists/artists-list.html"
-                    aria-label="Ir para Artistas"><i class="bi bi-person"></i><span>Artistas</span></a></li>
-        </ul>
+      <ul class="nav justify-content-around">
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="../painel.html"
+            aria-label="Ir para Dashboard"
+            ><i class="bi bi-speedometer2"></i><span>Dashboard</span></a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="../launch/releases.html"
+            aria-label="Ir para Lançamentos"
+            ><i class="bi bi-disc"></i><span>Lançamentos</span></a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="../analytics/statistics.html"
+            aria-label="Ir para Estatísticas"
+            ><i class="bi bi-bar-chart"></i><span>Estatísticas</span></a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="../finances/overview.html"
+            aria-label="Ir para Finanças"
+            ><i class="bi bi-currency-dollar"></i><span>Finanças</span></a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="../artists/artists-list.html"
+            aria-label="Ir para Artistas"
+            ><i class="bi bi-person"></i><span>Artistas</span></a
+          >
+        </li>
+      </ul>
     </nav>
 
     <!-- Bootstrap JS and Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Inicializar Tooltips
-        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+      // Inicializar Tooltips
+      const tooltipTriggerList = document.querySelectorAll(
+        '[data-bs-toggle="tooltip"]'
+      );
+      const tooltipList = [...tooltipTriggerList].map(
+        (tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl)
+      );
 
-        // Theme Toggle with Persistence
-        const themeToggle = document.getElementById('themeToggle');
-        const themeIcon = document.getElementById('themeIcon');
+      // Theme Toggle with Persistence
+      const themeToggle = document.getElementById("themeToggle");
+      const themeIcon = document.getElementById("themeIcon");
 
-        function applyTheme(theme) {
-            if (theme === 'dark') {
-                document.body.classList.add('dark-mode');
-                document.body.classList.remove('light-mode');
-                themeIcon.classList.remove('bi-sun');
-                themeIcon.classList.add('bi-moon');
-                document.querySelectorAll('input[name="themeOptions"]').forEach(input => {
-                    input.checked = input.value === 'dark';
-                });
-            } else if (theme === 'light') {
-                document.body.classList.add('light-mode');
-                document.body.classList.remove('dark-mode');
-                themeIcon.classList.remove('bi-moon');
-                themeIcon.classList.add('bi-sun');
-                document.querySelectorAll('input[name="themeOptions"]').forEach(input => {
-                    input.checked = input.value === 'light';
-                });
-            } else {
-                const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-                applyTheme(prefersDark ? 'dark' : 'light');
-                document.querySelectorAll('input[name="themeOptions"]').forEach(input => {
-                    input.checked = input.value === 'system';
-                });
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedTheme = localStorage.getItem('theme');
-            applyTheme(savedTheme || 'system');
-
-            // Carregar configurações salvas
-            const savedDisplaySettings = JSON.parse(localStorage.getItem('displaySettings')) || {};
-            document.getElementById('showStreamChart').checked = savedDisplaySettings.showStreamChart !== false;
-            document.getElementById('showFinancialSummary').checked = savedDisplaySettings
-                .showFinancialSummary !== false;
-            document.getElementById('showRecentReleases').checked = savedDisplaySettings.showRecentReleases ||
-                false;
-
-            const savedPrivacySettings = JSON.parse(localStorage.getItem('privacySettings')) || {};
-            document.getElementById('privateStats').checked = savedPrivacySettings.privateStats !== false;
-            document.getElementById('acceptCookies').checked = savedPrivacySettings.acceptCookies || false;
-
-            const savedLanguageSettings = JSON.parse(localStorage.getItem('languageSettings')) || {};
-            document.getElementById('languageSelect').value = savedLanguageSettings.language || 'pt-br';
-            document.getElementById('exportFormat').value = savedLanguageSettings.exportFormat || 'csv ';
-            document.getElementById('currencySelect').value = savedLanguageSettings.currency || 'BRL';
-        });
-
-        themeToggle.addEventListener('click', () => {
-            const isDarkMode = document.body.classList.contains('dark-mode');
-            const newTheme = isDarkMode ? 'light' : 'dark';
-            applyTheme(newTheme);
-            localStorage.setItem('theme', newTheme);
-        });
-
-        // Theme Settings
-        document.querySelectorAll('input[name="themeOptions"]').forEach(input => {
-            input.addEventListener('change', () => {
-                const theme = input.value;
-                if (theme === 'system') {
-                    localStorage.removeItem('theme');
-                    applyTheme('system');
-                } else {
-                    applyTheme(theme);
-                    localStorage.setItem('theme', theme);
-                }
+      function applyTheme(theme) {
+        if (theme === "dark") {
+          document.body.classList.add("dark-mode");
+          document.body.classList.remove("light-mode");
+          themeIcon.classList.remove("bi-sun");
+          themeIcon.classList.add("bi-moon");
+          document
+            .querySelectorAll('input[name="themeOptions"]')
+            .forEach((input) => {
+              input.checked = input.value === "dark";
             });
+        } else if (theme === "light") {
+          document.body.classList.add("light-mode");
+          document.body.classList.remove("dark-mode");
+          themeIcon.classList.remove("bi-moon");
+          themeIcon.classList.add("bi-sun");
+          document
+            .querySelectorAll('input[name="themeOptions"]')
+            .forEach((input) => {
+              input.checked = input.value === "light";
+            });
+        } else {
+          const prefersDark =
+            window.matchMedia &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches;
+          applyTheme(prefersDark ? "dark" : "light");
+          document
+            .querySelectorAll('input[name="themeOptions"]')
+            .forEach((input) => {
+              input.checked = input.value === "system";
+            });
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const savedTheme = localStorage.getItem("theme");
+        applyTheme(savedTheme || "system");
+
+        // Carregar configurações salvas
+        const savedDisplaySettings =
+          JSON.parse(localStorage.getItem("displaySettings")) || {};
+        document.getElementById("showStreamChart").checked =
+          savedDisplaySettings.showStreamChart !== false;
+        document.getElementById("showFinancialSummary").checked =
+          savedDisplaySettings.showFinancialSummary !== false;
+        document.getElementById("showRecentReleases").checked =
+          savedDisplaySettings.showRecentReleases || false;
+
+        const savedPrivacySettings =
+          JSON.parse(localStorage.getItem("privacySettings")) || {};
+        document.getElementById("privateStats").checked =
+          savedPrivacySettings.privateStats !== false;
+        document.getElementById("acceptCookies").checked =
+          savedPrivacySettings.acceptCookies || false;
+
+        const savedLanguageSettings =
+          JSON.parse(localStorage.getItem("languageSettings")) || {};
+        document.getElementById("languageSelect").value =
+          savedLanguageSettings.language || "pt-br";
+        document.getElementById("exportFormat").value =
+          savedLanguageSettings.exportFormat || "csv ";
+        document.getElementById("currencySelect").value =
+          savedLanguageSettings.currency || "BRL";
+      });
+
+      themeToggle.addEventListener("click", () => {
+        const isDarkMode = document.body.classList.contains("dark-mode");
+        const newTheme = isDarkMode ? "light" : "dark";
+        applyTheme(newTheme);
+        localStorage.setItem("theme", newTheme);
+      });
+
+      // Theme Settings
+      document
+        .querySelectorAll('input[name="themeOptions"]')
+        .forEach((input) => {
+          input.addEventListener("change", () => {
+            const theme = input.value;
+            if (theme === "system") {
+              localStorage.removeItem("theme");
+              applyTheme("system");
+            } else {
+              applyTheme(theme);
+              localStorage.setItem("theme", theme);
+            }
+          });
         });
 
-        // Save Display Settings
-        function saveDisplaySettings() {
-            const settings = {
-                showStreamChart: document.getElementById('showStreamChart').checked,
-                showFinancialSummary: document.getElementById('showFinancialSummary').checked,
-                showRecentReleases: document.getElementById('showRecentReleases').checked
-            };
-            localStorage.setItem('displaySettings', JSON.stringify(settings));
-            alert('Configurações de exibição salvas!');
-        }
+      // Save Display Settings
+      function saveDisplaySettings() {
+        const settings = {
+          showStreamChart: document.getElementById("showStreamChart").checked,
+          showFinancialSummary: document.getElementById("showFinancialSummary")
+            .checked,
+          showRecentReleases:
+            document.getElementById("showRecentReleases").checked,
+        };
+        localStorage.setItem("displaySettings", JSON.stringify(settings));
+        alert("Configurações de exibição salvas!");
+      }
 
-        // Save Privacy Settings
-        function savePrivacySettings() {
-            const settings = {
-                privateStats: document.getElementById('privateStats').checked,
-                acceptCookies: document.getElementById('acceptCookies').checked
-            };
-            localStorage.setItem('privacySettings', JSON.stringify(settings));
-            alert('Configurações de privacidade salvas!');
-        }
+      // Save Privacy Settings
+      function savePrivacySettings() {
+        const settings = {
+          privateStats: document.getElementById("privateStats").checked,
+          acceptCookies: document.getElementById("acceptCookies").checked,
+        };
+        localStorage.setItem("privacySettings", JSON.stringify(settings));
+        alert("Configurações de privacidade salvas!");
+      }
 
-        // Save Language and Export Settings
-        function saveLanguageSettings() {
-            const settings = {
-                language: document.getElementById('languageSelect').value,
-                currency: document.getElementById('currencySelect').value,
-                exportFormat: document.getElementById('exportFormat').value
-            };
-            localStorage.setItem('languageSettings', JSON.stringify(settings));
-            alert('Configurações de idioma e exportação salvas!');
-        }
+      // Save Language and Export Settings
+      function saveLanguageSettings() {
+        const settings = {
+          language: document.getElementById("languageSelect").value,
+          currency: document.getElementById("currencySelect").value,
+          exportFormat: document.getElementById("exportFormat").value,
+        };
+        localStorage.setItem("languageSettings", JSON.stringify(settings));
+        alert("Configurações de idioma e exportação salvas!");
+      }
 
-        // Export Data (Example)
-        function exportData() {
-            const format = document.getElementById('exportFormat').value;
-            if (format === 'csv') {
-                const sampleData = "Data,Streams,Receita\n2025-07-01,1000,$50\n2025-07-02,1200,$60";
-                const blob = new Blob([sampleData], {
-                    type: 'text/csv'
-                });
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'relatorio_exemplo.csv';
-                a.click();
-                window.URL.revokeObjectURL(url);
+      // Export Data (Example)
+      function exportData() {
+        const format = document.getElementById("exportFormat").value;
+        if (format === "csv") {
+          const sampleData =
+            "Data,Streams,Receita\n2025-07-01,1000,$50\n2025-07-02,1200,$60";
+          const blob = new Blob([sampleData], {
+            type: "text/csv",
+          });
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "relatorio_exemplo.csv";
+          a.click();
+          window.URL.revokeObjectURL(url);
+        } else {
+          alert("Exportação de PDF não implementada no frontend.");
+        }
+      }
+
+      // Testar Notificação Push
+      function testPushNotification() {
+        if ("Notification" in window) {
+          Notification.requestPermission().then((permission) => {
+            if (permission === "granted") {
+              new Notification("Wasom Upfy", {
+                body: "Você atingiu 1.000 streams! Verifique suas estatísticas.",
+                icon: "/assets/img/icones/wasomupfy_fiv.png",
+              });
             } else {
-                alert('Exportação de PDF não implementada no frontend.');
+              alert(
+                "Permissão para notificações negada. Habilite nas configurações do navegador."
+              );
             }
+          });
+        } else {
+          alert("Notificações push não suportadas neste navegador.");
         }
+      }
 
-        // Testar Notificação Push
-        function testPushNotification() {
-            if ('Notification' in window) {
-                Notification.requestPermission().then(permission => {
-                    if (permission === 'granted') {
-                        new Notification('Wasom Upfy', {
-                            body: 'Você atingiu 1.000 streams! Verifique suas estatísticas.',
-                            icon: '/assets/img/icones/wasomupfy_fiv.png'
-                        });
-                    } else {
-                        alert('Permissão para notificações negada. Habilite nas configurações do navegador.');
-                    }
-                });
-            } else {
-                alert('Notificações push não suportadas neste navegador.');
-            }
-        }
+      // Gerenciar Status de Conexão
+      const connectionStatus = document.getElementById("connectionStatus");
+      const connectionToast = document.getElementById("connectionToast");
+      const toast = new bootstrap.Toast(connectionToast);
 
-        // Gerenciar Status de Conexão
-        const connectionStatus = document.getElementById('connectionStatus');
-        const connectionToast = document.getElementById('connectionToast');
-        const toast = new bootstrap.Toast(connectionToast);
+      function updateConnectionStatus() {
+        const isOnline = navigator.onLine;
+        connectionStatus.textContent = isOnline ? "Online" : "Offline";
+        connectionStatus.classList.toggle("online", isOnline);
+        connectionStatus.classList.toggle("offline", !isOnline);
+        connectionStatus.setAttribute(
+          "title",
+          isOnline ? "Você está online" : "Você está offline"
+        );
+        bootstrap.Tooltip.getOrCreateInstance(connectionStatus).setContent({
+          ".tooltip-inner": isOnline ? "Você está online" : "Você está offline",
+        });
 
-        function updateConnectionStatus() {
-            const isOnline = navigator.onLine;
-            connectionStatus.textContent = isOnline ? 'Online' : 'Offline';
-            connectionStatus.classList.toggle('online', isOnline);
-            connectionStatus.classList.toggle('offline', !isOnline);
-            connectionStatus.setAttribute('title', isOnline ? 'Você está online' : 'Você está offline');
-            bootstrap.Tooltip.getOrCreateInstance(connectionStatus).setContent({
-                '.tooltip-inner': isOnline ? 'Você está online' : 'Você está offline'
-            });
-
-            if (!isOnline) {
-                connectionToast.querySelector('.toast-body').innerHTML = `
+        if (!isOnline) {
+          connectionToast.querySelector(".toast-body").innerHTML = `
                     Você está offline. Alguns dados podem estar desatualizados.
                     <div class="mt-2">
                         <button class="btn btn-pink btn-sm" onclick="tryReconnect()">Tentar Reconectar</button>
                     </div>
                 `;
-                toast.show();
-            } else {
-                connectionToast.querySelector('.toast-body').innerHTML = `
+          toast.show();
+        } else {
+          connectionToast.querySelector(".toast-body").innerHTML = `
                     Você está online. Todos os dados estão atualizados.
                 `;
-                toast.show();
-            }
+          toast.show();
         }
+      }
 
-        // Tentar Reconectar
-        function tryReconnect() {
-            if (navigator.onLine) {
-                updateConnectionStatus();
-            } else {
-                fetch('/').then(() => {
-                    updateConnectionStatus();
-                }).catch(() => {
-                    alert('Ainda sem conexão. Tente novamente mais tarde.');
-                });
-            }
-        }
-
-        // Inicializar Status de Conexão
-        document.addEventListener('DOMContentLoaded', () => {
-            updateConnectionStatus();
-            window.addEventListener('online', updateConnectionStatus);
-            window.addEventListener('offline', updateConnectionStatus);
-        });
-
-        // Highlight active link in bottom navigation and offcanvas
-        document.addEventListener('DOMContentLoaded', () => {
-            const navLinks = document.querySelectorAll('.bottom-nav .nav-link, .offcanvas-body .nav-link');
-            const currentPath = window.location.pathname.split('/').pop();
-
-            navLinks.forEach(link => {
-                if (link.getAttribute('href').split('/').pop() === currentPath) {
-                    link.classList.add('active');
-                }
-            });
-        });
-
-        // Registrar Service Worker
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js').then(registration => {
-                    console.log('Service Worker registrado com sucesso:', registration);
-                }).catch(error => {
-                    console.log('Erro ao registrar Service Worker:', error);
-                });
+      // Tentar Reconectar
+      function tryReconnect() {
+        if (navigator.onLine) {
+          updateConnectionStatus();
+        } else {
+          fetch("/")
+            .then(() => {
+              updateConnectionStatus();
+            })
+            .catch(() => {
+              alert("Ainda sem conexão. Tente novamente mais tarde.");
             });
         }
+      }
 
-        // Logout Function
-        function logout_wasomupfy() {
-            window.location = '../logout';
-        }
+      // Inicializar Status de Conexão
+      document.addEventListener("DOMContentLoaded", () => {
+        updateConnectionStatus();
+        window.addEventListener("online", updateConnectionStatus);
+        window.addEventListener("offline", updateConnectionStatus);
+      });
+
+      // Highlight active link in bottom navigation and offcanvas
+      document.addEventListener("DOMContentLoaded", () => {
+        const navLinks = document.querySelectorAll(
+          ".bottom-nav .nav-link, .offcanvas-body .nav-link"
+        );
+        const currentPath = window.location.pathname.split("/").pop();
+
+        navLinks.forEach((link) => {
+          if (link.getAttribute("href").split("/").pop() === currentPath) {
+            link.classList.add("active");
+          }
+        });
+      });
+
+      // Registrar Service Worker
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("/sw.js")
+            .then((registration) => {
+              console.log(
+                "Service Worker registrado com sucesso:",
+                registration
+              );
+            })
+            .catch((error) => {
+              console.log("Erro ao registrar Service Worker:", error);
+            });
+        });
+      }
+
+      // Logout Function
+      function logout_wasomupfy() {
+        window.location = "../logout";
+      }
     </script>
-</body>
-
+  </body>
 </html>

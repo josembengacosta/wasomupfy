@@ -1,31 +1,48 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="robots" content="noindex, nofollow">
+    <meta name="robots" content="noindex, nofollow" />
     <meta name="author" content="Voosoft" />
-    <meta name="theme-color" content="#FF0089">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="../../assets/img/icones/wasomupfy_fiv_512.png">
-    <link rel="apple-touch-startup-image" href="../../assets/img/screenshots/splash.png">
-    <link rel="manifest" href="../manifest.json">
+    <meta name="theme-color" content="#FF0089" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <link
+      rel="apple-touch-icon"
+      href="../../assets/img/icones/wasomupfy_fiv_512.png"
+    />
+    <link
+      rel="apple-touch-startup-image"
+      href="../../assets/img/screenshots/splash.png"
+    />
+    <link rel="manifest" href="../manifest.json" />
     <title>Ajuda - Wasom Upfy</title>
-    <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
-    <link href="
+    <link
+      rel="shortcut icon"
+      href="../../assets/img/icones/wasomupfy_fiv.png"
+      type="image/x-icon"
+    />
+    <link
+      href="
 https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css
-" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="../../css/dashboard-style.css">
-    <link rel="stylesheet" href="../../css/lastest-style.css">
-    <link rel="stylesheet" href="../../css/help.css">
+"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+    />
+    <link rel="stylesheet" href="../../css/dashboard-style.css" />
+    <link rel="stylesheet" href="../../css/lastest-style.css" />
+    <link rel="stylesheet" href="../../css/help.css" />
+  </head>
 
-</head>
-
-<body>
+  <body>
     <!-- Tela de Carregamento -->
     <!-- <div class="loading-screen" id="loadingScreen">
         <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg" class="loading-logo">
@@ -37,373 +54,638 @@ https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <!-- Menu Button (Left) -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu"
-                aria-controls="offcanvasMenu">
-                <span class="navbar-toggler-icon"><i class="bi bi-list text-white fs-1"></i></span>
-            </button>
+      <div class="container-fluid">
+        <!-- Menu Button (Left) -->
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#offcanvasMenu"
+          aria-controls="offcanvasMenu"
+        >
+          <span class="navbar-toggler-icon"
+            ><i class="bi bi-list text-white fs-1"></i
+          ></span>
+        </button>
 
-            <!-- Logo (Center on Mobile, Left on Desktop) -->
-            <a class="navbar-brand" href="../painel.html">
-                <!-- SVG Logo Wasom Upfy -->
-                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+        <!-- Logo (Center on Mobile, Left on Desktop) -->
+        <a class="navbar-brand" href="../painel.html">
+          <!-- SVG Logo Wasom Upfy -->
+          <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
                     <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
                     <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
                         fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
                 </svg> -->
-                <span class="text-light"
-                    style="font-weight: bold; box-sizing: border-box; text-transform: capitalize; font-family:Arial, sans-serif">WASOM
-                    UPFY</span>
-            </a>
+          <span
+            class="text-light"
+            style="
+              font-weight: bold;
+              box-sizing: border-box;
+              text-transform: capitalize;
+              font-family: Arial, sans-serif;
+            "
+            >WASOM UPFY</span
+          >
+        </a>
 
-
-            <!-- Desktop Menu -->
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav m-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="../painel.html"><i class="bi bi-speedometer2"></i>
-                            Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../launch/releases.html"><i class="bi bi-disc"></i>
-                            Lançamentos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../analytics/statistics.html"><i
-                                class="bi bi-bar-chart"></i>
-                            Estatísticas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../finances/overview.html"><i
-                                class="bi bi-currency-dollar"></i>
-                            Finanças</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../artists/artists-list.html"><i
-                                class="bi bi-person"></i>
-                            Artistas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="youtube.html"><i class="bi bi-youtube"></i>
-                            Unificação de canal YouTube</a></li>
-                </ul>
-            </div>
-
-            <!-- User Icon (Right) -->
-            <div class="user-menu d-flex align-items-center">
-                <!-- Theme Toggle Button -->
-                <a class="theme-toggle text-white me-2" id="themeToggle">
-                    <i class="bi bi-sun" id="themeIcon"></i>
-                </a>
-                <a href="../notifications.html" class="text-white me-2" aria-label="Notificações">
-                    <i class="bi bi-bell fs-4"></i>
-                    <span class="badge bg-danger">9</span>
-                </a>
-                <a href="#" class="text-white" data-bs-toggle="dropdown">
-                    <i class="bi bi-person-circle fs-4"></i>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="../user/profile.html"><i class="bi bi-person me-2"></i>
-                            <strong>Eleven
-                                Records</strong></a>
-                        <div class="text-white-50"> &nbsp; &nbsp; &nbsp; &nbsp;
-                            (Conta 560108)</div>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item" href="../user/profile.html"><i class="bi bi-person me-2"></i> Meu
-                            Perfil</a>
-                    </li>
-                    <li><a class="dropdown-item" href="../account/manage-account.html"><i class="bi bi-tools me-2"></i>
-                            Gestão de Conta</a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item" href="../page/settings.html"><i class="bi bi-gear me-2"></i>
-                            Configurações</a></li>
-                    <li><a class="dropdown-item" href="../page/notifications.html"><i class="bi bi-bell me-2"></i>
-                            Notificações</a></li>
-                    <li><a class="dropdown-item" href="../services/available-services.html"><i
-                                class="bi bi-star me-2"></i> Conta e serviços disponíveis</a></li>
-                    <li><a class="dropdown-item" href="#?logout-wasomupfy" data-bs-toggle="modal"
-                            data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right me-2"></i>
-                            Desconectar-se</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item" href="../page/sobre.html"><i class="bi bi-info-circle me-2"></i>
-                            Sobre</a>
-                    </li>
-                    <li><a class="dropdown-item" href="../page/support.html"><i class="bi bi-headset me-2"></i> Enviar
-                            pedido de suporte</a></li>
-                    <li><a class="dropdown-item" href="../page/faq.html"><i class="bi bi-chat-left-text me-2"></i>
-                            Perguntas frequentes</a></li>
-                    <li><a class="dropdown-item" href="../page/help.html"><i class="bi bi-question-circle me-2"></i>
-                            Ajuda</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><span class="dropdown-item-text" id="versionDropdown"></span></li>
-                </ul>
-            </div>
+        <!-- Desktop Menu -->
+        <div class="collapse navbar-collapse">
+          <ul class="navbar-nav m-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" href="../painel.html"
+                ><i class="bi bi-speedometer2"></i> Dashboard</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../launch/releases.html"
+                ><i class="bi bi-disc"></i> Lançamentos</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../analytics/statistics.html"
+                ><i class="bi bi-bar-chart"></i> Estatísticas</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../finances/overview.html"
+                ><i class="bi bi-currency-dollar"></i> Finanças</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../artists/artists-list.html"
+                ><i class="bi bi-person"></i> Artistas</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="youtube.html"
+                ><i class="bi bi-youtube"></i> Unificação de canal YouTube</a
+              >
+            </li>
+          </ul>
         </div>
+
+        <!-- User Icon (Right) -->
+        <div class="user-menu d-flex align-items-center">
+          <!-- Theme Toggle Button -->
+          <a class="theme-toggle text-white me-2" id="themeToggle">
+            <i class="bi bi-sun" id="themeIcon"></i>
+          </a>
+          <a
+            href="../notifications.html"
+            class="text-white me-2"
+            aria-label="Notificações"
+          >
+            <i class="bi bi-bell fs-4"></i>
+            <span class="badge bg-danger">9</span>
+          </a>
+          <a href="#" class="text-white" data-bs-toggle="dropdown">
+            <i class="bi bi-person-circle fs-4"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+              <a class="dropdown-item" href="../user/profile.html"
+                ><i class="bi bi-person me-2"></i>
+                <strong>Eleven Records</strong></a
+              >
+              <div class="text-white-50">
+                &nbsp; &nbsp; &nbsp; &nbsp; (Conta 560108)
+              </div>
+            </li>
+            <li>
+              <hr class="dropdown-divider" />
+            </li>
+            <li>
+              <a class="dropdown-item" href="../user/profile.html"
+                ><i class="bi bi-person me-2"></i> Meu Perfil</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="../account/manage-account.html"
+                ><i class="bi bi-tools me-2"></i> Gestão de Conta</a
+              >
+            </li>
+            <li>
+              <hr class="dropdown-divider" />
+            </li>
+            <li>
+              <a class="dropdown-item" href="../page/settings.html"
+                ><i class="bi bi-gear me-2"></i> Configurações</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="../page/notifications.html"
+                ><i class="bi bi-bell me-2"></i> Notificações</a
+              >
+            </li>
+            <li>
+              <a
+                class="dropdown-item"
+                href="../services/available-services.html"
+                ><i class="bi bi-star me-2"></i> Conta e serviços disponíveis</a
+              >
+            </li>
+            <li>
+              <a
+                class="dropdown-item"
+                href="#?logout-wasomupfy"
+                data-bs-toggle="modal"
+                data-bs-target="#logoutwasomupfy"
+                ><i class="bi bi-box-arrow-right me-2"></i> Desconectar-se</a
+              >
+            </li>
+            <li>
+              <hr class="dropdown-divider" />
+            </li>
+            <li>
+              <a class="dropdown-item" href="../page/sobre.html"
+                ><i class="bi bi-info-circle me-2"></i> Sobre</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="../page/support.html"
+                ><i class="bi bi-headset me-2"></i> Enviar pedido de suporte</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="../page/faq.html"
+                ><i class="bi bi-chat-left-text me-2"></i> Perguntas
+                frequentes</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="../page/help.html"
+                ><i class="bi bi-question-circle me-2"></i> Ajuda</a
+              >
+            </li>
+            <li>
+              <hr class="dropdown-divider" />
+            </li>
+            <li>
+              <span class="dropdown-item-text" id="versionDropdown"></span>
+            </li>
+          </ul>
+        </div>
+      </div>
     </nav>
 
     <!-- Modal logout -->
-    <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">Terminar sessão</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div
+      class="modal fade"
+      id="logoutwasomupfy"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="logoutwasomupfyLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">
+              Terminar sessão
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="container">
+              <div class="row justify-content-center text-center">
+                <div
+                  class="col-md-12 content-center justify-center text-center"
+                >
+                  <p class="text-center text-dark">
+                    @josembengadacosta você tem certeza de que desejas terminar
+                    sessão?
+                  </p>
                 </div>
-                <div class="modal-body">
-                    <div class="container">
-                        <div class="row justify-content-center text-center">
-                            <div class="col-md-12 content-center justify-center text-center">
-                                <p class="text-center text-dark">@josembengadacosta você tem
-                                    certeza
-                                    de que desejas terminar
-                                    sessão?</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <div>
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Não, continuar</button>
-                    </div>
-                    <div>
-                        <button class="btn btn-danger" type="button" name="logout_wasomupfy"
-                            onclick="logout_wasomupfy()">Sim, terminar
-                            sessão</button>
-                    </div>
-                    <script type="text/javascript">
-                        function logout_wasomupfy() {
-                            window.location = '../logout';
-                        }
-                    </script>
-                </div>
+              </div>
             </div>
+          </div>
+          <div class="modal-footer">
+            <div>
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-bs-dismiss="modal"
+              >
+                Não, continuar
+              </button>
+            </div>
+            <div>
+              <button
+                class="btn btn-danger"
+                type="button"
+                name="logout_wasomupfy"
+                onclick="logout_wasomupfy()"
+              >
+                Sim, terminar sessão
+              </button>
+            </div>
+            <script type="text/javascript">
+              function logout_wasomupfy() {
+                window.location = "../logout";
+              }
+            </script>
+          </div>
         </div>
+      </div>
     </div>
     <!-- Modal logout fim -->
 
     <!-- Offcanvas Menu par Mobile e Desktop -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasMenuLabel">
-                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+    <div
+      class="offcanvas offcanvas-start"
+      tabindex="-1"
+      id="offcanvasMenu"
+      aria-labelledby="offcanvasMenuLabel"
+    >
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasMenuLabel">
+          <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
                     <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
                     <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
                         fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
                 </svg> -->
-                <span class="text-light"
-                    style="font-weight: bold; box-sizing: border-box; text-transform: capitalize; font-family:Arial, sans-serif">WASOM
-                    UPFY</span>
-            </h5>
-            <button type="button" class="btn-close text-white" data-bs-dismiss="offcanvas" aria-label="Close">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-        <div class="offcanvas-body">
-            <ul class="nav flex-column">
-                <li class="nav-item"><a class="nav-link" href="../painel.html"><i class="bi bi-speedometer2"></i>
-                        Dashboard</a></li>
-                <li class="nav-item"><a class="nav-link" href="../launch/releases.html"><i class="bi bi-disc"></i>
-                        Lançamentos</a></li>
-                <li class="nav-item"><a class="nav-link" href="../analytics/statistics.html"><i
-                            class="bi bi-bar-chart"></i> Estatísticas</a></li>
-                <li class="nav-item"><a class="nav-link" href="../finances/overview.html"><i
-                            class="bi bi-currency-dollar"></i> Finanças</a></li>
-                <li class="nav-item"><a class="nav-link" href="../artists/artists-list.html"><i
-                            class="bi bi-person"></i>
-                        Artistas</a></li>
-                <li class="nav-item"><a class="nav-link" href="../youtube.html"><i class="bi bi-youtube"></i> Unificação
-                        de
-                        canal YouTube</a></li>
-                <!-- Links secundários exibidos apenas em mobile -->
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../user/profile.html"><i
-                            class="bi bi-person-circle"></i> Meu Perfil</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link active" href="../page/settings.html"><i
-                            class="bi bi-gear"></i> Configurações</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/notifications.html"><i
-                            class="bi bi-bell"></i> Notificações</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/sobre.html"><i
-                            class="bi bi-info-circle"></i> Sobre</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../services/available-services.html"><i
-                            class="bi bi-star"></i>
-                        Conta e serviços disponíveis</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/help.html"><i
-                            class="bi bi-question-circle"></i> Ajuda</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="#?logout-wasomupfy" data-bs-toggle="modal"
-                        data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right"></i> Desconectar-se</a></li>
-            </ul>
-        </div>
+          <span
+            class="text-light"
+            style="
+              font-weight: bold;
+              box-sizing: border-box;
+              text-transform: capitalize;
+              font-family: Arial, sans-serif;
+            "
+            >WASOM UPFY</span
+          >
+        </h5>
+        <button
+          type="button"
+          class="btn-close text-white"
+          data-bs-dismiss="offcanvas"
+          aria-label="Close"
+        >
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      <div class="offcanvas-body">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link" href="../painel.html"
+              ><i class="bi bi-speedometer2"></i> Dashboard</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../launch/releases.html"
+              ><i class="bi bi-disc"></i> Lançamentos</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../analytics/statistics.html"
+              ><i class="bi bi-bar-chart"></i> Estatísticas</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../finances/overview.html"
+              ><i class="bi bi-currency-dollar"></i> Finanças</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../artists/artists-list.html"
+              ><i class="bi bi-person"></i> Artistas</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../youtube.html"
+              ><i class="bi bi-youtube"></i> Unificação de canal YouTube</a
+            >
+          </li>
+          <!-- Links secundários exibidos apenas em mobile -->
+          <li class="nav-item d-lg-none">
+            <a class="nav-link" href="../user/profile.html"
+              ><i class="bi bi-person-circle"></i> Meu Perfil</a
+            >
+          </li>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link active" href="../page/settings.html"
+              ><i class="bi bi-gear"></i> Configurações</a
+            >
+          </li>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link" href="../page/notifications.html"
+              ><i class="bi bi-bell"></i> Notificações</a
+            >
+          </li>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link" href="../page/sobre.html"
+              ><i class="bi bi-info-circle"></i> Sobre</a
+            >
+          </li>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link" href="../services/available-services.html"
+              ><i class="bi bi-star"></i> Conta e serviços disponíveis</a
+            >
+          </li>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link" href="../page/help.html"
+              ><i class="bi bi-question-circle"></i> Ajuda</a
+            >
+          </li>
+          <li class="nav-item d-lg-none">
+            <a
+              class="nav-link"
+              href="#?logout-wasomupfy"
+              data-bs-toggle="modal"
+              data-bs-target="#logoutwasomupfy"
+              ><i class="bi bi-box-arrow-right"></i> Desconectar-se</a
+            >
+          </li>
+        </ul>
+      </div>
     </div>
 
     <!-- Toast para Notificações de Status -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="connectionToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <strong class="me-auto">Conexão</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Fechar"></button>
-            </div>
-            <div class="toast-body">
-                Você está offline. Alguns dados podem estar desatualizados.
-                <div class="mt-2">
-                    <button class="btn btn-pink btn-sm" onclick="tryReconnect()">Tentar Reconectar</button>
-                </div>
-            </div>
+      <div
+        id="connectionToast"
+        class="toast"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="toast-header">
+          <strong class="me-auto">Conexão</strong>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="toast"
+            aria-label="Fechar"
+          ></button>
         </div>
+        <div class="toast-body">
+          Você está offline. Alguns dados podem estar desatualizados.
+          <div class="mt-2">
+            <button class="btn btn-pink btn-sm" onclick="tryReconnect()">
+              Tentar Reconectar
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Main Content -->
     <div class="container my-4">
-        <!-- Help Header -->
-        <div class="welcome-text col-auto d-sm-block support-header text-center">
-            <h1>Ajuda do Wasom Upfy</h1>
-            <!-- Stats Description -->
-            <p class="stats-description" style="font-size: medium;">
-                Bem-vindo à central de ajuda! Aqui você encontra guias, respostas para perguntas frequentes e opções de
-                suporte para gerenciar seus lançamentos, finanças, estatísticas e muito mais.
-            </p>
-        </div>
+      <!-- Help Header -->
+      <div class="welcome-text col-auto d-sm-block support-header text-center">
+        <h1>Ajuda do Wasom Upfy</h1>
+        <!-- Stats Description -->
+        <p class="stats-description" style="font-size: medium">
+          Bem-vindo à central de ajuda! Aqui você encontra guias, respostas para
+          perguntas frequentes e opções de suporte para gerenciar seus
+          lançamentos, finanças, estatísticas e muito mais.
+        </p>
+      </div>
 
-        <!-- FAQ Section -->
-        <div class="faq-section">
-            <h2>Perguntas Frequentes</h2>
-            <div class="accordion" id="faqAccordion">
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="faq1">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
-                            Como criar um novo lançamento?
-                        </button>
-                    </h2>
-                    <div id="collapse1" class="accordion-collapse collapse show" aria-labelledby="faq1"
-                        data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">
-                            Para criar um novo lançamento, vá até a seção "Lançamentos" no menu, clique em "Novo
-                            Lançamento" e preencha os detalhes, como código UPC e arquivos de áudio.
-                        </div>
-                    </div>
-                </div>
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="faq2">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
-                            Como sacar meu saldo?
-                        </button>
-                    </h2>
-                    <div id="collapse2" class="accordion-collapse collapse" aria-labelledby="faq2"
-                        data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">
-                            Na seção "Finanças", clique em "Sacar", selecione a conta (ex.: PayPal) e insira sua senha.
-                            Você receberá uma notificação por e-mail após a aprovação.
-                        </div>
-                    </div>
-                </div>
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="faq3">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapse3" aria-expanded="false" aria-controls="collapse3">
-                            O que significa "Unificação de canal YouTube"?
-                        </button>
-                    </h2>
-                    <div id="collapse3" class="accordion-collapse collapse" aria-labelledby="faq3"
-                        data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">
-                            A unificação de canal YouTube permite conectar seus vídeos e Art Tracks ao Wasom Upfy para
-                            rastrear streams e gerenciar conteúdo.
-                        </div>
-                    </div>
-                </div>
+      <!-- FAQ Section -->
+      <div class="faq-section">
+        <h2>Perguntas Frequentes</h2>
+        <div class="accordion" id="faqAccordion">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="faq1">
+              <button
+                class="accordion-button"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapse1"
+                aria-expanded="true"
+                aria-controls="collapse1"
+              >
+                Como criar um novo lançamento?
+              </button>
+            </h2>
+            <div
+              id="collapse1"
+              class="accordion-collapse collapse show"
+              aria-labelledby="faq1"
+              data-bs-parent="#faqAccordion"
+            >
+              <div class="accordion-body">
+                Para criar um novo lançamento, vá até a seção "Lançamentos" no
+                menu, clique em "Novo Lançamento" e preencha os detalhes, como
+                código UPC e arquivos de áudio.
+              </div>
             </div>
-        </div>
-        <div class="mt-2"><a href="faq.html" class="btn btn-pink">Ver mais</a></div>
-
-        <!-- Tutorials Section -->
-        <div class="tutorials-section mt-4">
-            <h2>Guias e Tutoriais</h2>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Guia para Iniciantes</h5>
-                            <p class="card-text">Aprenda a configurar sua conta e começar a usar o Wasom Upfy.</p>
-                            <a href="../tutorials/beginner-guide.html" class="btn btn-pink">Ver Guia</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Tutorial de Lançamentos</h5>
-                            <p class="card-text">Assista a um vídeo sobre como publicar seus lançamentos.</p>
-                            <a href="../tutorials/release-video.html" class="btn btn-pink">Assistir Vídeo</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Analisando Estatísticas</h5>
-                            <p class="card-text">Entenda como interpretar seus dados de streams.</p>
-                            <a href="../tutorials/statistics-guide.html" class="btn btn-pink">Ver Guia</a>
-                        </div>
-                    </div>
-                </div>
+          </div>
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="faq2">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapse2"
+                aria-expanded="false"
+                aria-controls="collapse2"
+              >
+                Como sacar meu saldo?
+              </button>
+            </h2>
+            <div
+              id="collapse2"
+              class="accordion-collapse collapse"
+              aria-labelledby="faq2"
+              data-bs-parent="#faqAccordion"
+            >
+              <div class="accordion-body">
+                Na seção "Finanças", clique em "Sacar", selecione a conta (ex.:
+                PayPal) e insira sua senha. Você receberá uma notificação por
+                e-mail após a aprovação.
+              </div>
             </div>
+          </div>
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="faq3">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapse3"
+                aria-expanded="false"
+                aria-controls="collapse3"
+              >
+                O que significa "Unificação de canal YouTube"?
+              </button>
+            </h2>
+            <div
+              id="collapse3"
+              class="accordion-collapse collapse"
+              aria-labelledby="faq3"
+              data-bs-parent="#faqAccordion"
+            >
+              <div class="accordion-body">
+                A unificação de canal YouTube permite conectar seus vídeos e Art
+                Tracks ao Wasom Upfy para rastrear streams e gerenciar conteúdo.
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
+      <div class="mt-2">
+        <a href="faq.html" class="btn btn-pink">Ver mais</a>
+      </div>
 
-        <!-- Support Section -->
-        <div class="support-section mt-4">
-            <h2>Precisa de Suporte?</h2>
-            <p>Entre em contato com nossa equipe para resolver suas dúvidas:</p>
-            <ul>
-                <li><a href="support.html" class="btn btn-outline-pink"><i class="bi bi-headset"></i> Enviar Pedido de
-                        Suporte</a></li>
-                <li>E-mail: <a href="mailto:suporte@wasomupfy.com">suporte@wasomupfy.com</a></li>
-                <li>Horário: Segunda a Sexta, 9h às 18h (WAT)</li>
-            </ul>
+      <!-- Tutorials Section -->
+      <div class="tutorials-section mt-4">
+        <h2>Guias e Tutoriais</h2>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Guia para Iniciantes</h5>
+                <p class="card-text">
+                  Aprenda a configurar sua conta e começar a usar o Wasom Upfy.
+                </p>
+                <a href="../tutorials/beginner-guide.html" class="btn btn-pink"
+                  >Ver Guia</a
+                >
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Tutorial de Lançamentos</h5>
+                <p class="card-text">
+                  Assista a um vídeo sobre como publicar seus lançamentos.
+                </p>
+                <a href="../tutorials/release-video.html" class="btn btn-pink"
+                  >Assistir Vídeo</a
+                >
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Analisando Estatísticas</h5>
+                <p class="card-text">
+                  Entenda como interpretar seus dados de streams.
+                </p>
+                <a
+                  href="../tutorials/statistics-guide.html"
+                  class="btn btn-pink"
+                  >Ver Guia</a
+                >
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
 
-        <!-- Related Links -->
-        <div class="related-links mt-4">
-            <h2>Mais Informações</h2>
-            <ul class="nav flex-column">
-                <li class="nav-item"><a class="nav-link" href="../../sobre.html"><i class="bi bi-info-circle"></i> Sobre
-                        o Wasom Upfy</a></li>
-                <li class="nav-item"><a class="nav-link" href="../../planos.html"><i class="bi bi-star"></i> Ver Planos
-                        e Upgrades</a></li>
-                <li class="nav-item"><a class="nav-link" href="../../contatos.html"><i class="bi bi-headset"></i>
-                        Contatos</a></li>
-            </ul>
-        </div>
+      <!-- Support Section -->
+      <div class="support-section mt-4">
+        <h2>Precisa de Suporte?</h2>
+        <p>Entre em contato com nossa equipe para resolver suas dúvidas:</p>
+        <ul>
+          <li>
+            <a href="support.html" class="btn btn-outline-pink"
+              ><i class="bi bi-headset"></i> Enviar Pedido de Suporte</a
+            >
+          </li>
+          <li>
+            E-mail:
+            <a href="mailto:suporte@wasomupfy.com">suporte@wasomupfy.com</a>
+          </li>
+          <li>Horário: Segunda a Sexta, 9h às 18h (WAT)</li>
+        </ul>
+      </div>
 
-        <!-- Account Info -->
-        <div class="account-info mt-4">
-            <h2>Sua Conta</h2>
-            <p><strong>Nome:</strong> José da Costa</p>
-            <p><strong>Conta:</strong> Eleven Records (ID: 560108)</p>
-            <p><strong>Plano:</strong> Pro</p>
-            <p><a href="../user/profile.html" class="btn btn-pink">Gerenciar Perfil</a></p>
-        </div>
+      <!-- Related Links -->
+      <div class="related-links mt-4">
+        <h2>Mais Informações</h2>
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link" href="../../sobre.html"
+              ><i class="bi bi-info-circle"></i> Sobre o Wasom Upfy</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../../planos.html"
+              ><i class="bi bi-star"></i> Ver Planos e Upgrades</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../../contatos.html"
+              ><i class="bi bi-headset"></i> Contatos</a
+            >
+          </li>
+        </ul>
+      </div>
 
-        <!-- Version Info -->
-        <div class="version-info mt-4">
-            <p><strong>Versão do Dashboard:</strong> 2.0 (2025)</p>
-        </div>
+      <!-- Account Info -->
+      <div class="account-info mt-4">
+        <h2>Sua Conta</h2>
+        <p><strong>Nome:</strong> José da Costa</p>
+        <p><strong>Conta:</strong> Eleven Records (ID: 560108)</p>
+        <p><strong>Plano:</strong> Pro</p>
+        <p>
+          <a href="../user/profile.html" class="btn btn-pink"
+            >Gerenciar Perfil</a
+          >
+        </p>
+      </div>
+
+      <!-- Version Info -->
+      <div class="version-info mt-4">
+        <p><strong>Versão do Dashboard:</strong> 2.0 (2025)</p>
+      </div>
     </div>
 
     <!-- Bottom Navigation for Mobile -->
     <nav class="bottom-nav d-lg-none">
-        <ul class="nav justify-content-around">
-            <li class="nav-item"><a class="nav-link" href="../painel.html" aria-label="Ir para Dashboard"><i
-                        class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../launch/releases.html" aria-label="Ir para Lançamentos"><i
-                        class="bi bi-disc"></i><span>Lançamentos</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../analytics/statistics.html"
-                    aria-label="Ir para Estatísticas"><i class="bi bi-bar-chart"></i><span>Estatísticas</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../finances/overview.html" aria-label="Ir para Finanças"><i
-                        class="bi bi-currency-dollar"></i><span>Finanças</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../artists/artists-list.html"
-                    aria-label="Ir para Artistas"><i class="bi bi-person"></i><span>Artistas</span></a></li>
-        </ul>
+      <ul class="nav justify-content-around">
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="../painel.html"
+            aria-label="Ir para Dashboard"
+            ><i class="bi bi-speedometer2"></i><span>Dashboard</span></a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="../launch/releases.html"
+            aria-label="Ir para Lançamentos"
+            ><i class="bi bi-disc"></i><span>Lançamentos</span></a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="../analytics/statistics.html"
+            aria-label="Ir para Estatísticas"
+            ><i class="bi bi-bar-chart"></i><span>Estatísticas</span></a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="../finances/overview.html"
+            aria-label="Ir para Finanças"
+            ><i class="bi bi-currency-dollar"></i><span>Finanças</span></a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="../artists/artists-list.html"
+            aria-label="Ir para Artistas"
+            ><i class="bi bi-person"></i><span>Artistas</span></a
+          >
+        </li>
+      </ul>
     </nav>
 
     <!-- Bootstrap JS and Scripts -->
@@ -411,15 +693,18 @@ https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css
     <script src="../../js/theme.wp.js"></script>
     <script src="../../js/wp.tools.js"></script>
     <script>
-        // Inicializar Tooltips
-        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+      // Inicializar Tooltips
+      const tooltipTriggerList = document.querySelectorAll(
+        '[data-bs-toggle="tooltip"]'
+      );
+      const tooltipList = [...tooltipTriggerList].map(
+        (tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl)
+      );
 
-        // Logout Function
-        function logout_wasomupfy() {
-            window.location = '../logout';
-        }
+      // Logout Function
+      function logout_wasomupfy() {
+        window.location = "../logout";
+      }
     </script>
-</body>
-
+  </body>
 </html>

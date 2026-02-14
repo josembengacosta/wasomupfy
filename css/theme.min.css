@@ -19310,7 +19310,7 @@ strong {
   opacity: 1;
 }
 .btn-scroll-top {
-  background-color: var(--bs-white);
+  background: linear-gradient(45deg, #ff0089, #ff0089);
   border-radius: 10px;
   bottom: 1.5rem;
   box-shadow: inset 0 0 0 0.1rem rgba(227, 229, 233, 0.25);
@@ -19330,7 +19330,7 @@ strong {
   width: 3rem;
 }
 .btn-scroll-top:after {
-  color: var(--bs-primary);
+  color:  #fff;
   content: "\f145";
   font-family: bootstrap-icons !important;
   font-size: 1.5rem;
@@ -19355,7 +19355,7 @@ strong {
   fill: none;
 }
 .btn-scroll-top svg.progress-square path {
-  stroke: var(--bs-primary);
+  stroke: #fff;
   stroke-width: 2;
   box-sizing: border-box;
   transition: all 0.2s linear;

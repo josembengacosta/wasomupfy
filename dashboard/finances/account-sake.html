@@ -1,35 +1,57 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="robots" content="noindex, nofollow">
+    <meta name="robots" content="noindex, nofollow" />
     <meta name="author" content="Voosoft" />
-    <meta name="theme-color" content="#FF0089">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="../../assets/img/icones/wasomupfy_fiv_512.png">
-    <link rel="apple-touch-startup-image" href="../../assets/img/screenshots/splash.png">
-    <link rel="manifest" href="../manifest.json">
+    <meta name="theme-color" content="#FF0089" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <link
+      rel="apple-touch-icon"
+      href="../../assets/img/icones/wasomupfy_fiv_512.png"
+    />
+    <link
+      rel="apple-touch-startup-image"
+      href="../../assets/img/screenshots/splash.png"
+    />
+    <link rel="manifest" href="../manifest.json" />
     <title>Conta de saque - Wasom Upfy</title>
-    <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
-    <link href="
+    <link
+      rel="shortcut icon"
+      href="../../assets/img/icones/wasomupfy_fiv.png"
+      type="image/x-icon"
+    />
+    <link
+      href="
 https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css
-" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="../../css/dashboard-style.css">
-    <link rel="stylesheet" href="../../css/lastest-style.css">
+"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+    />
+    <link rel="stylesheet" href="../../css/dashboard-style.css" />
+    <link rel="stylesheet" href="../../css/lastest-style.css" />
     <!-- Select2 Bootstrap 5 Theme (opcional, para melhor integração) -->
-    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"
-        rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"
+      rel="stylesheet"
+    />
     <!-- Toastr CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
-</head>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"
+      rel="stylesheet"
+    />
+  </head>
 
-<body>
-
+  <body>
     <!-- Tela de Carregamento -->
     <!-- <div class="loading-screen" id="loadingScreen">
         <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg" class="loading-logo">
@@ -41,519 +63,872 @@ https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <!-- Menu Button (Left) -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu"
-                aria-controls="offcanvasMenu">
-                <span class="navbar-toggler-icon"><i class="bi bi-list text-white fs-1"></i></span>
-            </button>
+      <div class="container-fluid">
+        <!-- Menu Button (Left) -->
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#offcanvasMenu"
+          aria-controls="offcanvasMenu"
+        >
+          <span class="navbar-toggler-icon"
+            ><i class="bi bi-list text-white fs-1"></i
+          ></span>
+        </button>
 
-            <!-- Logo (Center on Mobile, Left on Desktop) -->
-            <a class="navbar-brand" href="../painel.html">
-                <!-- SVG Logo Wasom Upfy -->
-                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+        <!-- Logo (Center on Mobile, Left on Desktop) -->
+        <a class="navbar-brand" href="../painel.html">
+          <!-- SVG Logo Wasom Upfy -->
+          <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
                     <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
                     <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
                         fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
                 </svg> -->
-                <span class="text-light"
-                    style="font-weight: bold; box-sizing: border-box; text-transform: capitalize; font-family:Arial, sans-serif">WASOM
-                    UPFY</span>
-            </a>
+          <span
+            class="text-light"
+            style="
+              font-weight: bold;
+              box-sizing: border-box;
+              text-transform: capitalize;
+              font-family: Arial, sans-serif;
+            "
+            >WASOM UPFY</span
+          >
+        </a>
 
-
-            <!-- Desktop Menu -->
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav m-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="../painel.html"><i class="bi bi-speedometer2"></i>
-                            Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../launch/releases.html"><i class="bi bi-disc"></i>
-                            Lançamentos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../analytics/statistics.html"><i
-                                class="bi bi-bar-chart"></i>
-                            Estatísticas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../finances/overview.html"><i
-                                class="bi bi-currency-dollar"></i>
-                            Finanças</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../artists/artists-list.html"><i
-                                class="bi bi-person"></i>
-                            Artistas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="youtube.html"><i class="bi bi-youtube"></i>
-                            Unificação de canal YouTube</a></li>
-                </ul>
-            </div>
-
-            <!-- User Icon (Right) -->
-            <div class="user-menu d-flex align-items-center">
-                <!-- Theme Toggle Button -->
-                <a class="theme-toggle text-white me-2" id="themeToggle">
-                    <i class="bi bi-sun" id="themeIcon"></i>
-                </a>
-                <a href="../notifications.html" class="text-white me-2" aria-label="Notificações">
-                    <i class="bi bi-bell fs-4"></i>
-                    <span class="badge bg-danger">9</span>
-                </a>
-                <a href="#" class="text-white" data-bs-toggle="dropdown">
-                    <i class="bi bi-person-circle fs-4"></i>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="../user/profile.html"><i class="bi bi-person me-2"></i>
-                            <strong>Eleven
-                                Records</strong></a>
-                        <div class="text-white-50"> &nbsp; &nbsp; &nbsp; &nbsp;
-                            (Conta 560108)</div>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item" href="../user/profile.html"><i class="bi bi-person me-2"></i> Meu
-                            Perfil</a>
-                    </li>
-                    <li><a class="dropdown-item" href="../account/manage-account.html"><i class="bi bi-tools me-2"></i>
-                            Gestão de Conta</a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item" href="../page/settings.html"><i class="bi bi-gear me-2"></i>
-                            Configurações</a></li>
-                    <li><a class="dropdown-item" href="../page/notifications.html"><i class="bi bi-bell me-2"></i>
-                            Notificações</a></li>
-                    <li><a class="dropdown-item" href="../services/available-services.html"><i
-                                class="bi bi-star me-2"></i> Conta e serviços disponíveis</a></li>
-                    <li><a class="dropdown-item" href="#?logout-wasomupfy" data-bs-toggle="modal"
-                            data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right me-2"></i>
-                            Desconectar-se</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item" href="../page/sobre.html"><i class="bi bi-info-circle me-2"></i>
-                            Sobre</a>
-                    </li>
-                    <li><a class="dropdown-item" href="../page/support.html"><i class="bi bi-headset me-2"></i> Enviar
-                            pedido de suporte</a></li>
-                    <li><a class="dropdown-item" href="../page/faq.html"><i class="bi bi-chat-left-text me-2"></i>
-                            Perguntas frequentes</a></li>
-                    <li><a class="dropdown-item" href="../page/help.html"><i class="bi bi-question-circle me-2"></i>
-                            Ajuda</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><span class="dropdown-item-text" id="versionDropdown"></span></li>
-                </ul>
-            </div>
+        <!-- Desktop Menu -->
+        <div class="collapse navbar-collapse">
+          <ul class="navbar-nav m-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" href="../painel.html"
+                ><i class="bi bi-speedometer2"></i> Dashboard</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../launch/releases.html"
+                ><i class="bi bi-disc"></i> Lançamentos</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../analytics/statistics.html"
+                ><i class="bi bi-bar-chart"></i> Estatísticas</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../finances/overview.html"
+                ><i class="bi bi-currency-dollar"></i> Finanças</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../artists/artists-list.html"
+                ><i class="bi bi-person"></i> Artistas</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="youtube.html"
+                ><i class="bi bi-youtube"></i> Unificação de canal YouTube</a
+              >
+            </li>
+          </ul>
         </div>
+
+        <!-- User Icon (Right) -->
+        <div class="user-menu d-flex align-items-center">
+          <!-- Theme Toggle Button -->
+          <a class="theme-toggle text-white me-2" id="themeToggle">
+            <i class="bi bi-sun" id="themeIcon"></i>
+          </a>
+          <a
+            href="../notifications.html"
+            class="text-white me-2"
+            aria-label="Notificações"
+          >
+            <i class="bi bi-bell fs-4"></i>
+            <span class="badge bg-danger">9</span>
+          </a>
+          <a href="#" class="text-white" data-bs-toggle="dropdown">
+            <i class="bi bi-person-circle fs-4"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+              <a class="dropdown-item" href="../user/profile.html"
+                ><i class="bi bi-person me-2"></i>
+                <strong>Eleven Records</strong></a
+              >
+              <div class="text-white-50">
+                &nbsp; &nbsp; &nbsp; &nbsp; (Conta 560108)
+              </div>
+            </li>
+            <li>
+              <hr class="dropdown-divider" />
+            </li>
+            <li>
+              <a class="dropdown-item" href="../user/profile.html"
+                ><i class="bi bi-person me-2"></i> Meu Perfil</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="../account/manage-account.html"
+                ><i class="bi bi-tools me-2"></i> Gestão de Conta</a
+              >
+            </li>
+            <li>
+              <hr class="dropdown-divider" />
+            </li>
+            <li>
+              <a class="dropdown-item" href="../page/settings.html"
+                ><i class="bi bi-gear me-2"></i> Configurações</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="../page/notifications.html"
+                ><i class="bi bi-bell me-2"></i> Notificações</a
+              >
+            </li>
+            <li>
+              <a
+                class="dropdown-item"
+                href="../services/available-services.html"
+                ><i class="bi bi-star me-2"></i> Conta e serviços disponíveis</a
+              >
+            </li>
+            <li>
+              <a
+                class="dropdown-item"
+                href="#?logout-wasomupfy"
+                data-bs-toggle="modal"
+                data-bs-target="#logoutwasomupfy"
+                ><i class="bi bi-box-arrow-right me-2"></i> Desconectar-se</a
+              >
+            </li>
+            <li>
+              <hr class="dropdown-divider" />
+            </li>
+            <li>
+              <a class="dropdown-item" href="../page/sobre.html"
+                ><i class="bi bi-info-circle me-2"></i> Sobre</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="../page/support.html"
+                ><i class="bi bi-headset me-2"></i> Enviar pedido de suporte</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="../page/faq.html"
+                ><i class="bi bi-chat-left-text me-2"></i> Perguntas
+                frequentes</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="../page/help.html"
+                ><i class="bi bi-question-circle me-2"></i> Ajuda</a
+              >
+            </li>
+            <li>
+              <hr class="dropdown-divider" />
+            </li>
+            <li>
+              <span class="dropdown-item-text" id="versionDropdown"></span>
+            </li>
+          </ul>
+        </div>
+      </div>
     </nav>
 
     <!-- Modal logout -->
-    <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">Terminar sessão</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div
+      class="modal fade"
+      id="logoutwasomupfy"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="logoutwasomupfyLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">
+              Terminar sessão
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="container">
+              <div class="row justify-content-center text-center">
+                <div
+                  class="col-md-12 content-center justify-center text-center"
+                >
+                  <p class="text-center text-dark">
+                    @josembengadacosta você tem certeza de que desejas terminar
+                    sessão?
+                  </p>
                 </div>
-                <div class="modal-body">
-                    <div class="container">
-                        <div class="row justify-content-center text-center">
-                            <div class="col-md-12 content-center justify-center text-center">
-                                <p class="text-center text-dark">@josembengadacosta você tem
-                                    certeza
-                                    de que desejas terminar
-                                    sessão?</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <div>
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Não, continuar</button>
-                    </div>
-                    <div>
-                        <button class="btn btn-danger" type="button" name="logout_wasomupfy"
-                            onclick="logout_wasomupfy()">Sim, terminar
-                            sessão</button>
-                    </div>
-                    <script type="text/javascript">
-                        function logout_wasomupfy() {
-                            window.location = '../logout';
-                        }
-                    </script>
-                </div>
+              </div>
             </div>
+          </div>
+          <div class="modal-footer">
+            <div>
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-bs-dismiss="modal"
+              >
+                Não, continuar
+              </button>
+            </div>
+            <div>
+              <button
+                class="btn btn-danger"
+                type="button"
+                name="logout_wasomupfy"
+                onclick="logout_wasomupfy()"
+              >
+                Sim, terminar sessão
+              </button>
+            </div>
+            <script type="text/javascript">
+              function logout_wasomupfy() {
+                window.location = "../logout";
+              }
+            </script>
+          </div>
         </div>
+      </div>
     </div>
     <!-- Modal logout fim -->
 
     <!-- Offcanvas Menu para Mobile e Desktop -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasMenuLabel">
-                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+    <div
+      class="offcanvas offcanvas-start"
+      tabindex="-1"
+      id="offcanvasMenu"
+      aria-labelledby="offcanvasMenuLabel"
+    >
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasMenuLabel">
+          <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
                     <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
                     <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
                         fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
                 </svg> -->
-                <span class="text-light"
-                    style="font-weight: bold; box-sizing: border-box; text-transform: capitalize; font-family:Arial, sans-serif">WASOM
-                    UPFY</span>
-            </h5>
-            <button type="button" class="btn-close text-white" data-bs-dismiss="offcanvas" aria-label="Close">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-        <div class="offcanvas-body">
-            <ul class="nav flex-column">
-                <li class="nav-item"><a class="nav-link" href="../painel.html"><i class="bi bi-speedometer2"></i>
-                        Dashboard</a></li>
-                <li class="nav-item"><a class="nav-link" href="../launch/releases.html"><i class="bi bi-disc"></i>
-                        Lançamentos</a></li>
-                <li class="nav-item"><a class="nav-link" href="../analytics/statistics.html"><i
-                            class="bi bi-bar-chart"></i> Estatísticas</a></li>
-                <li class="nav-item"><a class="nav-link" href="../finances/overview.html"><i
-                            class="bi bi-currency-dollar"></i> Finanças</a></li>
-                <li class="nav-item"><a class="nav-link" href="../artists/artists-list.html"><i
-                            class="bi bi-person"></i>
-                        Artistas</a></li>
-                <li class="nav-item"><a class="nav-link" href="../youtube.html"><i class="bi bi-youtube"></i> Unificação
-                        de
-                        canal YouTube</a></li>
-                <!-- Links secundários exibidos apenas em mobile -->
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../user/profile.html"><i
-                            class="bi bi-person-circle"></i> Meu Perfil</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link active" href="../page/settings.html"><i
-                            class="bi bi-gear"></i> Configurações</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/notifications.html"><i
-                            class="bi bi-bell"></i> Notificações</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/sobre.html"><i
-                            class="bi bi-info-circle"></i> Sobre</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../services/available-services.html"><i
-                            class="bi bi-star"></i>
-                        Conta e serviços disponíveis</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/help.html"><i
-                            class="bi bi-question-circle"></i> Ajuda</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="#?logout-wasomupfy" data-bs-toggle="modal"
-                        data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right"></i> Desconectar-se</a></li>
-            </ul>
-        </div>
+          <span
+            class="text-light"
+            style="
+              font-weight: bold;
+              box-sizing: border-box;
+              text-transform: capitalize;
+              font-family: Arial, sans-serif;
+            "
+            >WASOM UPFY</span
+          >
+        </h5>
+        <button
+          type="button"
+          class="btn-close text-white"
+          data-bs-dismiss="offcanvas"
+          aria-label="Close"
+        >
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      <div class="offcanvas-body">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link" href="../painel.html"
+              ><i class="bi bi-speedometer2"></i> Dashboard</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../launch/releases.html"
+              ><i class="bi bi-disc"></i> Lançamentos</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../analytics/statistics.html"
+              ><i class="bi bi-bar-chart"></i> Estatísticas</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../finances/overview.html"
+              ><i class="bi bi-currency-dollar"></i> Finanças</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../artists/artists-list.html"
+              ><i class="bi bi-person"></i> Artistas</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../youtube.html"
+              ><i class="bi bi-youtube"></i> Unificação de canal YouTube</a
+            >
+          </li>
+          <!-- Links secundários exibidos apenas em mobile -->
+          <li class="nav-item d-lg-none">
+            <a class="nav-link" href="../user/profile.html"
+              ><i class="bi bi-person-circle"></i> Meu Perfil</a
+            >
+          </li>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link active" href="../page/settings.html"
+              ><i class="bi bi-gear"></i> Configurações</a
+            >
+          </li>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link" href="../page/notifications.html"
+              ><i class="bi bi-bell"></i> Notificações</a
+            >
+          </li>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link" href="../page/sobre.html"
+              ><i class="bi bi-info-circle"></i> Sobre</a
+            >
+          </li>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link" href="../services/available-services.html"
+              ><i class="bi bi-star"></i> Conta e serviços disponíveis</a
+            >
+          </li>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link" href="../page/help.html"
+              ><i class="bi bi-question-circle"></i> Ajuda</a
+            >
+          </li>
+          <li class="nav-item d-lg-none">
+            <a
+              class="nav-link"
+              href="#?logout-wasomupfy"
+              data-bs-toggle="modal"
+              data-bs-target="#logoutwasomupfy"
+              ><i class="bi bi-box-arrow-right"></i> Desconectar-se</a
+            >
+          </li>
+        </ul>
+      </div>
     </div>
 
     <!-- Toast para Notificações de Status -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="connectionToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <strong class="me-auto">Conexão</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Fechar"></button>
-            </div>
-            <div class="toast-body">
-                Você está offline. Alguns dados podem estar desatualizados.
-                <div class="mt-2">
-                    <button class="btn btn-pink btn-sm" onclick="tryReconnect()">Tentar Reconectar</button>
-                </div>
-            </div>
+      <div
+        id="connectionToast"
+        class="toast"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="toast-header">
+          <strong class="me-auto">Conexão</strong>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="toast"
+            aria-label="Fechar"
+          ></button>
         </div>
+        <div class="toast-body">
+          Você está offline. Alguns dados podem estar desatualizados.
+          <div class="mt-2">
+            <button class="btn btn-pink btn-sm" onclick="tryReconnect()">
+              Tentar Reconectar
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Main Content -->
     <div class="container my-4">
-        <!-- Welcome Section -->
+      <!-- Welcome Section -->
 
-        <div class="row">
-            <div class="welcome-text mb-4 col-auto d-sm-block">
-                <h1>Contas de saque</h1>
-            </div>
-            <div class="col-auto ms-auto text-end mt-n1">
-                <button class="btn btn-pink" data-bs-toggle="modal" data-bs-target="#creatnewAccount"><i
-                        class="bi bi-plus"></i> Criar conta</button>
-                <button class="btn btn-light" onclick="window.location='overview.html'"><i class="bi bi-arrow-left"></i>
-                    Voltar</button>
-            </div>
+      <div class="row">
+        <div class="welcome-text mb-4 col-auto d-sm-block">
+          <h1>Contas de saque</h1>
         </div>
-
-        <!-- Stats Description -->
-        <p class="stats-description">
-            Em contas de saque podes encontrar todas as contas de saída de fundos de todos os conteúdos disponíveis
-            aqui, bem como podes adicionar no máximo duas contas que são de diferentes carteiras financeiras.
-        </p>
-
-        <div class="w-25">
-            <div class="toastrDefaultInfo text-info" style="cursor: pointer;">
-                <i class="bi bi-info-square"></i>
-                Info
-            </div>
+        <div class="col-auto ms-auto text-end mt-n1">
+          <button
+            class="btn btn-pink"
+            data-bs-toggle="modal"
+            data-bs-target="#creatnewAccount"
+          >
+            <i class="bi bi-plus"></i> Criar conta
+          </button>
+          <button
+            class="btn btn-light"
+            onclick="window.location='overview.html'"
+          >
+            <i class="bi bi-arrow-left"></i> Voltar
+          </button>
         </div>
+      </div>
 
-        <!-- Launch Card para actualizar a conta express -->
-        <div class="launch-card mb-4 mt-4">
-            <div class="card">
-                <div class="align-items-lg-center">
-                    <div class="text-center">
-                        <button href="#!" data-bs-toggle="collapse" data-bs-target="#collapseOneAccount"
-                            aria-expanded="false" aria-controls="collapseOneAccount"
-                            style="color:#ff0089 ;  font-weight: bold; border-color: #ff0089;"
-                            class="btn btn-default w-100">
-                            <h5>Express</h5>
-                        </button>
-                        <div id="collapseOneAccount" class="accordion-collapse collapse w-100"
-                            data-bs-parent="#accordionExample">
-                            <div class="mt-3">
-                                <form method="post" action="" class="needs-validation mb-2 row text-start"
-                                    id="validation-form" novalidate>
-                                    <div class="mb-2 col-md-4">
-                                        <label for="name_express" class="form-label">Nome</label><input type="text"
-                                            autocomplete="name" id="name_express"
-                                            placeholder="Insira o nome da sua conta IBAN" required class="form-control"
-                                            value="José Mbenga da Costa">
-                                        <div class="invalid-feedback">
-                                            Por favor insira o seu nome válido de IBAN
-                                        </div>
+      <!-- Stats Description -->
+      <p class="stats-description">
+        Em contas de saque podes encontrar todas as contas de saída de fundos de
+        todos os conteúdos disponíveis aqui, bem como podes adicionar no máximo
+        duas contas que são de diferentes carteiras financeiras.
+      </p>
+
+      <div class="w-25">
+        <div class="toastrDefaultInfo text-info" style="cursor: pointer">
+          <i class="bi bi-info-square"></i>
+          Info
+        </div>
+      </div>
+
+      <!-- Launch Card para actualizar a conta express -->
+      <div class="launch-card mb-4 mt-4">
+        <div class="card">
+          <div class="align-items-lg-center">
+            <div class="text-center">
+              <button
+                href="#!"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapseOneAccount"
+                aria-expanded="false"
+                aria-controls="collapseOneAccount"
+                style="color: #ff0089; font-weight: bold; border-color: #ff0089"
+                class="btn btn-default w-100"
+              >
+                <h5>Express</h5>
+              </button>
+              <div
+                id="collapseOneAccount"
+                class="accordion-collapse collapse w-100"
+                data-bs-parent="#accordionExample"
+              >
+                <div class="mt-3">
+                  <form
+                    method="post"
+                    action=""
+                    class="needs-validation mb-2 row text-start"
+                    id="validation-form"
+                    novalidate
+                  >
+                    <div class="mb-2 col-md-4">
+                      <label for="name_express" class="form-label">Nome</label
+                      ><input
+                        type="text"
+                        autocomplete="name"
+                        id="name_express"
+                        placeholder="Insira o nome da sua conta IBAN"
+                        required
+                        class="form-control"
+                        value="José Mbenga da Costa"
+                      />
+                      <div class="invalid-feedback">
+                        Por favor insira o seu nome válido de IBAN
+                      </div>
+                    </div>
+                    <div class="mb-2 col-md-4">
+                      <label for="iba_express" class="form-label">IBAN</label
+                      ><input
+                        type="tel"
+                        autocomplete="email"
+                        id="iba_express"
+                        class="form-control"
+                        placeholder="Insira o emeil da sua conta IBAN"
+                        required
+                        value="AO06.0000.0000.0000.000.00.0"
+                        data-mask="AO06.0000.0000.0000.000.00.0"
+                        maxlength="28"
+                      />
+                      <div class="invalid-feedback">
+                        Por favor insira o IBAN válido
+                      </div>
+                    </div>
+                    <div class="mb-2 col-md-4">
+                      <label for="tel_expresss" class="form-label"
+                        >Telefone</label
+                      ><input
+                        type="tel"
+                        autocomplete="email"
+                        id="tel_expresss"
+                        class="form-control"
+                        placeholder="Insira o emeil da sua conta IBAN"
+                        required
+                        value="+244 923 000 000"
+                      />
+                      <div class="invalid-feedback">
+                        Por favor insira o número de telfone válido
+                      </div>
+                    </div>
+                    <div class="mt-2">
+                      <input
+                        type="submit"
+                        class="btn btn-pink form-control"
+                        value="Alterar"
+                      />
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Launch Card para actualizar a conta paypal -->
+      <div class="launch-card mb-4">
+        <div class="card">
+          <div class="align-items-lg-center">
+            <div class="text-center">
+              <button
+                href="#!"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapseTwoAccount"
+                aria-expanded="false"
+                aria-controls="collapseTwoAccount"
+                style="color: #ff0089; font-weight: bold; border-color: #ff0089"
+                class="btn btn-default w-100"
+              >
+                <h5>Paypal</h5>
+              </button>
+              <div
+                id="collapseTwoAccount"
+                class="accordion-collapse collapse"
+                data-bs-parent="#accordionExample"
+              >
+                <div class="mt-3">
+                  <form
+                    method="post"
+                    action=""
+                    class="needs-validation mb-2 row text-start"
+                    id="validation-form"
+                    novalidate
+                  >
+                    <div class="mb-2 col-md-6">
+                      <label for="name_paypel" class="form-label">Nome</label
+                      ><input
+                        type="text"
+                        autocomplete="name"
+                        id="name_paypel"
+                        placeholder="Insira o nome da sua conta paypal"
+                        required
+                        class="form-control"
+                        value="José Mbenga da Costa"
+                      />
+                      <div class="invalid-feedback">
+                        Por favor insira o seu nome válido de paypal
+                      </div>
+                    </div>
+                    <div class="mb-2 col-md-6">
+                      <label for="email_paypel" class="form-label">Email</label
+                      ><input
+                        type="email"
+                        autocomplete="email"
+                        id="email_paypel"
+                        class="form-control"
+                        placeholder="Insira o emeil da sua conta paypal"
+                        required
+                        value="josembenga@wasomupfy.com"
+                      />
+                      <div class="invalid-feedback">
+                        Por favor insira o seu e-mail válido de paypal
+                      </div>
+                    </div>
+                    <div class="mt-2">
+                      <input
+                        type="submit"
+                        class="btn btn-pink form-control"
+                        value="Alterar"
+                      />
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal para criar contas -->
+      <div
+        class="modal fade"
+        id="creatnewAccount"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabindex="-1"
+        aria-labelledby="creatnewAccountLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5 text-dark" id="creatnewAccountLabel">
+                Criar conta
+              </h1>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div class="row justify-content-center text-center">
+                <div class="card-header row">
+                  <p class="stats-description text-start">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    Possimus impedit delectus nostrum quam nulla laborum atque
+                    nobis magnam deserunt, quisquam voluptatum voluptatibus
+                    dicta amet quibusdam accusamus architecto sequi illo iste?
+                  </p>
+                </div>
+                <ul class="list-group-item">
+                  <div class="card-body">
+                    <!-- Launch Card para actualizar a conta express -->
+                    <div class="launch-card mb-4">
+                      <div class="card">
+                        <div class="align-items-lg-center">
+                          <div class="text-center">
+                            <button
+                              href="#!"
+                              data-bs-toggle="collapse"
+                              data-bs-target="#collapseOneAccount_creatExpress"
+                              aria-expanded="false"
+                              aria-controls="collapseOneAccount_creatExpress"
+                              style="
+                                color: #ff0089;
+                                font-weight: bold;
+                                border-color: #ff0089;
+                              "
+                              class="btn btn-default w-100"
+                            >
+                              <h5>Express</h5>
+                            </button>
+                            <div
+                              id="collapseOneAccount_creatExpress"
+                              class="accordion-collapse collapse w-100"
+                              data-bs-parent="#accordionExample"
+                            >
+                              <div class="mt-3">
+                                <form
+                                  method="post"
+                                  action=""
+                                  class="needs-validation mb-2 row text-start"
+                                  id="validation-form"
+                                  novalidate
+                                >
+                                  <div class="mb-2 col-md-4">
+                                    <label for="name_express" class="form-label"
+                                      >Nome</label
+                                    ><input
+                                      type="text"
+                                      autocomplete="name"
+                                      id="name_express"
+                                      placeholder="Insira o nome da sua conta IBAN"
+                                      required
+                                      class="form-control"
+                                      value="José Mbenga da Costa"
+                                    />
+                                    <div class="invalid-feedback">
+                                      Por favor insira o seu nome válido de IBAN
                                     </div>
-                                    <div class="mb-2 col-md-4">
-                                        <label for="iba_express" class="form-label">IBAN</label><input type="tel"
-                                            autocomplete="email" id="iba_express" class="form-control"
-                                            placeholder="Insira o emeil da sua conta IBAN" required
-                                            value="AO06.0000.0000.0000.000.00.0"
-                                            data-mask="AO06.0000.0000.0000.000.00.0" maxlength="28">
-                                        <div class="invalid-feedback">
-                                            Por favor insira o IBAN válido
-                                        </div>
+                                  </div>
+                                  <div class="mb-2 col-md-4">
+                                    <label for="iba_express" class="form-label"
+                                      >IBAN</label
+                                    ><input
+                                      type="tel"
+                                      autocomplete="email"
+                                      id="iba_express"
+                                      class="form-control"
+                                      placeholder="Insira o emeil da sua conta IBAN"
+                                      required
+                                      value="AO06.0000.0000.0000.000.00.0"
+                                      data-mask="AO06.0000.0000.0000.000.00.0"
+                                      maxlength="28"
+                                    />
+                                    <div class="invalid-feedback">
+                                      Por favor insira o IBAN válido
                                     </div>
-                                    <div class="mb-2 col-md-4">
-                                        <label for="tel_expresss" class="form-label">Telefone</label><input type="tel"
-                                            autocomplete="email" id="tel_expresss" class="form-control"
-                                            placeholder="Insira o emeil da sua conta IBAN" required
-                                            value="+244 923 000 000">
-                                        <div class="invalid-feedback">
-                                            Por favor insira o número de telfone válido
-                                        </div>
+                                  </div>
+                                  <div class="mb-2 col-md-4">
+                                    <label for="tel_expresss" class="form-label"
+                                      >Telefone</label
+                                    ><input
+                                      type="tel"
+                                      autocomplete="email"
+                                      id="tel_expresss"
+                                      class="form-control"
+                                      placeholder="Insira o emeil da sua conta IBAN"
+                                      required
+                                      value="+244 923 000 000"
+                                    />
+                                    <div class="invalid-feedback">
+                                      Por favor insira o número de telfone
+                                      válido
                                     </div>
-                                    <div class="mt-2"><input type="submit" class="btn btn-pink form-control"
-                                            value="Alterar"></div>
+                                  </div>
+                                  <div class="mt-2">
+                                    <input
+                                      type="submit"
+                                      class="btn btn-pink form-control"
+                                      value="Salva"
+                                    />
+                                  </div>
                                 </form>
+                              </div>
                             </div>
+                          </div>
                         </div>
+                      </div>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Launch Card para actualizar a conta paypal -->
-        <div class="launch-card mb-4">
-            <div class="card">
-                <div class="align-items-lg-center">
-                    <div class="text-center">
-                        <button href="#!" data-bs-toggle="collapse" data-bs-target="#collapseTwoAccount"
-                            aria-expanded="false" aria-controls="collapseTwoAccount"
-                            style="color:#ff0089 ; font-weight: bold; border-color: #ff0089;"
-                            class="btn btn-default w-100">
-                            <h5> Paypal</h5>
-                        </button>
-                        <div id="collapseTwoAccount" class="accordion-collapse collapse"
-                            data-bs-parent="#accordionExample">
-                            <div class="mt-3">
-                                <form method="post" action="" class="needs-validation mb-2 row text-start"
-                                    id="validation-form" novalidate>
-                                    <div class="mb-2 col-md-6">
-                                        <label for="name_paypel" class="form-label">Nome</label><input type="text"
-                                            autocomplete="name" id="name_paypel"
-                                            placeholder="Insira o nome da sua conta paypal" required
-                                            class="form-control" value="José Mbenga da Costa">
-                                        <div class="invalid-feedback">
-                                            Por favor insira o seu nome válido de paypal
-                                        </div>
+                    <hr />
+                    <!-- Launch Card para actualizar a conta paypal -->
+                    <div class="launch-card mb-4">
+                      <div class="card">
+                        <div class="align-items-lg-center">
+                          <div class="text-center">
+                            <button
+                              href="#!"
+                              data-bs-toggle="collapse"
+                              data-bs-target="#collapseTwoAccount_creatPaypal"
+                              aria-expanded="false"
+                              aria-controls="collapseTwoAccount_creatPaypal"
+                              style="
+                                color: #ff0089;
+                                font-weight: bold;
+                                border-color: #ff0089;
+                              "
+                              class="btn btn-default w-100"
+                            >
+                              <h5>Paypal</h5>
+                            </button>
+                            <div
+                              id="collapseTwoAccount_creatPaypal"
+                              class="accordion-collapse collapse"
+                              data-bs-parent="#accordionExample"
+                            >
+                              <div class="mt-3">
+                                <form
+                                  method="post"
+                                  action=""
+                                  class="needs-validation mb-2 row text-start"
+                                  id="validation-form"
+                                  novalidate
+                                >
+                                  <div class="mb-2 col-md-6">
+                                    <label for="name_paypel" class="form-label"
+                                      >Nome</label
+                                    ><input
+                                      type="text"
+                                      autocomplete="name"
+                                      id="name_paypel"
+                                      placeholder="Insira o nome da sua conta paypal"
+                                      required
+                                      class="form-control"
+                                      value="José Mbenga da Costa"
+                                    />
+                                    <div class="invalid-feedback">
+                                      Por favor insira o seu nome válido de
+                                      paypal
                                     </div>
-                                    <div class="mb-2 col-md-6">
-                                        <label for="email_paypel" class="form-label">Email</label><input type="email"
-                                            autocomplete="email" id="email_paypel" class="form-control"
-                                            placeholder="Insira o emeil da sua conta paypal" required
-                                            value="josembenga@wasomupfy.com">
-                                        <div class="invalid-feedback">
-                                            Por favor insira o seu e-mail válido de paypal
-                                        </div>
+                                  </div>
+                                  <div class="mb-2 col-md-6">
+                                    <label for="email_paypel" class="form-label"
+                                      >Email</label
+                                    ><input
+                                      type="email"
+                                      autocomplete="email"
+                                      id="email_paypel"
+                                      class="form-control"
+                                      placeholder="Insira o emeil da sua conta paypal"
+                                      required
+                                      value="josembenga@wasomupfy.com"
+                                    />
+                                    <div class="invalid-feedback">
+                                      Por favor insira o seu e-mail válido de
+                                      paypal
                                     </div>
-                                    <div class="mt-2"><input type="submit" class="btn btn-pink form-control"
-                                            value="Alterar"></div>
-
+                                  </div>
+                                  <div class="mt-2">
+                                    <input
+                                      type="submit"
+                                      class="btn btn-pink form-control"
+                                      value="Salva"
+                                    />
+                                  </div>
                                 </form>
+                              </div>
                             </div>
+                          </div>
                         </div>
+                      </div>
                     </div>
-                </div>
+                  </div>
+                </ul>
+              </div>
             </div>
-        </div>
-
-
-        <!-- Modal para criar contas -->
-        <div class="modal fade" id="creatnewAccount" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-            aria-labelledby="creatnewAccountLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5 text-dark" id="creatnewAccountLabel">Criar conta</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row justify-content-center text-center">
-                            <div class="card-header row">
-                                <p class="stats-description text-start">
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus impedit delectus
-                                    nostrum quam nulla laborum atque nobis magnam deserunt, quisquam voluptatum
-                                    voluptatibus dicta amet quibusdam accusamus architecto sequi illo iste?
-                                </p>
-                            </div>
-                            <ul class="list-group-item">
-                                <div class="card-body">
-                                    <!-- Launch Card para actualizar a conta express -->
-                                    <div class="launch-card mb-4">
-                                        <div class="card">
-                                            <div class="align-items-lg-center">
-                                                <div class="text-center">
-                                                    <button href="#!" data-bs-toggle="collapse"
-                                                        data-bs-target="#collapseOneAccount_creatExpress"
-                                                        aria-expanded="false"
-                                                        aria-controls="collapseOneAccount_creatExpress"
-                                                        style="color:#ff0089 ;  font-weight: bold; border-color: #ff0089;"
-                                                        class="btn btn-default w-100">
-                                                        <h5>Express</h5>
-                                                    </button>
-                                                    <div id="collapseOneAccount_creatExpress"
-                                                        class="accordion-collapse collapse w-100"
-                                                        data-bs-parent="#accordionExample">
-                                                        <div class="mt-3">
-                                                            <form method="post" action=""
-                                                                class="needs-validation mb-2 row text-start"
-                                                                id="validation-form" novalidate>
-                                                                <div class="mb-2 col-md-4">
-                                                                    <label for="name_express"
-                                                                        class="form-label">Nome</label><input
-                                                                        type="text" autocomplete="name"
-                                                                        id="name_express"
-                                                                        placeholder="Insira o nome da sua conta IBAN"
-                                                                        required class="form-control"
-                                                                        value="José Mbenga da Costa">
-                                                                    <div class="invalid-feedback">
-                                                                        Por favor insira o seu nome válido de IBAN
-                                                                    </div>
-                                                                </div>
-                                                                <div class="mb-2 col-md-4">
-                                                                    <label for="iba_express"
-                                                                        class="form-label">IBAN</label><input type="tel"
-                                                                        autocomplete="email" id="iba_express"
-                                                                        class="form-control"
-                                                                        placeholder="Insira o emeil da sua conta IBAN"
-                                                                        required value="AO06.0000.0000.0000.000.00.0"
-                                                                        data-mask="AO06.0000.0000.0000.000.00.0"
-                                                                        maxlength="28">
-                                                                    <div class="invalid-feedback">
-                                                                        Por favor insira o IBAN válido
-                                                                    </div>
-                                                                </div>
-                                                                <div class="mb-2 col-md-4">
-                                                                    <label for="tel_expresss"
-                                                                        class="form-label">Telefone</label><input
-                                                                        type="tel" autocomplete="email"
-                                                                        id="tel_expresss" class="form-control"
-                                                                        placeholder="Insira o emeil da sua conta IBAN"
-                                                                        required value="+244 923 000 000">
-                                                                    <div class="invalid-feedback">
-                                                                        Por favor insira o número de telfone válido
-                                                                    </div>
-                                                                </div>
-                                                                <div class="mt-2"><input type="submit"
-                                                                        class="btn btn-pink form-control" value="Salva">
-                                                                </div>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <!-- Launch Card para actualizar a conta paypal -->
-                                    <div class="launch-card mb-4">
-                                        <div class="card">
-                                            <div class="align-items-lg-center">
-                                                <div class="text-center">
-                                                    <button href="#!" data-bs-toggle="collapse"
-                                                        data-bs-target="#collapseTwoAccount_creatPaypal"
-                                                        aria-expanded="false"
-                                                        aria-controls="collapseTwoAccount_creatPaypal"
-                                                        style="color:#ff0089 ; font-weight: bold; border-color: #ff0089;"
-                                                        class="btn btn-default w-100">
-                                                        <h5> Paypal</h5>
-                                                    </button>
-                                                    <div id="collapseTwoAccount_creatPaypal"
-                                                        class="accordion-collapse collapse"
-                                                        data-bs-parent="#accordionExample">
-                                                        <div class="mt-3">
-                                                            <form method="post" action=""
-                                                                class="needs-validation mb-2 row text-start"
-                                                                id="validation-form" novalidate>
-                                                                <div class="mb-2 col-md-6">
-                                                                    <label for="name_paypel"
-                                                                        class="form-label">Nome</label><input
-                                                                        type="text" autocomplete="name" id="name_paypel"
-                                                                        placeholder="Insira o nome da sua conta paypal"
-                                                                        required class="form-control"
-                                                                        value="José Mbenga da Costa">
-                                                                    <div class="invalid-feedback">
-                                                                        Por favor insira o seu nome válido de paypal
-                                                                    </div>
-                                                                </div>
-                                                                <div class="mb-2 col-md-6">
-                                                                    <label for="email_paypel"
-                                                                        class="form-label">Email</label><input
-                                                                        type="email" autocomplete="email"
-                                                                        id="email_paypel" class="form-control"
-                                                                        placeholder="Insira o emeil da sua conta paypal"
-                                                                        required value="josembenga@wasomupfy.com">
-                                                                    <div class="invalid-feedback">
-                                                                        Por favor insira o seu e-mail válido de paypal
-                                                                    </div>
-                                                                </div>
-                                                                <div class="mt-2"><input type="submit"
-                                                                        class="btn btn-pink form-control" value="Salva">
-                                                                </div>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <div>
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-                        </div>
-                    </div>
-                </div>
+            <div class="modal-footer">
+              <div>
+                <button
+                  type="button"
+                  class="btn btn-danger"
+                  data-bs-dismiss="modal"
+                >
+                  Cancelar
+                </button>
+              </div>
             </div>
+          </div>
         </div>
-        <!-- Modal para criar contas fim -->
+      </div>
+      <!-- Modal para criar contas fim -->
     </div>
 
-
     <nav class="bottom-nav d-lg-none">
-        <ul class="nav justify-content-around">
-            <li class="nav-item"><a class="nav-link" href="../painel.html" aria-label="Ir para Dashboard"><i
-                        class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../launch/releases.html" aria-label="Ir para Lançamentos"><i
-                        class="bi bi-disc"></i><span>Lançamentos</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../analytics/statistics.html"
-                    aria-label="Ir para Estatísticas"><i class="bi bi-bar-chart"></i><span>Estatísticas</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../finances/overview.html" aria-label="Ir para Finanças"><i
-                        class="bi bi-currency-dollar"></i><span>Finanças</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../artists/artists-list.html"
-                    aria-label="Ir para Artistas"><i class="bi bi-person"></i><span>Artistas</span></a></li>
-        </ul>
+      <ul class="nav justify-content-around">
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="../painel.html"
+            aria-label="Ir para Dashboard"
+            ><i class="bi bi-speedometer2"></i><span>Dashboard</span></a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="../launch/releases.html"
+            aria-label="Ir para Lançamentos"
+            ><i class="bi bi-disc"></i><span>Lançamentos</span></a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="../analytics/statistics.html"
+            aria-label="Ir para Estatísticas"
+            ><i class="bi bi-bar-chart"></i><span>Estatísticas</span></a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="../finances/overview.html"
+            aria-label="Ir para Finanças"
+            ><i class="bi bi-currency-dollar"></i><span>Finanças</span></a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="../artists/artists-list.html"
+            aria-label="Ir para Artistas"
+            ><i class="bi bi-person"></i><span>Artistas</span></a
+          >
+        </li>
+      </ul>
     </nav>
-
 
     <!-- Bootstrap JS and Popper.js -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -563,69 +938,70 @@ https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css
     <!-- Toastr -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
-        // Theme Toggle with Auto Detection
-        const themeToggle = document.getElementById('themeToggle');
-        const themeIcon = document.getElementById('themeIcon');
+      // Theme Toggle with Auto Detection
+      const themeToggle = document.getElementById("themeToggle");
+      const themeIcon = document.getElementById("themeIcon");
 
-        // Verificar preferência do sistema e aplicar tema inicial
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.body.classList.add('dark-mode');
-            themeIcon.classList.remove('bi-sun');
-            themeIcon.classList.add('bi-moon');
+      // Verificar preferência do sistema e aplicar tema inicial
+      if (
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches
+      ) {
+        document.body.classList.add("dark-mode");
+        themeIcon.classList.remove("bi-sun");
+        themeIcon.classList.add("bi-moon");
+      }
+
+      // Alternar tema ao clicar no botão
+      themeToggle.addEventListener("click", () => {
+        document.body.classList.toggle("dark-mode");
+        if (document.body.classList.contains("dark-mode")) {
+          document.body.classList.remove("light-mode");
+          themeIcon.classList.remove("bi-sun");
+          themeIcon.classList.add("bi-moon");
+        } else {
+          document.body.classList.add("light-mode");
+          themeIcon.classList.remove("bi-moon");
+          themeIcon.classList.add("bi-sun");
         }
+      });
 
-        // Alternar tema ao clicar no botão
-        themeToggle.addEventListener('click', () => {
-            document.body.classList.toggle('dark-mode');
-            if (document.body.classList.contains('dark-mode')) {
-                document.body.classList.remove('light-mode');
-                themeIcon.classList.remove('bi-sun');
-                themeIcon.classList.add('bi-moon');
-            } else {
-                document.body.classList.add('light-mode');
-                themeIcon.classList.remove('bi-moon');
-                themeIcon.classList.add('bi-sun');
-            }
+      // Tela de Carregamento
+      window.addEventListener("load", () => {
+        const loadingScreen = document.getElementById("loadingScreen");
+        setTimeout(() => {
+          loadingScreen.classList.add("fade-out");
+        }, 200); // Exibir por 2 segundos
+      });
+
+      // Botões activo de links de navegação de baixo
+      document.addEventListener("DOMContentLoaded", () => {
+        const navLinks = document.querySelectorAll(".bottom-nav .nav-link");
+        const currentPath = window.location.pathname;
+
+        navLinks.forEach((link) => {
+          if (link.getAttribute("href") === currentPath.split("/").pop()) {
+            link.classList.add("active");
+          }
         });
-
-        // Tela de Carregamento
-        window.addEventListener('load', () => {
-            const loadingScreen = document.getElementById('loadingScreen');
-            setTimeout(() => {
-                loadingScreen.classList.add('fade-out');
-            }, 200); // Exibir por 2 segundos
-        });
-
-        // Botões activo de links de navegação de baixo
-        document.addEventListener('DOMContentLoaded', () => {
-            const navLinks = document.querySelectorAll('.bottom-nav .nav-link');
-            const currentPath = window.location.pathname;
-
-            navLinks.forEach(link => {
-                if (link.getAttribute('href') === currentPath.split('/').pop()) {
-                    link.classList.add('active');
-                }
-            });
-        });
+      });
     </script>
 
     <script>
-        $(function () {
-            var Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 5000
-            });
-
-            $('.toastrDefaultInfo').click(function () {
-                toastr.info(
-                    'Para visualizar os dados da suas carteiras financeiras basta clicar <q>Express</q> ou <q>Paypal</q>'
-                )
-            });
-
+      $(function () {
+        var Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 5000,
         });
-    </script>
-</body>
 
+        $(".toastrDefaultInfo").click(function () {
+          toastr.info(
+            "Para visualizar os dados da suas carteiras financeiras basta clicar <q>Express</q> ou <q>Paypal</q>"
+          );
+        });
+      });
+    </script>
+  </body>
 </html>

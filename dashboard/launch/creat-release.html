@@ -1,136 +1,173 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="robots" content="noindex, nofollow">
+    <meta name="robots" content="noindex, nofollow" />
     <meta name="author" content="Voosoft" />
-    <meta name="theme-color" content="#FF0089">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="../../assets/img/icones/wasomupfy_fiv_512.png">
-    <link rel="apple-touch-startup-image" href="../../assets/img/screenshots/splash.png">
-    <link rel="manifest" href="../manifest.json">
+    <meta name="theme-color" content="#FF0089" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <link
+      rel="apple-touch-icon"
+      href="../../assets/img/icones/wasomupfy_fiv_512.png"
+    />
+    <link
+      rel="apple-touch-startup-image"
+      href="../../assets/img/screenshots/splash.png"
+    />
+    <link rel="manifest" href="../manifest.json" />
     <title>Wasom Upfy - Criar lançamento</title>
-    <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
-    <link rel="stylesheet" href="../../css/libs/plugins.css">
-    <link rel="stylesheet" href="../../css/libs/scrollue.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="../../css/dashboard-style.css">
-    <link rel="stylesheet" href="../../css/lastest-style.css">
+    <link
+      rel="shortcut icon"
+      href="../../assets/img/icones/wasomupfy_fiv.png"
+      type="image/x-icon"
+    />
+    <link rel="stylesheet" href="../../css/libs/plugins.css" />
+    <link rel="stylesheet" href="../../css/libs/scrollue.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+    />
+    <link rel="stylesheet" href="../../css/dashboard-style.css" />
+    <link rel="stylesheet" href="../../css/lastest-style.css" />
     <!-- Select2 CSS -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css" rel="stylesheet" />
-   <!-- Toastr -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css"
+      rel="stylesheet"
+    />
+    <!-- Toastr -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <style>
-        /* Estilizar o container do Select2 (caixa de seleção) */
-        .select2-container--default .select2-selection--multiple {
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 5px;
-            font-size: 0.9rem;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
+      /* Estilizar o container do Select2 (caixa de seleção) */
+      .select2-container--default .select2-selection--multiple {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 5px;
+        font-size: 0.9rem;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
 
-        .select2-container--default .select2-selection--multiple:focus {
-            border-color: #ff0089;
-            box-shadow: 0 0 0 3px rgba(255, 77, 148, 0.2);
-        }
+      .select2-container--default .select2-selection--multiple:focus {
+        border-color: #ff0089;
+        box-shadow: 0 0 0 3px rgba(255, 77, 148, 0.2);
+      }
 
-        /* Estilizar os itens selecionados (tags) */
-        .select2-container--default .select2-selection--multiple .select2-selection__choice {
-            background-color: #ff0089;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            padding: 2px 8px;
-            font-size: 0.85rem;
-        }
+      /* Estilizar os itens selecionados (tags) */
+      .select2-container--default
+        .select2-selection--multiple
+        .select2-selection__choice {
+        background-color: #ff0089;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.85rem;
+      }
 
-        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
-            color: #1A1A1A;
-            margin-right: 5px;
-        }
+      .select2-container--default
+        .select2-selection--multiple
+        .select2-selection__choice__remove {
+        color: #1a1a1a;
+        margin-right: 5px;
+      }
 
-        /* Estilizar o campo de pesquisa dentro do dropdown */
-        .select2-container--default .select2-search--dropdown .select2-search__field {
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 6px;
-            font-size: 0.9rem;
-        }
+      /* Estilizar o campo de pesquisa dentro do dropdown */
+      .select2-container--default
+        .select2-search--dropdown
+        .select2-search__field {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 6px;
+        font-size: 0.9rem;
+      }
 
-        /* Estilizar o dropdown */
-        .select2-container--default .select2-dropdown {
-            background-color: #3a3a3a;
-            ;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        }
+      /* Estilizar o dropdown */
+      .select2-container--default .select2-dropdown {
+        background-color: #3a3a3a;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
 
-        /* Estilizar as opções no dropdown */
-        .select2-container--default .select2-results__option {
-            padding: 8px 12px;
-            font-size: 0.9rem;
-            color: #000;
-        }
+      /* Estilizar as opções no dropdown */
+      .select2-container--default .select2-results__option {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+        color: #000;
+      }
 
-        .select2-container--default .select2-results__option--highlighted[aria-selected] {
-            background-color: #ff0089;
-            color: #000;
-        }
+      .select2-container--default
+        .select2-results__option--highlighted[aria-selected] {
+        background-color: #ff0089;
+        color: #000;
+      }
 
-        .select2-container--default .select2-results__option[aria-selected="true"] {
-            background-color: #ff0089;
-            color: #000;
-        }
+      .select2-container--default
+        .select2-results__option[aria-selected="true"] {
+        background-color: #ff0089;
+        color: #000;
+      }
 
+      /* Modo Escuro */
 
-        /* Modo Escuro */
+      .dark-mode .select2-container--default .select2-selection--multiple {
+        border: 1px solid #555;
+        color: #ffffff;
+      }
 
-        .dark-mode .select2-container--default .select2-selection--multiple {
+      .dark-mode
+        .select2-container--default
+        .select2-selection--multiple
+        .select2-selection__choice {
+        background-color: #ff0089;
+        color: #ffffff;
+      }
 
-            border: 1px solid #555;
-            color: #ffffff;
-        }
+      .dark-mode .select2-container--default .select2-dropdown {
+        background-color: #2c2c2c;
+        border: 1px solid #555;
+      }
 
-        .dark-mode .select2-container--default .select2-selection--multiple .select2-selection__choice {
-            background-color: #ff0089;
-            color: #ffffff;
-        }
+      .dark-mode
+        .select2-container--default
+        .select2-search--dropdown
+        .select2-search__field {
+        border: 1px solid #555;
+        color: #ffffff;
+      }
 
-        .dark-mode .select2-container--default .select2-dropdown {
-            background-color: #2c2c2c;
-            border: 1px solid #555;
-        }
+      .dark-mode .select2-container--default .select2-results__option {
+        color: #ffffff;
+      }
 
-        .dark-mode .select2-container--default .select2-search--dropdown .select2-search__field {
-
-            border: 1px solid #555;
-            color: #ffffff;
-        }
-
-        .dark-mode .select2-container--default .select2-results__option {
-            color: #ffffff;
-        }
-
-        .dark-mode .select2-container--default .select2-results__option--highlighted[aria-selected],
-        .dark-mode .select2-container--default .select2-results__option[aria-selected="true"] {
-            background-color: #ff0089;
-            color: #ffffff;
-        }
+      .dark-mode
+        .select2-container--default
+        .select2-results__option--highlighted[aria-selected],
+      .dark-mode
+        .select2-container--default
+        .select2-results__option[aria-selected="true"] {
+        background-color: #ff0089;
+        color: #ffffff;
+      }
     </style>
-</head>
+  </head>
 
-<body>
-
+  <body>
     <!-- Tela de Carregamento -->
     <!-- <div class="loading-screen" id="loadingScreen">
         <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg" class="loading-logo">
@@ -142,665 +179,967 @@
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <!-- Menu Button (Left) -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu"
-                aria-controls="offcanvasMenu">
-                <span class="navbar-toggler-icon"><i class="bi bi-list text-white fs-1"></i></span>
-            </button>
+      <div class="container-fluid">
+        <!-- Menu Button (Left) -->
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#offcanvasMenu"
+          aria-controls="offcanvasMenu"
+        >
+          <span class="navbar-toggler-icon"
+            ><i class="bi bi-list text-white fs-1"></i
+          ></span>
+        </button>
 
-            <!-- Logo (Center on Mobile, Left on Desktop) -->
-            <a class="navbar-brand" href="../painel.html">
-                <!-- SVG Logo Wasom Upfy -->
-                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+        <!-- Logo (Center on Mobile, Left on Desktop) -->
+        <a class="navbar-brand" href="../painel.html">
+          <!-- SVG Logo Wasom Upfy -->
+          <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
                     <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
                     <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
                         fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
                 </svg> -->
-                <span class="text-light"
-                    style="font-weight: bold; box-sizing: border-box; text-transform: capitalize; font-family:Arial, sans-serif">WASOM
-                    UPFY</span>
-            </a>
+          <span
+            class="text-light"
+            style="
+              font-weight: bold;
+              box-sizing: border-box;
+              text-transform: capitalize;
+              font-family: Arial, sans-serif;
+            "
+            >WASOM UPFY</span
+          >
+        </a>
 
-            <!-- Desktop Menu -->
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav m-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="../painel.html"><i class="bi bi-speedometer2"></i>
-                            Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../launch/releases.html"><i class="bi bi-disc"></i>
-                            Lançamentos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../analytics/statistics.html"><i
-                                class="bi bi-bar-chart"></i>
-                            Estatísticas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../finances/overview.html"><i
-                                class="bi bi-currency-dollar"></i>
-                            Finanças</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../artists/artists-list.html"><i
-                                class="bi bi-person"></i>
-                            Artistas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="youtube.html"><i class="bi bi-youtube"></i>
-                            Unificação de canal YouTube</a></li>
-                </ul>
-            </div>
-
-            <!-- User Icon (Right) -->
-            <div class="user-menu d-flex align-items-center">
-                <!-- Theme Toggle Button -->
-                <a class="theme-toggle text-white me-2" id="themeToggle">
-                    <i class="bi bi-sun" id="themeIcon"></i>
-                </a>
-                <a href="../notifications.html" class="text-white me-2" aria-label="Notificações">
-                    <i class="bi bi-bell fs-4"></i>
-                    <span class="badge bg-danger">9</span>
-                </a>
-                <a href="#" class="text-white" data-bs-toggle="dropdown">
-                    <i class="bi bi-person-circle fs-4"></i>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="../user/profile.html"><i class="bi bi-person me-2"></i>
-                            <strong>Eleven
-                                Records</strong></a>
-                        <div class="text-white-50"> &nbsp; &nbsp; &nbsp; &nbsp;
-                            (Conta 560108)</div>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item" href="../user/profile.html"><i class="bi bi-person me-2"></i> Meu
-                            Perfil</a>
-                    </li>
-                    <li><a class="dropdown-item" href="../account/manage-account.html"><i class="bi bi-tools me-2"></i>
-                            Gestão de Conta</a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item" href="../page/settings.html"><i class="bi bi-gear me-2"></i>
-                            Configurações</a></li>
-                    <li><a class="dropdown-item" href="../page/notifications.html"><i class="bi bi-bell me-2"></i>
-                            Notificações</a></li>
-                    <li><a class="dropdown-item" href="../services/available-services.html"><i
-                                class="bi bi-star me-2"></i> Conta e serviços disponíveis</a></li>
-                    <li><a class="dropdown-item" href="#?logout-wasomupfy" data-bs-toggle="modal"
-                            data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right me-2"></i>
-                            Desconectar-se</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item" href="../page/sobre.html"><i class="bi bi-info-circle me-2"></i>
-                            Sobre</a>
-                    </li>
-                    <li><a class="dropdown-item" href="../page/support.html"><i class="bi bi-headset me-2"></i> Enviar
-                            pedido de suporte</a></li>
-                    <li><a class="dropdown-item" href="../page/faq.html"><i class="bi bi-chat-left-text me-2"></i>
-                            Perguntas frequentes</a></li>
-                    <li><a class="dropdown-item" href="../page/help.html"><i class="bi bi-question-circle me-2"></i>
-                            Ajuda</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><span class="dropdown-item-text" id="versionDropdown"></span></li>
-                </ul>
-            </div>
+        <!-- Desktop Menu -->
+        <div class="collapse navbar-collapse">
+          <ul class="navbar-nav m-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" href="../painel.html"
+                ><i class="bi bi-speedometer2"></i> Dashboard</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../launch/releases.html"
+                ><i class="bi bi-disc"></i> Lançamentos</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../analytics/statistics.html"
+                ><i class="bi bi-bar-chart"></i> Estatísticas</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../finances/overview.html"
+                ><i class="bi bi-currency-dollar"></i> Finanças</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../artists/artists-list.html"
+                ><i class="bi bi-person"></i> Artistas</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="youtube.html"
+                ><i class="bi bi-youtube"></i> Unificação de canal YouTube</a
+              >
+            </li>
+          </ul>
         </div>
+
+        <!-- User Icon (Right) -->
+        <div class="user-menu d-flex align-items-center">
+          <!-- Theme Toggle Button -->
+          <a class="theme-toggle text-white me-2" id="themeToggle">
+            <i class="bi bi-sun" id="themeIcon"></i>
+          </a>
+          <a
+            href="../notifications.html"
+            class="text-white me-2"
+            aria-label="Notificações"
+          >
+            <i class="bi bi-bell fs-4"></i>
+            <span class="badge bg-danger">9</span>
+          </a>
+          <a href="#" class="text-white" data-bs-toggle="dropdown">
+            <i class="bi bi-person-circle fs-4"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+              <a class="dropdown-item" href="../user/profile.html"
+                ><i class="bi bi-person me-2"></i>
+                <strong>Eleven Records</strong></a
+              >
+              <div class="text-white-50">
+                &nbsp; &nbsp; &nbsp; &nbsp; (Conta 560108)
+              </div>
+            </li>
+            <li>
+              <hr class="dropdown-divider" />
+            </li>
+            <li>
+              <a class="dropdown-item" href="../user/profile.html"
+                ><i class="bi bi-person me-2"></i> Meu Perfil</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="../account/manage-account.html"
+                ><i class="bi bi-tools me-2"></i> Gestão de Conta</a
+              >
+            </li>
+            <li>
+              <hr class="dropdown-divider" />
+            </li>
+            <li>
+              <a class="dropdown-item" href="../page/settings.html"
+                ><i class="bi bi-gear me-2"></i> Configurações</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="../page/notifications.html"
+                ><i class="bi bi-bell me-2"></i> Notificações</a
+              >
+            </li>
+            <li>
+              <a
+                class="dropdown-item"
+                href="../services/available-services.html"
+                ><i class="bi bi-star me-2"></i> Conta e serviços disponíveis</a
+              >
+            </li>
+            <li>
+              <a
+                class="dropdown-item"
+                href="#?logout-wasomupfy"
+                data-bs-toggle="modal"
+                data-bs-target="#logoutwasomupfy"
+                ><i class="bi bi-box-arrow-right me-2"></i> Desconectar-se</a
+              >
+            </li>
+            <li>
+              <hr class="dropdown-divider" />
+            </li>
+            <li>
+              <a class="dropdown-item" href="../page/sobre.html"
+                ><i class="bi bi-info-circle me-2"></i> Sobre</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="../page/support.html"
+                ><i class="bi bi-headset me-2"></i> Enviar pedido de suporte</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="../page/faq.html"
+                ><i class="bi bi-chat-left-text me-2"></i> Perguntas
+                frequentes</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="../page/help.html"
+                ><i class="bi bi-question-circle me-2"></i> Ajuda</a
+              >
+            </li>
+            <li>
+              <hr class="dropdown-divider" />
+            </li>
+            <li>
+              <span class="dropdown-item-text" id="versionDropdown"></span>
+            </li>
+          </ul>
+        </div>
+      </div>
     </nav>
 
     <!-- Modal logout -->
-    <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">Terminar sessão</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div
+      class="modal fade"
+      id="logoutwasomupfy"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="logoutwasomupfyLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">
+              Terminar sessão
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="container">
+              <div class="row justify-content-center text-center">
+                <div
+                  class="col-md-12 content-center justify-center text-center"
+                >
+                  <p class="text-center text-dark">
+                    @josembengadacosta você tem certeza de que desejas terminar
+                    sessão?
+                  </p>
                 </div>
-                <div class="modal-body">
-                    <div class="container">
-                        <div class="row justify-content-center text-center">
-                            <div class="col-md-12 content-center justify-center text-center">
-                                <p class="text-center text-dark">@josembengadacosta você tem
-                                    certeza
-                                    de que desejas terminar
-                                    sessão?</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <div>
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Não, continuar</button>
-                    </div>
-                    <div>
-                        <button class="btn btn-danger" type="button" name="logout_wasomupfy"
-                            onclick="logout_wasomupfy()">Sim, terminar
-                            sessão</button>
-                    </div>
-                    <script type="text/javascript">
-                        function logout_wasomupfy() {
-                            window.location = '../logout';
-                        }
-                    </script>
-                </div>
+              </div>
             </div>
+          </div>
+          <div class="modal-footer">
+            <div>
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-bs-dismiss="modal"
+              >
+                Não, continuar
+              </button>
+            </div>
+            <div>
+              <button
+                class="btn btn-danger"
+                type="button"
+                name="logout_wasomupfy"
+                onclick="logout_wasomupfy()"
+              >
+                Sim, terminar sessão
+              </button>
+            </div>
+            <script type="text/javascript">
+              function logout_wasomupfy() {
+                window.location = "../logout";
+              }
+            </script>
+          </div>
         </div>
+      </div>
     </div>
     <!-- Modal logout fim -->
 
     <!-- Offcanvas Menu for Mobile -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasMenuLabel">
-                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+    <div
+      class="offcanvas offcanvas-start"
+      tabindex="-1"
+      id="offcanvasMenu"
+      aria-labelledby="offcanvasMenuLabel"
+    >
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasMenuLabel">
+          <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
                     <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
                     <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
                         fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
                 </svg> -->
-                <span class="text-light"
-                    style="font-weight: bold; box-sizing: border-box; text-transform: capitalize; font-family:Arial, sans-serif">WASOM
-                    UPFY</span>
-            </h5>
-            <button type="button" class="btn-close text-white" data-bs-dismiss="offcanvas" aria-label="Close">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-        <div class="offcanvas-body">
-            <ul class="nav flex-column">
-                <li class="nav-item"><a class="nav-link" href="../painel.html"><i class="bi bi-speedometer2"></i>
-                        Dashboard</a></li>
-                <li class="nav-item"><a class="nav-link" href="../launch/releases.html"><i class="bi bi-disc"></i>
-                        Lançamentos</a>
-                </li>
-                <li class="nav-item"><a class="nav-link active" href="../analytics/statistics.html"><i
-                            class="bi bi-bar-chart"></i>
-                        Estatísticas</a></li>
-                <li class="nav-item"><a class="nav-link" href="../finances/overview.html"><i
-                            class="bi bi-currency-dollar"></i>
-                        Finanças</a></li>
-                <li class="nav-item"><a class="nav-link" href="../artists/artists-list.html"><i
-                            class="bi bi-person"></i>
-                        Artistas</a>
-                </li>
-                <li class="nav-item"><a class="nav-link" href="youtube.html"><i class="bi bi-youtube"></i> Unificação de
-                        canal YouTube</a></li>
-            </ul>
-            <div class="version-info">
-                Versão 2.1 (2026)
-            </div>
-        </div>
+          <span
+            class="text-light"
+            style="
+              font-weight: bold;
+              box-sizing: border-box;
+              text-transform: capitalize;
+              font-family: Arial, sans-serif;
+            "
+            >WASOM UPFY</span
+          >
+        </h5>
+        <button
+          type="button"
+          class="btn-close text-white"
+          data-bs-dismiss="offcanvas"
+          aria-label="Close"
+        >
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      <div class="offcanvas-body">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link" href="../painel.html"
+              ><i class="bi bi-speedometer2"></i> Dashboard</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../launch/releases.html"
+              ><i class="bi bi-disc"></i> Lançamentos</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="../analytics/statistics.html"
+              ><i class="bi bi-bar-chart"></i> Estatísticas</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../finances/overview.html"
+              ><i class="bi bi-currency-dollar"></i> Finanças</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../artists/artists-list.html"
+              ><i class="bi bi-person"></i> Artistas</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="youtube.html"
+              ><i class="bi bi-youtube"></i> Unificação de canal YouTube</a
+            >
+          </li>
+        </ul>
+        <div class="version-info">Versão 2.1 (2026)</div>
+      </div>
     </div>
 
     <!-- Main Content -->
     <div class="container my-4">
-        <!-- Welcome Section -->
-        <div class="row">
-            <div class="welcome-text mb-4 col-auto d-sm-block">
-                <h1>Detalhes lançamento</h1>
-            </div>
-            <div class="col-auto ms-auto text-end mt-n1 mb-2">
-                <button class="btn btn-pink" onclick="window.location='releases.html'"><i class="bi bi-arrow-left"></i>
-                    Voltar</button>
-            </div>
+      <!-- Welcome Section -->
+      <div class="row">
+        <div class="welcome-text mb-4 col-auto d-sm-block">
+          <h1>Detalhes lançamento</h1>
         </div>
+        <div class="col-auto ms-auto text-end mt-n1 mb-2">
+          <button
+            class="btn btn-pink"
+            onclick="window.location='releases.html'"
+          >
+            <i class="bi bi-arrow-left"></i> Voltar
+          </button>
+        </div>
+      </div>
 
-        <!-- Stats Description -->
-        <p class="stats-description">
-            Faça o preenchimento de todos os espaços informando os dados necessários para o primeiro passo daa criaçao
-            do seu novo lançamento, faça tudo de acordo com as regras de cada loja de música digital.
-        </p>
+      <!-- Stats Description -->
+      <p class="stats-description">
+        Faça o preenchimento de todos os espaços informando os dados necessários
+        para o primeiro passo daa criaçao do seu novo lançamento, faça tudo de
+        acordo com as regras de cada loja de música digital.
+      </p>
 
-        <!-- Launch Card  -->
-        <div class="launch-card mb-4 mt-4 col-xl-5 col-lg-6 col-md-8 col-12 m-auto">
-            <div class="card col-md-5 m-auto">
-                <div class="align-items-lg-center">
-                    <div class="mt-2">
-                        <div class="">
-                            <form method="post" action="" class="needs-validation mb-3 row text-start" id="release-form"
-                                novalidate>
-                                <div class="d-flex align-content-center justify-center mb-3">
-                                    <div class="text-center m-auto">
-                                        <label for="cover">Capa do Álbum</label>
-                                        <br>
-                                        <a href='#!' data-bs-toggle='modal' data-bs-target='#viewphoto'>
-                                            <img id="cover-preview" src="https://via.placeholder.com/200"
-                                                alt="Pré-visualização da Capa"
-                                                class="img-responsive mt-2"
-                                                style="border-color: #FF0089;" width='128' height='128'> </a>
-                                        <input type="file" class="form-control mt-2" id="cover"
-                                            style="border-color: #FF0089;" accept="image/*">
-                                        <!-- <div class='mt-2'>
+      <!-- Launch Card  -->
+      <div
+        class="launch-card mb-4 mt-4 col-xl-5 col-lg-6 col-md-8 col-12 m-auto"
+      >
+        <div class="card col-md-5 m-auto">
+          <div class="align-items-lg-center">
+            <div class="mt-2">
+              <div class="">
+                <form
+                  method="post"
+                  action=""
+                  class="needs-validation mb-3 row text-start"
+                  id="release-form"
+                  novalidate
+                >
+                  <div class="d-flex align-content-center justify-center mb-3">
+                    <div class="text-center m-auto">
+                      <label for="cover">Capa do Álbum</label>
+                      <br />
+                      <a
+                        href="#!"
+                        data-bs-toggle="modal"
+                        data-bs-target="#viewphoto"
+                      >
+                        <img
+                          id="cover-preview"
+                          src="https://via.placeholder.com/200"
+                          alt="Pré-visualização da Capa"
+                          class="img-responsive mt-2"
+                          style="border-color: #ff0089"
+                          width="128"
+                          height="128"
+                        />
+                      </a>
+                      <input
+                        type="file"
+                        class="form-control mt-2"
+                        id="cover"
+                        style="border-color: #ff0089"
+                        accept="image/*"
+                      />
+                      <!-- <div class='mt-2'>
                                             <span href='#!' data-bs-toggle='modal' data-bs-target='#uploadwasomupfy'
                                                 class='btn btn-pink'><i class='bi bi-upload'></i>
                                                 Carregar arte de capa</span>
                                         </div> -->
-                                    </div>
-                                </div>
-
-                                <div class="mb-2">
-                                    <label for="title" class="form-label">Título do lançamento <span
-                                            class="text-danger text-xs">*</span></label>
-                                    <input type="text" autocomplete="name" id="title"
-                                        placeholder="Insira o nome de Artista" required class="form-control">
-                                    <div class="invalid-feedback">
-                                        Por favor insira o título de lançamento
-                                    </div>
-                                </div>
-
-                                <div class="mb-2">
-                                    <label for="version_release" class="form-label text-dark-form">Versão do lançamento
-                                        <span class="text-danger text-xs">*</span></label> <br>
-                                    <small>Usado para versões de lançamento não originais.</small> <br>
-                                    <small>Ex.: Remasterizado, Ao vivo, Remixes, etc</small>
-                                    <select data-placeholder="Selecione a versão do lançamento" class="form-select"
-                                        id="version" required>
-                                        <option value="original">Original</option>
-                                        <option value="remix">Remix</option>
-                                        <option value="acoustic">Acústico</option>
-                                        <option value="live">Ao Vivo</option>
-                                        <option value="other">Outro</option>
-                                    </select>
-                                    <div class="invalid-feedback">
-                                        Por favor, selecione a versão do lançamento!
-                                    </div>
-                                </div>
-
-                                <div class="mb-2">
-                                    <div class="form-group">
-                                        <label for="artists">Artistas principais <span
-                                                class="text-danger text-xs">*</span></label>
-                                        <select class="select2" multiple="multiple" required id="artists"
-                                            data-placeholder="Selecione os artistas" style="width: 100%;">
-                                            <option>Artista 1</option>
-                                            <option>Artista 2</option>
-                                            <option>Artista 3</option>
-                                            <option>Artista 4</option>
-                                            <option>Artista 5</option>
-                                            <option>Artista 6</option>
-                                            <option>Artista 7</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-
-                                <div class="mb-2">
-                                    <div class="form-group">
-                                        <label for="language">Linguagem do Lançamento</label>
-                                        <select class="form-select" id="language">
-                                            <option value="pt">Português</option>
-                                            <option value="en">Inglês</option>
-                                            <option value="es">Espanhol</option>
-                                            <option value="fr">Francês</option>
-                                            <option value="de">Alemão</option>
-                                            <option value="it">Italiano</option>
-                                            <option value="ja">Japonês</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-
-                                <div class="mb-2">
-                                    <div class="form-group">
-                                        <label for="genre">Gênero *</label>
-                                        <select class="form-select" id="genre" required>
-                                            <option value="">Selecione um gênero</option>
-                                            <option value="pop">Pop</option>
-                                            <option value="rock">Rock</option>
-                                            <option value="hip_hop">Hip Hop</option>
-                                            <option value="electronic">Electronic</option>
-                                            <option value="rnb">R&B</option>
-                                            <option value="jazz">Jazz</option>
-                                            <option value="blues">Blues</option>
-                                            <option value="country">Country</option>
-                                            <option value="folk">Folk</option>
-                                            <option value="classical">Classical</option>
-                                            <option value="reggae">Reggae</option>
-                                            <option value="metal">Metal</option>
-                                            <option value="latin">Latin</option>
-                                            <option value="world">World</option>
-                                            <option value="gospel">Gospel</option>
-                                            <option value="funk">Funk</option>
-                                            <option value="punk">Punk</option>
-                                            <option value="alternative">Alternative</option>
-                                            <option value="soundtrack">Soundtrack</option>
-                                            <option value="children">Children's</option>
-                                            <option value="new_age">New Age</option>
-                                            <option value="experimental">Experimental</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="mb-2">
-                                    <div class="form-group">
-                                        <label for="subgenre">Subgênero *</label>
-                                        <select class="form-select" id="subgenre" required>
-                                            <option value="">Selecione um subgênero</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="mb-2">
-                                    <label for="name_label" class="form-label">Nome do Rótulo <span
-                                            class="text-danger">*</span>
-                                    </label> <br>
-                                    <small>O nome do Rótulo pode ser o nome da gravadora responsavél pelos teus
-                                        trabalhos, em caso de ser um Artista independente podes usar o seu próprio nome
-                                        artistico.</small>
-                                    <input type="text" required name="name_label" class="form-control"
-                                        placeholder="Insira o nome de rótulo" id="label">
-                                    <div class="valid-feedback">
-                                    </div>
-                                    <div class="invalid-feedback">
-                                        <span class="text-base">Qual é o selo da gravadora?</span>
-                                    </div>
-                                </div>
-
-                                <div class="mb-2">
-                                    <div class="form-group">
-                                        <label>Direitos Autorais (©)</label>
-                                        <div class="d-flex align-items-center">
-                                            <select class="form-select me-2" id="copyright-year" style="width: 120px;">
-                                                <option value="">Ano</option>
-                                            </select>
-                                            <input type="text" class="form-control" id="copyright-holder"
-                                                placeholder="Artista ou Editora" maxlength="100">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="mb-2">
-                                    <div class="form-group">
-                                        <label>Direitos de Gravação (℗)</label>
-                                        <div class="d-flex align-items-center">
-                                            <select class="form-select me-2" id="phonogram-year" style="width: 120px;">
-                                                <option value="">Ano</option>
-                                            </select>
-                                            <input type="text" class="form-control" id="phonogram-holder"
-                                                placeholder="Artista ou Editora" maxlength="100">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="mb-2">
-                                    <div class="form-group">
-                                        <label for="track_count">Número de Faixas <span class="text-danger">*</span>
-                                        </label>
-                                        <input type="number" class="form-control" max="50" min="1" value="" step="1"
-                                            required id="track_count" placeholder="Insira o número de faixas">
-                                    </div>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <button type="button" class="btn btn-pink" onclick="saveDraft(true)">Salvar
-                                        Rascunho</button>
-                                    <button type="submit" class="btn btn-pink">Criar</button>
-                                </div>
-                            </form>
-                        </div>
                     </div>
-                </div>
+                  </div>
+
+                  <div class="mb-2">
+                    <label for="title" class="form-label"
+                      >Título do lançamento
+                      <span class="text-danger text-xs">*</span></label
+                    >
+                    <input
+                      type="text"
+                      autocomplete="name"
+                      id="title"
+                      placeholder="Insira o nome de Artista"
+                      required
+                      class="form-control"
+                    />
+                    <div class="invalid-feedback">
+                      Por favor insira o título de lançamento
+                    </div>
+                  </div>
+
+                  <div class="mb-2">
+                    <label
+                      for="version_release"
+                      class="form-label text-dark-form"
+                      >Versão do lançamento
+                      <span class="text-danger text-xs">*</span></label
+                    >
+                    <br />
+                    <small
+                      >Usado para versões de lançamento não originais.</small
+                    >
+                    <br />
+                    <small>Ex.: Remasterizado, Ao vivo, Remixes, etc</small>
+                    <select
+                      data-placeholder="Selecione a versão do lançamento"
+                      class="form-select"
+                      id="version"
+                      required
+                    >
+                      <option value="original">Original</option>
+                      <option value="remix">Remix</option>
+                      <option value="acoustic">Acústico</option>
+                      <option value="live">Ao Vivo</option>
+                      <option value="other">Outro</option>
+                    </select>
+                    <div class="invalid-feedback">
+                      Por favor, selecione a versão do lançamento!
+                    </div>
+                  </div>
+
+                  <div class="mb-2">
+                    <div class="form-group">
+                      <label for="artists"
+                        >Artistas principais
+                        <span class="text-danger text-xs">*</span></label
+                      >
+                      <select
+                        class="select2"
+                        multiple="multiple"
+                        required
+                        id="artists"
+                        data-placeholder="Selecione os artistas"
+                        style="width: 100%"
+                      >
+                        <option>Artista 1</option>
+                        <option>Artista 2</option>
+                        <option>Artista 3</option>
+                        <option>Artista 4</option>
+                        <option>Artista 5</option>
+                        <option>Artista 6</option>
+                        <option>Artista 7</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="mb-2">
+                    <div class="form-group">
+                      <label for="language">Linguagem do Lançamento</label>
+                      <select class="form-select" id="language">
+                        <option value="pt">Português</option>
+                        <option value="en">Inglês</option>
+                        <option value="es">Espanhol</option>
+                        <option value="fr">Francês</option>
+                        <option value="de">Alemão</option>
+                        <option value="it">Italiano</option>
+                        <option value="ja">Japonês</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="mb-2">
+                    <div class="form-group">
+                      <label for="genre">Gênero *</label>
+                      <select class="form-select" id="genre" required>
+                        <option value="">Selecione um gênero</option>
+                        <option value="pop">Pop</option>
+                        <option value="rock">Rock</option>
+                        <option value="hip_hop">Hip Hop</option>
+                        <option value="electronic">Electronic</option>
+                        <option value="rnb">R&B</option>
+                        <option value="jazz">Jazz</option>
+                        <option value="blues">Blues</option>
+                        <option value="country">Country</option>
+                        <option value="folk">Folk</option>
+                        <option value="classical">Classical</option>
+                        <option value="reggae">Reggae</option>
+                        <option value="metal">Metal</option>
+                        <option value="latin">Latin</option>
+                        <option value="world">World</option>
+                        <option value="gospel">Gospel</option>
+                        <option value="funk">Funk</option>
+                        <option value="punk">Punk</option>
+                        <option value="alternative">Alternative</option>
+                        <option value="soundtrack">Soundtrack</option>
+                        <option value="children">Children's</option>
+                        <option value="new_age">New Age</option>
+                        <option value="experimental">Experimental</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="mb-2">
+                    <div class="form-group">
+                      <label for="subgenre">Subgênero *</label>
+                      <select class="form-select" id="subgenre" required>
+                        <option value="">Selecione um subgênero</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="mb-2">
+                    <label for="name_label" class="form-label"
+                      >Nome do Rótulo <span class="text-danger">*</span>
+                    </label>
+                    <br />
+                    <small
+                      >O nome do Rótulo pode ser o nome da gravadora responsavél
+                      pelos teus trabalhos, em caso de ser um Artista
+                      independente podes usar o seu próprio nome
+                      artistico.</small
+                    >
+                    <input
+                      type="text"
+                      required
+                      name="name_label"
+                      class="form-control"
+                      placeholder="Insira o nome de rótulo"
+                      id="label"
+                    />
+                    <div class="valid-feedback"></div>
+                    <div class="invalid-feedback">
+                      <span class="text-base">Qual é o selo da gravadora?</span>
+                    </div>
+                  </div>
+
+                  <div class="mb-2">
+                    <div class="form-group">
+                      <label>Direitos Autorais (©)</label>
+                      <div class="d-flex align-items-center">
+                        <select
+                          class="form-select me-2"
+                          id="copyright-year"
+                          style="width: 120px"
+                        >
+                          <option value="">Ano</option>
+                        </select>
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="copyright-holder"
+                          placeholder="Artista ou Editora"
+                          maxlength="100"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="mb-2">
+                    <div class="form-group">
+                      <label>Direitos de Gravação (℗)</label>
+                      <div class="d-flex align-items-center">
+                        <select
+                          class="form-select me-2"
+                          id="phonogram-year"
+                          style="width: 120px"
+                        >
+                          <option value="">Ano</option>
+                        </select>
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="phonogram-holder"
+                          placeholder="Artista ou Editora"
+                          maxlength="100"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="mb-2">
+                    <div class="form-group">
+                      <label for="track_count"
+                        >Número de Faixas <span class="text-danger">*</span>
+                      </label>
+                      <input
+                        type="number"
+                        class="form-control"
+                        max="50"
+                        min="1"
+                        value=""
+                        step="1"
+                        required
+                        id="track_count"
+                        placeholder="Insira o número de faixas"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    class="d-flex justify-content-between align-items-center"
+                  >
+                    <button
+                      type="button"
+                      class="btn btn-pink"
+                      onclick="saveDraft(true)"
+                    >
+                      Salvar Rascunho
+                    </button>
+                    <button type="submit" class="btn btn-pink">Criar</button>
+                  </div>
+                </form>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
 
-
     <nav class="bottom-nav d-lg-none">
-        <ul class="nav justify-content-around">
-            <li class="nav-item"><a class="nav-link" href="../painel.html" aria-label="Ir para Dashboard"><i
-                        class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../launch/releases.html" aria-label="Ir para Lançamentos"><i
-                        class="bi bi-disc"></i><span>Lançamentos</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../analytics/statistics.html"
-                    aria-label="Ir para Estatísticas"><i class="bi bi-bar-chart"></i><span>Estatísticas</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../finances/overview.html" aria-label="Ir para Finanças"><i
-                        class="bi bi-currency-dollar"></i><span>Finanças</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../artists/artists-list.html"
-                    aria-label="Ir para Artistas"><i class="bi bi-person"></i><span>Artistas</span></a></li>
-        </ul>
+      <ul class="nav justify-content-around">
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="../painel.html"
+            aria-label="Ir para Dashboard"
+            ><i class="bi bi-speedometer2"></i><span>Dashboard</span></a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="../launch/releases.html"
+            aria-label="Ir para Lançamentos"
+            ><i class="bi bi-disc"></i><span>Lançamentos</span></a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="../analytics/statistics.html"
+            aria-label="Ir para Estatísticas"
+            ><i class="bi bi-bar-chart"></i><span>Estatísticas</span></a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="../finances/overview.html"
+            aria-label="Ir para Finanças"
+            ><i class="bi bi-currency-dollar"></i><span>Finanças</span></a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="../artists/artists-list.html"
+            aria-label="Ir para Artistas"
+            ><i class="bi bi-person"></i><span>Artistas</span></a
+          >
+        </li>
+      </ul>
     </nav>
-
 
     <!-- Bootstrap JS and Popper.js -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Select2 JS (depende do jQuery) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/js/select2.min.js"></script>
-<!-- Se precisar de tradução para português -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/js/i18n/pt-BR.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/js/select2.min.js"></script>
+    <!-- Se precisar de tradução para português -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/js/i18n/pt-BR.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="../../js/theme.wp.js"></script>
     <script src="../../js/wp.tools.js"></script>
     <script>
-        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+      const tooltipTriggerList = document.querySelectorAll(
+        '[data-bs-toggle="tooltip"]'
+      );
+      const tooltipList = [...tooltipTriggerList].map(
+        (tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl)
+      );
     </script>
     <script>
-        toastr.options = {
-            progressBar: true,
-            closeButton: true,
-            positionClass: 'toast-top-right',
-            timeOut: 3000
-        };
+      toastr.options = {
+        progressBar: true,
+        closeButton: true,
+        positionClass: "toast-top-right",
+        timeOut: 3000,
+      };
 
-        let draftId = null;
-        let lastSavedState = null;
+      let draftId = null;
+      let lastSavedState = null;
 
-        const subgenres = {
-            pop: ['pop_rock', 'synth_pop', 'indie_pop', 'electro_pop'],
-            rock: ['classic_rock', 'alternative_rock', 'indie_rock', 'grunge'],
-            hip_hop: ['trap', 'boom_bap', 'gangsta_rap', 'conscious_rap'],
-            eletronica: ['house', 'techno', 'drum_and_bass', 'dubstep'],
-            jazz: ['smooth_jazz', 'bebop', 'fusion', 'free_jazz'],
-            classica: ['baroque', 'romantic', 'modern', 'minimalist']
-        };
+      const subgenres = {
+        pop: ["pop_rock", "synth_pop", "indie_pop", "electro_pop"],
+        rock: ["classic_rock", "alternative_rock", "indie_rock", "grunge"],
+        hip_hop: ["trap", "boom_bap", "gangsta_rap", "conscious_rap"],
+        eletronica: ["house", "techno", "drum_and_bass", "dubstep"],
+        jazz: ["smooth_jazz", "bebop", "fusion", "free_jazz"],
+        classica: ["baroque", "romantic", "modern", "minimalist"],
+      };
 
-        function populateYears() {
-            const currentYear = new Date().getFullYear();
-            const startYear = 1900;
-            const copyrightYearSelect = document.getElementById('copyright-year');
-            const phonogramYearSelect = document.getElementById('phonogram-year');
+      function populateYears() {
+        const currentYear = new Date().getFullYear();
+        const startYear = 1900;
+        const copyrightYearSelect = document.getElementById("copyright-year");
+        const phonogramYearSelect = document.getElementById("phonogram-year");
 
-            for (let year = currentYear + 1; year >= startYear; year--) {
-                const option1 = document.createElement('option');
-                option1.value = year;
-                option1.textContent = year;
-                copyrightYearSelect.appendChild(option1);
+        for (let year = currentYear + 1; year >= startYear; year--) {
+          const option1 = document.createElement("option");
+          option1.value = year;
+          option1.textContent = year;
+          copyrightYearSelect.appendChild(option1);
 
-                const option2 = document.createElement('option');
-                option2.value = year;
-                option2.textContent = year;
-                phonogramYearSelect.appendChild(option2);
-            }
+          const option2 = document.createElement("option");
+          option2.value = year;
+          option2.textContent = year;
+          phonogramYearSelect.appendChild(option2);
         }
+      }
 
-        document.getElementById('genre').addEventListener('change', function () {
-            const genre = this.value;
-            const subgenreSelect = document.getElementById('subgenre');
-            subgenreSelect.innerHTML = '<option value="">Selecione um subgênero</option>';
+      document.getElementById("genre").addEventListener("change", function () {
+        const genre = this.value;
+        const subgenreSelect = document.getElementById("subgenre");
+        subgenreSelect.innerHTML =
+          '<option value="">Selecione um subgênero</option>';
 
-            if (subgenres[genre]) {
-                subgenres[genre].forEach(subgenre => {
-                    const option = document.createElement('option');
-                    option.value = subgenre;
-                    option.textContent = subgenre.charAt(0).toUpperCase() + subgenre.slice(1).replace(
-                        /_/g, ' ');
-                    subgenreSelect.appendChild(option);
-                });
-            }
+        if (subgenres[genre]) {
+          subgenres[genre].forEach((subgenre) => {
+            const option = document.createElement("option");
+            option.value = subgenre;
+            option.textContent =
+              subgenre.charAt(0).toUpperCase() +
+              subgenre.slice(1).replace(/_/g, " ");
+            subgenreSelect.appendChild(option);
+          });
+        }
+      });
+
+      document.getElementById("cover").addEventListener("change", function (e) {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            document.getElementById("cover-preview").src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      $(document).ready(function () {
+        $("#artists").select2();
+        populateYears();
+        lastSavedState = getFormState();
+      });
+
+      function getFormState() {
+        return {
+          title: document.getElementById("title").value,
+          version_release: document.getElementById("version_release").value,
+          artists: JSON.stringify($("#artists").val() || []),
+          language: document.getElementById("language").value,
+          genre: document.getElementById("genre").value,
+          subgenre: document.getElementById("subgenre").value,
+          name_label: document.getElementById("name_label").value,
+          copyright: `© ${document.getElementById("copyright-year").value} ${
+            document.getElementById("copyright-holder").value
+          }`.trim(),
+          phonogram: `℗ ${document.getElementById("phonogram-year").value} ${
+            document.getElementById("phonogram-holder").value
+          }`.trim(),
+          track_count: document.getElementById("track_count").value,
+          cover: document.getElementById("cover").files[0]
+            ? document.getElementById("cover").files[0].name
+            : "",
+        };
+      }
+
+      function hasFormChanged() {
+        if (!lastSavedState) return true;
+        const currentState = getFormState();
+        return Object.keys(currentState).some((key) => {
+          if (key === "cover") return false;
+          return currentState[key] !== lastSavedState[key];
         });
+      }
 
-        document.getElementById('cover').addEventListener('change', function (e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    document.getElementById('cover-preview').src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
+      async function saveDraft(redirect = false) {
+        if (!hasFormChanged() && !redirect) return;
 
-        $(document).ready(function () {
-            $('#artists').select2();
-            populateYears();
+        const formData = new FormData();
+        formData.append("draft_id", draftId || "");
+        formData.append("title", document.getElementById("title").value);
+        formData.append(
+          "version_release",
+          document.getElementById("version_release").value
+        );
+        formData.append("artists", JSON.stringify($("#artists").val() || []));
+        formData.append("language", document.getElementById("language").value);
+        formData.append("genre", document.getElementById("genre").value);
+        formData.append("subgenre", document.getElementById("subgenre").value);
+        formData.append(
+          "name_label",
+          document.getElementById("name_label").value
+        );
+        formData.append(
+          "copyright",
+          `© ${document.getElementById("copyright-year").value} ${
+            document.getElementById("copyright-holder").value
+          }`.trim()
+        );
+        formData.append(
+          "phonogram",
+          `℗ ${document.getElementById("phonogram-year").value} ${
+            document.getElementById("phonogram-holder").value
+          }`.trim()
+        );
+        formData.append(
+          "track_count",
+          document.getElementById("track_count").value
+        );
+        const coverFile = document.getElementById("cover").files[0];
+        if (coverFile) formData.append("cover", coverFile);
+
+        const draftData = {
+          title: document.getElementById("title").value,
+          version_release: document.getElementById("version_release").value,
+          artists: $("#artists").val() || [],
+          language: document.getElementById("language").value,
+          genre: document.getElementById("genre").value,
+          subgenre: document.getElementById("subgenre").value,
+          name_label: document.getElementById("name_label").value,
+          copyright: `© ${document.getElementById("copyright-year").value} ${
+            document.getElementById("copyright-holder").value
+          }`.trim(),
+          phonogram: `℗ ${document.getElementById("phonogram-year").value} ${
+            document.getElementById("phonogram-holder").value
+          }`.trim(),
+          track_count: document.getElementById("track_count").value,
+          cover: coverFile ? URL.createObjectURL(coverFile) : "",
+        };
+        localStorage.setItem("album_draft", JSON.stringify(draftData));
+
+        try {
+          console.log("Salvando rascunho...");
+          const response = await fetch("api.php?action=save_draft", {
+            method: "POST",
+            body: formData,
+          });
+          const result = await response.json();
+          console.log("Resposta do save_draft:", result);
+          if (result.success) {
+            draftId = result.id;
             lastSavedState = getFormState();
-        });
-
-        function getFormState() {
-            return {
-                title: document.getElementById('title').value,
-                version_release: document.getElementById('version_release').value,
-                artists: JSON.stringify($('#artists').val() || []),
-                language: document.getElementById('language').value,
-                genre: document.getElementById('genre').value,
-                subgenre: document.getElementById('subgenre').value,
-                name_label: document.getElementById('name_label').value,
-                copyright: `© ${document.getElementById('copyright-year').value} ${document.getElementById('copyright-holder').value}`
-                    .trim(),
-                phonogram: `℗ ${document.getElementById('phonogram-year').value} ${document.getElementById('phonogram-holder').value}`
-                    .trim(),
-                track_count: document.getElementById('track_count').value,
-                cover: document.getElementById('cover').files[0] ? document.getElementById('cover').files[0].name : ''
-            };
+            toastr.success("Rascunho salvo com sucesso!", "Sucesso");
+            if (redirect) {
+              window.location.href = `draft.html?id=${draftId}`;
+            }
+          } else {
+            throw new Error(result.error || "Erro ao salvar rascunho");
+          }
+        } catch (error) {
+          console.error("Erro ao salvar rascunho:", error);
+          toastr.error(`Erro ao salvar rascunho: ${error.message}`, "Erro");
         }
+      }
 
-        function hasFormChanged() {
-            if (!lastSavedState) return true;
-            const currentState = getFormState();
-            return Object.keys(currentState).some(key => {
-                if (key === 'cover') return false;
-                return currentState[key] !== lastSavedState[key];
+      document
+        .getElementById("release-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const title = document.getElementById("title").value.trim();
+          const genre = document.getElementById("genre").value;
+          const subgenre = document.getElementById("subgenre").value;
+          const trackCount = document.getElementById("track_count").value;
+          const artists = $("#artists").val();
+          if (
+            !title ||
+            !genre ||
+            !subgenre ||
+            !trackCount ||
+            !artists ||
+            artists.length === 0
+          ) {
+            toastr.error(
+              "Preencha título, gênero, subgênero, número de faixas e pelo menos um artista.",
+              "Erro"
+            );
+            return;
+          }
+
+          const formData = new FormData();
+          formData.append("draft_id", draftId || "");
+          formData.append("title", title);
+          formData.append(
+            "version_release",
+            document.getElementById("version_release").value
+          );
+          formData.append("artists", JSON.stringify(artists));
+          formData.append(
+            "language",
+            document.getElementById("language").value || "pt"
+          );
+          formData.append("genre", genre);
+          formData.append("subgenre", subgenre);
+          formData.append(
+            "name_label",
+            document.getElementById("name_label").value
+          );
+          formData.append(
+            "copyright",
+            `© ${document.getElementById("copyright-year").value || ""} ${
+              document.getElementById("copyright-holder").value || ""
+            }`.trim()
+          );
+          formData.append(
+            "phonogram",
+            `℗ ${document.getElementById("phonogram-year").value || ""} ${
+              document.getElementById("phonogram-holder").value || ""
+            }`.trim()
+          );
+          formData.append("track_count", trackCount);
+          formData.append("status", "pending");
+          const coverFile = document.getElementById("cover").files[0];
+          if (coverFile) formData.append("cover", coverFile);
+
+          try {
+            console.log("Enviando formulário para api.php?action=submit");
+            const response = await fetch("api.php?action=submit", {
+              method: "POST",
+              body: formData,
             });
-        }
-
-        async function saveDraft(redirect = false) {
-            if (!hasFormChanged() && !redirect) return;
-
-            const formData = new FormData();
-            formData.append('draft_id', draftId || '');
-            formData.append('title', document.getElementById('title').value);
-            formData.append('version_release', document.getElementById('version_release').value);
-            formData.append('artists', JSON.stringify($('#artists').val() || []));
-            formData.append('language', document.getElementById('language').value);
-            formData.append('genre', document.getElementById('genre').value);
-            formData.append('subgenre', document.getElementById('subgenre').value);
-            formData.append('name_label', document.getElementById('name_label').value);
-            formData.append('copyright',
-                `© ${document.getElementById('copyright-year').value} ${document.getElementById('copyright-holder').value}`
-                .trim());
-            formData.append('phonogram',
-                `℗ ${document.getElementById('phonogram-year').value} ${document.getElementById('phonogram-holder').value}`
-                .trim());
-            formData.append('track_count', document.getElementById('track_count').value);
-            const coverFile = document.getElementById('cover').files[0];
-            if (coverFile) formData.append('cover', coverFile);
-
-            const draftData = {
-                title: document.getElementById('title').value,
-                version_release: document.getElementById('version_release').value,
-                artists: $('#artists').val() || [],
-                language: document.getElementById('language').value,
-                genre: document.getElementById('genre').value,
-                subgenre: document.getElementById('subgenre').value,
-                name_label: document.getElementById('name_label').value,
-                copyright: `© ${document.getElementById('copyright-year').value} ${document.getElementById('copyright-holder').value}`
-                    .trim(),
-                phonogram: `℗ ${document.getElementById('phonogram-year').value} ${document.getElementById('phonogram-holder').value}`
-                    .trim(),
-                track_count: document.getElementById('track_count').value,
-                cover: coverFile ? URL.createObjectURL(coverFile) : ''
-            };
-            localStorage.setItem('album_draft', JSON.stringify(draftData));
-
-            try {
-                console.log('Salvando rascunho...');
-                const response = await fetch('api.php?action=save_draft', {
-                    method: 'POST',
-                    body: formData
-                });
-                const result = await response.json();
-                console.log('Resposta do save_draft:', result);
-                if (result.success) {
-                    draftId = result.id;
-                    lastSavedState = getFormState();
-                    toastr.success('Rascunho salvo com sucesso!', 'Sucesso');
-                    if (redirect) {
-                        window.location.href = `draft.html?id=${draftId}`;
-                    }
-                } else {
-                    throw new Error(result.error || 'Erro ao salvar rascunho');
-                }
-            } catch (error) {
-                console.error('Erro ao salvar rascunho:', error);
-                toastr.error(`Erro ao salvar rascunho: ${error.message}`, 'Erro');
+            const result = await response.json();
+            console.log("Resposta do backend:", result);
+            if (result.success) {
+              console.log("Envio bem-sucedido, redirecionando...");
+              localStorage.removeItem("album_draft");
+              draftId = null;
+              lastSavedState = {};
+              window.location.href = `draft.html?id=${result.id}`;
+            } else {
+              throw new Error(result.error || "Erro desconhecido no backend");
             }
-        }
-
-        document.getElementById('release-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const title = document.getElementById('title').value.trim();
-            const genre = document.getElementById('genre').value;
-            const subgenre = document.getElementById('subgenre').value;
-            const trackCount = document.getElementById('track_count').value;
-            const artists = $('#artists').val();
-            if (!title || !genre || !subgenre || !trackCount || !artists || artists.length === 0) {
-                toastr.error(
-                    'Preencha título, gênero, subgênero, número de faixas e pelo menos um artista.',
-                    'Erro');
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('draft_id', draftId || '');
-            formData.append('title', title);
-            formData.append('version_release', document.getElementById('version_release').value);
-            formData.append('artists', JSON.stringify(artists));
-            formData.append('language', document.getElementById('language').value || 'pt');
-            formData.append('genre', genre);
-            formData.append('subgenre', subgenre);
-            formData.append('name_label', document.getElementById('name_label').value);
-            formData.append('copyright',
-                `© ${document.getElementById('copyright-year').value || ''} ${document.getElementById('copyright-holder').value || ''}`
-                .trim());
-            formData.append('phonogram',
-                `℗ ${document.getElementById('phonogram-year').value || ''} ${document.getElementById('phonogram-holder').value || ''}`
-                .trim());
-            formData.append('track_count', trackCount);
-            formData.append('status', 'pending');
-            const coverFile = document.getElementById('cover').files[0];
-            if (coverFile) formData.append('cover', coverFile);
-
-            try {
-                console.log('Enviando formulário para api.php?action=submit');
-                const response = await fetch('api.php?action=submit', {
-                    method: 'POST',
-                    body: formData
-                });
-                const result = await response.json();
-                console.log('Resposta do backend:', result);
-                if (result.success) {
-                    console.log('Envio bem-sucedido, redirecionando...');
-                    localStorage.removeItem('album_draft');
-                    draftId = null;
-                    lastSavedState = {};
-                    window.location.href = `draft.html?id=${result.id}`;
-                } else {
-                    throw new Error(result.error || 'Erro desconhecido no backend');
-                }
-            } catch (error) {
-                console.error('Erro ao enviar:', error);
-                toastr.error(`Erro ao enviar lançamento: ${error.message}`, 'Erro');
-            }
+          } catch (error) {
+            console.error("Erro ao enviar:", error);
+            toastr.error(`Erro ao enviar lançamento: ${error.message}`, "Erro");
+          }
         });
 
-        setInterval(() => saveDraft(), 5000);
+      setInterval(() => saveDraft(), 5000);
 
-        window.addEventListener('beforeunload', (e) => {
-            if (hasFormChanged()) {
-                e.preventDefault();
-                e.returnValue = '';
-            }
-        });
+      window.addEventListener("beforeunload", (e) => {
+        if (hasFormChanged()) {
+          e.preventDefault();
+          e.returnValue = "";
+        }
+      });
     </script>
-</body>
-
+  </body>
 </html>

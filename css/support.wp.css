@@ -145,3 +145,20 @@
         transform: translateY(-3px);
         box-shadow: 0 5px 15px rgba(255, 0, 157, 0.3) !important;
     }
+    /* Botões sociais */
+    .btn-social {
+      width: 44px;
+      height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+
+    .btn-social:hover,
+    .btn-social:focus {
+      transform: translateY(-2px);
+      outline: 2px solid currentColor;
+      outline-offset: 2px;
+    }

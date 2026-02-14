@@ -1,950 +1,1420 @@
 <!DOCTYPE html>
 <html lang="pt">
-
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="robots" content="noindex, nofollow">
+    <meta name="robots" content="noindex, nofollow" />
     <meta name="author" content="Voosoft" />
-    <meta name="theme-color" content="#FF0089">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="#FF0089">
-    <link rel="apple-touch-icon" href="../assets/img/icones/wasomupfy_fiv_512.png">
-    <link rel="apple-touch-startup-image" href="../assets/img/screenshots/splash.png">
-    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FF0089" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="#FF0089" />
+    <link
+      rel="apple-touch-icon"
+      href="../assets/img/icones/wasomupfy_fiv_512.png"
+    />
+    <link
+      rel="apple-touch-startup-image"
+      href="../assets/img/screenshots/splash.png"
+    />
+    <link rel="manifest" href="manifest.json" />
     <title>Painel Administrador - Wasom Upfy</title>
-    <link rel="shortcut icon" href="../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
-    <link rel="stylesheet" href="../css/libs/plugins.css">
-    <link rel="stylesheet" href="../css/libs/scrollue.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
+    <link
+      rel="shortcut icon"
+      href="../assets/img/icones/wasomupfy_fiv.png"
+      type="image/x-icon"
+    />
+    <link rel="stylesheet" href="../css/libs/plugins.css" />
+    <link rel="stylesheet" href="../css/libs/scrollue.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css"
+    />
     <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="../css/lastest-style.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <link rel="stylesheet" href="../css/lastest-style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+    />
     <!-- Chart.js para gráficos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Google Fonts - Poppins -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-</head>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
 
-<body>
+  <body>
     <div class="wrapper">
-        <!-- Sidebar Overlay -->
-        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+      <!-- Sidebar Overlay -->
+      <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-        <!-- Sidebar -->
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="d-flex align-items-center">
-                    <img src="../assets/img/brand/wasomupfy_brand.png" alt="Logo Wasom Upfy" class="rounded-circle me-2"
-                        style="height: 40px;">
-                    <span class="brand-text">Wasom Upfy</span>
-                </div>
-                <i class="bi bi-chevron-left toggle-icon" id="sidebarCollapse" title="Colapsar/Expandir Menu"
-                    aria-label="Colapsar/Expandir Menu"></i>
-            </div>
-            <ul class="nav flex-column mt-3">
-                <li class="nav-item">
-                    <a href="home.html" class="nav-link active">
-                        <i class="bi bi-speedometer2"></i>
-                        <span>Painel de Controle</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseAnalytics" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseAnalytics">
-                        <i class="bi bi-graph-up"></i>
-                        <span>Estatísticas e Análises</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseAnalytics">
-                        <a href="pages/analytics/home.html" class="nav-link">
-                            <i class="bi bi-bar-chart-line"></i>
-                            <span>Visão Geral</span>
-                        </a>
-                        <a href="pages/analytics/artists.html" class="nav-link">
-                            <i class="bi bi-person-lines-fill"></i>
-                            <span>Desempenho por Artista</span>
-                        </a>
-                        <a href="pages/analytics/stores.html" class="nav-link">
-                            <i class="bi bi-shop"></i>
-                            <span>Desempenho por Loja Digital</span>
-                        </a>
-                        <a href="pages/analytics/reports.html" class="nav-link">
-                            <i class="bi bi-file-earmark-bar-graph"></i>
-                            <span>Relatórios Personalizados</span>
-                        </a>
-                    </div>
-                </li>
-
-                <li class="nav-item">
-                    <a href="#collapseAdmins" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseAdmins">
-                        <i class="bi bi-person-gear"></i>
-                        <span>Gestão de Admins</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseAdmins">
-                        <a href="pages/employees/all-employees.html" class="nav-link">
-                            <i class="bi bi-people"></i>
-                            <span>Listar Admins</span>
-                        </a>
-                        <a href="pages/admins/add.html" class="nav-link">
-                            <i class="bi bi-person-plus"></i>
-                            <span>Adicionar</span>
-                        </a>
-                        <a href="pages/admins/edit.html" class="nav-link">
-                            <i class="bi bi-person-gear"></i>
-                            <span>Editar</span>
-                        </a>
-                        <a href="pages/admins/delete.html" class="nav-link">
-                            <i class="bi bi-person-x"></i>
-                            <span>Excluir</span>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseUsers" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseUsers">
-                        <i class="bi bi-person-gear"></i>
-                        <span>Gestão de Usuários</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseUsers">
-                        <a href="pages/users/all-users.html" class="nav-link">
-                            <i class="bi bi-people"></i>
-                            <span>Todos Usuários</span>
-                        </a>
-                        <a href="pages/users/add.html" class="nav-link">
-                            <i class="bi bi-person-plus"></i>
-                            <span>Adicionar</span>
-                        </a>
-                        <a href="pages/users/edit.html" class="nav-link">
-                            <i class="bi bi-person-gear"></i>
-                            <span>Editar</span>
-                        </a>
-                        <a href="pages/users/delete.html" class="nav-link">
-                            <i class="bi bi-person-x"></i>
-                            <span>Excluir</span>
-                        </a>
-                        <a href="pages/users/available-account.html" class="nav-link">
-                            <i class="bi bi-person-check"></i>
-                            <span>Contas Disponíveis</span>
-                        </a>
-                        <a href="pages/users/unavailable-account.html" class="nav-link">
-                            <i class="bi bi-person-exclamation"></i>
-                            <span>Contas Indisponíveis</span>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseSongs" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseSongs">
-                        <i class="bi bi-music-note-list"></i>
-                        <span>Gestão de Músicas</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseSongs">
-                        <a href="pages/music/revise.html" class="nav-link">
-                            <i class="bi bi-eye"></i>
-                            <span>Revisar Envios</span>
-                        </a>
-                        <a href="pages/music/approve.html" class="nav-link">
-                            <i class="bi bi-check-circle"></i>
-                            <span>Aprovar</span>
-                        </a>
-                        <a href="pages/music/reject.html" class="nav-link">
-                            <i class="bi bi-x-circle"></i>
-                            <span>Rejeitar</span>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="pages/artist/accounts-users.html" class="nav-link">
-                        <i class="bi bi-person-check"></i>
-                        <span>Contas e Usuários</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="pages/artist/collaborators-artist.html" class="nav-link">
-                        <i class="bi bi-people"></i>
-                        <span>Artistas e Colaboradores</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseDistribution" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseDistribution">
-                        <i class="bi bi-globe"></i>
-                        <span>Distribuição</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseDistribution">
-                        <a href="pages/distribution/releases.html" class="nav-link">
-                            <i class="bi bi-rocket-takeoff"></i>
-                            <span>Lançamentos</span>
-                        </a>
-                        <a href="pages/distribution/store.html" class="nav-link">
-                            <i class="bi bi-shop"></i>
-                            <span>Lojas Digitais</span>
-                        </a>
-                        <a href="pages/distribution/schedule.html" class="nav-link">
-                            <i class="bi bi-calendar-event"></i>
-                            <span>Agendar Lançamento</span>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="pages/finances/payments.html" class="nav-link">
-                        <i class="bi bi-wallet2"></i>
-                        <span>Pagamentos</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="pages/finances/earnings.html" class="nav-link">
-                        <i class="bi bi-currency-dollar"></i>
-                        <span>Finanças e Rendimentos</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseIntegration" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseIntegration">
-                        <i class="bi bi-youtube"></i>
-                        <span>Unificação e V. Youtube</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseIntegration">
-                        <a href="pages/integration/youtube.html" class="nav-link">
-                            <i class="bi bi-gear"></i>
-                            <span>Configurar Integração</span>
-                        </a>
-                        <a href="pages/integration/verify-channel.html" class="nav-link">
-                            <i class="bi bi-check2-all"></i>
-                            <span>Verificar Canais</span>
-                        </a>
-                        <a href="pages/distribution/monetization.html" class="nav-link">
-                            <i class="bi bi-youtube"></i>
-                            <span>Gerenciamento de Conteúdo Monetizado</span>
-                        </a>
-                    </div>
-                </li>
-
-                <li class="nav-item">
-                    <a href="#collapseSupport" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseSupport">
-                        <i class="bi bi-headset"></i>
-                        <span>Suporte</span>
-                        <span class="badge bg-danger badge-notification">3</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseSupport">
-                        <a href="pages/messages/inbox.html" class="nav-link">
-                            <i class="bi bi-envelope"></i>
-                            <span>Caixa de entrada</span>
-                        </a>
-                        <a href="pages/messages/compose.html" class="nav-link">
-                            <i class="bi bi-pencil"></i>
-                            <span>Enviar mensagens</span>
-                        </a>
-                    </div>
-                </li>
-
-                <li class="nav-item">
-                    <a href="#collapseHelp" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseHelp">
-                        <i class="bi bi-question-circle"></i>
-                        <span>Ajuda</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseHelp">
-                        <a href="pages/help/faqs.html" class="nav-link">
-                            <i class="bi bi-messenger"></i>
-                            <span>FAQs</span>
-                        </a>
-                        <a href="pages/help/tutorials.html" class="nav-link">
-                            <i class="bi bi-book"></i>
-                            <span>Tutoriais</span>
-                        </a>
-                        <a href="pages/help/contact.html" class="nav-link">
-                            <i class="bi bi-telephone"></i>
-                            <span>Contacto com suporte</span>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="pages/settings/config.html" class="nav-link">
-                        <i class="bi bi-sliders"></i>
-                        <span>Configurações</span>
-                    </a>
-                </li>
-                <li class="nav-item mt-4">
-                    <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#logoutwasomupfy">
-                        <i class="bi bi-box-arrow-right"></i>
-                        <span>Logout</span>
-                    </a>
-                </li>
-                <li class="nav-item mt-4">
-                    <a href="http://localhost:5500/home.html" target="_blank" class="nav-link">
-                        <i class="bi bi-box-arrow-in-up-right"></i>
-                        <span>Visitar Site</span>
-                    </a>
-                </li>
-            </ul>
+      <!-- Sidebar -->
+      <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <div class="d-flex align-items-center">
+            <img
+              src="../assets/img/brand/wasomupfy_brand.png"
+              alt="Logo Wasom Upfy"
+              class="rounded-circle me-2"
+              style="height: 40px"
+            />
+            <span class="brand-text">Wasom Upfy</span>
+          </div>
+          <i
+            class="bi bi-chevron-left toggle-icon"
+            id="sidebarCollapse"
+            title="Colapsar/Expandir Menu"
+            aria-label="Colapsar/Expandir Menu"
+          ></i>
         </div>
+        <ul class="nav flex-column mt-3">
+          <li class="nav-item">
+            <a href="home.html" class="nav-link active">
+              <i class="bi bi-speedometer2"></i>
+              <span>Painel de Controle</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              href="#collapseAnalytics"
+              class="nav-link"
+              data-bs-toggle="collapse"
+              aria-expanded="false"
+              aria-controls="collapseAnalytics"
+            >
+              <i class="bi bi-graph-up"></i>
+              <span>Estatísticas e Análises</span>
+              <i
+                class="bi bi-chevron-down ms-auto"
+                style="font-size: 0.8rem"
+              ></i>
+            </a>
+            <div class="collapse" id="collapseAnalytics">
+              <a href="pages/analytics/home.html" class="nav-link">
+                <i class="bi bi-bar-chart-line"></i>
+                <span>Visão Geral</span>
+              </a>
+              <a href="pages/analytics/artists.html" class="nav-link">
+                <i class="bi bi-person-lines-fill"></i>
+                <span>Desempenho por Artista</span>
+              </a>
+              <a href="pages/analytics/stores.html" class="nav-link">
+                <i class="bi bi-shop"></i>
+                <span>Desempenho por Loja Digital</span>
+              </a>
+              <a href="pages/analytics/reports.html" class="nav-link">
+                <i class="bi bi-file-earmark-bar-graph"></i>
+                <span>Relatórios Personalizados</span>
+              </a>
+            </div>
+          </li>
 
-        <!-- Content -->
-        <div class="content w-100" id="mainContent">
-            <nav class="navbar navbar-expand-lg">
-                <button class="navbar-toggler" type="button" id="sidebarToggle" aria-label="Abrir/Fechar Menu">
-                    <i class="bi bi-list text-white"></i>
-                </button>
-                <div class="ms-auto d-flex align-items-center">
-                    <button class="btn btn-outline-light btn-sm me-2" onclick="toggleDarkMode()"
-                        aria-label="Alternar Modo Escuro">
-                        <i class="bi bi-moon"></i>
+          <li class="nav-item">
+            <a
+              href="#collapseAdmins"
+              class="nav-link"
+              data-bs-toggle="collapse"
+              aria-expanded="false"
+              aria-controls="collapseAdmins"
+            >
+              <i class="bi bi-person-gear"></i>
+              <span>Gestão de Admins</span>
+              <i
+                class="bi bi-chevron-down ms-auto"
+                style="font-size: 0.8rem"
+              ></i>
+            </a>
+            <div class="collapse" id="collapseAdmins">
+              <a href="pages/employees/all-employees.html" class="nav-link">
+                <i class="bi bi-people"></i>
+                <span>Listar Admins</span>
+              </a>
+              <a href="pages/admins/add.html" class="nav-link">
+                <i class="bi bi-person-plus"></i>
+                <span>Adicionar</span>
+              </a>
+              <a href="pages/admins/edit.html" class="nav-link">
+                <i class="bi bi-person-gear"></i>
+                <span>Editar</span>
+              </a>
+              <a href="pages/admins/delete.html" class="nav-link">
+                <i class="bi bi-person-x"></i>
+                <span>Excluir</span>
+              </a>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a
+              href="#collapseUsers"
+              class="nav-link"
+              data-bs-toggle="collapse"
+              aria-expanded="false"
+              aria-controls="collapseUsers"
+            >
+              <i class="bi bi-person-gear"></i>
+              <span>Gestão de Usuários</span>
+              <i
+                class="bi bi-chevron-down ms-auto"
+                style="font-size: 0.8rem"
+              ></i>
+            </a>
+            <div class="collapse" id="collapseUsers">
+              <a href="pages/users/all-users.html" class="nav-link">
+                <i class="bi bi-people"></i>
+                <span>Todos Usuários</span>
+              </a>
+              <a href="pages/users/add.html" class="nav-link">
+                <i class="bi bi-person-plus"></i>
+                <span>Adicionar</span>
+              </a>
+              <a href="pages/users/edit.html" class="nav-link">
+                <i class="bi bi-person-gear"></i>
+                <span>Editar</span>
+              </a>
+              <a href="pages/users/delete.html" class="nav-link">
+                <i class="bi bi-person-x"></i>
+                <span>Excluir</span>
+              </a>
+              <a href="pages/users/available-account.html" class="nav-link">
+                <i class="bi bi-person-check"></i>
+                <span>Contas Disponíveis</span>
+              </a>
+              <a href="pages/users/unavailable-account.html" class="nav-link">
+                <i class="bi bi-person-exclamation"></i>
+                <span>Contas Indisponíveis</span>
+              </a>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a
+              href="#collapseSongs"
+              class="nav-link"
+              data-bs-toggle="collapse"
+              aria-expanded="false"
+              aria-controls="collapseSongs"
+            >
+              <i class="bi bi-music-note-list"></i>
+              <span>Gestão de Músicas</span>
+              <i
+                class="bi bi-chevron-down ms-auto"
+                style="font-size: 0.8rem"
+              ></i>
+            </a>
+            <div class="collapse" id="collapseSongs">
+              <a href="pages/music/revise.html" class="nav-link">
+                <i class="bi bi-eye"></i>
+                <span>Revisar Envios</span>
+              </a>
+              <a href="pages/music/approve.html" class="nav-link">
+                <i class="bi bi-check-circle"></i>
+                <span>Aprovar</span>
+              </a>
+              <a href="pages/music/reject.html" class="nav-link">
+                <i class="bi bi-x-circle"></i>
+                <span>Rejeitar</span>
+              </a>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a href="pages/artist/accounts-users.html" class="nav-link">
+              <i class="bi bi-person-check"></i>
+              <span>Contas e Usuários</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="pages/artist/collaborators-artist.html" class="nav-link">
+              <i class="bi bi-people"></i>
+              <span>Artistas e Colaboradores</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              href="#collapseDistribution"
+              class="nav-link"
+              data-bs-toggle="collapse"
+              aria-expanded="false"
+              aria-controls="collapseDistribution"
+            >
+              <i class="bi bi-globe"></i>
+              <span>Distribuição</span>
+              <i
+                class="bi bi-chevron-down ms-auto"
+                style="font-size: 0.8rem"
+              ></i>
+            </a>
+            <div class="collapse" id="collapseDistribution">
+              <a href="pages/distribution/releases.html" class="nav-link">
+                <i class="bi bi-rocket-takeoff"></i>
+                <span>Lançamentos</span>
+              </a>
+              <a href="pages/distribution/store.html" class="nav-link">
+                <i class="bi bi-shop"></i>
+                <span>Lojas Digitais</span>
+              </a>
+              <a href="pages/distribution/schedule.html" class="nav-link">
+                <i class="bi bi-calendar-event"></i>
+                <span>Agendar Lançamento</span>
+              </a>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a href="pages/finances/payments.html" class="nav-link">
+              <i class="bi bi-wallet2"></i>
+              <span>Pagamentos</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="pages/finances/earnings.html" class="nav-link">
+              <i class="bi bi-currency-dollar"></i>
+              <span>Finanças e Rendimentos</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              href="#collapseIntegration"
+              class="nav-link"
+              data-bs-toggle="collapse"
+              aria-expanded="false"
+              aria-controls="collapseIntegration"
+            >
+              <i class="bi bi-youtube"></i>
+              <span>Unificação e V. Youtube</span>
+              <i
+                class="bi bi-chevron-down ms-auto"
+                style="font-size: 0.8rem"
+              ></i>
+            </a>
+            <div class="collapse" id="collapseIntegration">
+              <a href="pages/integration/youtube.html" class="nav-link">
+                <i class="bi bi-gear"></i>
+                <span>Configurar Integração</span>
+              </a>
+              <a href="pages/integration/verify-channel.html" class="nav-link">
+                <i class="bi bi-check2-all"></i>
+                <span>Verificar Canais</span>
+              </a>
+              <a href="pages/distribution/monetization.html" class="nav-link">
+                <i class="bi bi-youtube"></i>
+                <span>Gerenciamento de Conteúdo Monetizado</span>
+              </a>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <a
+              href="#collapseSupport"
+              class="nav-link"
+              data-bs-toggle="collapse"
+              aria-expanded="false"
+              aria-controls="collapseSupport"
+            >
+              <i class="bi bi-headset"></i>
+              <span>Suporte</span>
+              <span class="badge bg-danger badge-notification">3</span>
+              <i
+                class="bi bi-chevron-down ms-auto"
+                style="font-size: 0.8rem"
+              ></i>
+            </a>
+            <div class="collapse" id="collapseSupport">
+              <a href="pages/messages/inbox.html" class="nav-link">
+                <i class="bi bi-envelope"></i>
+                <span>Caixa de entrada</span>
+              </a>
+              <a href="pages/messages/compose.html" class="nav-link">
+                <i class="bi bi-pencil"></i>
+                <span>Enviar mensagens</span>
+              </a>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <a
+              href="#collapseHelp"
+              class="nav-link"
+              data-bs-toggle="collapse"
+              aria-expanded="false"
+              aria-controls="collapseHelp"
+            >
+              <i class="bi bi-question-circle"></i>
+              <span>Ajuda</span>
+              <i
+                class="bi bi-chevron-down ms-auto"
+                style="font-size: 0.8rem"
+              ></i>
+            </a>
+            <div class="collapse" id="collapseHelp">
+              <a href="pages/help/faqs.html" class="nav-link">
+                <i class="bi bi-messenger"></i>
+                <span>FAQs</span>
+              </a>
+              <a href="pages/help/tutorials.html" class="nav-link">
+                <i class="bi bi-book"></i>
+                <span>Tutoriais</span>
+              </a>
+              <a href="pages/help/contact.html" class="nav-link">
+                <i class="bi bi-telephone"></i>
+                <span>Contacto com suporte</span>
+              </a>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a href="pages/settings/config.html" class="nav-link">
+              <i class="bi bi-sliders"></i>
+              <span>Configurações</span>
+            </a>
+          </li>
+          <li class="nav-item mt-4">
+            <a
+              href="#"
+              class="nav-link"
+              data-bs-toggle="modal"
+              data-bs-target="#logoutwasomupfy"
+            >
+              <i class="bi bi-box-arrow-right"></i>
+              <span>Logout</span>
+            </a>
+          </li>
+          <li class="nav-item mt-4">
+            <a
+              href="http://localhost:5500/home.html"
+              target="_blank"
+              class="nav-link"
+            >
+              <i class="bi bi-box-arrow-in-up-right"></i>
+              <span>Visitar Site</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Content -->
+      <div class="content w-100" id="mainContent">
+        <nav class="navbar navbar-expand-lg">
+          <button
+            class="navbar-toggler"
+            type="button"
+            id="sidebarToggle"
+            aria-label="Abrir/Fechar Menu"
+          >
+            <i class="bi bi-list text-white"></i>
+          </button>
+          <div class="ms-auto d-flex align-items-center">
+            <button
+              class="btn btn-outline-light btn-sm me-2"
+              onclick="toggleDarkMode()"
+              aria-label="Alternar Modo Escuro"
+            >
+              <i class="bi bi-moon"></i>
+            </button>
+            <div class="dropdown me-2 position-relative">
+              <button
+                class="btn btn-outline-light btn-sm position-relative"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-label="Notificações"
+              >
+                <i class="bi bi-bell"></i>
+                <span
+                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                  >5</span
+                >
+              </button>
+              <ul
+                class="dropdown-menu dropdown-menu-start p-0"
+                style="min-width: 250px"
+              >
+                <li class="dropdown-header bg-dark text-white p-2">
+                  Notificações (5)
+                </li>
+                <li>
+                  <a class="dropdown-item p-2" href="#"
+                    >Novo artista registrado</a
+                  >
+                </li>
+                <li>
+                  <a class="dropdown-item p-2" href="#"
+                    >Música atingiu 1000 plays</a
+                  >
+                </li>
+                <li>
+                  <a class="dropdown-item p-2" href="#"
+                    >Atualização do sistema disponível</a
+                  >
+                </li>
+                <li class="dropdown-footer text-center p-2">
+                  <a href="#" class="text-primary">Ver todas</a>
+                </li>
+              </ul>
+            </div>
+            <div class="dropdown me-2 position-relative">
+              <button
+                class="btn btn-outline-light btn-sm position-relative"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-label="Mensagens"
+              >
+                <i class="bi bi-envelope"></i>
+                <span
+                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                  >2</span
+                >
+              </button>
+              <ul
+                class="dropdown-menu dropdown-menu-start p-0"
+                style="min-width: 250px"
+              >
+                <li class="dropdown-header bg-dark text-white p-2">
+                  Mensagens (2)
+                </li>
+                <li>
+                  <a class="dropdown-item p-2" href="#"
+                    >Suporte #4521 - Novo ticket</a
+                  >
+                </li>
+                <li>
+                  <a class="dropdown-item p-2" href="#">Mensagem de artista</a>
+                </li>
+                <li class="dropdown-footer text-center p-2">
+                  <a href="#" class="text-primary">Ver todas</a>
+                </li>
+              </ul>
+            </div>
+            <div class="dropdown">
+              <button
+                class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-label="Menu do Usuário"
+              >
+                <img
+                  src="../assets/img/avatar/avatar.png"
+                  alt="Usuário"
+                  class="rounded-circle me-1"
+                  style="height: 24px"
+                />
+                <span>Cristiano Amadeu</span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                  <a class="dropdown-item" href="pages/user/profile.html"
+                    ><i class="bi bi-person me-2"></i>Perfil</a
+                  >
+                </li>
+                <li>
+                  <a class="dropdown-item" href="pages/settings/config.html"
+                    ><i class="bi bi-sliders me-2"></i>Configurações</a
+                  >
+                </li>
+                <li>
+                  <a class="dropdown-item" href="pages/help/help.html"
+                    ><i class="bi bi-question-circle me-2"></i>Ajuda</a
+                  >
+                </li>
+                <li>
+                  <hr class="dropdown-divider" />
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    data-bs-toggle="modal"
+                    data-bs-target="#logoutwasomupfy"
+                    href="#"
+                    ><i class="bi bi-box-arrow-right me-2"></i>Sair</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+
+        <!-- Adicione isso dentro da tag <nav class="bottom-nav"> -->
+        <div class="connection-status" id="connectionStatus"></div>
+        <div class="status-notification" id="statusNotification"></div>
+
+        <!-- Modal logout -->
+        <div
+          class="modal fade"
+          id="logoutwasomupfy"
+          data-bs-backdrop="static"
+          data-bs-keyboard="false"
+          tabindex="-1"
+          aria-labelledby="logoutwasomupfyLabel"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog">
+            <div class="modal-content modal-bottom">
+              <div class="modal-header">
+                <h1
+                  class="modal-title fs-5 text-dark"
+                  id="logoutwasomupfyLabel"
+                >
+                  Terminar sessão
+                </h1>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body">
+                <div class="container">
+                  <div class="row justify-content-center text-center">
+                    <div
+                      class="col-md-12 content-center justify-center text-center"
+                    >
+                      <p class="text-center text-dark">
+                        @josembengadacosta você tem certeza de que desejas
+                        terminar sessão?
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <div>
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    data-bs-dismiss="modal"
+                  >
+                    Não, continuar
+                  </button>
+                </div>
+                <div>
+                  <button
+                    class="btn btn-danger"
+                    type="button"
+                    name="logout_wasomupfy"
+                    onclick="logout_wasomupfy()"
+                  >
+                    Sim, terminar
+                  </button>
+                </div>
+                <script type="text/javascript">
+                  function logout_wasomupfy() {
+                    window.location = "logout";
+                  }
+                </script>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Modal logout fim -->
+
+        <div class="container-fluid p-0">
+          <div class="row mb-3 mt-2">
+            <div class="welcome-text col-auto d-sm-block">
+              <h2 class="h4 mb-2">
+                <i class="bi bi-speedometer2 me-2"></i>Bem-vindo,<br /><span
+                  >Cristiano Amadeu</span
+                >
+              </h2>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                  <li class="breadcrumb-item">
+                    <a href="#" class="text-secondary-emphasis">Home</a>
+                  </li>
+                  <li
+                    class="breadcrumb-item active text-white-stable"
+                    aria-current="page"
+                  >
+                    Dashboard
+                  </li>
+                </ol>
+              </nav>
+            </div>
+            <div class="col-auto ms-auto text-end mt-n1 mt-3">
+              <div class="dropdown me-2 d-inline-block position-relative">
+                <a
+                  class="btn btn-light bg-white shadow-sm dropdown-toggle"
+                  href="#"
+                  data-bs-toggle="dropdown"
+                  data-bs-display="static"
+                >
+                  <i class="align-middle mt-n1 bi bi-calendar"></i> Hoje
+                </a>
+                <div class="dropdown-menu dropdown-menu-end">
+                  <h6 class="dropdown-header">Opções</h6>
+                  <a class="dropdown-item" href="pages/music/approve.html"
+                    >Aprovar Música</a
+                  >
+                  <a
+                    class="dropdown-item"
+                    href="pages/distribution/schedule.html"
+                    >Agendar lançamentos</a
+                  >
+                  <a class="dropdown-item" href="pages/admins/add.html"
+                    >Novo funcionário</a
+                  >
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="pages/settings/config.html"
+                    >Configurações</a
+                  >
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="pages/manager/gestion.html"
+                    >Gestão Geral</a
+                  >
+                </div>
+              </div>
+
+              <button
+                class="btn btn-light bg-white shadow-sm"
+                onclick="alert('Filtração indisponível')"
+              >
+                <i class="align-middle bi bi-filter">&nbsp;</i>
+              </button>
+              <button class="btn btn-light bg-white shadow-sm">
+                <i
+                  class="align-middle bi bi-repeat"
+                  id="refresh"
+                  onclick="window.location.reload()"
+                  >&nbsp;</i
+                >
+              </button>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
+              <div class="card stats-card-primary flex-fill">
+                <div class="card-body">
+                  <div class="d-flex align-items-start">
+                    <div class="flex-grow-1">
+                      <h5 class="text-white-stable">
+                        Total de Usuários
+                        <span
+                          class="badge badge-soft-pink counter"
+                          data-valor="5000"
+                          data-tipo="contagem"
+                          >0</span
+                        >
+                      </h5>
+                      <p class="mb-2">
+                        Total de usuários da <strong>Wasom Upfy</strong>
+                      </p>
+                      <div class="mb-0">
+                        <a href="pages/users/all-users.html" class="card-link"
+                          >Ver usuários <i class="bi bi-arrow-right"></i
+                        ></a>
+                      </div>
+                    </div>
+                    <div class="d-inline-block ms-3">
+                      <div class="stat">
+                        <a
+                          href="pages/users/all-users.html"
+                          title="Ver usuários da Wasom Upfy"
+                          ><i class="align-middle bi bi-people card-icon"></i
+                        ></a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
+              <div class="card stats-card-primary flex-fill">
+                <div class="card-body">
+                  <div class="d-flex align-items-start">
+                    <div class="flex-grow-1">
+                      <h5 class="text-white-stable">
+                        Total de Funcionários
+                        <span
+                          class="badge badge-soft-pink counter"
+                          data-valor="4"
+                          data-tipo="contagem"
+                          >0</span
+                        >
+                      </h5>
+                      <p class="mb-2">
+                        Total de funcionários da <strong>Wasom Upfy</strong>
+                      </p>
+                      <div class="mb-0">
+                        <a
+                          href="pages/employees/all-employees.html"
+                          class="card-link"
+                          >Ver funcionários <i class="bi bi-arrow-right"></i
+                        ></a>
+                      </div>
+                    </div>
+                    <div class="d-inline-block ms-3">
+                      <div class="stat">
+                        <a
+                          href="pages/employees/all-employees.html"
+                          title="Ver funcionários da Wasom Upfy"
+                          ><i class="align-middle bi bi-people card-icon"></i
+                        ></a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
+              <div class="card stats-card-primary flex-fill">
+                <div class="card-body">
+                  <div class="d-flex align-items-start">
+                    <div class="flex-grow-1">
+                      <h5 class="text-white-stable">
+                        Total de Lançamentos
+                        <span
+                          class="badge badge-soft-pink counter"
+                          data-valor="300000"
+                          data-tipo="contagem"
+                          >0</span
+                        >
+                      </h5>
+                      <p class="mb-2">
+                        Todos os lançamentos feitos pelos usuários da
+                        <strong>Wasom Upfy</strong>
+                      </p>
+                      <div class="mb-0">
+                        <a
+                          href="pages/distribution/releases.html"
+                          class="card-link"
+                          >Ver lançamentos <i class="bi bi-arrow-right"></i
+                        ></a>
+                      </div>
+                    </div>
+                    <div class="d-inline-block ms-3">
+                      <div class="stat">
+                        <a
+                          href="pages/distribution/releases.html"
+                          title="Ver todos os lançamentos da Wasom Upfy"
+                          ><i
+                            class="align-middle bi-rocket-takeoff card-icon"
+                          ></i
+                        ></a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
+              <div class="card stats-card-primary flex-fill">
+                <div class="card-body">
+                  <div class="d-flex align-items-start">
+                    <div class="flex-grow-1">
+                      <h5 class="text-white-stable">
+                        Visitantes
+                        <span
+                          class="badge badge-soft-pink counter"
+                          data-valor="900000"
+                          data-tipo="contagem"
+                          >0</span
+                        >
+                      </h5>
+                      <p class="mb-2">
+                        Todos os visitantes globais da
+                        <strong>Wasom Upfy</strong>
+                      </p>
+                      <div class="mb-0">
+                        <a href="pages/analytics/visites.html" class="card-link"
+                          >Ver os visitantes <i class="bi bi-arrow-right"></i
+                        ></a>
+                      </div>
+                    </div>
+                    <div class="d-inline-block ms-3">
+                      <div class="stat">
+                        <a
+                          href="pages/analytics/visites.html"
+                          title="Ver todos os visitantes da Wasom Upfy"
+                          ><i class="align-middle bi-eye card-icon"></i
+                        ></a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
+              <div class="card stats-card-primary flex-fill">
+                <div class="card-body">
+                  <div class="d-flex align-items-start">
+                    <div class="flex-grow-1">
+                      <h5 class="text-white-stable">
+                        Usuários Online
+                        <span
+                          class="badge badge-soft-pink counter"
+                          data-valor="900"
+                          data-tipo="contagem"
+                          >0</span
+                        >
+                      </h5>
+                      <p class="mb-2">
+                        Todos os usuários online na <strong>Wasom Upfy</strong>
+                      </p>
+                      <div class="mb-0">
+                        <a
+                          href="pages/analytics/online-users.html"
+                          class="card-link"
+                          >Ver actividade <i class="bi bi-arrow-right"></i
+                        ></a>
+                      </div>
+                    </div>
+                    <div class="d-inline-block ms-3">
+                      <div class="stat">
+                        <a
+                          href="pages/analytics/online-users.html"
+                          title="Ver todos os usuários online da Wasom Upfy"
+                          ><i
+                            class="align-middle bi-person-workspace card-icon"
+                          ></i
+                        ></a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
+              <div class="card stats-card-primary flex-fill">
+                <div class="card-body">
+                  <div class="d-flex align-items-start">
+                    <div class="flex-grow-1">
+                      <h5 class="text-white-stable">
+                        Receita de Hoje
+                        <span
+                          class="badge badge-soft-pink counter"
+                          data-valor="500800"
+                          data-tipo="moeda"
+                          >kz0</span
+                        >
+                      </h5>
+                      <p class="mb-2">Vê relatórios sobre a receita de hoje</p>
+                      <div class="mb-0">
+                        <a
+                          href="pages/finances/earnings.html#cash"
+                          class="card-link"
+                          >Ver relatório <i class="bi bi-arrow-right"></i
+                        ></a>
+                      </div>
+                    </div>
+                    <div class="d-inline-block ms-3">
+                      <div class="stat">
+                        <a
+                          href="pages/finances/earnings.html#cash"
+                          title="Ver receita de hoje da Wasom Upfy"
+                          ><i class="align-middle bi-cash-coin card-icon"></i
+                        ></a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-xxl-3 mb-3 d-flex">
+              <div class="card stats-card-primary flex-fill">
+                <div class="card-body">
+                  <div class="d-flex align-items-start">
+                    <div class="flex-grow-1">
+                      <h5 class="text-white-stable">
+                        Contas Disponíveis
+                        <span
+                          class="badge badge-soft-pink counter"
+                          data-valor="2090"
+                          data-tipo="contagem"
+                          >0</span
+                        >
+                      </h5>
+                      <p class="mb-2">
+                        Vê agora todas as Contas Disponíveis na
+                        <strong>Wasom Upfy</strong>, faça a gestão das mesmas em
+                        tempo real
+                      </p>
+                      <div class="mb-0">
+                        <a
+                          href="pages/users/available-account.html"
+                          class="card-link"
+                          >Ver as Contas Disponíveis
+                          <i class="bi bi-arrow-right"></i
+                        ></a>
+                      </div>
+                    </div>
+                    <div class="d-inline-block ms-3">
+                      <div class="stat">
+                        <a
+                          href="pages/users/available-account.html"
+                          title="Ver todas as Contas Disponíveis da Wasom Upfy"
+                          ><i class="align-middle bi-person-check card-icon"></i
+                        ></a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-xxl-3 mb-3 d-flex">
+              <div class="card stats-card-primary flex-fill">
+                <div class="card-body">
+                  <div class="d-flex align-items-start">
+                    <div class="flex-grow-1">
+                      <h5 class="text-white-stable">
+                        Contas Indisponíveis
+                        <span
+                          class="badge badge-soft-pink counter"
+                          data-valor="428"
+                          data-tipo="contagem"
+                          >0</span
+                        >
+                      </h5>
+                      <p class="mb-2">
+                        Vê agora todas as contas indisponível na
+                        <strong>Wasom Upfy</strong>, faça a gestão das mesmas em
+                        tempo real
+                      </p>
+                      <div class="mb-0">
+                        <a
+                          href="pages/users/unavailable-account.html"
+                          class="card-link"
+                          >Ver as Contas Indisponíveis
+                          <i class="bi bi-arrow-right"></i
+                        ></a>
+                      </div>
+                    </div>
+                    <div class="d-inline-block ms-3">
+                      <div class="stat">
+                        <a
+                          href="pages/users/unavailable-account.html"
+                          title="Ver todas as Contas Indisponíveis da Wasom Upfy"
+                          ><i
+                            class="align-middle bi-person-exclamation card-icon"
+                          ></i
+                        ></a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <div class="card stats-card-primary flex-fill">
+                <div class="card-body">
+                  <div class="d-flex align-items-start">
+                    <div class="flex-grow-1">
+                      <h5 class="text-white-stable">
+                        Pedidos de Suporte de Usuários
+                      </h5>
+                      <p class="mb-2">
+                        Todos os pedidos de suporte da
+                        <strong>Wasom Upfy</strong> estão disponíveis aqui.
+                        Saiba como podes ajudar os usuários
+                      </p>
+                      <div class="mb-0">
+                        <a href="#" class="card-link"
+                          >Ver pedidos de suporte
+                          <i class="bi bi-arrow-right"></i
+                        ></a>
+                      </div>
+                    </div>
+                    <div class="d-inline-block ms-3">
+                      <div class="stat">
+                        <a
+                          href="pages/messages/inbox.html"
+                          title="Ver todos os pedidos de suporte de usuários da Wasom Upfy"
+                          ><i class="align-middle bi-headset card-icon"></i
+                        ></a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card stats-card-primary flex-fill">
+                <h5 class="card-title">Países que usam a Wasom Upfy</h5>
+                <div id="clientMap"></div>
+                <div class="row text-center">
+                  <div class="col-4 border-end">
+                    <h6 class="text-white-stable">Brasil</h6>
+                    <h4 class="counter" data-valor="58" data-tipo="porcentagem">
+                      0%
+                    </h4>
+                  </div>
+                  <div class="col-4 border-end">
+                    <h6 class="text-white-stable">Portugal</h6>
+                    <h4 class="counter" data-valor="22" data-tipo="porcentagem">
+                      0%
+                    </h4>
+                  </div>
+                  <div class="col-4">
+                    <h6 class="text-white-stable">Outros</h6>
+                    <h4 class="counter" data-valor="22" data-tipo="porcentagem">
+                      0%
+                    </h4>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-3 d-flex">
+              <div class="card stats-card-primary flex-fill">
+                <div
+                  class="d-flex justify-content-between align-items-center mb-3"
+                >
+                  <h5 class="card-title mb-0">Estatísticas de Streams</h5>
+                  <div class="dropdown">
+                    <button
+                      class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                      type="button"
+                      data-bs-toggle="dropdown"
+                      aria-label="Selecionar Período"
+                    >
+                      Últimos 7 dias
                     </button>
-                    <div class="dropdown me-2 position-relative">
-                        <button class="btn btn-outline-light btn-sm position-relative" type="button"
-                            data-bs-toggle="dropdown" aria-label="Notificações">
-                            <i class="bi bi-bell"></i>
-                            <span
-                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">5</span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-start p-0" style="min-width: 250px;">
-                            <li class="dropdown-header bg-dark text-white p-2">Notificações (5)</li>
-                            <li><a class="dropdown-item p-2" href="#">Novo artista registrado</a></li>
-                            <li><a class="dropdown-item p-2" href="#">Música atingiu 1000 plays</a></li>
-                            <li><a class="dropdown-item p-2" href="#">Atualização do sistema disponível</a></li>
-                            <li class="dropdown-footer text-center p-2"><a href="#" class="text-primary">Ver todas</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="dropdown me-2 position-relative">
-                        <button class="btn btn-outline-light btn-sm position-relative" type="button"
-                            data-bs-toggle="dropdown" aria-label="Mensagens">
-                            <i class="bi bi-envelope"></i>
-                            <span
-                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">2</span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-start p-0" style="min-width: 250px;">
-                            <li class="dropdown-header bg-dark text-white p-2">Mensagens (2)</li>
-                            <li><a class="dropdown-item p-2" href="#">Suporte #4521 - Novo ticket</a></li>
-                            <li><a class="dropdown-item p-2" href="#">Mensagem de artista</a></li>
-                            <li class="dropdown-footer text-center p-2"><a href="#" class="text-primary">Ver todas</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="dropdown">
-                        <button class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center"
-                            type="button" data-bs-toggle="dropdown" aria-label="Menu do Usuário">
-                            <img src="../assets/img/avatar/avatar.png" alt="Usuário" class="rounded-circle me-1"
-                                style="height: 24px;">
-                            <span>Cristiano Amadeu</span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="pages/user/profile.html"><i
-                                        class="bi bi-person me-2"></i>Perfil</a></li>
-                            <li><a class="dropdown-item" href="pages/settings/config.html"><i
-                                        class="bi bi-sliders me-2"></i>Configurações</a></li>
-                            <li><a class="dropdown-item" href="pages/help/help.html"><i
-                                        class="bi bi-question-circle me-2"></i>Ajuda</a>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutwasomupfy"
-                                    href="#"><i class="bi bi-box-arrow-right me-2"></i>Sair</a>
-                            </li>
-                        </ul>
-                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                      <li>
+                        <a class="dropdown-item" href="#" data-period="today"
+                          >Hoje</a
+                        >
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="#" data-period="7days"
+                          >Últimos 7 dias</a
+                        >
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="#" data-period="30days"
+                          >Últimos 30 dias</a
+                        >
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="#" data-period="month"
+                          >Este mês</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
                 </div>
-            </nav>
-
-            <!-- Adicione isso dentro da tag <nav class="bottom-nav"> -->
-            <div class="connection-status" id="connectionStatus"></div>
-            <div class="status-notification" id="statusNotification"></div>
-
-            <!-- Modal logout -->
-            <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false"
-                tabindex="-1" aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content modal-bottom">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">Terminar sessão</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="container">
-                                <div class="row justify-content-center text-center">
-                                    <div class="col-md-12 content-center justify-center text-center">
-                                        <p class="text-center text-dark">@josembengadacosta você tem
-                                            certeza
-                                            de que desejas terminar
-                                            sessão?</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <div>
-                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Não,
-                                    continuar</button>
-                            </div>
-                            <div>
-                                <button class="btn btn-danger" type="button" name="logout_wasomupfy"
-                                    onclick="logout_wasomupfy()">Sim, terminar</button>
-                            </div>
-                            <script type="text/javascript">
-                                function logout_wasomupfy() {
-                                    window.location = 'logout';
-                                }
-                            </script>
-                        </div>
-                    </div>
+                <canvas id="streamsChart" style="max-height: 400px"></canvas>
+                <div class="row mt-3 text-center">
+                  <div class="col-4 border-end">
+                    <h6 class="text-white-stable">Total Streams</h6>
+                    <h4
+                      id="totalStreams"
+                      class="counter"
+                      data-valor="173.589"
+                      data-tipo="decimal"
+                    >
+                      0
+                    </h4>
+                  </div>
+                  <div class="col-4 border-end">
+                    <h6 class="text-white-stable">Novos Ouvintes</h6>
+                    <h4
+                      id="newListeners"
+                      class="counter"
+                      data-valor="1.254"
+                      data-tipo="decimal"
+                    >
+                      0
+                    </h4>
+                  </div>
+                  <div class="col-4">
+                    <h6 class="text-white-stable">Receita</h6>
+                    <h4
+                      id="revenue"
+                      class="counter"
+                      data-valor="200000"
+                      data-tipo="moeda"
+                    >
+                      kz0
+                    </h4>
+                  </div>
                 </div>
+              </div>
             </div>
-            <!-- Modal logout fim -->
+          </div>
 
-            <div class="container-fluid p-0">
-                <div class="row mb-3 mt-2">
-                    <div class="welcome-text col-auto d-sm-block">
-                        <h2 class="h4 mb-2"><i class="bi bi-speedometer2 me-2"></i>Bem-vindo,<br><span>Cristiano
-                                Amadeu</span></h2>
-                        <nav aria-label="breadcrumb">
-                            <ol class="breadcrumb mb-0">
-                                <li class="breadcrumb-item"><a href="#" class="text-secondary-emphasis">Home</a></li>
-                                <li class="breadcrumb-item active text-white-stable" aria-current="page">Dashboard</li>
-                            </ol>
-                        </nav>
-                    </div>
-                    <div class="col-auto ms-auto text-end mt-n1 mt-3">
-
-                        <div class="dropdown me-2 d-inline-block position-relative">
-                            <a class="btn btn-light bg-white shadow-sm dropdown-toggle" href="#"
-                                data-bs-toggle="dropdown" data-bs-display="static">
-                                <i class="align-middle mt-n1 bi bi-calendar"></i> Hoje
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <h6 class="dropdown-header">Opções</h6>
-                                <a class="dropdown-item" href="pages/music/approve.html">Aprovar Música</a>
-                                <a class="dropdown-item" href="pages/distribution/schedule.html">Agendar lançamentos</a>
-                                <a class="dropdown-item" href="pages/admins/add.html">Novo
-                                    funcionário</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="pages/settings/config.html">Configurações</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="pages/manager/gestion.html">Gestão Geral</a>
-                            </div>
-                        </div>
-
-                        <button class="btn btn-light bg-white shadow-sm" onclick="alert('Filtração indisponível')">
-                            <i class="align-middle bi bi-filter">&nbsp;</i>
-                        </button>
-                        <button class="btn btn-light bg-white shadow-sm">
-                            <i class="align-middle bi bi-repeat" id="refresh"
-                                onclick="window.location.reload()">&nbsp;</i>
-                        </button>
-
-                    </div>
+          <div class="row">
+            <div class="col-md-6 mb-3 d-flex">
+              <div class="card stats-card-primary flex-fill">
+                <h5 class="card-title">Top Músicas</h5>
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Música</th>
+                        <th>Artista</th>
+                        <th>Streams</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>1</td>
+                        <td>Canção do Verão</td>
+                        <td>Maria Souza</td>
+                        <td>12,456</td>
+                      </tr>
+                      <tr>
+                        <td>2</td>
+                        <td>Noites de Inverno</td>
+                        <td>Carlos Mendes</td>
+                        <td>10,234</td>
+                      </tr>
+                      <tr>
+                        <td>3</td>
+                        <td>Primavera</td>
+                        <td>Ana Beatriz</td>
+                        <td>9,876</td>
+                      </tr>
+                      <tr>
+                        <td>4</td>
+                        <td>Life</td>
+                        <td>Bruna</td>
+                        <td>2,876</td>
+                      </tr>
+                      <tr>
+                        <td>5</td>
+                        <td>Regra da vida</td>
+                        <td>Cristiano Amadeu</td>
+                        <td>1,876</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
-
-                <div class="row">
-                    <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
-                        <div class="card stats-card-primary flex-fill">
-                            <div class="card-body">
-                                <div class="d-flex align-items-start">
-                                    <div class="flex-grow-1">
-                                        <h5 class="text-white-stable">Total de Usuários <span
-                                                class="badge badge-soft-pink counter" data-valor="5000"
-                                                data-tipo="contagem">0</span></h5>
-                                        <p class="mb-2">Total de usuários da <strong>Wasom Upfy</strong></p>
-                                        <div class="mb-0">
-                                            <a href="pages/users/all-users.html" class="card-link">Ver usuários <i
-                                                    class="bi bi-arrow-right"></i></a>
-                                        </div>
-                                    </div>
-                                    <div class="d-inline-block ms-3">
-                                        <div class="stat">
-                                            <a href="pages/users/all-users.html" title="Ver usuários da Wasom Upfy"><i
-                                                    class="align-middle bi bi-people card-icon"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
-                        <div class="card stats-card-primary flex-fill">
-                            <div class="card-body">
-                                <div class="d-flex align-items-start">
-                                    <div class="flex-grow-1">
-                                        <h5 class="text-white-stable">Total de Funcionários <span
-                                                class="badge badge-soft-pink counter" data-valor="4"
-                                                data-tipo="contagem">0</span></h5>
-                                        <p class="mb-2">Total de funcionários da <strong>Wasom Upfy</strong></p>
-                                        <div class="mb-0">
-                                            <a href="pages/employees/all-employees.html" class="card-link">Ver
-                                                funcionários <i class="bi bi-arrow-right"></i></a>
-                                        </div>
-                                    </div>
-                                    <div class="d-inline-block ms-3">
-                                        <div class="stat">
-                                            <a href="pages/employees/all-employees.html"
-                                                title="Ver funcionários da Wasom Upfy"><i
-                                                    class="align-middle bi bi-people card-icon"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
-                        <div class="card stats-card-primary flex-fill">
-                            <div class="card-body">
-                                <div class="d-flex align-items-start">
-                                    <div class="flex-grow-1">
-                                        <h5 class="text-white-stable">Total de Lançamentos <span
-                                                class="badge badge-soft-pink counter" data-valor="300000"
-                                                data-tipo="contagem">0</span></h5>
-                                        <p class="mb-2">Todos os lançamentos feitos pelos usuários da <strong>Wasom
-                                                Upfy</strong></p>
-                                        <div class="mb-0">
-                                            <a href="pages/distribution/releases.html" class="card-link">Ver
-                                                lançamentos <i class="bi bi-arrow-right"></i></a>
-                                        </div>
-                                    </div>
-                                    <div class="d-inline-block ms-3">
-                                        <div class="stat">
-                                            <a href="pages/distribution/releases.html"
-                                                title="Ver todos os lançamentos da Wasom Upfy"><i
-                                                    class="align-middle bi-rocket-takeoff card-icon"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
-                        <div class="card stats-card-primary flex-fill">
-                            <div class="card-body">
-                                <div class="d-flex align-items-start">
-                                    <div class="flex-grow-1">
-                                        <h5 class="text-white-stable">Visitantes <span
-                                                class="badge badge-soft-pink counter" data-valor="900000"
-                                                data-tipo="contagem">0</span></h5>
-                                        <p class="mb-2">Todos os visitantes globais da <strong>Wasom Upfy</strong></p>
-                                        <div class="mb-0">
-                                            <a href="pages/analytics/visites.html" class="card-link">Ver os visitantes
-                                                <i class="bi bi-arrow-right"></i></a>
-                                        </div>
-                                    </div>
-                                    <div class="d-inline-block ms-3">
-                                        <div class="stat">
-                                            <a href="pages/analytics/visites.html"
-                                                title="Ver todos os visitantes da Wasom Upfy"><i
-                                                    class="align-middle bi-eye card-icon"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
-                        <div class="card stats-card-primary flex-fill">
-                            <div class="card-body">
-                                <div class="d-flex align-items-start">
-                                    <div class="flex-grow-1">
-                                        <h5 class="text-white-stable">Usuários Online <span
-                                                class="badge badge-soft-pink counter" data-valor="900"
-                                                data-tipo="contagem">0</span></h5>
-                                        <p class="mb-2">Todos os usuários online na <strong>Wasom
-                                                Upfy</strong></p>
-                                        <div class="mb-0">
-                                            <a href="pages/analytics/online-users.html" class="card-link">Ver actividade
-                                                <i class="bi bi-arrow-right"></i></a>
-                                        </div>
-                                    </div>
-                                    <div class="d-inline-block ms-3">
-                                        <div class="stat">
-                                            <a href="pages/analytics/online-users.html"
-                                                title="Ver todos os usuários online da Wasom Upfy"><i
-                                                    class="align-middle bi-person-workspace card-icon"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
-                        <div class="card stats-card-primary flex-fill">
-                            <div class="card-body">
-                                <div class="d-flex align-items-start">
-                                    <div class="flex-grow-1">
-                                        <h5 class="text-white-stable">Receita de Hoje <span
-                                                class="badge badge-soft-pink counter" data-valor="500800"
-                                                data-tipo="moeda">kz0</span></h5>
-                                        <p class="mb-2">Vê relatórios sobre a receita de hoje</p>
-                                        <div class="mb-0">
-                                            <a href="pages/finances/earnings.html#cash" class="card-link">Ver relatório
-                                                <i class="bi bi-arrow-right"></i></a>
-                                        </div>
-                                    </div>
-                                    <div class="d-inline-block ms-3">
-                                        <div class="stat">
-                                            <a href="pages/finances/earnings.html#cash"
-                                                title="Ver receita de hoje da Wasom Upfy"><i
-                                                    class="align-middle bi-cash-coin card-icon"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12 col-sm-6 col-xxl-3 mb-3 d-flex">
-                        <div class="card stats-card-primary flex-fill">
-                            <div class="card-body">
-                                <div class="d-flex align-items-start">
-                                    <div class="flex-grow-1">
-                                        <h5 class="text-white-stable">Contas Disponíveis <span
-                                                class="badge badge-soft-pink counter" data-valor="2090"
-                                                data-tipo="contagem">0</span></h5>
-                                        <p class="mb-2">Vê agora todas as Contas Disponíveis na <strong>Wasom
-                                                Upfy</strong>, faça a gestão das mesmas em tempo real</p>
-                                        <div class="mb-0">
-                                            <a href="pages/users/available-account.html" class="card-link">Ver as Contas
-                                                Disponíveis <i class="bi bi-arrow-right"></i></a>
-                                        </div>
-                                    </div>
-                                    <div class="d-inline-block ms-3">
-                                        <div class="stat">
-                                            <a href="pages/users/available-account.html"
-                                                title="Ver todas as Contas Disponíveis da Wasom Upfy"><i
-                                                    class="align-middle bi-person-check card-icon"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12 col-sm-6 col-xxl-3 mb-3 d-flex">
-                        <div class="card stats-card-primary flex-fill">
-                            <div class="card-body">
-                                <div class="d-flex align-items-start">
-                                    <div class="flex-grow-1">
-                                        <h5 class="text-white-stable">Contas Indisponíveis <span
-                                                class="badge badge-soft-pink counter" data-valor="428"
-                                                data-tipo="contagem">0</span></h5>
-                                        <p class="mb-2">Vê agora todas as contas indisponível na <strong>Wasom
-                                                Upfy</strong>, faça a gestão das mesmas em tempo real</p>
-                                        <div class="mb-0">
-                                            <a href="pages/users/unavailable-account.html" class="card-link">Ver as
-                                                Contas Indisponíveis <i class="bi bi-arrow-right"></i></a>
-                                        </div>
-                                    </div>
-                                    <div class="d-inline-block ms-3">
-                                        <div class="stat">
-                                            <a href="pages/users/unavailable-account.html"
-                                                title="Ver todas as Contas Indisponíveis da Wasom Upfy"><i
-                                                    class="align-middle bi-person-exclamation card-icon"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class=" col-md-6 mb-3">
-                        <div class="card stats-card-primary flex-fill">
-                            <div class="card-body">
-                                <div class="d-flex align-items-start">
-                                    <div class="flex-grow-1">
-                                        <h5 class="text-white-stable">Pedidos de Suporte de Usuários</h5>
-                                        <p class="mb-2">Todos os pedidos de suporte da <strong>Wasom
-                                                Upfy</strong> estão disponíveis aqui. Saiba como podes ajudar os
-                                            usuários</p>
-                                        <div class="mb-0">
-                                            <a href="#" class="card-link">Ver pedidos de suporte <i
-                                                    class="bi bi-arrow-right"></i></a>
-                                        </div>
-                                    </div>
-                                    <div class="d-inline-block ms-3">
-                                        <div class="stat">
-                                            <a href="pages/messages/inbox.html"
-                                                title="Ver todos os pedidos de suporte de usuários da Wasom Upfy"><i
-                                                    class="align-middle bi-headset card-icon"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card stats-card-primary flex-fill">
-                            <h5 class="card-title">Países que usam a Wasom Upfy</h5>
-                            <div id="clientMap"></div>
-                            <div class="row text-center">
-                                <div class="col-4 border-end">
-                                    <h6 class="text-white-stable">Brasil</h6>
-                                    <h4 class="counter" data-valor="58" data-tipo="porcentagem">0%</h4>
-                                </div>
-                                <div class="col-4 border-end">
-                                    <h6 class="text-white-stable">Portugal</h6>
-                                    <h4 class="counter" data-valor="22" data-tipo="porcentagem">0%</h4>
-                                </div>
-                                <div class="col-4">
-                                    <h6 class="text-white-stable">Outros</h6>
-                                    <h4 class="counter" data-valor="22" data-tipo="porcentagem">0%</h4>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div class="col-md-6 mb-3 d-flex">
-                        <div class="card stats-card-primary flex-fill">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="card-title mb-0">Estatísticas de Streams</h5>
-                                <div class="dropdown">
-                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
-                                        data-bs-toggle="dropdown" aria-label="Selecionar Período">
-                                        Últimos 7 dias
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><a class="dropdown-item" href="#" data-period="today">Hoje</a></li>
-                                        <li><a class="dropdown-item" href="#" data-period="7days">Últimos 7 dias</a>
-                                        </li>
-                                        <li><a class="dropdown-item" href="#" data-period="30days">Últimos 30
-                                                dias</a></li>
-                                        <li><a class="dropdown-item" href="#" data-period="month">Este mês</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <canvas id="streamsChart" style="max-height: 400px;"></canvas>
-                            <div class="row mt-3 text-center">
-                                <div class="col-4 border-end">
-                                    <h6 class="text-white-stable">Total Streams</h6>
-                                    <h4 id="totalStreams" class="counter" data-valor="173.589" data-tipo="decimal">0
-                                    </h4>
-                                </div>
-                                <div class="col-4 border-end">
-                                    <h6 class="text-white-stable">Novos Ouvintes</h6>
-                                    <h4 id="newListeners" class="counter" data-valor="1.254" data-tipo="decimal">0</h4>
-                                </div>
-                                <div class="col-4">
-                                    <h6 class="text-white-stable">Receita</h6>
-                                    <h4 id="revenue" class="counter" data-valor="200000" data-tipo="moeda">kz0</h4>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6 mb-3 d-flex">
-                        <div class="card stats-card-primary flex-fill">
-                            <h5 class="card-title">Top Músicas</h5>
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Música</th>
-                                            <th>Artista</th>
-                                            <th>Streams</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>Canção do Verão</td>
-                                            <td>Maria Souza</td>
-                                            <td>12,456</td>
-                                        </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td>Noites de Inverno</td>
-                                            <td>Carlos Mendes</td>
-                                            <td>10,234</td>
-                                        </tr>
-                                        <tr>
-                                            <td>3</td>
-                                            <td>Primavera</td>
-                                            <td>Ana Beatriz</td>
-                                            <td>9,876</td>
-                                        </tr>
-                                        <tr>
-                                            <td>4</td>
-                                            <td>Life</td>
-                                            <td>Bruna</td>
-                                            <td>2,876</td>
-                                        </tr>
-                                        <tr>
-                                            <td>5</td>
-                                            <td>Regra da vida</td>
-                                            <td>Cristiano Amadeu</td>
-                                            <td>1,876</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <a href="pages/manager/top-music.html" class="card-link">Ver todas <i
-                                    class="bi bi-arrow-right"></i></a>
-                        </div>
-                    </div>
-
-                    <div class="col-12 col-md-6 mb-3">
-                        <div class="card stats-card-primary flex-fill">
-                            <h5 class="card-title">Atividade Recente</h5>
-                            <div class="activity-list">
-                                <div class="activity-item d-flex mb-3">
-                                    <div class="flex-shrink-0">
-                                        <img src="../assets/img/brand/wasomupfy_brand.png" alt="User"
-                                            class="rounded-circle" width="40">
-                                    </div>
-                                    <div class="flex-grow-1 ms-3">
-                                        <h6 class="mb-0">Novo admin adicionado</h6>
-                                        <p class="text-white-stable mb-0">João Silva foi adicionado como admin</p>
-                                        <small class="text-white-stable">10 minutos atrás</small>
-                                    </div>
-                                </div>
-                                <div class="activity-item d-flex mb-3">
-                                    <div class="flex-shrink-0">
-                                        <img src="../assets/img/brand/wasomupfy_brand.png" alt="User"
-                                            class="rounded-circle" width="40">
-                                    </div>
-                                    <div class="flex-grow-1 ms-3">
-                                        <h6 class="mb-0">Novo lançamento</h6>
-                                        <p class="text-white-stable mb-0">"Canção do Verão" por Maria Souza</p>
-                                        <small class="text-white-stable">1 hora atrás</small>
-                                    </div>
-                                </div>
-                                <div class="activity-item d-flex mb-3">
-                                    <div class="flex-shrink-0">
-                                        <img src="../assets/img/brand/wasomupfy_brand.png" alt="User"
-                                            class="rounded-circle" width="40">
-                                    </div>
-                                    <div class="flex-grow-1 ms-3">
-                                        <h6 class="mb-0">Atualização de sistema</h6>
-                                        <p class="text-white-stable mb-0">Versão 2.5.1 instalada</p>
-                                        <small class="text-white-stable">3 horas atrás</small>
-                                    </div>
-                                </div>
-                                <div class="activity-item d-flex">
-                                    <div class="flex-shrink-0">
-                                        <img src="../assets/img/brand/wasomupfy_brand.png" alt="User"
-                                            class="rounded-circle" width="40">
-                                    </div>
-                                    <div class="flex-grow-1 ms-3">
-                                        <h6 class="mb-0">Novo pedido de suporte</h6>
-                                        <p class="text-white-stable mb-0">Ticket #4521 criado</p>
-                                        <small class="text-white-stable">5 horas atrás</small>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="pages/manager/activity.html" class="card-link mt-3">Ver toda atividade <i
-                                    class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="row">
-                    <div class="col-md-6 mb-3 d-flex">
-                        <div class="card stats-card-primary flex-fill">
-                            <h5 class="card-title">Nossos Clientes</h5>
-                            <p class="small">Principais artistas e gravadoras que confiam na Wasom Upfy</p>
-                            <div class="client-grid">
-                                <div class="client-logo"><img src="../assets/img/avatar/avatar.png" alt="Gravadora A">
-                                </div>
-                                <div class="client-logo"><img src="../assets/img/avatar/avatar.png" alt="Artista B">
-                                </div>
-                                <div class="client-logo"><img src="../assets/img/avatar/avatar.png" alt="Studio C">
-                                </div>
-                                <div class="client-logo"><img src="../assets/img/avatar/avatar.png" alt="Label E"></div>
-                                <div class="client-logo"><img src="../assets/img/avatar/avatar.png" alt="Gravadora A">
-                                </div>
-                                <div class="client-logo"><img src="../assets/img/avatar/avatar.png" alt="Artista B">
-                                </div>
-                                <div class="client-logo"><img src="../assets/img/avatar/avatar.png" alt="Studio C">
-                                </div>
-                                <div class="client-logo"><img src="../assets/img/avatar/avatar.png" alt="Label E"></div>
-                                <div class="client-logo"><img src="../assets/img/avatar/avatar.png" alt="Gravadora A">
-                                </div>
-                                <div class="client-logo"><img src="../assets/img/avatar/avatar.png" alt="Artista B">
-                                </div>
-                                <div class="client-logo"><img src="../assets/img/avatar/avatar.png" alt="Studio C">
-                                </div>
-                                <div class="client-logo"><img src="../assets/img/avatar/avatar.png" alt="Label E"></div>
-                                <div class="client-logo"><img src="../assets/img/avatar/avatar.png" alt="Gravadora A">
-                                </div>
-                                <div class="client-logo"><img src="../assets/img/avatar/avatar.png" alt="Artista B">
-                                </div>
-                                <div class="client-logo"><img src="../assets/img/avatar/avatar.png" alt="Studio C">
-                                </div>
-                                <div class="client-logo"><img src="../assets/img/avatar/avatar.png" alt="Label E"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6 mb-3 d-flex">
-                        <div class="card stats-card-primary flex-fill">
-                            <h5 class="card-title">Timeline de Atualizações</h5>
-                            <div class="timeline">
-                                <div class="timeline-item">
-                                    <h6>Versão 2.5.1 Lançada</h6>
-                                    <p class="text-white-stable mb-1">Novo sistema de relatórios e dashboard melhorado
-                                    </p>
-                                    <small class="timeline-date">15 Jul 2025</small>
-                                </div>
-                                <div class="timeline-item">
-                                    <h6>Manutenção Programada</h6>
-                                    <p class="text-white-stable mb-1">Sistema ficará offline por 2 horas para
-                                        atualizações</p>
-                                    <small class="timeline-date">10 Jul 2025</small>
-                                </div>
-                                <div class="timeline-item">
-                                    <h6>Novo Recurso Adicionado</h6>
-                                    <p class="text-white-stable mb-1">Integração com redes sociais agora disponível</p>
-                                    <small class="timeline-date">5 Jul 2025</small>
-                                </div>
-                            </div>
-                            <a href="pages/manager/timeline.html" class="card-link">Ver histórico completo <i
-                                    class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                </div>
+                <a href="pages/manager/top-music.html" class="card-link"
+                  >Ver todas <i class="bi bi-arrow-right"></i
+                ></a>
+              </div>
             </div>
+
+            <div class="col-12 col-md-6 mb-3">
+              <div class="card stats-card-primary flex-fill">
+                <h5 class="card-title">Atividade Recente</h5>
+                <div class="activity-list">
+                  <div class="activity-item d-flex mb-3">
+                    <div class="flex-shrink-0">
+                      <img
+                        src="../assets/img/brand/wasomupfy_brand.png"
+                        alt="User"
+                        class="rounded-circle"
+                        width="40"
+                      />
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                      <h6 class="mb-0">Novo admin adicionado</h6>
+                      <p class="text-white-stable mb-0">
+                        João Silva foi adicionado como admin
+                      </p>
+                      <small class="text-white-stable">10 minutos atrás</small>
+                    </div>
+                  </div>
+                  <div class="activity-item d-flex mb-3">
+                    <div class="flex-shrink-0">
+                      <img
+                        src="../assets/img/brand/wasomupfy_brand.png"
+                        alt="User"
+                        class="rounded-circle"
+                        width="40"
+                      />
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                      <h6 class="mb-0">Novo lançamento</h6>
+                      <p class="text-white-stable mb-0">
+                        "Canção do Verão" por Maria Souza
+                      </p>
+                      <small class="text-white-stable">1 hora atrás</small>
+                    </div>
+                  </div>
+                  <div class="activity-item d-flex mb-3">
+                    <div class="flex-shrink-0">
+                      <img
+                        src="../assets/img/brand/wasomupfy_brand.png"
+                        alt="User"
+                        class="rounded-circle"
+                        width="40"
+                      />
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                      <h6 class="mb-0">Atualização de sistema</h6>
+                      <p class="text-white-stable mb-0">
+                        Versão 2.5.1 instalada
+                      </p>
+                      <small class="text-white-stable">3 horas atrás</small>
+                    </div>
+                  </div>
+                  <div class="activity-item d-flex">
+                    <div class="flex-shrink-0">
+                      <img
+                        src="../assets/img/brand/wasomupfy_brand.png"
+                        alt="User"
+                        class="rounded-circle"
+                        width="40"
+                      />
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                      <h6 class="mb-0">Novo pedido de suporte</h6>
+                      <p class="text-white-stable mb-0">Ticket #4521 criado</p>
+                      <small class="text-white-stable">5 horas atrás</small>
+                    </div>
+                  </div>
+                </div>
+                <a href="pages/manager/activity.html" class="card-link mt-3"
+                  >Ver toda atividade <i class="fas fa-arrow-right"></i
+                ></a>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3 d-flex">
+              <div class="card stats-card-primary flex-fill">
+                <h5 class="card-title">Nossos Clientes</h5>
+                <p class="small">
+                  Principais artistas e gravadoras que confiam na Wasom Upfy
+                </p>
+                <div class="client-grid">
+                  <div class="client-logo">
+                    <img
+                      src="../assets/img/avatar/avatar.png"
+                      alt="Gravadora A"
+                    />
+                  </div>
+                  <div class="client-logo">
+                    <img
+                      src="../assets/img/avatar/avatar.png"
+                      alt="Artista B"
+                    />
+                  </div>
+                  <div class="client-logo">
+                    <img src="../assets/img/avatar/avatar.png" alt="Studio C" />
+                  </div>
+                  <div class="client-logo">
+                    <img src="../assets/img/avatar/avatar.png" alt="Label E" />
+                  </div>
+                  <div class="client-logo">
+                    <img
+                      src="../assets/img/avatar/avatar.png"
+                      alt="Gravadora A"
+                    />
+                  </div>
+                  <div class="client-logo">
+                    <img
+                      src="../assets/img/avatar/avatar.png"
+                      alt="Artista B"
+                    />
+                  </div>
+                  <div class="client-logo">
+                    <img src="../assets/img/avatar/avatar.png" alt="Studio C" />
+                  </div>
+                  <div class="client-logo">
+                    <img src="../assets/img/avatar/avatar.png" alt="Label E" />
+                  </div>
+                  <div class="client-logo">
+                    <img
+                      src="../assets/img/avatar/avatar.png"
+                      alt="Gravadora A"
+                    />
+                  </div>
+                  <div class="client-logo">
+                    <img
+                      src="../assets/img/avatar/avatar.png"
+                      alt="Artista B"
+                    />
+                  </div>
+                  <div class="client-logo">
+                    <img src="../assets/img/avatar/avatar.png" alt="Studio C" />
+                  </div>
+                  <div class="client-logo">
+                    <img src="../assets/img/avatar/avatar.png" alt="Label E" />
+                  </div>
+                  <div class="client-logo">
+                    <img
+                      src="../assets/img/avatar/avatar.png"
+                      alt="Gravadora A"
+                    />
+                  </div>
+                  <div class="client-logo">
+                    <img
+                      src="../assets/img/avatar/avatar.png"
+                      alt="Artista B"
+                    />
+                  </div>
+                  <div class="client-logo">
+                    <img src="../assets/img/avatar/avatar.png" alt="Studio C" />
+                  </div>
+                  <div class="client-logo">
+                    <img src="../assets/img/avatar/avatar.png" alt="Label E" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-3 d-flex">
+              <div class="card stats-card-primary flex-fill">
+                <h5 class="card-title">Timeline de Atualizações</h5>
+                <div class="timeline">
+                  <div class="timeline-item">
+                    <h6>Versão 2.5.1 Lançada</h6>
+                    <p class="text-white-stable mb-1">
+                      Novo sistema de relatórios e dashboard melhorado
+                    </p>
+                    <small class="timeline-date">15 Jul 2025</small>
+                  </div>
+                  <div class="timeline-item">
+                    <h6>Manutenção Programada</h6>
+                    <p class="text-white-stable mb-1">
+                      Sistema ficará offline por 2 horas para atualizações
+                    </p>
+                    <small class="timeline-date">10 Jul 2025</small>
+                  </div>
+                  <div class="timeline-item">
+                    <h6>Novo Recurso Adicionado</h6>
+                    <p class="text-white-stable mb-1">
+                      Integração com redes sociais agora disponível
+                    </p>
+                    <small class="timeline-date">5 Jul 2025</small>
+                  </div>
+                </div>
+                <a href="pages/manager/timeline.html" class="card-link"
+                  >Ver histórico completo <i class="fas fa-arrow-right"></i
+                ></a>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-
 
     <!-- Floating Action Button -->
     <div class="fab" onclick="showQuickAction()" aria-label="Ações Rápidas">
-        <i class="bi bi-plus-lg"></i>
+      <i class="bi bi-plus-lg"></i>
     </div>
 
     <!-- Footer -->
     <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-12 text-center">
-                    <p class="mb-2">© 2026 Wasom Upfy. Todos os direitos reservados.</p>
-                    <a href="#" class="me-2">Termos de Uso</a>
-                    <a href="#" class="me-2">Privacidade</a>
-                    <a href="#">Suporte</a>
-                </div>
-            </div>
+      <div class="container">
+        <div class="row">
+          <div class="col-12 text-center">
+            <p class="mb-2">© 2026 Wasom Upfy. Todos os direitos reservados.</p>
+            <a href="#" class="me-2">Termos de Uso</a>
+            <a href="#" class="me-2">Privacidade</a>
+            <a href="#">Suporte</a>
+          </div>
         </div>
+      </div>
     </footer>
 
     <!-- Bottom Navigation -->
@@ -983,14 +1453,17 @@
     </ul>
 </nav> -->
 
-
     <div class="page-loader" id="pageLoader">
-        <div class="loader-content">
-            <!-- Sua imagem pulsante -->
-            <img src="../assets/img/brand/wasomupfy_brand.png" class="loader-image" alt="Carregando">
-            <!-- Barra de progresso agora perfeitamente centralizada -->
-            <div class="loader-progress"></div>
-        </div>
+      <div class="loader-content">
+        <!-- Sua imagem pulsante -->
+        <img
+          src="../assets/img/brand/wasomupfy_brand.png"
+          class="loader-image"
+          alt="Carregando"
+        />
+        <!-- Barra de progresso agora perfeitamente centralizada -->
+        <div class="loader-progress"></div>
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -999,200 +1472,225 @@
     <script src="../js/lastest.js"></script>
     <script src="../js/lastest.min.js"></script>
     <script>
-        // Initialize map
-        function initClientMap() {
-            const map = L.map('clientMap').setView([-14.2350, -51.9253], 4);
-            const tileLayerUrl = document.body.classList.contains('dark-mode') ?
-                'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png' :
-                'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      // Initialize map
+      function initClientMap() {
+        const map = L.map("clientMap").setView([-14.235, -51.9253], 4);
+        const tileLayerUrl = document.body.classList.contains("dark-mode")
+          ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          : "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 
-            L.tileLayer(tileLayerUrl, {
-                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
+        L.tileLayer(tileLayerUrl, {
+          attribution:
+            '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        }).addTo(map);
 
-            const clients = [{
-                    name: "Gravadora A",
-                    lat: -23.5505,
-                    lng: -46.6333
-                }, // São Paulo
-                {
-                    name: "Artista B",
-                    lat: -22.9068,
-                    lng: -43.1729
-                }, // Rio de Janeiro
-                {
-                    name: "Studio C",
-                    lat: -19.9167,
-                    lng: -43.9345
-                }, // Belo Horizonte
-                {
-                    name: "Label D",
-                    lat: -15.7942,
-                    lng: -47.8822
-                }, // Brasília
-                {
-                    name: "Artista E",
-                    lat: -12.9714,
-                    lng: -38.5014
-                }, // Salvador
-                {
-                    name: "Gravadora F",
-                    lat: -8.0543,
-                    lng: -34.8813
-                }, // Recife
-                {
-                    name: "Artista G",
-                    lat: 38.7223,
-                    lng: -9.1393
-                } // Lisboa
-            ];
+        const clients = [
+          {
+            name: "Gravadora A",
+            lat: -23.5505,
+            lng: -46.6333,
+          }, // São Paulo
+          {
+            name: "Artista B",
+            lat: -22.9068,
+            lng: -43.1729,
+          }, // Rio de Janeiro
+          {
+            name: "Studio C",
+            lat: -19.9167,
+            lng: -43.9345,
+          }, // Belo Horizonte
+          {
+            name: "Label D",
+            lat: -15.7942,
+            lng: -47.8822,
+          }, // Brasília
+          {
+            name: "Artista E",
+            lat: -12.9714,
+            lng: -38.5014,
+          }, // Salvador
+          {
+            name: "Gravadora F",
+            lat: -8.0543,
+            lng: -34.8813,
+          }, // Recife
+          {
+            name: "Artista G",
+            lat: 38.7223,
+            lng: -9.1393,
+          }, // Lisboa
+        ];
 
-            clients.forEach(client => {
-                L.marker([client.lat, client.lng])
-                    .addTo(map)
-                    .bindPopup(`<b>${client.name}</b><br>Cliente Wasom Upfy`);
-            });
-        }
+        clients.forEach((client) => {
+          L.marker([client.lat, client.lng])
+            .addTo(map)
+            .bindPopup(`<b>${client.name}</b><br>Cliente Wasom Upfy`);
+        });
+      }
     </script>
 
     <script>
-        // Simulated data for different periods
-        const streamData = {
-            today: {
-                labels: Array.from({
-                    length: 24
-                }, (_, i) => `${i}:00`),
-                streams: [120, 150, 180, 200, 220, 250, 300, 320, 350, 400, 420, 450, 480, 500, 520, 550, 600, 620,
-                    650, 700, 720, 750, 780, 800
-                ],
-                totalStreams: 8455,
-                newListeners: 320,
-                revenue: 2456
+      // Simulated data for different periods
+      const streamData = {
+        today: {
+          labels: Array.from(
+            {
+              length: 24,
             },
-            '7days': {
-                labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
-                streams: [24589, 22000, 23500, 25000, 26000, 27000, 25500],
-                totalStreams: 173589,
-                newListeners: 1254,
-                revenue: 12456
+            (_, i) => `${i}:00`
+          ),
+          streams: [
+            120, 150, 180, 200, 220, 250, 300, 320, 350, 400, 420, 450, 480,
+            500, 520, 550, 600, 620, 650, 700, 720, 750, 780, 800,
+          ],
+          totalStreams: 8455,
+          newListeners: 320,
+          revenue: 2456,
+        },
+        "7days": {
+          labels: ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"],
+          streams: [24589, 22000, 23500, 25000, 26000, 27000, 25500],
+          totalStreams: 173589,
+          newListeners: 1254,
+          revenue: 12456,
+        },
+        "30days": {
+          labels: Array.from(
+            {
+              length: 30,
             },
-            '30days': {
-                labels: Array.from({
-                    length: 30
-                }, (_, i) => `Dia ${i + 1}`),
-                streams: Array.from({
-                    length: 30
-                }, () => Math.floor(Math.random() * 20000) + 20000),
-                totalStreams: 620000,
-                newListeners: 5200,
-                revenue: 45000
+            (_, i) => `Dia ${i + 1}`
+          ),
+          streams: Array.from(
+            {
+              length: 30,
             },
-            month: {
-                labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
-                streams: [150000, 160000, 155000, 165000],
-                totalStreams: 630000,
-                newListeners: 5400,
-                revenue: 46000
-            }
-        };
+            () => Math.floor(Math.random() * 20000) + 20000
+          ),
+          totalStreams: 620000,
+          newListeners: 5200,
+          revenue: 45000,
+        },
+        month: {
+          labels: ["Semana 1", "Semana 2", "Semana 3", "Semana 4"],
+          streams: [150000, 160000, 155000, 165000],
+          totalStreams: 630000,
+          newListeners: 5400,
+          revenue: 46000,
+        },
+      };
 
-        // Chart configuration
-        let streamsChart = null;
-        const ctx = document.getElementById('streamsChart').getContext('2d');
+      // Chart configuration
+      let streamsChart = null;
+      const ctx = document.getElementById("streamsChart").getContext("2d");
 
-        function updateChart(period) {
-            const data = streamData[period];
-            const isDarkMode = document.body.classList.contains('dark-mode');
-            const lineColor = isDarkMode ? '#ff0088' : '#ff4d94';
+      function updateChart(period) {
+        const data = streamData[period];
+        const isDarkMode = document.body.classList.contains("dark-mode");
+        const lineColor = isDarkMode ? "#ff0088" : "#ff4d94";
 
-            // Destroy previous chart instance if exists
-            if (streamsChart) {
-                streamsChart.destroy();
-            }
-
-            // Create new chart
-            streamsChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: data.labels,
-                    datasets: [{
-                        label: 'Streams',
-                        data: data.streams,
-                        borderColor: lineColor,
-                        backgroundColor: lineColor + '33', // 20% opacity
-                        fill: true,
-                        tension: 0.4,
-                        pointRadius: 3,
-                        pointHoverRadius: 5
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            backgroundColor: isDarkMode ? '#333' : '#fff',
-                            titleColor: isDarkMode ? '#fff' : '#333',
-                            bodyColor: isDarkMode ? '#fff' : '#333'
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: {
-                                display: false
-                            },
-                            ticks: {
-                                color: isDarkMode ? '#fff' : '#333'
-                            }
-                        },
-                        y: {
-                            grid: {
-                                color: isDarkMode ? '#444' : '#e0e0e0'
-                            },
-                            ticks: {
-                                color: isDarkMode ? '#fff' : '#333'
-                            }
-                        }
-                    }
-                }
-            });
-
-            // Update card values
-            document.getElementById('totalStreams').textContent = data.totalStreams.toLocaleString('pt-AO');
-            document.getElementById('newListeners').textContent = data.newListeners.toLocaleString('pt-AO');
-            document.getElementById('revenue').textContent = `Kz ${data.revenue.toLocaleString('pt-AO')}`;
+        // Destroy previous chart instance if exists
+        if (streamsChart) {
+          streamsChart.destroy();
         }
 
-        // Initialize chart with default period (7 days)
-        updateChart('7days');
-
-        // Handle dropdown clicks
-        document.querySelectorAll('.dropdown-menu a[data-period]').forEach(item => {
-            item.addEventListener('click', (e) => {
-                e.preventDefault();
-                const period = e.target.getAttribute('data-period');
-                updateChart(period);
-                // Update dropdown button text
-                e.target.closest('.dropdown').querySelector('.dropdown-toggle').textContent = e.target
-                    .textContent;
-            });
+        // Create new chart
+        streamsChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: data.labels,
+            datasets: [
+              {
+                label: "Streams",
+                data: data.streams,
+                borderColor: lineColor,
+                backgroundColor: lineColor + "33", // 20% opacity
+                fill: true,
+                tension: 0.4,
+                pointRadius: 3,
+                pointHoverRadius: 5,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: false,
+              },
+              tooltip: {
+                backgroundColor: isDarkMode ? "#333" : "#fff",
+                titleColor: isDarkMode ? "#fff" : "#333",
+                bodyColor: isDarkMode ? "#fff" : "#333",
+              },
+            },
+            scales: {
+              x: {
+                grid: {
+                  display: false,
+                },
+                ticks: {
+                  color: isDarkMode ? "#fff" : "#333",
+                },
+              },
+              y: {
+                grid: {
+                  color: isDarkMode ? "#444" : "#e0e0e0",
+                },
+                ticks: {
+                  color: isDarkMode ? "#fff" : "#333",
+                },
+              },
+            },
+          },
         });
 
-        // Update chart colors on dark mode toggle
-        document.querySelector('[onclick="toggleDarkMode()"]').addEventListener('click', () => {
-            const currentPeriod = document.querySelector('.dropdown-toggle').textContent.trim();
-            const periodMap = {
-                'Hoje': 'today',
-                'Últimos 7 dias': '7days',
-                'Últimos 30 dias': '30days',
-                'Este mês': 'month'
-            };
-            updateChart(periodMap[currentPeriod]);
+        // Update card values
+        document.getElementById("totalStreams").textContent =
+          data.totalStreams.toLocaleString("pt-AO");
+        document.getElementById("newListeners").textContent =
+          data.newListeners.toLocaleString("pt-AO");
+        document.getElementById(
+          "revenue"
+        ).textContent = `Kz ${data.revenue.toLocaleString("pt-AO")}`;
+      }
+
+      // Initialize chart with default period (7 days)
+      updateChart("7days");
+
+      // Handle dropdown clicks
+      document
+        .querySelectorAll(".dropdown-menu a[data-period]")
+        .forEach((item) => {
+          item.addEventListener("click", (e) => {
+            e.preventDefault();
+            const period = e.target.getAttribute("data-period");
+            updateChart(period);
+            // Update dropdown button text
+            e.target
+              .closest(".dropdown")
+              .querySelector(".dropdown-toggle").textContent =
+              e.target.textContent;
+          });
+        });
+
+      // Update chart colors on dark mode toggle
+      document
+        .querySelector('[onclick="toggleDarkMode()"]')
+        .addEventListener("click", () => {
+          const currentPeriod = document
+            .querySelector(".dropdown-toggle")
+            .textContent.trim();
+          const periodMap = {
+            Hoje: "today",
+            "Últimos 7 dias": "7days",
+            "Últimos 30 dias": "30days",
+            "Este mês": "month",
+          };
+          updateChart(periodMap[currentPeriod]);
         });
     </script>
-</body>
-
+  </body>
 </html>

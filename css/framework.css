@@ -7034,8 +7034,10 @@ figure {
   outline: none;
   text-decoration: none;
   list-style: none;
-  font-family: "opens", sans-serif;
+  font-family: "Arial", sans-serif;
   text-align: none;
+  font-size: 100%;
+  text-decoration: none;
 }
 
 div.dispotivos {
@@ -7276,46 +7278,6 @@ a.logotipo {
 }
 /* mudança de cores do Slogan consoente ao ambiente do site fim */
 
-/* mudança de fotos de cada categoria */
-img#icone {
-  width: 100px;
-  position: relative;
-  margin-left: 60%;
-  margin-bottom: 25%;
-}
-img#icone-oth {
-  width: 100px;
-  position: relative;
-  margin-left: 76%;
-  margin-top: -4%;
-}
-
-img#icone-oth:hover {
-  transition: all 0.6s;
-}
-img#icone:hover {
-  transition: all 0.6s;
-}
-
-/* seccao de site */
-img.mobile {
-  display: none;
-}
-
-/* tamanho dos meus paragrafos */
-p {
-  font-size: 1.2rem;
-}
-
-/* detalhes dos meus videos */
-iframe.video-responsive {
-  height: 313px;
-  width: 100%;
-}
-img.img-responsive-costum {
-  width: 675px;
-  height: 247px;
-}
 /* meu rodape */
 
 .rodape > a {
@@ -7328,40 +7290,7 @@ img.img-responsive-costum {
   transition: all 0.2s ease;
 }
 
-@media (max-width: 768px) {
-  img#icone-oth {
-    display: none;
-  }
-  img#icone {
-    display: none;
-  }
 
-  img.mobile {
-    display: block;
-    position: relative;
-    width: 100%;
-    top: 0px;
-    height: 100vh;
-    background-attachment: fixed;
-  }
-}
-@media (max-width: 480px) {
-  img#icone-oth {
-    display: none;
-  }
-  img#icone {
-    display: none;
-  }
-
-  img.mobile {
-    display: block;
-    position: relative;
-    width: 100%;
-    top: 0px;
-    height: 100vh;
-    background-attachment: fixed;
-  }
-}
 @media (min-width: 1200px) {
   body {
     font: 18px/1.5 Arial, Helvetica, sans-serif;
