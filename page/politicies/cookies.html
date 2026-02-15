@@ -67,220 +67,7 @@
     <link rel="stylesheet" href="../../css/framework.css" />
     <link rel="stylesheet" href="../../css/main.css" />
     <link rel="stylesheet" href="../../css/terms.wp.css" />
-    <style>
-      .terms-header::after {
-        content: "";
-        width: 60px;
-        height: 4px;
-        background-color: #ff0089;
-        position: absolute;
-        bottom: -10px;
-        left: 50%;
-        transform: translateX(-50%);
-        border-radius: 2px;
-      }
-
-      .action-buttons {
-        text-align: center;
-        margin-bottom: 30px;
-      }
-
-      .action-buttons a,
-      .action-buttons button {
-        background-color: #ff0089;
-        color: #fff;
-        border: none;
-        padding: 8px 20px;
-        border-radius: 20px;
-        font-size: 0.9rem;
-        cursor: pointer;
-        transition: transform 0.3s ease, background-color 0.3s ease;
-        margin: 0 10px;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-      }
-
-      .action-buttons a:hover,
-      .action-buttons button:hover {
-        transform: scale(1.05);
-        background-color: #e04385;
-      }
-
-      .action-buttons i {
-        margin-right: 5px;
-      }
-
-      .nav-index {
-        position: sticky;
-        top: 20px;
-        width: 200px;
-        float: left;
-        margin-right: 30px;
-        padding: 15px;
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      }
-
-      .dark-mode .nav-index {
-        background-color: #2c2c2c;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-      }
-
-      .nav-index h3 {
-        font-size: 1.2rem;
-        color: #ff0089;
-        margin-bottom: 15px;
-      }
-
-      .nav-index ul {
-        list-style: none;
-        padding: 0;
-      }
-
-      .nav-index li {
-        margin-bottom: 10px;
-      }
-
-      .nav-index a {
-        color: #333;
-        text-decoration: none;
-        font-size: 0.9rem;
-        transition: color 0.3s ease;
-      }
-
-      .dark-mode .nav-index a {
-        color: #ccc;
-      }
-
-      .nav-index a:hover {
-        color: #ff0089;
-      }
-
-      .terms-content {
-        margin-left: 230px;
-      }
-
-      .term-section {
-        margin-bottom: 30px;
-        padding: 20px;
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      }
-
-      .dark-mode .term-section {
-        background-color: #2c2c2c;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-      }
-
-      .term-section h2 {
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: #ff0089;
-        margin-bottom: 15px;
-      }
-
-      .term-section p {
-        font-size: 1rem;
-        color: #333;
-        line-height: 1.6;
-      }
-
-      .dark-mode .term-section p {
-        color: #ccc;
-      }
-
-      .scroll-hint {
-        text-align: center;
-        margin-top: 20px;
-        font-size: 0.9rem;
-        color: #666;
-        display: block;
-      }
-
-      .dark-mode .scroll-hint {
-        color: #ccc;
-      }
-
-      .accept-terms {
-        text-align: center;
-        margin-top: 40px;
-      }
-
-      .accept-btn {
-        background-color: #ff0089;
-        color: #fff;
-        border: none;
-        padding: 12px 30px;
-        border-radius: 25px;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: transform 0.3s ease, background-color 0.3s ease;
-        opacity: 0.5;
-        pointer-events: none;
-      }
-
-      .accept-btn.active {
-        opacity: 1;
-        pointer-events: auto;
-      }
-
-      .accept-btn:hover {
-        transform: scale(1.05);
-        background-color: #e04385;
-      }
-
-      @media (max-width: 767px) {
-        .terms-header h1 {
-          font-size: 2rem;
-        }
-
-        .terms-header .update-date {
-          font-size: 0.85rem;
-        }
-
-        .action-buttons a,
-        .action-buttons button {
-          padding: 6px 15px;
-          font-size: 0.85rem;
-          margin: 5px;
-        }
-
-        .nav-index {
-          position: static;
-          width: 100%;
-          margin-right: 0;
-          margin-bottom: 20px;
-        }
-
-        .terms-content {
-          margin-left: 0;
-        }
-
-        .term-section {
-          padding: 15px;
-        }
-
-        .term-section h2 {
-          font-size: 1.3rem;
-        }
-
-        .term-section p {
-          font-size: 0.95rem;
-        }
-
-        .accept-btn {
-          padding: 10px 20px;
-        }
-
-        .scroll-hint {
-          font-size: 0.85rem;
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="../../css/cookies.css" />
   </head>
 
   <body>
@@ -358,7 +145,7 @@
                 <li class="nav-item">
                   <a
                     class="nav-link"
-                    href="../../blog/home"
+                    href="../../blog/"
                     title="Blogue"
                     target="_blank"
                     rel="external"
@@ -491,13 +278,13 @@
                         <a
                           title="Novidades"
                           class="dropdown-item"
-                          href="../../blog/news.html"
+                          href="../../blog/"
                           >Novidades</a
                         >
                         <a
                           title="Passatempo Wasom Upfy"
                           class="dropdown-item"
-                          href="../../blog/freetime"
+                          href="../../blog/"
                           >Passatempo</a
                         >
                         <a title="Indisponível" class="dropdown-item" href="#!"
@@ -1103,9 +890,6 @@
                     href="../../about.html"
                     class="text-reset text-decoration-none hover-white"
                   >
-                    <i
-                      class="text-wasomupfy fa-solid fa-book-open-reader me-1"
-                    ></i>
                     Sobre
                   </a>
                 </li>
@@ -1113,27 +897,21 @@
                   <a
                     href="../../about.html#nossamarca"
                     class="text-reset text-decoration-none hover-white"
-                  >
-                    <i class="text-wasomupfy fa-solid fa-hand-peace me-1"></i> A
-                    nossa marca
+                  >A nossa marca
                   </a>
                 </li>
                 <li class="mb-2">
                   <a
                     href="../../plan/all-plans.html"
                     class="text-reset text-decoration-none hover-white"
-                  >
-                    <i class="text-wasomupfy fa-solid fa-list-check me-1"></i
-                    >Planos
+                  >Planos
                   </a>
                 </li>
                 <li class="mb-2">
                   <a
                     href="../services/customized-services.html"
                     class="text-reset text-decoration-none hover-white"
-                  >
-                    <i class="text-wasomupfy fa-solid fa-gears me-1"></i
-                    >Serviços Premium</a
+                  >Serviços Premium</a
                   >
                 </li>
               </ul>
@@ -1149,40 +927,28 @@
                     target="_blank"
                     rel="external noopener noreferrer"
                     class="text-reset text-decoration-none hover-white"
-                  >
-                    <i
-                      class="text-wasomupfy fa-brands fa-facebook-messenger me-1"
-                    ></i>
-                    Atendimento
+                  > Atendimento
                   </a>
                 </li>
                 <li class="mb-2">
                   <a
                     href="../../page/support/help.html"
                     class="text-reset text-decoration-none hover-white"
-                  >
-                    <i
-                      class="text-wasomupfy fa-solid fa-circle-exclamation me-1"
-                    ></i>
-                    Ajuda
+                  >Ajuda
                   </a>
                 </li>
                 <li class="mb-2">
                   <a
                     href="../../contact.html"
                     class="text-reset text-decoration-none hover-white"
-                  >
-                    <i class="text-wasomupfy fa-solid fa-phone-alt me-1"></i>
-                    Contacta-nos
+                  >Contacta-nos
                   </a>
                 </li>
                 <li class="mb-2">
                   <a
                     href="https://wa.me/244923456789"
                     class="text-reset text-decoration-none hover-white"
-                  >
-                    <i class="text-wasomupfy fa-brands fa-whatsapp me-1"></i>
-                    WhatsApp
+                  >WhatsApp
                   </a>
                 </li>
               </ul>
@@ -1193,13 +959,9 @@
               <h3 class="fw-bold mb-3">Contacto</h3>
               <ul class="list-unstyled mb-0 text-muted small">
                 <li class="mb-3 d-flex">
-                  <i
-                    class="fa-solid fa-location-dot mt-1 me-2 text-wasomupfy"
-                  ></i>
                   <span>Angola - Luanda</span>
                 </li>
                 <li class="mb-3 d-flex">
-                  <i class="fa-solid fa-envelope mt-1 me-2 text-wasomupfy"></i>
                   <a
                     href="mailto:info@wasomupfy.com?subject=Contacto%20Wasom%20Upfy"
                     class="text-reset text-decoration-none"
@@ -1207,7 +969,6 @@
                   >
                 </li>
                 <li class="mb-3 d-flex">
-                  <i class="fa-solid fa-envelope mt-1 me-2 text-wasomupfy"></i>
                   <a
                     href="mailto:suporte@wasomupfy.com?subject=Contacto%20Wasom%20Upfy"
                     class="text-reset text-decoration-none"
@@ -1215,7 +976,6 @@
                   >
                 </li>
                 <li class="d-flex">
-                  <i class="fa-solid fa-clock mt-1 me-2 text-wasomupfy"></i>
                   <span>Seg - Sex: 08h às 17h</span>
                 </li>
               </ul>

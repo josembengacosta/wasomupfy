@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wasom Upfy · Como receber Royalties em Angola</title>
+  <!-- Bootstrap 5 + Font Awesome 6 (CDN) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* ===== mesmo dark mode premium do blog ===== */
+    body {
+      background-color: #0c0c0c;
+      color: #f0f0f0;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    /* navbar replicada */
+    .navbar {
+      background: transparent !important;
+      backdrop-filter: blur(0);
+      transition: background 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.2s;
+      padding: 1.2rem 0;
+    }
+    .navbar-scrolled {
+      background: #0c0c0c !important;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.8);
+      border-bottom: 1px solid rgba(138, 43, 226, 0.25);
+    }
+    .navbar .nav-link {
+      color: #fff !important;
+      font-weight: 500;
+      margin: 0 0.75rem;
+      opacity: 0.85;
+      transition: 0.2s;
+    }
+    .navbar .nav-link:hover {
+      opacity: 1;
+      color: #c77dff !important;
+    }
+    .btn-cta {
+      background: linear-gradient(145deg, #9b4dff, #7a2be0);
+      border: none;
+      color: white;
+      font-weight: 600;
+      padding: 0.6rem 1.6rem;
+      border-radius: 40px;
+      box-shadow: 0 4px 14px rgba(138, 43, 226, 0.5);
+      transition: all 0.2s;
+    }
+    .btn-cta:hover {
+      background: linear-gradient(145deg, #b366ff, #8a4bff);
+      transform: scale(1.03);
+      box-shadow: 0 8px 20px rgba(155, 77, 255, 0.7);
+      color: white;
+    }
+
+    /* tipografia do artigo */
+    .article-title {
+      font-size: clamp(2.2rem, 6vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.2;
+      background: linear-gradient(to right, #fff, #e0c0ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .lead-article {
+      font-size: 1.3rem;
+      color: #c0c0c0;
+      border-left: 5px solid #9b4dff;
+      padding-left: 1.5rem;
+    }
+    .author-badge {
+      background: #212121;
+      border-radius: 50px;
+      padding: 0.5rem 1.2rem 0.5rem 0.8rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid #3a2a4a;
+    }
+    .article-content h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      color: #f3e7ff;
+    }
+    .article-content h2 i {
+      color: #b366ff;
+      margin-right: 12px;
+    }
+    .article-content p {
+      line-height: 1.8;
+      color: #ddd;
+      font-size: 1.1rem;
+    }
+    .article-content blockquote {
+      background: #1e1e1e;
+      border-left: 6px solid #a966ff;
+      padding: 1.8rem 2rem;
+      border-radius: 20px;
+      font-style: italic;
+      margin: 2rem 0;
+      box-shadow: inset 0 0 10px #110018;
+    }
+    .highlight-box {
+      background: #191124;
+      border: 1px solid #623b9f;
+      border-radius: 32px;
+      padding: 2rem;
+    }
+
+    /* sidebar widgets (mesmo estilo) */
+    .sidebar-widget {
+      background: #161616;
+      border-radius: 30px;
+      padding: 1.8rem 1.5rem;
+      margin-bottom: 2.5rem;
+      border: 1px solid #2d2d2d;
+    }
+    .search-form {
+      position: relative;
+    }
+    .search-form input {
+      background: #232323;
+      border: 1px solid #3a3a3a;
+      border-radius: 60px;
+      padding: 0.85rem 2rem;
+      color: white;
+      width: 100%;
+    }
+    .search-form input:focus {
+      outline: 2px solid #b366ff;
+      background: #1f1f1f;
+    }
+    .search-form i {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #b87aff;
+    }
+    .magic-banner {
+      background: linear-gradient(145deg, #1f112b, #2a1738);
+      border-radius: 32px;
+      padding: 2rem 1.8rem;
+      border: 1px solid #7d4ec7;
+    }
+    .giveaway-card {
+      background: #1d1d1d;
+      border-radius: 26px;
+      padding: 1.5rem;
+      border: 1px solid #513582;
+    }
+    .footer-icon-circle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      background: #232023;
+      border-radius: 50%;
+      color: #d9b3ff;
+      font-size: 1.3rem;
+      transition: 0.2s;
+      text-decoration: none;
+      border: 1px solid #5d427d;
+    }
+    .footer-icon-circle:hover {
+      background: #7a4fc2;
+      color: #fff;
+      transform: scale(1.1);
+    }
+    footer {
+      background: #0a0a0a;
+      border-top: 2px solid #282138;
+    }
+    .newsletter-input {
+      background: #1d1d1d;
+      border: 1px solid #633b9c;
+      border-radius: 60px;
+      padding: 0.7rem 1.2rem;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+<!-- CABEÇALHO (idêntico ao blog) -->
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand fw-bold fs-3" href="blog.html">
+      <span style="color: #c58aff;">Wasom</span><span style="color: white;">Upfy</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto align-items-center">
+        <li class="nav-item"><a class="nav-link" href="#">Início</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Planos</a></li>
+        <li class="nav-item"><a class="nav-link active" href="#">Blog</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Contacto</a></li>
+        <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
+          <a class="btn btn-cta" href="#"><i class="fas fa-cloud-upload-alt me-2"></i>Distribuir Agora</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div style="height: 96px;"></div>
+
+<!-- CONTEÚDO PRINCIPAL DO ARTIGO -->
+<main class="container">
+  <!-- Breadcrumb simples -->
+  <div class="mb-4">
+    <a href="#" class="text-secondary text-decoration-none"><i class="fas fa-home me-1"></i>Blog</a>
+    <span class="mx-2 text-secondary">›</span>
+    <span class="text-white-50">Royalties em Angola</span>
+  </div>
+
+  <div class="row g-5">
+    <!-- COLUNA DO ARTIGO (esquerda) -->
+    <div class="col-lg-8">
+      <!-- cabeçalho do post -->
+      <span class="badge bg-purple text-white mb-3" style="background:#7d3acb;"><i class="fas fa-coins me-1"></i> Royalties & Finanças</span>
+      <h1 class="article-title mb-4">Como receber Royalties em Angola e multiplicar os teus ganhos</h1>
+      
+      <!-- meta info autor/data -->
+      <div class="d-flex align-items-center flex-wrap gap-4 mb-4">
+        <div class="author-badge">
+          <img src="https://randomuser.me/api/portraits/women/44.jpg" width="36" height="36" class="rounded-circle" style="border:2px solid #a966ff;">
+          <span><strong class="text-white">Kilvia dos Santos</strong> <span class="text-secondary">· Especialista em direitos autorais</span></span>
+        </div>
+        <div class="text-secondary"><i class="far fa-calendar-alt me-2"></i>12 Abril 2025 · 8 min leitura</div>
+        <div><i class="fas fa-share-alt me-2" style="color:#b87aff;"></i> partilhar</div>
+      </div>
+
+      <!-- imagem principal do artigo (destacada) -->
+      <img src="https://images.unsplash.com/photo-1459499362902-55a20553e082?q=80&w=2074&auto=format&fit=crop" class="img-fluid rounded-4 mb-5" style="border:2px solid #482e64; box-shadow: 0 20px 30px -12px #5a2d91;" alt="royalties angola">
+
+      <!-- corpo do artigo -->
+      <div class="article-content">
+        <p class="lead-article">Sabias que milhares de artistas angolanos deixam de receber dinheiro todos os anos por não saberem como registar as suas músicas e reclamar royalties? Neste guia completo, vais aprender o passo-a-passo para garantires cada kwanza que te é devido, seja no Kuduro, Kizomba ou Semba.</p>
+
+        <h2><i class="fas fa-1-circle"></i> Regista a tua obra na SAD Autor</h2>
+        <p>A Sociedade Angolana de Autores (SAD) é a entidade que gere os direitos de autor em Angola. Sem o registo, a tua música não existe legalmente. O processo pode ser feito online ou presencialmente em Luanda. Precisas do BI, formulário e uma cópia da letra/partitura. <strong>Dica:</strong> faz o registo antes de lançar a música em plataformas digitais.</p>
+
+        <div class="highlight-box my-4">
+          <i class="fas fa-check-circle text-success me-2"></i> <strong>Validade:</strong> O registo na SAD protege a tua obra durante toda a tua vida + 70 anos para os herdeiros. Não podes abdicar deste passo.
+        </div>
+
+        <h2><i class="fas fa-2-circle"></i> Escolhe um distribuidor digital com presença local</h2>
+        <p>A Wasom Upfy, por exemplo, é uma distribuidora angolana que entende as particularidades do mercado. Além de levar a tua música para o mundo (Spotify, Apple Music, Boomplay), fazemos a ponte com as sociedades de gestão colectiva para garantir que os royalties de execução pública (rádios, TV, bares) também chegam até ti. Outros distribuidores internacionais podem ignorar este passo.</p>
+
+        <blockquote>
+          <i class="fas fa-quote-left fa-xl me-3" style="color:#9b4dff;"></i> 
+          "Antes de usar a Wasom Upfy, recebia valores muito baixos. Depois que eles começaram a gerir também os direitos de radiodifusão, os meus ganhos mensais quadruplicaram." — <strong>Preto Show, artista de Kuduro</strong>
+        </blockquote>
+
+        <h2><i class="fas fa-3-circle"></i> Compreende os tipos de royalties</h2>
+        <p>Existem dois grandes blocos: os <strong>royalties de reprodução</strong> (streaming, vendas) e os <strong>royalties de execução pública</strong> (quando a tua música toca na rádio, num evento, no TikTok). Em Angola, a SAD é responsável por recolher estes últimos. Certifica-te de que a tua distribuidora envia os relatórios correctos para a SAD.</p>
+
+        <!-- Tabela simples resumo -->
+        <div class="bg-dark p-4 rounded-4 my-4 border border-secondary">
+          <h5 class="mb-3"><i class="fas fa-table me-2 text-purple"></i> Comparação rápida</h5>
+          <div class="row">
+            <div class="col-6"><i class="fas fa-circle-nodes text-info me-1"></i> Streaming: ~0,003 USD por stream</div>
+            <div class="col-6"><i class="fas fa-radio text-warning me-1"></i> Rádio: depende do relatório da SAD</div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-6"><i class="fas fa-tv text-primary me-1"></i> TV/ sincronização: negociação directa</div>
+            <div class="col-6"><i class="fas fa-gem text-purple me-1"></i> Shows ao vivo: direitos conexos</div>
+          </div>
+        </div>
+
+        <h2><i class="fas fa-4-circle"></i> Como receber o dinheiro (métodos de pagamento)</h2>
+        <p>A Wasom Upfy oferece várias formas de levantamento adaptadas a Angola: transferência bancária (em kwanzas ou USD), Multicaixa, PayPal, Payoneer. Algumas opções têm taxas, por isso aconselhamos a acumular um valor mínimo para transferir. <strong>Importante:</strong> mantém os teus dados sempre actualizados na plataforma.</p>
+
+        <h2><i class="fas fa-5-circle"></i> Não te esqueças dos direitos conexos (produtores e intérpretes)</h2>
+        <p>Se és produtor musical ou intérprete (cantor, músico), também tens direito a royalties conexos. Em Angola, a entidade que gere esses valores é a <strong>AGECOP</strong>. A Wasom Upfy auxilia os seus artistas a fazerem o registo duplo (SAD + AGECOP) para que nenhum dinheiro fique por receber.</p>
+
+        <!-- resumo final com call to action -->
+        <div class="p-4 rounded-4 mt-5 text-center" style="background: linear-gradient(125deg, #1d1429, #181121); border:1px solid #6a4794;">
+          <i class="fas fa-crown fa-3x" style="color: #f5c84e;"></i>
+          <h4 class="mt-2">Recebeste menos de 10.000 Kz no último trimestre?</h4>
+          <p class="px-4">Provavelmente estás a perder dinheiro por não teres os registos correctos. A nossa equipa pode fazer uma auditoria gratuita dos teus ganhos.</p>
+          <a href="#" class="btn btn-cta btn-lg mt-2"><i class="fas fa-headset me-2"></i>Falar com especialista</a>
+        </div>
+
+        <!-- tags do artigo -->
+        <hr class="my-5 border-secondary">
+        <div class="d-flex gap-2 flex-wrap">
+          <span class="badge bg-secondary">#Royalties</span>
+          <span class="badge bg-secondary">#Kuduro</span>
+          <span class="badge bg-secondary">#Kizomba</span>
+          <span class="badge bg-secondary">#SAD</span>
+          <span class="badge bg-secondary">#DireitosAutorais</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIDEBAR DIREITA (idêntica à do blog, com alguns ajustes) -->
+    <div class="col-lg-4">
+      <!-- pesquisa -->
+      <div class="sidebar-widget search-form">
+        <input type="text" placeholder="Pesquisar no blog...">
+        <i class="fas fa-search"></i>
+      </div>
+
+      <!-- autor em destaque -->
+      <div class="sidebar-widget text-center">
+        <img src="https://randomuser.me/api/portraits/women/44.jpg" class="rounded-circle mb-3" width="100" height="100" style="border:4px solid #a966ff;">
+        <h5>Kilvia dos Santos</h5>
+        <p class="small">Advogada especialista em propriedade intelectual, colaboradora da Wasom Upfy há 5 anos. Ajuda artistas a maximizarem receitas.</p>
+      </div>
+
+      <!-- banner serviços personalizados (magic) -->
+      <div class="magic-banner sidebar-widget">
+        <div class="d-flex align-items-center gap-3 mb-2">
+          <i class="fas fa-wand-magic-sparkles fa-2x" style="color: #c48aff;"></i>
+          <h5 class="mb-0">Serviços Personalizados</h5>
+        </div>
+        <p class="mt-2">Masterização, artwork, pitching para curadores. Tudo para o teu lançamento brilhar.</p>
+        <a href="#" class="btn btn-light rounded-pill w-100 mt-2" style="background: #ac73ff; color:#000;">Quero saber mais</a>
+      </div>
+
+      <!-- passatempos -->
+      <div class="giveaway-card sidebar-widget">
+        <span class="badge bg-warning text-dark mb-2"><i class="fas fa-gift me-1"></i>Passatempo ativo</span>
+        <h5><i class="fas fa-trophy me-2" style="color: #f5c542;"></i>Ganha uma Masterização Grátis</h5>
+        <p class="small">Envia a tua faixa inédita até 30/04. O vencedor leva master + distribuição premium.</p>
+        <a href="#" class="stretched-link text-decoration-none" style="color:#d9b3ff;">Participa aqui →</a>
+      </div>
+
+      <!-- artigo anterior/seguinte (navegação simples) -->
+      <div class="d-flex justify-content-between mt-4">
+        <a href="#" class="btn btn-outline-secondary rounded-pill"><i class="fas fa-arrow-left me-2"></i>Anterior</a>
+        <a href="#" class="btn btn-outline-secondary rounded-pill">Seguinte <i class="fas fa-arrow-right ms-2"></i></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECÇÃO COMENTÁRIOS (simulacro) ou artigos relacionados -->
+  <section class="my-5 pt-4">
+    <h3 class="mb-4"><i class="fas fa-comments me-2" style="color:#a970ff;"></i> Comentários</h3>
+    <div class="bg-dark p-4 rounded-4">
+      <p class="text-secondary">Sê o primeiro a comentar este artigo. <a href="#" class="text-info">Entrar com tua conta</a></p>
+      <div class="d-flex gap-3">
+        <textarea class="form-control bg-black text-white" rows="2" placeholder="Partilha a tua opinião..."></textarea>
+        <button class="btn btn-cta px-4">Enviar</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- FOOTER (exatamente igual ao do blog) -->
+<footer class="footer pt-5 pb-4">
+  <div class="container">
+    <div class="row justify-content-center mb-5">
+      <div class="col-lg-6 text-center">
+        <h4 class="fw-light">📬 Recebe dicas exclusivas e passatempos</h4>
+        <div class="d-flex flex-column flex-sm-row gap-2 mt-3">
+          <input type="email" class="form-control newsletter-input" placeholder="O teu melhor e-mail">
+          <button class="btn btn-cta px-4">Inscrever</button>
+        </div>
+      </div>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-3">
+        <h5><i class="fas fa-circle-info me-2" style="color:#b87aff;"></i> Sobre Nós</h5>
+        <ul class="list-unstyled mt-3">
+          <li><a href="#" class="text-secondary-50"><i class="fas fa-chevron-right me-1 fa-xs"></i>Quem somos</a></li>
+          <li><a href="#" class="text-secondary-50"><i class="fas fa-chevron-right me-1 fa-xs"></i>Carreiras</a></li>
+          <li><a href="#" class="text-secondary-50"><i class="fas fa-award me-1"></i>Nossa Marca</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h5><i class="fas fa-headset me-2"></i> Suporte</h5>
+        <ul class="list-unstyled mt-3">
+          <li><a href="#">Centro de ajuda</a></li>
+          <li><a href="#">Fale connosco</a></li>
+          <li><a href="#"><i class="fas fa-gem me-1"></i>Planos e preços</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h5><i class="fas fa-envelope me-2"></i> Contacto</h5>
+        <ul class="list-unstyled mt-3">
+          <li><i class="fas fa-phone-alt me-2"></i>+244 923 456 789</li>
+          <li><i class="fas fa-map-pin me-2"></i>Luanda, Talatona</li>
+          <li><i class="fas fa-at me-2"></i>blog@wasomupfy.ao</li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h5><i class="fas fa-share-alt me-2"></i> Redes</h5>
+        <div class="d-flex gap-2 mt-3 flex-wrap">
+          <a href="#" class="footer-icon-circle"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="footer-icon-circle"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="footer-icon-circle"><i class="fab fa-x-twitter"></i></a>
+          <a href="#" class="footer-icon-circle"><i class="fab fa-tiktok"></i></a>
+          <a href="#" class="footer-icon-circle"><i class="fab fa-youtube"></i></a>
+        </div>
+        <p class="mt-4 small text-secondary">© 2025 Wasom Upfy – distribuição global com raízes angolanas.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Bootstrap JS e script scroll -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  window.addEventListener('scroll', function() {
+    const nav = document.getElementById('mainNav');
+    if (window.scrollY > 50) {
+      nav.classList.add('navbar-scrolled');
+    } else {
+      nav.classList.remove('navbar-scrolled');
+    }
+  });
+</script>
+</body>
+</html>
