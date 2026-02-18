@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "Relatórios mensais disponíveis no dia 15",
         "Período de apuração: 60 dias para pagamento",
         "Valor mínimo para saque: R$50,00",
-        "Formas de pagamento: TED, PIX, PayPal",
+        "Formas de pagamento: TED, PIX, IBAN",
         "Impostos: retenção na fonte conforme legislação",
       ],
       dicas: [
@@ -152,7 +152,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "P: Como aumento meus ganhos?",
         "R: Lançando regularmente e divulgando seu trabalho.",
         "P: Posso receber em dólar?",
-        "R: Sim, através de conta internacional ou Paypal.",
+        "R: Sim, através de conta internacional ou IBAN.",
       ],
       linkGuia: "#",
       tempoLeitura: "7 minutos",
@@ -195,9 +195,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Função para gerar HTML do modal baseado no tutorial
   // Função para gerar HTML do modal baseado no tutorial - VERSÃO CORRIGIDA
-function gerarConteudoModal(tutorialKey) {
+  function gerarConteudoModal(tutorialKey) {
     const info = tutoriaisInfo[tutorialKey];
-    if (!info) return '<p>Conteúdo não encontrado.</p>';
+    if (!info) return "<p>Conteúdo não encontrado.</p>";
 
     let html = `
         <div class="mb-4">
@@ -206,25 +206,50 @@ function gerarConteudoModal(tutorialKey) {
                     <i class="fa-solid ${info.icone} fs-4"></i>
                 </div>
                 <div>
-                    <span class="badge bg-${info.nivel === 'Iniciante' ? 'success' : info.nivel === 'Intermediário' ? 'warning' : 'danger'} me-2">${info.nivel}</span>
-                    <span class="text-muted"><i class="fa-regular fa-clock me-1"></i>${info.tempoLeitura} de leitura</span>
+                    <span class="badge bg-${
+                      info.nivel === "Iniciante"
+                        ? "success"
+                        : info.nivel === "Intermediário"
+                        ? "warning"
+                        : "danger"
+                    } me-2">${info.nivel}</span>
+                    <span class="text-muted"><i class="fa-regular fa-clock me-1"></i>${
+                      info.tempoLeitura
+                    } de leitura</span>
                 </div>
             </div>
             
             <p class="lead mb-4">${info.descricao}</p>
             
-            <div class="accordion" id="accordionTutorial_${tutorialKey.replace(/\s+/g, '')}">
+            <div class="accordion" id="accordionTutorial_${tutorialKey.replace(
+              /\s+/g,
+              ""
+            )}">
                 <!-- Passo a Passo -->
                 <div class="accordion-item border-0 mb-3 shadow-sm">
                     <h2 class="accordion-header">
-                        <button class="accordion-button bg-wasomupfy text-white rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePassos_${tutorialKey.replace(/\s+/g, '')}">
+                        <button class="accordion-button bg-wasomupfy text-white rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePassos_${tutorialKey.replace(
+                          /\s+/g,
+                          ""
+                        )}">
                             <i class="fa-solid fa-list-check me-2"></i> Passo a Passo Detalhado
                         </button>
                     </h2>
-                    <div id="collapsePassos_${tutorialKey.replace(/\s+/g, '')}" class="accordion-collapse collapse show" data-bs-parent="#accordionTutorial_${tutorialKey.replace(/\s+/g, '')}">
+                    <div id="collapsePassos_${tutorialKey.replace(
+                      /\s+/g,
+                      ""
+                    )}" class="accordion-collapse collapse show" data-bs-parent="#accordionTutorial_${tutorialKey.replace(
+      /\s+/g,
+      ""
+    )}">
                         <div class="accordion-body">
                             <ol class="list-group list-group-numbered">
-                                ${info.passos.map(passo => `<li class="list-group-item border-0 ps-0">${passo}</li>`).join('')}
+                                ${info.passos
+                                  .map(
+                                    (passo) =>
+                                      `<li class="list-group-item border-0 ps-0">${passo}</li>`
+                                  )
+                                  .join("")}
                             </ol>
                         </div>
                     </div>
@@ -233,21 +258,34 @@ function gerarConteudoModal(tutorialKey) {
 
     // Seção de Dicas
     if (info.dicas) {
-        html += `
+      html += `
                 <div class="accordion-item border-0 mb-3 shadow-sm">
                     <h2 class="accordion-header">
-                        <button class="accordion-button collapsed bg-light-100" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDicas_${tutorialKey.replace(/\s+/g, '')}">
+                        <button class="accordion-button collapsed bg-light-100" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDicas_${tutorialKey.replace(
+                          /\s+/g,
+                          ""
+                        )}">
                             <i class="fa-solid fa-lightbulb text-warning me-2"></i> Dicas de Ouro
                         </button>
                     </h2>
-                    <div id="collapseDicas_${tutorialKey.replace(/\s+/g, '')}" class="accordion-collapse collapse" data-bs-parent="#accordionTutorial_${tutorialKey.replace(/\s+/g, '')}">
+                    <div id="collapseDicas_${tutorialKey.replace(
+                      /\s+/g,
+                      ""
+                    )}" class="accordion-collapse collapse" data-bs-parent="#accordionTutorial_${tutorialKey.replace(
+        /\s+/g,
+        ""
+      )}">
                         <div class="accordion-body">
                             <ul class="list-group">
-                                ${info.dicas.map(dica => `
+                                ${info.dicas
+                                  .map(
+                                    (dica) => `
                                     <li class="list-group-item border-0 ps-0">
                                         <i class="fa-solid fa-check-circle text-success me-2"></i>${dica}
                                     </li>
-                                `).join('')}
+                                `
+                                  )
+                                  .join("")}
                             </ul>
                         </div>
                     </div>
@@ -256,73 +294,105 @@ function gerarConteudoModal(tutorialKey) {
     }
 
     // Seção de Requisitos e Especificações
-    if (info.requisitos || info.especificacoes || info.proibicoes || info.definicoes) {
-        html += `
+    if (
+      info.requisitos ||
+      info.especificacoes ||
+      info.proibicoes ||
+      info.definicoes
+    ) {
+      html += `
                 <div class="accordion-item border-0 mb-3 shadow-sm">
                     <h2 class="accordion-header">
-                        <button class="accordion-button collapsed bg-light-100" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRequisitos_${tutorialKey.replace(/\s+/g, '')}">
+                        <button class="accordion-button collapsed bg-light-100" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRequisitos_${tutorialKey.replace(
+                          /\s+/g,
+                          ""
+                        )}">
                             <i class="fa-solid fa-clipboard-check text-wasomupfy me-2"></i> Requisitos e Especificações
                         </button>
                     </h2>
-                    <div id="collapseRequisitos_${tutorialKey.replace(/\s+/g, '')}" class="accordion-collapse collapse" data-bs-parent="#accordionTutorial_${tutorialKey.replace(/\s+/g, '')}">
+                    <div id="collapseRequisitos_${tutorialKey.replace(
+                      /\s+/g,
+                      ""
+                    )}" class="accordion-collapse collapse" data-bs-parent="#accordionTutorial_${tutorialKey.replace(
+        /\s+/g,
+        ""
+      )}">
                         <div class="accordion-body">
         `;
-        
-        if (info.requisitos) {
-            html += `
+
+      if (info.requisitos) {
+        html += `
                             <h6 class="fw-bold mb-3">Requisitos:</h6>
                             <ul class="list-group mb-4">
-                                ${info.requisitos.map(req => `<li class="list-group-item border-0 ps-0"><i class="fa-solid fa-circle-check text-success me-2"></i>${req}</li>`).join('')}
+                                ${info.requisitos
+                                  .map(
+                                    (req) =>
+                                      `<li class="list-group-item border-0 ps-0"><i class="fa-solid fa-circle-check text-success me-2"></i>${req}</li>`
+                                  )
+                                  .join("")}
                             </ul>
             `;
-        }
-        
-        if (info.proibicoes) {
-            html += `
+      }
+
+      if (info.proibicoes) {
+        html += `
                             <h6 class="fw-bold mb-3 text-danger">Não Permitido:</h6>
                             <ul class="list-group mb-4">
-                                ${info.proibicoes.map(proib => `<li class="list-group-item border-0 ps-0"><i class="fa-solid fa-circle-exclamation text-danger me-2"></i>${proib}</li>`).join('')}
+                                ${info.proibicoes
+                                  .map(
+                                    (proib) =>
+                                      `<li class="list-group-item border-0 ps-0"><i class="fa-solid fa-circle-exclamation text-danger me-2"></i>${proib}</li>`
+                                  )
+                                  .join("")}
                             </ul>
             `;
-        }
-        
-        if (info.especificacoes) {
-            html += `
+      }
+
+      if (info.especificacoes) {
+        html += `
                             <h6 class="fw-bold mb-3 mt-4">Especificações Técnicas:</h6>
                             <div class="table-responsive">
                                 <table class="table table-bordered">
                                     <tbody>
-                                        ${Object.entries(info.especificacoes).map(([key, value]) => `
+                                        ${Object.entries(info.especificacoes)
+                                          .map(
+                                            ([key, value]) => `
                                             <tr>
                                                 <th scope="row" class="bg-light">${key}</th>
                                                 <td>${value}</td>
                                             </tr>
-                                        `).join('')}
+                                        `
+                                          )
+                                          .join("")}
                                     </tbody>
                                 </table>
                             </div>
             `;
-        }
-        
-        if (info.definicoes) {
-            html += `
+      }
+
+      if (info.definicoes) {
+        html += `
                             <h6 class="fw-bold mb-3 mt-4">Definições:</h6>
                             <div class="table-responsive">
                                 <table class="table table-bordered">
                                     <tbody>
-                                        ${Object.entries(info.definicoes).map(([key, value]) => `
+                                        ${Object.entries(info.definicoes)
+                                          .map(
+                                            ([key, value]) => `
                                             <tr>
                                                 <th scope="row" class="bg-light">${key}</th>
                                                 <td>${value}</td>
                                             </tr>
-                                        `).join('')}
+                                        `
+                                          )
+                                          .join("")}
                                     </tbody>
                                 </table>
                             </div>
             `;
-        }
-        
-        html += `
+      }
+
+      html += `
                         </div>
                     </div>
                 </div>
@@ -331,28 +401,37 @@ function gerarConteudoModal(tutorialKey) {
 
     // Seção de FAQ - CORRIGIDA!
     if (info.faq) {
-        html += `
+      html += `
                 <div class="accordion-item border-0 mb-3 shadow-sm">
                     <h2 class="accordion-header">
-                        <button class="accordion-button collapsed bg-light-100" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQ_${tutorialKey.replace(/\s+/g, '')}">
+                        <button class="accordion-button collapsed bg-light-100" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFAQ_${tutorialKey.replace(
+                          /\s+/g,
+                          ""
+                        )}">
                             <i class="fa-solid fa-circle-question text-info me-2"></i> Perguntas Frequentes
                         </button>
                     </h2>
-                    <div id="collapseFAQ_${tutorialKey.replace(/\s+/g, '')}" class="accordion-collapse collapse" data-bs-parent="#accordionTutorial_${tutorialKey.replace(/\s+/g, '')}">
+                    <div id="collapseFAQ_${tutorialKey.replace(
+                      /\s+/g,
+                      ""
+                    )}" class="accordion-collapse collapse" data-bs-parent="#accordionTutorial_${tutorialKey.replace(
+        /\s+/g,
+        ""
+      )}">
                         <div class="accordion-body">
                             <div class="list-group">
         `;
-        
-        // Loop correto para FAQ
-        for (let i = 0; i < info.faq.length; i++) {
-            if (i % 2 === 0) {
-                html += `<div class="mb-2"><strong>${info.faq[i]}</strong></div>`;
-            } else {
-                html += `<div class="text-muted mb-3 ps-3">${info.faq[i]}</div>`;
-            }
+
+      // Loop correto para FAQ
+      for (let i = 0; i < info.faq.length; i++) {
+        if (i % 2 === 0) {
+          html += `<div class="mb-2"><strong>${info.faq[i]}</strong></div>`;
+        } else {
+          html += `<div class="text-muted mb-3 ps-3">${info.faq[i]}</div>`;
         }
-        
-        html += `
+      }
+
+      html += `
                             </div>
                         </div>
                     </div>
@@ -362,21 +441,34 @@ function gerarConteudoModal(tutorialKey) {
 
     // Seção de Estratégias (para Pitching & Marketing)
     if (info.estrategias) {
-        html += `
+      html += `
                 <div class="accordion-item border-0 mb-3 shadow-sm">
                     <h2 class="accordion-header">
-                        <button class="accordion-button collapsed bg-light-100" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEstrategias_${tutorialKey.replace(/\s+/g, '')}">
+                        <button class="accordion-button collapsed bg-light-100" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEstrategias_${tutorialKey.replace(
+                          /\s+/g,
+                          ""
+                        )}">
                             <i class="fa-solid fa-bullhorn text-wasomupfy me-2"></i> Estratégias de Marketing
                         </button>
                     </h2>
-                    <div id="collapseEstrategias_${tutorialKey.replace(/\s+/g, '')}" class="accordion-collapse collapse" data-bs-parent="#accordionTutorial_${tutorialKey.replace(/\s+/g, '')}">
+                    <div id="collapseEstrategias_${tutorialKey.replace(
+                      /\s+/g,
+                      ""
+                    )}" class="accordion-collapse collapse" data-bs-parent="#accordionTutorial_${tutorialKey.replace(
+        /\s+/g,
+        ""
+      )}">
                         <div class="accordion-body">
                             <ul class="list-group">
-                                ${info.estrategias.map(estrategia => `
+                                ${info.estrategias
+                                  .map(
+                                    (estrategia) => `
                                     <li class="list-group-item border-0 ps-0">
                                         <i class="fa-solid fa-check-circle text-success me-2"></i>${estrategia}
                                     </li>
-                                `).join('')}
+                                `
+                                  )
+                                  .join("")}
                             </ul>
                         </div>
                     </div>
@@ -384,16 +476,25 @@ function gerarConteudoModal(tutorialKey) {
         `;
     }
 
-    // Seção de Vídeo - OPCIONAL 
+    // Seção de Vídeo - OPCIONAL
     if (info.videoUrl) {
-        html += `
+      html += `
                 <div class="accordion-item border-0 shadow-sm">
                     <h2 class="accordion-header">
-                        <button class="accordion-button collapsed bg-light-100" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVideo_${tutorialKey.replace(/\s+/g, '')}">
+                        <button class="accordion-button collapsed bg-light-100" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVideo_${tutorialKey.replace(
+                          /\s+/g,
+                          ""
+                        )}">
                             <i class="fa-solid fa-video text-danger me-2"></i> Vídeo Tutorial
                         </button>
                     </h2>
-                    <div id="collapseVideo_${tutorialKey.replace(/\s+/g, '')}" class="accordion-collapse collapse" data-bs-parent="#accordionTutorial_${tutorialKey.replace(/\s+/g, '')}">
+                    <div id="collapseVideo_${tutorialKey.replace(
+                      /\s+/g,
+                      ""
+                    )}" class="accordion-collapse collapse" data-bs-parent="#accordionTutorial_${tutorialKey.replace(
+        /\s+/g,
+        ""
+      )}">
                         <div class="accordion-body">
                             <div class="ratio ratio-16x9 rounded-3 overflow-hidden">
                                 <iframe src="${info.videoUrl}" 
@@ -414,7 +515,7 @@ function gerarConteudoModal(tutorialKey) {
     `;
 
     return html;
-}
+  }
 
   // Adiciona evento de clique em todos os links "Ler mais"
   document.querySelectorAll(".card .text-wasomupfy.fw-bold").forEach((link) => {
