@@ -287,6 +287,96 @@ body.light-mode .dropdown-item-text {
   color: #6c757d;
 }
 
+ /* Estilos base para todos os headers de página */
+.page-header {
+  background: linear-gradient(135deg, #FF0089 0%, #FF4D4D 100%);
+  border-radius: 15px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.page-header::before {
+  font-family: 'bootstrap-icons';
+  position: absolute;
+  right: -20px;
+  top: -20px;
+  font-size: 10rem;
+  opacity: 0.1;
+  color: var(--text-light);
+  transform: rotate(15deg);
+}
+
+.page-header h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  position: relative;
+  z-index: 2;
+}
+
+.page-header-compact h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  position: relative;
+  z-index: 2;
+}
+
+.page-header p {
+  font-size: 1.1rem;
+  max-width: 700px;
+  opacity: 0.95;
+  margin-bottom: 0;
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    padding: 1.5rem;
+  }
+  
+  .page-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .page-header p {
+    font-size: 1rem;
+  }
+
+   .page-header-compact {
+    padding: 1.5rem;
+  }
+  
+  .page-header-compact h1 {
+    font-size: 1.8rem;
+  }
+  
+  .page-header-compact p {
+    font-size: 1rem;
+  }
+}
+
+
+.page-header-compact p {
+  font-size: 1.1rem;
+  max-width: 700px;
+  opacity: 0.95;
+  margin-bottom: 0;
+  position: relative;
+  z-index: 2;
+}
+
+/* Ícone decorativo (opcional, se quiser manter o fundo) */
+.page-header-compact {
+  position: relative;
+  overflow: hidden;
+}
+
+
 /* Tela de Carregamento */
 .loading-screen {
   position: fixed;
@@ -556,11 +646,7 @@ body.light-mode .dropdown-item-text {
 }
 
 .fade-in-custom {
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeInUp 0.6s ease forwards;
-  width: 100%;
-  max-width: 100%;
+animation: fadeIn 0.5s ease-in-out;
 }
 
 .balance-card {

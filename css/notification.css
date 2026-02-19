@@ -1,0 +1,290 @@
+/* Estilos específicos para a página de notificações */
+    .notifications-header {
+      background: linear-gradient(135deg, #ff0089 0%, #ff4d4d 100%);
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .notifications-header::before {
+      content: "\F2F3";
+      font-family: "bootstrap-icons";
+      position: absolute;
+      right: -20px;
+      bottom: -20px;
+      font-size: 10rem;
+      opacity: 0.1;
+      color: white;
+      transform: rotate(15deg);
+    }
+
+    .notification-card {
+      border-radius: 15px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+      border-left: 4px solid transparent;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .notification-card:hover {
+      transform: translateX(5px);
+      box-shadow: 0 5px 20px rgba(255, 0, 137, 0.15);
+    }
+
+    .notification-card.unread {
+      border-left-color: #ff0089;
+    }
+
+    .notification-card.unread::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: 20px;
+      transform: translateY(-50%);
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ff0089;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(255, 0, 137, 0.7);
+      }
+
+      70% {
+        box-shadow: 0 0 0 10px rgba(255, 0, 137, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(255, 0, 137, 0);
+      }
+    }
+
+    .notification-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: white;
+    }
+
+    .icon-success {
+      background: linear-gradient(135deg, #10b981, #34d399);
+    }
+
+    .icon-warning {
+      background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    }
+
+    .icon-info {
+      background: linear-gradient(135deg, #3b82f6, #60a5fa);
+    }
+
+    .icon-danger {
+      background: linear-gradient(135deg, #ef4444, #f87171);
+    }
+
+    .icon-primary {
+      background: linear-gradient(135deg, #ff0089, #ff4d4d);
+    }
+
+    .notification-time {
+      font-size: 0.75rem;
+      color: #6c757d;
+      display: flex;
+      align-items: center;
+    }
+
+    .filter-tabs {
+      border-radius: 12px;
+      padding: 0.5rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      margin-bottom: 2rem;
+    }
+
+    .filter-tabs .btn-filter {
+      border: none;
+      background: transparent;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      color: #6c757d;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .filter-tabs .btn-filter:hover {
+      background: #f8f9fa;
+      color: #ff0089;
+    }
+
+    .filter-tabs .btn-filter.active {
+      background: linear-gradient(135deg, #ff0089, #ff4d4d);
+      color: white;
+    }
+
+    .notification-type-badge {
+      font-size: 0.7rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 30px;
+      font-weight: 500;
+      display: inline-block;
+    }
+
+    .badge-stream {
+      background: #1db954;
+      color: white;
+    }
+
+    .badge-revenue {
+      background: #f59e0b;
+      color: white;
+    }
+
+    .badge-system {
+      background: #6c757d;
+      color: white;
+    }
+
+    .badge-release {
+      background: #ff0089;
+      color: white;
+    }
+
+    .badge-subscriber {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .notification-actions {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .notification-card:hover .notification-actions {
+      opacity: 1;
+    }
+
+    .action-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1px solid #e9ecef;
+      color: #6c757d;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .action-btn:hover {
+      background: #ff0089;
+      color: white;
+      border-color: #ff0089;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      border-radius: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .empty-state i {
+      font-size: 5rem;
+      color: #ff0089;
+      opacity: 0.3;
+      margin-bottom: 1rem;
+    }
+
+    .notification-group-date {
+      font-weight: 600;
+      color: #6c757d;
+      margin: 1.5rem 0 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #f1f1f1;
+    }
+
+    .notification-group-date:first-of-type {
+      margin-top: 0;
+    }
+
+    .settings-card {
+      border-radius: 15px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      height: fit-content;
+    }
+
+    .settings-card h6 {
+      color: #ff0089;
+      margin-bottom: 1.25rem;
+      font-weight: 600;
+    }
+
+    .notification-preference {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #f1f1f1;
+    }
+
+    .notification-preference:last-child {
+      border-bottom: none;
+    }
+
+    .form-switch .form-check-input {
+      width: 3em;
+      height: 1.5em;
+      cursor: pointer;
+    }
+
+    .form-switch .form-check-input:checked {
+      background-color: #ff0089;
+      border-color: #ff0089;
+    }
+
+    .quick-mark {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .quick-mark .btn {
+      flex: 1;
+      font-size: 0.875rem;
+      padding: 0.4rem 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .notifications-header {
+        padding: 1.5rem;
+      }
+
+      .notification-actions {
+        opacity: 1;
+        position: relative;
+        top: auto;
+        right: auto;
+        margin-top: 0.5rem;
+      }
+
+      .notification-card {
+        padding: 1rem;
+      }
+    }

@@ -1,12 +1,9 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="robots" content="noindex, nofollow" />
-  <meta name="author" content="Voosoft" />
+  <meta name="author" content="José Mbenga da Costa" />
   <meta name="theme-color" content="#FF0089" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -26,6 +23,7 @@ https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css
   <link rel="stylesheet" href="../../css/statistics.css" />
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 
 <body>
@@ -82,7 +80,8 @@ https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css
             <a class="nav-link" href="../artists/artists-list.html"><i class="bi bi-person"></i> Artistas</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="../artists/youtube/ucy.html"><i class="bi bi-youtube"></i> Unificação de canal YouTube</a>
+            <a class="nav-link" href="../artists/youtube/ucy.html"><i class="bi bi-youtube"></i> Unificação de canal
+              YouTube</a>
           </li>
         </ul>
       </div>
@@ -93,7 +92,7 @@ https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css
         <a class="theme-toggle text-white me-2" id="themeToggle">
           <i class="bi bi-sun" id="themeIcon"></i>
         </a>
-        <a href="../notifications.html" class="text-white me-2" aria-label="Notificações">
+        <a href="../page/notifications.html" class="text-white me-2" aria-label="Notificações">
           <i class="bi bi-bell fs-4"></i>
           <span class="badge bg-danger">9</span>
         </a>
@@ -138,7 +137,7 @@ https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css
             <hr class="dropdown-divider" />
           </li>
           <li>
-            <a class="dropdown-item" href="../page/sobre.html"><i class="bi bi-info-circle me-2"></i> Sobre</a>
+            <a class="dropdown-item" href="../page/about.html"><i class="bi bi-info-circle me-2"></i> Sobre</a>
           </li>
           <li>
             <a class="dropdown-item" href="../page/support.html"><i class="bi bi-headset me-2"></i> Enviar pedido de
@@ -161,51 +160,6 @@ https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css
       </div>
     </div>
   </nav>
-
-  <!-- Modal logout -->
-  <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">
-            Terminar sessão
-          </h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div class="container">
-            <div class="row justify-content-center text-center">
-              <div class="col-md-12 content-center justify-center text-center">
-                <p class="text-center text-dark">
-                  @josembengadacosta você tem certeza de que desejas terminar
-                  sessão?
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <div>
-            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
-              Não, continuar
-            </button>
-          </div>
-          <div>
-            <button class="btn btn-danger" type="button" name="logout_wasomupfy" onclick="logout_wasomupfy()">
-              Sim, terminar sessão
-            </button>
-          </div>
-          <script type="text/javascript">
-            function logout_wasomupfy() {
-              window.location = "../logout";
-            }
-          </script>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- Modal logout fim -->
 
   <!-- Offcanvas Menu para Mobile e Desktop -->
   <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
@@ -258,7 +212,7 @@ https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css
           <a class="nav-link" href="../page/notifications.html"><i class="bi bi-bell"></i> Notificações</a>
         </li>
         <li class="nav-item d-lg-none">
-          <a class="nav-link" href="../page/sobre.html"><i class="bi bi-info-circle"></i> Sobre</a>
+          <a class="nav-link" href="../page/about.html"><i class="bi bi-info-circle"></i> Sobre</a>
         </li>
         <li class="nav-item d-lg-none">
           <a class="nav-link" href="../services/available-services.html"><i class="bi bi-star"></i> Conta e serviços
@@ -295,28 +249,38 @@ https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css
 
   <!-- Main Content -->
   <div class="container my-4">
-    <!-- Welcome Section -->
-    <div class="row">
-      <div class="welcome-text mb-4 col-auto d-sm-block">
-        <h1>Estatísticas</h1>
+    <!-- Header de Estatísticas -->
+    <div class="page-header">
+      <div class="row align-items-center mb-4">
+        <div class="col-md-8">
+          <div class="page-header-compact">
+            <h1>
+              <i class="bi bi-bar-chart-fill me-3"></i>
+              Estatísticas
+            </h1>
+            <p class="lead">
+              O Stream Analytics agrega seus streams totais no Spotify, Apple Music, Deezer,
+              Amazon e YouTube Art Tracks, calculando streams diários e mensais.
+            </p>
+          </div>
+        </div>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+          <button class="btn btn-secondary" onclick="window.location='analytics/export.html'">
+            <i class="bi bi-download"></i> Exportar
+          </button>
+          <button class="btn btn-pink" onclick="window.location='compare.html'">
+            <i class="bi bi-calendar-range"></i> Comparar períodos
+          </button>
+        </div>
       </div>
-      <div class="col-auto ms-auto text-end mt-n1">
-        <button class="btn btn-back shadow-sm" onclick="window.location.reload()">
-          <i class="bi bi-repeat"></i> Actualizar
-        </button>
-        <button class="btn btn-pink" onclick="window.location='report.html'">
-          <i class="bi bi-receipt"></i> Ver relatórios
-        </button>
-      </div>
+      <!-- Ícone decorativo: dupla leitura -->
+      <style>
+        .page-header::before {
+          content: '\F26F';
+          /* bi-bar-chart-fill */
+        }
+      </style>
     </div>
-
-    <!-- Stats Description -->
-    <p class="stats-description">
-      O Stream Analytics agrega seus streams totais no Spotify, Apple Music,
-      Deezer, Pandora, Amazon e YouTube Art Tracks. Ele também calcula os
-      streams diários e mensais dos parceiros e pode calcular os números que
-      eles informam nos relatórios de royalties.
-    </p>
 
     <!-- Date Range Selector -->
     <div class="date-range row">
@@ -521,6 +485,51 @@ https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css
       </li>
     </ul>
   </nav>
+
+  <!-- Modal logout -->
+  <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">
+            Terminar sessão
+          </h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="container">
+            <div class="row justify-content-center text-center">
+              <div class="col-md-12 content-center justify-center text-center">
+                <p class="text-center text-dark">
+                  @josembengadacosta você tem certeza de que desejas terminar
+                  sessão?
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div>
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+              Não, continuar
+            </button>
+          </div>
+          <div>
+            <button class="btn btn-danger" type="button" name="logout_wasomupfy" onclick="logout_wasomupfy()">
+              Sim, terminar
+            </button>
+          </div>
+          <script type="text/javascript">
+            function logout_wasomupfy() {
+              window.location = "logout";
+            }
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal logout fim -->
 
   <!-- jQuery (necessário para DataTables) -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

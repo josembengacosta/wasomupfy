@@ -1,25 +1,26 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="robots" content="noindex, nofollow" />
-  <meta name="author" content="Voosoft" />
+  <meta name="author" content="José Mbenga da Costa" />
   <meta name="theme-color" content="#FF0089" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="#FF0089" />
-  
+
   <!-- Preconnect para CDNs -->
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
-  
+
   <title>Unificação de Canal YouTube - Wasom Upfy</title>
-  
+
   <!-- Favicon -->
   <link rel="shortcut icon" href="../../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon" />
   <link rel="apple-touch-icon" href="../../../assets/img/icones/wasomupfy_fiv_512.png" />
   <link rel="manifest" href="../../../manifest.json" />
-  
+
   <!-- CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" />
@@ -29,885 +30,736 @@
 </head>
 
 <!-- Tela de Carregamento -->
-    <!-- <div class="loading-screen" id="loadingScreen">
+<!-- <div class="loading-screen" id="loadingScreen">
         <img src="../assets/img/brand/wasomupfy_loaading.png" class="img-fluid loading-logo" width="90" height="90"
             alt="Loading-wasomupfy">
         <div class="spinner"></div>
     </div> -->
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg">
-      <div class="container-fluid">
-        <!-- Menu Button (Left) -->
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="offcanvas"
-          data-bs-target="#offcanvasMenu"
-          aria-controls="offcanvasMenu"
-        >
-          <span class="navbar-toggler-icon"
-            ><i class="bi bi-list text-white fs-1"></i
-          ></span>
-        </button>
-        <!-- Logo (Center on Mobile, Left on Desktop) -->
-        <a class="navbar-brand" href="../../painel.html">
-          <!-- SVG Logo Wasom Upfy -->
-          <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg">
+  <div class="container-fluid">
+    <!-- Menu Button (Left) -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu"
+      aria-controls="offcanvasMenu">
+      <span class="navbar-toggler-icon"><i class="bi bi-list text-white fs-1"></i></span>
+    </button>
+    <!-- Logo (Center on Mobile, Left on Desktop) -->
+    <a class="navbar-brand" href="../../painel.html">
+      <!-- SVG Logo Wasom Upfy -->
+      <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
                     <rect x="2" y="2" width="120" height="32" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
                     <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
                         fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
                 </svg> -->
-          <!-- <img src="../assets/img/brand/wasomupfy_brand.png" width="70"  class="img-fluid" alt=""> -->
-          <span
-            class="text-light"
-            style="
+      <!-- <img src="../assets/img/brand/wasomupfy_brand.png" width="70"  class="img-fluid" alt=""> -->
+      <span class="text-light" style="
               font-weight: bold;
               box-sizing: border-box;
               text-transform: capitalize;
               font-family: Arial, sans-serif;
-            "
-            >WASOM UPFY</span
-          >
-        </a>
+            ">WASOM UPFY</span>
+    </a>
 
-        <!-- Desktop Menu -->
-        <div class="collapse navbar-collapse">
-          <ul class="navbar-nav m-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link" href="../../painel.html"
-                ><i class="bi bi-speedometer2"></i> Dashboard</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="../../launch/releases.html"
-                ><i class="bi bi-disc"></i> Lançamentos</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="../../analytics/statistics.html"
-                ><i class="bi bi-bar-chart"></i> Estatísticas</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="../../finances/overview.html"
-                ><i class="bi bi-currency-dollar"></i> Finanças</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="../../artists/artists-list.html"
-                ><i class="bi bi-person"></i> Artistas</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="ucy.html"
-                ><i class="bi bi-youtube"></i> Unificação de canal YouTube</a
-              >
-            </li>
-          </ul>
-        </div>
-
-        <!-- User Icon (Right) -->
-        <div class="user-menu d-flex align-items-center">
-          <!-- Theme Toggle Button -->
-          <a class="theme-toggle text-white me-2" id="themeToggle">
-            <i class="bi bi-sun" id="themeIcon"></i>
-          </a>
-          <a
-            href="../notifications.html"
-            class="text-white me-2"
-            aria-label="Notificações"
-          >
-            <i class="bi bi-bell fs-4"></i>
-            <span class="badge bg-danger">9</span>
-          </a>
-          <a href="#" class="text-white" data-bs-toggle="dropdown">
-            <i class="bi bi-person-circle fs-4"></i>
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li>
-              <a class="dropdown-item" href="../../profile/profile.html"
-                ><i class="bi bi-person me-2"></i>
-                <strong>Eleven Records</strong></a
-              >
-              <div class="text-white-50">
-                &nbsp; &nbsp; &nbsp; &nbsp; (Conta 560108)
-              </div>
-            </li>
-            <li>
-              <hr class="dropdown-divider" />
-            </li>
-            <li>
-              <a class="dropdown-item" href="../../profile/profile.html"
-                ><i class="bi bi-person me-2"></i> Meu Perfil</a
-              >
-            </li>
-            <li>
-              <a class="dropdown-item" href="account/manage-account.html"
-                ><i class="bi bi-tools me-2"></i> Gestão de Conta</a
-              >
-            </li>
-            <li>
-              <hr class="dropdown-divider" />
-            </li>
-            <li>
-              <a class="dropdown-item" href="../../page/settings.html"
-                ><i class="bi bi-gear me-2"></i> Configurações</a
-              >
-            </li>
-            <li>
-              <a class="dropdown-item" href="../../page/notifications.html"
-                ><i class="bi bi-bell me-2"></i> Notificações</a
-              >
-            </li>
-            <li>
-              <a class="dropdown-item" href="services/available-services.html"
-                ><i class="bi bi-star me-2"></i> Conta e serviços disponíveis</a
-              >
-            </li>
-            <li>
-              <a
-                class="dropdown-item"
-                href="#?logout-wasomupfy"
-                data-bs-toggle="modal"
-                data-bs-target="#logoutwasomupfy"
-                ><i class="bi bi-box-arrow-right me-2"></i> Desconectar-se</a
-              >
-            </li>
-            <li>
-              <hr class="dropdown-divider" />
-            </li>
-            <li>
-              <a class="dropdown-item" href="../../page/sobre.html"
-                ><i class="bi bi-info-circle me-2"></i> Sobre</a
-              >
-            </li>
-            <li>
-              <a class="dropdown-item" href="../../page/support.html"
-                ><i class="bi bi-headset me-2"></i> Enviar pedido de suporte</a
-              >
-            </li>
-            <li>
-              <a class="dropdown-item" href="../../page/faq.html"
-                ><i class="bi bi-chat-left-text me-2"></i> Perguntas
-                frequentes</a
-              >
-            </li>
-            <li>
-              <a class="dropdown-item" href="../../page/help.html"
-                ><i class="bi bi-question-circle me-2"></i> Ajuda</a
-              >
-            </li>
-            <li>
-              <hr class="dropdown-divider" />
-            </li>
-            <li>
-              <span class="dropdown-item-text" id="versionDropdown"></span>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-
-    <!-- Modal logout -->
-    <div
-      class="modal fade"
-      id="logoutwasomupfy"
-      data-bs-backdrop="static"
-      data-bs-keyboard="false"
-      tabindex="-1"
-      aria-labelledby="logoutwasomupfyLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">
-              Terminar sessão
-            </h1>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <div class="container">
-              <div class="row justify-content-center text-center">
-                <div
-                  class="col-md-12 content-center justify-center text-center"
-                >
-                  <p class="text-center text-dark">
-                    @josembengadacosta você tem certeza de que desejas terminar
-                    sessão?
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <div>
-              <button
-                type="button"
-                class="btn btn-primary"
-                data-bs-dismiss="modal"
-              >
-                Não, continuar
-              </button>
-            </div>
-            <div>
-              <button
-                class="btn btn-danger"
-                type="button"
-                name="logout_wasomupfy"
-                onclick="logout_wasomupfy()"
-              >
-                Sim, terminar
-              </button>
-            </div>
-            <script type="text/javascript">
-              function logout_wasomupfy() {
-                window.location = "logout";
-              }
-            </script>
-          </div>
-        </div>
-      </div>
+    <!-- Desktop Menu -->
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav m-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="../../painel.html"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="../../launch/releases.html"><i class="bi bi-disc"></i> Lançamentos</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="../../analytics/statistics.html"><i class="bi bi-bar-chart"></i> Estatísticas</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="../../finances/overview.html"><i class="bi bi-currency-dollar"></i> Finanças</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="../../artists/artists-list.html"><i class="bi bi-person"></i> Artistas</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="ucy.html"><i class="bi bi-youtube"></i> Unificação de canal YouTube</a>
+        </li>
+      </ul>
     </div>
-    <!-- Modal logout fim -->
 
-    <!-- Offcanvas Menu par Mobile e Desktop -->
-    <div
-      class="offcanvas offcanvas-start"
-      tabindex="-1"
-      id="offcanvasMenu"
-      aria-labelledby="offcanvasMenuLabel"
-    >
-      <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasMenuLabel">
-          <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+    <!-- User Icon (Right) -->
+    <div class="user-menu d-flex align-items-center">
+      <!-- Theme Toggle Button -->
+      <a class="theme-toggle text-white me-2" id="themeToggle">
+        <i class="bi bi-sun" id="themeIcon"></i>
+      </a>
+      <a href="../../page/notifications.html" class="text-white me-2" aria-label="Notificações">
+        <i class="bi bi-bell fs-4"></i>
+        <span class="badge bg-danger">9</span>
+      </a>
+      <a href="#" class="text-white" data-bs-toggle="dropdown">
+        <i class="bi bi-person-circle fs-4"></i>
+      </a>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+          <a class="dropdown-item" href="../../profile/profile.html"><i class="bi bi-person me-2"></i>
+            <strong>Eleven Records</strong></a>
+          <div class="text-white-50">
+            &nbsp; &nbsp; &nbsp; &nbsp; (Conta 560108)
+          </div>
+        </li>
+        <li>
+          <hr class="dropdown-divider" />
+        </li>
+        <li>
+          <a class="dropdown-item" href="../../profile/profile.html"><i class="bi bi-person me-2"></i> Meu Perfil</a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="account/manage-account.html"><i class="bi bi-tools me-2"></i> Gestão de
+            Conta</a>
+        </li>
+        <li>
+          <hr class="dropdown-divider" />
+        </li>
+        <li>
+          <a class="dropdown-item" href="../../page/settings.html"><i class="bi bi-gear me-2"></i> Configurações</a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="../../page/notifications.html"><i class="bi bi-bell me-2"></i> Notificações</a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="services/available-services.html"><i class="bi bi-star me-2"></i> Conta e
+            serviços disponíveis</a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="#?logout-wasomupfy" data-bs-toggle="modal" data-bs-target="#logoutwasomupfy"><i
+              class="bi bi-box-arrow-right me-2"></i> Desconectar-se</a>
+        </li>
+        <li>
+          <hr class="dropdown-divider" />
+        </li>
+        <li>
+          <a class="dropdown-item" href="../../page/about.html"><i class="bi bi-info-circle me-2"></i> Sobre</a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="../../page/support.html"><i class="bi bi-headset me-2"></i> Enviar pedido de
+            suporte</a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="../../page/faq.html"><i class="bi bi-chat-left-text me-2"></i> Perguntas
+            frequentes</a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="../../page/help.html"><i class="bi bi-question-circle me-2"></i> Ajuda</a>
+        </li>
+        <li>
+          <hr class="dropdown-divider" />
+        </li>
+        <li>
+          <span class="dropdown-item-text" id="versionDropdown"></span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Offcanvas Menu par Mobile e Desktop -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasMenuLabel">
+      <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
                     <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
                     <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
                         fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
                 </svg> -->
-          <span
-            class="text-light"
-            style="
+      <span class="text-light" style="
               font-weight: bold;
               box-sizing: border-box;
               text-transform: capitalize;
               font-family: Arial, sans-serif;
-            "
-            >WASOM UPFY
-          </span>
-        </h5>
-        <button
-          type="button"
-          class="btn-close text-white"
-          data-bs-dismiss="offcanvas"
-          aria-label="Close"
-        >
-          <i class="bi bi-x-lg"></i>
+            ">WASOM UPFY
+      </span>
+    </h5>
+    <button type="button" class="btn-close text-white" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body">
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link" href="../../painel.html"><i class="bi bi-speedometer2"></i> Dashboard</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="../../launch/releases.html"><i class="bi bi-disc"></i> Lançamentos</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="../../analytics/statistics.html"><i class="bi bi-bar-chart"></i> Estatísticas</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="../../finances/overview.html"><i class="bi bi-currency-dollar"></i> Finanças</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="../../artists/artists-list.html"><i class="bi bi-person"></i> Artistas</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="ucy.html"><i class="bi bi-youtube"></i> Unificação de canal YouTube</a>
+      </li>
+      <!-- Links secundários exibidos apenas em mobile -->
+      <li class="nav-item d-lg-none">
+        <a class="nav-link" href="../../profile/profile.html"><i class="bi bi-person-circle"></i> Meu Perfil</a>
+      </li>
+      <li class="nav-item d-lg-none">
+        <a class="nav-link active" href="../../page/settings.html"><i class="bi bi-gear"></i> Configurações</a>
+      </li>
+      <li class="nav-item d-lg-none">
+        <a class="nav-link" href="../../page/notifications.html"><i class="bi bi-bell"></i> Notificações</a>
+      </li>
+      <li class="nav-item d-lg-none">
+        <a class="nav-link" href="../../page/about.html"><i class="bi bi-info-circle"></i> Sobre</a>
+      </li>
+      <li class="nav-item d-lg-none">
+        <a class="nav-link" href="../../services/available-services.html"><i class="bi bi-star"></i> Conta e serviços
+          disponíveis</a>
+      </li>
+      <li class="nav-item d-lg-none">
+        <a class="nav-link" href="../../page/help.html"><i class="bi bi-question-circle"></i> Ajuda</a>
+      </li>
+      <li class="nav-item d-lg-none">
+        <a class="nav-link" href="#?logout-wasomupfy" data-bs-toggle="modal" data-bs-target="#logoutwasomupfy"><i
+            class="bi bi-box-arrow-right"></i> Desconectar-se</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- Toast para Notificações de Status -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div id="connectionToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+      <strong class="me-auto">Conexão</strong>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Fechar"></button>
+    </div>
+    <div class="toast-body">
+      Você está offline. Alguns dados podem estar desatualizados.
+      <div class="mt-2">
+        <button class="btn btn-pink btn-sm" onclick="tryReconnect()">
+          Tentar Reconectar
         </button>
       </div>
-      <div class="offcanvas-body">
-        <ul class="nav flex-column">
-          <li class="nav-item">
-            <a class="nav-link" href="../../painel.html"
-              ><i class="bi bi-speedometer2"></i> Dashboard</a
-            >
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="../../launch/releases.html"
-              ><i class="bi bi-disc"></i> Lançamentos</a
-            >
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="../../analytics/statistics.html"
-              ><i class="bi bi-bar-chart"></i> Estatísticas</a
-            >
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="../../finances/overview.html"
-              ><i class="bi bi-currency-dollar"></i> Finanças</a
-            >
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="../../artists/artists-list.html"
-              ><i class="bi bi-person"></i> Artistas</a
-            >
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="ucy.html"
-              ><i class="bi bi-youtube"></i> Unificação de canal YouTube</a
-            >
-          </li>
-          <!-- Links secundários exibidos apenas em mobile -->
-          <li class="nav-item d-lg-none">
-            <a class="nav-link" href="../../profile/profile.html"
-              ><i class="bi bi-person-circle"></i> Meu Perfil</a
-            >
-          </li>
-          <li class="nav-item d-lg-none">
-            <a class="nav-link active" href="../../page/settings.html"
-              ><i class="bi bi-gear"></i> Configurações</a
-            >
-          </li>
-          <li class="nav-item d-lg-none">
-            <a class="nav-link" href="../../page/notifications.html"
-              ><i class="bi bi-bell"></i> Notificações</a
-            >
-          </li>
-          <li class="nav-item d-lg-none">
-            <a class="nav-link" href="../../page/sobre.html"
-              ><i class="bi bi-info-circle"></i> Sobre</a
-            >
-          </li>
-          <li class="nav-item d-lg-none">
-            <a class="nav-link" href="../../services/available-services.html"
-              ><i class="bi bi-star"></i> Conta e serviços disponíveis</a
-            >
-          </li>
-          <li class="nav-item d-lg-none">
-            <a class="nav-link" href="../../page/help.html"
-              ><i class="bi bi-question-circle"></i> Ajuda</a
-            >
-          </li>
-          <li class="nav-item d-lg-none">
-            <a
-              class="nav-link"
-              href="#?logout-wasomupfy"
-              data-bs-toggle="modal"
-              data-bs-target="#logoutwasomupfy"
-              ><i class="bi bi-box-arrow-right"></i> Desconectar-se</a
-            >
-          </li>
-        </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Main Content -->
+<main class="container my-4">
+  <!-- Header com título e descrição -->
+  <div class="youtube-header">
+    <div class="row align-items-center">
+      <div class="col-md-8">
+        <h1 class="display-5 fw-bold mb-3">
+          <i class="bi bi-youtube me-2"></i> Unificação de Canal YouTube
+        </h1>
+        <p class="lead mb-0">
+          Conecte e gerencie todos os seus canais do YouTube em um só lugar.
+          Sincronize suas músicas, estatísticas e receitas automaticamente.
+        </p>
+      </div>
+      <div class="col-md-4 text-md-end mt-3 mt-md-0">
+        <span class="verification-badge">
+          <i class="bi bi-patch-check-fill"></i> Verificado
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status da Unificação -->
+  <div class="row mb-4">
+    <div class="col-md-4 mb-3">
+      <div class="youtube-stats-card">
+        <div class="d-flex align-items-center mb-3">
+          <div class="music-service-icon service-spotify me-3">
+            <i class="bi bi-spotify"></i>
+          </div>
+          <div>
+            <h6 class="mb-1">Spotify</h6>
+            <span class="sync-status synced">
+              <i class="bi bi-check-circle-fill me-1"></i> Sincronizado
+            </span>
+          </div>
+        </div>
+        <p class="text-muted small mb-0">
+          Última sincronização: há 5 minutos
+        </p>
       </div>
     </div>
 
-    <!-- Toast para Notificações de Status -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-      <div
-        id="connectionToast"
-        class="toast"
-        role="alert"
-        aria-live="assertive"
-        aria-atomic="true"
-      >
-        <div class="toast-header">
-          <strong class="me-auto">Conexão</strong>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="toast"
-            aria-label="Fechar"
-          ></button>
-        </div>
-        <div class="toast-body">
-          Você está offline. Alguns dados podem estar desatualizados.
-          <div class="mt-2">
-            <button class="btn btn-pink btn-sm" onclick="tryReconnect()">
-              Tentar Reconectar
-            </button>
+    <div class="col-md-4 mb-3">
+      <div class="youtube-stats-card">
+        <div class="d-flex align-items-center mb-3">
+          <div class="music-service-icon service-deezer me-3">
+            <i class="bi bi-music-player"></i>
+          </div>
+          <div>
+            <h6 class="mb-1">Deezer</h6>
+            <span class="sync-status pending">
+              <i class="bi bi-clock-history me-1"></i> Pendente
+            </span>
           </div>
         </div>
+        <p class="text-muted small mb-0">
+          Aguardando autorização
+        </p>
       </div>
     </div>
 
-  <!-- Main Content -->
-  <main class="container my-4">
-    <!-- Header com título e descrição -->
-    <div class="youtube-header">
-      <div class="row align-items-center">
-        <div class="col-md-8">
-          <h1 class="display-5 fw-bold mb-3">
-            <i class="bi bi-youtube me-2"></i> Unificação de Canal YouTube
-          </h1>
-          <p class="lead mb-0">
-            Conecte e gerencie todos os seus canais do YouTube em um só lugar. 
-            Sincronize suas músicas, estatísticas e receitas automaticamente.
-          </p>
+    <div class="col-md-4 mb-3">
+      <div class="youtube-stats-card">
+        <div class="d-flex align-items-center mb-3">
+          <div class="music-service-icon service-apple me-3">
+            <i class="bi bi-apple"></i>
+          </div>
+          <div>
+            <h6 class="mb-1">Apple Music</h6>
+            <span class="sync-status synced">
+              <i class="bi bi-check-circle-fill me-1"></i> Sincronizado
+            </span>
+          </div>
         </div>
-        <div class="col-md-4 text-md-end mt-3 mt-md-0">
-          <span class="verification-badge">
-            <i class="bi bi-patch-check-fill"></i> Verificado
-          </span>
-        </div>
+        <p class="text-muted small mb-0">
+          Última sincronização: há 2 horas
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Canais Conectados -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0">
+          <i class="bi bi-youtube text-danger me-2"></i> Seus Canais Conectados
+        </h4>
+        <button class="youtube-btn" data-bs-toggle="modal" data-bs-target="#connectChannelModal">
+          <i class="bi bi-plus-circle me-2"></i> Conectar Novo Canal
+        </button>
       </div>
     </div>
 
-    <!-- Status da Unificação -->
-    <div class="row mb-4">
-      <div class="col-md-4 mb-3">
-        <div class="youtube-stats-card">
-          <div class="d-flex align-items-center mb-3">
-            <div class="music-service-icon service-spotify me-3">
-              <i class="bi bi-spotify"></i>
-            </div>
-            <div>
-              <h6 class="mb-1">Spotify</h6>
-              <span class="sync-status synced">
-                <i class="bi bi-check-circle-fill me-1"></i> Sincronizado
-              </span>
-            </div>
-          </div>
-          <p class="text-muted small mb-0">
-            Última sincronização: há 5 minutos
-          </p>
-        </div>
-      </div>
-      
-      <div class="col-md-4 mb-3">
-        <div class="youtube-stats-card">
-          <div class="d-flex align-items-center mb-3">
-            <div class="music-service-icon service-deezer me-3">
-              <i class="bi bi-music-player"></i>
-            </div>
-            <div>
-              <h6 class="mb-1">Deezer</h6>
-              <span class="sync-status pending">
-                <i class="bi bi-clock-history me-1"></i> Pendente
-              </span>
-            </div>
-          </div>
-          <p class="text-muted small mb-0">
-            Aguardando autorização
-          </p>
-        </div>
-      </div>
-      
-      <div class="col-md-4 mb-3">
-        <div class="youtube-stats-card">
-          <div class="d-flex align-items-center mb-3">
-            <div class="music-service-icon service-apple me-3">
-              <i class="bi bi-apple"></i>
-            </div>
-            <div>
-              <h6 class="mb-1">Apple Music</h6>
-              <span class="sync-status synced">
-                <i class="bi bi-check-circle-fill me-1"></i> Sincronizado
-              </span>
-            </div>
-          </div>
-          <p class="text-muted small mb-0">
-            Última sincronização: há 2 horas
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Canais Conectados -->
-    <div class="row mb-4">
-      <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h4 class="mb-0">
-            <i class="bi bi-youtube text-danger me-2"></i> Seus Canais Conectados
-          </h4>
-          <button class="youtube-btn" data-bs-toggle="modal" data-bs-target="#connectChannelModal">
-            <i class="bi bi-plus-circle me-2"></i> Conectar Novo Canal
-          </button>
-        </div>
-      </div>
-      
-      <!-- Canal 1 -->
-      <div class="col-12">
-        <div class="channel-card">
-          <div class="row align-items-center">
-            <div class="col-md-6">
-              <div class="d-flex align-items-center">
-                <img src="https://via.placeholder.com/60" alt="Channel Avatar" 
-                     class="channel-avatar me-3">
-                <div>
-                  <h5 class="mb-1">Eleven Records Official</h5>
-                  <p class="text-muted small mb-2">
-                    <i class="bi bi-people me-1"></i> 125K inscritos • 
-                    <i class="bi bi-film me-1 ms-2"></i> 450 vídeos
-                  </p>
-                  <div class="d-flex gap-2">
-                    <span class="badge bg-success">
-                      <i class="bi bi-check-circle me-1"></i> Verificado
-                    </span>
-                    <span class="badge bg-primary">
-                      <i class="bi bi-music-note me-1"></i> Artista Oficial
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div class="col-md-3 mt-3 mt-md-0">
-              <div class="d-flex flex-column">
-                <span class="text-muted small">Receita do mês</span>
-                <span class="h5 mb-0">$12,450.00</span>
-                <span class="text-success small">
-                  <i class="bi bi-arrow-up"></i> +15% vs mês anterior
-                </span>
-              </div>
-            </div>
-            
-            <div class="col-md-3 mt-3 mt-md-0">
-              <div class="d-flex gap-2">
-                <button class="youtube-btn-outline btn-sm flex-grow-1" 
-                        onclick="viewChannelDetails(1)">
-                  <i class="bi bi-eye me-1"></i> Detalhes
-                </button>
-                <button class="youtube-btn btn-sm flex-grow-1" 
-                        onclick="syncChannel(1)">
-                  <i class="bi bi-arrow-repeat me-1"></i> Sincronizar
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Progresso da Unificação -->
-          <div class="row mt-3">
-            <div class="col-12">
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="small text-muted">Progresso da unificação</span>
-                <span class="small fw-bold">75%</span>
-              </div>
-              <div class="unification-progress">
-                <div class="progress-bar" style="width: 75%"></div>
-              </div>
-              
-              <!-- Steps -->
-              <div class="d-flex justify-content-between mt-2">
-                <small class="step-completed">
-                  <i class="bi bi-check-circle-fill"></i> Conectado
-                </small>
-                <small class="step-completed">
-                  <i class="bi bi-check-circle-fill"></i> Músicas
-                </small>
-                <small class="step-active">
-                  <i class="bi bi-arrow-right-circle-fill"></i> Análises
-                </small>
-                <small>
-                  <i class="bi bi-circle"></i> Receitas
-                </small>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Canal 2 -->
-      <div class="col-12">
-        <div class="channel-card">
-          <div class="row align-items-center">
-            <div class="col-md-6">
-              <div class="d-flex align-items-center">
-                <img src="https://via.placeholder.com/60" alt="Channel Avatar" 
-                     class="channel-avatar me-3">
-                <div>
-                  <h5 class="mb-1">Eleven Records Music</h5>
-                  <p class="text-muted small mb-2">
-                    <i class="bi bi-people me-1"></i> 50K inscritos • 
-                    <i class="bi bi-film me-1 ms-2"></i> 200 vídeos
-                  </p>
-                  <span class="badge bg-warning text-dark">
-                    <i class="bi bi-exclamation-triangle me-1"></i> Pendente
+    <!-- Canal 1 -->
+    <div class="col-12">
+      <div class="channel-card">
+        <div class="row align-items-center">
+          <div class="col-md-6">
+            <div class="d-flex align-items-center">
+              <img src="https://via.placeholder.com/60" alt="Channel Avatar" class="channel-avatar me-3">
+              <div>
+                <h5 class="mb-1">Eleven Records Official</h5>
+                <p class="text-muted small mb-2">
+                  <i class="bi bi-people me-1"></i> 125K inscritos •
+                  <i class="bi bi-film me-1 ms-2"></i> 450 vídeos
+                </p>
+                <div class="d-flex gap-2">
+                  <span class="badge bg-success">
+                    <i class="bi bi-check-circle me-1"></i> Verificado
+                  </span>
+                  <span class="badge bg-primary">
+                    <i class="bi bi-music-note me-1"></i> Artista Oficial
                   </span>
                 </div>
               </div>
             </div>
-            
-            <div class="col-md-3 mt-3 mt-md-0">
-              <div class="d-flex flex-column">
-                <span class="text-muted small">Receita do mês</span>
-                <span class="h5 mb-0">$5,230.00</span>
-                <span class="text-success small">
-                  <i class="bi bi-arrow-up"></i> +8% vs mês anterior
+          </div>
+
+          <div class="col-md-3 mt-3 mt-md-0">
+            <div class="d-flex flex-column">
+              <span class="text-muted small">Receita do mês</span>
+              <span class="h5 mb-0">$12,450.00</span>
+              <span class="text-success small">
+                <i class="bi bi-arrow-up"></i> +15% vs mês anterior
+              </span>
+            </div>
+          </div>
+
+          <div class="col-md-3 mt-3 mt-md-0">
+            <div class="d-flex gap-2">
+              <button class="youtube-btn-outline btn-sm flex-grow-1" onclick="viewChannelDetails(1)">
+                <i class="bi bi-eye me-1"></i> Detalhes
+              </button>
+              <button class="youtube-btn btn-sm flex-grow-1" onclick="syncChannel(1)">
+                <i class="bi bi-arrow-repeat me-1"></i> Sincronizar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Progresso da Unificação -->
+        <div class="row mt-3">
+          <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="small text-muted">Progresso da unificação</span>
+              <span class="small fw-bold">75%</span>
+            </div>
+            <div class="unification-progress">
+              <div class="progress-bar" style="width: 75%"></div>
+            </div>
+
+            <!-- Steps -->
+            <div class="d-flex justify-content-between mt-2">
+              <small class="step-completed">
+                <i class="bi bi-check-circle-fill"></i> Conectado
+              </small>
+              <small class="step-completed">
+                <i class="bi bi-check-circle-fill"></i> Músicas
+              </small>
+              <small class="step-active">
+                <i class="bi bi-arrow-right-circle-fill"></i> Análises
+              </small>
+              <small>
+                <i class="bi bi-circle"></i> Receitas
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Canal 2 -->
+    <div class="col-12">
+      <div class="channel-card">
+        <div class="row align-items-center">
+          <div class="col-md-6">
+            <div class="d-flex align-items-center">
+              <img src="https://via.placeholder.com/60" alt="Channel Avatar" class="channel-avatar me-3">
+              <div>
+                <h5 class="mb-1">Eleven Records Music</h5>
+                <p class="text-muted small mb-2">
+                  <i class="bi bi-people me-1"></i> 50K inscritos •
+                  <i class="bi bi-film me-1 ms-2"></i> 200 vídeos
+                </p>
+                <span class="badge bg-warning text-dark">
+                  <i class="bi bi-exclamation-triangle me-1"></i> Pendente
                 </span>
               </div>
             </div>
-            
-            <div class="col-md-3 mt-3 mt-md-0">
-              <div class="d-flex gap-2">
-                <button class="youtube-btn-outline btn-sm flex-grow-1">
-                  <i class="bi bi-eye me-1"></i> Detalhes
-                </button>
-                <button class="youtube-btn btn-sm flex-grow-1">
-                  <i class="bi bi-arrow-repeat me-1"></i> Sincronizar
-                </button>
-              </div>
+          </div>
+
+          <div class="col-md-3 mt-3 mt-md-0">
+            <div class="d-flex flex-column">
+              <span class="text-muted small">Receita do mês</span>
+              <span class="h5 mb-0">$5,230.00</span>
+              <span class="text-success small">
+                <i class="bi bi-arrow-up"></i> +8% vs mês anterior
+              </span>
             </div>
           </div>
-          
-          <div class="row mt-3">
-            <div class="col-12">
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="small text-muted">Progresso da unificação</span>
-                <span class="small fw-bold">40%</span>
-              </div>
-              <div class="unification-progress">
-                <div class="progress-bar" style="width: 40%"></div>
-              </div>
-              
-              <div class="d-flex justify-content-between mt-2">
-                <small class="step-completed">
-                  <i class="bi bi-check-circle-fill"></i> Conectado
-                </small>
-                <small class="step-active">
-                  <i class="bi bi-arrow-right-circle-fill"></i> Músicas
-                </small>
-                <small>
-                  <i class="bi bi-circle"></i> Análises
-                </small>
-                <small>
-                  <i class="bi bi-circle"></i> Receitas
-                </small>
-              </div>
+
+          <div class="col-md-3 mt-3 mt-md-0">
+            <div class="d-flex gap-2">
+              <button class="youtube-btn-outline btn-sm flex-grow-1">
+                <i class="bi bi-eye me-1"></i> Detalhes
+              </button>
+              <button class="youtube-btn btn-sm flex-grow-1">
+                <i class="bi bi-arrow-repeat me-1"></i> Sincronizar
+              </button>
             </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Estatísticas Rápidas -->
-    <div class="row mb-4">
-      <div class="col-12">
-        <h4 class="mb-3">
-          <i class="bi bi-graph-up me-2"></i> Visão Geral dos Canais
-        </h4>
-      </div>
-      
-      <div class="col-md-3 col-6 mb-3">
-        <div class="card text-center p-3">
-          <h3 class="text-primary mb-2">175K</h3>
-          <p class="text-muted small mb-0">Total de Inscritos</p>
-        </div>
-      </div>
-      
-      <div class="col-md-3 col-6 mb-3">
-        <div class="card text-center p-3">
-          <h3 class="text-primary mb-2">650</h3>
-          <p class="text-muted small mb-0">Total de Vídeos</p>
-        </div>
-      </div>
-      
-      <div class="col-md-3 col-6 mb-3">
-        <div class="card text-center p-3">
-          <h3 class="text-primary mb-2">2.5M</h3>
-          <p class="text-muted small mb-0">Visualizações</p>
-        </div>
-      </div>
-      
-      <div class="col-md-3 col-6 mb-3">
-        <div class="card text-center p-3">
-          <h3 class="text-primary mb-2">$17,680</h3>
-          <p class="text-muted small mb-0">Receita Total</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Músicas Recentes -->
-    <div class="row">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-header bg-transparent">
-            <h5 class="mb-0">
-              <i class="bi bi-music-note-beamed me-2"></i> Músicas Detectadas Recentemente
-            </h5>
-          </div>
-          <div class="card-body p-0">
-            <div class="table-responsive">
-              <table class="table table-hover mb-0">
-                <thead class="table-light">
-                  <tr>
-                    <th>Música</th>
-                    <th>Canal</th>
-                    <th>Plataforma</th>
-                    <th>Visualizações</th>
-                    <th>Receita</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <strong>Summer Vibes</strong><br>
-                      <small class="text-muted">Artista: DJ Mark</small>
-                    </td>
-                    <td>Eleven Records Official</td>
-                    <td>
-                      <span class="music-service-icon service-spotify" style="width: 25px; height: 25px; font-size: 0.875rem; display: inline-flex;">
-                        <i class="bi bi-spotify"></i>
-                      </span>
-                    </td>
-                    <td>45,230</td>
-                    <td>$450.00</td>
-                    <td><span class="sync-status synced">Sincronizado</span></td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <strong>Night Drive</strong><br>
-                      <small class="text-muted">Artista: ElectroBeats</small>
-                    </td>
-                    <td>Eleven Records Official</td>
-                    <td>
-                      <span class="music-service-icon service-deezer" style="width: 25px; height: 25px; font-size: 0.875rem; display: inline-flex;">
-                        <i class="bi bi-music-player"></i>
-                      </span>
-                    </td>
-                    <td>12,890</td>
-                    <td>$128.90</td>
-                    <td><span class="sync-status pending">Pendente</span></td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <strong>Ocean Eyes</strong><br>
-                      <small class="text-muted">Artista: Sarah Moon</small>
-                    </td>
-                    <td>Eleven Records Music</td>
-                    <td>
-                      <span class="music-service-icon service-apple" style="width: 25px; height: 25px; font-size: 0.875rem; display: inline-flex;">
-                        <i class="bi bi-apple"></i>
-                      </span>
-                    </td>
-                    <td>89,450</td>
-                    <td>$894.50</td>
-                    <td><span class="sync-status synced">Sincronizado</span></td>
-                  </tr>
-                </tbody>
-              </table>
+        <div class="row mt-3">
+          <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="small text-muted">Progresso da unificação</span>
+              <span class="small fw-bold">40%</span>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </main>
+            <div class="unification-progress">
+              <div class="progress-bar" style="width: 40%"></div>
+            </div>
 
-  <!-- Bottom Navigation (Mobile) -->
-  <nav class="bottom-nav d-lg-none fixed-bottom bg-white shadow">
-    <ul class="nav justify-content-around">
-      <li class="nav-item">
-        <a class="nav-link text-center" href="../../painel.html">
-          <i class="bi bi-speedometer2 d-block fs-5"></i>
-          <span class="small">Dashboard</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link text-center" href="../../launch/releases.html">
-          <i class="bi bi-disc d-block fs-5"></i>
-          <span class="small">Lançamentos</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link text-center" href="../../analytics/statistics.html">
-          <i class="bi bi-bar-chart d-block fs-5"></i>
-          <span class="small">Stats</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link text-center" href="../../finances/overview.html">
-          <i class="bi bi-currency-dollar d-block fs-5"></i>
-          <span class="small">Finanças</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link text-center active" href="ucy.html">
-          <i class="bi bi-youtube d-block fs-5"></i>
-          <span class="small">YouTube</span>
-        </a>
-      </li>
-    </ul>
-  </nav>
-
-  <!-- Modal Conectar Canal -->
-  <div class="modal fade" id="connectChannelModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Conectar Novo Canal do YouTube</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <p class="text-muted small mb-3">
-            Para conectar seu canal do YouTube, você precisa autorizar o acesso 
-            através da sua conta Google.
-          </p>
-          
-          <div class="text-center mb-4">
-            <i class="bi bi-youtube" style="font-size: 4rem; color: #FF0000;"></i>
-            <h6 class="mt-2">Eleven Records</h6>
-            <p class="text-muted small">conta@gmail.com</p>
-          </div>
-          
-          <div class="d-grid gap-2">
-            <button class="youtube-btn" onclick="authorizeYoutube()">
-              <i class="bi bi-google me-2"></i> Autorizar com Google
-            </button>
-            <button class="btn btn-link text-muted" data-bs-dismiss="modal">
-              Cancelar
-            </button>
+            <div class="d-flex justify-content-between mt-2">
+              <small class="step-completed">
+                <i class="bi bi-check-circle-fill"></i> Conectado
+              </small>
+              <small class="step-active">
+                <i class="bi bi-arrow-right-circle-fill"></i> Músicas
+              </small>
+              <small>
+                <i class="bi bi-circle"></i> Análises
+              </small>
+              <small>
+                <i class="bi bi-circle"></i> Receitas
+              </small>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Modal Logout -->
-  <div class="modal fade" id="logoutModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Terminar sessão</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+  <!-- Estatísticas Rápidas -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h4 class="mb-3">
+        <i class="bi bi-graph-up me-2"></i> Visão Geral dos Canais
+      </h4>
+    </div>
+
+    <div class="col-md-3 col-6 mb-3">
+      <div class="card text-center p-3">
+        <h3 class="text-primary mb-2">175K</h3>
+        <p class="text-muted small mb-0">Total de Inscritos</p>
+      </div>
+    </div>
+
+    <div class="col-md-3 col-6 mb-3">
+      <div class="card text-center p-3">
+        <h3 class="text-primary mb-2">650</h3>
+        <p class="text-muted small mb-0">Total de Vídeos</p>
+      </div>
+    </div>
+
+    <div class="col-md-3 col-6 mb-3">
+      <div class="card text-center p-3">
+        <h3 class="text-primary mb-2">2.5M</h3>
+        <p class="text-muted small mb-0">Visualizações</p>
+      </div>
+    </div>
+
+    <div class="col-md-3 col-6 mb-3">
+      <div class="card text-center p-3">
+        <h3 class="text-primary mb-2">$17,680</h3>
+        <p class="text-muted small mb-0">Receita Total</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Músicas Recentes -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header bg-transparent">
+          <h5 class="mb-0">
+            <i class="bi bi-music-note-beamed me-2"></i> Músicas Detectadas Recentemente
+          </h5>
         </div>
-        <div class="modal-body">
-          <p class="text-center mb-0">
-            José da Costa, você tem certeza que deseja terminar sessão?
-          </p>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Música</th>
+                  <th>Canal</th>
+                  <th>Plataforma</th>
+                  <th>Visualizações</th>
+                  <th>Receita</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <strong>Summer Vibes</strong><br>
+                    <small class="text-muted">Artista: DJ Mark</small>
+                  </td>
+                  <td>Eleven Records Official</td>
+                  <td>
+                    <span class="music-service-icon service-spotify"
+                      style="width: 25px; height: 25px; font-size: 0.875rem; display: inline-flex;">
+                      <i class="bi bi-spotify"></i>
+                    </span>
+                  </td>
+                  <td>45,230</td>
+                  <td>$450.00</td>
+                  <td><span class="sync-status synced">Sincronizado</span></td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Night Drive</strong><br>
+                    <small class="text-muted">Artista: ElectroBeats</small>
+                  </td>
+                  <td>Eleven Records Official</td>
+                  <td>
+                    <span class="music-service-icon service-deezer"
+                      style="width: 25px; height: 25px; font-size: 0.875rem; display: inline-flex;">
+                      <i class="bi bi-music-player"></i>
+                    </span>
+                  </td>
+                  <td>12,890</td>
+                  <td>$128.90</td>
+                  <td><span class="sync-status pending">Pendente</span></td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Ocean Eyes</strong><br>
+                    <small class="text-muted">Artista: Sarah Moon</small>
+                  </td>
+                  <td>Eleven Records Music</td>
+                  <td>
+                    <span class="music-service-icon service-apple"
+                      style="width: 25px; height: 25px; font-size: 0.875rem; display: inline-flex;">
+                      <i class="bi bi-apple"></i>
+                    </span>
+                  </td>
+                  <td>89,450</td>
+                  <td>$894.50</td>
+                  <td><span class="sync-status synced">Sincronizado</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Bottom Navigation (Mobile) -->
+<nav class="bottom-nav d-lg-none fixed-bottom bg-white shadow">
+  <ul class="nav justify-content-around">
+    <li class="nav-item">
+      <a class="nav-link text-center" href="../../painel.html">
+        <i class="bi bi-speedometer2 d-block fs-5"></i>
+        <span class="small">Dashboard</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link text-center" href="../../launch/releases.html">
+        <i class="bi bi-disc d-block fs-5"></i>
+        <span class="small">Lançamentos</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link text-center" href="../../analytics/statistics.html">
+        <i class="bi bi-bar-chart d-block fs-5"></i>
+        <span class="small">Stats</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link text-center" href="../../finances/overview.html">
+        <i class="bi bi-currency-dollar d-block fs-5"></i>
+        <span class="small">Finanças</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link text-center active" href="ucy.html">
+        <i class="bi bi-youtube d-block fs-5"></i>
+        <span class="small">YouTube</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<!-- Modal Conectar Canal -->
+<div class="modal fade" id="connectChannelModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Conectar Novo Canal do YouTube</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted small mb-3">
+          Para conectar seu canal do YouTube, você precisa autorizar o acesso
+          através da sua conta Google.
+        </p>
+
+        <div class="text-center mb-4">
+          <i class="bi bi-youtube" style="font-size: 4rem; color: #FF0000;"></i>
+          <h6 class="mt-2">Eleven Records</h6>
+          <p class="text-muted small">conta@gmail.com</p>
+        </div>
+
+        <div class="d-grid gap-2">
+          <button class="youtube-btn" onclick="authorizeYoutube()">
+            <i class="bi bi-google me-2"></i> Autorizar com Google
+          </button>
+          <button class="btn btn-link text-muted" data-bs-dismiss="modal">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal logout -->
+<div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">
+          Terminar sessão
+        </h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <div class="row justify-content-center text-center">
+            <div class="col-md-12 content-center justify-center text-center">
+              <p class="text-center text-dark">
+                @josembengadacosta você tem certeza de que desejas terminar
+                sessão?
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
             Não, continuar
           </button>
-          <button type="button" class="btn btn-danger" onclick="logout()">
+        </div>
+        <div>
+          <button class="btn btn-danger" type="button" name="logout_wasomupfy" onclick="logout_wasomupfy()">
             Sim, terminar
           </button>
         </div>
+        <script type="text/javascript">
+          function logout_wasomupfy() {
+            window.location = "logout";
+          }
+        </script>
       </div>
     </div>
   </div>
+</div>
+<!-- Modal logout fim -->
 
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="../../../js/theme.wp.js"></script>
-    <script src="../../../js/wp.tools.js"></script>
-  
-  <script>
-    // Funções específicas da página
-    function viewChannelDetails(channelId) {
-      console.log('Ver detalhes do canal:', channelId);
-      window.location.href = 'channel-details.html?id=' + channelId;
-    }
-    
-    function syncChannel(channelId) {
-      console.log('Sincronizar canal:', channelId);
-      // Aqui você implementaria a lógica de sincronização
-      alert('Sincronização iniciada! Isso pode levar alguns minutos.');
-    }
-    
-    function authorizeYoutube() {
-      console.log('Autorizando YouTube...');
-      // Aqui você implementaria a autorização OAuth
-      window.location.href = '/auth/youtube';
-    }
-    
-    function logout() {
-      window.location = "logout";
-    }
-    
-    // Inicializar tooltips
-    document.addEventListener('DOMContentLoaded', function() {
-      const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-      tooltipTriggerList.map(function(tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-      });
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../../js/theme.wp.js"></script>
+<script src="../../../js/wp.tools.js"></script>
+
+<script>
+  // Funções específicas da página
+  function viewChannelDetails(channelId) {
+    console.log('Ver detalhes do canal:', channelId);
+    window.location.href = 'channel-details.html?id=' + channelId;
+  }
+
+  function syncChannel(channelId) {
+    console.log('Sincronizar canal:', channelId);
+    // Aqui você implementaria a lógica de sincronização
+    alert('Sincronização iniciada! Isso pode levar alguns minutos.');
+  }
+
+  function authorizeYoutube() {
+    console.log('Autorizando YouTube...');
+    // Aqui você implementaria a autorização OAuth
+    window.location.href = '/auth/youtube';
+  }
+
+  function logout() {
+    window.location = "logout";
+  }
+
+  // Inicializar tooltips
+  document.addEventListener('DOMContentLoaded', function () {
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl);
     });
-  </script>
+  });
+</script>
 </body>
+
 </html>
