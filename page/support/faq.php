@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="author" content="José Mbenga da Costa" />
+  <meta name="keywords"
+    content="Perguntas frequentes sobre a plataforma Wasom Upfy, incluindo cadastro de artistas, estatísticas e suporte." />
+  <meta name="robots" content="follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large" />
+  <meta name="theme-color" content="#FF009D" />
+  <meta property="og:locale" content="pt_AO" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale:alternate" content="fr_FR" />
+  <meta property="og:locale:alternate" content="en_EN" />
+  <meta property="og:locale:alternate" content="pt_BR" />
+  <meta property="og:locale:alternate" content="pt_PT" />
+  <meta property="og:title" content="Wasom Upfy - Perguntas frequentes." />
+  <meta property="og:description"
+    content="Perguntas frequentes sobre a plataforma Wasom Upfy, incluindo cadastro de artistas, estatísticas e suporte." />
+  <meta property="og:url" content="https://wasomupfy.rf.gd/" />
+  <meta property="og:site_name" content="Wasom Upfy" />
+  <meta property="og:image" content="https://wasomupfy.rf.gd/imgs/og_wasomupfy.jpeg" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:width" content="300" />
+  <meta property="og:image:height" content="300" />
+  <meta property="og:image:alt" content="Slogan Wasom Upfy" />
+  <title>Wasom Upfy | Perguntas frequentes</title>
+  <!-- O processo de carregamento do site em Javascript fim -->
+  <script>
+    window.addEventListener("load", function() {
+      setTimeout(function() {
+        document.querySelector("body").classList.add("loaded");
+      }, 200);
+    });
+  </script>
+  <!-- O processo de carregamento do site em Javascript fim -->
+  <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv1.png" type="image/x-icon" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="../../css/theme.min.css" />
+  <link rel="stylesheet" href="../../js/libs/scrollcue/scrollCue.css" />
+  <link rel="stylesheet" href="../../css/framework.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+  <link rel="stylesheet" href="../../css/faq-web.css" />
+</head>
+
+<body>
+  <!-- O processo de carregamento do site em HTML & CSS -->
+  <div class="preloader">
+    <img src="../../assets/img/brand/wasomupfy_loaading.png" class="img-fluid loading-logo" width="90" height="90"
+      alt="Loading-wasomupfy" />
+  </div>
+  <!-- O processo de carregamento do site em HTML & CSS fim -->
+
+  <!-- Cabecalho da página de navbar -->
+  <header>
+    <nav class="navbar navbar-expand-lg transparent navbar-transparent navbar-dark">
+      <div class="container px-3">
+        <a class="navbar-brand" href="../../home" title="Home"><img src="../../assets/img/brand/wasomupfy_brand.png"
+            width="65" class="img-logo" height="60" alt="Logo Wasom Upfy" /></a>
+        <button class="navbar-toggler offcanvas-nav-btn" type="button">
+          <i class="bi bi-list"></i>
+        </button>
+        <div class="offcanvas offcanvas-start offcanvas-nav" style="width: 20rem">
+          <div class="offcanvas-header">
+            <a title="Logotipo" href="../../home"><img width="65" src="../../assets/img/brand/wasomupfy_brand.png"
+                alt="Logo Wasom Upfy" /></a>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body pt-0 align-items-center">
+            <ul class="navbar-nav mx-auto align-items-lg-center">
+              <li class="nav-item">
+                <a class="nav-link" href="../../home" title="Inicio" role="button" data-bs-toggle="link"
+                  aria-expanded="false">Início</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="../../about" title="Sobre" role="button" data-bs-toggle="link"
+                  aria-expanded="false">Sobre</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="../../blog/" title="Blogue" target="_blank" rel="external" role="button"
+                  data-bs-toggle="link" aria-expanded="false">Blogue</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a title="Planos" class="nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+                  aria-haspopup="true" aria-expanded="false">Planos <i data-feather="chevron-down"></i></a>
+                <div class="dropdown-menu dropdown-menu-md" aria-labelledby="navbarDropdown">
+                  <a title="Single" class="dropdown-item mb-3 text-body" href="../../plan/single">
+                    <div class="d-flex align-items-center">
+                      <i class="fa-solid fa-music text-wasomupfy fs-3" style="width: 35px"></i>
+                      <div class="ms-3 lh-1">
+                        <h5 class="mb-1">Single</h5>
+                        <p class="mb-0 fs-6">Nosso plano Single - 2.000 Kz</p>
+                      </div>
+                    </div>
+                  </a>
+
+                  <a title="Álbum" class="dropdown-item mb-3 text-body" href="../../plan/album">
+                    <div class="d-flex align-items-center">
+                      <i class="fa-solid fa-compact-disc text-wasomupfy fs-3" style="width: 35px"></i>
+                      <div class="ms-3 lh-1">
+                        <h5 class="mb-1">Álbum</h5>
+                        <p class="mb-0 fs-6">Nosso plano Álbum - 5.000 Kz</p>
+                      </div>
+                    </div>
+                  </a>
+
+                  <a title="Artista" class="dropdown-item mb-3 text-body" href="../../plan/artist">
+                    <div class="d-flex align-items-center">
+                      <i class="fa-solid fa-microphone-lines text-wasomupfy fs-3" style="width: 35px"></i>
+                      <div class="ms-3 lh-1">
+                        <h5 class="mb-1">Artista</h5>
+                        <p class="mb-0 fs-6">
+                          Nosso plano Artista - 11.400 Kz/2ano
+                        </p>
+                      </div>
+                    </div>
+                  </a>
+
+                  <a title="Label" class="dropdown-item mb-3 text-body" href="../../plan/label">
+                    <div class="d-flex align-items-center">
+                      <i class="fa-solid fa-tags text-wasomupfy fs-3" style="width: 35px"></i>
+                      <div class="ms-3 lh-1">
+                        <h5 class="mb-1">Label</h5>
+                        <p class="mb-0 fs-6">
+                          Nosso plano Label - 70.000 Kz/2ano
+                        </p>
+                      </div>
+                    </div>
+                  </a>
+
+                  <a title="Todos os planos" class="dropdown-item mb-3 text-body" href="../../plan/all-plans">
+                    <div class="d-flex align-items-center">
+                      <i class="fa-solid fa-layer-group text-wasomupfy fs-3" style="width: 35px"></i>
+                      <div class="ms-3 lh-1">
+                        <h5 class="mb-1">Todos os planos</h5>
+                        <p class="mb-0 fs-6">Todos os nossos planos</p>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </li>
+              <li class="nav-item dropdown">
+                <a title="Páginas" class="nav-link active" href="#" role="button" data-bs-toggle="dropdown"
+                  aria-expanded="false">Páginas <i data-feather="chevron-down"></i></a>
+                <div class="dropdown-menu dropdown-menu-xxl">
+                  <div class="row row-cols-lg-3">
+                    <div class="col">
+                      <div class="dropdown-header">Blog</div>
+                      <a title="Novidades" class="dropdown-item" href="../../blog/">Novidades</a>
+                      <a title="Passatempo Wasom Upfy" class="dropdown-item" href="../../blog/">Passatempo</a>
+                      <a title="Indisponível" class="dropdown-item" href="#!">Indisponível
+                        <span class="badge bg-warning">Indisponível</span></a>
+                      <div class="mt-3">
+                        <div class="dropdown-header">Sobre</div>
+                        <a title="A nossa marca" class="dropdown-item" href="../../about?#nossamarca">A nossa marca</a>
+                        <a title="Parcerias" class="dropdown-item" href="../../partnership">Parcerias</a>
+                        <a title="Quem somos" class="dropdown-item" href="../../about#nossa-historia">Quem somos</a>
+                      </div>
+                    </div>
+
+                    <div class="col">
+                      <div class="mt-3 mt-lg-0">
+                        <div class="dropdown-header">Serviços</div>
+                        <a title="Distribuição de música" class="dropdown-item"
+                          href="../../page/services/music-distribution">Distribuição de música</a>
+                        <a title="Promoção de música" class="dropdown-item"
+                          href="../../page/services/music-promotion">Promoção de música
+                          <span class="badge bg-success">Novo</span></a>
+                        <a title="Indisponível" class="dropdown-item"
+                          href="../../page/services/customized-services">Serviços personalizados
+                          <span class="badge bg-warning">Indisponível</span></a>
+                      </div>
+
+                      <div class="mt-3">
+                        <div class="dropdown-header">Contactos</div>
+                        <a title="Atendimento pelo Facebook" class="dropdown-item"
+                          href="https://www.facebook.com/m.me/2007900989425052" target="_blank"
+                          rel="external noopener noreferrer">Atendimento</a>
+                        <a title="Contacto-nos" class="dropdown-item" href="../../contact">Contacta-nos</a>
+                        <a title="Canal WhatsApp" class="dropdown-item"
+                          href="https://whatsapp.com/channel/0029VaCEDqo59PwWpU0nGa04" target="_blank"
+                          rel="external noopener noreferrer">Canal WhatsApp</a>
+                      </div>
+                    </div>
+
+                    <div class="col">
+                      <div class="mt-3 mt-lg-0">
+                        <div>
+                          <div class="dropdown-header">Sugestões</div>
+                          <a title="Ajuda" class="dropdown-item" href="../support/help">Ajuda
+                            <span class="badge bg-success">Novo</span></a>
+                          <a title="Feedback" class="dropdown-item" href="#" data-bs-toggle="modal"
+                            data-bs-target="#modalFeedback">
+                            Feedback</a>
+                          <a title="Indisponível" class="dropdown-item" href="#!">Indisponível
+                            <span class="badge bg-warning">Indisponível</span></a>
+                        </div>
+                        <div class="mt-3">
+                          <div class="dropdown-header">Ajuda</div>
+                          <a title="Tutorial" class="dropdown-item" href="../support/tutorial">Tutorial
+                            <span class="badge bg-success">Novo</span></a>
+                          <a title="Ocorreu um erro" class="dropdown-item" href="../support/support">Suporte técnico</a>
+                          <a title="Perguntas frequentes" class="dropdown-item active" href="../support/faq">Perguntas
+                            frequentes</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link" href="../../resources" title="Recursos" role="button" data-bs-toggle="link"
+                  aria-expanded="false">
+                  Recursos</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a title="Contacto" class="nav-link" href="#" role="button" data-bs-toggle="dropdown"
+                  aria-expanded="false">Contactar <i data-feather="chevron-down"></i></a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a title="Caixa de mensagem" class="dropdown-item" href="../../contact">
+                      Caixa de mensagem</a>
+                  </li>
+                  <li>
+                    <a title="E-mail" class="dropdown-item"
+                      href="mailto:info@wasomupfy.com?subject=Entrando em contacto com equipa de Wasom Upfy.&bcc=suporte@wasomupfy.com&body=Olá equipa de Wasom Upfy.">
+                      info@wasomupfy.com</a>
+                  </li>
+                  <li>
+                    <a title="WhatsApp" class="dropdown-item"
+                      href="https://api.whatsapp.com/send/?phone=244922030116&text&type=phone_number&app_absent=0">
+                      WhatsApp
+                    </a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+            <div class="mt-3 mt-lg-0 d-flex align-items-center">
+              <a title="Sign-in" href="/wasomupfy/login" class="btn btn-secondary mx-2">Entrar
+                <i data-feather="log-in"></i>
+              </a>
+              <a title="Sign-up" href="/wasomupfy/register" class="btn btn-wasomupfy">Inscreva-se
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+  <!-- Cabecalho da página de navbar fim -->
+
+  <!--Seccão do site inteira até ao perto do footer  -->
+  <main>
+    <!-- A área do site  -->
+
+    <!-- A área de recursos  -->
+    <section class="faq-hero jarallax position-relative overflow-hidden py-5" data-jarallax data-speed="0.4">
+      <img class="jarallax-img" src="../../assets/img/theme/faq.png" alt="Perguntas frequentes Wasom Upfy"
+        loading="lazy" />
+      <div class="hero-overlay"></div>
+      <div class="container position-relative z-index-2 py-6">
+        <div class="row justify-content-center text-center">
+          <div class="col-xl-8 col-lg-10 text-center" data-cue="fadeIn">
+            <nav aria-label="breadcrumb" class="d-flex justify-content-center mb-3">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                  <a href="../../home" class="text-muted">Home</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                  FAQ
+                </li>
+              </ol>
+            </nav>
+            <h1 class="display-4 mb-4 text-white-stable fw-bold">
+              Perguntas mais comun
+            </h1>
+            <p class="lead text-white-stable mb-4 opacity-90">
+              Encontre respostas para as perguntas mais comuns sobre o uso da
+              plataforma Wasom Upfy. Não encontrou o que procurava? Entre em
+              contato com nosso
+              <a href="support" title="Suporte" class="text-secondary">suporte</a>!
+            </p>
+            <p class="update-date" data-i18n="faq_update_date">
+              Última atualização: 14 de Fevereiro de 2026
+            </p>
+            <a href="#nossa-historia" class="btn btn-wasomupfy btn-lg mt-2 smooth-scroll">
+              Descubra nossa jornada <i class="bi bi-arrow-down ms-2"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sessão para detalhes de recursos -->
+    <section class="my-xl-4 py-2 bg-ligth-100">
+      <div class="container mb-xl-3" data-cue="fadeIn">
+        <div class="row row-cols-1 row-cols-md-3 gy-4">
+          <!-- Action Buttons -->
+          <div class="action-buttons">
+            <a href="faq.pdf" download><i class="bi bi-file-earmark-pdf"></i>
+              <span data-i18n="download_pdf">Baixar em PDF</span></a>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="progress-bar-container">
+            <div class="progress-bar">
+              <div class="progress-bar-fill" id="progressBar"></div>
+            </div>
+          </div>
+
+          <!-- Search Bar -->
+          <div class="search-bar fade-in-custom">
+            <input type="text" id="faqSearch" class="form-control" placeholder="Pesquisar perguntas..."
+              data-i18n-placeholder="search_placeholder" onkeyup="searchFAQ()" />
+          </div>
+
+          <!-- Navigation Index -->
+          <nav class="nav-index fade-in-custom">
+            <h3 data-i18n="index_title">Índice</h3>
+            <ul class="list-unstyled">
+              <li class="index-item" id="index-faq1">
+                <a href="#faq1" data-i18n="index_faq1">Como posso cadastrar um novo artista?</a>
+              </li>
+              <li class="index-item" id="index-faq2">
+                <a href="#faq2" data-i18n="index_faq2">Como vejo as estatísticas das minhas músicas?</a>
+              </li>
+              <li class="index-item" id="index-faq3">
+                <a href="#faq3" data-i18n="index_faq3">O que fazer se eu esquecer minha senha?</a>
+              </li>
+              <li class="index-item" id="index-faq4">
+                <a href="#faq4" data-i18n="index_faq4">Como funciona o modo escuro?</a>
+              </li>
+              <li class="index-item">
+                <a href="#faq5">Como ver estatísticas?</a>
+              </li>
+              <li class="index-item">
+                <a href="#faq6">Qual o prazo para as lojas?</a>
+              </li>
+              <li class="index-item">
+                <a href="#faq7">Como recebo meus Royalties?</a>
+              </li>
+              <li class="index-item">
+                <a href="#faq8">Formatos de áudio aceitos?</a>
+              </li>
+              <li class="index-item" id="index-tips">
+                <a href="#tips" data-i18n="index_tips">Dicas Rápidas</a>
+              </li>
+              <li class="index-item" id="index-tutorial">
+                <a href="#tutorial" data-i18n="index_tutorial">Tutorial</a>
+              </li>
+            </ul>
+          </nav>
+
+          <!-- FAQ Items -->
+
+          <!-- FAQ Content -->
+          <section class="faq-content fade-in-custom">
+            <!-- FAQ Items -->
+            <div class="faq-item visible" id="faq1" data-category="cadastro">
+              <div class="question" onclick="toggleFAQ(this)" role="button" aria-expanded="false"
+                aria-controls="faq1-answer">
+                <i class="bi bi-person-plus"></i>
+                <span data-i18n="faq1_question">Como posso cadastrar um novo artista?</span>
+                <i class="bi bi-chevron-down toggle-icon"></i>
+              </div>
+              <div class="answer" id="faq1-answer" data-i18n="faq1_answer">
+                Para cadastrar um novo artista, acesse a seção "Artistas" no
+                menu, clique em "Adicionar Novo" e preencha os detalhes
+                solicitados, como nome, foto e informações de contato. Após
+                revisar, salve as alterações. Este processo é simples e pode
+                ser feito em poucos minutos. Certifique-se de que as
+                informações estejam corretas para evitar problemas futuros.
+              </div>
+            </div>
+
+            <div class="faq-item visible" id="faq2" data-category="estatisticas">
+              <div class="question" onclick="toggleFAQ(this)" role="button" aria-expanded="false"
+                aria-controls="faq2-answer">
+                <i class="bi bi-bar-chart"></i>
+                <span data-i18n="faq2_question">Como vejo as estatísticas das minhas músicas?</span>
+                <i class="bi bi-chevron-down toggle-icon"></i>
+              </div>
+              <div class="answer" id="faq2-answer" data-i18n="faq2_answer">
+                Acesse a seção "Estatísticas" no menu principal. Selecione o
+                artista ou música desejada e utilize os filtros de data para
+                visualizar os dados de streams em gráficos e tabelas. Você
+                também pode exportar os dados em formato CSV para uma análise
+                mais detalhada, se necessário.
+              </div>
+            </div>
+
+            <div class="faq-item visible" id="faq3" data-category="suporte">
+              <div class="question" onclick="toggleFAQ(this)" role="button" aria-expanded="false"
+                aria-controls="faq3-answer">
+                <i class="bi bi-lock"></i>
+                <span data-i18n="faq3_question">O que fazer se eu esquecer minha senha?</span>
+                <i class="bi bi-chevron-down toggle-icon"></i>
+              </div>
+              <div class="answer" id="faq3-answer" data-i18n="faq3_answer">
+                Vá até a página de login, clique em "Esqueceu sua senha?" e
+                siga as instruções para redefini-la. Você receberá um e-mail
+                com um link para criar uma nova senha. Certifique-se de
+                verificar sua caixa de spam caso o e-mail não apareça na sua
+                caixa de entrada.
+              </div>
+            </div>
+
+            <div class="faq-item visible" id="faq4" data-category="suporte">
+              <div class="question" onclick="toggleFAQ(this)" role="button" aria-expanded="false"
+                aria-controls="faq4-answer">
+                <i class="bi bi-moon"></i>
+                <span data-i18n="faq4_question">Como funciona o modo escuro?</span>
+                <i class="bi bi-chevron-down toggle-icon"></i>
+              </div>
+              <div class="answer" id="faq4-answer" data-i18n="faq4_answer">
+                O modo escuro pode ser ativado manualmente ou automaticamente.
+                Use o seletor de temas no canto inferior direito para escolher
+                entre Light, Dark ou Automático, que segue a preferência do
+                seu sistema. O modo escuro é ideal para uso em ambientes com
+                pouca luz, reduzindo o cansaço visual.
+              </div>
+            </div>
+
+            <div class="faq-item visible" id="faq5" data-category="lancamento">
+              <div class="question" onclick="toggleFAQ(this)" role="button">
+                <i class="bi bi-clock-history"></i>
+                <span>Quanto tempo demora para minha música estar nas
+                  lojas?</span>
+                <i class="bi bi-chevron-down toggle-icon"></i>
+              </div>
+              <div class="answer" id="faq5-answer">
+                O prazo médio é de 10 a 15 dias úteis. Recomendamos que envie
+                o seu lançamento com pelo menos 3 semanas de antecedência para
+                garantir que o "Pitch" para as playlists editoriais seja feito
+                a tempo.
+              </div>
+            </div>
+
+            <div class="faq-item visible" id="faq6" data-category="financeiro">
+              <div class="question" onclick="toggleFAQ(this)" role="button">
+                <i class="bi bi-cash-stack"></i>
+                <span>Como e quando recebo os meus ganhos (Royalties)?</span>
+                <i class="bi bi-chevron-down toggle-icon"></i>
+              </div>
+              <div class="answer" id="faq6-answer">
+                Os relatórios de vendas são atualizados mensalmente. Assim que
+                atingir o valor mínimo de levantamento no seu plano, poderá
+                solicitar o resgate via transferência bancária ou métodos
+                disponíveis na sua carteira Wasom Upfy.
+              </div>
+            </div>
+
+            <div class="faq-item visible" id="faq7" data-category="tecnico">
+              <div class="question" onclick="toggleFAQ(this)" role="button">
+                <i class="bi bi-file-earmark-music"></i>
+                <span>Quais os formatos de áudio e capa aceitos?</span>
+                <i class="bi bi-chevron-down toggle-icon"></i>
+              </div>
+              <div class="answer" id="faq8">
+                O áudio deve estar obrigatoriamente em formato **WAV**, 44.1
+                kHz, 16-bit (estéreo). A capa deve ser um quadrado perfeito de
+                3000x3000px, em formato JPG ou PNG, sem logótipos de redes
+                sociais ou excesso de texto.
+              </div>
+            </div>
+            <!-- Tips Section -->
+            <div class="tips-section" id="tips">
+              <h2 data-i18n="tips_title">Dicas Rápidas</h2>
+              <div class="tip-card" data-i18n="tip1">
+                <i class="bi bi-lightning"></i> Use os filtros de data para
+                comparar estatísticas rapidamente.
+              </div>
+              <div class="tip-card" data-i18n="tip2">
+                <i class="bi bi-bell"></i> Ative notificações para novos
+                streams na sua página de perfil.
+              </div>
+              <div class="tip-card" data-i18n="tip3">
+                <i class="bi bi-download"></i> Exporte seus dados em CSV na
+                seção de estatísticas.
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+      <!-- Tutorial Section -->
+      <div class="tutorial-section" id="tutorial">
+        <h2 data-i18n="tutorial_title">Assista ao Nosso Tutorial</h2>
+        <button class="btn-wasomupfy" data-bs-toggle="modal" data-bs-target="#tutorialModal" data-i18n="watch_video">
+          Ver Vídeo
+        </button>
+      </div>
+    </section>
+    <!-- A área do site fim -->
+  </main>
+  <!--Seccão do site inteira até ao perto do footer  fim -->
+
+  <!-- Modal for Tutorial Video -->
+  <div class="modal fade" id="tutorialModal" tabindex="-1" aria-labelledby="tutorialModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="tutorialModalLabel" data-i18n="tutorial_modal_title">
+            Tutorial Wasom Upfy
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="ratio ratio-16x9">
+            <iframe src="https://www.youtube.com/embed/your-video-id" title="Tutorial Wasom Upfy" frameborder="0"
+              allowfullscreen></iframe>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="close">
+            Fechar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider-fade"></div>
+
+  <!-- Footer -->
+  <footer class="bg-light-100 pt-7" role="contentinfo" aria-label="Rodapé do site">
+    <div class="container">
+      <!-- Call-to-action Newsletter -->
+      <div class="row align-items-center mb-7 border-bottom border-white-10 pb-5">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+          <h3 class="fw-bold mb-1">Junte-se a +10.000 Artistas</h3>
+          <p class="lead text-muted mb-0">
+            Receba dicas de marketing, novidades da indústria e ofertas
+            exclusivas.
+          </p>
+        </div>
+        <div class="col-lg-6">
+          <form action="#" class="row g-2">
+            <div class="col-sm-8">
+              <input type="email" class="form-control border-0 text-muted py-3" autocapitalize="email" required
+                placeholder="Seu melhor e-mail" />
+            </div>
+            <div class="col-sm-4">
+              <button class="btn btn-wasomupfy w-100 py-3 fw-bold">
+                Inscrever
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Navegação do Footer -->
+      <nav aria-label="Navegação do rodapé">
+        <div class="row g-5" id="ft-links">
+          <!-- Logo + Redes Sociais -->
+          <div class="col-lg-3 col-12">
+            <a href="../../home" class="d-inline-block mb-4 navbar-brand">
+              <img src="../../assets/img/brand/wasomupfy_brand.png" alt="Wasom Upfy" width="65" class="img-logo"
+                height="60" />
+            </a>
+            <p class="lead text-muted small mb-4">
+              Levamos a música angolana para o mundo. Distribuição digital,
+              marketing e gestão de carreira num só lugar.
+            </p>
+            <div class="d-flex gap-3" role="list" aria-label="Redes sociais">
+              <a href="https://www.instagram.com/wasomupfy" target="_blank" rel="external noopener noreferrer"
+                aria-label="Instagram da Wasom Upfy (abre em nova janela)"
+                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                <i class="fa-brands fa-instagram"></i>
+                <span class="visually-hidden">Instagram</span>
+              </a>
+              <a href="https://www.facebook.com/wasom.official" target="_blank" rel="external noopener noreferrer"
+                aria-label="Facebook da Wasom Upfy (abre em nova janela)"
+                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                <i class="fa-brands fa-facebook-f"></i>
+                <span class="visually-hidden">Facebook</span>
+              </a>
+              <a href="https://www.youtube.com/@wasomupfy" target="_blank" rel="external noopener noreferrer"
+                aria-label="YouTube da Wasom Upfy (abre em nova janela)"
+                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                <i class="fa-brands fa-youtube"></i>
+                <span class="visually-hidden">YouTube</span>
+              </a>
+              <a href="https://linkedin.com/company/wasom-upfy" target="_blank" rel="external noopener noreferrer"
+                aria-label="LinkedIn da Wasom Upfy (abre em nova janela)"
+                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                <i class="fa-brands fa-linkedin-in"></i>
+                <span class="visually-hidden">LinkedIn</span>
+              </a>
+              <a href="https://wa.me/244923456789" target="_blank" rel="external noopener noreferrer"
+                aria-label="WhatsApp da Wasom Upfy (abre em nova janela)"
+                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                <i class="fa-brands fa-whatsapp"></i>
+                <span class="visually-hidden">WhatsApp</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Empresa -->
+          <div class="col-lg-3 col-6">
+            <h3 class="fw-bold mb-3">Empresa</h3>
+            <ul class="list-unstyled mb-0">
+              <li class="mb-2">
+                <a href="../../about" class="text-reset text-decoration-none hover-white">
+                  Sobre
+                </a>
+              </li>
+              <li class="mb-2">
+                <a href="../../about#nossamarca" class="text-reset text-decoration-none hover-white">A nossa marca
+                </a>
+              </li>
+              <li class="mb-2">
+                <a href="../../plan/all-plans" class="text-reset text-decoration-none hover-white">Planos
+                </a>
+              </li>
+              <li class="mb-2">
+                <a href="../services/customized-services" class="text-reset text-decoration-none hover-white">Serviços
+                  Premium</a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Suporte -->
+          <div class="col-lg-3 col-6">
+            <h3 class="fw-bold mb-3">Suporte</h3>
+            <ul class="list-unstyled mb-0">
+              <li class="mb-2">
+                <a href="https://www.facebook.com/m.me/2007900989425052" target="_blank"
+                  rel="external noopener noreferrer" class="text-reset text-decoration-none hover-white">
+                  Atendimento
+                </a>
+              </li>
+              <li class="mb-2">
+                <a href="../../page/support/help" class="text-reset text-decoration-none hover-white">Ajuda
+                </a>
+              </li>
+              <li class="mb-2">
+                <a href="../../contact" class="text-reset text-decoration-none hover-white">Contacta-nos
+                </a>
+              </li>
+              <li class="mb-2">
+                <a href="https://wa.me/244923456789" class="text-reset text-decoration-none hover-white">WhatsApp
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Contacto e Localidade -->
+          <div class="col-lg-3 col-12">
+            <h3 class="fw-bold mb-3">Contacto</h3>
+            <ul class="list-unstyled mb-0 text-muted small">
+              <li class="mb-3 d-flex">
+                <span>Angola - Luanda</span>
+              </li>
+              <li class="mb-3 d-flex">
+                <a href="mailto:info@wasomupfy.com?subject=Contacto%20Wasom%20Upfy"
+                  class="text-reset text-decoration-none">info@wasomupfy.com</a>
+              </li>
+              <li class="mb-3 d-flex">
+                <a href="mailto:suporte@wasomupfy.com?subject=Contacto%20Wasom%20Upfy"
+                  class="text-reset text-decoration-none">suporte@wasomupfy.com</a>
+              </li>
+              <li class="d-flex">
+                <span>Seg - Sex: 08h às 17h</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Rodapé Inferior - Copyright e Links Legais -->
+      <div class="row py-4 mt-6 border-top border-white-10 align-items-center">
+        <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+          <p class="text-muted small mb-0">
+            &copy;
+            <script>
+              document.write(new Date().getFullYear());
+            </script>
+            Wasom Upfy. Todos os direitos reservados.
+          </p>
+        </div>
+        <div class="col-md-6 text-center text-md-end">
+          <ul class="list-inline mb-0 small">
+            <li class="list-inline-item">
+              <a href="../politicies/privacy" class="text-reset text-decoration-none">Política de Privacidade</a>
+            </li>
+            <li class="list-inline-item mx-2 text-white-10">|</li>
+            <li class="list-inline-item">
+              <a href="../politicies/terms" class="text-reset text-decoration-none">Termos de Uso</a>
+            </li>
+            <li class="list-inline-item mx-2 text-white-10">|</li>
+            <li class="list-inline-item">
+              <a href="../politicies/cookies" class="text-reset text-decoration-none">Cookies</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <!-- Footer fim -->
+
+  <!-- Scroll top  ou voltar para cima-->
+  <div class="btn-scroll-top">
+    <svg class="progress-square svg-content" width="100%" height="100%" viewBox="0 0 40 40">
+      <path
+        d="M8 1H32C35.866 1 39 4.13401 39 8V32C39 35.866 35.866 39 32 39H8C4.13401 39 1 35.866 1 32V8C1 4.13401 4.13401 1 8 1Z" />
+    </svg>
+  </div>
+  <!-- Scroll top  ou voltar para cima fim-->
+  <!-- Mudar de do tema da so site-->
+  <div class="customizer_1">
+    <div class="position-absolute end-0 bottom-0 m-4 fixed">
+      <div class="dropdown">
+        <button class="btn btn-wasomupfy rounded-circle d-flex align-items-center" type="button" aria-expanded="false"
+          data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
+          <i class="fa-solid fa-circle-half-stroke"></i>
+          <span class="visually-hidden bs-theme-text">Tema do Site</span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bs-theme-text">
+          <li>
+            <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light"
+              aria-pressed="false">
+              <i class="fa-solid fa-sun"></i>
+              <span class="ms-2">Claro</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark"
+              aria-pressed="false">
+              <i class="fa-solid fa-moon"></i>
+              <span class="ms-2">Escuro</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto"
+              aria-pressed="true">
+              <i class="fa-solid fa-display"></i>
+              <span class="ms-2">Sistema</span>
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <!-- Mudar de do tema da so site fim-->
+  <div class="modal fade" id="modalFeedback" tabindex="-1" aria-labelledby="modalFeedbackLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-wasomupfy text-white border-0">
+          <h5 class="modal-title fw-bold" id="modalFeedbackLabel">
+            <i class="fa-solid fa-bullhorn me-2"></i> Sua opinião importa!
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body p-4">
+          <p class="text-muted">
+            Como tem sido sua experiência com a <strong>Wasom Upfy</strong>?
+            Suas sugestões nos ajudam a evoluir.
+          </p>
+
+          <form id="formFeedback">
+            <div class="mb-3">
+              <label class="form-label fw-semibold text-dark">Seu Nome</label>
+              <input type="text" class="form-control" placeholder="Ex: André Wasom" required />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold text-dark">Assunto</label>
+              <select class="form-select">
+                <option selected>Sugestão de melhoria</option>
+                <option>Elogio</option>
+                <option>Relatar um problema</option>
+                <option>Outros</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold text-dark">Sua Mensagem</label>
+              <textarea class="form-control" rows="4" placeholder="Conte-nos em detalhes..." required></textarea>
+            </div>
+
+            <div class="d-grid mt-4">
+              <button type="submit" class="btn btn-wasomupfy btn-lg">
+                Enviar Feedback <i class="fa-solid fa-paper-plane ms-2"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="modal-footer border-0 justify-content-center pb-4">
+          <small class="text-muted">A Wasom Upfy agradece sua parceria!</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Libs JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Simplebar (Scrollbar customizado) -->
+  <script src="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.js"></script>
+  <!-- Headhesive (Sticky header) -->
+  <script src="https://cdn.jsdelivr.net/npm/headhesive@1.2.4/dist/headhesive.min.js"></script>
+  <!-- Theme JS -->
+  <script src="../../js/theme.min.js"></script>
+  <!-- Color modes -->
+  <script src="../../js/vendors/color-modes.js"></script>
+  <script src="../../js/libs/scrollcue/scrollCue.min.js"></script>
+  <script src="../../js/vendors/scrollcue.js"></script>
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/svg-injector@1.1.3/dist/svg-injector.min.js"></script>
+  <!-- Feather Icons -->
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.29.0/dist/feather.min.js"></script>
+  <!-- In View (Detectar elementos na viewport) -->
+  <script src="https://unpkg.com/in-view@0.6.1/dist/in-view.min.js"></script>
+  <!-- Sticky Kit (Elementos sticky) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js"></script>
+  <!-- ImagesLoaded -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/imagesloaded/5.0.0/imagesloaded.pkgd.min.js"></script>
+  <!-- Jarallax (Efeitos parallax) -->
+  <script src="https://cdn.jsdelivr.net/npm/jarallax@2.2.0/dist/jarallax.min.js"></script>
+  <script src="../../js/faq.js"></script>
+  <script>
+    feather.replace({
+      width: "1em",
+      height: "1em",
+    });
+  </script>
+  <script>
+    !(function(e, t, a, n, g) {
+      (e[n] = e[n] || []),
+      e[n].push({
+        "gtm.start": new Date().getTime(),
+        event: "gtm.js",
+      });
+      var m = t.getElementsByTagName(a)[0],
+        r = t.createElement(a);
+      (r.async = !0),
+      (r.src = "https://www.googletagmanager.com/gtm.js?id=GTM-MF4DZVH"),
+      m.parentNode.insertBefore(r, m);
+    })(window, document, "script", "dataLayer");
+  </script>
+</body>
+
+</html>

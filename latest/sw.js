@@ -1,16 +1,16 @@
 const CACHE_NAME = "wasom-upfy-cache-v2.0";
 const urlsToCache = [
   "/",
-  "/home.html",
-  "/settings.html",
-  "/help.html",
-  "/launch/releases.html",
-  "/analytics/statistics.html",
-  "/finances/overview.html",
-  "/artists/artists-list.html",
-  "/youtube.html",
-  "/user/profile.html",
-  "/notifications.html",
+  "/home",
+  "/settings",
+  "/help",
+  "/launch/releases",
+  "/analytics/statistics",
+  "/finances/overview",
+  "/artists/artists-list",
+  "/youtube",
+  "/user/profile",
+  "/notifications",
   "/css/bootstrap.min.css",
   "/css/bootstrap-icons.css",
   "/css/dashboard-style.css",
@@ -20,7 +20,7 @@ const urlsToCache = [
   "/assets/img/icones/wasomupfy_fiv_maskable.png",
   "/assets/img/screenshots/dashboard.png",
   "/assets/img/screenshots/settings.png",
-  "/offline.html",
+  "/offline",
 ];
 
 self.addEventListener("install", (event) => {
@@ -74,7 +74,7 @@ self.addEventListener("fetch", (event) => {
             })
             .catch(() => {
               if (event.request.mode === "navigate") {
-                return caches.match("/offline.html");
+                return caches.match("/offline");
               }
             })
         );
@@ -125,7 +125,7 @@ self.addEventListener("push", (event) => {
     icon: "/assets/img/icones/wasomupfy_fiv.png",
     badge: "/assets/img/icones/wasomupfy_fiv.png",
     vibrate: [200, 100, 200], // Vibração em dispositivos móveis
-    data: { url: data.url || "/painel.html" },
+    data: { url: data.url || "/painel" },
   };
   event.waitUntil(self.registration.showNotification(data.title, options));
 });

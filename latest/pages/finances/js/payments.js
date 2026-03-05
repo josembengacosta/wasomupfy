@@ -604,7 +604,7 @@ $(document).ready(function () {
     printWindow.document.write(`
             <html>
                 <head>
-                    <title>Recibo de Pagamento - WASOM UPFY</title>
+                    <title>Recibo de Pagamento — Wasom Upfy</title>
                     <style>
                         body { font-family: Arial, sans-serif; margin: 20px; }
                         .table { width: 100%; border-collapse: collapse; }

@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "Conta bancária para recebimento dos royalties",
         "Maior de 18 anos ou autorização dos responsáveis",
       ],
-      linkGuia: "../../authentic/register.html",
+      linkGuia: "../../authentic/register",
       tempoLeitura: "5 minutos",
       nivel: "Iniciante",
       videoUrl: "https://www.youtube.com/watch?v=SEU_VIDEO_CADASTRO",

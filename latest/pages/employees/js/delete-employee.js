@@ -514,7 +514,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Botão de redirecionamento
     redirectButton.addEventListener("click", function () {
-      window.location.href = "all-employees.html";
+      window.location.href = "all-employees";
     });
   }
 

@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="author" content="José Mbenga da Costa" />
+  <meta name="keywords"
+    content="Wasom Upfy, Wasom, Upfy, Sobre, about, Sobre nós, quem somos, a nossa marca, about us" />
+  <meta name="robots" content="follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large" />
+  <meta name="theme-color" content="#FF009D" />
+  <meta property="og:locale" content="pt_AO" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale:alternate" content="fr_FR" />
+  <meta property="og:locale:alternate" content="en_EN" />
+  <meta property="og:locale:alternate" content="pt_BR" />
+  <meta property="og:locale:alternate" content="pt_PT" />
+  <meta property="og:title" content="Wasom Upfy - Saiba tudo sobre nós." />
+  <meta property="og:description"
+    content="A Wasom Upfy é a plataforma de distribuição de música mais fácil e completa do mercado. Ela constitui de serviços de distribuição digital e gestão de direitos de músicas, focada na promoção e desenvolvimento de artistas e gravadoras independentes. Com bons anos de experiência no mercado da música, a empresa tem como um dos principais objectivos desenvolver o mercado de distribuição e vendas de obras musicais para mais de 100 regiões em toda parte do mundo." />
+  <meta property="og:url" content="https://wasomupfy.rf.gd/" />
+  <meta property="og:site_name" content="Wasom Upfy" />
+  <meta property="og:image" content="https://wasomupfy.rf.gd/imgs/og_wasomupfy.jpeg" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:width" content="300" />
+  <meta property="og:image:height" content="300" />
+  <meta property="og:image:alt" content="Slogan Wasom Upfy" />
+  <title>Wasom Upfy | Promoção de Música</title>
+  <!-- O processo de carregamento do site em Javascript fim -->
+  <script>
+    window.addEventListener("load", function() {
+      setTimeout(function() {
+        document.querySelector("body").classList.add("loaded");
+      }, 200);
+    });
+  </script>
+  <!-- O processo de carregamento do site em Javascript fim -->
+  <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv1.png" type="image/x-icon" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="../../css/theme.min.css" />
+  <link rel="stylesheet" href="../../js/libs/scrollcue/scrollCue.css" />
+  <link rel="stylesheet" href="../../css/framework.css" />
+  <link rel="stylesheet" href="../../css/main.css" />
+</head>
+
+<body>
+  <!-- O processo de carregamento do site em HTML & CSS -->
+  <div class="preloader">
+    <img src="../../assets/img/brand/wasomupfy_loaading.png" class="img-fluid loading-logo" width="90" height="90"
+      alt="Loading-wasomupfy" />
+  </div>
+  <!-- O processo de carregamento do site em HTML & CSS fim -->
+
+  <!-- Cabecalho da página de navbar -->
+  <header>
+    <nav class="navbar navbar-expand-lg transparent navbar-transparent navbar-dark">
+      <div class="container px-3">
+        <a class="navbar-brand" href="../../home" title="Home"><img src="../../assets/img/brand/wasomupfy_brand.png"
+            width="65" class="img-logo" height="60" alt="Logo Wasom Upfy" /></a>
+        <button class="navbar-toggler offcanvas-nav-btn" type="button">
+          <i class="bi bi-list"></i>
+        </button>
+        <div class="offcanvas offcanvas-start offcanvas-nav" style="width: 20rem">
+          <div class="offcanvas-header">
+            <a title="Logotipo" href="../../home"><img width="65" src="../../assets/img/brand/wasomupfy_brand.png"
+                alt="Logo Wasom Upfy" /></a>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body pt-0 align-items-center">
+            <ul class="navbar-nav mx-auto align-items-lg-center">
+              <li class="nav-item">
+                <a class="nav-link" href="../../home" title="Inicio" role="button" data-bs-toggle="link"
+                  aria-expanded="false">Início</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="../../about" title="Sobre" role="button" data-bs-toggle="link"
+                  aria-expanded="false">Sobre</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="../../blog/" title="Blogue" target="_blank" rel="external" role="button"
+                  data-bs-toggle="link" aria-expanded="false">Blogue</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a title="Planos" class="nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+                  aria-haspopup="true" aria-expanded="false">Planos <i data-feather="chevron-down"></i></a>
+                <div class="dropdown-menu dropdown-menu-md" aria-labelledby="navbarDropdown">
+                  <a title="Single" class="dropdown-item mb-3 text-body" href="../../plan/single">
+                    <div class="d-flex align-items-center">
+                      <i class="fa-solid fa-music text-wasomupfy fs-3" style="width: 35px"></i>
+                      <div class="ms-3 lh-1">
+                        <h5 class="mb-1">Single</h5>
+                        <p class="mb-0 fs-6">Nosso plano Single - 2.000 Kz</p>
+                      </div>
+                    </div>
+                  </a>
+
+                  <a title="Álbum" class="dropdown-item mb-3 text-body" href="../../plan/album">
+                    <div class="d-flex align-items-center">
+                      <i class="fa-solid fa-compact-disc text-wasomupfy fs-3" style="width: 35px"></i>
+                      <div class="ms-3 lh-1">
+                        <h5 class="mb-1">Álbum</h5>
+                        <p class="mb-0 fs-6">Nosso plano Álbum - 5.000 Kz</p>
+                      </div>
+                    </div>
+                  </a>
+
+                  <a title="Artista" class="dropdown-item mb-3 text-body" href="../../plan/artist">
+                    <div class="d-flex align-items-center">
+                      <i class="fa-solid fa-microphone-lines text-wasomupfy fs-3" style="width: 35px"></i>
+                      <div class="ms-3 lh-1">
+                        <h5 class="mb-1">Artista</h5>
+                        <p class="mb-0 fs-6">
+                          Nosso plano Artista - 11.400 Kz/2ano
+                        </p>
+                      </div>
+                    </div>
+                  </a>
+
+                  <a title="Label" class="dropdown-item mb-3 text-body" href="../../plan/label">
+                    <div class="d-flex align-items-center">
+                      <i class="fa-solid fa-tags text-wasomupfy fs-3" style="width: 35px"></i>
+                      <div class="ms-3 lh-1">
+                        <h5 class="mb-1">Label</h5>
+                        <p class="mb-0 fs-6">
+                          Nosso plano Label - 70.000 Kz/2ano
+                        </p>
+                      </div>
+                    </div>
+                  </a>
+
+                  <a title="Todos os planos" class="dropdown-item mb-3 text-body" href="../../plan/all-plans">
+                    <div class="d-flex align-items-center">
+                      <i class="fa-solid fa-layer-group text-wasomupfy fs-3" style="width: 35px"></i>
+                      <div class="ms-3 lh-1">
+                        <h5 class="mb-1">Todos os planos</h5>
+                        <p class="mb-0 fs-6">Todos os nossos planos</p>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </li>
+              <li class="nav-item dropdown">
+                <a title="Páginas" class="nav-link" href="#" role="button" data-bs-toggle="dropdown"
+                  aria-expanded="false">Páginas <i data-feather="chevron-down"></i></a>
+                <div class="dropdown-menu dropdown-menu-xxl">
+                  <div class="row row-cols-lg-3">
+                    <div class="col">
+                      <div class="dropdown-header">Blog</div>
+                      <a title="Novidades" class="dropdown-item" href="../../blog/">Novidades</a>
+                      <a title="Passatempo Wasom Upfy" class="dropdown-item" href="../../blog/">Passatempo</a>
+                      <a title="Indisponível" class="dropdown-item" href="#!">Indisponível
+                        <span class="badge bg-warning">Indisponível</span></a>
+                      <div class="mt-3">
+                        <div class="dropdown-header">Sobre</div>
+                        <a title="A nossa marca" class="dropdown-item" href="../../about?#nossamarca">A nossa marca</a>
+                        <a title="Parcerias" class="dropdown-item" href="../../partnership">Parcerias</a>
+                        <a title="Quem somos" class="dropdown-item" href="../../about#nossa-historia">Quem somos</a>
+                      </div>
+                    </div>
+
+                    <div class="col">
+                      <div class="mt-3 mt-lg-0">
+                        <div class="dropdown-header">Serviços</div>
+                        <a title="Propagandas" class="dropdown-item" href="music-distribution">Distribuição de
+                          música</a>
+                        <a title="Parcerias" class="dropdown-item active" href="music-promotion">Promoção de música
+                          <span class="badge bg-success">Novo</span></a>
+                        <a title="Indisponível" class="dropdown-item" href="customized-services">Serviços personalizados
+                          <span class="badge bg-warning">Indisponível</span></a>
+                      </div>
+
+                      <div class="mt-3">
+                        <div class="dropdown-header">Contactos</div>
+                        <a title="Atendimento pelo Facebook" class="dropdown-item"
+                          href="https://www.facebook.com/m.me/2007900989425052" target="_blank"
+                          rel="external noopener noreferrer">Atendimento</a>
+                        <a title="Contacto-nos" class="dropdown-item" href="../../contact">Contacta-nos</a>
+                        <a title="Canal WhatsApp" class="dropdown-item"
+                          href="https://whatsapp.com/channel/0029VaCEDqo59PwWpU0nGa04" target="_blank"
+                          rel="external noopener noreferrer">Canal WhatsApp</a>
+                      </div>
+                    </div>
+
+                    <div class="col">
+                      <div class="mt-3 mt-lg-0">
+                        <div>
+                          <div class="dropdown-header">Sugestões</div>
+                          <a title="Ajuda" class="dropdown-item" href="../support/help">Ajuda
+                            <span class="badge bg-success">Novo</span></a>
+                          <a title="Feedback" class="dropdown-item" href="#" data-bs-toggle="modal"
+                            data-bs-target="#modalFeedback">
+                            Feedback</a>
+                          <a title="Indisponível" class="dropdown-item" href="#!">Indisponível
+                            <span class="badge bg-warning">Indisponível</span></a>
+                        </div>
+                        <div class="mt-3">
+                          <div class="dropdown-header">Ajuda</div>
+                          <a title="Tutorial" class="dropdown-item" href="../support/tutorial">Tutorial
+                            <span class="badge bg-success">Novo</span></a>
+                          <a title="Ocorreu um erro" class="dropdown-item" href="../support/support">Suporte técnico</a>
+                          <a title="Perguntas frequentes" class="dropdown-item" href="../support/faq">Perguntas
+                            frequentes</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link" href="../../resources" title="Recursos" role="button" data-bs-toggle="link"
+                  aria-expanded="false">
+                  Recursos</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a title="Contacto" class="nav-link" href="#" role="button" data-bs-toggle="dropdown"
+                  aria-expanded="false">Contactar <i data-feather="chevron-down"></i></a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a title="Caixa de mensagem" class="dropdown-item" href="../../contact">
+                      Caixa de mensagem</a>
+                  </li>
+                  <li>
+                    <a title="E-mail" class="dropdown-item"
+                      href="mailto:info@wasomupfy.com?subject=Entrando em contacto com equipa de Wasom Upfy.&bcc=suporte@wasomupfy.com&body=Olá equipa de Wasom Upfy.">
+                      info@wasomupfy.com</a>
+                  </li>
+                  <li>
+                    <a title="WhatsApp" class="dropdown-item"
+                      href="https://api.whatsapp.com/send/?phone=244922030116&text&type=phone_number&app_absent=0">
+                      WhatsApp
+                    </a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+            <div class="mt-3 mt-lg-0 d-flex align-items-center">
+              <a title="Sign-in" href="/wasomupfy/login" class="btn btn-secondary mx-2">Entrar
+                <i data-feather="log-in"></i>
+              </a>
+              <a title="Sign-up" href="/wasomupfy/register" class="btn btn-wasomupfy">Inscreva-se
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+  <!-- Cabecalho da página de navbar fim -->
+
+  <!--Seccão do site inteira até ao perto do footer  -->
+  <main>
+    <section class="promotion-hero jarallax position-relative overflow-hidden py-5" data-jarallax data-speed="0.4">
+      <img class="jarallax-img" src="../../assets/img/theme/promoting.png" alt="Promoção Musical Wasom Upfy"
+        loading="lazy" />
+      <div class="hero-overlay"></div>
+      <div class="container position-relative z-index-2 py-6">
+        <div class="row justify-content-center text-center">
+          <div class="col-xl-8 col-lg-10 text-center" data-cue="fadeIn">
+            <span class="badge bg-wasomupfy text-white mb-3 fs-6 px-3 py-2 rounded-pill">Marketing Musical</span>
+            <h1 class="display-4 mb-4 text-white-stable fw-bold">
+              Não basta lançar.<br />É preciso ser ouvido.
+            </h1>
+            <p class="lead text-white-stable mb-4 opacity-90">
+              Ajudamos artistas e labels a furar a bolha dos algoritmos.
+              Campanhas de tráfego, pitching para playlists e estratégias de
+              lançamento personalizadas.
+            </p>
+            <div class="d-flex justify-content-center gap-3">
+              <a href="#pacotes" class="btn btn-wasomupfy btn-lg px-5 py-3 fw-bold shadow-lg smooth-scroll">
+                Ver Pacotes <i class="fa-solid fa-fire ms-2"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-4 bg-light-100">
+      <div class="container">
+        <div class="row align-items-center g-5">
+          <div class="col-lg-6" data-cue="slideInLeft">
+            <div class="position-relative">
+              <img src="../../assets/img/theme/meeting.png" class="img-fluid rounded-3 shadow-lg"
+                alt="Estatísticas de Crescimento" />
+              <div class="card position-absolute bottom-0 end-0 mb-n4 me-n4 border-0 shadow-lg p-3"
+                style="max-width: 200px">
+                <div class="d-flex align-items-center">
+                  <div class="icon-shape icon-md bg-success text-white rounded-circle">
+                    <i class="fa-solid fa-arrow-trend-up"></i>
+                  </div>
+                  <div class="ms-3">
+                    <h5 class="mb-0 fw-bold">+450%</h5>
+                    <small class="text-muted">Alcance Mensal</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6" data-cue="fadeIn">
+            <h2 class="display-5 fw-bold mb-4">
+              60.000 músicas são lançadas todos os dias...
+            </h2>
+            <p class="lead text-muted mb-4">
+              Como fazer a tua destacar-se no meio de tantas? A distribuição
+              coloca a tua música na loja, mas a
+              <strong>promoção</strong> traz os clientes para dentro.
+            </p>
+            <ul class="list-unstyled mb-0">
+              <li class="d-flex mb-3">
+                <i class="fa-solid fa-bullseye text-wasomupfy mt-1 fs-5 me-3"></i>
+                <div>
+                  <h5 class="mb-1">Tráfego Qualificado</h5>
+                  <p class="text-muted small">
+                    Anúncios direcionados para quem realmente gosta do teu
+                    estilo.
+                  </p>
+                </div>
+              </li>
+              <li class="d-flex mb-3">
+                <i class="fa-solid fa-list-ul text-wasomupfy mt-1 fs-5 me-3"></i>
+                <div>
+                  <h5 class="mb-1">Curadoria de Playlists</h5>
+                  <p class="text-muted small">
+                    Pitching direto para curadores independentes e editoriais.
+                  </p>
+                </div>
+              </li>
+              <li class="d-flex">
+                <i class="fa-solid fa-hashtag text-wasomupfy mt-1 fs-5 me-3"></i>
+                <div>
+                  <h5 class="mb-1">Redes Sociais</h5>
+                  <p class="text-muted small">
+                    Estratégias para TikTok e Instagram Reels.
+                  </p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-5 bg-light-100">
+      <div class="container">
+        <div class="text-center mb-6">
+          <h2 class="fw-bold">Ferramentas de Impulso</h2>
+          <p class="text-muted">
+            Tudo o que precisas para profissionalizar o teu lançamento.
+          </p>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-md-3 col-sm-6" data-cue="zoomIn">
+            <div class="card h-100 border-0 shadow-sm text-center p-4 hover-lift">
+              <div class="icon-shape icon-lg text-wasomupfy rounded-circle shadow-sm mb-3 mx-auto">
+                <i class="fa-brands fa-spotify fs-2"></i>
+              </div>
+              <h5 class="fw-bold">Pitching Spotify</h5>
+              <p class="small text-muted mb-0">
+                Submissão para playlists algorítmicas e editoriais.
+              </p>
+            </div>
+          </div>
+          <div class="col-md-3 col-sm-6" data-cue="zoomIn" data-delay="100">
+            <div class="card h-100 border-0 shadow-sm text-center p-4 hover-lift">
+              <div class="icon-shape icon-lg text-wasomupfy rounded-circle shadow-sm mb-3 mx-auto">
+                <i class="fa-brands fa-youtube fs-2"></i>
+              </div>
+              <h5 class="fw-bold">YouTube Ads</h5>
+              <p class="small text-muted mb-0">
+                Campanhas de visualização TrueView para o teu clipe.
+              </p>
+            </div>
+          </div>
+          <div class="col-md-3 col-sm-6" data-cue="zoomIn" data-delay="200">
+            <div class="card h-100 border-0 shadow-sm text-center p-4 hover-lift">
+              <div class="icon-shape icon-lg text-wasomupfy rounded-circle shadow-sm mb-3 mx-auto">
+                <i class="fa-brands fa-instagram fs-2"></i>
+              </div>
+              <h5 class="fw-bold">Meta Ads</h5>
+              <p class="small text-muted mb-0">
+                Anúncios no Instagram e Facebook Stories/Reels.
+              </p>
+            </div>
+          </div>
+          <div class="col-md-3 col-sm-6" data-cue="zoomIn" data-delay="300">
+            <div class="card h-100 border-0 shadow-sm text-center p-4 hover-lift">
+              <div class="icon-shape icon-lg text-wasomupfy rounded-circle shadow-sm mb-3 mx-auto">
+                <i class="fa-solid fa-pen-nib fs-2"></i>
+              </div>
+              <h5 class="fw-bold">Press Kit (EPK)</h5>
+              <p class="small text-muted mb-0">
+                Criação de biografia e material profissional para imprensa.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pacotes" class="py-5 bg-wasomupfy position-relative">
+      <div class="position-absolute top-0 start-0 w-100 h-100 opacity-10"
+        style="background-image: url('../../assets/img/theme/pattern.png')"></div>
+
+      <div class="container position-relative z-index-2">
+        <div class="text-center mb-6">
+          <h2 class="fw-bold">Investimento na sua Carreira</h2>
+          <p class="text-white">
+            Escolha o nível de intensidade que o seu lançamento precisa.
+          </p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+          <div class="col-lg-4 col-md-6" data-cue="fadeIn">
+            <div class="card h-100 border-0 shadow-lg p-4">
+              <div class="card-body">
+                <span class="badge bg-light text-dark mb-3">Inicial</span>
+                <h3 class="fw-bold">Impulso Single</h3>
+                <p class="text-muted small">
+                  Para quem está começando e precisa de validação.
+                </p>
+                <hr class="my-4 opacity-10" />
+                <ul class="list-unstyled mb-4">
+                  <li class="mb-3">
+                    <i class="fa-solid fa-check text-wasomupfy me-2"></i>
+                    Pitching para Curadores
+                  </li>
+                  <li class="mb-3">
+                    <i class="fa-solid fa-check text-wasomupfy me-2"></i>
+                    Otimização de Perfil
+                  </li>
+                  <li class="mb-3">
+                    <i class="fa-solid fa-check text-wasomupfy me-2"></i>
+                    Relatório Básico
+                  </li>
+                </ul>
+                <a href="contact?consultant=initial" class="btn btn-outline-wasomupfy w-100">Consultar Valor</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-cue="fadeIn" data-delay="100">
+            <div class="card h-100 border-0 shadow-lg p-4 position-relative overflow-hidden transform-scale-md">
+              <div class="position-absolute top-0 start-0 w-100 bg-dark text-white text-center small fw-bold py-1">
+                MAIS VENDIDO
+              </div>
+              <div class="card-body mt-3">
+                <span class="badge bg-wasomupfy text-white mb-3">Profissional</span>
+                <h3 class="fw-bold">Campanha 360º</h3>
+                <p class="text-muted small">
+                  Tráfego pago e orgânico combinados para máximo alcance.
+                </p>
+                <hr class="my-4 opacity-10" />
+                <ul class="list-unstyled mb-4">
+                  <li class="mb-3">
+                    <i class="fa-solid fa-check text-wasomupfy me-2"></i>
+                    <strong>Gestão de Ads (Meta/Google)</strong>
+                  </li>
+                  <li class="mb-3">
+                    <i class="fa-solid fa-check text-wasomupfy me-2"></i>
+                    Pitching Editorial & Blogs
+                  </li>
+                  <li class="mb-3">
+                    <i class="fa-solid fa-check text-wasomupfy me-2"></i>
+                    Criação de Criativos (Vídeo)
+                  </li>
+                  <li class="mb-3">
+                    <i class="fa-solid fa-check text-wasomupfy me-2"></i>
+                    Relatório Avançado
+                  </li>
+                </ul>
+                <a href="contact?consultant=talk" class="btn btn-wasomupfy w-100 shadow">Falar com Consultor</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6" data-cue="fadeIn" data-delay="200">
+            <div class="card h-100 border-0 shadow-lg p-4">
+              <div class="card-body">
+                <span class="badge bg-light text-dark mb-3">Empresarial</span>
+                <h3 class="fw-bold">Gestão de Label</h3>
+                <p class="text-muted small">
+                  Planejamento estratégico de longo prazo para catálogo.
+                </p>
+                <hr class="my-4 opacity-10" />
+                <ul class="list-unstyled mb-4">
+                  <li class="mb-3">
+                    <i class="fa-solid fa-check text-wasomupfy me-2"></i>
+                    Planejamento Trimestral
+                  </li>
+                  <li class="mb-3">
+                    <i class="fa-solid fa-check text-wasomupfy me-2"></i>
+                    Gestão de Branding
+                  </li>
+                  <li class="mb-3">
+                    <i class="fa-solid fa-check text-wasomupfy me-2"></i>
+                    Consultoria de Carreira
+                  </li>
+                </ul>
+                <a href="contact?meeting=schedule" class="btn btn-outline-wasomupfy w-100">Agendar Reunião</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-5 bg-light-100 border-top">
+      <div class="container text-center">
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <h2 class="fw-bold mb-3">Não sabe qual estratégia usar?</h2>
+            <p class="lead text-muted mb-4">
+              Cada lançamento é único. Nossa equipe pode analisar sua música e
+              sugerir o melhor caminho.
+            </p>
+            <a href="contact?analysis=free" class="btn btn-wasomupfy btn-lg px-5 rounded-pill">
+              <i class="fa-regular fa-comments me-2"></i> Análise Gratuita
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!--Seccão do site inteira até ao perto do footer  fim -->
+  <div class="divider-fade"></div>
+
+  <!-- Footer -->
+  <footer class="pt-4 bg-light-100" role="contentinfo" aria-label="Rodapé do site">
+    <div class="container">
+      <!-- Redes Sociais -->
+      <div class="text-center mb-5">
+        <h2 class="h4 mb-3">Acompanhe-nos</h2>
+        <div class="social-links d-flex flex-wrap justify-content-center gap-3 mb-4" role="list"
+          aria-label="Redes sociais">
+          <!-- Facebook -->
+          <a target="_blank" rel="external noopener noreferrer"
+            aria-label="Facebook da Wasom Upfy (abre em nova janela)" href="https://www.facebook.com/wasom.official"
+            class="btn btn-wasomupfy btn-social" role="listitem">
+            <i class="bi bi-facebook fs-5"></i>
+            <span class="visually-hidden">Facebook</span>
+          </a>
+
+          <!-- Instagram -->
+          <a target="_blank" rel="external noopener noreferrer"
+            aria-label="Instagram da Wasom Upfy (abre em nova janela)" href="https://www.instagram.com/@wasomupfy"
+            class="btn btn-wasomupfy btn-social" role="listitem">
+            <i class="bi bi-instagram fs-5"></i>
+            <span class="visually-hidden">Instagram</span>
+          </a>
+
+          <!-- WhatsApp -->
+          <a target="_blank" rel="external noopener noreferrer"
+            aria-label="WhatsApp da Wasom Upfy (abre em nova janela)" href="https://wa.me/244923456789"
+            class="btn btn-wasomupfy btn-social" role="listitem">
+            <i class="bi bi-whatsapp fs-5"></i>
+            <span class="visually-hidden">WhatsApp</span>
+          </a>
+
+          <!-- YouTube -->
+          <a target="_blank" rel="external noopener noreferrer" aria-label="YouTube da Wasom Upfy (abre em nova janela)"
+            href="https://www.youtube.com/@wasomupfy" class="btn btn-wasomupfy btn-social" role="listitem">
+            <i class="bi bi-youtube fs-5"></i>
+            <span class="visually-hidden">YouTube</span>
+          </a>
+
+          <!-- LinkedIn -->
+          <a target="_blank" rel="external noopener noreferrer"
+            aria-label="LinkedIn da Wasom Upfy (abre em nova janela)" href="https://linkedin.com/company/wasom-upfy"
+            class="btn btn-wasomupfy btn-social" role="listitem">
+            <i class="bi bi-linkedin fs-5"></i>
+            <span class="visually-hidden">LinkedIn</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Navegação do Footer -->
+      <nav aria-label="Navegação do rodapé">
+        <div class="row" id="ft-links">
+          <!-- Sobre Nós -->
+          <div class="col-lg-3 col-12 mb-4 mb-lg-0">
+            <div class="mb-3 pb-2 d-flex justify-content-between border-bottom border-bottom-lg-0">
+              <h3 class="h5 mb-0">Sobre Nós</h3>
+              <button class="d-block d-lg-none btn btn-link p-0 text-body" type="button" aria-expanded="false"
+                aria-controls="collapseAccounts" data-bs-toggle="collapse" data-bs-target="#collapseAccounts">
+                <i data-feather="chevron-down" aria-hidden="true"></i>
+                <span class="visually-hidden">Expandir seção Sobre Nós</span>
+              </button>
+            </div>
+            <div class="collapse d-lg-block" id="collapseAccounts" data-bs-parent="#ft-links">
+              <ul class="list-unstyled mb-0 py-3 py-lg-0">
+                <li class="mb-2">
+                  <a href="/blog/" class="text-decoration-none text-reset hover-primary">
+                    Blogue
+                  </a>
+                </li>
+
+                <li class="mb-2">
+                  <a href="/about" class="text-decoration-none text-reset hover-primary">
+                    Sobre
+                  </a>
+                </li>
+                <li class="mb-2">
+                  <a href="/about#nossamarca" class="text-decoration-none text-reset hover-primary">
+                    A nossa marca
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Suporte -->
+          <div class="col-lg-3 col-12 mb-4 mb-lg-0">
+            <div class="mb-3 pb-2 d-flex justify-content-between border-bottom border-bottom-lg-0">
+              <h3 class="h5 mb-0">Suporte</h3>
+              <button class="d-block d-lg-none btn btn-link p-0 text-body" type="button" aria-expanded="false"
+                aria-controls="collapseResources" data-bs-toggle="collapse" data-bs-target="#collapseResources">
+                <i data-feather="chevron-down" aria-hidden="true"></i>
+                <span class="visually-hidden">Expandir seção Suporte</span>
+              </button>
+            </div>
+            <div class="collapse d-lg-block" id="collapseResources" data-bs-parent="#ft-links">
+              <ul class="list-unstyled mb-0 py-3 py-lg-0">
+                <li class="mb-2">
+                  <a href="https://www.facebook.com/m.me/2007900989425052" target="_blank"
+                    rel="external noopener noreferrer" class="text-decoration-none text-reset hover-primary">
+                    Atendimento
+                  </a>
+                </li>
+                <li class="mb-2">
+                  <a href="/page/support/help" class="text-decoration-none text-reset hover-primary">
+                    Ajuda
+                  </a>
+                </li>
+                <li class="mb-2">
+                  <a href="/contact" class="text-decoration-none text-reset hover-primary">
+                    Contacta-nos
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Localidades -->
+          <div class="col-lg-3 col-12 mb-4 mb-lg-0">
+            <div class="mb-3 pb-2 d-flex justify-content-between border-bottom border-bottom-lg-0">
+              <h3 class="h5 mb-0">Localidades</h3>
+              <button class="d-block d-lg-none btn btn-link p-0 text-body" type="button" aria-expanded="false"
+                aria-controls="collapseLocations" data-bs-toggle="collapse" data-bs-target="#collapseLocations">
+                <i data-feather="chevron-down" aria-hidden="true"></i>
+                <span class="visually-hidden">Expandir seção Localidades</span>
+              </button>
+            </div>
+            <div class="collapse d-lg-block" id="collapseLocations" data-bs-parent="#ft-links">
+              <ul class="list-unstyled mb-0 py-3 py-lg-0">
+                <li class="mb-2">
+                  <span class="text-reset">Angola - Luanda</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Dados de Contacto -->
+          <div class="col-lg-3 col-12 mb-4 mb-lg-0">
+            <div class="mb-3 pb-2 d-flex justify-content-between border-bottom border-bottom-lg-0">
+              <h3 class="h5 mb-0">Dados de Contacto</h3>
+              <button class="d-block d-lg-none btn btn-link p-0 text-body" type="button" aria-expanded="false"
+                aria-controls="collapseContacto" data-bs-toggle="collapse" data-bs-target="#collapseContacto">
+                <i data-feather="chevron-down" aria-hidden="true"></i>
+                <span class="visually-hidden">Expandir seção Dados de Contacto</span>
+              </button>
+            </div>
+            <div class="collapse d-lg-block" id="collapseContacto" data-bs-parent="#ft-links">
+              <ul class="list-unstyled mb-0 py-3 py-lg-0">
+                <li class="mb-2">
+                  <a href="mailto:info@wasomupfy.com?subject=Contacto%20Wasom%20Upfy"
+                    class="text-decoration-none text-reset hover-primary d-inline-flex align-items-center gap-1">
+                    <i data-feather="mail" width="16" height="16" aria-hidden="true"></i>
+                    info@wasomupfy.com
+                  </a>
+                </li>
+                <li class="mb-2">
+                  <a href="mailto:suporte@wasomupfy.com?subject=Contacto%20Wasom%20Upfy"
+                    class="text-decoration-none text-reset hover-primary d-inline-flex align-items-center gap-1">
+                    <i data-feather="mail" width="16" height="16" aria-hidden="true"></i>
+                    suporte@wasomupfy.com
+                  </a>
+                </li>
+                <li class="mb-2">
+                  <span class="text-reset d-inline-flex align-items-center gap-1">
+                    <i data-feather="clock" width="16" height="16" aria-hidden="true"></i>
+                    Segunda a Sexta: 10h às 18h
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <hr class="divider divider-fade divider-dark my-4" />
+
+      <!-- Rodapé Inferior -->
+      <div class="container mt-4 pt-lg-3 pb-0">
+        <div class="row align-items-center">
+          <div class="col-md-12">
+            <div class="text-center text-lg-center rodape">
+              <p class="mb-2">Todos os direitos reservados</p>
+              <nav class="d-flex flex-wrap justify-content-center gap-3 mb-2" aria-label="Legal">
+                <a href="../politicies/privacy" class="link text-muted text-decoration-none hover-primary">
+                  Política de Privacidade
+                </a>
+                <span class="text-muted">|</span>
+                <a href="../politicies/terms" class="link text-muted text-decoration-none hover-primary">
+                  Termos de Uso
+                </a>
+                <span class="text-muted">|</span>
+                <a href="../politicies/cookies" class="link text-muted text-decoration-none hover-primary">
+                  Cookies
+                </a>
+              </nav>
+              &copy;
+              <span id="current-year">2026</span> Wasom Upfy
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <!-- Footer fim -->
+
+  <!-- Scroll top  ou voltar para cima-->
+  <div class="btn-scroll-top">
+    <svg class="progress-square svg-content" width="100%" height="100%" viewBox="0 0 40 40">
+      <path
+        d="M8 1H32C35.866 1 39 4.13401 39 8V32C39 35.866 35.866 39 32 39H8C4.13401 39 1 35.866 1 32V8C1 4.13401 4.13401 1 8 1Z" />
+    </svg>
+  </div>
+  <!-- Scroll top  ou voltar para cima fim-->
+  <!-- Mudar de do tema da so site-->
+  <div class="customizer_1">
+    <div class="position-absolute end-0 bottom-0 m-4 fixed">
+      <div class="dropdown">
+        <button class="btn btn-wasomupfy rounded-circle d-flex align-items-center" type="button" aria-expanded="false"
+          data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
+          <i class="fa-solid fa-circle-half-stroke"></i>
+          <span class="visually-hidden bs-theme-text">Tema do Site</span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bs-theme-text">
+          <li>
+            <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light"
+              aria-pressed="false">
+              <i class="fa-solid fa-sun"></i>
+              <span class="ms-2">Claro</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark"
+              aria-pressed="false">
+              <i class="fa-solid fa-moon"></i>
+              <span class="ms-2">Escuro</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto"
+              aria-pressed="true">
+              <i class="fa-solid fa-display"></i>
+              <span class="ms-2">Sistema</span>
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <!-- Mudar de do tema da so site fim-->
+  <div class="modal fade" id="modalFeedback" tabindex="-1" aria-labelledby="modalFeedbackLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-wasomupfy text-white border-0">
+          <h5 class="modal-title fw-bold" id="modalFeedbackLabel">
+            <i class="fa-solid fa-bullhorn me-2"></i> Sua opinião importa!
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body p-4">
+          <p class="text-muted">
+            Como tem sido sua experiência com a <strong>Wasom Upfy</strong>?
+            Suas sugestões nos ajudam a evoluir.
+          </p>
+
+          <form id="formFeedback">
+            <div class="mb-3">
+              <label class="form-label fw-semibold text-dark">Seu Nome</label>
+              <input type="text" class="form-control" placeholder="Ex: André Wasom" required />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold text-dark">Assunto</label>
+              <select class="form-select">
+                <option selected>Sugestão de melhoria</option>
+                <option>Elogio</option>
+                <option>Relatar um problema</option>
+                <option>Outros</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold text-dark">Sua Mensagem</label>
+              <textarea class="form-control" rows="4" placeholder="Conte-nos em detalhes..." required></textarea>
+            </div>
+
+            <div class="d-grid mt-4">
+              <button type="submit" class="btn btn-wasomupfy btn-lg">
+                Enviar Feedback <i class="fa-solid fa-paper-plane ms-2"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="modal-footer border-0 justify-content-center pb-4">
+          <small class="text-muted">A Wasom Upfy agradece sua parceria!</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Libs JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Simplebar (Scrollbar customizado) -->
+  <script src="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.js"></script>
+  <!-- Headhesive (Sticky header) -->
+  <script src="https://cdn.jsdelivr.net/npm/headhesive@1.2.4/dist/headhesive.min.js"></script>
+  <!-- Theme JS -->
+  <script src="../../js/theme.min.js"></script>
+  <!-- Color modes -->
+  <script src="../../js/vendors/color-modes.js"></script>
+  <script src="../../js/libs/scrollcue/scrollCue.min.js"></script>
+  <script src="../../js/vendors/scrollcue.js"></script>
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/svg-injector@1.1.3/dist/svg-injector.min.js"></script>
+  <!-- Feather Icons -->
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.29.0/dist/feather.min.js"></script>
+  <!-- In View (Detectar elementos na viewport) -->
+  <script src="https://unpkg.com/in-view@0.6.1/dist/in-view.min.js"></script>
+  <!-- Sticky Kit (Elementos sticky) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js"></script>
+  <!-- ImagesLoaded -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/imagesloaded/5.0.0/imagesloaded.pkgd.min.js"></script>
+  <!-- Jarallax (Efeitos parallax) -->
+  <script src="https://cdn.jsdelivr.net/npm/jarallax@2.2.0/dist/jarallax.min.js"></script>
+  <script>
+    feather.replace({
+      width: "1em",
+      height: "1em",
+    });
+  </script>
+  <script>
+    !(function(e, t, a, n, g) {
+      (e[n] = e[n] || []),
+      e[n].push({
+        "gtm.start": new Date().getTime(),
+        event: "gtm.js",
+      });
+      var m = t.getElementsByTagName(a)[0],
+        r = t.createElement(a);
+      (r.async = !0),
+      (r.src = "https://www.googletagmanager.com/gtm.js?id=GTM-MF4DZVH"),
+      m.parentNode.insertBefore(r, m);
+    })(window, document, "script", "dataLayer");
+  </script>
+</body>
+
+</html>

@@ -4,7 +4,7 @@
        "description": "Gerencie as músicas  de utilizadores, estatísticas e finanças com o Wasom Upfy v2.0",
        "version": "2.0",
        "lang": "pt-BR",
-       "start_url": "home.html",
+       "start_url": "home",
        "scope": "/",
        "display": "standalone",
        "orientation": "portrait",
@@ -53,17 +53,17 @@
        "shortcuts": [
            {
                "name": "Dashboard",
-               "url": "/painel.html",
+               "url": "/painel",
                "description": "Acesse o painel principal"
            },
             {
                "name": "Lançamentos",
-               "url": "/launch/releases.html",
+               "url": "/launch/releases",
                "description": "Personalize sua experiência"
            },
            {
                "name": "Configurações",
-               "url": "/page/settings.html",
+               "url": "/page/settings",
                "description": "Personalize sua experiência"
            }
        ],

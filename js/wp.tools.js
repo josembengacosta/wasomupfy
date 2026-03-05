@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
     currentPath
       .split("/")
       .filter((segment) => segment)
-      .pop() || "painel.html";
+      .pop() || "painel";
 
   navLinks.forEach((link) => {
     // Remover a classe active de todos os links
@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Obter o href do link e normalizá-lo
     let href = link.getAttribute("href");
     if (href) {
-      // Resolver caminhos relativos (ex.: '../painel.html')
+      // Resolver caminhos relativos (ex.: '../painel')
       const absoluteHref = new URL(href, window.location.origin).pathname;
       const hrefPage = absoluteHref
         .split("/")

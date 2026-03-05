@@ -1,0 +1,19 @@
+# ══════════════════════════════════════════════
+# WASOM UPFY v2.0 — .htaccess da pasta authentic
+# Localização: /wasomupfy/authentic/.htaccess
+# ══════════════════════════════════════════════
+
+Options -Indexes
+
+# Bloquear acesso directo à pasta include
+RewriteEngine On
+RewriteRule ^include/ - [F,L]
+
+# Bloquear acesso directo aos ficheiros _process.php
+# (só devem ser chamados via formulário POST, nunca via URL directa)
+RewriteCond %{REQUEST_METHOD} !POST
+RewriteRule _process\.php$ /wasomupfy/login [R=302,L]
+
+# Redirecionar utilizadores já autenticados para o painel
+# (evita que um utilizador logado veja o login de novo)
+# A verificação real é feita no PHP — isto é só uma camada extra

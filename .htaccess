@@ -1,0 +1,263 @@
+# ══════════════════════════════════════════════
+# WASOM UPFY v2.0 — .htaccess Principal
+# Localização: /htdocs/wasomupfy/.htaccess
+# ══════════════════════════════════════════════
+
+Options -Indexes
+RewriteEngine On
+RewriteBase /wasomupfy/
+
+# ─── Bloquear ficheiros sensíveis ─────────────
+RewriteRule \.(sql|log|env|sh|bak)$ - [F,L]
+
+# ─── Bloquear acesso directo às pastas include ─
+RewriteRule ^(authentic|admin)/include/ - [F,L]
+
+# ─── Se o ficheiro/pasta existir, serve directo ─
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# ══════════════════════════════════════════════
+# AUTENTICAÇÃO
+# ══════════════════════════════════════════════
+
+RewriteRule ^login/?$                           authentic/login.php [L]
+RewriteRule ^login_process/?$                   authentic/login_process.php [L]
+RewriteRule ^register/?$                        authentic/register.php [L]
+RewriteRule ^register_process/?$                authentic/register_process.php [L]
+RewriteRule ^verify-email/?$                    authentic/verify-email.php [L]
+RewriteRule ^forgot-password/?$                 authentic/forgot-password.php [L]
+RewriteRule ^forgot-password-process/?$         authentic/forgot-password-process.php [L]
+RewriteRule ^confirm-email-code/?$              authentic/confirm-email-code.php [L,QSA]
+RewriteRule ^verify-code-process/?$             authentic/verify-code-process.php [L,QSA]
+RewriteRule ^reset-password/?$                  authentic/reset-password.php [L,QSA]
+RewriteRule ^reset-password-process/?$          authentic/reset-password-process.php [L,QSA]
+RewriteRule ^support_process/?$                 authentic/support_process.php [L,QSA]
+RewriteRule ^logout/?$                          dashboard/logout.php [L]
+RewriteRule ^_modal_support/?$                  dashboard/_modal_support.php [L]
+
+
+# ══════════════════════════════════════════════
+# PÁGINAS PÚBLICAS — RAIZ
+# ══════════════════════════════════════════════
+
+RewriteRule ^home/?$                            home.php [L]
+RewriteRule ^about/?$                           about.php [L]
+RewriteRule ^resources/?$                       resources.php [L]
+RewriteRule ^partnership/?$                     partnership.php [L]
+RewriteRule ^contact/?$                         contact.php [L]
+
+# ══════════════════════════════════════════════
+# PLANOS
+# ══════════════════════════════════════════════
+
+RewriteRule ^plan/all-plans/?$                 plan/all-plans.php [L]
+RewriteRule ^plan/single/?$                    plan/single.php [L]
+RewriteRule ^plan/album/?$                     plan/album.php [L]
+RewriteRule ^plan/artist/?$                    plan/artist.php [L]
+RewriteRule ^plan/label/?$                     plan/label.php [L]
+
+# ══════════════════════════════════════════════
+# BLOG
+# ══════════════════════════════════════════════
+
+RewriteRule ^blog/?$                            blog/home.php [L]
+RewriteRule ^blog/news/?$                       blog/news.php [L]
+RewriteRule ^blog/tutorials/?$                  blog/tutorials.php [L]
+RewriteRule ^blog/marketing/?$                  blog/marketing.php [L]
+RewriteRule ^blog/([a-z0-9-]+)/?$              blog/posts/$1.php [L,QSA]
+
+# ══════════════════════════════════════════════
+# SUPORTE & AJUDA (páginas públicas)
+# ══════════════════════════════════════════════
+
+RewriteRule ^faq/?$                             page/support/faq.php [L]
+RewriteRule ^help/?$                            page/support/help.php [L]
+RewriteRule ^support/?$                         page/support/support.php [L]
+RewriteRule ^tutorials/?$                       page/support/tutorial.php [L]
+
+# ══════════════════════════════════════════════
+# SERVIÇOS
+# ══════════════════════════════════════════════
+
+RewriteRule ^services/music-distribution/?$     page/services/music-distribution.php [L]
+RewriteRule ^services/music-promotion/?$        page/services/music-promotion.php [L]
+RewriteRule ^services/customized/?$             page/services/customized-services.php [L]
+
+# ══════════════════════════════════════════════
+# POLÍTICAS
+# ══════════════════════════════════════════════
+
+RewriteRule ^terms/?$                           page/politicies/terms.php [L]
+RewriteRule ^privacy/?$                         page/politicies/privacy.php [L]
+RewriteRule ^cookies/?$                         page/politicies/cookies.php [L]
+
+# ══════════════════════════════════════════════
+# DASHBOARD — PAINEL PRINCIPAL
+# ══════════════════════════════════════════════
+
+RewriteRule ^dashboard/painel/?$                                dashboard/painel.php [L]
+RewriteRule ^dashboard/onboarding_done/?$                       dashboard/onboarding_done.php [L]
+RewriteRule ^dashboard/all-plans/?$                             dashboard/all-plans.php [L]
+RewriteRule ^dashboard/logout/?$                                dashboard/logout.php [L]
+
+# ─── Account ──────────────────────────────────
+RewriteRule ^dashboard/account/add-user/?$                      dashboard/account/add-user.php [L]
+RewriteRule ^dashboard/account/manage-account/?$                dashboard/account/manage-account.php [L]
+RewriteRule ^dashboard/account/manage_account_process/?$          dashboard/account/manage_account_process.php [L]
+RewriteRule ^dashboard/account/collab-activate/?$                    dashboard/account/collab-activate.php [L]
+RewriteRule ^dashboard/account/collab_activate_process/?$                          dashboard/account/collab_activate_process.php [L]
+RewriteRule ^dashboard/account/collab-login/?$                    dashboard/account/collab-login.php [L]
+
+# ─── Collaborator ──────────────────────────────────
+RewriteRule ^dashboard/collab/overview/?$                          dashboard/collab/overview.php [L]
+RewriteRule ^dashboard/collab/logout/?$                          dashboard/collab/logout.php [L]
+RewriteRule ^dashboard/collab/ping/?$                          dashboard/collab/ping.php [L]
+
+RewriteRule ^dashboard/collab/middleware/?$                          dashboard/collab/middleware.php [L]
+RewriteRule ^dashboard/collab/artists-list/?$                          dashboard/collab/artists-list.php [L]
+RewriteRule ^dashboard/collab/blocked/?$                          dashboard/collab/blocked.php [L]
+RewriteRule ^dashboard/collab/navbar/?$                          dashboard/collab/navbar.php [L]
+RewriteRule ^dashboard/collab/releases/?$                          dashboard/collab/releases.php [L]
+
+# ─── Profile ──────────────────────────────────
+RewriteRule ^dashboard/user/profile/?$                          dashboard/user/profile.php [L]
+RewriteRule ^dashboard/user/profile_process/?$                          dashboard/user/profile_process.php [L]
+
+# ─── Analytics ────────────────────────────────
+RewriteRule ^dashboard/analytics/statistics/?$                  dashboard/analytics/statistics.php [L]
+RewriteRule ^dashboard/analytics/export/?$                      dashboard/analytics/export.php [L]
+RewriteRule ^dashboard/analytics/report/?$                      dashboard/analytics/report.php [L]
+RewriteRule ^dashboard/analytics/compare/?$                     dashboard/analytics/compare.php [L]
+RewriteRule ^dashboard/analytics/launches/?$                    dashboard/analytics/launches.php [L]
+RewriteRule ^dashboard/analytics/artist/([0-9]+)/?$             dashboard/analytics/artist-details.php?id=$1 [L,QSA]
+RewriteRule ^dashboard/analytics/country/([a-z]{2})/?$          dashboard/analytics/country-details.php?code=$1 [L,QSA]
+RewriteRule ^dashboard/analytics/playlist/([0-9]+)/?$           dashboard/analytics/playlist-details.php?id=$1 [L,QSA]
+
+# ─── Artistas ─────────────────────────────────
+RewriteRule ^dashboard/artists/artists-list/?$                   dashboard/artists/artists-list.php [L]
+RewriteRule ^dashboard/artists/add-artist/?$                     dashboard/artists/add-artist.php [L]
+RewriteRule ^dashboard/artists/add_artist_process/?$             dashboard/artists/add_artist_process.php [L]
+RewriteRule ^dashboard/artists/youtube/([^/]+)/?$                dashboard/artists/youtube/channel-details.php?id=$1 [L,QSA]
+RewriteRule ^dashboard/artists/youtube/ucy/?$                    dashboard/artists/youtube/ucy.php [L]
+
+# ─── Finanças ─────────────────────────────────
+RewriteRule ^dashboard/finances/?$                               dashboard/finances/overview.php [L]
+RewriteRule ^dashboard/finances/overview/?$                      dashboard/finances/overview.php [L]
+RewriteRule ^dashboard/finances/transactions/?$                  dashboard/finances/transactions.php [L]
+RewriteRule ^dashboard/finances/withdraw/?$                      dashboard/finances/withdraw.php [L]
+RewriteRule ^dashboard/finances/withdrawal_process/?$            dashboard/finances/withdrawal_process.php [L]
+RewriteRule ^dashboard/finances/_modal_withdrawal/?$             dashboard/finances/_modal_withdrawal.php [L]
+RewriteRule ^dashboard/finances/account_process/?$               dashboard/finances/account_process.php [L]
+
+# ─── Lançamentos ──────────────────────────────
+RewriteRule ^dashboard/launch/releases/?$                        dashboard/launch/releases.php [L]
+RewriteRule ^dashboard/launch/releases_process/?$                dashboard/launch/releases_process.php [L]
+RewriteRule ^dashboard/launch/creat_release_process/?$           dashboard/launch/creat_release_process.php [L]
+RewriteRule ^dashboard/launch/creat-release/?$                   dashboard/launch/creat-release.php [L]
+RewriteRule ^dashboard/launch/draft-release/?$                   dashboard/launch/draft-release.php [L]
+RewriteRule ^dashboard/launch/edit-release/?$                   dashboard/launch/edit-release.php [L]
+
+
+# ─── Páginas internas do painel ───────────────
+RewriteRule ^dashboard/notifications/?$                          dashboard/page/notifications.php [L]
+RewriteRule ^dashboard/settings/?$                               dashboard/page/settings.php [L]
+RewriteRule ^dashboard/page/support/?$                           dashboard/page/support.php [L]
+RewriteRule ^dashboard/page/faq/?$                               dashboard/page/faq.php [L]
+RewriteRule ^dashboard/page/help/?$                              dashboard/page/help.php [L]
+RewriteRule ^dashboard/page/about/?$                             dashboard/page/about.php [L]
+RewriteRule ^dashboard/page/terms/?$                             dashboard/page/politicies/terms.php [L]
+RewriteRule ^dashboard/page/privacy/?$                           dashboard/page/politicies/privacy.php [L]
+RewriteRule ^dashboard/payment/pay/?$                            dashboard/payment/pay.php [L]
+RewriteRule ^dashboard/payment/payment_process/?$                dashboard/payment/payment_process.php [L]
+
+# ─── Erros do painel ──────────────────────────
+RewriteRule ^dashboard/offline/?$                                dashboard/offline.php [L]
+RewriteRule ^dashboard/error/403/?$                              dashboard/page/error/403.php [L]
+RewriteRule ^dashboard/error/404/?$                              dashboard/page/error/404.php [L]
+RewriteRule ^dashboard/error/500/?$                              dashboard/page/error/500.php [L]
+RewriteRule ^dashboard/error/503/?$                              dashboard/page/error/503.php [L]
+RewriteRule ^dashboard/maintenance/?$                            dashboard/page/error/manuntence.php [L]
+
+# ══════════════════════════════════════════════
+# PAINEL ADMIN
+# ══════════════════════════════════════════════
+
+RewriteRule ^admin/?$                                   admin/home.php [L]
+
+RewriteRule ^admin/users/?$                             admin/users/all-users.php [L]
+RewriteRule ^admin/users/online/?$                      admin/users/online-users.php [L]
+RewriteRule ^admin/users/([0-9]+)/?$                    admin/users/view.php?id=$1 [L,QSA]
+
+RewriteRule ^admin/employees/?$                         admin/employees/all-employees.php [L]
+RewriteRule ^admin/employees/([0-9]+)/?$                admin/employees/view.php?id=$1 [L,QSA]
+
+RewriteRule ^admin/releases/?$                          admin/releases/all-releases.php [L]
+RewriteRule ^admin/releases/pending/?$                  admin/releases/pending.php [L]
+RewriteRule ^admin/releases/([0-9]+)/?$                 admin/releases/view.php?id=$1 [L,QSA]
+
+RewriteRule ^admin/finances/?$                          admin/finances/index.php [L]
+RewriteRule ^admin/finances/withdrawals/?$              admin/finances/withdrawals.php [L]
+RewriteRule ^admin/finances/payments/?$                 admin/finances/payments.php [L]
+RewriteRule ^admin/finances/royalties/?$                admin/finances/royalties.php [L]
+
+RewriteRule ^admin/plans/?$                             admin/plans/index.php [L]
+RewriteRule ^admin/plans/([0-9]+)/edit/?$               admin/plans/edit.php?id=$1 [L,QSA]
+
+RewriteRule ^admin/analytics/?$                         admin/analytics/home.php [L]
+RewriteRule ^admin/reports/?$                           admin/analytics/custom-reports.php [L]
+
+RewriteRule ^admin/visitors/?$                          admin/security/visitors.php [L]
+RewriteRule ^admin/security/?$                          admin/security/home.php [L]
+RewriteRule ^admin/audit/?$                             admin/security/audit-log.php [L]
+
+RewriteRule ^admin/cms/?$                               admin/cms/index.php [L]
+RewriteRule ^admin/blog/?$                              admin/cms/blog.php [L]
+RewriteRule ^admin/blog/([0-9]+)/edit/?$                admin/cms/blog-edit.php?id=$1 [L,QSA]
+RewriteRule ^admin/faq/?$                               admin/cms/faq.php [L]
+
+RewriteRule ^admin/support/?$                           admin/support/index.php [L]
+RewriteRule ^admin/support/([0-9]+)/?$                  admin/support/ticket.php?id=$1 [L,QSA]
+
+RewriteRule ^admin/settings/?$                          admin/settings/index.php [L]
+RewriteRule ^admin/settings/platform/?$                 admin/settings/platform.php [L]
+
+# ══════════════════════════════════════════════
+# FALLBACK — .php na raiz sem extensão
+# ══════════════════════════════════════════════
+
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^([a-z0-9-]+)/?$   $1.php [L]
+
+# Fallback — .php na raiz sem extensão
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^([a-z0-9-]+)/?$   $1.php [L]
+
+# ══════════════════════════════════════════════
+# CABEÇALHOS DE SEGURANÇA
+# ══════════════════════════════════════════════
+
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-XSS-Protection "1; mode=block"
+</IfModule>
+
+# ══════════════════════════════════════════════
+# CACHE & PERFORMANCE
+# ══════════════════════════════════════════════
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpeg             "access plus 1 month"
+    ExpiresByType image/png              "access plus 1 month"
+    ExpiresByType image/webp             "access plus 1 month"
+    ExpiresByType image/x-icon           "access plus 1 year"
+    ExpiresByType text/css               "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+</IfModule>
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json
+</IfModule>
