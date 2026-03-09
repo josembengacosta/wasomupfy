@@ -56,7 +56,7 @@ function getUserByEmail(string $email): ?array
     $db = getDB();
     $stmt = $db->prepare("
         SELECT u.*, s.login_attempts, s.block_until, s.block_level,
-               s.is_fraud_blocked, s.recovery_key
+               s.is_fraud_blocked, s.recovery_key, s.two_factor_enabled
         FROM _users u
         LEFT JOIN _users_security s ON s.id_users = u.id_users
         WHERE u.email_user = ?
@@ -466,14 +466,15 @@ function destroyUserSession(int $id_users): void
     }
 }
 
-function verifyUserPassword(int $id_users, string $password): bool {
+function verifyUserPassword(int $id_users, string $password): bool
+{
     $db = getDB();
     $stmt = $db->prepare("SELECT password_user FROM _users WHERE id_users = ?");
     $stmt->execute([$id_users]);
     $user = $stmt->fetch();
-    
+
     if (!$user) return false;
-    
+
     return password_verify($password, $user['password_user']);
 }
 // ════════════════════════════════════════════════

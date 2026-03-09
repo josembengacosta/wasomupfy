@@ -102,7 +102,7 @@ function sendCollabInviteEmail(
             </div>
 
             <div style='background:#fff8e6;border:1px solid #ffc107;border-radius:8px;padding:12px 16px;margin-bottom:24px;font-size:.83rem;color:#856404'>
-                <strong>⚠️ Atenção:</strong> Este link de activação é de uso único e expira em 72 horas.
+                <strong> ⚠️ Atenção:</strong> Este link de activação é de uso único e expira em 72 horas.
                 Após o primeiro login, serás solicitado a alterar a tua senha.
             </div>
 

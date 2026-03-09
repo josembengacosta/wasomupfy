@@ -1097,7 +1097,7 @@
     </div>
   </div>
 
-  <!-- Modal logout -->
+  <!-- ════ MODAL — Logout ════ -->
   <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -1140,7 +1140,7 @@
       </div>
     </div>
   </div>
-  <!-- Modal logout fim -->
+  <!-- ════ MODAL — Logout  FIM ════ -->
 
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

@@ -518,7 +518,7 @@ https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css
     </ul>
   </nav>
 
-  <!-- Modal logout -->
+  <!-- ════ MODAL — Logout ════ -->
   <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -561,7 +561,7 @@ https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css
       </div>
     </div>
   </div>
-  <!-- Modal logout fim -->
+  <!-- ════ MODAL — Logout  FIM ════ -->
 
   <!-- Bootstrap JS and Popper.js -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>

@@ -22,6 +22,9 @@ RewriteRule ^ - [L]
 # AUTENTICAÇÃO
 # ══════════════════════════════════════════════
 
+
+RewriteRule ^2fa-verify/?$                      authentic/2fa-verify.php [L]
+RewriteRule ^2fa-process/?$                     authentic/2fa-process.php [L]
 RewriteRule ^login/?$                           authentic/login.php [L]
 RewriteRule ^login_process/?$                   authentic/login_process.php [L]
 RewriteRule ^register/?$                        authentic/register.php [L]
@@ -66,7 +69,7 @@ RewriteRule ^blog/?$                            blog/home.php [L]
 RewriteRule ^blog/news/?$                       blog/news.php [L]
 RewriteRule ^blog/tutorials/?$                  blog/tutorials.php [L]
 RewriteRule ^blog/marketing/?$                  blog/marketing.php [L]
-RewriteRule ^blog/([a-z0-9-]+)/?$              blog/posts/$1.php [L,QSA]
+RewriteRule ^blog/([a-z0-9-]+)/?$               blog/posts/$1.php [L,QSA]
 
 # ══════════════════════════════════════════════
 # SUPORTE & AJUDA (páginas públicas)
@@ -81,9 +84,9 @@ RewriteRule ^tutorials/?$                       page/support/tutorial.php [L]
 # SERVIÇOS
 # ══════════════════════════════════════════════
 
-RewriteRule ^services/music-distribution/?$     page/services/music-distribution.php [L]
-RewriteRule ^services/music-promotion/?$        page/services/music-promotion.php [L]
-RewriteRule ^services/customized/?$             page/services/customized-services.php [L]
+RewriteRule ^page/services/music-distribution/?$     page/services/music-distribution.php [L]
+RewriteRule ^page/services/music-promotion/?$        page/services/music-promotion.php [L]
+RewriteRule ^page/services/customized-services/?$             page/services/customized-services.php [L]
 
 # ══════════════════════════════════════════════
 # POLÍTICAS
@@ -105,25 +108,30 @@ RewriteRule ^dashboard/logout/?$                                dashboard/logout
 # ─── Account ──────────────────────────────────
 RewriteRule ^dashboard/account/add-user/?$                      dashboard/account/add-user.php [L]
 RewriteRule ^dashboard/account/manage-account/?$                dashboard/account/manage-account.php [L]
-RewriteRule ^dashboard/account/manage_account_process/?$          dashboard/account/manage_account_process.php [L]
-RewriteRule ^dashboard/account/collab-activate/?$                    dashboard/account/collab-activate.php [L]
-RewriteRule ^dashboard/account/collab_activate_process/?$                          dashboard/account/collab_activate_process.php [L]
-RewriteRule ^dashboard/account/collab-login/?$                    dashboard/account/collab-login.php [L]
+RewriteRule ^dashboard/account/manage_account_process/?$        dashboard/account/manage_account_process.php [L]
+RewriteRule ^dashboard/account/collab-activate/?$               dashboard/account/collab-activate.php [L]
+RewriteRule ^dashboard/account/collab_activate_process/?$       dashboard/account/collab_activate_process.php [L]
+RewriteRule ^dashboard/account/collab-login/?$                  dashboard/account/collab-login.php [L]
 
 # ─── Collaborator ──────────────────────────────────
-RewriteRule ^dashboard/collab/overview/?$                          dashboard/collab/overview.php [L]
-RewriteRule ^dashboard/collab/logout/?$                          dashboard/collab/logout.php [L]
-RewriteRule ^dashboard/collab/ping/?$                          dashboard/collab/ping.php [L]
+RewriteRule ^dashboard/collab/overview/?$                       dashboard/collab/overview.php [L]
+RewriteRule ^dashboard/collab/releases-ajax/?$                  dashboard/collab/releases_ajax.php [L]
+RewriteRule ^dashboard/collab/releases/?$                       dashboard/collab/releases.php [L]
+RewriteRule ^dashboard/collab/artists/?$                        dashboard/collab/artists.php [L]
+RewriteRule ^dashboard/collab/statistics/?$                     dashboard/collab/statistics.php [L]
+RewriteRule ^dashboard/collab/finances/?$                       dashboard/collab/finances.php [L]
+RewriteRule ^dashboard/collab/logout/?$                         dashboard/collab/logout.php [L]
+RewriteRule ^dashboard/collab/ping/?$                           dashboard/collab/ping.php [L]
 
-RewriteRule ^dashboard/collab/middleware/?$                          dashboard/collab/middleware.php [L]
-RewriteRule ^dashboard/collab/artists-list/?$                          dashboard/collab/artists-list.php [L]
-RewriteRule ^dashboard/collab/blocked/?$                          dashboard/collab/blocked.php [L]
-RewriteRule ^dashboard/collab/navbar/?$                          dashboard/collab/navbar.php [L]
-RewriteRule ^dashboard/collab/releases/?$                          dashboard/collab/releases.php [L]
+RewriteRule ^dashboard/collab/middleware/?$                     dashboard/collab/middleware.php [L]
+RewriteRule ^dashboard/collab/artists-list/?$                   dashboard/collab/artists-list.php [L]
+RewriteRule ^dashboard/collab/blocked/?$                        dashboard/collab/blocked.php [L]
+RewriteRule ^dashboard/collab/navbar/?$                         dashboard/collab/navbar.php [L]
+RewriteRule ^dashboard/collab/releases/?$                       dashboard/collab/releases.php [L]
 
 # ─── Profile ──────────────────────────────────
 RewriteRule ^dashboard/user/profile/?$                          dashboard/user/profile.php [L]
-RewriteRule ^dashboard/user/profile_process/?$                          dashboard/user/profile_process.php [L]
+RewriteRule ^dashboard/user/profile_process/?$                  dashboard/user/profile_process.php [L]
 
 # ─── Analytics ────────────────────────────────
 RewriteRule ^dashboard/analytics/statistics/?$                  dashboard/analytics/statistics.php [L]
@@ -131,54 +139,54 @@ RewriteRule ^dashboard/analytics/export/?$                      dashboard/analyt
 RewriteRule ^dashboard/analytics/report/?$                      dashboard/analytics/report.php [L]
 RewriteRule ^dashboard/analytics/compare/?$                     dashboard/analytics/compare.php [L]
 RewriteRule ^dashboard/analytics/launches/?$                    dashboard/analytics/launches.php [L]
-RewriteRule ^dashboard/analytics/artist/([0-9]+)/?$             dashboard/analytics/artist-details.php?id=$1 [L,QSA]
-RewriteRule ^dashboard/analytics/country/([a-z]{2})/?$          dashboard/analytics/country-details.php?code=$1 [L,QSA]
-RewriteRule ^dashboard/analytics/playlist/([0-9]+)/?$           dashboard/analytics/playlist-details.php?id=$1 [L,QSA]
+RewriteRule ^dashboard/analytics/artist-details/?$              dashboard/analytics/artist-details.php [L]
+RewriteRule ^dashboard/analytics/country-details/?$             dashboard/analytics/country-details.php [L]
+RewriteRule ^dashboard/analytics/playlist-details/?$            dashboard/analytics/playlist-details.php [L]
 
 # ─── Artistas ─────────────────────────────────
-RewriteRule ^dashboard/artists/artists-list/?$                   dashboard/artists/artists-list.php [L]
-RewriteRule ^dashboard/artists/add-artist/?$                     dashboard/artists/add-artist.php [L]
-RewriteRule ^dashboard/artists/add_artist_process/?$             dashboard/artists/add_artist_process.php [L]
-RewriteRule ^dashboard/artists/youtube/([^/]+)/?$                dashboard/artists/youtube/channel-details.php?id=$1 [L,QSA]
-RewriteRule ^dashboard/artists/youtube/ucy/?$                    dashboard/artists/youtube/ucy.php [L]
+RewriteRule ^dashboard/artists/artists-list/?$                  dashboard/artists/artists-list.php [L]
+RewriteRule ^dashboard/artists/add-artist/?$                    dashboard/artists/add-artist.php [L]
+RewriteRule ^dashboard/artists/add_artist_process/?$            dashboard/artists/add_artist_process.php [L]
+RewriteRule ^dashboard/artists/youtube/([^/]+)/?$               dashboard/artists/youtube/channel-details.php?id=$1 [L,QSA]
+RewriteRule ^dashboard/artists/youtube/ucy/?$                   dashboard/artists/youtube/ucy.php [L]
 
 # ─── Finanças ─────────────────────────────────
-RewriteRule ^dashboard/finances/?$                               dashboard/finances/overview.php [L]
-RewriteRule ^dashboard/finances/overview/?$                      dashboard/finances/overview.php [L]
-RewriteRule ^dashboard/finances/transactions/?$                  dashboard/finances/transactions.php [L]
-RewriteRule ^dashboard/finances/withdraw/?$                      dashboard/finances/withdraw.php [L]
-RewriteRule ^dashboard/finances/withdrawal_process/?$            dashboard/finances/withdrawal_process.php [L]
-RewriteRule ^dashboard/finances/_modal_withdrawal/?$             dashboard/finances/_modal_withdrawal.php [L]
-RewriteRule ^dashboard/finances/account_process/?$               dashboard/finances/account_process.php [L]
+RewriteRule ^dashboard/finances/?$                              dashboard/finances/overview.php [L]
+RewriteRule ^dashboard/finances/overview/?$                     dashboard/finances/overview.php [L]
+RewriteRule ^dashboard/finances/transactions/?$                 dashboard/finances/transactions.php [L]
+RewriteRule ^dashboard/finances/withdraw/?$                     dashboard/finances/withdraw.php [L]
+RewriteRule ^dashboard/finances/withdrawal_process/?$           dashboard/finances/withdrawal_process.php [L]
+RewriteRule ^dashboard/finances/_modal_withdrawal/?$            dashboard/finances/_modal_withdrawal.php [L]
+RewriteRule ^dashboard/finances/account_process/?$              dashboard/finances/account_process.php [L]
 
 # ─── Lançamentos ──────────────────────────────
-RewriteRule ^dashboard/launch/releases/?$                        dashboard/launch/releases.php [L]
-RewriteRule ^dashboard/launch/releases_process/?$                dashboard/launch/releases_process.php [L]
-RewriteRule ^dashboard/launch/creat_release_process/?$           dashboard/launch/creat_release_process.php [L]
-RewriteRule ^dashboard/launch/creat-release/?$                   dashboard/launch/creat-release.php [L]
-RewriteRule ^dashboard/launch/draft-release/?$                   dashboard/launch/draft-release.php [L]
+RewriteRule ^dashboard/launch/releases/?$                       dashboard/launch/releases.php [L]
+RewriteRule ^dashboard/launch/releases_process/?$               dashboard/launch/releases_process.php [L]
+RewriteRule ^dashboard/launch/creat_release_process/?$          dashboard/launch/creat_release_process.php [L]
+RewriteRule ^dashboard/launch/creat-release/?$                  dashboard/launch/creat-release.php [L]
+RewriteRule ^dashboard/launch/draft-release/?$                  dashboard/launch/draft-release.php [L]
 RewriteRule ^dashboard/launch/edit-release/?$                   dashboard/launch/edit-release.php [L]
 
 
 # ─── Páginas internas do painel ───────────────
-RewriteRule ^dashboard/notifications/?$                          dashboard/page/notifications.php [L]
-RewriteRule ^dashboard/settings/?$                               dashboard/page/settings.php [L]
-RewriteRule ^dashboard/page/support/?$                           dashboard/page/support.php [L]
-RewriteRule ^dashboard/page/faq/?$                               dashboard/page/faq.php [L]
-RewriteRule ^dashboard/page/help/?$                              dashboard/page/help.php [L]
-RewriteRule ^dashboard/page/about/?$                             dashboard/page/about.php [L]
-RewriteRule ^dashboard/page/terms/?$                             dashboard/page/politicies/terms.php [L]
-RewriteRule ^dashboard/page/privacy/?$                           dashboard/page/politicies/privacy.php [L]
-RewriteRule ^dashboard/payment/pay/?$                            dashboard/payment/pay.php [L]
-RewriteRule ^dashboard/payment/payment_process/?$                dashboard/payment/payment_process.php [L]
+RewriteRule ^dashboard/notifications/?$                         dashboard/page/notifications.php [L]
+RewriteRule ^dashboard/settings/?$                              dashboard/page/settings.php [L]
+RewriteRule ^dashboard/page/support/?$                          dashboard/page/support.php [L]
+RewriteRule ^dashboard/page/faq/?$                              dashboard/page/faq.php [L]
+RewriteRule ^dashboard/page/help/?$                             dashboard/page/help.php [L]
+RewriteRule ^dashboard/page/about/?$                            dashboard/page/about.php [L]
+RewriteRule ^dashboard/page/terms/?$                            dashboard/page/politicies/terms.php [L]
+RewriteRule ^dashboard/page/privacy/?$                          dashboard/page/politicies/privacy.php [L]
+RewriteRule ^dashboard/payment/pay/?$                           dashboard/payment/pay.php [L]
+RewriteRule ^dashboard/payment/payment_process/?$               dashboard/payment/payment_process.php [L]
 
 # ─── Erros do painel ──────────────────────────
-RewriteRule ^dashboard/offline/?$                                dashboard/offline.php [L]
-RewriteRule ^dashboard/error/403/?$                              dashboard/page/error/403.php [L]
-RewriteRule ^dashboard/error/404/?$                              dashboard/page/error/404.php [L]
-RewriteRule ^dashboard/error/500/?$                              dashboard/page/error/500.php [L]
-RewriteRule ^dashboard/error/503/?$                              dashboard/page/error/503.php [L]
-RewriteRule ^dashboard/maintenance/?$                            dashboard/page/error/manuntence.php [L]
+RewriteRule ^dashboard/offline/?$                               dashboard/offline.php [L]
+RewriteRule ^dashboard/error/403/?$                             dashboard/page/error/403.php [L]
+RewriteRule ^dashboard/error/404/?$                             dashboard/page/error/404.php [L]
+RewriteRule ^dashboard/error/500/?$                             dashboard/page/error/500.php [L]
+RewriteRule ^dashboard/error/503/?$                             dashboard/page/error/503.php [L]
+RewriteRule ^dashboard/maintenance/?$                           dashboard/page/error/maintenance.php [L]
 
 # ══════════════════════════════════════════════
 # PAINEL ADMIN

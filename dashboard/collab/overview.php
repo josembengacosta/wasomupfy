@@ -151,248 +151,9 @@ $cover_base  = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/covers/';
     <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+    <link rel="stylesheet" href="css/collab.css" />
     <style>
-    :root {
-        --wasom: #FF0089;
-        --wasom-dark: #cc006d;
-        --sidebar-w: 220px;
-        --nav-h: 60px;
-        --bg: #f4f6fb;
-        --card: #fff;
-        --border: rgba(0, 0, 0, .07);
-        --text: #1a1a2e;
-        --muted: #6c757d;
-    }
-
-    [data-theme="dark"] {
-        --bg: #0f0f1a;
-        --card: #151521;
-        --border: rgba(255, 255, 255, .08);
-        --text: #e8e8f0;
-        --muted: #9999bb;
-
-    }
-
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
-
-    body {
-        background: var(--bg);
-        color: var(--text);
-        font-family: 'Segoe UI', Arial, sans-serif;
-        min-height: 100vh;
-    }
-
-    /* ── Top navbar ── */
-    .collab-nav {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: var(--nav-h);
-        z-index: 1000;
-        background: linear-gradient(135deg, #FF0089, #FF4D4D);
-        display: flex;
-        align-items: center;
-        padding: 0 20px;
-        gap: 12px;
-        box-shadow: 0 2px 16px rgba(255, 0, 137, .3);
-    }
-
-    .nav-brand {
-        color: #fff;
-        font-weight: 900;
-        font-size: 1.25rem;
-        text-decoration: none;
-        letter-spacing: -.3px;
-    }
-
-    .nav-brand span {
-        opacity: .7;
-        font-weight: 400;
-        font-size: .8rem;
-        margin-left: 6px;
-    }
-
-    .nav-spacer {
-        flex: 1;
-    }
-
-    .nav-chip {
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        background: rgba(255, 255, 255, .18);
-        color: #fff;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: .72rem;
-        font-weight: 700;
-        border: 1px solid rgba(255, 255, 255, .25);
-    }
-
-    .nav-avatar {
-        width: 34px;
-        height: 34px;
-        border-radius: 50%;
-        border: 2px solid rgba(255, 255, 255, .4);
-        object-fit: cover;
-        background: rgba(255, 255, 255, .2);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: .9rem;
-        color: #fff;
-        overflow: hidden;
-        flex-shrink: 0;
-    }
-
-    .nav-avatar img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    /* ── Sidebar ── */
-    .collab-sidebar {
-        position: fixed;
-        top: var(--nav-h);
-        left: 0;
-        bottom: 0;
-        width: var(--sidebar-w);
-        background: var(--card);
-        border-right: 1.5px solid var(--border);
-        overflow-y: auto;
-        z-index: 900;
-        padding: 20px 12px;
-        transition: transform .3s;
-    }
-
-    @media(max-width:768px) {
-        .collab-sidebar {
-            transform: translateX(-100%);
-        }
-
-        .collab-sidebar.open {
-            transform: translateX(0);
-            box-shadow: 4px 0 24px rgba(0, 0, 0, .15);
-        }
-
-        .main-content {
-            margin-left: 0 !important;
-        }
-    }
-
-    .sidebar-section {
-        font-size: .65rem;
-        color: var(--muted);
-        text-transform: uppercase;
-        letter-spacing: .8px;
-        font-weight: 700;
-        padding: 12px 8px 4px;
-    }
-
-    .sidebar-link {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 9px 10px;
-        border-radius: 10px;
-        font-size: .84rem;
-        font-weight: 500;
-        color: var(--text);
-        text-decoration: none;
-        transition: all .15s;
-        margin-bottom: 2px;
-    }
-
-    .sidebar-link:hover {
-        background: rgba(255, 0, 137, .06);
-        color: var(--wasom);
-    }
-
-    .sidebar-link.active {
-        background: rgba(255, 0, 137, .1);
-        color: var(--wasom);
-        font-weight: 700;
-    }
-
-    .sidebar-link i {
-        width: 18px;
-        text-align: center;
-        font-size: .9rem;
-    }
-
-    .sidebar-link .badge-count {
-        margin-left: auto;
-        font-size: .6rem;
-        font-weight: 800;
-        background: var(--wasom);
-        color: #fff;
-        padding: 1px 6px;
-        border-radius: 10px;
-    }
-
-    /* ── Main content ── */
-    .main-content {
-        margin-left: var(--sidebar-w);
-        padding: calc(var(--nav-h) + 24px) 24px 80px;
-        min-height: 100vh;
-    }
-
-    /* ── Cards ── */
-    .dash-card {
-        background: var(--card);
-        border-radius: 16px;
-        border: 1.5px solid var(--border);
-        padding: 20px;
-        transition: border-color .2s, box-shadow .2s;
-    }
-
-    .dash-card:hover {
-        border-color: rgba(255, 0, 137, .15);
-        box-shadow: 0 4px 20px rgba(255, 0, 137, .07);
-    }
-
-    /* ── Stat cards ── */
-    .stat-card {
-        background: var(--card);
-        border-radius: 16px;
-        border: 1.5px solid var(--border);
-        padding: 18px 20px;
-        display: flex;
-        align-items: center;
-        gap: 16px;
-    }
-
-    .stat-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 14px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
-        flex-shrink: 0;
-    }
-
-    .stat-value {
-        font-size: 1.6rem;
-        font-weight: 800;
-        line-height: 1;
-    }
-
-    .stat-label {
-        font-size: .72rem;
-        color: var(--muted);
-        margin-top: 3px;
-    }
-
-    /* ── Access badge ── */
+    /* ── Overview: Access badge ── */
     .access-card {
         background: linear-gradient(135deg, rgba(255, 0, 137, .08), rgba(255, 77, 77, .06));
         border: 1.5px solid rgba(255, 0, 137, .2);
@@ -400,7 +161,7 @@ $cover_base  = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/covers/';
         padding: 20px;
     }
 
-    /* ── Album row ── */
+    /* ── Overview: Album row ── */
     .album-row {
         display: flex;
         align-items: center;
@@ -433,18 +194,7 @@ $cover_base  = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/covers/';
         object-fit: cover;
     }
 
-    /* ── Chip ── */
-    .chip {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        padding: 3px 10px;
-        border-radius: 20px;
-        font-size: .68rem;
-        font-weight: 700;
-    }
-
-    /* ── Activity items ── */
+    /* ── Overview: Activity ── */
     .act-item {
         display: flex;
         gap: 10px;
@@ -466,102 +216,13 @@ $cover_base  = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/covers/';
         margin-top: 5px;
     }
 
-    /* ── Owner info card ── */
-    .owner-card {
-        background: linear-gradient(135deg, #FF0089, #FF4D4D);
-        border-radius: 16px;
-        padding: 20px;
-        color: #fff;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .owner-card::before {
-        content: '🎵';
-        position: absolute;
-        right: 16px;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 4rem;
-        opacity: .15;
-    }
-
-    /* ── Locked section ── */
+    /* ── Overview: Locked ── */
     .locked-section {
         border-radius: 16px;
         border: 1.5px dashed var(--border);
         padding: 32px;
         text-align: center;
         opacity: .6;
-    }
-
-    /* ── Bottom nav (mobile) ── */
-    .bottom-nav-collab {
-        display: none;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: var(--card);
-        border-top: 1.5px solid var(--border);
-        padding: 8px 0;
-        z-index: 900;
-    }
-
-    @media(max-width:768px) {
-        .bottom-nav-collab {
-            display: flex;
-        }
-
-        .bottom-nav-collab a {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-            font-size: .58rem;
-            color: var(--muted);
-            text-decoration: none;
-            padding: 4px 0;
-        }
-
-        .bottom-nav-collab a.active,
-        .bottom-nav-collab a:hover {
-            color: var(--wasom);
-        }
-
-        .bottom-nav-collab i {
-            font-size: 1.2rem;
-        }
-    }
-
-    /* ── Overlay (mobile sidebar) ── */
-    .sidebar-overlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, .4);
-        z-index: 850;
-    }
-
-    .sidebar-overlay.show {
-        display: block;
-    }
-
-    /* ── Theme ── */
-    .theme-btn {
-        background: none;
-        border: none;
-        color: rgba(255, 255, 255, .8);
-        font-size: 1.1rem;
-        cursor: pointer;
-        padding: 4px 8px;
-        border-radius: 8px;
-        transition: background .2s;
-    }
-
-    .theme-btn:hover {
-        background: rgba(255, 255, 255, .15);
     }
     </style>
 </head>
@@ -593,14 +254,13 @@ $cover_base  = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/covers/';
 
         <!-- Avatar + dropdown -->
         <div class="dropdown">
-            <button class="nav-avatar dropdown-toggle" style="background:none;border:none;cursor:pointer"
-                data-bs-toggle="dropdown">
+            <button class="nav-avatar dropdown-toggle" style="padding:0" data-bs-toggle="dropdown">
                 <?php if ($collab['photo_collab']): ?>
                 <img src="<?php echo htmlspecialchars($collab['photo_collab']); ?>" alt=""
                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
-                <span style="display:none"><i class="bi bi-person"></i></span>
+                <span style="display:none"><i class="bi bi-person-circle"></i></span>
                 <?php else: ?>
-                <span><i class="bi bi-person"></i></span>
+                <span><i class="bi bi-person-circle"></i></span>
                 <?php endif; ?>
             </button>
             <ul class="dropdown-menu dropdown-menu-end" style="font-size:.84rem;min-width:200px">
@@ -650,12 +310,12 @@ $cover_base  = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/covers/';
 
         <div class="sidebar-section">Menu</div>
 
-        <a href="" class="sidebar-link active">
+        <a href="overview" class="sidebar-link active">
             <i class="bi bi-speedometer2"></i>Dashboard
         </a>
 
         <?php if ($can_view_releases): ?>
-        <a href="<?php echo rtrim(APP_URL, '/'); ?>/dashboard/releases" class="sidebar-link">
+        <a href="<?php echo rtrim(APP_URL, '/'); ?>/dashboard/collab/releases" class="sidebar-link">
             <i class="bi bi-disc"></i>Lançamentos
             <?php if ((int)($album_stats['pending'] ?? 0) > 0): ?>
             <span class="badge-count"><?php echo $album_stats['pending']; ?></span>
@@ -664,21 +324,21 @@ $cover_base  = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/covers/';
         <?php endif; ?>
 
         <?php if ($can_view_artists): ?>
-        <a href="<?php echo rtrim(APP_URL, '/'); ?>/dashboard/artists-list" class="sidebar-link">
+        <a href="<?php echo rtrim(APP_URL, '/'); ?>/dashboard/collab/artists" class="sidebar-link">
             <i class="bi bi-people"></i>Artistas
         </a>
         <?php endif; ?>
 
         <?php if ($can_view_finances): ?>
         <div class="sidebar-section">Finanças</div>
-        <a href="<?php echo rtrim(APP_URL, '/'); ?>/dashboard/overview" class="sidebar-link">
+        <a href="<?php echo rtrim(APP_URL, '/'); ?>/dashboard/collab/overview" class="sidebar-link">
             <i class="bi bi-currency-dollar"></i>Visão geral
         </a>
         <?php endif; ?>
 
         <?php if ($can_view_stats): ?>
         <div class="sidebar-section">Análise</div>
-        <a href="<?php echo rtrim(APP_URL, '/'); ?>/dashboard/statistics" class="sidebar-link">
+        <a href="<?php echo rtrim(APP_URL, '/'); ?>/dashboard/collab/statistics" class="sidebar-link">
             <i class="bi bi-bar-chart"></i>Estatísticas
         </a>
         <?php endif; ?>
@@ -700,8 +360,8 @@ $cover_base  = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/covers/';
         <!-- Page title -->
         <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
             <div>
-                <h1 class="h4 fw-bold mb-1">
-                    Olá, <?php echo htmlspecialchars($collab['first_name']); ?>! <i class="bi bi-emoji-smile"></i>
+                <h1 class="h4 fw-bold mb-1"><i class="bi bi-emoji-smile" style="color:var(--wasom)"></i>
+                    Olá, <?php echo htmlspecialchars($collab['first_name']); ?>!
                 </h1>
                 <p class="small mb-0">
                     Painel de colaboradores · <?php echo $owner_artist_name; ?>
@@ -814,7 +474,7 @@ $cover_base  = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/covers/';
                             Últimos Lançamentos
                         </div>
                         <?php if ($can_edit_releases): ?>
-                        <a href="<?php echo rtrim(APP_URL, '/'); ?>/dashboard/releases"
+                        <a href="<?php echo rtrim(APP_URL, '/'); ?>/dashboard/collab/releases"
                             class="btn btn-sm px-3 fw-semibold"
                             style="background:var(--wasom);color:#fff;border-radius:20px;font-size:.75rem">
                             Ver todos
@@ -905,7 +565,7 @@ $cover_base  = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/covers/';
                 </div>
                 <?php elseif (!$can_view_finances): ?>
                 <div class="locked-section mb-3">
-                    <div style="font-size:2rem;margin-bottom:8px">🔒</div>
+                    <div style="font-size:2rem;margin-bottom:8px"> <i class="bi bi-"> </i> </div>
                     <div class="fw-semibold small">Sem acesso a Finanças</div>
                     <div class="text-reset" style="font-size:.75rem;margin-top:4px">
                         Só Administradores e Analistas têm acesso aos dados financeiros.
@@ -990,17 +650,17 @@ $cover_base  = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/covers/';
     <nav class="bottom-nav-collab">
         <a href="" class="active"><i class="bi bi-speedometer2"></i>Dashboard</a>
         <?php if ($can_view_releases): ?>
-        <a href="<?php echo rtrim(APP_URL, '/'); ?>/dashboard/releases">
+        <a href="<?php echo rtrim(APP_URL, '/'); ?>/dashboard/collab/releases">
             <i class="bi bi-disc"></i>Releases
         </a>
         <?php endif; ?>
         <?php if ($can_view_artists): ?>
-        <a href="<?php echo rtrim(APP_URL, '/'); ?>/dashboard/artists-list">
+        <a href="<?php echo rtrim(APP_URL, '/'); ?>/dashboard/collab/artists">
             <i class="bi bi-people"></i>Artistas
         </a>
         <?php endif; ?>
         <?php if ($can_view_stats): ?>
-        <a href="<?php echo rtrim(APP_URL, '/'); ?>/dashboard/statistics">
+        <a href="<?php echo rtrim(APP_URL, '/'); ?>/dashboard/collab/statistics">
             <i class="bi bi-bar-chart"></i>Stats
         </a>
         <?php endif; ?>

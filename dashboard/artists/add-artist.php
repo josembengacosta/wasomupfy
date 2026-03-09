@@ -1086,7 +1086,7 @@ $photo_base = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/artists/';
             </div>
         </div>
 
-        <!-- Modal logout -->
+        <!-- ════ MODAL — Logout ════ -->
         <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
             aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -1179,7 +1179,7 @@ $photo_base = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/artists/';
                 </div>
             </div>
         </div>
-        <!-- Modal logout fim -->
+        <!-- ════ MODAL — Logout  FIM ════ -->
 
 
         <script>

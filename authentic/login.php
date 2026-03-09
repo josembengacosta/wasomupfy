@@ -11,18 +11,21 @@ if (isLoggedIn()) {
 }
 
 $notices = [
-    'account_created' => 'Conta criada com sucesso! Faz login para continuar.',
-    'password_reset' => 'Senha redefinida. Podes iniciar sessao.',
-    'logout' => 'Sessao terminada com sucesso.',
-    'session' => 'Sessao expirada. Inicia sessao novamente.',
+    'account_created'     => 'Conta criada com sucesso! Faz login para continuar.',
+    'password_reset'      => 'Senha redefinida. Podes iniciar sessao.',
+    'logout'              => 'Sessao terminada com sucesso.',
+    'session'             => 'Sessao expirada. Inicia sessao novamente.',
+    'account_deactivated' => 'Conta desactivada. Tens 29 dias para recuperar — basta iniciares sessão.',
+    'account_deleted'     => 'A tua conta foi eliminada permanentemente. Obrigado por teres usado o ' . (defined('APP_NAME') ? APP_NAME : 'Wasom Upfy') . '.',
 ];
 $errors = [
-    'csrf' => 'Sessao expirada. Tenta novamente.',
-    'empty' => 'Preenche o e-mail e a senha.',
-    'invalid' => 'E-mail ou senha incorretos.',
-    'suspended' => 'Conta suspensa. Contacta o suporte.',
-    'fraud' => 'Conta bloqueada por atividade suspeita. Contacta o suporte.',
-    'blocked' => isset($_GET['msg']) ? urldecode($_GET['msg']) : 'Conta temporariamente bloqueada.',
+    'csrf'             => 'Sessao expirada. Tenta novamente.',
+    'empty'            => 'Preenche o e-mail e a senha.',
+    'invalid'          => 'E-mail ou senha incorretos.',
+    'suspended'        => 'Conta suspensa. Contacta o suporte.',
+    'fraud'            => 'Conta bloqueada por atividade suspeita. Contacta o suporte.',
+    'blocked'          => isset($_GET['msg']) ? urldecode($_GET['msg']) : 'Conta temporariamente bloqueada.',
+    'inactive_expired' => 'O prazo de recuperação da tua conta expirou. Contacta o suporte se precisares de ajuda.',
 ];
 $notice = isset($_GET['notice']) ? ($notices[$_GET['notice']] ?? '') : '';
 $error = isset($_GET['error']) ? ($errors[$_GET['error']] ?? '') : '';
@@ -47,73 +50,73 @@ if (isset($_GET['remaining']) && (int)$_GET['remaining'] > 0) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-    <link rel="stylesheet" href="css/login.css" />
+    <link rel="stylesheet" href="../css/login.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/josembengacosta/wasomupfy@main/css/light.css" />
     <style>
-        :root {
-            --wasom-primary: #ff0089;
-            --wasom-secondary: #e04385;
-            --wasom-light: #fff0f7;
-            --wasom-dark: #cc0070;
-        }
+    :root {
+        --wasom-primary: #ff0089;
+        --wasom-secondary: #e04385;
+        --wasom-light: #fff0f7;
+        --wasom-dark: #cc0070;
+    }
 
-        .card {
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            background: rgba(255, 255, 255, 0.95);
-            margin: auto;
-        }
+    .card {
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        background: rgba(255, 255, 255, 0.95);
+        margin: auto;
+    }
 
-        .btn-wasomupfy {
-            background: linear-gradient(45deg, #ff0089, #ff0089);
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            padding: 3px 6px;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-        }
+    .btn-wasomupfy {
+        background: linear-gradient(45deg, #ff0089, #ff0089);
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 3px 6px;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+    }
 
-        .btn-wasomupfy:hover {
-            background: linear-gradient(45deg, #e04385, #cc0070);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(172, 19, 19, 0.2);
-            color: white;
-        }
+    .btn-wasomupfy:hover {
+        background: linear-gradient(45deg, #e04385, #cc0070);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(172, 19, 19, 0.2);
+        color: white;
+    }
 
-        .preloader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease;
-        }
+    .preloader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease;
+    }
 
-        .loaded .preloader {
-            opacity: 0;
-            pointer-events: none;
-        }
+    .loaded .preloader {
+        opacity: 0;
+        pointer-events: none;
+    }
 
-        .text-wasom {
-            color: var(--wasom-primary) !important;
-        }
+    .text-wasom {
+        color: var(--wasom-primary) !important;
+    }
 
-        .form-control:focus {
-            border-color: var(--wasom-primary);
-            box-shadow: 0 0 0 0.25rem rgba(255, 0, 137, 0.15);
-        }
+    .form-control:focus {
+        border-color: var(--wasom-primary);
+        box-shadow: 0 0 0 0.25rem rgba(255, 0, 137, 0.15);
+    }
 
-        .spinner-border {
-            border-bottom-color: #ff0089;
-            border-top-color: #ff0089;
-            border-left-color: #ff0089;
-        }
+    .spinner-border {
+        border-bottom-color: #ff0089;
+        border-top-color: #ff0089;
+        border-left-color: #ff0089;
+    }
     </style>
 </head>
 
@@ -149,23 +152,23 @@ if (isset($_GET['remaining']) && (int)$_GET['remaining'] > 0) {
                                         autocomplete="off" />
 
                                     <?php if ($notice): ?>
-                                        <div style="padding: 1rem;"
-                                            class="alert alert-success alert-dismissible fade show d-flex align-items-center mb-3"
-                                            role="alert">
-                                            <i class="bi bi-check-circle-fill me-2"></i>
-                                            <div><?php echo htmlspecialchars($notice); ?></div>
-                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                        </div>
+                                    <div style="padding: 1rem;"
+                                        class="alert alert-success alert-dismissible fade show d-flex align-items-center mb-3"
+                                        role="alert">
+                                        <i class="bi bi-check-circle-fill me-2"></i>
+                                        <div><?php echo htmlspecialchars($notice); ?></div>
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
                                     <?php endif; ?>
 
                                     <?php if ($error): ?>
-                                        <div style="padding: 1rem;"
-                                            class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-3"
-                                            role="alert">
-                                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                                            <div><?php echo htmlspecialchars($error); ?></div>
-                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                        </div>
+                                    <div style="padding: 1rem;"
+                                        class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-3"
+                                        role="alert">
+                                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                        <div><?php echo htmlspecialchars($error); ?></div>
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
                                     <?php endif; ?>
                                     <div class="mb-3">
                                         <label for="email_user" class="form-label">E-mail <span
@@ -271,18 +274,18 @@ if (isset($_GET['remaining']) && (int)$_GET['remaining'] > 0) {
                         ];
                         foreach ($pSections as $i => [$title, $body]):
                         ?>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#pa<?php echo $i; ?>">
-                                        <?php echo $title; ?>
-                                    </button>
-                                </h2>
-                                <div id="pa<?php echo $i; ?>" class="accordion-collapse collapse"
-                                    data-bs-parent="#privacyAcc">
-                                    <div class="accordion-body small"><?php echo $body; ?></div>
-                                </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#pa<?php echo $i; ?>">
+                                    <?php echo $title; ?>
+                                </button>
+                            </h2>
+                            <div id="pa<?php echo $i; ?>" class="accordion-collapse collapse"
+                                data-bs-parent="#privacyAcc">
+                                <div class="accordion-body small"><?php echo $body; ?></div>
                             </div>
+                        </div>
                         <?php endforeach; ?>
                     </div>
                     <p class="text-muted small mt-3 mb-0">Actualizado em: 21/10/2024</p>
@@ -318,18 +321,18 @@ if (isset($_GET['remaining']) && (int)$_GET['remaining'] > 0) {
                         ];
                         foreach ($tSections as $i => [$title, $body]):
                         ?>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#ta<?php echo $i; ?>">
-                                        <?php echo $title; ?>
-                                    </button>
-                                </h2>
-                                <div id="ta<?php echo $i; ?>" class="accordion-collapse collapse"
-                                    data-bs-parent="#termsAcc">
-                                    <div class="accordion-body small"><?php echo $body; ?></div>
-                                </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#ta<?php echo $i; ?>">
+                                    <?php echo $title; ?>
+                                </button>
+                            </h2>
+                            <div id="ta<?php echo $i; ?>" class="accordion-collapse collapse"
+                                data-bs-parent="#termsAcc">
+                                <div class="accordion-body small"><?php echo $body; ?></div>
                             </div>
+                        </div>
                         <?php endforeach; ?>
                     </div>
                     <p class="text-muted small mt-3 mb-0">Actualizado em: 26/06/2025</p>
@@ -346,42 +349,42 @@ if (isset($_GET['remaining']) && (int)$_GET['remaining'] > 0) {
     <script src="js/validacao.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/josembengacosta/wasomupfy@main/js/app.js"></script>
     <script>
-        window.addEventListener("load", function() {
-            requestAnimationFrame(() => {
-                document.querySelector("body").classList.add("loaded");
-            });
+    window.addEventListener("load", function() {
+        requestAnimationFrame(() => {
+            document.querySelector("body").classList.add("loaded");
         });
+    });
 
-        function togglePasswordVisibility() {
-            const passwordInput = document.getElementById("password_user");
-            const mostrar = document.getElementById("mostrar");
-            const mostrar1 = document.getElementById("mostrar1");
-            if (!passwordInput || !mostrar || !mostrar1) return;
-            if (passwordInput.type === "password") {
-                passwordInput.type = "text";
-                mostrar.style.display = "none";
-                mostrar1.style.display = "block";
-            } else {
-                passwordInput.type = "password";
-                mostrar1.style.display = "none";
-                mostrar.style.display = "block";
-            }
+    function togglePasswordVisibility() {
+        const passwordInput = document.getElementById("password_user");
+        const mostrar = document.getElementById("mostrar");
+        const mostrar1 = document.getElementById("mostrar1");
+        if (!passwordInput || !mostrar || !mostrar1) return;
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            mostrar.style.display = "none";
+            mostrar1.style.display = "block";
+        } else {
+            passwordInput.type = "password";
+            mostrar1.style.display = "none";
+            mostrar.style.display = "block";
         }
-        // Real-time email validation
-        document
-            .getElementById("email_user")
-            .addEventListener("input", function() {
-                const email = this.value;
-                const feedback = this.nextElementSibling.nextElementSibling;
-                if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-                    this.classList.add("is-invalid");
-                    feedback.style.display = "block";
-                } else {
-                    this.classList.remove("is-invalid");
-                    this.classList.add("is-valid");
-                    feedback.style.display = "none";
-                }
-            });
+    }
+    // Real-time email validation
+    document
+        .getElementById("email_user")
+        .addEventListener("input", function() {
+            const email = this.value;
+            const feedback = this.nextElementSibling.nextElementSibling;
+            if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+                this.classList.add("is-invalid");
+                feedback.style.display = "block";
+            } else {
+                this.classList.remove("is-invalid");
+                this.classList.add("is-valid");
+                feedback.style.display = "none";
+            }
+        });
     </script>
 </body>
 

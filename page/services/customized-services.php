@@ -1,880 +1,1001 @@
+<?php
+// ══════════════════════════════════════════════
+// WASOM UPFY — Serviços Personalizados
+// Arquivo: page/services/customized-services.php
+// ══════════════════════════════════════════════
+require_once __DIR__ . '/../../include/site.php';
+
+checkPlatformStatus('customized-services');
+trackVisitor('/page/services/customized-services', 'Serviços Personalizados — Wasom Upfy');
+
+$plans       = getPlans();
+$platform    = getPlatform();
+$canRegister = (bool)$platform['allow_register'];
+$royalty     = (int)$platform['royalty_percentage'];
+$stores      = (int)$platform['stores_count'];
+$siteName    = htmlspecialchars(cfg('site_name', 'Wasom Upfy'));
+$whatsNum    = preg_replace('/[^0-9]/', '', cfg('whatsapp_number', '244922030116'));
+?>
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-AO">
 
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="author" content="José Mbenga da Costa" />
-  <meta name="keywords"
-    content="Wasom Upfy, Wasom, Upfy, Sobre, about, Sobre nós, quem somos, a nossa marca, about us" />
-  <meta name="robots" content="follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large" />
-  <meta name="theme-color" content="#FF009D" />
-  <meta property="og:locale" content="pt_AO" />
-  <meta property="og:type" content="website" />
-  <meta property="og:locale:alternate" content="fr_FR" />
-  <meta property="og:locale:alternate" content="en_EN" />
-  <meta property="og:locale:alternate" content="pt_BR" />
-  <meta property="og:locale:alternate" content="pt_PT" />
-  <meta property="og:title" content="Wasom Upfy - Saiba tudo sobre nós." />
-  <meta property="og:description"
-    content="A Wasom Upfy é a plataforma de distribuição de música mais fácil e completa do mercado. Ela constitui de serviços de distribuição digital e gestão de direitos de músicas, focada na promoção e desenvolvimento de artistas e gravadoras independentes. Com bons anos de experiência no mercado da música, a empresa tem como um dos principais objectivos desenvolver o mercado de distribuição e vendas de obras musicais para mais de 100 regiões em toda parte do mundo." />
-  <meta property="og:url" content="https://wasomupfy.rf.gd/" />
-  <meta property="og:site_name" content="Wasom Upfy" />
-  <meta property="og:image" content="https://wasomupfy.rf.gd/imgs/og_wasomupfy.jpeg" />
-  <meta property="og:image:type" content="image/jpeg" />
-  <meta property="og:image:width" content="300" />
-  <meta property="og:image:height" content="300" />
-  <meta property="og:image:alt" content="Slogan Wasom Upfy" />
-  <title>Wasom Upfy | Serviços Personalizados</title>
-  <!-- O processo de carregamento do site em Javascript fim -->
-  <script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="author" content="José Mbenga da Costa" />
+    <meta name="robots" content="follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large" />
+    <meta name="theme-color" content="#FF009D" />
+
+    <!-- SEO dinâmico -->
+    <title><?php echo $siteName; ?> | Serviços Personalizados</title>
+    <meta name="description"
+        content="Soluções premium sob medida: Label Services, Design, Publishing e Sync Licensing para Selos, Gestores e Artistas que precisam de infraestrutura avançada com a <?php echo $siteName; ?>." />
+    <meta name="keywords"
+        content="<?php echo htmlspecialchars(cfg('site_keywords', 'Wasom Upfy, serviços personalizados, label management, publishing, sync licensing, design musical Angola')); ?>" />
+
+    <!-- Open Graph -->
+    <meta property="og:locale" content="pt_AO" />
+    <meta property="og:locale:alternate" content="fr_FR" />
+    <meta property="og:locale:alternate" content="en_EN" />
+    <meta property="og:locale:alternate" content="pt_BR" />
+    <meta property="og:locale:alternate" content="pt_PT" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="<?php echo $siteName; ?> — Serviços Personalizados Premium" />
+    <meta property="og:description"
+        content="<?php echo htmlspecialchars(cfg('site_description', 'Plataforma de distribuição musical de Angola para o mundo.')); ?>" />
+    <meta property="og:url"
+        content="<?php echo htmlspecialchars(cfg('site_url', 'https://wasomupfy.rf.gd')); ?>/page/services/customized-services" />
+    <meta property="og:site_name" content="<?php echo $siteName; ?>" />
+    <meta property="og:image"
+        content="<?php echo htmlspecialchars(cfg('og_image', cfg('site_url', 'https://wasomupfy.rf.gd') . '/imgs/og_wasomupfy.jpeg')); ?>" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="300" />
+    <meta property="og:image:height" content="300" />
+    <meta property="og:image:alt" content="<?php echo $siteName; ?>" />
+
+    <script>
     window.addEventListener("load", function() {
-      setTimeout(function() {
-        document.querySelector("body").classList.add("loaded");
-      }, 200);
+        setTimeout(function() {
+            document.querySelector("body").classList.add("loaded");
+        }, 200);
     });
-  </script>
-  <!-- O processo de carregamento do site em Javascript fim -->
-  <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv1.png" type="image/x-icon" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  <!-- Lightbox2 CSS -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="../../css/theme.min.css" />
-  <link rel="stylesheet" href="../../js/libs/scrollcue/scrollCue.css" />
-  <link rel="stylesheet" href="../../css/framework.css" />
-  <link rel="stylesheet" href="../../css/main.css" />
+    </script>
+
+    <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv1.png" type="image/x-icon" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../../css/theme.min.css" />
+    <link rel="stylesheet" href="../../js/libs/scrollcue/scrollCue.css" />
+    <link rel="stylesheet" href="../../css/framework.css" />
+    <link rel="stylesheet" href="../../css/main.css" />
 </head>
 
-<body>
-  <!-- O processo de carregamento do site em HTML & CSS -->
-  <div class="preloader">
-    <img src="../../assets/img/brand/wasomupfy_loaading.png" class="img-fluid loading-logo" width="90" height="90"
-      alt="Loading-wasomupfy" />
-  </div>
-  <!-- O processo de carregamento do site em HTML & CSS fim -->
+<body data-base-path="../..">
+    <!-- Preloader -->
+    <div class="preloader">
+        <img src="../../assets/img/brand/wasomupfy_loaading.png" class="img-fluid loading-logo" width="90" height="90"
+            alt="Loading-wasomupfy" />
+    </div>
 
-  <!-- Cabecalho da página de navbar -->
-  <header>
-    <nav class="navbar navbar-expand-lg transparent navbar-transparent navbar-dark">
-      <div class="container px-3">
-        <a class="navbar-brand" href="../../home" title="Home"><img src="../../assets/img/brand/wasomupfy_brand.png"
-            width="65" class="img-logo" height="60" alt="Logo Wasom Upfy" /></a>
-        <button class="navbar-toggler offcanvas-nav-btn" type="button">
-          <i class="bi bi-list"></i>
-        </button>
-        <div class="offcanvas offcanvas-start offcanvas-nav" style="width: 20rem">
-          <div class="offcanvas-header">
-            <a title="Logotipo" href="../../home"><img width="65" src="../../assets/img/brand/wasomupfy_brand.png"
-                alt="Logo Wasom Upfy" /></a>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-          </div>
-          <div class="offcanvas-body pt-0 align-items-center">
-            <ul class="navbar-nav mx-auto align-items-lg-center">
-              <li class="nav-item">
-                <a class="nav-link" href="../../home" title="Inicio" role="button" data-bs-toggle="link"
-                  aria-expanded="false">Início</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="../../about" title="Sobre" role="button" data-bs-toggle="link"
-                  aria-expanded="false">Sobre</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="../../blog/" title="Blogue" target="_blank" rel="external" role="button"
-                  data-bs-toggle="link" aria-expanded="false">Blogue</a>
-              </li>
-              <li class="nav-item dropdown">
-                <a title="Planos" class="nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
-                  aria-haspopup="true" aria-expanded="false">Planos <i data-feather="chevron-down"></i></a>
-                <div class="dropdown-menu dropdown-menu-md" aria-labelledby="navbarDropdown">
-                  <a title="Single" class="dropdown-item mb-3 text-body" href="../../plan/single">
-                    <div class="d-flex align-items-center">
-                      <i class="fa-solid fa-music text-wasomupfy fs-3" style="width: 35px"></i>
-                      <div class="ms-3 lh-1">
-                        <h5 class="mb-1">Single</h5>
-                        <p class="mb-0 fs-6">Nosso plano Single - 2.000 Kz</p>
-                      </div>
+    <!-- Navbar -->
+    <header>
+        <nav class="navbar navbar-expand-lg transparent navbar-transparent navbar-dark">
+            <div class="container px-3">
+                <a class="navbar-brand" href="../../home" title="Home">
+                    <img src="../../assets/img/brand/wasomupfy_brand.png" width="65" class="img-logo" height="60"
+                        alt="Logo <?php echo $siteName; ?>" />
+                </a>
+                <button class="navbar-toggler offcanvas-nav-btn" type="button"><i class="bi bi-list"></i></button>
+                <div class="offcanvas offcanvas-start offcanvas-nav" style="width: 20rem">
+                    <div class="offcanvas-header">
+                        <a title="Logotipo" href="../../home">
+                            <img width="65" src="../../assets/img/brand/wasomupfy_brand.png"
+                                alt="Logo <?php echo $siteName; ?>" />
+                        </a>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                     </div>
-                  </a>
+                    <div class="offcanvas-body pt-0 align-items-center">
+                        <ul class="navbar-nav mx-auto align-items-lg-center">
+                            <li class="nav-item">
+                                <a class="nav-link" href="../../home" title="Inicio">Início</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="../../about" title="Sobre">Sobre</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="../../blog/" title="Blogue" target="_blank"
+                                    rel="external">Blogue</a>
+                            </li>
 
-                  <a title="Álbum" class="dropdown-item mb-3 text-body" href="../../plan/album">
-                    <div class="d-flex align-items-center">
-                      <i class="fa-solid fa-compact-disc text-wasomupfy fs-3" style="width: 35px"></i>
-                      <div class="ms-3 lh-1">
-                        <h5 class="mb-1">Álbum</h5>
-                        <p class="mb-0 fs-6">Nosso plano Álbum - 5.000 Kz</p>
-                      </div>
-                    </div>
-                  </a>
+                            <!-- Planos — dinâmico -->
+                            <li class="nav-item dropdown">
+                                <a title="Planos" class="nav-link" href="#" id="navbarDropdown" role="button"
+                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Planos <i data-feather="chevron-down"></i>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-md" aria-labelledby="navbarDropdown">
+                                    <?php
+                  $navIcons = ['single'=>'fa-music','album'=>'fa-compact-disc','artist'=>'fa-microphone-lines','label'=>'fa-tags'];
+                  foreach ($plans as $p):
+                    $nSlug = $p['slug_plan'];
+                    $nIcon = $navIcons[$nSlug] ?? 'fa-music';
+                    $nPrc  = number_format($p['price_plan'], 0, ',', '.');
+                    $nPer  = $p['type_plan'] === 'subscription' ? '/ano' : '';
+                  ?>
+                                    <a title="<?php echo htmlspecialchars($p['name_plan']); ?>"
+                                        class="dropdown-item mb-3 text-body" href="../../plan/<?php echo $nSlug; ?>">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fa-solid <?php echo $nIcon; ?> text-wasomupfy fs-3"
+                                                style="width: 35px"></i>
+                                            <div class="ms-3 lh-1">
+                                                <h5 class="mb-1"><?php echo htmlspecialchars($p['name_plan']); ?></h5>
+                                                <p class="mb-0 fs-6">Nosso plano
+                                                    <?php echo htmlspecialchars($p['name_plan']); ?> —
+                                                    <?php echo $nPrc; ?> Kz<?php echo $nPer; ?></p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <?php endforeach; ?>
+                                    <a title="Todos os planos" class="dropdown-item mb-3 text-body"
+                                        href="../../plan/all-plans">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fa-solid fa-layer-group text-wasomupfy fs-3"
+                                                style="width: 35px"></i>
+                                            <div class="ms-3 lh-1">
+                                                <h5 class="mb-1">Todos os planos</h5>
+                                                <p class="mb-0 fs-6">Todos os nossos planos</p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </li>
 
-                  <a title="Artista" class="dropdown-item mb-3 text-body" href="../../plan/artist">
-                    <div class="d-flex align-items-center">
-                      <i class="fa-solid fa-microphone-lines text-wasomupfy fs-3" style="width: 35px"></i>
-                      <div class="ms-3 lh-1">
-                        <h5 class="mb-1">Artista</h5>
-                        <p class="mb-0 fs-6">
-                          Nosso plano Artista - 11.400 Kz/2ano
-                        </p>
-                      </div>
-                    </div>
-                  </a>
+                            <li class="nav-item dropdown">
+                                <a title="Páginas" class="nav-link" href="#" role="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false">Páginas <i data-feather="chevron-down"></i></a>
+                                <div class="dropdown-menu dropdown-menu-xxl">
+                                    <div class="row row-cols-lg-3">
+                                        <div class="col">
+                                            <div class="dropdown-header">Blog</div>
+                                            <a title="Novidades" class="dropdown-item" href="../../blog/">Novidades</a>
+                                            <a title="Passatempo Wasom Upfy" class="dropdown-item"
+                                                href="../../blog/">Passatempo</a>
+                                            <a title="Indisponível" class="dropdown-item" href="#!">Indisponível
+                                                <span class="badge bg-warning">Indisponível</span></a>
+                                            <div class="mt-3">
+                                                <div class="dropdown-header">Sobre</div>
+                                                <a title="A nossa marca" class="dropdown-item"
+                                                    href="../../about?#nossamarca">A nossa marca</a>
+                                                <a title="Parcerias" class="dropdown-item"
+                                                    href="../../partnership">Parcerias</a>
+                                                <a title="Quem somos" class="dropdown-item"
+                                                    href="../../about#nossa-historia">Quem somos</a>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="mt-3 mt-lg-0">
+                                                <div class="dropdown-header">Serviços</div>
+                                                <a title="Distribuição de música" class="dropdown-item"
+                                                    href="music-distribution">Distribuição de música</a>
+                                                <a title="Promoção de música" class="dropdown-item"
+                                                    href="music-promotion">Promoção de música
+                                                    <span class="badge bg-success">Novo</span></a>
+                                                <a title="Serviços Personalizados" class="dropdown-item active"
+                                                    href="customized-services">Serviços personalizados
+                                                    <span class="badge bg-warning">Em breve</span></a>
+                                            </div>
+                                            <div class="mt-3">
+                                                <div class="dropdown-header">Contactos</div>
+                                                <a title="Atendimento pelo Facebook" class="dropdown-item"
+                                                    href="https://www.facebook.com/m.me/2007900989425052"
+                                                    target="_blank" rel="external noopener noreferrer">Atendimento</a>
+                                                <a title="Contacto-nos" class="dropdown-item"
+                                                    href="../../contact">Contacta-nos</a>
+                                                <a title="Canal WhatsApp" class="dropdown-item"
+                                                    href="https://whatsapp.com/channel/0029VaCEDqo59PwWpU0nGa04"
+                                                    target="_blank" rel="external noopener noreferrer">Canal
+                                                    WhatsApp</a>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="mt-3 mt-lg-0">
+                                                <div class="dropdown-header">Sugestões</div>
+                                                <a title="Ajuda" class="dropdown-item" href="../support/help">Ajuda
+                                                    <span class="badge bg-success">Novo</span></a>
+                                                <a title="Feedback" class="dropdown-item" href="#"
+                                                    data-bs-toggle="modal" data-bs-target="#modalFeedback">Feedback</a>
+                                                <a title="Indisponível" class="dropdown-item" href="#!">Indisponível
+                                                    <span class="badge bg-warning">Indisponível</span></a>
+                                                <div class="mt-3">
+                                                    <div class="dropdown-header">Ajuda</div>
+                                                    <a title="Tutorial" class="dropdown-item"
+                                                        href="../support/tutorial">Tutorial
+                                                        <span class="badge bg-success">Novo</span></a>
+                                                    <a title="Suporte técnico" class="dropdown-item"
+                                                        href="../support/support">Suporte técnico</a>
+                                                    <a title="Perguntas frequentes" class="dropdown-item"
+                                                        href="../support/faq">Perguntas frequentes</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
 
-                  <a title="Label" class="dropdown-item mb-3 text-body" href="../../plan/label">
-                    <div class="d-flex align-items-center">
-                      <i class="fa-solid fa-tags text-wasomupfy fs-3" style="width: 35px"></i>
-                      <div class="ms-3 lh-1">
-                        <h5 class="mb-1">Label</h5>
-                        <p class="mb-0 fs-6">
-                          Nosso plano Label - 70.000 Kz/2ano
-                        </p>
-                      </div>
-                    </div>
-                  </a>
+                            <li class="nav-item">
+                                <a class="nav-link" href="../../resources" title="Recursos">Recursos</a>
+                            </li>
 
-                  <a title="Todos os planos" class="dropdown-item mb-3 text-body" href="../../plan/all-plans">
-                    <div class="d-flex align-items-center">
-                      <i class="fa-solid fa-layer-group text-wasomupfy fs-3" style="width: 35px"></i>
-                      <div class="ms-3 lh-1">
-                        <h5 class="mb-1">Todos os planos</h5>
-                        <p class="mb-0 fs-6">Todos os nossos planos</p>
-                      </div>
-                    </div>
-                  </a>
-                </div>
-              </li>
-              <li class="nav-item dropdown">
-                <a title="Páginas" class="nav-link" href="#" role="button" data-bs-toggle="dropdown"
-                  aria-expanded="false">Páginas <i data-feather="chevron-down"></i></a>
-                <div class="dropdown-menu dropdown-menu-xxl">
-                  <div class="row row-cols-lg-3">
-                    <div class="col">
-                      <div class="dropdown-header">Blog</div>
-                      <a title="Novidades" class="dropdown-item" href="../../blog/">Novidades</a>
-                      <a title="Passatempo Wasom Upfy" class="dropdown-item" href="../../blog/">Passatempo</a>
-                      <a title="Indisponível" class="dropdown-item" href="#!">Indisponível
-                        <span class="badge bg-warning">Indisponível</span></a>
-                      <div class="mt-3">
-                        <div class="dropdown-header">Sobre</div>
-                        <a title="A nossa marca" class="dropdown-item" href="../../about?#nossamarca">A nossa marca</a>
-                        <a title="Parcerias" class="dropdown-item" href="../../partnership">Parcerias</a>
-                        <a title="Quem somos" class="dropdown-item" href="../../about#nossa-historia">Quem somos</a>
-                      </div>
-                    </div>
+                            <li class="nav-item dropdown">
+                                <a title="Contactar" class="nav-link" href="#" role="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false">Contactar <i data-feather="chevron-down"></i></a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a title="Caixa de mensagem" class="dropdown-item" href="../../contact">Caixa de
+                                            mensagem</a>
+                                    </li>
+                                    <li>
+                                        <?php if (cfg('support_email')): ?>
+                                        <a title="E-mail" class="dropdown-item"
+                                            href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>">
+                                            <?php echo htmlspecialchars(cfg('support_email')); ?>
+                                        </a>
+                                        <?php endif; ?>
+                                    </li>
+                                    <li>
+                                        <?php if ($whatsNum): ?>
+                                        <a title="WhatsApp" class="dropdown-item"
+                                            href="https://api.whatsapp.com/send/?phone=<?php echo $whatsNum; ?>&text&type=phone_number&app_absent=0">
+                                            WhatsApp
+                                        </a>
+                                        <?php endif; ?>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
 
-                    <div class="col">
-                      <div class="mt-3 mt-lg-0">
-                        <div class="dropdown-header">Serviços</div>
-                        <a title="Propagandas" class="dropdown-item" href="music-distribution">Distribuição de
-                          música</a>
-                        <a title="Parcerias" class="dropdown-item" href="music-promotion">Promoção de música
-                          <span class="badge bg-success">Novo</span></a>
-                        <a title="Indisponível" class="dropdown-item active" href="customized-services">Serviços
-                          personalizados
-                          <span class="badge bg-warning">Indisponível</span></a>
-                      </div>
-
-                      <div class="mt-3">
-                        <div class="dropdown-header">Contactos</div>
-                        <a title="Atendimento pelo Facebook" class="dropdown-item"
-                          href="https://www.facebook.com/m.me/2007900989425052" target="_blank"
-                          rel="external noopener noreferrer">Atendimento</a>
-                        <a title="Contacto-nos" class="dropdown-item" href="../../contact">Contacta-nos</a>
-                        <a title="Canal WhatsApp" class="dropdown-item"
-                          href="https://whatsapp.com/channel/0029VaCEDqo59PwWpU0nGa04" target="_blank"
-                          rel="external noopener noreferrer">Canal WhatsApp</a>
-                      </div>
-                    </div>
-
-                    <div class="col">
-                      <div class="mt-3 mt-lg-0">
-                        <div>
-                          <div class="dropdown-header">Sugestões</div>
-                          <a title="Ajuda" class="dropdown-item" href="../support/help">Ajuda
-                            <span class="badge bg-success">Novo</span></a>
-                          <a title="Feedback" class="dropdown-item" href="#" data-bs-toggle="modal"
-                            data-bs-target="#modalFeedback">
-                            Feedback</a>
-                          <a title="Indisponível" class="dropdown-item" href="#!">Indisponível
-                            <span class="badge bg-warning">Indisponível</span></a>
+                        <div class="mt-3 mt-lg-0 d-flex align-items-center">
+                            <a title="Sign-in" href="/wasomupfy/login" class="btn btn-secondary mx-2">
+                                Entrar <i data-feather="log-in"></i>
+                            </a>
+                            <?php if ($canRegister): ?>
+                            <a title="Sign-up" href="/wasomupfy/register" class="btn btn-wasomupfy">Inscreva-se</a>
+                            <?php else: ?>
+                            <span class="btn btn-secondary disabled">Inscrições fechadas</span>
+                            <?php endif; ?>
                         </div>
-                        <div class="mt-3">
-                          <div class="dropdown-header">Ajuda</div>
-                          <a title="Tutorial" class="dropdown-item" href="../support/tutorial">Tutorial
-                            <span class="badge bg-success">Novo</span></a>
-                          <a title="Ocorreu um erro" class="dropdown-item" href="../support/support">Suporte técnico</a>
-                          <a title="Perguntas frequentes" class="dropdown-item" href="../support/faq">Perguntas
-                            frequentes</a>
-                        </div>
-                      </div>
                     </div>
-                  </div>
                 </div>
-              </li>
+            </div>
+        </nav>
+    </header>
 
-              <li class="nav-item">
-                <a class="nav-link" href="../../resources" title="Recursos" role="button" data-bs-toggle="link"
-                  aria-expanded="false">
-                  Recursos</a>
-              </li>
-              <li class="nav-item dropdown">
-                <a title="Contacto" class="nav-link" href="#" role="button" data-bs-toggle="dropdown"
-                  aria-expanded="false">Contactar <i data-feather="chevron-down"></i></a>
-                <ul class="dropdown-menu">
-                  <li>
-                    <a title="Caixa de mensagem" class="dropdown-item" href="../../contact">
-                      Caixa de mensagem</a>
-                  </li>
-                  <li>
-                    <a title="E-mail" class="dropdown-item"
-                      href="mailto:info@wasomupfy.com?subject=Entrando em contacto com equipa de Wasom Upfy.&bcc=suporte@wasomupfy.com&body=Olá equipa de Wasom Upfy.">
-                      info@wasomupfy.com</a>
-                  </li>
-                  <li>
-                    <a title="WhatsApp" class="dropdown-item"
-                      href="https://api.whatsapp.com/send/?phone=244922030116&text&type=phone_number&app_absent=0">
-                      WhatsApp
-                    </a>
-                  </li>
+    <main>
+        <!-- Hero -->
+        <section class="customized-hero jarallax position-relative overflow-hidden py-5" data-jarallax data-speed="0.4">
+            <img class="jarallax-img" src="../../assets/img/theme/customized-services.png"
+                alt="Serviços Personalizados <?php echo $siteName; ?>" loading="lazy" />
+            <div class="hero-overlay"></div>
+            <div class="container position-relative z-index-2 py-6">
+                <div class="row justify-content-center text-center">
+                    <div class="col-lg-9" data-cue="fadeIn">
+                        <span class="badge bg-wasomupfy text-white mb-3 fs-6 px-3 py-2 rounded-pill">
+                            Premium Services
+                        </span>
+                        <h1 class="display-4 mb-4 text-white-stable fw-bold">
+                            Soluções sob medida para<br />a sua visão.
+                        </h1>
+                        <p class="lead text-white-stable mb-4 opacity-90">
+                            Para Selos, Gestores e Artistas que necessitam de infraestrutura avançada,
+                            gestão de direitos complexa e suporte estratégico dedicado.
+                            Com <?php echo $royalty; ?>% dos direitos sempre nas suas mãos.
+                        </p>
+                        <a href="#solucoes" class="btn btn-wasomupfy btn-lg mt-2 smooth-scroll">
+                            Explorar Soluções <i class="fa-solid fa-arrow-down ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Intro -->
+        <section class="py-4 bg-light-100">
+            <div class="container">
+                <div class="row justify-content-center text-center mb-6">
+                    <div class="col-lg-8">
+                        <h2 class="fw-bold display-6 mb-3">Além da Distribuição Padrão</h2>
+                        <p class="text-muted lead">
+                            Sabemos que cada carreira tem desafios únicos. A nossa equipa de
+                            <strong>"Special Operations"</strong> está pronta para desenhar o plano perfeito
+                            para o seu negócio musical — desde a gestão de selos com múltiplos artistas
+                            até ao licenciamento das suas obras para cinema e publicidade internacional.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Soluções -->
+        <section id="solucoes" class="py-4 bg-light-100 overflow-hidden">
+            <div class="container">
+
+                <!-- Label Services -->
+                <div class="row align-items-center mb-7 g-5">
+                    <div class="col-lg-6 order-lg-2" data-cue="slideInRight">
+                        <div class="position-relative ps-lg-5">
+                            <img src="../../assets/img/theme/label-services.png" class="img-fluid rounded-3 shadow-lg"
+                                alt="Gestão de Selos <?php echo $siteName; ?>" />
+                            <div
+                                class="position-absolute top-0 end-0 mt-n4 me-n4 bg-wasomupfy text-white p-3 rounded-circle shadow-lg d-none d-md-block">
+                                <i class="fa-solid fa-sitemap fs-3"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 order-lg-1" data-cue="slideInLeft">
+                        <h3 class="fw-bold mb-3 display-6">Label Services &amp; Gestão de Catálogo</h3>
+                        <p class="text-muted mb-4">
+                            Tem um selo com vários artistas? A <?php echo $siteName; ?> trata da burocracia.
+                            O nosso painel administrativo dedicado permite gerir múltiplos artistas,
+                            configurar <strong class="text-dark">Split Pay (Divisão de Royalties)</strong> automático
+                            entre produtores, cantores e investidores — e acompanhar cada kwanza gerado
+                            por cada obra em tempo real.
+                        </p>
+                        <ul class="list-unstyled mb-4">
+                            <li class="mb-2">
+                                <i class="fa-solid fa-check-circle text-wasomupfy me-2"></i>
+                                Pagamentos automáticos por colaborador e percentagem.
+                            </li>
+                            <li class="mb-2">
+                                <i class="fa-solid fa-check-circle text-wasomupfy me-2"></i>
+                                Relatórios financeiros unificados por artista e catálogo.
+                            </li>
+                            <li class="mb-2">
+                                <i class="fa-solid fa-check-circle text-wasomupfy me-2"></i>
+                                Painel de controlo com estatísticas de streams por plataforma.
+                            </li>
+                            <li class="mb-2">
+                                <i class="fa-solid fa-check-circle text-wasomupfy me-2"></i>
+                                Contratos de licenciamento personalizados.
+                            </li>
+                        </ul>
+                        <a href="../../contact?subject=Label+Services"
+                            class="btn btn-link text-wasomupfy fw-bold p-0 text-decoration-none">
+                            Falar com Gestor de Labels <i class="fa-solid fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Design -->
+                <div class="row align-items-center mb-7 g-5">
+                    <div class="col-lg-6" data-cue="slideInLeft">
+                        <div class="position-relative pe-lg-5">
+                            <img src="../../assets/img/theme/design-global.png" class="img-fluid rounded-3 shadow-lg"
+                                alt="Design Gráfico Musical" />
+                            <div
+                                class="position-absolute bottom-0 start-0 mb-n4 ms-n4 bg-dark text-white p-3 rounded-circle shadow-lg d-none d-md-block">
+                                <i class="fa-solid fa-palette fs-3"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6" data-cue="slideInRight">
+                        <h3 class="fw-bold mb-3 display-6">Design &amp; Identidade Visual</h3>
+                        <p class="text-muted mb-4">
+                            A primeira impressão é a que fica. A nossa equipa de design cria capas de álbuns,
+                            logótipos e material promocional (Social Media Kits) que cumprem os requisitos
+                            rigorosos das lojas e destacam a sua marca no mercado africano e global.
+                        </p>
+                        <ul class="list-unstyled mb-4">
+                            <li class="mb-2">
+                                <i class="fa-solid fa-check-circle text-wasomupfy me-2"></i>
+                                Capas em conformidade com todas as lojas (3000×3000 px).
+                            </li>
+                            <li class="mb-2">
+                                <i class="fa-solid fa-check-circle text-wasomupfy me-2"></i>
+                                Canvas animados para Spotify &amp; Apple Music.
+                            </li>
+                            <li class="mb-2">
+                                <i class="fa-solid fa-check-circle text-wasomupfy me-2"></i>
+                                Motion Graphics para Stories e Reels.
+                            </li>
+                            <li class="mb-2">
+                                <i class="fa-solid fa-check-circle text-wasomupfy me-2"></i>
+                                Identidade visual completa (logo, cores, tipografia).
+                            </li>
+                        </ul>
+                        <a href="javascript:void(0);"
+                            class="btn btn-link text-wasomupfy fw-bold p-0 text-decoration-none"
+                            onclick="openPortfolioLightbox(); return false;">
+                            Ver Portfólio <i class="fa-solid fa-arrow-right ms-1"></i>
+                        </a>
+
+                        <!-- Gallery oculta (Lightbox2) -->
+                        <div style="display:none">
+                            <a href="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&auto=format"
+                                data-lightbox="design-gallery" data-title="Capa de Álbum — Artista Wasom"
+                                class="portfolio-item"></a>
+                            <a href="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800&auto=format"
+                                data-lightbox="design-gallery" data-title="Capa Conceitual — Série Musical"
+                                class="portfolio-item"></a>
+                            <a href="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format"
+                                data-lightbox="design-gallery" data-title="Canvas Animado — Preview"
+                                class="portfolio-item"></a>
+                            <a href="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=800&auto=format"
+                                data-lightbox="design-gallery" data-title="Estúdio de Design"
+                                class="portfolio-item"></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Publishing -->
+                <div class="row align-items-center g-5">
+                    <div class="col-lg-6 order-lg-2" data-cue="slideInRight">
+                        <div class="position-relative ps-lg-5">
+                            <img src="../../assets/img/theme/publishing-rights.png"
+                                class="img-fluid rounded-3 shadow-lg"
+                                alt="Direitos Autorais <?php echo $siteName; ?>" />
+                            <div
+                                class="position-absolute top-50 start-100 translate-middle bg-success text-white p-3 rounded-circle shadow-lg d-none d-md-block">
+                                <i class="fa-solid fa-copyright fs-3"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 order-lg-1" data-cue="slideInLeft">
+                        <h3 class="fw-bold mb-3 display-6">Publishing &amp; Sync Licensing</h3>
+                        <p class="text-muted mb-4">
+                            Não deixe dinheiro na mesa. A distribuição recolhe royalties de gravação —
+                            mas e os de composição? Ajudamos a registar as suas obras junto à
+                            <strong class="text-dark">SADIA</strong> e demais sociedades internacionais para recolher
+                            direitos de execução pública, e negociamos a sua música para Filmes, TV e Publicidade
+                            (Sync).
+                        </p>
+                        <ul class="list-unstyled mb-4">
+                            <li class="mb-2">
+                                <i class="fa-solid fa-check-circle text-wasomupfy me-2"></i>
+                                Recolha global de direitos autorais (SADIA, ECAD, PRS e mais).
+                            </li>
+                            <li class="mb-2">
+                                <i class="fa-solid fa-check-circle text-wasomupfy me-2"></i>
+                                Representação para Sync (TV, Cinema, Publicidade).
+                            </li>
+                            <li class="mb-2">
+                                <i class="fa-solid fa-check-circle text-wasomupfy me-2"></i>
+                                Registo e gestão de ISRC e ISWC.
+                            </li>
+                            <li class="mb-2">
+                                <i class="fa-solid fa-check-circle text-wasomupfy me-2"></i>
+                                Maximiza até 100% dos seus rendimentos musicais.
+                            </li>
+                        </ul>
+                        <a href="#!" class="btn btn-link text-wasomupfy fw-bold p-0 text-decoration-none">
+                            Saber mais sobre Publishing <i class="fa-solid fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Como funciona -->
+        <section class="py-5 bg-light-100">
+            <div class="container">
+                <div class="text-center mb-6">
+                    <h2 class="fw-bold">Como contratamos serviços personalizados?</h2>
+                    <p class="text-muted">Um processo simples, transparente e sem surpresas.</p>
+                </div>
+                <div class="row g-4 justify-content-center">
+                    <div class="col-md-4 text-center position-relative" data-cue="slideInUp">
+                        <div
+                            class="display-1 text-wasomupfy opacity-25 fw-bold position-absolute top-0 start-50 translate-middle-x z-index-1">
+                            01</div>
+                        <div class="position-relative z-index-2 pt-4">
+                            <h4 class="fw-bold">Diagnóstico</h4>
+                            <p class="text-muted">
+                                Reunimo-nos consigo para entender a dimensão do seu catálogo,
+                                as necessidades específicas e os objetivos de carreira.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-center position-relative" data-cue="slideInUp" data-delay="100">
+                        <div
+                            class="display-1 text-wasomupfy opacity-25 fw-bold position-absolute top-0 start-50 translate-middle-x z-index-1">
+                            02</div>
+                        <div class="position-relative z-index-2 pt-4">
+                            <h4 class="fw-bold">Proposta</h4>
+                            <p class="text-muted">
+                                Apresentamos um plano estratégico com custos transparentes,
+                                cronograma definido e resultados esperados.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-center position-relative" data-cue="slideInUp" data-delay="200">
+                        <div
+                            class="display-1 text-wasomupfy opacity-25 fw-bold position-absolute top-0 start-50 translate-middle-x z-index-1">
+                            03</div>
+                        <div class="position-relative z-index-2 pt-4">
+                            <h4 class="fw-bold">Execução</h4>
+                            <p class="text-muted">
+                                A nossa equipa assume toda a operação.
+                                Você foca apenas em criar música — nós tratamos do resto.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA VIP -->
+        <section class="py-5 bg-light-100 position-relative overflow-hidden">
+            <div class="container position-relative z-index-2 text-center">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8" data-cue="zoomIn">
+                        <i class="fa-solid fa-handshake fs-1 text-wasomupfy mb-4"></i>
+                        <h2 class="display-5 fw-bold mb-4">Vamos elevar o nível?</h2>
+                        <p class="lead mb-5">
+                            Estes serviços são exclusivos e requerem análise prévia.
+                            Entre em contacto direto com a nossa diretoria e receba uma proposta personalizada.
+                        </p>
+                        <div class="d-flex flex-wrap justify-content-center gap-3">
+                            <a href="../../contact?subject=Servi%C3%A7os+Personalizados"
+                                class="btn btn-wasomupfy btn-lg px-5 py-3 rounded-pill fw-bold shadow-lg hover-scale">
+                                <i class="fa-solid fa-crown me-2"></i> Solicitar Consultoria VIP
+                            </a>
+                            <?php if ($whatsNum): ?>
+                            <a href="https://api.whatsapp.com/send/?phone=<?php echo $whatsNum; ?>&text=Ol%C3%A1%2C+quero+saber+mais+sobre+os+Servi%C3%A7os+Personalizados+Wasom+Upfy&type=phone_number&app_absent=0"
+                                target="_blank" rel="noopener noreferrer"
+                                class="btn btn-outline-success btn-lg px-5 py-3 rounded-pill fw-bold">
+                                <i class="fa-brands fa-whatsapp me-2"></i> WhatsApp Direto
+                            </a>
+                            <?php endif; ?>
+                        </div>
+                        <p class="text-muted small mt-4">
+                            <i class="fa-solid fa-shield-halved me-1 text-wasomupfy"></i>
+                            Consulta inicial gratuita. Sem compromisso.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="divider-fade"></div>
+
+    <!-- Footer -->
+    <footer class="bg-light-100 pt-7" role="contentinfo" aria-label="Rodapé do site">
+        <div class="container">
+            <!-- Newsletter -->
+            <div class="row align-items-center mb-7 border-bottom border-white-10 pb-5">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <h3 class="fw-bold mb-1">Junte-se a +10.000 Artistas</h3>
+                    <p class="lead text-muted mb-0">Receba dicas de marketing, novidades da indústria e ofertas
+                        exclusivas.</p>
+                </div>
+                <div class="col-lg-6">
+                    <form action="#" class="row g-2">
+                        <div class="col-sm-8">
+                            <input type="email" class="form-control border-0 text-muted py-3" required
+                                placeholder="Seu melhor e-mail" />
+                        </div>
+                        <div class="col-sm-4">
+                            <button class="btn btn-wasomupfy w-100 py-3 fw-bold">Inscrever</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <nav aria-label="Navegação do rodapé">
+                <div class="row g-5" id="ft-links">
+                    <!-- Logo + Social -->
+                    <div class="col-lg-3 col-12">
+                        <a href="../../home" class="d-inline-block mb-4 navbar-brand">
+                            <img src="../../assets/img/brand/wasomupfy_brand.png" alt="<?php echo $siteName; ?>"
+                                width="65" class="img-logo" height="60" />
+                        </a>
+                        <p class="lead text-muted small mb-4">
+                            Levamos a música angolana para o mundo. Distribuição digital, marketing e gestão de carreira
+                            num só lugar.
+                        </p>
+                        <div class="d-flex gap-3" role="list" aria-label="Redes sociais">
+                            <?php if (cfg('instagram_url')): ?>
+                            <a href="<?php echo htmlspecialchars(cfg('instagram_url')); ?>" target="_blank"
+                                rel="external noopener noreferrer"
+                                aria-label="Instagram da <?php echo $siteName; ?> (abre em nova janela)"
+                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                <i class="fa-brands fa-instagram"></i><span class="visually-hidden">Instagram</span>
+                            </a>
+                            <?php endif; ?>
+                            <?php if (cfg('facebook_url')): ?>
+                            <a href="<?php echo htmlspecialchars(cfg('facebook_url')); ?>" target="_blank"
+                                rel="external noopener noreferrer"
+                                aria-label="Facebook da <?php echo $siteName; ?> (abre em nova janela)"
+                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                <i class="fa-brands fa-facebook-f"></i><span class="visually-hidden">Facebook</span>
+                            </a>
+                            <?php endif; ?>
+                            <?php if (cfg('youtube_url')): ?>
+                            <a href="<?php echo htmlspecialchars(cfg('youtube_url')); ?>" target="_blank"
+                                rel="external noopener noreferrer"
+                                aria-label="YouTube da <?php echo $siteName; ?> (abre em nova janela)"
+                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                <i class="fa-brands fa-youtube"></i><span class="visually-hidden">YouTube</span>
+                            </a>
+                            <?php endif; ?>
+                            <?php if (cfg('linkedin_url')): ?>
+                            <a href="<?php echo htmlspecialchars(cfg('linkedin_url')); ?>" target="_blank"
+                                rel="external noopener noreferrer"
+                                aria-label="LinkedIn da <?php echo $siteName; ?> (abre em nova janela)"
+                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                <i class="fa-brands fa-linkedin-in"></i><span class="visually-hidden">LinkedIn</span>
+                            </a>
+                            <?php endif; ?>
+                            <?php if ($whatsNum): ?>
+                            <a href="https://wa.me/<?php echo $whatsNum; ?>" target="_blank"
+                                rel="external noopener noreferrer"
+                                aria-label="WhatsApp da <?php echo $siteName; ?> (abre em nova janela)"
+                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                <i class="fa-brands fa-whatsapp"></i><span class="visually-hidden">WhatsApp</span>
+                            </a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <!-- Empresa -->
+                    <div class="col-lg-3 col-6">
+                        <h3 class="fw-bold mb-3">Empresa</h3>
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2"><a href="../../about"
+                                    class="text-reset text-decoration-none hover-white">Sobre</a></li>
+                            <li class="mb-2"><a href="../../about#nossamarca"
+                                    class="text-reset text-decoration-none hover-white">A nossa marca</a></li>
+                            <li class="mb-2"><a href="../../plan/all-plans"
+                                    class="text-reset text-decoration-none hover-white">Planos</a></li>
+                            <li class="mb-2"><a href="customized-services"
+                                    class="text-reset text-decoration-none hover-white">Serviços Premium</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Suporte -->
+                    <div class="col-lg-3 col-6">
+                        <h3 class="fw-bold mb-3">Suporte</h3>
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2"><a href="https://www.facebook.com/m.me/2007900989425052" target="_blank"
+                                    rel="external noopener noreferrer"
+                                    class="text-reset text-decoration-none hover-white">Atendimento</a></li>
+                            <li class="mb-2"><a href="../support/help"
+                                    class="text-reset text-decoration-none hover-white">Ajuda</a></li>
+                            <li class="mb-2"><a href="../../contact"
+                                    class="text-reset text-decoration-none hover-white">Contacta-nos</a></li>
+                            <li class="mb-2">
+                                <?php if ($whatsNum): ?>
+                                <a href="https://wa.me/<?php echo $whatsNum; ?>"
+                                    class="text-reset text-decoration-none hover-white">WhatsApp</a>
+                                <?php endif; ?>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Contacto -->
+                    <div class="col-lg-3 col-12">
+                        <h3 class="fw-bold mb-3">Contacto</h3>
+                        <ul class="list-unstyled mb-0 text-muted small">
+                            <li class="mb-3 d-flex"><span>Angola - Luanda</span></li>
+                            <?php if (cfg('support_email')): ?>
+                            <li class="mb-3 d-flex">
+                                <a href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
+                                    class="text-reset text-decoration-none">
+                                    <?php echo htmlspecialchars(cfg('support_email')); ?>
+                                </a>
+                            </li>
+                            <?php endif; ?>
+                            <?php if (cfg('info_email')): ?>
+                            <li class="mb-3 d-flex">
+                                <a href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
+                                    class="text-reset text-decoration-none">
+                                    <?php echo htmlspecialchars(cfg('info_email')); ?>
+                                </a>
+                            </li>
+                            <?php endif; ?>
+                            <li class="d-flex"><span>Seg - Sex: 08h às 17h</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Copyright -->
+            <div class="row py-4 mt-6 border-top border-white-10 align-items-center">
+                <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+                    <p class="text-muted small mb-0">
+                        &copy; <?php echo date('Y'); ?> <?php echo $siteName; ?>. Todos os direitos reservados.
+                    </p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <ul class="list-inline mb-0 small">
+                        <li class="list-inline-item">
+                            <a href="../politicies/privacy" class="text-reset text-decoration-none">Política de
+                                Privacidade</a>
+                        </li>
+                        <li class="list-inline-item mx-2 text-white-10">|</li>
+                        <li class="list-inline-item">
+                            <a href="../politicies/terms" class="text-reset text-decoration-none">Termos de Uso</a>
+                        </li>
+                        <li class="list-inline-item mx-2 text-white-10">|</li>
+                        <li class="list-inline-item">
+                            <a href="../politicies/cookies" class="text-reset text-decoration-none">Cookies</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll top -->
+    <div class="btn-scroll-top">
+        <svg class="progress-square svg-content" width="100%" height="100%" viewBox="0 0 40 40">
+            <path
+                d="M8 1H32C35.866 1 39 4.13401 39 8V32C39 35.866 35.866 39 32 39H8C4.13401 39 1 35.866 1 32V8C1 4.13401 4.13401 1 8 1Z" />
+        </svg>
+    </div>
+
+    <!-- Theme switcher — verbatim -->
+    <div class="customizer_1">
+        <div class="position-absolute end-0 bottom-0 m-4 fixed">
+            <div class="dropdown">
+                <button class="btn btn-wasomupfy rounded-circle d-flex align-items-center" type="button"
+                    aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
+                    <i class="fa-solid fa-circle-half-stroke"></i>
+                    <span class="visually-hidden bs-theme-text">Tema do Site</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bs-theme-text">
+                    <li>
+                        <button type="button" class="dropdown-item d-flex align-items-center"
+                            data-bs-theme-value="light" aria-pressed="false">
+                            <i class="fa-solid fa-sun"></i><span class="ms-2">Claro</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark"
+                            aria-pressed="false">
+                            <i class="fa-solid fa-moon"></i><span class="ms-2">Escuro</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="dropdown-item d-flex align-items-center active"
+                            data-bs-theme-value="auto" aria-pressed="true">
+                            <i class="fa-solid fa-display"></i><span class="ms-2">Sistema</span>
+                        </button>
+                    </li>
                 </ul>
-              </li>
-            </ul>
-            <div class="mt-3 mt-lg-0 d-flex align-items-center">
-              <a title="Sign-in" href="/wasomupfy/login" class="btn btn-secondary mx-2">Entrar
-                <i data-feather="log-in"></i>
-              </a>
-              <a title="Sign-up" href="/wasomupfy/register" class="btn btn-wasomupfy">Inscreva-se
-              </a>
             </div>
-          </div>
         </div>
-      </div>
-    </nav>
-  </header>
-  <!-- Cabecalho da página de navbar fim -->
-
-  <!--Seccão do site inteira até ao perto do footer  -->
-  <main>
-    <section class="customized-hero jarallax position-relative overflow-hidden py-5" data-jarallax data-speed="0.4">
-      <img class="jarallax-img" src="../../assets/img/theme/customized-services.png"
-        alt="Serviços Personalizados Wasom Upfy" loading="lazy" />
-      <div class="hero-overlay"></div>
-      <div class="container position-relative z-index-2 py-6">
-        <div class="row justify-content-center text-center">
-          <div class="col-lg-9" data-cue="fadeIn">
-            <span class="badge bg-wasomupfy text-white mb-3 fs-6 px-3 py-2 rounded-pill">Premium Services</span>
-            <h1 class="display-4 mb-4 text-white-stable fw-bold">
-              Soluções sob medida para<br />a sua visão.
-            </h1>
-            <p class="lead text-white-stable mb-4 opacity-90">
-              Para Selos, Gestores e Artistas que necessitam de infraestrutura
-              avançada, gestão de direitos complexa e suporte estratégico
-              dedicado.
-            </p>
-            <a href="#solucoes" class="btn btn-wasomupfy btn-lg mt-2 smooth-scroll">
-              Explorar Soluções <i class="fa-solid fa-arrow-down ms-2"></i>
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="py-4 bg-light-100">
-      <div class="container">
-        <div class="row justify-content-center text-center mb-6">
-          <div class="col-lg-8">
-            <h2 class="fw-bold display-6 mb-3">
-              Além da Distribuição Padrão
-            </h2>
-            <p class="text-muted lead">
-              Sabemos que cada carreira tem desafios únicos. A nossa equipa de
-              "Special Operations" está pronta para desenhar o plano perfeito
-              para o seu negócio musical.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="solucoes" class="py-4 bg-light-100 overflow-hidden">
-      <div class="container">
-        <div class="row align-items-center mb-7 g-5">
-          <div class="col-lg-6 order-lg-2" data-cue="slideInRight">
-            <div class="position-relative ps-lg-5">
-              <img src="../../assets/img/theme/label-services.png" class="img-fluid rounded-3 shadow-lg"
-                alt="Gestão de Selos" />
-              <div
-                class="position-absolute top-0 end-0 mt-n4 me-n4 bg-wasomupfy text-white p-3 rounded-circle shadow-lg d-none d-md-block">
-                <i class="fa-solid fa-sitemap fs-3"></i>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-6 order-lg-1" data-cue="slideInLeft">
-            <h3 class="fw-bold mb-3 display-6">
-              Label Services & Gestão de Catálogo
-            </h3>
-            <p class="text-muted mb-4">
-              Tem um selo com vários artistas? Nós cuidamos da burocracia.
-              Oferecemos um painel administrativo onde pode gerir múltiplos
-              artistas, configurar
-              <strong class="text-dark">Split Pay (Divisão de Royalties)</strong>
-              automática entre produtores, cantores e investidores.
-            </p>
-            <ul class="list-unstyled mb-4">
-              <li class="mb-2">
-                <i class="fa-solid fa-check-circle text-wasomupfy me-2"></i>
-                Pagamentos automáticos para cada membro.
-              </li>
-              <li class="mb-2">
-                <i class="fa-solid fa-check-circle text-wasomupfy me-2"></i>
-                Relatórios financeiros unificados.
-              </li>
-              <li class="mb-2">
-                <i class="fa-solid fa-check-circle text-wasomupfy me-2"></i>
-                Contratos de licenciamento personalizados.
-              </li>
-            </ul>
-            <a href="contact" class="btn btn-link text-wasomupfy fw-bold p-0 text-decoration-none">
-              Falar com Gestor de Labels
-              <i class="fa-solid fa-arrow-right ms-1"></i>
-            </a>
-          </div>
-        </div>
-
-        <div class="row align-items-center mb-7 g-5">
-          <div class="col-lg-6" data-cue="slideInLeft">
-            <div class="position-relative pe-lg-5">
-              <img src="../../assets/img/theme/design-global.png" class="img-fluid rounded-3 shadow-lg"
-                alt="Design Gráfico" />
-              <div
-                class="position-absolute bottom-0 start-0 mb-n4 ms-n4 bg-dark text-white p-3 rounded-circle shadow-lg d-none d-md-block">
-                <i class="fa-solid fa-palette fs-3"></i>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-6" data-cue="slideInRight">
-            <h3 class="fw-bold mb-3 display-6">Design & Identidade Visual</h3>
-            <p class="text-muted mb-4">
-              A primeira impressão é a que fica. A nossa equipa de design cria
-              capas de álbuns, logótipos e material promocional (Social Media
-              Kits) que cumprem os requisitos rigorosos das lojas e destacam a
-              sua marca.
-            </p>
-            <ul class="list-unstyled mb-4">
-              <li class="mb-2">
-                <i class="fa-solid fa-check-circle text-wasomupfy me-2"></i>
-                Capas em conformidade (3000x3000px).
-              </li>
-              <li class="mb-2">
-                <i class="fa-solid fa-check-circle text-wasomupfy me-2"></i>
-                Canvas animados para Spotify.
-              </li>
-              <li class="mb-2">
-                <i class="fa-solid fa-check-circle text-wasomupfy me-2"></i>
-                Motion Graphics para Stories.
-              </li>
-            </ul>
-
-            <!-- Lightbox Gallery Trigger -->
-            <a href="javascript:void(0);" class="btn btn-link text-wasomupfy fw-bold p-0 text-decoration-none"
-              onclick="openPortfolioLightbox(); return false;">
-              Ver Portfólio <i class="fa-solid fa-arrow-right ms-1"></i>
-            </a>
-
-            <!-- Hidden Gallery Items -->
-            <div style="display: none">
-              <a href="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&auto=format"
-                data-lightbox="design-gallery" data-title="Capa de Álbum - Artista X" class="portfolio-item">
-              </a>
-              <a href="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800&auto=format"
-                data-lightbox="design-gallery" data-title="Capa Conceitual - Série Musical" class="portfolio-item">
-              </a>
-
-              <a href="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format"
-                data-lightbox="design-gallery" data-title="Canvas Animado - Preview" class="portfolio-item">
-              </a>
-
-              <a href="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=800&auto=format"
-                data-lightbox="design-gallery" data-title="Estúdio de Design" class="portfolio-item">
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div class="row align-items-center g-5">
-          <div class="col-lg-6 order-lg-2" data-cue="slideInRight">
-            <div class="position-relative ps-lg-5">
-              <img src="../../assets/img/theme/publishing-rights.png" class="img-fluid rounded-3 shadow-lg"
-                alt="Direitos Autorais" />
-              <div
-                class="position-absolute top-50 start-100 translate-middle bg-success text-white p-3 rounded-circle shadow-lg d-none d-md-block">
-                <i class="fa-solid fa-copyright fs-3"></i>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-6 order-lg-1" data-cue="slideInLeft">
-            <h3 class="fw-bold mb-3 display-6">
-              Publishing & Sync Licensing
-            </h3>
-            <p class="text-muted mb-4">
-              Não deixe dinheiro na mesa. A distribuição recolhe royalties de
-              gravação, mas e os de composição? Ajudamos a registar as suas
-              obras para recolher direitos de execução pública e negociamos a
-              sua música para Filmes, TV e Publicidade (Sync).
-            </p>
-            <ul class="list-unstyled mb-4">
-              <li class="mb-2">
-                <i class="fa-solid fa-check-circle text-wasomupfy me-2"></i>
-                Recolha global de direitos autorais.
-              </li>
-              <li class="mb-2">
-                <i class="fa-solid fa-check-circle text-wasomupfy me-2"></i>
-                Representação para Sync (TV/Cinema).
-              </li>
-              <li class="mb-2">
-                <i class="fa-solid fa-check-circle text-wasomupfy me-2"></i>
-                Registo de ISRC e ISWC.
-              </li>
-            </ul>
-            <a href="#!" class="btn btn-link text-wasomupfy fw-bold p-0 text-decoration-none">
-              Saber mais sobre Publishing
-              <i class="fa-solid fa-arrow-right ms-1"></i>
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="py-5 bg-light-100">
-      <div class="container">
-        <div class="text-center mb-6">
-          <h2 class="fw-bold">Como contratamos serviços personalizados?</h2>
-        </div>
-
-        <div class="row g-4 justify-content-center">
-          <div class="col-md-4 text-center position-relative">
-            <div
-              class="display-1 text-wasomupfy opacity-25 fw-bold position-absolute top-0 start-50 translate-middle-x z-index-1">
-              01
-            </div>
-            <div class="position-relative z-index-2 pt-4">
-              <h4 class="fw-bold">Diagnóstico</h4>
-              <p class="text-muted">
-                Reunimos consigo para entender a dimensão do seu catálogo e as
-                necessidades específicas.
-              </p>
-            </div>
-          </div>
-          <div class="col-md-4 text-center position-relative">
-            <div
-              class="display-1 text-wasomupfy opacity-25 fw-bold position-absolute top-0 start-50 translate-middle-x z-index-1">
-              02
-            </div>
-            <div class="position-relative z-index-2 pt-4">
-              <h4 class="fw-bold">Proposta</h4>
-              <p class="text-muted">
-                Apresentamos um plano estratégico com custos transparentes e
-                prazos definidos.
-              </p>
-            </div>
-          </div>
-          <div class="col-md-4 text-center position-relative">
-            <div
-              class="display-1 text-wasomupfy opacity-25 fw-bold position-absolute top-0 start-50 translate-middle-x z-index-1">
-              03
-            </div>
-            <div class="position-relative z-index-2 pt-4">
-              <h4 class="fw-bold">Execução</h4>
-              <p class="text-muted">
-                A nossa equipa assume a operação e você foca apenas em criar
-                música.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="py-5 bg-light-100 position-relative overflow-hidden">
-      <div class="container position-relative z-index-2 text-center">
-        <div class="row justify-content-center">
-          <div class="col-lg-8" data-cue="zoomIn">
-            <i class="fa-solid fa-handshake fs-1 text-wasomupfy mb-4"></i>
-            <h2 class="display-5 fw-bold mb-4">Vamos elevar o nível?</h2>
-            <p class="lead mb-5">
-              Estes serviços são exclusivos e requerem análise prévia. Entre
-              em contacto direto com a nossa diretoria.
-            </p>
-            <a href="contact?subject=personalizado"
-              class="btn btn-wasomupfy btn-lg px-5 py-3 rounded-pill fw-bold shadow-lg hover-scale">
-              Solicitar Consultoria VIP
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!--Seccão do site inteira até ao perto do footer  fim -->
-  <div class="divider-fade"></div>
-
-  <!-- Footer -->
-  <footer class="bg-light-100 pt-7" role="contentinfo" aria-label="Rodapé do site">
-    <div class="container">
-      <!-- Call-to-action Newsletter -->
-      <div class="row align-items-center mb-7 border-bottom border-white-10 pb-5">
-        <div class="col-lg-6 mb-4 mb-lg-0">
-          <h3 class="fw-bold mb-1">Junte-se a +10.000 Artistas</h3>
-          <p class="lead text-muted mb-0">
-            Receba dicas de marketing, novidades da indústria e ofertas
-            exclusivas.
-          </p>
-        </div>
-        <div class="col-lg-6">
-          <form action="#" class="row g-2">
-            <div class="col-sm-8">
-              <input type="email" class="form-control border-0 text-muted py-3" autocapitalize="email" required
-                placeholder="Seu melhor e-mail" />
-            </div>
-            <div class="col-sm-4">
-              <button class="btn btn-wasomupfy w-100 py-3 fw-bold">
-                Inscrever
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      <!-- Navegação do Footer -->
-      <nav aria-label="Navegação do rodapé">
-        <div class="row g-5" id="ft-links">
-          <!-- Logo + Redes Sociais -->
-          <div class="col-lg-3 col-12">
-            <a href="../../home" class="d-inline-block mb-4 navbar-brand">
-              <img src="../../assets/img/brand/wasomupfy_brand.png" alt="Wasom Upfy" width="65" class="img-logo"
-                height="60" />
-            </a>
-            <p class="lead text-muted small mb-4">
-              Levamos a música angolana para o mundo. Distribuição digital,
-              marketing e gestão de carreira num só lugar.
-            </p>
-            <div class="d-flex gap-3" role="list" aria-label="Redes sociais">
-              <a href="https://www.instagram.com/wasomupfy" target="_blank" rel="external noopener noreferrer"
-                aria-label="Instagram da Wasom Upfy (abre em nova janela)"
-                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                <i class="fa-brands fa-instagram"></i>
-                <span class="visually-hidden">Instagram</span>
-              </a>
-              <a href="https://www.facebook.com/wasom.official" target="_blank" rel="external noopener noreferrer"
-                aria-label="Facebook da Wasom Upfy (abre em nova janela)"
-                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                <i class="fa-brands fa-facebook-f"></i>
-                <span class="visually-hidden">Facebook</span>
-              </a>
-              <a href="https://www.youtube.com/@wasomupfy" target="_blank" rel="external noopener noreferrer"
-                aria-label="YouTube da Wasom Upfy (abre em nova janela)"
-                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                <i class="fa-brands fa-youtube"></i>
-                <span class="visually-hidden">YouTube</span>
-              </a>
-              <a href="https://linkedin.com/company/wasom-upfy" target="_blank" rel="external noopener noreferrer"
-                aria-label="LinkedIn da Wasom Upfy (abre em nova janela)"
-                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                <i class="fa-brands fa-linkedin-in"></i>
-                <span class="visually-hidden">LinkedIn</span>
-              </a>
-              <a href="https://wa.me/244923456789" target="_blank" rel="external noopener noreferrer"
-                aria-label="WhatsApp da Wasom Upfy (abre em nova janela)"
-                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                <i class="fa-brands fa-whatsapp"></i>
-                <span class="visually-hidden">WhatsApp</span>
-              </a>
-            </div>
-          </div>
-
-          <!-- Empresa -->
-          <div class="col-lg-3 col-6">
-            <h3 class="fw-bold mb-3">Empresa</h3>
-            <ul class="list-unstyled mb-0">
-              <li class="mb-2">
-                <a href="../../about" class="text-reset text-decoration-none hover-white">
-                  Sobre
-                </a>
-              </li>
-              <li class="mb-2">
-                <a href="../../about#nossamarca" class="text-reset text-decoration-none hover-white">A nossa marca
-                </a>
-              </li>
-              <li class="mb-2">
-                <a href="../../plan/all-plans" class="text-reset text-decoration-none hover-white">Planos
-                </a>
-              </li>
-              <li class="mb-2">
-                <a href="../services/customized-services" class="text-reset text-decoration-none hover-white">Serviços
-                  Premium</a>
-              </li>
-            </ul>
-          </div>
-
-          <!-- Suporte -->
-          <div class="col-lg-3 col-6">
-            <h3 class="fw-bold mb-3">Suporte</h3>
-            <ul class="list-unstyled mb-0">
-              <li class="mb-2">
-                <a href="https://www.facebook.com/m.me/2007900989425052" target="_blank"
-                  rel="external noopener noreferrer" class="text-reset text-decoration-none hover-white">
-                  Atendimento
-                </a>
-              </li>
-              <li class="mb-2">
-                <a href="../../page/support/help" class="text-reset text-decoration-none hover-white">Ajuda
-                </a>
-              </li>
-              <li class="mb-2">
-                <a href="../../contact" class="text-reset text-decoration-none hover-white">Contacta-nos
-                </a>
-              </li>
-              <li class="mb-2">
-                <a href="https://wa.me/244923456789" class="text-reset text-decoration-none hover-white">WhatsApp
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <!-- Contacto e Localidade -->
-          <div class="col-lg-3 col-12">
-            <h3 class="fw-bold mb-3">Contacto</h3>
-            <ul class="list-unstyled mb-0 text-muted small">
-              <li class="mb-3 d-flex">
-                <span>Angola - Luanda</span>
-              </li>
-              <li class="mb-3 d-flex">
-                <a href="mailto:info@wasomupfy.com?subject=Contacto%20Wasom%20Upfy"
-                  class="text-reset text-decoration-none">info@wasomupfy.com</a>
-              </li>
-              <li class="mb-3 d-flex">
-                <a href="mailto:suporte@wasomupfy.com?subject=Contacto%20Wasom%20Upfy"
-                  class="text-reset text-decoration-none">suporte@wasomupfy.com</a>
-              </li>
-              <li class="d-flex">
-                <span>Seg - Sex: 08h às 17h</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-
-      <!-- Rodapé Inferior - Copyright e Links Legais -->
-      <div class="row py-4 mt-6 border-top border-white-10 align-items-center">
-        <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
-          <p class="text-muted small mb-0">
-            &copy;
-            <script>
-              document.write(new Date().getFullYear());
-            </script>
-            Wasom Upfy. Todos os direitos reservados.
-          </p>
-        </div>
-        <div class="col-md-6 text-center text-md-end">
-          <ul class="list-inline mb-0 small">
-            <li class="list-inline-item">
-              <a href="../politicies/privacy" class="text-reset text-decoration-none">Política de Privacidade</a>
-            </li>
-            <li class="list-inline-item mx-2 text-white-10">|</li>
-            <li class="list-inline-item">
-              <a href="../politicies/terms" class="text-reset text-decoration-none">Termos de Uso</a>
-            </li>
-            <li class="list-inline-item mx-2 text-white-10">|</li>
-            <li class="list-inline-item">
-              <a href="../politicies/cookies" class="text-reset text-decoration-none">Cookies</a>
-            </li>
-          </ul>
-        </div>
-      </div>
     </div>
-  </footer>
-  <!-- Footer fim -->
 
-  <!-- Scroll top  ou voltar para cima-->
-  <div class="btn-scroll-top">
-    <svg class="progress-square svg-content" width="100%" height="100%" viewBox="0 0 40 40">
-      <path
-        d="M8 1H32C35.866 1 39 4.13401 39 8V32C39 35.866 35.866 39 32 39H8C4.13401 39 1 35.866 1 32V8C1 4.13401 4.13401 1 8 1Z" />
-    </svg>
-  </div>
-  <!-- Scroll top  ou voltar para cima fim-->
-  <!-- Mudar de do tema da so site-->
-  <div class="customizer_1">
-    <div class="position-absolute end-0 bottom-0 m-4 fixed">
-      <div class="dropdown">
-        <button class="btn btn-wasomupfy rounded-circle d-flex align-items-center" type="button" aria-expanded="false"
-          data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
-          <i class="fa-solid fa-circle-half-stroke"></i>
-          <span class="visually-hidden bs-theme-text">Tema do Site</span>
-        </button>
-        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bs-theme-text">
-          <li>
-            <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light"
-              aria-pressed="false">
-              <i class="fa-solid fa-sun"></i>
-              <span class="ms-2">Claro</span>
-            </button>
-          </li>
-          <li>
-            <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark"
-              aria-pressed="false">
-              <i class="fa-solid fa-moon"></i>
-              <span class="ms-2">Escuro</span>
-            </button>
-          </li>
-          <li>
-            <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto"
-              aria-pressed="true">
-              <i class="fa-solid fa-display"></i>
-              <span class="ms-2">Sistema</span>
-            </button>
-          </li>
-        </ul>
-      </div>
+    <!-- Modal Feedback -->
+    <div class="modal fade" id="modalFeedback" tabindex="-1" aria-labelledby="modalFeedbackLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-wasomupfy text-white border-0">
+                    <h5 class="modal-title fw-bold" id="modalFeedbackLabel">
+                        <i class="fa-solid fa-bullhorn me-2"></i> A tua opinião importa!
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted mb-3">
+                        Como tem sido a tua experiência com a <strong><?php echo $siteName; ?></strong>?
+                        As tuas sugestões ajudam-nos a evoluir.
+                    </p>
+                    <div id="feedbackAlert" class="alert d-none mb-3" role="alert"></div>
+                    <form id="formFeedback" novalidate>
+                        <input type="hidden" id="feedbackCsrf" name="csrf" value="<?php echo getSiteCsrf(); ?>">
+                        <div class="mb-3">
+                            <label for="feedbackName" class="form-label fw-semibold text-dark">O teu Nome</label>
+                            <input type="text" class="form-control" id="feedbackName" name="name"
+                                placeholder="Ex: André Wasom" maxlength="120" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="feedbackSubject" class="form-label fw-semibold text-dark">Assunto</label>
+                            <select class="form-select" id="feedbackSubject" name="subject">
+                                <option value="Sugestão de melhoria">Sugestão de melhoria</option>
+                                <option value="Elogio">Elogio</option>
+                                <option value="Relatar um problema">Relatar um problema</option>
+                                <option value="Outros">Outros</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="feedbackMessage" class="form-label fw-semibold text-dark">A tua Mensagem</label>
+                            <textarea class="form-control" id="feedbackMessage" name="message" rows="4"
+                                placeholder="Conta-nos em detalhe..." maxlength="2000" required></textarea>
+                            <div class="form-text text-end"><span id="feedbackCharCount">0</span>/2000</div>
+                        </div>
+                        <div class="d-grid mt-4">
+                            <button type="submit" id="feedbackSubmitBtn" class="btn btn-wasomupfy btn-lg">
+                                <span id="feedbackBtnText">Enviar Feedback <i
+                                        class="fa-solid fa-paper-plane ms-2"></i></span>
+                                <span id="feedbackBtnLoading" class="d-none">
+                                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>A enviar...
+                                </span>
+                            </button>
+                        </div>
+                    </form>
+                    <div id="feedbackSuccess" class="d-none text-center py-3">
+                        <i class="fa-solid fa-circle-check text-success mb-3" style="font-size:3rem"></i>
+                        <h5 class="fw-bold mb-2">Feedback enviado!</h5>
+                        <p class="text-muted mb-4">Obrigado! A equipa vai analisar com atenção. 🙏</p>
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 justify-content-center pb-4">
+                    <small class="text-muted"><?php echo $siteName; ?> agradece a tua parceria!</small>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-  <!-- Mudar de do tema da so site fim-->
-  <div class="modal fade" id="modalFeedback" tabindex="-1" aria-labelledby="modalFeedbackLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content border-0 shadow-lg">
-        <div class="modal-header bg-wasomupfy text-white border-0">
-          <h5 class="modal-title fw-bold" id="modalFeedbackLabel">
-            <i class="fa-solid fa-bullhorn me-2"></i> Sua opinião importa!
-          </h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+
+    <!-- Modal Publishing (conteúdo gerado pelo JS) -->
+    <div class="modal fade" id="modalPublishing" tabindex="-1" aria-labelledby="modalPublishingLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fs-3 fw-bold" id="modalPublishingLabel">
+                        Publishing &amp; Sync Licensing
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body pt-3" id="modalPublishingBody">
+                    <!-- Conteúdo gerado pelo customized-services.js -->
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <a href="../../contact?subject=Publishing+%26+Sync+Licensing" class="btn btn-wasomupfy"
+                        id="modalPublishingBtn">
+                        <i class="fa-solid fa-envelope me-1"></i> Falar com especialista
+                    </a>
+                </div>
+            </div>
         </div>
-
-        <div class="modal-body p-4">
-          <p class="text-muted">
-            Como tem sido sua experiência com a <strong>Wasom Upfy</strong>?
-            Suas sugestões nos ajudam a evoluir.
-          </p>
-
-          <form id="formFeedback">
-            <div class="mb-3">
-              <label class="form-label fw-semibold text-dark">Seu Nome</label>
-              <input type="text" class="form-control" placeholder="Ex: André Wasom" required />
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label fw-semibold text-dark">Assunto</label>
-              <select class="form-select">
-                <option selected>Sugestão de melhoria</option>
-                <option>Elogio</option>
-                <option>Relatar um problema</option>
-                <option>Outros</option>
-              </select>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label fw-semibold text-dark">Sua Mensagem</label>
-              <textarea class="form-control" rows="4" placeholder="Conte-nos em detalhes..." required></textarea>
-            </div>
-
-            <div class="d-grid mt-4">
-              <button type="submit" class="btn btn-wasomupfy btn-lg">
-                Enviar Feedback <i class="fa-solid fa-paper-plane ms-2"></i>
-              </button>
-            </div>
-          </form>
-        </div>
-
-        <div class="modal-footer border-0 justify-content-center pb-4">
-          <small class="text-muted">A Wasom Upfy agradece sua parceria!</small>
-        </div>
-      </div>
     </div>
-  </div>
 
-  <!-- MODAL PARA PUBLISHING - Adicione antes do fechamento do body -->
-  <div class="modal fade" id="modalPublishing" tabindex="-1" aria-labelledby="modalPublishingLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-      <div class="modal-content">
-        <div class="modal-header border-0 pb-0">
-          <h5 class="modal-title fs-3 fw-bold" id="modalPublishingLabel">
-            Publishing & Sync Licensing
-          </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body pt-3" id="modalPublishingBody">
-          <!-- Conteúdo será gerado pelo JavaScript -->
-        </div>
-        <div class="modal-footer border-0">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-            Fechar
-          </button>
-          <a href="contact" class="btn btn-wasomupfy" id="modalPublishingBtn">Falar com especialista</a>
-        </div>
-      </div>
-    </div>
-  </div>
+    <!-- Libs JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/headhesive@1.2.4/dist/headhesive.min.js"></script>
+    <script src="../../js/theme.min.js"></script>
+    <script src="../../js/vendors/color-modes.js"></script>
+    <script src="../../js/libs/scrollcue/scrollCue.min.js"></script>
+    <script src="../../js/vendors/scrollcue.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/svg-injector@1.1.3/dist/svg-injector.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.29.0/dist/feather.min.js"></script>
+    <script src="https://unpkg.com/in-view@0.6.1/dist/in-view.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/imagesloaded/5.0.0/imagesloaded.pkgd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jarallax@2.2.0/dist/jarallax.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
 
-  <!-- Libs JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- Simplebar (Scrollbar customizado) -->
-  <script src="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.js"></script>
-  <!-- Headhesive (Sticky header) -->
-  <script src="https://cdn.jsdelivr.net/npm/headhesive@1.2.4/dist/headhesive.min.js"></script>
-  <!-- Theme JS -->
-  <script src="../../js/theme.min.js"></script>
-  <!-- Color modes -->
-  <script src="../../js/vendors/color-modes.js"></script>
-  <script src="../../js/libs/scrollcue/scrollCue.min.js"></script>
-  <script src="../../js/vendors/scrollcue.js"></script>
-  <!-- jQuery -->
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/svg-injector@1.1.3/dist/svg-injector.min.js"></script>
-  <!-- Feather Icons -->
-  <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.29.0/dist/feather.min.js"></script>
-  <!-- In View (Detectar elementos na viewport) -->
-  <script src="https://unpkg.com/in-view@0.6.1/dist/in-view.min.js"></script>
-  <!-- Sticky Kit (Elementos sticky) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js"></script>
-  <!-- ImagesLoaded -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/imagesloaded/5.0.0/imagesloaded.pkgd.min.js"></script>
-  <!-- Jarallax (Efeitos parallax) -->
-  <script src="https://cdn.jsdelivr.net/npm/jarallax@2.2.0/dist/jarallax.min.js"></script>
-  <!-- Lightbox2 JS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
-  <script src="customized-services.js"></script>
+    <!-- JS desta página -->
+    <script src="customized-services.js"></script>
 
-  <script>
-    function openPortfolioLightbox() {
-      // Simula um clique no primeiro item da galeria
-      var firstItem = document.querySelector(".portfolio-item");
-      if (firstItem) {
-        firstItem.click();
-      }
-      return false; // Previne qualquer comportamento padrão
-    }
-  </script>
-
-  <script>
+    <script>
     feather.replace({
-      width: "1em",
-      height: "1em",
+        width: "1em",
+        height: "1em"
     });
-  </script>
-  <script>
-    !(function(e, t, a, n, g) {
-      (e[n] = e[n] || []),
-      e[n].push({
-        "gtm.start": new Date().getTime(),
-        event: "gtm.js",
-      });
-      var m = t.getElementsByTagName(a)[0],
-        r = t.createElement(a);
-      (r.async = !0),
-      (r.src = "https://www.googletagmanager.com/gtm.js?id=GTM-MF4DZVH"),
-      m.parentNode.insertBefore(r, m);
-    })(window, document, "script", "dataLayer");
-  </script>
+
+    function openPortfolioLightbox() {
+        var firstItem = document.querySelector(".portfolio-item");
+        if (firstItem) {
+            firstItem.click();
+        }
+        return false;
+    }
+    </script>
+
+    <!-- Modal Feedback JS -->
+    <script>
+    (function() {
+        'use strict';
+        var form = document.getElementById('formFeedback');
+        var alertEl = document.getElementById('feedbackAlert');
+        var successEl = document.getElementById('feedbackSuccess');
+        var submitBtn = document.getElementById('feedbackSubmitBtn');
+        var btnText = document.getElementById('feedbackBtnText');
+        var btnLoading = document.getElementById('feedbackBtnLoading');
+        var csrfInput = document.getElementById('feedbackCsrf');
+        var charCount = document.getElementById('feedbackCharCount');
+        var textarea = document.getElementById('feedbackMessage');
+        var modal = document.getElementById('modalFeedback');
+
+        if (!form) return;
+
+        if (textarea && charCount) {
+            textarea.addEventListener('input', function() {
+                charCount.textContent = this.value.length;
+                charCount.classList.toggle('text-danger', this.value.length > 1800);
+            });
+        }
+
+        if (modal) {
+            modal.addEventListener('hidden.bs.modal', function() {
+                form.reset();
+                form.classList.remove('d-none');
+                alertEl.className = 'alert d-none';
+                successEl.classList.add('d-none');
+                if (charCount) {
+                    charCount.textContent = '0';
+                    charCount.classList.remove('text-danger');
+                }
+                submitBtn.disabled = false;
+                btnText.classList.remove('d-none');
+                btnLoading.classList.add('d-none');
+            });
+        }
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var name = document.getElementById('feedbackName').value.trim();
+            var subject = document.getElementById('feedbackSubject').value;
+            var message = textarea.value.trim();
+
+            if (name.length < 2) {
+                alertEl.className = 'alert alert-warning mb-3';
+                alertEl.textContent = 'Insere o teu nome.';
+                return;
+            }
+            if (message.length < 10) {
+                alertEl.className = 'alert alert-warning mb-3';
+                alertEl.textContent = 'A mensagem deve ter pelo menos 10 caracteres.';
+                return;
+            }
+
+            submitBtn.disabled = true;
+            btnText.classList.add('d-none');
+            btnLoading.classList.remove('d-none');
+            alertEl.className = 'alert d-none';
+
+            fetch('../../ajax/feedback.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        csrf: csrfInput.value,
+                        name: name,
+                        subject: subject,
+                        message: message,
+                        page: window.location.pathname
+                    })
+                })
+                .then(function(r) {
+                    return r.json();
+                })
+                .then(function(data) {
+                    submitBtn.disabled = false;
+                    btnText.classList.remove('d-none');
+                    btnLoading.classList.add('d-none');
+                    if (data.success) {
+                        if (data.new_csrf) csrfInput.value = data.new_csrf;
+                        form.classList.add('d-none');
+                        successEl.classList.remove('d-none');
+                    } else {
+                        alertEl.className = 'alert alert-danger mb-3';
+                        alertEl.textContent = data.message || 'Ocorreu um erro. Tenta novamente.';
+                    }
+                })
+                .catch(function() {
+                    submitBtn.disabled = false;
+                    btnText.classList.remove('d-none');
+                    btnLoading.classList.add('d-none');
+                    alertEl.className = 'alert alert-danger mb-3';
+                    alertEl.textContent = 'Erro de ligação. Tenta novamente.';
+                });
+        });
+    })();
+    </script>
+
 </body>
 
 </html>

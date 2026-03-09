@@ -34,12 +34,8 @@ define('MAIL_DRIVER',   'phpmailer');      // 'phpmailer' | 'native'
 define('MAIL_HOST',     'smtp.gmail.com'); // Gmail, Outlook, etc.
 define('MAIL_PORT',     587);              // 587 = TLS | 465 = SSL
 define('MAIL_SECURE',   'tls');            // 'tls' | 'ssl'
-define('MAIL_USER',     'wasomupfy@gmail.com');              // conta SMTP (ex: seuemail@gmail.com)
+define('MAIL_USER',     'wasomupfy@gmail.com');  // conta SMTP (ex: seuemail@gmail.com)
 define('MAIL_PASS',     'prntkiazqafmoesg');
-// ⚠️  ATENÇÃO: O Gmail requer uma "Senha de App" (16 chars, sem espaços) — NÃO a senha da conta.
-//    Para gerar: myaccount.google.com → Segurança → Verificação em 2 passos → Senhas de app
-//    Exemplo de senha de app válida: 'abcdwxyzijklmnop' (16 letras minúsculas, sem espaços)
-//    A senha actual parece ser a senha da conta Gmail, não uma senha de app.
 define('MAIL_FROM',     'noreply@wasomupfy.com');
 define('MAIL_FROM_NAME', APP_NAME);
 // ─── Modo debug de email ──────────────────────

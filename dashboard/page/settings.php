@@ -1063,7 +1063,7 @@
     </ul>
   </nav>
 
-  <!-- Modal Logout -->
+  <!-- ════ MODAL — Logout ════ -->
   <div class="modal fade" id="logoutModal" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">

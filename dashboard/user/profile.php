@@ -10,8 +10,8 @@ requireLogin();
 
 $user = getUserById((int)$_SESSION['id_users']);
 if (!$user) {
-  session_destroy();
-  redirect('/login');
+    session_destroy();
+    redirect('/login');
 }
 
 $id_users = (int)$user['id_users'];
@@ -25,9 +25,9 @@ $security = $sec->fetch() ?: [];
 // ── Plan ──────────────────────────────────────
 $plan = null;
 if ($user['plan_selected']) {
-  $ps = $db->prepare("SELECT * FROM _plans WHERE id_plan = ?");
-  $ps->execute([$user['plan_selected']]);
-  $plan = $ps->fetch();
+    $ps = $db->prepare("SELECT * FROM _plans WHERE id_plan = ?");
+    $ps->execute([$user['plan_selected']]);
+    $plan = $ps->fetch();
 }
 
 // ── Wallet ────────────────────────────────────
@@ -79,10 +79,10 @@ $account_id = str_pad($id_users, 6, '0', STR_PAD_LEFT);
 // Plan badge colour
 $plan_slug   = $plan ? $plan['slug_plan'] : 'none';
 $plan_colors = [
-  'single' => ['bg' => '#1d6bf3', 'text' => '#fff', 'label' => 'Single'],
-  'album'  => ['bg' => '#198754', 'text' => '#fff', 'label' => 'Album'],
-  'artist' => ['bg' => '#6f42c1', 'text' => '#fff', 'label' => 'Artist'],
-  'label'  => ['bg' => 'linear-gradient(135deg,#b8860b,#ffd700)', 'text' => '#3d2800', 'label' => 'Label'],
+    'single' => ['bg' => '#1d6bf3', 'text' => '#fff', 'label' => 'Single'],
+    'album'  => ['bg' => '#198754', 'text' => '#fff', 'label' => 'Album'],
+    'artist' => ['bg' => '#6f42c1', 'text' => '#fff', 'label' => 'Artist'],
+    'label'  => ['bg' => 'linear-gradient(135deg,#b8860b,#ffd700)', 'text' => '#3d2800', 'label' => 'Label'],
 ];
 $pc = $plan_colors[$plan_slug] ?? ['bg' => '#6c757d', 'text' => '#fff', 'label' => ucfirst($plan_slug)];
 
@@ -90,27 +90,27 @@ $pc = $plan_colors[$plan_slug] ?? ['bg' => '#6c757d', 'text' => '#fff', 'label' 
 $plan_expires_str = '—';
 $plan_days_left   = null;
 if ($user['plan_expires_at']) {
-  $exp = strtotime($user['plan_expires_at']);
-  $plan_days_left = max(0, ceil(($exp - time()) / 86400));
-  $plan_expires_str = date('d/m/Y', $exp);
+    $exp = strtotime($user['plan_expires_at']);
+    $plan_days_left = max(0, ceil(($exp - time()) / 86400));
+    $plan_expires_str = date('d/m/Y', $exp);
 } elseif ($user['plan_activated_at']) {
-  $plan_expires_str = 'Sem expiração';
+    $plan_expires_str = 'Sem expiração';
 }
 
 // Method labels
 $method_labels = [
-  'bank_transfer' => 'Transferência Bancária',
-  'multicaixa' => 'Multicaixa',
-  'paypal' => 'PayPal',
-  'card' => 'Cartão',
-  'other' => 'Outro'
+    'bank_transfer' => 'Transferência Bancária',
+    'multicaixa' => 'Multicaixa',
+    'paypal' => 'PayPal',
+    'card' => 'Cartão',
+    'other' => 'Outro'
 ];
 $bank_labels = [
-  'IBAN' => 'IBAN',
-  'Express' => 'Multicaixa Express',
-  'PayPal' => 'PayPal',
-  'Multicaixa' => 'Multicaixa TPA',
-  'TPA' => 'TPA'
+    'IBAN' => 'IBAN',
+    'Express' => 'Multicaixa Express',
+    'PayPal' => 'PayPal',
+    'Multicaixa' => 'Multicaixa TPA',
+    'TPA' => 'TPA'
 ];
 
 // Gender labels
@@ -130,7 +130,7 @@ $active_section = 'perfil';
 
 // Email verified at
 $verified_at_str = $user['email_verified'] && $user['email_verified_at']
-  ? date('d/m/Y', strtotime($user['email_verified_at'])) : null;
+    ? date('d/m/Y', strtotime($user['email_verified_at'])) : null;
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -148,398 +148,398 @@ $verified_at_str = $user['email_verified'] && $user['email_verified_at']
     <link rel="stylesheet" href="../../css/dashboard-style.css" />
     <link rel="stylesheet" href="../../css/lastest-style.css" />
     <style>
-    :root {
-        --wasom: #FF0089;
-        --wasom-dark: #cc006d;
-    }
-
-    /* ── Layout ── */
-    .profile-layout {
-        display: grid;
-        grid-template-columns: 220px 1fr;
-        gap: 24px;
-        align-items: start;
-    }
-
-    @media(max-width:768px) {
-        .profile-layout {
-            grid-template-columns: 1fr;
+        :root {
+            --wasom: #FF0089;
+            --wasom-dark: #cc006d;
         }
 
+        /* ── Layout ── */
+        .profile-layout {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media(max-width:768px) {
+            .profile-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-sidebar {
+                display: none;
+            }
+        }
+
+        /* ── Sidebar nav ── */
         .profile-sidebar {
+            position: sticky;
+            top: 80px;
+        }
+
+        .sidebar-nav .nav-link {
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-size: .875rem;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all .2s;
+            margin-bottom: 2px;
+            font-weight: 500;
+        }
+
+        .sidebar-nav .nav-link:hover {
+            background: rgba(255, 0, 137, .08);
+            color: var(--wasom);
+        }
+
+        .sidebar-nav .nav-link.active {
+            background: rgba(255, 0, 137, .12);
+            color: var(--wasom);
+            font-weight: 700;
+        }
+
+        .sidebar-nav .nav-link i {
+            font-size: 1.05rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* ── Section ── */
+        .profile-section {
             display: none;
         }
-    }
 
-    /* ── Sidebar nav ── */
-    .profile-sidebar {
-        position: sticky;
-        top: 80px;
-    }
+        .profile-section.active {
+            display: block;
+        }
 
-    .sidebar-nav .nav-link {
-        border-radius: 12px;
-        padding: 10px 14px;
-        font-size: .875rem;
-        color: inherit;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        transition: all .2s;
-        margin-bottom: 2px;
-        font-weight: 500;
-    }
+        /* ── Avatar ── */
+        .avatar-ring {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            border: 3px solid var(--wasom);
+            object-fit: cover;
+            box-shadow: 0 4px 20px rgba(255, 0, 137, .25);
+            display: block;
+        }
 
-    .sidebar-nav .nav-link:hover {
-        background: rgba(255, 0, 137, .08);
-        color: var(--wasom);
-    }
+        .avatar-ring-ph {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            border: 3px solid var(--wasom);
+            background: #f1f3f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.8rem;
+            color: #ccc;
+            box-shadow: 0 4px 20px rgba(255, 0, 137, .1);
+        }
 
-    .sidebar-nav .nav-link.active {
-        background: rgba(255, 0, 137, .12);
-        color: var(--wasom);
-        font-weight: 700;
-    }
+        .avatar-upload-btn {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--wasom);
+            color: #fff;
+            border: 2px solid #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: .8rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .25);
+            transition: transform .2s;
+        }
 
-    .sidebar-nav .nav-link i {
-        font-size: 1.05rem;
-        width: 20px;
-        text-align: center;
-    }
+        .avatar-upload-btn:hover {
+            transform: scale(1.1);
+        }
 
-    /* ── Section ── */
-    .profile-section {
-        display: none;
-    }
+        /* ── Profile header card ── */
+        .profile-hero {
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 20px;
+        }
 
-    .profile-section.active {
-        display: block;
-    }
+        .profile-hero-cover {
+            height: 100px;
+            background: linear-gradient(135deg, #FF0089 0%, #FF4D4D 100%);
+        }
 
-    /* ── Avatar ── */
-    .avatar-ring {
-        width: 110px;
-        height: 110px;
-        border-radius: 50%;
-        border: 3px solid var(--wasom);
-        object-fit: cover;
-        box-shadow: 0 4px 20px rgba(255, 0, 137, .25);
-        display: block;
-    }
+        .profile-hero-body {
+            padding: 0 24px 24px;
+            border: 1.5px solid rgba(0, 0, 0, .07);
+            border-top: none;
+            border-radius: 0 0 20px 20px;
+        }
 
-    .avatar-ring-ph {
-        width: 110px;
-        height: 110px;
-        border-radius: 50%;
-        border: 3px solid var(--wasom);
-        background: #f1f3f5;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2.8rem;
-        color: #ccc;
-        box-shadow: 0 4px 20px rgba(255, 0, 137, .1);
-    }
+        .avatar-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-top: -52px;
+            margin-bottom: 12px;
+        }
 
-    .avatar-upload-btn {
-        position: absolute;
-        bottom: 4px;
-        right: 4px;
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        background: var(--wasom);
-        color: #fff;
-        border: 2px solid #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        font-size: .8rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, .25);
-        transition: transform .2s;
-    }
+        /* ── Info rows ── */
+        .info-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, .06);
+        }
 
-    .avatar-upload-btn:hover {
-        transform: scale(1.1);
-    }
+        .info-row:last-child {
+            border-bottom: none;
+        }
 
-    /* ── Profile header card ── */
-    .profile-hero {
-        border-radius: 20px;
-        overflow: hidden;
-        position: relative;
-        margin-bottom: 20px;
-    }
+        .info-row-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(255, 0, 137, .08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--wasom);
+            flex-shrink: 0;
+            font-size: .9rem;
+        }
 
-    .profile-hero-cover {
-        height: 100px;
-        background: linear-gradient(135deg, #FF0089 0%, #FF4D4D 100%);
-    }
+        .info-row-label {
+            font-size: .72rem;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            margin-bottom: 2px;
+        }
 
-    .profile-hero-body {
-        padding: 0 24px 24px;
-        border: 1.5px solid rgba(0, 0, 0, .07);
-        border-top: none;
-        border-radius: 0 0 20px 20px;
-    }
+        .info-row-value {
+            font-size: .9rem;
+            font-weight: 600;
+        }
 
-    .avatar-wrapper {
-        position: relative;
-        display: inline-block;
-        margin-top: -52px;
-        margin-bottom: 12px;
-    }
+        /* ── Email badge ── */
+        .email-verified-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: .72rem;
+            font-weight: 700;
+            cursor: default;
+        }
 
-    /* ── Info rows ── */
-    .info-row {
-        display: flex;
-        align-items: flex-start;
-        gap: 12px;
-        padding: 10px 0;
-        border-bottom: 1px solid rgba(0, 0, 0, .06);
-    }
+        .email-verified-badge.verified {
+            background: rgba(25, 135, 84, .1);
+            color: #198754;
+            border: 1px solid rgba(25, 135, 84, .2);
+        }
 
-    .info-row:last-child {
-        border-bottom: none;
-    }
+        .email-verified-badge.unverified {
+            background: rgba(255, 193, 7, .15);
+            color: #856404;
+            border: 1px solid rgba(255, 193, 7, .3);
+            cursor: pointer;
+            transition: all .2s;
+        }
 
-    .info-row-icon {
-        width: 32px;
-        height: 32px;
-        border-radius: 8px;
-        background: rgba(255, 0, 137, .08);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--wasom);
-        flex-shrink: 0;
-        font-size: .9rem;
-    }
+        .email-verified-badge.unverified:hover {
+            background: rgba(255, 193, 7, .3);
+        }
 
-    .info-row-label {
-        font-size: .72rem;
-        color: #999;
-        text-transform: uppercase;
-        letter-spacing: .5px;
-        margin-bottom: 2px;
-    }
+        /* ── Plan badge ── */
+        .plan-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: .75rem;
+            font-weight: 800;
+            letter-spacing: .5px;
+        }
 
-    .info-row-value {
-        font-size: .9rem;
-        font-weight: 600;
-    }
+        /* ── Stats grid ── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
+        }
 
-    /* ── Email badge ── */
-    .email-verified-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        padding: 3px 10px;
-        border-radius: 20px;
-        font-size: .72rem;
-        font-weight: 700;
-        cursor: default;
-    }
+        .stat-card {
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            background: rgba(255, 0, 137, .05);
+            border: 1px solid rgba(255, 0, 137, .1);
+        }
 
-    .email-verified-badge.verified {
-        background: rgba(25, 135, 84, .1);
-        color: #198754;
-        border: 1px solid rgba(25, 135, 84, .2);
-    }
+        .stat-card .num {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--wasom);
+        }
 
-    .email-verified-badge.unverified {
-        background: rgba(255, 193, 7, .15);
-        color: #856404;
-        border: 1px solid rgba(255, 193, 7, .3);
-        cursor: pointer;
-        transition: all .2s;
-    }
+        .stat-card .lbl {
+            font-size: .7rem;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            margin-top: 2px;
+        }
 
-    .email-verified-badge.unverified:hover {
-        background: rgba(255, 193, 7, .3);
-    }
+        /* ── Section card ── */
+        .section-card {
+            border-radius: 18px;
+            border: 1.5px solid rgba(0, 0, 0, .07);
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, .04);
+        }
 
-    /* ── Plan badge ── */
-    .plan-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: .75rem;
-        font-weight: 800;
-        letter-spacing: .5px;
-    }
+        .section-title {
+            font-size: 1rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--wasom);
+        }
 
-    /* ── Stats grid ── */
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-        gap: 12px;
-    }
+        /* ── Password strength ── */
+        .strength-bar {
+            height: 5px;
+            border-radius: 4px;
+            transition: width .3s, background .3s;
+        }
 
-    .stat-card {
-        border-radius: 14px;
-        padding: 16px;
-        text-align: center;
-        background: rgba(255, 0, 137, .05);
-        border: 1px solid rgba(255, 0, 137, .1);
-    }
+        /* ── Session item ── */
+        .session-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, .05);
+        }
 
-    .stat-card .num {
-        font-size: 1.5rem;
-        font-weight: 900;
-        color: var(--wasom);
-    }
+        .session-item:last-child {
+            border-bottom: none;
+        }
 
-    .stat-card .lbl {
-        font-size: .7rem;
-        color: #999;
-        text-transform: uppercase;
-        letter-spacing: .5px;
-        margin-top: 2px;
-    }
+        .session-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(255, 0, 137, .08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--wasom);
+            flex-shrink: 0;
+        }
 
-    /* ── Section card ── */
-    .section-card {
-        border-radius: 18px;
-        border: 1.5px solid rgba(0, 0, 0, .07);
-        padding: 24px;
-        margin-bottom: 20px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, .04);
-    }
+        .session-current {
+            background: rgba(25, 135, 84, .08);
+        }
 
-    .section-title {
-        font-size: 1rem;
-        font-weight: 800;
-        margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: var(--wasom);
-    }
+        .session-current .session-icon {
+            background: rgba(25, 135, 84, .12);
+            color: #198754;
+        }
 
-    /* ── Password strength ── */
-    .strength-bar {
-        height: 5px;
-        border-radius: 4px;
-        transition: width .3s, background .3s;
-    }
+        /* ── Recovery key display ── */
+        .recovery-display {
+            background: rgba(0, 0, 0, .04);
+            border: 2px dashed var(--wasom);
+            border-radius: 14px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: .78rem;
+            word-break: break-all;
+            line-height: 2;
+            letter-spacing: .5px;
+            user-select: all;
+        }
 
-    /* ── Session item ── */
-    .session-item {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        padding: 12px 0;
-        border-bottom: 1px solid rgba(0, 0, 0, .05);
-    }
+        .recovery-segment {
+            display: inline-block;
+            margin: 2px;
+        }
 
-    .session-item:last-child {
-        border-bottom: none;
-    }
+        /* ── 2FA secret display ── */
+        .totp-secret {
+            font-family: monospace;
+            font-size: .85rem;
+            background: rgba(0, 0, 0, .04);
+            border-radius: 10px;
+            padding: 10px 14px;
+            letter-spacing: 2px;
+            word-break: break-all;
+            user-select: all;
+        }
 
-    .session-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 10px;
-        background: rgba(255, 0, 137, .08);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--wasom);
-        flex-shrink: 0;
-    }
+        /* ── Danger zone ── */
+        .danger-card {
+            border: 2px solid rgba(220, 53, 69, .3);
+            border-radius: 16px;
+            padding: 20px;
+            background: rgba(220, 53, 69, .02);
+            margin-bottom: 16px;
+        }
 
-    .session-current {
-        background: rgba(25, 135, 84, .08);
-    }
+        /* ── Toggle switch ── */
+        .form-switch .form-check-input:checked {
+            background-color: var(--wasom);
+            border-color: var(--wasom);
+        }
 
-    .session-current .session-icon {
-        background: rgba(25, 135, 84, .12);
-        color: #198754;
-    }
+        .form-switch .form-check-input:focus {
+            border-color: var(--wasom);
+            box-shadow: 0 0 0 .2rem rgba(255, 0, 137, .2);
+        }
 
-    /* ── Recovery key display ── */
-    .recovery-display {
-        background: rgba(0, 0, 0, .04);
-        border: 2px dashed var(--wasom);
-        border-radius: 14px;
-        padding: 20px;
-        font-family: monospace;
-        font-size: .78rem;
-        word-break: break-all;
-        line-height: 2;
-        letter-spacing: .5px;
-        user-select: all;
-    }
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--wasom);
+            box-shadow: 0 0 0 .2rem rgba(255, 0, 137, .2);
+        }
 
-    .recovery-segment {
-        display: inline-block;
-        margin: 2px;
-    }
+        /* ── Section divider ── */
+        .sec-divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 24px 0 16px;
+        }
 
-    /* ── 2FA secret display ── */
-    .totp-secret {
-        font-family: monospace;
-        font-size: .85rem;
-        background: rgba(0, 0, 0, .04);
-        border-radius: 10px;
-        padding: 10px 14px;
-        letter-spacing: 2px;
-        word-break: break-all;
-        user-select: all;
-    }
+        .sec-divider span {
+            font-weight: 700;
+            font-size: .78rem;
+            color: var(--wasom);
+            white-space: nowrap;
+        }
 
-    /* ── Danger zone ── */
-    .danger-card {
-        border: 2px solid rgba(220, 53, 69, .3);
-        border-radius: 16px;
-        padding: 20px;
-        background: rgba(220, 53, 69, .02);
-        margin-bottom: 16px;
-    }
-
-    /* ── Toggle switch ── */
-    .form-switch .form-check-input:checked {
-        background-color: var(--wasom);
-        border-color: var(--wasom);
-    }
-
-    .form-switch .form-check-input:focus {
-        border-color: var(--wasom);
-        box-shadow: 0 0 0 .2rem rgba(255, 0, 137, .2);
-    }
-
-    .form-control:focus,
-    .form-select:focus {
-        border-color: var(--wasom);
-        box-shadow: 0 0 0 .2rem rgba(255, 0, 137, .2);
-    }
-
-    /* ── Section divider ── */
-    .sec-divider {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin: 24px 0 16px;
-    }
-
-    .sec-divider span {
-        font-weight: 700;
-        font-size: .78rem;
-        color: var(--wasom);
-        white-space: nowrap;
-    }
-
-    .sec-divider::before,
-    .sec-divider::after {
-        content: '';
-        flex: 1;
-        height: 1px;
-        background: rgba(0, 0, 0, .08);
-    }
+        .sec-divider::before,
+        .sec-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(0, 0, 0, .08);
+        }
     </style>
 </head>
 
@@ -783,10 +783,10 @@ $verified_at_str = $user['email_verified'] && $user['email_verified_at']
         <!-- Mobile section tabs -->
         <div class="d-flex gap-2 mb-3 overflow-auto d-md-none pb-1" style="scrollbar-width:none">
             <?php foreach ([['perfil', 'person', 'Perfil'], ['seguranca', 'shield-lock', 'Segurança'], ['notificacoes', 'bell', 'Notif.'], ['sessoes', 'display', 'Sessões'], ['perigo', 'exclamation-triangle', 'Perigo']] as [$sid, $icon, $label]): ?>
-            <button class="btn btn-sm btn-outline-secondary flex-shrink-0 mobile-tab"
-                data-section="<?php echo $sid; ?>">
-                <i class="bi bi-<?php echo $icon; ?> me-1"></i><?php echo $label; ?>
-            </button>
+                <button class="btn btn-sm btn-outline-secondary flex-shrink-0 mobile-tab"
+                    data-section="<?php echo $sid; ?>">
+                    <i class="bi bi-<?php echo $icon; ?> me-1"></i><?php echo $label; ?>
+                </button>
             <?php endforeach; ?>
         </div>
 
@@ -797,10 +797,10 @@ $verified_at_str = $user['email_verified'] && $user['email_verified_at']
                 <div class="section-card p-3 mb-3 text-center">
                     <div class="d-flex justify-content-center mb-2">
                         <?php if ($photo_url): ?>
-                        <img src="<?php echo htmlspecialchars($photo_url); ?>" class="avatar-ring" alt="Foto"
-                            id="sidebar-avatar" />
+                            <img src="<?php echo htmlspecialchars($photo_url); ?>" class="avatar-ring" alt="Foto"
+                                id="sidebar-avatar" />
                         <?php else: ?>
-                        <div class="avatar-ring-ph" id="sidebar-avatar-ph"><i class="bi bi-person"></i></div>
+                            <div class="avatar-ring-ph" id="sidebar-avatar-ph"><i class="bi bi-person"></i></div>
                         <?php endif; ?>
                     </div>
                     <div class="fw-bold"><?php echo htmlspecialchars($full_name); ?></div>
@@ -846,11 +846,11 @@ $verified_at_str = $user['email_verified'] && $user['email_verified_at']
                                 <div>
                                     <div class="avatar-wrapper">
                                         <?php if ($photo_url): ?>
-                                        <img src="<?php echo htmlspecialchars($photo_url); ?>" class="avatar-ring"
-                                            id="hero-avatar" />
+                                            <img src="<?php echo htmlspecialchars($photo_url); ?>" class="avatar-ring"
+                                                id="hero-avatar" />
                                         <?php else: ?>
-                                        <div class="avatar-ring-ph" id="hero-avatar-ph"><i class="bi bi-person"></i>
-                                        </div>
+                                            <div class="avatar-ring-ph" id="hero-avatar-ph"><i class="bi bi-person"></i>
+                                            </div>
                                         <?php endif; ?>
                                         <!-- Hover overlay for edit -->
                                         <div class="avatar-upload-btn"
@@ -873,10 +873,10 @@ $verified_at_str = $user['email_verified'] && $user['email_verified_at']
                                             <i class="bi bi-shield-check me-1"></i>Administrador
                                         </span>
                                         <?php if ($twofa_on): ?>
-                                        <span class="badge"
-                                            style="background:rgba(25,135,84,.12);color:#198754;font-size:.72rem">
-                                            <i class="bi bi-lock-fill me-1"></i>2FA Activo
-                                        </span>
+                                            <span class="badge"
+                                                style="background:rgba(25,135,84,.12);color:#198754;font-size:.72rem">
+                                                <i class="bi bi-lock-fill me-1"></i>2FA Activo
+                                            </span>
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -921,15 +921,15 @@ $verified_at_str = $user['email_verified'] && $user['email_verified_at']
                                     <span
                                         class="info-row-value"><?php echo htmlspecialchars($user['email_user']); ?></span>
                                     <?php if ($user['email_verified']): ?>
-                                    <span class="email-verified-badge verified">
-                                        <i
-                                            class="bi bi-patch-check-fill"></i>Verificado<?php echo $verified_at_str ? ' em ' . $verified_at_str : ''; ?>
-                                    </span>
+                                        <span class="email-verified-badge verified">
+                                            <i
+                                                class="bi bi-patch-check-fill"></i>Verificado<?php echo $verified_at_str ? ' em ' . $verified_at_str : ''; ?>
+                                        </span>
                                     <?php else: ?>
-                                    <span class="email-verified-badge unverified" onclick="resendVerifyEmail()"
-                                        title="Clica para enviar email de verificação">
-                                        <i class="bi bi-exclamation-circle"></i>Não verificado · Verificar agora
-                                    </span>
+                                        <span class="email-verified-badge unverified" onclick="resendVerifyEmail()"
+                                            title="Clica para enviar email de verificação">
+                                            <i class="bi bi-exclamation-circle"></i>Não verificado · Verificar agora
+                                        </span>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -987,30 +987,30 @@ $verified_at_str = $user['email_verified'] && $user['email_verified_at']
 
                         <!-- Bio -->
                         <?php if ($user['about_user']): ?>
-                        <div class="info-row">
-                            <div class="info-row-icon"><i class="bi bi-file-text"></i></div>
-                            <div>
-                                <div class="info-row-label">Bio</div>
-                                <div class="info-row-value" style="font-weight:400;line-height:1.6">
-                                    <?php echo nl2br(htmlspecialchars($user['about_user'])); ?></div>
+                            <div class="info-row">
+                                <div class="info-row-icon"><i class="bi bi-file-text"></i></div>
+                                <div>
+                                    <div class="info-row-label">Bio</div>
+                                    <div class="info-row-value" style="font-weight:400;line-height:1.6">
+                                        <?php echo nl2br(htmlspecialchars($user['about_user'])); ?></div>
+                                </div>
                             </div>
-                        </div>
                         <?php endif; ?>
 
                         <!-- Website -->
                         <?php if ($user['url_user']): ?>
-                        <div class="info-row">
-                            <div class="info-row-icon"><i class="bi bi-globe"></i></div>
-                            <div>
-                                <div class="info-row-label">Website</div>
-                                <div class="info-row-value">
-                                    <a href="<?php echo htmlspecialchars($user['url_user']); ?>" target="_blank"
-                                        rel="noopener" style="color:var(--wasom)">
-                                        <?php echo htmlspecialchars($user['url_user']); ?>
-                                    </a>
+                            <div class="info-row">
+                                <div class="info-row-icon"><i class="bi bi-globe"></i></div>
+                                <div>
+                                    <div class="info-row-label">Website</div>
+                                    <div class="info-row-value">
+                                        <a href="<?php echo htmlspecialchars($user['url_user']); ?>" target="_blank"
+                                            rel="noopener" style="color:var(--wasom)">
+                                            <?php echo htmlspecialchars($user['url_user']); ?>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
                         <?php endif; ?>
                     </div>
 
@@ -1026,9 +1026,9 @@ $verified_at_str = $user['email_verified'] && $user['email_verified_at']
                                     <span
                                         class="info-row-value"><?php echo $plan ? htmlspecialchars($plan['name_plan']) : 'Sem plano'; ?></span>
                                     <?php if ($plan): ?>
-                                    <span class="badge text-muted" style="background:rgba(0,0,0,.06);font-size:.7rem">
-                                        <?php echo $plan['royalty_rate']; ?>% royalties
-                                    </span>
+                                        <span class="badge text-muted" style="background:rgba(0,0,0,.06);font-size:.7rem">
+                                            <?php echo $plan['royalty_rate']; ?>% royalties
+                                        </span>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -1041,11 +1041,11 @@ $verified_at_str = $user['email_verified'] && $user['email_verified_at']
                                 <div class="d-flex align-items-center gap-2">
                                     <span class="info-row-value"><?php echo $plan_expires_str; ?></span>
                                     <?php if ($plan_days_left !== null): ?>
-                                    <span
-                                        class="badge <?php echo $plan_days_left <= 14 ? 'bg-warning text-dark' : 'bg-success'; ?>"
-                                        style="font-size:.7rem">
-                                        <?php echo $plan_days_left; ?> dia<?php echo $plan_days_left != 1 ? 's' : ''; ?>
-                                    </span>
+                                        <span
+                                            class="badge <?php echo $plan_days_left <= 14 ? 'bg-warning text-dark' : 'bg-success'; ?>"
+                                            style="font-size:.7rem">
+                                            <?php echo $plan_days_left; ?> dia<?php echo $plan_days_left != 1 ? 's' : ''; ?>
+                                        </span>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -1061,25 +1061,25 @@ $verified_at_str = $user['email_verified'] && $user['email_verified_at']
                         </div>
 
                         <?php if ($payment_method): ?>
-                        <div class="info-row">
-                            <div class="info-row-icon"><i class="bi bi-receipt"></i></div>
-                            <div>
-                                <div class="info-row-label">Método de Pagamento</div>
-                                <div class="info-row-value">
-                                    <?php echo $method_labels[$payment_method] ?? $payment_method; ?></div>
+                            <div class="info-row">
+                                <div class="info-row-icon"><i class="bi bi-receipt"></i></div>
+                                <div>
+                                    <div class="info-row-label">Método de Pagamento</div>
+                                    <div class="info-row-value">
+                                        <?php echo $method_labels[$payment_method] ?? $payment_method; ?></div>
+                                </div>
                             </div>
-                        </div>
                         <?php endif; ?>
 
                         <?php if ($bank): ?>
-                        <div class="info-row">
-                            <div class="info-row-icon"><i class="bi bi-bank"></i></div>
-                            <div>
-                                <div class="info-row-label">Conta Bancária</div>
-                                <div class="info-row-value">
-                                    <?php echo $bank_labels[$bank['type_account']] ?? $bank['type_account']; ?></div>
+                            <div class="info-row">
+                                <div class="info-row-icon"><i class="bi bi-bank"></i></div>
+                                <div>
+                                    <div class="info-row-label">Conta Bancária</div>
+                                    <div class="info-row-value">
+                                        <?php echo $bank_labels[$bank['type_account']] ?? $bank['type_account']; ?></div>
+                                </div>
                             </div>
-                        </div>
                         <?php endif; ?>
                     </div>
 
@@ -1157,13 +1157,13 @@ $verified_at_str = $user['email_verified'] && $user['email_verified_at']
                             <div>
                                 <div class="fw-semibold small mb-1">Estado actual</div>
                                 <?php if ($twofa_on): ?>
-                                <span class="badge" style="background:rgba(25,135,84,.12);color:#198754">
-                                    <i class="bi bi-lock-fill me-1"></i>Activado
-                                </span>
+                                    <span class="badge" style="background:rgba(25,135,84,.12);color:#198754">
+                                        <i class="bi bi-lock-fill me-1"></i>Activado
+                                    </span>
                                 <?php else: ?>
-                                <span class="badge" style="background:rgba(220,53,69,.1);color:#dc3545">
-                                    <i class="bi bi-unlock me-1"></i>Desactivado
-                                </span>
+                                    <span class="badge" style="background:rgba(220,53,69,.1);color:#dc3545">
+                                        <i class="bi bi-unlock me-1"></i>Desactivado
+                                    </span>
                                 <?php endif; ?>
                             </div>
                             <div class="form-check form-switch mb-0">
@@ -1217,12 +1217,12 @@ $verified_at_str = $user['email_verified'] && $user['email_verified_at']
                             <strong>Guarda-a offline em local seguro.</strong>
                         </p>
                         <?php if (!$can_recovery): ?>
-                        <div class="alert alert-warning small d-flex gap-2 mb-3">
-                            <i class="bi bi-lock-fill flex-shrink-0 mt-1"></i>
-                            <div>Para gerar uma nova chave, deves primeiro <strong>alterar a tua senha</strong> na
-                                secção acima. Isto garante que só o dono real da conta pode revogar a chave anterior.
+                            <div class="alert alert-warning small d-flex gap-2 mb-3">
+                                <i class="bi bi-lock-fill flex-shrink-0 mt-1"></i>
+                                <div>Para gerar uma nova chave, deves primeiro <strong>alterar a tua senha</strong> na
+                                    secção acima. Isto garante que só o dono real da conta pode revogar a chave anterior.
+                                </div>
                             </div>
-                        </div>
                         <?php endif; ?>
                         <div id="recovery-key-display" class="d-none mb-3">
                             <div class="recovery-display" id="recovery-key-text"></div>
@@ -1256,60 +1256,60 @@ $verified_at_str = $user['email_verified'] && $user['email_verified_at']
                         <p class="text-muted small mb-4">Escolhe como e quando queres ser notificado.</p>
 
                         <?php
-            $notifs = [
-              [
-                'id' => 'notif_email',
-                'icon' => 'bi-envelope',
-                'label' => 'Notificações por Email',
-                'desc' => 'Recebe emails sobre streams, levantamentos e lançamentos.',
-                'val' => $user['notif_email'] ?? 1
-              ],
-              [
-                'id' => 'notif_push',
-                'icon' => 'bi-bell-fill',
-                'label' => 'Notificações Push',
-                'desc' => 'Alertas em tempo real no navegador.',
-                'val' => $user['notif_push'] ?? 0
-              ],
-              [
-                'id' => 'notif_weekly',
-                'icon' => 'bi-calendar-week',
-                'label' => 'Resumo Semanal',
-                'desc' => 'Recebe um resumo das actividades da semana, todos os segundas.',
-                'val' => $user['notif_weekly'] ?? 1
-              ],
-              [
-                'id' => 'notif_releases',
-                'icon' => 'bi-disc',
-                'label' => 'Actualizações de Lançamentos',
-                'desc' => 'Notificações quando um lançamento é aprovado, rejeitado ou entra em revisão.',
-                'val' => $user['notif_releases'] ?? 1
-              ],
-              [
-                'id' => 'notif_payments',
-                'icon' => 'bi-currency-dollar',
-                'label' => 'Pagamentos & Royalties',
-                'desc' => 'Avisos de pagamentos recebidos, levantamentos processados e royalties creditados.',
-                'val' => $user['notif_payments'] ?? 1
-              ],
-            ];
-            foreach ($notifs as $n): ?>
-                        <div class="d-flex align-items-center justify-content-between gap-3 mb-3 pb-3 border-bottom">
-                            <div class="d-flex align-items-start gap-3">
-                                <div
-                                    style="width:36px;height:36px;border-radius:10px;background:rgba(255,0,137,.08);display:flex;align-items:center;justify-content:center;color:var(--wasom);flex-shrink:0">
-                                    <i class="bi <?php echo $n['icon']; ?>"></i>
+                        $notifs = [
+                            [
+                                'id' => 'notif_email',
+                                'icon' => 'bi-envelope',
+                                'label' => 'Notificações por Email',
+                                'desc' => 'Recebe emails sobre streams, levantamentos e lançamentos.',
+                                'val' => $user['notif_email'] ?? 1
+                            ],
+                            [
+                                'id' => 'notif_push',
+                                'icon' => 'bi-bell-fill',
+                                'label' => 'Notificações Push',
+                                'desc' => 'Alertas em tempo real no navegador.',
+                                'val' => $user['notif_push'] ?? 0
+                            ],
+                            [
+                                'id' => 'notif_weekly',
+                                'icon' => 'bi-calendar-week',
+                                'label' => 'Resumo Semanal',
+                                'desc' => 'Recebe um resumo das actividades da semana, todos os segundas.',
+                                'val' => $user['notif_weekly'] ?? 1
+                            ],
+                            [
+                                'id' => 'notif_releases',
+                                'icon' => 'bi-disc',
+                                'label' => 'Actualizações de Lançamentos',
+                                'desc' => 'Notificações quando um lançamento é aprovado, rejeitado ou entra em revisão.',
+                                'val' => $user['notif_releases'] ?? 1
+                            ],
+                            [
+                                'id' => 'notif_payments',
+                                'icon' => 'bi-currency-dollar',
+                                'label' => 'Pagamentos & Royalties',
+                                'desc' => 'Avisos de pagamentos recebidos, levantamentos processados e royalties creditados.',
+                                'val' => $user['notif_payments'] ?? 1
+                            ],
+                        ];
+                        foreach ($notifs as $n): ?>
+                            <div class="d-flex align-items-center justify-content-between gap-3 mb-3 pb-3 border-bottom">
+                                <div class="d-flex align-items-start gap-3">
+                                    <div
+                                        style="width:36px;height:36px;border-radius:10px;background:rgba(255,0,137,.08);display:flex;align-items:center;justify-content:center;color:var(--wasom);flex-shrink:0">
+                                        <i class="bi <?php echo $n['icon']; ?>"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold small"><?php echo $n['label']; ?></div>
+                                        <div class="text-muted" style="font-size:.75rem"><?php echo $n['desc']; ?></div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <div class="fw-semibold small"><?php echo $n['label']; ?></div>
-                                    <div class="text-muted" style="font-size:.75rem"><?php echo $n['desc']; ?></div>
+                                <div class="form-check form-switch mb-0 flex-shrink-0">
+                                    <input class="form-check-input" type="checkbox" id="<?php echo $n['id']; ?>"
+                                        <?php echo $n['val'] ? 'checked' : ''; ?> onchange="saveNotifications()" />
                                 </div>
                             </div>
-                            <div class="form-check form-switch mb-0 flex-shrink-0">
-                                <input class="form-check-input" type="checkbox" id="<?php echo $n['id']; ?>"
-                                    <?php echo $n['val'] ? 'checked' : ''; ?> onchange="saveNotifications()" />
-                            </div>
-                        </div>
                         <?php endforeach; ?>
                         <div class="text-muted small mt-2" id="notif-save-hint" style="display:none">
                             <i class="bi bi-check-circle text-success me-1"></i>Preferências guardadas automaticamente.
@@ -1327,59 +1327,59 @@ $verified_at_str = $user['email_verified'] && $user['email_verified_at']
                             conta.</p>
 
                         <?php if (empty($sessions)): ?>
-                        <p class="text-muted small">Nenhuma sessão encontrada.</p>
+                            <p class="text-muted small">Nenhuma sessão encontrada.</p>
                         <?php else: ?>
-                        <?php foreach ($sessions as $s):
-                $ua      = $s['user_agent'] ?? '';
-                $is_cur  = (strpos($ua, $_SERVER['HTTP_USER_AGENT'] ?? '') !== false);
-                $device  = 'Computador';
-                $icon    = 'bi-laptop';
-                if (preg_match('/Mobile|Android|iPhone/i', $ua)) {
-                  $device = 'Telemóvel';
-                  $icon = 'bi-phone';
-                } elseif (preg_match('/iPad|Tablet/i', $ua)) {
-                  $device = 'Tablet';
-                  $icon = 'bi-tablet';
-                }
-                $browser = 'Desconhecido';
-                if (preg_match('/Chrome\/(\d+)/i', $ua, $m))  $browser = 'Chrome ' . $m[1];
-                elseif (preg_match('/Firefox\/(\d+)/i', $ua, $m)) $browser = 'Firefox ' . $m[1];
-                elseif (preg_match('/Safari\/(\d+)/i', $ua, $m))  $browser = 'Safari';
-                elseif (preg_match('/Edg\/(\d+)/i', $ua, $m))     $browser = 'Edge ' . $m[1];
-                $location = implode(', ', array_filter([$s['city'] ?? '', $s['country'] ?? ''])) ?: 'Localização desconhecida';
-                $last_act = $s['last_activity'] ? date('d/m/Y H:i', strtotime($s['last_activity'])) : '—';
-              ?>
-                        <div class="session-item <?php echo $is_cur ? 'session-current' : ''; ?>">
-                            <div class="session-icon">
-                                <i class="bi <?php echo $icon; ?>"></i>
-                            </div>
-                            <div style="flex:1;min-width:0">
-                                <div class="fw-semibold small d-flex align-items-center gap-2">
-                                    <?php echo htmlspecialchars($device); ?> · <?php echo htmlspecialchars($browser); ?>
-                                    <?php if ($is_cur): ?>
-                                    <span class="badge"
-                                        style="background:rgba(25,135,84,.12);color:#198754;font-size:.65rem">Sessão
-                                        actual</span>
-                                    <?php endif; ?>
+                            <?php foreach ($sessions as $s):
+                                $ua      = $s['user_agent'] ?? '';
+                                $is_cur  = (strpos($ua, $_SERVER['HTTP_USER_AGENT'] ?? '') !== false);
+                                $device  = 'Computador';
+                                $icon    = 'bi-laptop';
+                                if (preg_match('/Mobile|Android|iPhone/i', $ua)) {
+                                    $device = 'Telemóvel';
+                                    $icon = 'bi-phone';
+                                } elseif (preg_match('/iPad|Tablet/i', $ua)) {
+                                    $device = 'Tablet';
+                                    $icon = 'bi-tablet';
+                                }
+                                $browser = 'Desconhecido';
+                                if (preg_match('/Chrome\/(\d+)/i', $ua, $m))  $browser = 'Chrome ' . $m[1];
+                                elseif (preg_match('/Firefox\/(\d+)/i', $ua, $m)) $browser = 'Firefox ' . $m[1];
+                                elseif (preg_match('/Safari\/(\d+)/i', $ua, $m))  $browser = 'Safari';
+                                elseif (preg_match('/Edg\/(\d+)/i', $ua, $m))     $browser = 'Edge ' . $m[1];
+                                $location = implode(', ', array_filter([$s['city'] ?? '', $s['country'] ?? ''])) ?: 'Localização desconhecida';
+                                $last_act = $s['last_activity'] ? date('d/m/Y H:i', strtotime($s['last_activity'])) : '—';
+                            ?>
+                                <div class="session-item <?php echo $is_cur ? 'session-current' : ''; ?>">
+                                    <div class="session-icon">
+                                        <i class="bi <?php echo $icon; ?>"></i>
+                                    </div>
+                                    <div style="flex:1;min-width:0">
+                                        <div class="fw-semibold small d-flex align-items-center gap-2">
+                                            <?php echo htmlspecialchars($device); ?> · <?php echo htmlspecialchars($browser); ?>
+                                            <?php if ($is_cur): ?>
+                                                <span class="badge"
+                                                    style="background:rgba(25,135,84,.12);color:#198754;font-size:.65rem">Sessão
+                                                    actual</span>
+                                            <?php endif; ?>
+                                        </div>
+                                        <div class="text-muted" style="font-size:.75rem">
+                                            <i class="bi bi-geo-alt me-1"></i><?php echo htmlspecialchars($location); ?>
+                                            <span class="ms-2"><i class="bi bi-clock me-1"></i><?php echo $last_act; ?></span>
+                                        </div>
+                                        <div class="text-muted" style="font-size:.7rem">IP:
+                                            <?php echo htmlspecialchars($s['ip_address'] ?? '—'); ?></div>
+                                    </div>
                                 </div>
-                                <div class="text-muted" style="font-size:.75rem">
-                                    <i class="bi bi-geo-alt me-1"></i><?php echo htmlspecialchars($location); ?>
-                                    <span class="ms-2"><i class="bi bi-clock me-1"></i><?php echo $last_act; ?></span>
-                                </div>
-                                <div class="text-muted" style="font-size:.7rem">IP:
-                                    <?php echo htmlspecialchars($s['ip_address'] ?? '—'); ?></div>
-                            </div>
-                        </div>
-                        <?php endforeach; ?>
+                            <?php endforeach; ?>
                         <?php endif; ?>
 
                         <?php if (count($sessions) > 1): ?>
-                        <div class="mt-4 pt-2 border-top">
-                            <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
-                                data-bs-target="#logoutAllModal">
-                                <i class="bi bi-box-arrow-right me-1"></i>Sair de todos os dispositivos
-                            </button>
-                        </div>
+                            <div class="mt-4 pt-2 border-top">
+                                <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
+                                    data-bs-target="#logoutAllModal">
+                                    <i class="bi bi-box-arrow-right me-1"></i>Sair de todos os dispositivos
+                                </button>
+                            </div>
                         <?php endif; ?>
                     </div>
                 </div><!-- /sec-sessoes -->
@@ -1472,15 +1472,15 @@ $verified_at_str = $user['email_verified'] && $user['email_verified_at']
                     <div class="text-center mb-4">
                         <div style="position:relative;display:inline-block">
                             <?php if ($photo_url): ?>
-                            <img id="edit-avatar-preview" src="<?php echo htmlspecialchars($photo_url); ?>"
-                                class="avatar-ring" style="width:90px;height:90px" alt="" />
+                                <img id="edit-avatar-preview" src="<?php echo htmlspecialchars($photo_url); ?>"
+                                    class="avatar-ring" style="width:90px;height:90px" alt="" />
                             <?php else: ?>
-                            <div id="edit-avatar-ph" class="avatar-ring-ph"
-                                style="width:90px;height:90px;font-size:2rem"
-                                onclick="document.getElementById('edit-photo-input').click()"><i
-                                    class="bi bi-person"></i></div>
-                            <img id="edit-avatar-preview" src="" class="avatar-ring d-none"
-                                style="width:90px;height:90px" alt="" />
+                                <div id="edit-avatar-ph" class="avatar-ring-ph"
+                                    style="width:90px;height:90px;font-size:2rem"
+                                    onclick="document.getElementById('edit-photo-input').click()"><i
+                                        class="bi bi-person"></i></div>
+                                <img id="edit-avatar-preview" src="" class="avatar-ring d-none"
+                                    style="width:90px;height:90px" alt="" />
                             <?php endif; ?>
                             <div class="avatar-upload-btn"
                                 onclick="document.getElementById('edit-photo-input').click()">
@@ -1731,32 +1731,101 @@ $verified_at_str = $user['email_verified'] && $user['email_verified_at']
     </div>
 
     <!-- ════ MODAL — Logout ════ -->
-    <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" tabindex="-1">
+    <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header border-0">
+
+                <div class="modal-header border-0 pb-0">
                     <div class="d-flex align-items-center gap-3">
-                        <div class="rounded-circle d-flex align-items-center justify-content-center"
-                            style="width:44px;height:44px;background:rgba(220,53,69,.1)">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                            style="width:44px;height:44px;background:rgba(220,53,69,.12)">
                             <i class="bi bi-box-arrow-right fs-5 text-danger"></i>
                         </div>
-                        <h5 class="modal-title mb-0">Terminar sessão?</h5>
+                        <div>
+                            <h5 class="modal-title text-dark mb-0" id="logoutwasomupfyLabel">Terminar sessão</h5>
+                            <small class="text-muted">@<?php echo $user_name; ?></small>
+                        </div>
                     </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
-                <div class="modal-body pt-2 pb-0 text-center">
-                    <p class="text-muted small">@<?php echo htmlspecialchars($user['user_name'] ?? ''); ?></p>
+
+                <div class="modal-body pt-2">
+                    <!-- Informação da sessão actual -->
+                    <div class="rounded-3 p-3 mb-3" style="background:rgba(0,0,0,.04)">
+                        <div class="row g-2" style="font-size:.82rem">
+                            <div class="col-6 d-flex gap-2 align-items-start">
+                                <i class="bi bi-clock text-muted mt-1 flex-shrink-0"></i>
+                                <div>
+                                    <div class="text-muted">Duração da sessão</div>
+                                    <div class="fw-semibold text-dark"><?php echo $session_duration_str; ?></div>
+                                </div>
+                            </div>
+                            <div class="col-6 d-flex gap-2 align-items-start">
+                                <i class="bi bi-calendar3 text-muted mt-1 flex-shrink-0"></i>
+                                <div>
+                                    <div class="text-muted">Último acesso</div>
+                                    <div class="fw-semibold text-dark"><?php echo $last_login_str; ?></div>
+                                </div>
+                            </div>
+                            <div class="col-6 d-flex gap-2 align-items-start">
+                                <i class="bi bi-globe text-muted mt-1 flex-shrink-0"></i>
+                                <div>
+                                    <div class="text-muted">Localização</div>
+                                    <div class="fw-semibold text-dark"><?php echo htmlspecialchars($sess_location); ?>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 d-flex gap-2 align-items-start">
+                                <i class="bi bi-browser-chrome text-muted mt-1 flex-shrink-0"></i>
+                                <div>
+                                    <div class="text-muted">Navegador</div>
+                                    <div class="fw-semibold text-dark"><?php echo htmlspecialchars($browser); ?></div>
+                                </div>
+                            </div>
+                            <div class="col-6 d-flex gap-2 align-items-start">
+                                <i class="bi bi-hdd-network text-muted mt-1 flex-shrink-0"></i>
+                                <div>
+                                    <div class="text-muted">IP</div>
+                                    <div class="fw-semibold text-dark"><?php echo htmlspecialchars($sess_ip); ?></div>
+                                </div>
+                            </div>
+                            <div class="col-6 d-flex gap-2 align-items-start">
+                                <i class="bi bi-person-badge text-muted mt-1 flex-shrink-0"></i>
+                                <div>
+                                    <div class="text-muted">Membro desde</div>
+                                    <div class="fw-semibold text-dark"><?php echo $member_since; ?></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-dark text-center mb-0" style="font-size:.9rem">
+                        Tens a certeza que queres terminar a sessão?<br>
+                        <span class="text-muted" style="font-size:.8rem">Terás de iniciar sessão novamente para aceder
+                            ao painel.</span>
+                    </p>
                 </div>
-                <div class="modal-footer border-0 gap-2">
-                    <button class="btn btn-outline-secondary flex-fill" data-bs-dismiss="modal">Continuar</button>
-                    <button class="btn btn-danger flex-fill"
-                        onclick="window.location='<?php echo rtrim(APP_URL, '/'); ?>/logout'">
-                        <i class="bi bi-box-arrow-right me-1"></i>Terminar
+
+                <div class="modal-footer border-0 pt-0 gap-2">
+                    <button type="button" class="btn btn-outline-secondary flex-fill" data-bs-dismiss="modal">
+                        <i class="bi bi-arrow-left me-1"></i>Não, continuar
+                    </button>
+                    <button class="btn btn-danger flex-fill" type="button" onclick="logout_wasomupfy()">
+                        <i class="bi bi-box-arrow-right me-1"></i>Sim, terminar
                     </button>
                 </div>
+
             </div>
         </div>
     </div>
+    <!-- ════ MODAL — Logout  FIM ════ -->
+
+    <script>
+        function logout_wasomupfy() {
+            window.location = '../logout';
+        }
+    </script>
 
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -1766,567 +1835,583 @@ $verified_at_str = $user['email_verified'] && $user['email_verified_at']
     <script src="../../js/theme.wp.js"></script>
     <script src="../../js/wp.tools.js"></script>
     <script>
-    const CSRF = '<?php echo $csrf; ?>';
-    const PROCESS = '<?php echo rtrim(APP_URL, "/"); ?>/dashboard/user/profile_process';
+        const CSRF = '<?php echo $csrf; ?>';
+        const PROCESS = '<?php echo rtrim(APP_URL, "/"); ?>/dashboard/user/profile_process';
 
-    toastr.options = {
-        progressBar: true,
-        closeButton: true,
-        positionClass: 'toast-top-right',
-        timeOut: 4000
-    };
-
-    // ── Section nav ────────────────────────────
-    function showSection(id) {
-        document.querySelectorAll('.profile-section').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.sidebar-nav .nav-link').forEach(l => l.classList.remove('active'));
-        document.querySelectorAll('.mobile-tab').forEach(b => b.classList.remove('btn-primary'));
-
-        const sec = document.getElementById('sec-' + id);
-        if (sec) sec.classList.add('active');
-
-        const navLink = document.querySelector(`.sidebar-nav [data-section="${id}"]`);
-        if (navLink) navLink.classList.add('active');
-
-        const mobileBtn = document.querySelector(`.mobile-tab[data-section="${id}"]`);
-        if (mobileBtn) mobileBtn.classList.add('btn-primary');
-
-        history.replaceState(null, '', '#' + id);
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    }
-
-    // Init nav from URL hash
-    const hash = location.hash.replace('#', '');
-    if (['perfil', 'seguranca', 'notificacoes', 'sessoes', 'perigo'].includes(hash)) showSection(hash);
-
-    document.querySelectorAll('.sidebar-nav .nav-link').forEach(l => {
-        l.addEventListener('click', e => {
-            e.preventDefault();
-            showSection(l.dataset.section);
-        });
-    });
-    document.querySelectorAll('.mobile-tab').forEach(b => {
-        b.addEventListener('click', () => showSection(b.dataset.section));
-    });
-
-    // ── Shared helpers ──────────────────────
-    function togglePwd(id, btn) {
-        const inp = document.getElementById(id);
-        const show = inp.type === 'password';
-        inp.type = show ? 'text' : 'password';
-        btn.querySelector('i').className = show ? 'bi bi-eye-slash' : 'bi bi-eye';
-    }
-
-    async function postJSON(payload) {
-        const fd = new FormData();
-        fd.append('csrf_token', CSRF);
-        for (const [k, v] of Object.entries(payload)) fd.append(k, v);
-        const r = await fetch(PROCESS, {
-            method: 'POST',
-            body: fd
-        });
-        return r.json();
-    }
-
-    function setLoad(textId, loadId, btnEl, loading) {
-        document.getElementById(textId)?.classList.toggle('d-none', loading);
-        document.getElementById(loadId)?.classList.toggle('d-none', !loading);
-        if (btnEl) btnEl.disabled = loading;
-    }
-
-    function showFeedback(id, ok, msg) {
-        const el = document.getElementById(id);
-        if (!el) return;
-        el.innerHTML =
-            `<div class="alert alert-${ok?'success':'danger'} small py-2 d-flex gap-2"><i class="bi bi-${ok?'check-circle':'exclamation-circle'}-fill flex-shrink-0"></i><div>${msg}</div></div>`;
-        el.classList.remove('d-none');
-    }
-
-    // ── Verify email ─────────────────────────
-    async function resendVerifyEmail() {
-        const r = await postJSON({
-            action: 'resend_verify_email'
-        });
-        if (r.ok) {
-            new bootstrap.Modal(document.createElement('div'));
-            await Swal.fire({
-                icon: 'success',
-                iconColor: '#FF0089',
-                title: 'Email enviado!',
-                text: r.message,
-                confirmButtonColor: '#FF0089',
-                timer: 4000,
-                timerProgressBar: true
-            });
-        } else toastr.error(r.message);
-    }
-
-    // ── Photo preview (edit modal) ────────────
-    document.getElementById('edit-photo-input').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        if (file.size > 5 * 1024 * 1024) {
-            toastr.error('Imagem demasiado grande (máx. 5MB).');
-            return;
-        }
-        const reader = new FileReader();
-        reader.onload = ev => {
-            const ph = document.getElementById('edit-avatar-ph');
-            if (ph) ph.classList.add('d-none');
-            const img = document.getElementById('edit-avatar-preview');
-            img.src = ev.target.result;
-            img.classList.remove('d-none');
+        toastr.options = {
+            progressBar: true,
+            closeButton: true,
+            positionClass: 'toast-top-right',
+            timeOut: 4000
         };
-        reader.readAsDataURL(file);
-    });
 
-    // Bio counter
-    const bioTA = document.querySelector('#edit-profile-form [name="about_user"]');
-    const bioCount = document.getElementById('bio-count');
-    if (bioTA && bioCount) {
-        bioCount.textContent = bioTA.value.length + ' / 500';
-        bioTA.addEventListener('input', () => bioCount.textContent = bioTA.value.length + ' / 500');
-    }
+        // ── Section nav ────────────────────────────
+        function showSection(id) {
+            document.querySelectorAll('.profile-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.sidebar-nav .nav-link').forEach(l => l.classList.remove('active'));
+            document.querySelectorAll('.mobile-tab').forEach(b => b.classList.remove('btn-primary'));
 
-    // ── Username check ────────────────────────
-    let usernameTimer;
+            const sec = document.getElementById('sec-' + id);
+            if (sec) sec.classList.add('active');
 
-    function checkUsername(val) {
-        clearTimeout(usernameTimer);
-        val = val.toLowerCase().replace(/[^a-z0-9_.]/g, '');
-        document.getElementById('edit-username').value = val;
-        if (val.length < 3) {
-            document.getElementById('username-feedback').textContent = '';
-            document.getElementById('username-icon').innerHTML = '<i class="bi bi-dash text-muted"></i>';
-            return;
-        }
-        document.getElementById('username-icon').innerHTML =
-            '<span class="spinner-border spinner-border-sm text-muted"></span>';
-        usernameTimer = setTimeout(async () => {
-            const r = await postJSON({
-                action: 'check_username',
-                username: val
+            const navLink = document.querySelector(`.sidebar-nav [data-section="${id}"]`);
+            if (navLink) navLink.classList.add('active');
+
+            const mobileBtn = document.querySelector(`.mobile-tab[data-section="${id}"]`);
+            if (mobileBtn) mobileBtn.classList.add('btn-primary');
+
+            history.replaceState(null, '', '#' + id);
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
             });
-            const icon = document.getElementById('username-icon');
-            const fb = document.getElementById('username-feedback');
-            const sug = document.getElementById('username-suggestions');
-            if (r.available) {
-                icon.innerHTML = '<i class="bi bi-check-circle-fill text-success"></i>';
-                fb.innerHTML = `<span class="text-success small">${r.message}</span>`;
-                sug.innerHTML = '';
-            } else {
-                icon.innerHTML = '<i class="bi bi-x-circle-fill text-danger"></i>';
-                fb.innerHTML = `<span class="text-danger small">${r.message}</span>`;
-                if (r.suggestions?.length) {
-                    sug.innerHTML = '<small class="text-muted me-1">Sugestões:</small>' +
-                        r.suggestions.map(s =>
-                            `<button type="button" class="btn btn-outline-secondary btn-sm py-0" style="font-size:.75rem" onclick="document.getElementById('edit-username').value='${s}';checkUsername('${s}')">${s}</button>`
-                        ).join('');
-                }
-            }
-        }, 600);
-    }
+        }
 
-    // ── Save profile ──────────────────────────
-    async function saveProfile() {
-        const btn = document.getElementById('btn-save-profile');
-        setLoad('save-profile-text', 'save-profile-load', btn, true);
+        // Init nav from URL hash
+        const hash = location.hash.replace('#', '');
+        if (['perfil', 'seguranca', 'notificacoes', 'sessoes', 'perigo'].includes(hash)) showSection(hash);
 
-        const fd = new FormData(document.getElementById('edit-profile-form'));
-        fd.append('action', 'update_profile');
-        fd.append('csrf_token', CSRF);
-        const photo = document.getElementById('edit-photo-input').files[0];
-        if (photo) fd.set('photo_user', photo);
+        document.querySelectorAll('.sidebar-nav .nav-link').forEach(l => {
+            l.addEventListener('click', e => {
+                e.preventDefault();
+                showSection(l.dataset.section);
+            });
+        });
+        document.querySelectorAll('.mobile-tab').forEach(b => {
+            b.addEventListener('click', () => showSection(b.dataset.section));
+        });
 
-        try {
+        // ── Shared helpers ──────────────────────
+        function togglePwd(id, btn) {
+            const inp = document.getElementById(id);
+            const show = inp.type === 'password';
+            inp.type = show ? 'text' : 'password';
+            btn.querySelector('i').className = show ? 'bi bi-eye-slash' : 'bi bi-eye';
+        }
+
+        async function postJSON(payload) {
+            const fd = new FormData();
+            fd.append('csrf_token', CSRF);
+            for (const [k, v] of Object.entries(payload)) fd.append(k, v);
             const r = await fetch(PROCESS, {
                 method: 'POST',
                 body: fd
             });
-            const data = await r.json();
-            if (data.ok) {
-                bootstrap.Modal.getInstance(document.getElementById('editProfileModal')).hide();
-                // Update UI
-                if (data.photo_url) {
-                    document.querySelectorAll('#sidebar-avatar,#hero-avatar,#edit-avatar-preview').forEach(el => {
-                        el.src = data.photo_url;
-                        el.classList.remove('d-none');
-                    });
-                    document.querySelectorAll('#sidebar-avatar-ph,#hero-avatar-ph,#edit-avatar-ph').forEach(el => el
-                        ?.classList.add('d-none'));
-                }
-                toastr.success(data.message);
-                setTimeout(() => location.reload(), 1000);
-            } else {
-                showFeedback('edit-profile-feedback', false, data.message);
-            }
-        } catch {
-            toastr.error('Erro de ligação.');
-        } finally {
-            setLoad('save-profile-text', 'save-profile-load', btn, false);
-        }
-    }
-
-    // ── Password strength ─────────────────────
-    function checkStrength(pwd) {
-        const bar = document.getElementById('strength-bar');
-        const label = document.getElementById('strength-label');
-        let score = 0;
-        if (pwd.length >= 8) score++;
-        if (pwd.length >= 12) score++;
-        if (/[A-Z]/.test(pwd)) score++;
-        if (/[0-9]/.test(pwd)) score++;
-        if (/[^A-Za-z0-9]/.test(pwd)) score++;
-        const map = [
-            [20, '#dc3545', 'Muito fraca'],
-            [40, '#fd7e14', 'Fraca'],
-            [60, '#ffc107', 'Razoável'],
-            [80, '#20c997', 'Boa'],
-            [100, '#198754', 'Excelente']
-        ];
-        const [w, c, t] = map[score - 1] || [10, '#dc3545', 'Muito fraca'];
-        bar.style.width = w + '%';
-        bar.style.background = c;
-        label.textContent = t;
-        label.style.color = c;
-    }
-
-    // ── Change password ───────────────────────
-    async function changePassword() {
-        const old = document.getElementById('old-password').value;
-        const nw = document.getElementById('new-password').value;
-        const conf = document.getElementById('confirm-password').value;
-        if (!old || !nw || !conf) {
-            toastr.error('Preenche todos os campos.');
-            return;
-        }
-        if (nw !== conf) {
-            toastr.error('As senhas não coincidem.');
-            return;
-        }
-        if (nw.length < 8) {
-            toastr.error('A senha deve ter pelo menos 8 caracteres.');
-            return;
+            return r.json();
         }
 
-        const r = await postJSON({
-            action: 'change_password',
-            old_password: old,
-            new_password: nw,
-            confirm_password: conf
-        });
-        if (r.ok) {
-            toastr.success(r.message);
-            ['old-password', 'new-password', 'confirm-password'].forEach(id => document.getElementById(id).value =
-                '');
-            document.getElementById('strength-bar').style.width = '0';
-            document.getElementById('strength-label').textContent = '';
-            // Unlock recovery key
-            document.getElementById('btn-gen-recovery')?.removeAttribute('disabled');
-            Swal.fire({
-                icon: 'success',
-                iconColor: '#FF0089',
-                title: 'Senha alterada!',
-                text: r.message,
-                confirmButtonColor: '#FF0089',
-                timer: 3000,
-                timerProgressBar: true
+        function setLoad(textId, loadId, btnEl, loading) {
+            document.getElementById(textId)?.classList.toggle('d-none', loading);
+            document.getElementById(loadId)?.classList.toggle('d-none', !loading);
+            if (btnEl) btnEl.disabled = loading;
+        }
+
+        function showFeedback(id, ok, msg) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.innerHTML =
+                `<div class="alert alert-${ok?'success':'danger'} small py-2 d-flex gap-2"><i class="bi bi-${ok?'check-circle':'exclamation-circle'}-fill flex-shrink-0"></i><div>${msg}</div></div>`;
+            el.classList.remove('d-none');
+        }
+
+        // ── Verify email ─────────────────────────
+        async function resendVerifyEmail() {
+            const r = await postJSON({
+                action: 'resend_verify_email'
             });
-        } else toastr.error(r.message);
-    }
+            if (r.ok) {
+                new bootstrap.Modal(document.createElement('div'));
+                await Swal.fire({
+                    icon: 'success',
+                    iconColor: '#FF0089',
+                    title: 'Email enviado!',
+                    text: r.message,
+                    confirmButtonColor: '#FF0089',
+                    timer: 4000,
+                    timerProgressBar: true
+                });
+            } else toastr.error(r.message);
+        }
 
-    // ── 2FA ───────────────────────────────────
-    let totpSecretGlobal = '';
-    async function toggle2FA(checkbox) {
-        if (checkbox.checked) {
+        // ── Photo preview (edit modal) ────────────
+        document.getElementById('edit-photo-input').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            if (file.size > 5 * 1024 * 1024) {
+                toastr.error('Imagem demasiado grande (máx. 5MB).');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = ev => {
+                const ph = document.getElementById('edit-avatar-ph');
+                if (ph) ph.classList.add('d-none');
+                const img = document.getElementById('edit-avatar-preview');
+                img.src = ev.target.result;
+                img.classList.remove('d-none');
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Bio counter
+        const bioTA = document.querySelector('#edit-profile-form [name="about_user"]');
+        const bioCount = document.getElementById('bio-count');
+        if (bioTA && bioCount) {
+            bioCount.textContent = bioTA.value.length + ' / 500';
+            bioTA.addEventListener('input', () => bioCount.textContent = bioTA.value.length + ' / 500');
+        }
+
+        // ── Username check ────────────────────────
+        let usernameTimer;
+
+        function checkUsername(val) {
+            clearTimeout(usernameTimer);
+            val = val.toLowerCase().replace(/[^a-z0-9_.]/g, '');
+            document.getElementById('edit-username').value = val;
+            if (val.length < 3) {
+                document.getElementById('username-feedback').textContent = '';
+                document.getElementById('username-icon').innerHTML = '<i class="bi bi-dash text-muted"></i>';
+                return;
+            }
+            document.getElementById('username-icon').innerHTML =
+                '<span class="spinner-border spinner-border-sm text-muted"></span>';
+            usernameTimer = setTimeout(async () => {
+                const r = await postJSON({
+                    action: 'check_username',
+                    username: val
+                });
+                const icon = document.getElementById('username-icon');
+                const fb = document.getElementById('username-feedback');
+                const sug = document.getElementById('username-suggestions');
+                if (r.available) {
+                    icon.innerHTML = '<i class="bi bi-check-circle-fill text-success"></i>';
+                    fb.innerHTML = `<span class="text-success small">${r.message}</span>`;
+                    sug.innerHTML = '';
+                } else {
+                    icon.innerHTML = '<i class="bi bi-x-circle-fill text-danger"></i>';
+                    fb.innerHTML = `<span class="text-danger small">${r.message}</span>`;
+                    if (r.suggestions?.length) {
+                        sug.innerHTML = '<small class="text-muted me-1">Sugestões:</small>' +
+                            r.suggestions.map(s =>
+                                `<button type="button" class="btn btn-outline-secondary btn-sm py-0" style="font-size:.75rem" onclick="document.getElementById('edit-username').value='${s}';checkUsername('${s}')">${s}</button>`
+                            ).join('');
+                    }
+                }
+            }, 600);
+        }
+
+        // ── Save profile ──────────────────────────
+        async function saveProfile() {
+            const btn = document.getElementById('btn-save-profile');
+            setLoad('save-profile-text', 'save-profile-load', btn, true);
+
+            const fd = new FormData(document.getElementById('edit-profile-form'));
+            fd.append('action', 'update_profile');
+            fd.append('csrf_token', CSRF);
+            const photo = document.getElementById('edit-photo-input').files[0];
+            if (photo) fd.set('photo_user', photo);
+
+            try {
+                const r = await fetch(PROCESS, {
+                    method: 'POST',
+                    body: fd
+                });
+                const data = await r.json();
+                if (data.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('editProfileModal')).hide();
+                    // Update UI
+                    if (data.photo_url) {
+                        document.querySelectorAll('#sidebar-avatar,#hero-avatar,#edit-avatar-preview').forEach(el => {
+                            el.src = data.photo_url;
+                            el.classList.remove('d-none');
+                        });
+                        document.querySelectorAll('#sidebar-avatar-ph,#hero-avatar-ph,#edit-avatar-ph').forEach(el => el
+                            ?.classList.add('d-none'));
+                    }
+                    toastr.success(data.message);
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showFeedback('edit-profile-feedback', false, data.message);
+                }
+            } catch {
+                toastr.error('Erro de ligação.');
+            } finally {
+                setLoad('save-profile-text', 'save-profile-load', btn, false);
+            }
+        }
+
+        // ── Password strength ─────────────────────
+        function checkStrength(pwd) {
+            const bar = document.getElementById('strength-bar');
+            const label = document.getElementById('strength-label');
+            let score = 0;
+            if (pwd.length >= 8) score++;
+            if (pwd.length >= 12) score++;
+            if (/[A-Z]/.test(pwd)) score++;
+            if (/[0-9]/.test(pwd)) score++;
+            if (/[^A-Za-z0-9]/.test(pwd)) score++;
+            const map = [
+                [20, '#dc3545', 'Muito fraca'],
+                [40, '#fd7e14', 'Fraca'],
+                [60, '#ffc107', 'Razoável'],
+                [80, '#20c997', 'Boa'],
+                [100, '#198754', 'Excelente']
+            ];
+            const [w, c, t] = map[score - 1] || [10, '#dc3545', 'Muito fraca'];
+            bar.style.width = w + '%';
+            bar.style.background = c;
+            label.textContent = t;
+            label.style.color = c;
+        }
+
+        // ── Change password ───────────────────────
+        async function changePassword() {
+            const old = document.getElementById('old-password').value;
+            const nw = document.getElementById('new-password').value;
+            const conf = document.getElementById('confirm-password').value;
+            if (!old || !nw || !conf) {
+                toastr.error('Preenche todos os campos.');
+                return;
+            }
+            if (nw !== conf) {
+                toastr.error('As senhas não coincidem.');
+                return;
+            }
+            if (nw.length < 8) {
+                toastr.error('A senha deve ter pelo menos 8 caracteres.');
+                return;
+            }
+
+            const r = await postJSON({
+                action: 'change_password',
+                old_password: old,
+                new_password: nw,
+                confirm_password: conf
+            });
+            if (r.ok) {
+                toastr.success(r.message);
+                ['old-password', 'new-password', 'confirm-password'].forEach(id => document.getElementById(id).value =
+                    '');
+                document.getElementById('strength-bar').style.width = '0';
+                document.getElementById('strength-label').textContent = '';
+                // Unlock recovery key
+                document.getElementById('btn-gen-recovery')?.removeAttribute('disabled');
+                Swal.fire({
+                    icon: 'success',
+                    iconColor: '#FF0089',
+                    title: 'Senha alterada!',
+                    text: r.message,
+                    confirmButtonColor: '#FF0089',
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+            } else toastr.error(r.message);
+        }
+
+        // ── 2FA ───────────────────────────────────
+        let totpSecretGlobal = '';
+        async function toggle2FA(checkbox) {
+            if (checkbox.checked) {
+                // Activar — gerar QR
+                const r = await postJSON({
+                    action: 'toggle_2fa',
+                    enable: 1
+                });
+                if (r.ok) {
+                    totpSecretGlobal = r.secret;
+                    document.getElementById('2fa-qr').src = r.qr_url;
+                    document.getElementById('2fa-secret-display').textContent = r.secret;
+                    document.getElementById('2fa-setup').classList.remove('d-none');
+                    document.getElementById('2fa-disable').classList.add('d-none');
+                } else {
+                    toastr.error(r.message);
+                    checkbox.checked = false;
+                }
+            } else {
+                // Desactivar — re-marcar imediatamente (só desmarca após senha confirmada)
+                checkbox.checked = true;
+                document.getElementById('2fa-disable').classList.remove('d-none');
+                document.getElementById('2fa-setup').classList.add('d-none');
+                document.getElementById('2fa-disable-pwd').value = '';
+                document.getElementById('2fa-disable-pwd').focus();
+            }
+        }
+
+        async function confirm2FA() {
+            const code = document.getElementById('totp-code').value.trim();
+            if (code.length !== 6) {
+                toastr.error('Insere os 6 dígitos.');
+                return;
+            }
+            const r = await postJSON({
+                action: 'confirm_2fa',
+                totp_code: code,
+                totp_secret: totpSecretGlobal
+            });
+            if (r.ok) {
+                document.getElementById('2fa-setup').classList.add('d-none');
+                await Swal.fire({
+                    icon: 'success',
+                    iconColor: '#FF0089',
+                    title: '2FA Activado!',
+                    text: r.message,
+                    confirmButtonColor: '#FF0089',
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+                location.reload();
+            } else toastr.error(r.message);
+        }
+
+        async function disable2FA() {
+            const pwd = document.getElementById('2fa-disable-pwd').value;
+            if (!pwd) {
+                toastr.error('Introduz a tua senha.');
+                return;
+            }
             const r = await postJSON({
                 action: 'toggle_2fa',
-                enable: 1
+                enable: 0,
+                password_confirm: pwd
             });
             if (r.ok) {
-                totpSecretGlobal = r.secret;
-                document.getElementById('2fa-qr').src = r.qr_url;
-                document.getElementById('2fa-secret-display').textContent = r.secret;
-                document.getElementById('2fa-setup').classList.remove('d-none');
-                document.getElementById('2fa-disable').classList.add('d-none');
+                await Swal.fire({
+                    icon: 'success',
+                    iconColor: '#198754',
+                    title: '2FA Desactivado',
+                    text: r.message,
+                    confirmButtonColor: '#198754',
+                    timer: 2500,
+                    timerProgressBar: true
+                });
+                location.reload();
             } else {
                 toastr.error(r.message);
-                checkbox.checked = false;
             }
-        } else {
-            document.getElementById('2fa-disable').classList.remove('d-none');
-            document.getElementById('2fa-setup').classList.add('d-none');
         }
-    }
 
-    async function confirm2FA() {
-        const code = document.getElementById('totp-code').value.trim();
-        if (code.length !== 6) {
-            toastr.error('Insere os 6 dígitos.');
-            return;
-        }
-        const r = await postJSON({
-            action: 'confirm_2fa',
-            totp_code: code,
-            totp_secret: totpSecretGlobal
-        });
-        if (r.ok) {
-            document.getElementById('2fa-setup').classList.add('d-none');
-            Swal.fire({
-                icon: 'success',
-                iconColor: '#FF0089',
-                title: '2FA Activado!',
-                text: r.message,
-                confirmButtonColor: '#FF0089',
-                timer: 3000
+        // ── Recovery key ──────────────────────────
+        async function generateRecovery() {
+            const r = await postJSON({
+                action: 'generate_recovery_key'
             });
-        } else toastr.error(r.message);
-    }
-
-    async function disable2FA() {
-        const pwd = document.getElementById('2fa-disable-pwd').value;
-        if (!pwd) {
-            toastr.error('Introduz a tua senha.');
-            return;
-        }
-        const r = await postJSON({
-            action: 'toggle_2fa',
-            enable: 0,
-            password_confirm: pwd
-        });
-        if (r.ok) {
-            document.getElementById('2fa-disable').classList.add('d-none');
-            document.getElementById('2fa-toggle').checked = false;
-            toastr.success(r.message);
-        } else toastr.error(r.message);
-    }
-
-    // ── Recovery key ──────────────────────────
-    async function generateRecovery() {
-        const r = await postJSON({
-            action: 'generate_recovery_key'
-        });
-        if (r.ok) {
-            const segments = r.key.split('-');
-            const display = segments.map(s => `<span class="recovery-segment">${s}</span>`).join(' - ');
-            document.getElementById('recovery-key-text').innerHTML = display;
-            document.getElementById('recovery-key-display').classList.remove('d-none');
-            document.getElementById('btn-download-recovery').classList.remove('d-none');
-            document.getElementById('btn-copy-recovery').classList.remove('d-none');
-            document.getElementById('btn-gen-recovery').setAttribute('disabled', '');
-            Swal.fire({
-                icon: 'warning',
-                iconColor: '#FF0089',
-                title: 'Guarda a tua chave!',
-                html: '<p>Esta chave é mostrada <strong>uma única vez</strong>. Copia ou faz download agora e guarda num local seguro offline.</p>',
-                confirmButtonColor: '#FF0089',
-                confirmButtonText: 'Entendido, guardei'
-            });
-        } else toastr.error(r.message);
-    }
-
-    async function downloadRecovery() {
-        const r = await postJSON({
-            action: 'download_recovery_key'
-        });
-        if (r.ok) {
-            const filename_txt = (r.filename || 'wasom_recovery.txt').replace(/\.json$/, '') + (r.filename
-                ?.endsWith('.txt') ? '' : '.txt');
-            const blob = new Blob([
-                '============================\n' +
-                'WASOM UPFY — Chave de Recuperação\n' +
-                'Gerada em: ' + new Date().toLocaleDateString('pt-PT') + '\n' +
-                '============================\n\n' +
-                r.key + '\n\n' +
-                'ATENÇÃO: Guarda esta chave offline num local seguro.\n' +
-                'Não a partilhes com ninguém.\n'
-            ], {
-                type: 'text/plain'
-            });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = r.filename || filename_txt;
-            a.click();
-            URL.revokeObjectURL(url);
-            toastr.success('Chave descarregada!');
-        } else toastr.error(r.message);
-    }
-
-    function copyRecovery() {
-        const txt = document.getElementById('recovery-key-text').textContent.replace(/\s+/g, ' ').trim();
-        navigator.clipboard.writeText(txt).then(() => toastr.success('Chave copiada!'));
-    }
-
-    // ── Notifications (auto-save) ─────────────
-    let notifTimer;
-
-    function saveNotifications() {
-        clearTimeout(notifTimer);
-        notifTimer = setTimeout(async () => {
-            const payload = {
-                action: 'update_notifications'
-            };
-            ['notif_email', 'notif_push', 'notif_weekly', 'notif_releases', 'notif_payments'].forEach(
-                id => {
-                    payload[id] = document.getElementById(id)?.checked ? 1 : 0;
-                });
-            const r = await postJSON(payload);
-            const hint = document.getElementById('notif-save-hint');
             if (r.ok) {
-                if (hint) hint.style.display = 'block';
-                setTimeout(() => hint && (hint.style.display = 'none'), 3000);
+                const segments = r.key.split('-');
+                const display = segments.map(s => `<span class="recovery-segment">${s}</span>`).join(' - ');
+                document.getElementById('recovery-key-text').innerHTML = display;
+                document.getElementById('recovery-key-display').classList.remove('d-none');
+                document.getElementById('btn-download-recovery').classList.remove('d-none');
+                document.getElementById('btn-copy-recovery').classList.remove('d-none');
+                document.getElementById('btn-gen-recovery').setAttribute('disabled', '');
+                Swal.fire({
+                    icon: 'warning',
+                    iconColor: '#FF0089',
+                    title: 'Guarda a tua chave!',
+                    html: '<p>Esta chave é mostrada <strong>uma única vez</strong>. Copia ou faz download agora e guarda num local seguro offline.</p>',
+                    confirmButtonColor: '#FF0089',
+                    confirmButtonText: 'Entendido, guardei'
+                });
             } else toastr.error(r.message);
-        }, 800);
-    }
-
-    // ── Logout all devices ────────────────────
-    async function logoutAllDevices() {
-        const pwd = document.getElementById('logout-all-pwd').value;
-        if (!pwd) {
-            showFeedback('logout-all-feedback', false, 'Introduz a tua senha.');
-            return;
         }
-        setLoad('logout-all-text', 'logout-all-load', null, true);
-        const r = await postJSON({
-            action: 'logout_all_sessions',
-            password_confirm: pwd
-        });
-        setLoad('logout-all-text', 'logout-all-load', null, false);
-        if (r.ok) {
-            bootstrap.Modal.getInstance(document.getElementById('logoutAllModal')).hide();
-            await Swal.fire({
-                icon: 'success',
-                iconColor: '#FF0089',
-                title: 'Sessões encerradas!',
-                text: r.message,
-                confirmButtonColor: '#FF0089',
-                timer: 2500
+
+        async function downloadRecovery() {
+            const r = await postJSON({
+                action: 'download_recovery_key'
             });
-            location.reload();
-        } else showFeedback('logout-all-feedback', false, r.message);
-    }
-
-    // ── Download data ─────────────────────────
-    async function downloadData() {
-        const pwd = document.getElementById('download-data-pwd').value;
-        if (!pwd) {
-            showFeedback('download-data-feedback', false, 'Introduz a tua senha.');
-            return;
+            if (r.ok) {
+                const filename_txt = (r.filename || 'wasom_recovery.txt').replace(/\.json$/, '') + (r.filename
+                    ?.endsWith('.txt') ? '' : '.txt');
+                const blob = new Blob([
+                    '============================\n' +
+                    'WASOM UPFY — Chave de Recuperação\n' +
+                    'Gerada em: ' + new Date().toLocaleDateString('pt-PT') + '\n' +
+                    '============================\n\n' +
+                    r.key + '\n\n' +
+                    'ATENÇÃO: Guarda esta chave offline num local seguro.\n' +
+                    'Não a partilhes com ninguém.\n'
+                ], {
+                    type: 'text/plain'
+                });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = r.filename || filename_txt;
+                a.click();
+                URL.revokeObjectURL(url);
+                toastr.success('Chave descarregada!');
+            } else toastr.error(r.message);
         }
-        setLoad('dl-data-text', 'dl-data-load', null, true);
-        const r = await postJSON({
-            action: 'download_data',
-            password_confirm: pwd
-        });
-        setLoad('dl-data-text', 'dl-data-load', null, false);
-        if (r.ok) {
-            const blob = new Blob([r.data], {
-                type: 'application/json'
+
+        function copyRecovery() {
+            const txt = document.getElementById('recovery-key-text').textContent.replace(/\s+/g, ' ').trim();
+            navigator.clipboard.writeText(txt).then(() => toastr.success('Chave copiada!'));
+        }
+
+        // ── Notifications (auto-save) ─────────────
+        let notifTimer;
+
+        function saveNotifications() {
+            clearTimeout(notifTimer);
+            notifTimer = setTimeout(async () => {
+                const payload = {
+                    action: 'update_notifications'
+                };
+                ['notif_email', 'notif_push', 'notif_weekly', 'notif_releases', 'notif_payments'].forEach(
+                    id => {
+                        payload[id] = document.getElementById(id)?.checked ? 1 : 0;
+                    });
+                const r = await postJSON(payload);
+                const hint = document.getElementById('notif-save-hint');
+                if (r.ok) {
+                    if (hint) hint.style.display = 'block';
+                    setTimeout(() => hint && (hint.style.display = 'none'), 3000);
+                } else toastr.error(r.message);
+            }, 800);
+        }
+
+        // ── Logout all devices ────────────────────
+        async function logoutAllDevices() {
+            const pwd = document.getElementById('logout-all-pwd').value;
+            if (!pwd) {
+                showFeedback('logout-all-feedback', false, 'Introduz a tua senha.');
+                return;
+            }
+            setLoad('logout-all-text', 'logout-all-load', null, true);
+            const r = await postJSON({
+                action: 'logout_all_sessions',
+                password_confirm: pwd
             });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = r.filename;
-            a.click();
-            URL.revokeObjectURL(url);
-            bootstrap.Modal.getInstance(document.getElementById('downloadDataModal')).hide();
-            toastr.success('Download iniciado!');
-        } else showFeedback('download-data-feedback', false, r.message);
-    }
-
-    // ── Deactivate account ────────────────────
-    async function deactivateAccount() {
-        const pwd = document.getElementById('deactivate-pwd').value;
-        if (!pwd) {
-            showFeedback('deactivate-feedback', false, 'Introduz a tua senha.');
-            return;
+            setLoad('logout-all-text', 'logout-all-load', null, false);
+            if (r.ok) {
+                bootstrap.Modal.getInstance(document.getElementById('logoutAllModal')).hide();
+                await Swal.fire({
+                    icon: 'success',
+                    iconColor: '#FF0089',
+                    title: 'Sessões encerradas!',
+                    text: r.message,
+                    confirmButtonColor: '#FF0089',
+                    timer: 2500
+                });
+                location.reload();
+            } else showFeedback('logout-all-feedback', false, r.message);
         }
-        setLoad('deact-text', 'deact-load', null, true);
-        const r = await postJSON({
-            action: 'deactivate_account',
-            password_confirm: pwd
-        });
-        setLoad('deact-text', 'deact-load', null, false);
-        if (r.ok) {
-            await Swal.fire({
-                icon: 'info',
-                title: 'Conta desactivada',
-                text: r.message,
-                confirmButtonColor: '#FF0089'
+
+        // ── Download data ─────────────────────────
+        async function downloadData() {
+            const pwd = document.getElementById('download-data-pwd').value;
+            if (!pwd) {
+                showFeedback('download-data-feedback', false, 'Introduz a tua senha.');
+                return;
+            }
+            setLoad('dl-data-text', 'dl-data-load', null, true);
+            const r = await postJSON({
+                action: 'download_data',
+                password_confirm: pwd
             });
-            window.location.href = r.redirect || '/';
-        } else showFeedback('deactivate-feedback', false, r.message);
-    }
-
-    // ── Delete confirm text ───────────────────
-    function checkDeleteText() {
-        const val = document.getElementById('delete-confirm-text').value.trim().toLowerCase();
-        const expected = 'eliminar a minha conta permanentemente';
-        const check = document.getElementById('delete-text-check');
-        const btn = document.getElementById('btn-confirm-delete');
-        if (val === expected) {
-            check.innerHTML = '<span class="text-success"><i class="bi bi-check-circle me-1"></i>Texto correcto</span>';
-            btn.disabled = false;
-        } else {
-            check.innerHTML = val.length > 0 ?
-                '<span class="text-danger"><i class="bi bi-x-circle me-1"></i>Texto incorrecto</span>' : '';
-            btn.disabled = true;
+            setLoad('dl-data-text', 'dl-data-load', null, false);
+            if (r.ok) {
+                const blob = new Blob([r.data], {
+                    type: 'application/json'
+                });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = r.filename;
+                a.click();
+                URL.revokeObjectURL(url);
+                bootstrap.Modal.getInstance(document.getElementById('downloadDataModal')).hide();
+                toastr.success('Download iniciado!');
+            } else showFeedback('download-data-feedback', false, r.message);
         }
-    }
 
-    // ── Delete account ────────────────────────
-    async function deleteAccount() {
-        const pwd = document.getElementById('delete-pwd').value;
-        const text = document.getElementById('delete-confirm-text').value.trim();
-        if (!pwd) {
-            showFeedback('delete-feedback', false, 'Introduz a tua senha.');
-            return;
-        }
-        setLoad('del-text', 'del-load', null, true);
-        const r = await postJSON({
-            action: 'delete_account',
-            password_confirm: pwd,
-            confirm_text: text
-        });
-        setLoad('del-text', 'del-load', null, false);
-        if (r.ok) {
-            await Swal.fire({
-                icon: 'info',
-                title: 'Conta eliminada',
-                text: 'A tua conta foi eliminada.',
-                confirmButtonColor: '#FF0089'
+        // ── Deactivate account ────────────────────
+        async function deactivateAccount() {
+            const pwd = document.getElementById('deactivate-pwd').value;
+            if (!pwd) {
+                showFeedback('deactivate-feedback', false, 'Introduz a tua senha.');
+                return;
+            }
+            setLoad('deact-text', 'deact-load', null, true);
+            const r = await postJSON({
+                action: 'deactivate_account',
+                password_confirm: pwd
             });
-            window.location.href = r.redirect || '/';
-        } else showFeedback('delete-feedback', false, r.message);
-    }
+            setLoad('deact-text', 'deact-load', null, false);
+            if (r.ok) {
+                await Swal.fire({
+                    icon: 'info',
+                    title: 'Conta desactivada',
+                    text: r.message,
+                    confirmButtonColor: '#FF0089'
+                });
+                window.location.href = r.redirect || '/';
+            } else showFeedback('deactivate-feedback', false, r.message);
+        }
 
-    // ── Verify success (URL param) ────────────
-    <?php if ($verify_status === 'success'): ?>
-    document.addEventListener('DOMContentLoaded', () => {
-        Swal.fire({
-            icon: 'success',
-            iconColor: '#FF0089',
-            title: 'Email verificado!',
-            text: 'O teu email foi verificado com sucesso.',
-            confirmButtonColor: '#FF0089',
-            timer: 4000,
-            timerProgressBar: true
-        });
-    });
-    <?php elseif ($verify_status === 'error'): ?>
-    document.addEventListener('DOMContentLoaded', () => {
-        Swal.fire({
-            icon: 'error',
-            title: 'Erro na verificação',
-            text: 'O link é inválido ou expirou. Solicita um novo.',
-            confirmButtonColor: '#FF0089'
-        });
-    });
-    <?php endif; ?>
+        // ── Delete confirm text ───────────────────
+        function checkDeleteText() {
+            const val = document.getElementById('delete-confirm-text').value.trim().toLowerCase();
+            const expected = 'eliminar a minha conta permanentemente';
+            const check = document.getElementById('delete-text-check');
+            const btn = document.getElementById('btn-confirm-delete');
+            if (val === expected) {
+                check.innerHTML = '<span class="text-success"><i class="bi bi-check-circle me-1"></i>Texto correcto</span>';
+                btn.disabled = false;
+            } else {
+                check.innerHTML = val.length > 0 ?
+                    '<span class="text-danger"><i class="bi bi-x-circle me-1"></i>Texto incorrecto</span>' : '';
+                btn.disabled = true;
+            }
+        }
+
+        // ── Delete account ────────────────────────
+        async function deleteAccount() {
+            const pwd = document.getElementById('delete-pwd').value;
+            const text = document.getElementById('delete-confirm-text').value.trim();
+            if (!pwd) {
+                showFeedback('delete-feedback', false, 'Introduz a tua senha.');
+                return;
+            }
+            setLoad('del-text', 'del-load', null, true);
+            const r = await postJSON({
+                action: 'delete_account',
+                password_confirm: pwd,
+                confirm_text: text
+            });
+            setLoad('del-text', 'del-load', null, false);
+            if (r.ok) {
+                await Swal.fire({
+                    icon: 'info',
+                    title: 'Conta eliminada',
+                    text: 'A tua conta foi eliminada.',
+                    confirmButtonColor: '#FF0089'
+                });
+                window.location.href = r.redirect || '/';
+            } else showFeedback('delete-feedback', false, r.message);
+        }
+
+        // ── Verify success (URL param) ────────────
+        <?php if ($verify_status === 'success'): ?>
+            document.addEventListener('DOMContentLoaded', () => {
+                Swal.fire({
+                    icon: 'success',
+                    iconColor: '#FF0089',
+                    title: 'Email verificado!',
+                    text: 'O teu email foi verificado com sucesso.',
+                    confirmButtonColor: '#FF0089',
+                    timer: 4000,
+                    timerProgressBar: true
+                });
+            });
+        <?php elseif ($verify_status === 'error'): ?>
+            document.addEventListener('DOMContentLoaded', () => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro na verificação',
+                    text: 'O link é inválido ou expirou. Solicita um novo.',
+                    confirmButtonColor: '#FF0089'
+                });
+            });
+        <?php endif; ?>
     </script>
 </body>
 
