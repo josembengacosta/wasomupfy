@@ -1,1081 +1,1637 @@
+<?php
+// ══════════════════════════════════════════════════════
+// WASOM UPFY v2.0 — Notificações
+// Arquivo: dashboard/page/notifications.php
+// ══════════════════════════════════════════════════════
+require_once __DIR__ . '/../../authentic/include/functions.php';
+startSecureSession();
+checkRememberMe();
+requireLogin();
+
+$db       = getDB();
+$id_users = (int)$_SESSION['id_users'];
+$user     = getUserById($id_users);
+if (!$user) { redirect('authentic/logout'); }
+
+$first_name = htmlspecialchars($user['first_name'] ?? '');
+$full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['second_name'] ?? '')));
+$email_user = htmlspecialchars($user['email_user'] ?? '');
+
+// ── Carregar preferências de notificação ──────────────
+try {
+    $pq = $db->prepare("SELECT * FROM _user_settings WHERE id_users = ? LIMIT 1");
+    $pq->execute([$id_users]);
+    $prefs = $pq->fetch(PDO::FETCH_ASSOC);
+} catch (PDOException $e) { $prefs = []; }
+
+// Fallback para colunas de _users se _user_settings não existir
+$pref_email    = (int)($prefs['notif_email']    ?? $user['notif_email']    ?? 1);
+$pref_push     = (int)($prefs['notif_push']     ?? $user['notif_push']     ?? 0);
+$pref_streams  = (int)($prefs['notif_streams']  ?? 1);
+$pref_weekly   = (int)($prefs['notif_weekly']   ?? $user['notif_weekly']   ?? 1);
+$pref_releases = (int)($prefs['notif_releases'] ?? $user['notif_releases'] ?? 1);
+$pref_payments = (int)($prefs['notif_payments'] ?? $user['notif_payments'] ?? 1);
+
+// ── Buscar notificações do utilizador + broadcasts ────
+try {
+    // Notificações pessoais + broadcasts dirigidos a este user
+    $nq = $db->prepare("
+        SELECT id_notification AS id, id_users, type, title, body, action_url,
+               is_read, read_at, is_broadcast, creat_notification AS creat,
+               'notification' AS source
+        FROM _notification
+        WHERE id_users = ?
+           OR (is_broadcast = 1 AND id_users IS NULL)
+        ORDER BY is_read ASC, creat_notification DESC
+        LIMIT 80
+    ");
+    $nq->execute([$id_users]);
+    $notifications = $nq->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) { $notifications = []; }
+
+// ── Buscar broadcasts do admin com estado de leitura ──
+try {
+    $bq = $db->prepare("
+        SELECT b.id_broadcast AS id, b.type, b.message AS body,
+               b.creat_broadcast AS creat,
+               COALESCE(br.is_read, 0) AS is_read,
+               br.read_at,
+               1 AS is_broadcast,
+               'broadcast' AS source
+        FROM _broadcast b
+        LEFT JOIN _broadcast_receipt br
+               ON br.id_broadcast = b.id_broadcast AND br.id_users = ?
+        WHERE b.audience = 'all'
+           OR (b.audience = 'country' AND b.audience_value = ?)
+        ORDER BY b.creat_broadcast DESC
+        LIMIT 20
+    ");
+    $bq->execute([$id_users, $user['country_user'] ?? 'AO']);
+    $broadcasts = $bq->fetchAll(PDO::FETCH_ASSOC);
+
+    // Normalizar broadcasts para ter título
+    foreach ($broadcasts as &$b) {
+        $b['title']      = 'Comunicado da Equipa Wasom Upfy';
+        $b['action_url'] = null;
+        $b['id_users']   = $id_users;
+        $b['id']         = 'b_' . $b['id'];   // prefix para distinguir no AJAX
+    }
+    unset($b);
+} catch (PDOException $e) { $broadcasts = []; }
+
+// Merge e sort por data desc, não lidas primeiro
+$all = array_merge($notifications, $broadcasts);
+usort($all, function($a, $b) {
+    if ($a['is_read'] !== $b['is_read']) return $a['is_read'] - $b['is_read'];
+    return strtotime($b['creat']) - strtotime($a['creat']);
+});
+
+// Contagens
+$total_count  = count($all);
+$unread_count = count(array_filter($all, fn($n) => !$n['is_read']));
+$read_count   = $total_count - $unread_count;
+
+// ── Helper: ícone e cor por tipo ──────────────────────
+function notif_icon(string $type): array {
+    return match($type) {
+        'success'   => ['bi-check-circle-fill',      'icon-success'],
+        'warning'   => ['bi-exclamation-triangle-fill','icon-warning'],
+        'error'     => ['bi-x-circle-fill',           'icon-error'],
+        'payment'   => ['bi-currency-dollar',         'icon-payment'],
+        'music'     => ['bi-disc-fill',               'icon-music'],
+        'system'    => ['bi-gear-fill',               'icon-system'],
+        'broadcast' => ['bi-broadcast',               'icon-broadcast'],
+        default     => ['bi-info-circle-fill',        'icon-info'],
+    };
+}
+
+function notif_badge(string $type): string {
+    return match($type) {
+        'music'     => '<span class="notif-badge badge-music"><i class="bi bi-music-note me-1"></i>Música</span>',
+        'payment'   => '<span class="notif-badge badge-payment"><i class="bi bi-cash me-1"></i>Pagamento</span>',
+        'system'    => '<span class="notif-badge badge-system"><i class="bi bi-gear me-1"></i>Sistema</span>',
+        'warning'   => '<span class="notif-badge badge-warning"><i class="bi bi-exclamation me-1"></i>Aviso</span>',
+        'error'     => '<span class="notif-badge badge-error"><i class="bi bi-x me-1"></i>Erro</span>',
+        'success'   => '<span class="notif-badge badge-success"><i class="bi bi-check me-1"></i>Sucesso</span>',
+        'broadcast' => '<span class="notif-badge badge-broadcast"><i class="bi bi-broadcast me-1"></i>Comunicado</span>',
+        default     => '<span class="notif-badge badge-info"><i class="bi bi-info me-1"></i>Info</span>',
+    };
+}
+
+function time_ago(string $datetime): string {
+    $diff = time() - strtotime($datetime);
+    if ($diff < 60)     return 'Agora mesmo';
+    if ($diff < 3600)   return 'Há ' . floor($diff/60)   . ' min';
+    if ($diff < 86400)  return 'Há ' . floor($diff/3600) . 'h';
+    if ($diff < 604800) return 'Há ' . floor($diff/86400) . ' dia' . (floor($diff/86400)>1?'s':'');
+    return date('d/m/Y H:i', strtotime($datetime));
+}
+
+function date_group(string $datetime): string {
+    $ts   = strtotime($datetime);
+    $now  = time();
+    $diff = $now - $ts;
+    if ($diff < 86400)        return 'Hoje';
+    if ($diff < 86400*7)      return 'Esta semana';
+    if ($diff < 86400*30)     return 'Este mês';
+    if ($diff < 86400*365)    return date('F Y', $ts);
+    return 'Anteriores';
+}
+
+// Agrupar por data
+$grouped = [];
+foreach ($all as $n) {
+    $g = date_group($n['creat']);
+    $grouped[$g][] = $n;
+}
+?>
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-ao">
 
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="robots" content="noindex, nofollow" />
-  <meta name="author" content="José Mbenga da Costa" />
-  <meta name="theme-color" content="#FF0089" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="#FF0089" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#FF0089" />
+    <link rel="apple-touch-icon" href="../../assets/img/icones/wasomupfy_fiv_512.png" />
+    <link rel="manifest" href="../manifest.json" />
+    <title>Notificações — <?php echo APP_NAME; ?></title>
+    <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="../../css/dashboard-style.css" />
+    <link rel="stylesheet" href="../../css/lastest-style.css" />
+    <style>
+    /* ══ Hero ══ */
+    .notif-hero {
+        background: linear-gradient(135deg, #FF0089 0%, #c8006e 55%, #7b0044 100%);
+        border-radius: 20px;
+        padding: 2rem 2.4rem;
+        margin-bottom: 2rem;
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+    }
 
-  <!-- Preconnect para CDNs -->
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    .notif-hero::after {
+        content: '\F0B5';
+        font-family: 'bootstrap-icons';
+        position: absolute;
+        right: -15px;
+        bottom: -25px;
+        font-size: 9rem;
+        opacity: .07;
+    }
 
-  <title>Notificações — Wasom Upfy</title>
+    .notif-hero .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255, 255, 255, .18);
+        border: 1px solid rgba(255, 255, 255, .3);
+        border-radius: 999px;
+        padding: 4px 14px;
+        font-size: .76rem;
+        font-weight: 700;
+        backdrop-filter: blur(4px);
+        margin-bottom: .7rem;
+    }
 
-  <!-- Favicon -->
-  <link rel="shortcut icon" href="../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon" />
-  <link rel="apple-touch-icon" href="../assets/img/icones/wasomupfy_fiv_512.png" />
-  <link rel="manifest" href="../manifest.json" />
+    .notif-hero h1 {
+        font-size: 1.9rem;
+        font-weight: 800;
+        margin-bottom: .3rem;
+    }
 
-  <!-- CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
-  <link rel="stylesheet" href="../../css/dashboard-style.css" />
-  <link rel="stylesheet" href="../../css/lastest-style.css" />
-  <link rel="stylesheet" href="../../css/notification.css" />
+    .notif-hero p {
+        opacity: .85;
+        font-size: .92rem;
+        margin: 0;
+    }
+
+    /* ══ Quick action bar ══ */
+    .quick-bar {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 1.4rem;
+    }
+
+    .quick-bar .btn {
+        border-radius: 10px;
+        font-size: .8rem;
+        font-weight: 600;
+        padding: .45rem 1rem;
+    }
+
+    /* ══ Filter tabs ══ */
+    .filter-tabs {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-filter {
+        padding: .38rem 1rem;
+        border-radius: 999px;
+        font-size: .78rem;
+        font-weight: 700;
+        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .12));
+        background: var(--card-bg, #fff);
+        color: var(--text-muted, #6c757d);
+        cursor: pointer;
+        transition: all .15s;
+        white-space: nowrap;
+    }
+
+    .btn-filter:hover {
+        border-color: #FF0089;
+        color: #FF0089;
+    }
+
+    .btn-filter.active {
+        background: #FF0089;
+        border-color: #FF0089;
+        color: #fff;
+    }
+
+    .btn-filter .badge {
+        font-size: .65rem;
+        padding: .2rem .45rem;
+    }
+
+    /* ══ Date group header ══ */
+    .notif-group-date {
+        font-size: .72rem;
+        font-weight: 800;
+        color: var(--text-muted, #6c757d);
+        text-transform: uppercase;
+        letter-spacing: .08em;
+        padding: .5rem 0 .4rem;
+        margin-top: .4rem;
+        border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .07));
+        margin-bottom: .4rem;
+    }
+
+    /* ══ Notification card ══ */
+    .notification-card {
+        background: var(--card-bg, #fff);
+        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
+        border-left: 4px solid transparent;
+        border-radius: 14px;
+        padding: 1rem 1.2rem;
+        margin-bottom: .6rem;
+        cursor: pointer;
+        transition: all .18s;
+        position: relative;
+    }
+
+    .notification-card:hover {
+        box-shadow: 0 4px 16px rgba(255, 0, 137, .1);
+        border-left-color: #FF0089;
+        transform: translateX(2px);
+    }
+
+    .notification-card.unread {
+        border-left-color: #FF0089;
+        background: var(--card-bg, #fff);
+    }
+
+    .notification-card.unread::before {
+        content: '';
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #FF0089;
+        box-shadow: 0 0 0 2px rgba(255, 0, 137, .2);
+    }
+
+    /* ══ Notification icon ══ */
+    .notif-icon-wrap {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+
+    .icon-info {
+        background: rgba(13, 110, 253, .12);
+        color: #0d6efd;
+    }
+
+    .icon-success {
+        background: rgba(25, 135, 84, .12);
+        color: #198754;
+    }
+
+    .icon-warning {
+        background: rgba(255, 193, 7, .15);
+        color: #856404;
+    }
+
+    .icon-error {
+        background: rgba(220, 53, 69, .12);
+        color: #dc3545;
+    }
+
+    .icon-payment {
+        background: rgba(255, 193, 7, .15);
+        color: #fd7e14;
+    }
+
+    .icon-music {
+        background: rgba(255, 0, 137, .1);
+        color: #FF0089;
+    }
+
+    .icon-system {
+        background: rgba(108, 117, 125, .12);
+        color: #6c757d;
+    }
+
+    .icon-broadcast {
+        background: rgba(111, 66, 193, .12);
+        color: #6f42c1;
+    }
+
+    /* ══ Card content ══ */
+    .notif-title {
+        font-weight: 700;
+        font-size: .88rem;
+        margin-bottom: .2rem;
+    }
+
+    .notif-body {
+        font-size: .8rem;
+        color: var(--text-muted, #6c757d);
+        margin-bottom: .4rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .notif-meta {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .notif-time {
+        font-size: .72rem;
+        color: var(--text-muted, #6c757d);
+    }
+
+    /* ══ Badge types ══ */
+    .notif-badge {
+        font-size: .65rem;
+        font-weight: 700;
+        padding: .2rem .6rem;
+        border-radius: 999px;
+    }
+
+    .badge-music {
+        background: rgba(255, 0, 137, .12);
+        color: #FF0089;
+    }
+
+    .badge-payment {
+        background: rgba(253, 126, 20, .12);
+        color: #fd7e14;
+    }
+
+    .badge-system {
+        background: rgba(108, 117, 125, .12);
+        color: #6c757d;
+    }
+
+    .badge-warning {
+        background: rgba(255, 193, 7, .18);
+        color: #856404;
+    }
+
+    .badge-error {
+        background: rgba(220, 53, 69, .12);
+        color: #dc3545;
+    }
+
+    .badge-success {
+        background: rgba(25, 135, 84, .12);
+        color: #198754;
+    }
+
+    .badge-info {
+        background: rgba(13, 110, 253, .1);
+        color: #0d6efd;
+    }
+
+    .badge-broadcast {
+        background: rgba(111, 66, 193, .12);
+        color: #6f42c1;
+    }
+
+    /* ══ Card action buttons ══ */
+    .card-actions {
+        display: flex;
+        gap: 4px;
+        margin-left: auto;
+        flex-shrink: 0;
+        align-self: flex-start;
+    }
+
+    .action-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        border: none;
+        background: var(--metric-bg, rgba(0, 0, 0, .04));
+        color: var(--text-muted, #6c757d);
+        font-size: .85rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all .15s;
+        cursor: pointer;
+    }
+
+    .action-btn:hover {
+        background: #FF0089;
+        color: #fff;
+    }
+
+    .action-btn.danger:hover {
+        background: #dc3545;
+    }
+
+    /* ══ Empty state ══ */
+    .notif-empty {
+        text-align: center;
+        padding: 3rem 1rem;
+        display: none;
+    }
+
+    .notif-empty i {
+        font-size: 3rem;
+        color: #FF0089;
+        opacity: .3;
+        display: block;
+        margin-bottom: 1rem;
+    }
+
+    /* ══ Settings card ══ */
+    .settings-card {
+        background: var(--card-bg, #fff);
+        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
+        border-radius: 16px;
+        padding: 1.3rem;
+        margin-bottom: 1rem;
+    }
+
+    .settings-card h6 {
+        font-weight: 800;
+        font-size: .9rem;
+        color: #FF0089;
+        margin-bottom: 1rem;
+    }
+
+    /* ══ Preference row ══ */
+    .pref-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: .6rem 0;
+        border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .06));
+    }
+
+    .pref-row:last-of-type {
+        border-bottom: none;
+    }
+
+    .pref-row span {
+        font-size: .84rem;
+        font-weight: 600;
+    }
+
+    .pref-row small {
+        font-size: .73rem;
+        color: var(--text-muted, #6c757d);
+    }
+
+    .form-check-input:checked {
+        background-color: #FF0089;
+        border-color: #FF0089;
+    }
+
+    /* ══ Push notification permission card ══ */
+    .push-card {
+        background: linear-gradient(135deg, rgba(255, 0, 137, .07), rgba(200, 0, 110, .04));
+        border: 1.5px solid rgba(255, 0, 137, .2);
+        border-radius: 14px;
+        padding: 1.2rem;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+
+    .push-card i {
+        font-size: 2rem;
+        color: #FF0089;
+        display: block;
+        margin-bottom: .6rem;
+    }
+
+    .push-card h6 {
+        font-weight: 800;
+        font-size: .88rem;
+        margin-bottom: .4rem;
+    }
+
+    .push-card p {
+        font-size: .78rem;
+        color: var(--text-muted, #6c757d);
+        margin-bottom: .8rem;
+    }
+
+    .btn-push {
+        background: #FF0089;
+        border: none;
+        color: #fff;
+        border-radius: 10px;
+        font-size: .82rem;
+        font-weight: 700;
+        padding: .5rem 1.2rem;
+        transition: all .2s;
+    }
+
+    .btn-push:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 14px rgba(255, 0, 137, .35);
+        color: #fff;
+    }
+
+    .btn-push:disabled {
+        opacity: .6;
+    }
+
+    /* ══ Modal notification ══ */
+    #notificationModal .modal-header {
+        border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .08));
+    }
+
+    #notificationModal .modal-footer {
+        border-top: 1px solid var(--border-color, rgba(0, 0, 0, .08));
+    }
+
+    .modal-notif-icon {
+        width: 54px;
+        height: 54px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin: 0 auto 1rem;
+    }
+
+    .modal-action-area {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+    }
+
+    .btn-action-primary {
+        background: #FF0089;
+        border: none;
+        color: #fff;
+        padding: .45rem 1.2rem;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: .82rem;
+        transition: all .2s;
+    }
+
+    .btn-action-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(255, 0, 137, .3);
+        color: #fff;
+    }
+
+    .btn-action-later {
+        background: transparent;
+        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .12));
+        color: var(--text-muted, #6c757d);
+        padding: .45rem 1.2rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: .82rem;
+        transition: all .15s;
+    }
+
+    .btn-action-later:hover {
+        border-color: #FF0089;
+        color: #FF0089;
+    }
+
+    /* ══ Progress bar read ══ */
+    .read-ratio-bar {
+        height: 6px;
+        border-radius: 999px;
+        overflow: hidden;
+        background: var(--border-color, rgba(0, 0, 0, .08));
+    }
+
+    .read-ratio-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #FF0089, #c8006e);
+        border-radius: 999px;
+        transition: width .4s;
+    }
+
+    @media(max-width:768px) {
+        .notif-hero {
+            padding: 1.4rem;
+        }
+
+        .notif-hero h1 {
+            font-size: 1.5rem;
+        }
+    }
+    </style>
 </head>
 
 <body>
-  <!-- Tela de Carregamento -->
-  <!-- <div class="loading-screen" id="loadingScreen">
-        <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg" class="loading-logo">
-            <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2"/>
-            <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
-        </svg>
-        <div class="spinner"></div>
-    </div> -->
 
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg">
-    <div class="container-fluid">
-      <!-- Menu Button (Left) -->
-      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu"
-        aria-controls="offcanvasMenu">
-        <span class="navbar-toggler-icon"><i class="bi bi-list text-white fs-1"></i></span>
-      </button>
-
-      <!-- Logo (Center on Mobile, Left on Desktop) -->
-      <a class="navbar-brand" href="../painel">
-        <!-- SVG Logo Wasom Upfy -->
-        <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
-                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
-                        fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
-                </svg> -->
-        <span class="text-light" style="
-              font-weight: bold;
-              box-sizing: border-box;
-              text-transform: capitalize;
-              font-family: Arial, sans-serif;
-            ">WASOM UPFY</span>
-      </a>
-
-      <!-- Desktop Menu -->
-      <div class="collapse navbar-collapse">
-        <ul class="navbar-nav m-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link" href="../painel"><i class="bi bi-speedometer2"></i> Dashboard</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="../launch/releases"><i class="bi bi-disc"></i> Lançamentos</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="../analytics/statistics"><i class="bi bi-bar-chart"></i> Estatísticas</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="../finances/overview"><i class="bi bi-currency-dollar"></i> Finanças</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="../artists/artists-list"><i class="bi bi-person"></i> Artistas</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="../artists/youtube/ucy"><i class="bi bi-youtube"></i> Unificação de canal
-              YouTube</a>
-          </li>
-        </ul>
-      </div>
-
-      <!-- User Icon (Right) -->
-      <div class="user-menu d-flex align-items-center">
-        <!-- Theme Toggle Button -->
-        <a class="theme-toggle text-white me-2" id="themeToggle">
-          <i class="bi bi-sun" id="themeIcon"></i>
-        </a>
-        <a href="../notifications" class="text-white me-2" aria-label="Notificações">
-          <i class="bi bi-bell fs-4"></i>
-          <span class="badge bg-danger">9</span>
-        </a>
-        <a href="#" class="text-white" data-bs-toggle="dropdown">
-          <i class="bi bi-person-circle fs-4"></i>
-        </a>
-        <ul class="dropdown-menu dropdown-menu-end">
-          <li>
-            <a class="dropdown-item" href="../user/profile"><i class="bi bi-person me-2"></i>
-              <strong><?php echo $first_name; ?></strong></a>
-            <div class="text-white-50">
-              &nbsp; &nbsp; &nbsp; &nbsp; (Conta <?php echo str_pad($id_users, 6, "0", STR_PAD_LEFT); ?>)
+    <!-- ═══ NAVBAR ═══ -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
+                <span class="navbar-toggler-icon"><i class="bi bi-list text-white fs-1"></i></span>
+            </button>
+            <a class="navbar-brand" href="../painel">
+                <span class="text-light" style="font-weight:bold;font-family:Arial,sans-serif">WASOM UPFY</span>
+            </a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav m-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="../painel"><i class="bi bi-speedometer2"></i>
+                            Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../launch/releases"><i class="bi bi-disc"></i>
+                            Lançamentos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../analytics/statistics"><i
+                                class="bi bi-bar-chart"></i> Estatísticas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../finances/overview"><i
+                                class="bi bi-currency-dollar"></i> Finanças</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../artists/artists-list"><i class="bi bi-person"></i>
+                            Artistas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../artists/youtube/ucy"><i class="bi bi-youtube"></i>
+                            YouTube</a></li>
+                </ul>
             </div>
-          </li>
-          <li>
-            <hr class="dropdown-divider" />
-          </li>
-          <li>
-            <a class="dropdown-item" href="../user/profile"><i class="bi bi-person me-2"></i> Meu Perfil</a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="../account/manage-account"><i class="bi bi-tools me-2"></i> Gestão de
-              Conta</a>
-          </li>
-          <li>
-            <hr class="dropdown-divider" />
-          </li>
-          <li>
-            <a class="dropdown-item" href="../page/settings"><i class="bi bi-gear me-2"></i> Configurações</a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="../page/notifications"><i class="bi bi-bell me-2"></i> Notificações</a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="../services/available-services"><i class="bi bi-star me-2"></i> Conta e
-              serviços disponíveis</a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="#?logout-wasomupfy" data-bs-toggle="modal"
-              data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right me-2"></i> Desconectar-se</a>
-          </li>
-          <li>
-            <hr class="dropdown-divider" />
-          </li>
-          <li>
-            <a class="dropdown-item" href="../page/about"><i class="bi bi-info-circle me-2"></i> Sobre</a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="../page/support"><i class="bi bi-headset me-2"></i> Enviar pedido de
-              suporte</a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="../page/faq"><i class="bi bi-chat-left-text me-2"></i> Perguntas
-              frequentes</a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="../page/help"><i class="bi bi-question-circle me-2"></i> Ajuda</a>
-          </li>
-          <li>
-            <hr class="dropdown-divider" />
-          </li>
-          <li>
-            <span class="dropdown-item-text" id="versionDropdown"></span>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Offcanvas Menu par Mobile e Desktop -->
-  <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
-    <div class="offcanvas-header">
-      <h5 class="offcanvas-title" id="offcanvasMenuLabel">
-        <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
-                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
-                        fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
-                </svg> -->
-        <span class="text-light" style="
-              font-weight: bold;
-              box-sizing: border-box;
-              text-transform: capitalize;
-              font-family: Arial, sans-serif;
-            ">WASOM UPFY</span>
-      </h5>
-      <button type="button" class="btn-close text-white" data-bs-dismiss="offcanvas" aria-label="Close">
-        <i class="bi bi-x-lg"></i>
-      </button>
-    </div>
-    <div class="offcanvas-body">
-      <ul class="nav flex-column">
-        <li class="nav-item">
-          <a class="nav-link" href="../painel"><i class="bi bi-speedometer2"></i> Dashboard</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="../launch/releases"><i class="bi bi-disc"></i> Lançamentos</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="../analytics/statistics"><i class="bi bi-bar-chart"></i> Estatísticas</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="../finances/overview"><i class="bi bi-currency-dollar"></i> Finanças</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="../artists/artists-list"><i class="bi bi-person"></i> Artistas</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="../artists/youtube/ucy"><i class="bi bi-youtube"></i> Unificação de canal
-            YouTube</a>
-        </li>
-        <!-- Links secundários exibidos apenas em mobile -->
-        <li class="nav-item d-lg-none">
-          <a class="nav-link" href="../user/profile"><i class="bi bi-person-circle"></i> Meu Perfil</a>
-        </li>
-        <li class="nav-item d-lg-none">
-          <a class="nav-link active" href="../page/settings"><i class="bi bi-gear"></i> Configurações</a>
-        </li>
-        <li class="nav-item d-lg-none">
-          <a class="nav-link" href="../page/notifications"><i class="bi bi-bell"></i> Notificações</a>
-        </li>
-        <li class="nav-item d-lg-none">
-          <a class="nav-link" href="../page/about"><i class="bi bi-info-circle"></i> Sobre</a>
-        </li>
-        <li class="nav-item d-lg-none">
-          <a class="nav-link" href="../services/available-services"><i class="bi bi-star"></i> Conta e serviços
-            disponíveis</a>
-        </li>
-        <li class="nav-item d-lg-none">
-          <a class="nav-link" href="../page/help"><i class="bi bi-question-circle"></i> Ajuda</a>
-        </li>
-        <li class="nav-item d-lg-none">
-          <a class="nav-link" href="#?logout-wasomupfy" data-bs-toggle="modal" data-bs-target="#logoutwasomupfy"><i
-              class="bi bi-box-arrow-right"></i> Desconectar-se</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- Toast para Notificações de Status -->
-  <div class="toast-container position-fixed bottom-0 end-0 p-3">
-    <div id="connectionToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-      <div class="toast-header">
-        <strong class="me-auto">Conexão</strong>
-        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Fechar"></button>
-      </div>
-      <div class="toast-body">
-        Você está offline. Alguns dados podem estar desatualizados.
-        <div class="mt-2">
-          <button class="btn btn-pink btn-sm" onclick="tryReconnect()">
-            Tentar Reconectar
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Main Content -->
-  <main class="container my-4">
-    <!-- Header -->
-    <div class="notifications-header">
-      <div class="row align-items-center">
-        <div class="col-md-8">
-          <h1 class="display-5 fw-bold mb-3">
-            <i class="bi bi-bell-fill me-2"></i> Notificações
-          </h1>
-          <p class="lead mb-0">
-            Fique por dentro de todas as novidades, atualizações e
-            movimentações da sua conta.
-          </p>
-        </div>
-        <div class="col-md-4 text-md-end mt-3 mt-md-0">
-          <span class="badge bg-white text-dark p-3">
-            <i class="bi bi-envelope-fill text-primary me-2"></i>
-            <strong>9 não lidas</strong> • 23 no total
-          </span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Ações Rápidas -->
-    <div class="row mb-4">
-      <div class="col-12">
-        <div class="quick-mark">
-          <button class="btn btn-outline-primary" onclick="markAllAsRead()">
-            <i class="bi bi-check2-all me-2"></i> Marcar todas como lidas
-          </button>
-          <button class="btn btn-outline-secondary" onclick="archiveAll()">
-            <i class="bi bi-archive me-2"></i> Arquivar todas
-          </button>
-          <button class="btn btn-outline-danger" onclick="clearAll()">
-            <i class="bi bi-trash me-2"></i> Limpar todas
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Filtros -->
-    <div class="filter-tabs d-flex flex-wrap gap-2">
-      <button class="btn-filter active" data-filter="all">
-        <i class="bi bi-bell me-2"></i> Todas
-      </button>
-      <button class="btn-filter" data-filter="unread">
-        <i class="bi bi-envelope me-2"></i> Não lidas
-        <span class="badge bg-danger ms-2">9</span>
-      </button>
-      <button class="btn-filter" data-filter="streams">
-        <i class="bi bi-spotify me-2"></i> Streams
-      </button>
-      <button class="btn-filter" data-filter="revenue">
-        <i class="bi bi-currency-dollar me-2"></i> Receitas
-      </button>
-      <button class="btn-filter" data-filter="system">
-        <i class="bi bi-gear me-2"></i> Sistema
-      </button>
-      <button class="btn-filter" data-filter="releases">
-        <i class="bi bi-disc me-2"></i> Lançamentos
-      </button>
-    </div>
-
-    <div class="row">
-      <!-- Lista de Notificações -->
-      <div class="col-lg-8">
-        <!-- Hoje -->
-        <div class="notification-group-date">
-          <i class="bi bi-calendar-day me-2"></i> Hoje
-        </div>
-
-        <!-- Notificação 1 - Nova stream -->
-        <div class="notification-card unread" data-type="streams" onclick="openNotification(this)" data-id="1">
-          <div class="row">
-            <div class="col-auto">
-              <div class="notification-icon icon-success">
-                <i class="bi bi-spotify"></i>
-              </div>
+            <div class="user-menu d-flex align-items-center">
+                <a class="theme-toggle text-white me-2" id="themeToggle" style="cursor:pointer">
+                    <i class="bi bi-sun" id="themeIcon"></i>
+                </a>
+                <!-- Badge de notificações — actualizado por AJAX -->
+                <a href="notifications" class="text-white me-2 position-relative" aria-label="Notificações">
+                    <i class="bi bi-bell fs-4"></i>
+                    <?php if ($unread_count > 0): ?>
+                    <span class="badge bg-danger position-absolute" id="navBadge"
+                        style="top:-4px;right:-6px;font-size:.6rem;min-width:18px;padding:.25rem .35rem;border-radius:999px">
+                        <?php echo $unread_count > 99 ? '99+' : $unread_count; ?>
+                    </span>
+                    <?php else: ?>
+                    <span class="badge bg-danger position-absolute" id="navBadge"
+                        style="top:-4px;right:-6px;font-size:.6rem;min-width:18px;padding:.25rem .35rem;border-radius:999px;display:none">0</span>
+                    <?php endif; ?>
+                </a>
+                <div class="dropdown">
+                    <a href="#" class="text-white" data-bs-toggle="dropdown"><i
+                            class="bi bi-person-circle fs-4"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <span class="dropdown-item-text">
+                                <strong><?php echo $first_name; ?></strong><br>
+                                <small class="text-muted">Conta
+                                    <?php echo str_pad($id_users, 6, '0', STR_PAD_LEFT); ?></small>
+                            </span>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="../user/profile"><i class="bi bi-person me-2"></i> Meu
+                                Perfil</a></li>
+                        <li><a class="dropdown-item" href="../account/manage-account"><i class="bi bi-tools me-2"></i>
+                                Gestão de Conta</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="settings"><i class="bi bi-gear me-2"></i> Configurações</a>
+                        </li>
+                        <li><a class="dropdown-item active" href="notifications"><i class="bi bi-bell me-2"></i>
+                                Notificações</a></li>
+                        <li><a class="dropdown-item" href="../services/available-services"><i
+                                    class="bi bi-star me-2"></i> Conta e serviços</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="support"><i class="bi bi-headset me-2"></i> Suporte</a></li>
+                        <li><a class="dropdown-item" href="faq"><i class="bi bi-chat-left-text me-2"></i> FAQ</a></li>
+                        <li><a class="dropdown-item" href="help"><i class="bi bi-question-circle me-2"></i> Ajuda</a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <a class="dropdown-item text-danger" href="#" data-bs-toggle="modal"
+                                data-bs-target="#logoutwasomupfy">
+                                <i class="bi bi-box-arrow-right me-2"></i> Desconectar-se
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-            <div class="col">
-              <div class="d-flex justify-content-between align-items-start">
+        </div>
+    </nav>
+
+    <!-- Offcanvas Mobile -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title text-light" style="font-weight:bold;font-family:Arial,sans-serif">WASOM UPFY</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link" href="../painel"><i class="bi bi-speedometer2"></i>
+                        Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="../launch/releases"><i class="bi bi-disc"></i>
+                        Lançamentos</a></li>
+                <li class="nav-item"><a class="nav-link" href="../analytics/statistics"><i class="bi bi-bar-chart"></i>
+                        Estatísticas</a></li>
+                <li class="nav-item"><a class="nav-link" href="../finances/overview"><i
+                            class="bi bi-currency-dollar"></i> Finanças</a></li>
+                <li class="nav-item"><a class="nav-link" href="../artists/artists-list"><i class="bi bi-person"></i>
+                        Artistas</a></li>
+                <li class="nav-item"><a class="nav-link" href="../artists/youtube/ucy"><i class="bi bi-youtube"></i>
+                        YouTube</a></li>
+                <li class="nav-item d-lg-none">
+                    <hr />
+                </li>
+                <li class="nav-item d-lg-none"><a class="nav-link" href="../user/profile"><i
+                            class="bi bi-person-circle"></i> Meu Perfil</a></li>
+                <li class="nav-item d-lg-none"><a class="nav-link" href="settings"><i class="bi bi-gear"></i>
+                        Configurações</a></li>
+                <li class="nav-item d-lg-none"><a class="nav-link active" href="notifications"><i
+                            class="bi bi-bell"></i> Notificações</a></li>
+                <li class="nav-item d-lg-none"><a class="nav-link" href="help"><i class="bi bi-question-circle"></i>
+                        Ajuda</a></li>
+                <li class="nav-item d-lg-none">
+                    <a class="nav-link text-danger" href="#" data-bs-toggle="modal" data-bs-target="#logoutwasomupfy">
+                        <i class="bi bi-box-arrow-right"></i> Desconectar-se
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Toast feedback -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:9999">
+        <div id="feedbackToast" class="toast align-items-center border-0" role="alert" aria-live="assertive">
+            <div class="d-flex">
+                <div class="toast-body fw-semibold" id="feedbackToastMsg" style="font-size:.84rem"></div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ MAIN ═══ -->
+    <main class="container my-4">
+
+        <!-- HERO -->
+        <div class="notif-hero">
+            <div class="hero-badge">
+                <i class="bi bi-bell-fill"></i>
+                <?php if ($unread_count > 0): ?>
+                <?php echo $unread_count; ?> não lida<?php echo $unread_count !== 1 ? 's' : ''; ?>
+                <?php else: ?>
+                Tudo em dia!
+                <?php endif; ?>
+            </div>
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
                 <div>
-                  <h6 class="mb-1">Novas streams detectadas no Spotify</h6>
-                  <p class="text-muted small mb-2">
-                    Sua música "Summer Vibes" teve 1,234 novas streams nas
-                    últimas 24 horas.
-                  </p>
-                  <div class="d-flex gap-3">
-                    <span class="notification-type-badge badge-stream">
-                      <i class="bi bi-spotify me-1"></i> Streams
-                    </span>
-                    <span class="notification-time">
-                      <i class="bi bi-clock me-1"></i> Há 5 minutos
-                    </span>
-                  </div>
+                    <h1 class="fw-bold mb-1"><i class="bi bi-bell-fill me-2"></i>Notificações</h1>
+                    <p>Fica a par de todas as novidades, actualizações e movimentações da tua conta.</p>
                 </div>
-              </div>
-            </div>
-          </div>
-          <div class="notification-actions">
-            <button class="action-btn" onclick="event.stopPropagation(); markAsRead(1)" title="Marcar como lida">
-              <i class="bi bi-check"></i>
-            </button>
-            <button class="action-btn" onclick="event.stopPropagation(); archiveNotification(1)" title="Arquivar">
-              <i class="bi bi-archive"></i>
-            </button>
-          </div>
-        </div>
-
-        <!-- Notificação 2 - Receita -->
-        <div class="notification-card unread" data-type="revenue" onclick="openNotification(this)" data-id="2">
-          <div class="row">
-            <div class="col-auto">
-              <div class="notification-icon icon-warning">
-                <i class="bi bi-currency-dollar"></i>
-              </div>
-            </div>
-            <div class="col">
-              <div>
-                <h6 class="mb-1">Receita disponível para saque</h6>
-                <p class="text-muted small mb-2">
-                  Seu saldo atingiu $500. Você já pode solicitar o saque dos
-                  seus rendimentos.
-                </p>
-                <div class="d-flex gap-3">
-                  <span class="notification-type-badge badge-revenue">
-                    <i class="bi bi-cash me-1"></i> Receita
-                  </span>
-                  <span class="notification-time">
-                    <i class="bi bi-clock me-1"></i> Há 2 horas
-                  </span>
+                <div class="text-center">
+                    <div style="font-size:2rem;font-weight:900;line-height:1"><?php echo $total_count; ?></div>
+                    <small style="opacity:.75;font-size:.72rem">total</small>
                 </div>
-              </div>
             </div>
-          </div>
-          <div class="notification-actions">
-            <button class="action-btn" onclick="event.stopPropagation(); markAsRead(2)">
-              <i class="bi bi-check"></i>
-            </button>
-            <button class="action-btn" onclick="event.stopPropagation(); archiveNotification(2)">
-              <i class="bi bi-archive"></i>
-            </button>
-          </div>
         </div>
 
-        <!-- Notificação 3 - Sistema -->
-        <div class="notification-card" data-type="system" onclick="openNotification(this)" data-id="3">
-          <div class="row">
-            <div class="col-auto">
-              <div class="notification-icon icon-info">
-                <i class="bi bi-shield-check"></i>
-              </div>
-            </div>
-            <div class="col">
-              <div>
-                <h6 class="mb-1">Atualização de segurança concluída</h6>
-                <p class="text-muted small mb-2">
-                  Sua conta foi atualizada com os novos protocolos de
-                  segurança. Nenhuma ação necessária.
-                </p>
-                <div class="d-flex gap-3">
-                  <span class="notification-type-badge badge-system">
-                    <i class="bi bi-gear me-1"></i> Sistema
-                  </span>
-                  <span class="notification-time">
-                    <i class="bi bi-clock me-1"></i> Há 5 horas
-                  </span>
+        <!-- QUICK ACTIONS -->
+        <div class="quick-bar">
+            <button class="btn btn-outline-secondary btn-sm" id="btnMarkAll">
+                <i class="bi bi-check2-all me-1"></i>Marcar todas como lidas
+            </button>
+            <button class="btn btn-outline-secondary btn-sm" id="btnDeleteAll">
+                <i class="bi bi-trash me-1"></i>Limpar todas
+            </button>
+            <button class="btn btn-outline-secondary btn-sm" id="btnRefresh">
+                <i class="bi bi-arrow-clockwise me-1"></i>Actualizar
+            </button>
+        </div>
+
+        <!-- FILTER TABS -->
+        <div class="filter-tabs">
+            <button class="btn-filter active" data-filter="all">
+                <i class="bi bi-bell me-1"></i>Todas
+                <span class="badge bg-secondary ms-1" id="countAll"><?php echo $total_count; ?></span>
+            </button>
+            <button class="btn-filter" data-filter="unread">
+                <i class="bi bi-envelope me-1"></i>Não lidas
+                <span class="badge bg-danger ms-1" id="countUnread"><?php echo $unread_count; ?></span>
+            </button>
+            <button class="btn-filter" data-filter="music">
+                <i class="bi bi-music-note me-1"></i>Música
+            </button>
+            <button class="btn-filter" data-filter="payment">
+                <i class="bi bi-currency-dollar me-1"></i>Pagamentos
+            </button>
+            <button class="btn-filter" data-filter="system">
+                <i class="bi bi-gear me-1"></i>Sistema
+            </button>
+            <button class="btn-filter" data-filter="broadcast">
+                <i class="bi bi-broadcast me-1"></i>Comunicados
+            </button>
+        </div>
+
+        <div class="row g-4">
+
+            <!-- ══ LISTA DE NOTIFICAÇÕES ══ -->
+            <div class="col-lg-8">
+                <div id="notifList">
+                    <?php if (empty($all)): ?>
+                    <div class="notif-empty" style="display:block">
+                        <i class="bi bi-bell-slash"></i>
+                        <p class="fw-semibold mb-1">Sem notificações</p>
+                        <small class="text-muted">Quando houver novidades, aparecerão aqui.</small>
+                    </div>
+                    <?php else: ?>
+
+                    <?php
+                foreach ($grouped as $groupName => $items):
+                ?>
+                    <div class="notif-group-date group-label" data-group="<?php echo htmlspecialchars($groupName); ?>">
+                        <i class="bi bi-calendar3 me-2"></i><?php echo htmlspecialchars($groupName); ?>
+                    </div>
+
+                    <?php foreach ($items as $n):
+                    [$icon, $iconClass] = notif_icon($n['type']);
+                    $isUnread  = !$n['is_read'];
+                    $nid       = htmlspecialchars($n['id']);
+                    $source    = $n['source'];
+                    $title     = htmlspecialchars($n['title']);
+                    $body      = htmlspecialchars($n['body']);
+                    $bodyShort = mb_strimwidth(strip_tags($n['body']), 0, 110, '…');
+                    $ago       = time_ago($n['creat']);
+                    $badge     = notif_badge($n['type']);
+                    $actionUrl = htmlspecialchars($n['action_url'] ?? '');
+                ?>
+                    <div class="notification-card <?php echo $isUnread ? 'unread' : ''; ?>"
+                        data-id="<?php echo $nid; ?>" data-source="<?php echo $source; ?>"
+                        data-type="<?php echo htmlspecialchars($n['type']); ?>" data-title="<?php echo $title; ?>"
+                        data-body="<?php echo $body; ?>" data-ago="<?php echo $ago; ?>"
+                        data-action="<?php echo $actionUrl; ?>" data-read="<?php echo $isUnread ? '0' : '1'; ?>">
+
+                        <div class="d-flex gap-3 align-items-start">
+                            <div class="notif-icon-wrap <?php echo $iconClass; ?>">
+                                <i class="bi <?php echo $icon; ?>"></i>
+                            </div>
+                            <div class="flex-grow-1 min-w-0">
+                                <div class="notif-title"><?php echo $title; ?></div>
+                                <div class="notif-body"><?php echo htmlspecialchars($bodyShort); ?></div>
+                                <div class="notif-meta">
+                                    <?php echo $badge; ?>
+                                    <span class="notif-time"><i class="bi bi-clock me-1"></i><?php echo $ago; ?></span>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <!-- Toggle lida/não lida -->
+                                <button class="action-btn btn-toggle-read"
+                                    title="<?php echo $isUnread ? 'Marcar como lida' : 'Marcar como não lida'; ?>">
+                                    <i class="bi <?php echo $isUnread ? 'bi-check-lg' : 'bi-envelope'; ?>"></i>
+                                </button>
+                                <!-- Eliminar -->
+                                <button class="action-btn btn-delete danger" title="Eliminar">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                    <?php endforeach; ?>
+
+                    <div class="notif-empty" id="emptyState">
+                        <i class="bi bi-search"></i>
+                        <p class="fw-semibold mb-1">Sem resultados</p>
+                        <small class="text-muted">Nenhuma notificação nesta categoria.</small>
+                    </div>
+
+                    <?php endif; ?>
                 </div>
-              </div>
             </div>
-          </div>
-          <div class="notification-actions">
-            <button class="action-btn" onclick="event.stopPropagation(); markAsRead(3)">
-              <i class="bi bi-check"></i>
-            </button>
-            <button class="action-btn" onclick="event.stopPropagation(); archiveNotification(3)">
-              <i class="bi bi-archive"></i>
-            </button>
-          </div>
-        </div>
 
-        <!-- Este mês -->
-        <div class="notification-group-date">
-          <i class="bi bi-calendar-week me-2"></i> Este mês
-        </div>
+            <!-- ══ SIDEBAR ══ -->
+            <div class="col-lg-4">
 
-        <!-- Notificação 4 - Lançamento -->
-        <div class="notification-card" data-type="releases" onclick="openNotification(this)" data-id="4">
-          <div class="row">
-            <div class="col-auto">
-              <div class="notification-icon icon-primary">
-                <i class="bi bi-disc"></i>
-              </div>
-            </div>
-            <div class="col">
-              <div>
-                <h6 class="mb-1">Lançamento aprovado</h6>
-                <p class="text-muted small mb-2">
-                  Seu novo lançamento "Night Drive" foi aprovado e já está
-                  disponível em todas as plataformas.
-                </p>
-                <div class="d-flex gap-3">
-                  <span class="notification-type-badge badge-release">
-                    <i class="bi bi-music-note me-1"></i> Lançamento
-                  </span>
-                  <span class="notification-time">
-                    <i class="bi bi-clock me-1"></i> 3 dias atrás
-                  </span>
+                <!-- Push Notification Permission -->
+                <div class="push-card" id="pushCard">
+                    <i class="bi bi-bell-fill"></i>
+                    <h6>Activar Notificações Push</h6>
+                    <p>Recebe notificações em tempo real no teu dispositivo — mesmo com o browser fechado.</p>
+                    <button class="btn-push btn" id="btnEnablePush">
+                        <i class="bi bi-bell-fill me-2"></i>Activar Notificações
+                    </button>
+                    <div id="pushStatus" class="mt-2"
+                        style="font-size:.76rem;color:var(--text-muted,#6c757d);display:none"></div>
                 </div>
-              </div>
-            </div>
-          </div>
-          <div class="notification-actions">
-            <button class="action-btn" onclick="event.stopPropagation(); markAsRead(4)">
-              <i class="bi bi-check"></i>
-            </button>
-            <button class="action-btn" onclick="event.stopPropagation(); archiveNotification(4)">
-              <i class="bi bi-archive"></i>
-            </button>
-          </div>
-        </div>
 
-        <!-- Notificação 5 - Subscribers -->
-        <div class="notification-card" data-type="streams" onclick="openNotification(this)" data-id="5">
-          <div class="row">
-            <div class="col-auto">
-              <div class="notification-icon icon-success">
-                <i class="bi bi-youtube"></i>
-              </div>
-            </div>
-            <div class="col">
-              <div>
-                <h6 class="mb-1">Marco de inscritos no YouTube</h6>
-                <p class="text-muted small mb-2">
-                  Seu canal "Eleven Records Official" atingiu 125.000
-                  inscritos! 🎉
-                </p>
-                <div class="d-flex gap-3">
-                  <span class="notification-type-badge badge-subscriber">
-                    <i class="bi bi-people me-1"></i> Inscritos
-                  </span>
-                  <span class="notification-time">
-                    <i class="bi bi-clock me-1"></i> 5 dias atrás
-                  </span>
+                <!-- Resumo -->
+                <div class="settings-card">
+                    <h6><i class="bi bi-pie-chart me-2"></i>Resumo</h6>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span style="font-size:.83rem;color:var(--text-muted,#6c757d)">Total</span>
+                        <span class="fw-bold" id="statTotal"><?php echo $total_count; ?></span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span style="font-size:.83rem;color:var(--text-muted,#6c757d)">Não lidas</span>
+                        <span class="fw-bold text-danger" id="statUnread"><?php echo $unread_count; ?></span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span style="font-size:.83rem;color:var(--text-muted,#6c757d)">Lidas</span>
+                        <span class="fw-bold" id="statRead"><?php echo $read_count; ?></span>
+                    </div>
+                    <?php if ($total_count > 0): ?>
+                    <div class="read-ratio-bar">
+                        <div class="read-ratio-fill" id="ratioFill"
+                            style="width:<?php echo round($read_count / $total_count * 100); ?>%"></div>
+                    </div>
+                    <small class="text-muted d-block mt-1" style="font-size:.72rem">
+                        <?php echo round($read_count / $total_count * 100); ?>% lidas
+                    </small>
+                    <?php endif; ?>
                 </div>
-              </div>
-            </div>
-          </div>
-          <div class="notification-actions">
-            <button class="action-btn" onclick="event.stopPropagation(); markAsRead(5)">
-              <i class="bi bi-check"></i>
-            </button>
-            <button class="action-btn" onclick="event.stopPropagation(); archiveNotification(5)">
-              <i class="bi bi-archive"></i>
-            </button>
-          </div>
-        </div>
 
-        <!-- Mês passado -->
-        <div class="notification-group-date">
-          <i class="bi bi-calendar-month me-2"></i> Mês passado
-        </div>
+                <!-- Preferências -->
+                <div class="settings-card">
+                    <h6><i class="bi bi-sliders me-2"></i>Preferências</h6>
 
-        <!-- Notificação 6 - Receita mensal -->
-        <div class="notification-card" data-type="revenue" onclick="openNotification(this)" data-id="6">
-          <div class="row">
-            <div class="col-auto">
-              <div class="notification-icon icon-warning">
-                <i class="bi bi-graph-up"></i>
-              </div>
-            </div>
-            <div class="col">
-              <div>
-                <h6 class="mb-1">Relatório de receita mensal disponível</h6>
-                <p class="text-muted small mb-2">
-                  Seu relatório de receita de Janeiro já está disponível para
-                  consulta.
-                </p>
-                <div class="d-flex gap-3">
-                  <span class="notification-type-badge badge-revenue">
-                    <i class="bi bi-cash me-1"></i> Receita
-                  </span>
-                  <span class="notification-time">
-                    <i class="bi bi-clock me-1"></i> 15 Jan 2024
-                  </span>
+                    <div class="pref-row">
+                        <div>
+                            <span>Notificações push</span>
+                            <small class="d-block">No dispositivo, mesmo offline</small>
+                        </div>
+                        <div class="form-check form-switch mb-0">
+                            <input class="form-check-input pref-switch" type="checkbox" id="prefPush"
+                                data-pref="notif_push" <?php echo $pref_push ? 'checked' : ''; ?> />
+                        </div>
+                    </div>
+                    <div class="pref-row">
+                        <div>
+                            <span>Notificações por e-mail</span>
+                            <small class="d-block">Resumos e alertas importantes</small>
+                        </div>
+                        <div class="form-check form-switch mb-0">
+                            <input class="form-check-input pref-switch" type="checkbox" id="prefEmail"
+                                data-pref="notif_email" <?php echo $pref_email ? 'checked' : ''; ?> />
+                        </div>
+                    </div>
+                    <div class="pref-row">
+                        <div>
+                            <span>Streams</span>
+                            <small class="d-block">Novas reproduções nas tuas músicas</small>
+                        </div>
+                        <div class="form-check form-switch mb-0">
+                            <input class="form-check-input pref-switch" type="checkbox" id="prefStreams"
+                                data-pref="notif_streams" <?php echo $pref_streams ? 'checked' : ''; ?> />
+                        </div>
+                    </div>
+                    <div class="pref-row">
+                        <div>
+                            <span>Lançamentos</span>
+                            <small class="d-block">Estado dos teus lançamentos</small>
+                        </div>
+                        <div class="form-check form-switch mb-0">
+                            <input class="form-check-input pref-switch" type="checkbox" id="prefReleases"
+                                data-pref="notif_releases" <?php echo $pref_releases ? 'checked' : ''; ?> />
+                        </div>
+                    </div>
+                    <div class="pref-row">
+                        <div>
+                            <span>Pagamentos</span>
+                            <small class="d-block">Royalties, levantamentos, planos</small>
+                        </div>
+                        <div class="form-check form-switch mb-0">
+                            <input class="form-check-input pref-switch" type="checkbox" id="prefPayments"
+                                data-pref="notif_payments" <?php echo $pref_payments ? 'checked' : ''; ?> />
+                        </div>
+                    </div>
+                    <div class="pref-row">
+                        <div>
+                            <span>Resumo semanal</span>
+                            <small class="d-block">Relatório automático às sextas</small>
+                        </div>
+                        <div class="form-check form-switch mb-0">
+                            <input class="form-check-input pref-switch" type="checkbox" id="prefWeekly"
+                                data-pref="notif_weekly" <?php echo $pref_weekly ? 'checked' : ''; ?> />
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+                        <button class="btn btn-sm w-100 fw-bold" id="btnSavePrefs"
+                            style="background:#FF0089;color:#fff;border-radius:10px">
+                            <i class="bi bi-save me-2"></i>Guardar preferências
+                        </button>
+                    </div>
                 </div>
-              </div>
+
+                <!-- Atalhos rápidos -->
+                <div class="settings-card">
+                    <h6><i class="bi bi-lightning-charge me-2"></i>Atalhos Rápidos</h6>
+                    <div class="d-grid gap-2">
+                        <a href="../finances/overview" class="btn btn-sm btn-outline-secondary text-start"
+                            style="border-radius:9px;font-weight:600">
+                            <i class="bi bi-currency-dollar me-2"></i>Verificar receitas
+                        </a>
+                        <a href="../analytics/statistics" class="btn btn-sm btn-outline-secondary text-start"
+                            style="border-radius:9px;font-weight:600">
+                            <i class="bi bi-bar-chart me-2"></i>Ver estatísticas
+                        </a>
+                        <a href="../launch/creat-release" class="btn btn-sm btn-outline-secondary text-start"
+                            style="border-radius:9px;font-weight:600">
+                            <i class="bi bi-plus-circle me-2"></i>Novo lançamento
+                        </a>
+                        <a href="support" class="btn btn-sm btn-outline-secondary text-start"
+                            style="border-radius:9px;font-weight:600">
+                            <i class="bi bi-headset me-2"></i>Enviar suporte
+                        </a>
+                    </div>
+                </div>
+
             </div>
-          </div>
-          <div class="notification-actions">
-            <button class="action-btn" onclick="event.stopPropagation(); markAsRead(6)">
-              <i class="bi bi-check"></i>
-            </button>
-            <button class="action-btn" onclick="event.stopPropagation(); archiveNotification(6)">
-              <i class="bi bi-archive"></i>
-            </button>
-          </div>
         </div>
-      </div>
+    </main>
 
-      <!-- Sidebar - Configurações -->
-      <div class="col-lg-4">
-        <!-- Card de Status -->
-        <div class="settings-card mb-4">
-          <h6><i class="bi bi-pie-chart me-2"></i> Resumo</h6>
-          <div class="mb-3">
-            <div class="d-flex justify-content-between mb-2">
-              <span class="text-muted">Total de notificações</span>
-              <span class="fw-bold">23</span>
+    <!-- Bottom Nav Mobile -->
+    <nav class="bottom-nav d-lg-none">
+        <ul class="nav justify-content-around">
+            <li class="nav-item"><a class="nav-link" href="../painel"><i
+                        class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="../launch/releases"><i
+                        class="bi bi-disc"></i><span>Lançamentos</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="../analytics/statistics"><i
+                        class="bi bi-bar-chart"></i><span>Stats</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="../finances/overview"><i
+                        class="bi bi-currency-dollar"></i><span>Finanças</span></a></li>
+            <li class="nav-item"><a class="nav-link active" href="notifications"><i
+                        class="bi bi-bell"></i><span>Avisos</span></a></li>
+        </ul>
+    </nav>
+
+    <!-- ══ Modal: Detalhe da Notificação ══ -->
+    <div class="modal fade" id="notificationModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="modalNotifTitle">Detalhes</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="modalNotifBody">
+                    <!-- preenchido por JS -->
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <div id="modalToggleBtn">
+                        <!-- botão marcar/desmarcar como lida -->
+                    </div>
+                    <div class="d-flex gap-2" id="modalActionBtns">
+                        <!-- botões de acção dependendo do tipo -->
+                    </div>
+                </div>
             </div>
-            <div class="d-flex justify-content-between mb-2">
-              <span class="text-muted">Não lidas</span>
-              <span class="fw-bold text-danger">9</span>
-            </div>
-            <div class="d-flex justify-content-between mb-2">
-              <span class="text-muted">Arquivadas</span>
-              <span class="fw-bold">15</span>
-            </div>
-            <div class="progress mt-2" style="height: 8px">
-              <div class="progress-bar bg-primary" style="width: 39%"></div>
-              <div class="progress-bar bg-secondary" style="width: 61%"></div>
-            </div>
-            <small class="text-muted d-block mt-2">
-              <i class="bi bi-circle-fill text-primary me-1 small"></i> Não
-              lidas (39%)
-              <i class="bi bi-circle-fill text-secondary ms-3 me-1 small"></i>
-              Lidas (61%)
-            </small>
-          </div>
         </div>
-
-        <!-- Card de Preferências -->
-        <div class="settings-card mb-4">
-          <h6><i class="bi bi-gear me-2"></i> Preferências de Notificação</h6>
-
-          <div class="notification-preference">
-            <div>
-              <span>Streams</span>
-              <small class="d-block text-muted">Novas streams em suas músicas</small>
-            </div>
-            <div class="form-check form-switch">
-              <input class="form-check-input" type="checkbox" role="switch" id="switchStreams" checked />
-            </div>
-          </div>
-
-          <div class="notification-preference">
-            <div>
-              <span>Receitas</span>
-              <small class="d-block text-muted">Pagamentos e saques</small>
-            </div>
-            <div class="form-check form-switch">
-              <input class="form-check-input" type="checkbox" role="switch" id="switchRevenue" checked />
-            </div>
-          </div>
-
-          <div class="notification-preference">
-            <div>
-              <span>Lançamentos</span>
-              <small class="d-block text-muted">Status de novos lançamentos</small>
-            </div>
-            <div class="form-check form-switch">
-              <input class="form-check-input" type="checkbox" role="switch" id="switchReleases" checked />
-            </div>
-          </div>
-
-          <div class="notification-preference">
-            <div>
-              <span>Sistema</span>
-              <small class="d-block text-muted">Atualizações e segurança</small>
-            </div>
-            <div class="form-check form-switch">
-              <input class="form-check-input" type="checkbox" role="switch" id="switchSystem" checked />
-            </div>
-          </div>
-
-          <div class="notification-preference">
-            <div>
-              <span>E-mail</span>
-              <small class="d-block text-muted">Receber notificações por e-mail</small>
-            </div>
-            <div class="form-check form-switch">
-              <input class="form-check-input" type="checkbox" role="switch" id="switchEmail" />
-            </div>
-          </div>
-
-          <hr />
-
-          <div class="d-grid">
-            <button class="btn btn-primary btn-sm" onclick="savePreferences()">
-              <i class="bi bi-save me-2"></i> Salvar preferências
-            </button>
-          </div>
-        </div>
-
-        <!-- Card de Atalhos -->
-        <div class="settings-card">
-          <h6><i class="bi bi-lightning-charge me-2"></i> Atalhos Rápidos</h6>
-
-          <div class="d-grid gap-2">
-            <button class="btn btn-outline-primary text-start" onclick="window.location.href='../finances/overview'">
-              <i class="bi bi-currency-dollar me-2"></i> Verificar receitas
-            </button>
-            <button class="btn btn-outline-primary text-start" onclick="window.location.href='../analytics/statistics'">
-              <i class="bi bi-bar-chart me-2"></i> Ver estatísticas
-            </button>
-            <button class="btn btn-outline-primary text-start" onclick="window.location.href='../launch/creat-release'">
-              <i class="bi bi-plus-circle me-2"></i> Novo lançamento
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
-  </main>
 
-  <!-- Bottom Navigation (Mobile) -->
-  <nav class="bottom-nav d-lg-none fixed-bottom bg-white shadow">
-    <ul class="nav justify-content-around">
-      <li class="nav-item">
-        <a class="nav-link text-center" href="painel">
-          <i class="bi bi-speedometer2 d-block fs-5"></i>
-          <span class="small">Dashboard</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link text-center" href="launch/releases">
-          <i class="bi bi-disc d-block fs-5"></i>
-          <span class="small">Lançamentos</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link text-center" href="analytics/statistics">
-          <i class="bi bi-bar-chart d-block fs-5"></i>
-          <span class="small">Stats</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link text-center" href="finances/overview">
-          <i class="bi bi-currency-dollar d-block fs-5"></i>
-          <span class="small">Finanças</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link text-center" href="youtube">
-          <i class="bi bi-youtube d-block fs-5"></i>
-          <span class="small">YouTube</span>
-        </a>
-      </li>
-    </ul>
-  </nav>
-
-  <!-- Modal de Detalhes da Notificação -->
-  <div class="modal fade" id="notificationModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="notificationModalTitle">
-            Detalhes da Notificação
-          </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body" id="notificationModalBody">
-          <!-- Conteúdo dinâmico -->
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" onclick="markCurrentAsRead()">
-            <i class="bi bi-check2 me-2"></i> Marcar como lida
-          </button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-            Fechar
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal de Confirmação -->
-  <div class="modal fade" id="confirmModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Confirmar ação</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body" id="confirmModalMessage">
-          Tem certeza que deseja realizar esta ação?
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-            Cancelar
-          </button>
-          <button type="button" class="btn btn-danger" id="confirmActionBtn">
-            Confirmar
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ════ MODAL — Logout ════ -->
-  <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">
-            Terminar sessão
-          </h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div class="container">
-            <div class="row justify-content-center text-center">
-              <div class="col-md-12 content-center justify-center text-center">
-                <p class="text-center text-dark">
-                  @josembengadacosta você tem certeza de que desejas terminar
-                  sessão?
-                </p>
-              </div>
+    <!-- ══ Modal: Confirmação de acção ══ -->
+    <div class="modal fade" id="confirmModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmTitle">Confirmar</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="confirmMsg">Tens a certeza?</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger btn-sm" id="confirmOkBtn">Confirmar</button>
+                </div>
             </div>
-          </div>
         </div>
-        <div class="modal-footer">
-          <div>
-            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
-              Não, continuar
-            </button>
-          </div>
-          <div>
-            <button class="btn btn-danger" type="button" name="logout_wasomupfy" onclick="logout_wasomupfy()">
-              Sim, terminar
-            </button>
-          </div>
-          <script type="text/javascript">
-            function logout_wasomupfy() {
-              window.location = "logout";
+    </div>
+
+    <!-- ══ Modal: Logout ══ -->
+    <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-dark">Terminar sessão</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center text-dark">
+                    <p>Tens a certeza de que desejas terminar sessão, <strong><?php echo $first_name; ?></strong>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Não, continuar</button>
+                    <a href="../logout" class="btn btn-danger">Sim, terminar sessão</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../js/theme.wp.js"></script>
+    <script src="../../js/wp.tools.js"></script>
+    <script>
+    // ════════════════════════════════════════════════════
+    // CSRF token para todos os pedidos AJAX
+    // ════════════════════════════════════════════════════
+    const CSRF_TOKEN = <?php echo json_encode($_SESSION['csrf_token'] ?? ''); ?>;
+    const API_URL = '../ajax/notifications_api';
+
+    // ════════════════════════════════════════════════════
+    // VAPID PUBLIC KEY (configurar no servidor)
+    // ════════════════════════════════════════════════════
+    const VAPID_PUBLIC_KEY = <?php
+    // Substituir pela chave real gerada no servidor
+    // php artisan webpush:vapid  ou  vendor/bin/web-push generate-vapid-keys
+    echo json_encode(defined('VAPID_PUBLIC_KEY') ? VAPID_PUBLIC_KEY : 'SUBSTITUI_PELA_TUA_VAPID_PUBLIC_KEY');
+?>;
+
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // ── Bootstrap modais ──────────────────────────────
+        const notifModal = new bootstrap.Modal(document.getElementById('notificationModal'));
+        const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+        const feedToast = new bootstrap.Toast(document.getElementById('feedbackToast'), {
+            delay: 3000
+        });
+
+        // ── Toast helper ──────────────────────────────────
+        function toast(msg, isOk = true) {
+            var toastEl = document.getElementById('feedbackToast');
+            var msgEl = document.getElementById('feedbackToastMsg');
+            msgEl.textContent = msg;
+            toastEl.style.background = isOk ? 'rgba(25,135,84,.95)' : 'rgba(220,53,69,.95)';
+            toastEl.style.color = '#fff';
+            feedToast.show();
+        }
+
+        // ── AJAX helper ───────────────────────────────────
+        async function api(data) {
+            data.csrf_token = CSRF_TOKEN;
+            try {
+                var res = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams(data),
+                    credentials: 'same-origin'
+                });
+                return await res.json();
+            } catch (e) {
+                return {
+                    ok: false,
+                    message: 'Erro de rede.'
+                };
             }
-          </script>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- ════ MODAL — Logout  FIM ════ -->
+        }
 
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="../../js/theme.wp.js"></script>
-  <script src="../../js/wp.tools.js"></script>
+        // ── Filtros ───────────────────────────────────────
+        document.querySelectorAll('.btn-filter').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.btn-filter').forEach(function(b) {
+                    b.classList.remove('active');
+                });
+                this.classList.add('active');
+                var filter = this.dataset.filter;
+                var cards = document.querySelectorAll('.notification-card');
+                var visible = 0;
 
-  <script>
-    // Estado das notificações
-    let currentNotificationId = null;
-    let notificationModal = null;
-    let confirmModal = null;
+                cards.forEach(function(card) {
+                    var show = filter === 'all' ||
+                        (filter === 'unread' && card.dataset.read === '0') ||
+                        card.dataset.type === filter;
+                    card.style.display = show ? '' : 'none';
+                    if (show) visible++;
+                });
 
-    document.addEventListener("DOMContentLoaded", function() {
-      // Inicializar modais
-      notificationModal = new bootstrap.Modal(
-        document.getElementById("notificationModal")
-      );
-      confirmModal = new bootstrap.Modal(
-        document.getElementById("confirmModal")
-      );
+                // Esconder/mostrar group labels
+                document.querySelectorAll('.group-label').forEach(function(lbl) {
+                    var next = lbl.nextElementSibling;
+                    var hasVisible = false;
+                    while (next && !next.classList.contains('group-label')) {
+                        if (next.classList.contains('notification-card') && next.style
+                            .display !== 'none') {
+                            hasVisible = true;
+                            break;
+                        }
+                        next = next.nextElementSibling;
+                    }
+                    lbl.style.display = hasVisible ? '' : 'none';
+                });
 
-      // Inicializar tooltips
-      const tooltipTriggerList = [].slice.call(
-        document.querySelectorAll('[data-bs-toggle="tooltip"]')
-      );
-      tooltipTriggerList.map(function(tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-      });
-
-      // Configurar filtros
-      setupFilters();
-    });
-
-    // Configurar filtros
-    function setupFilters() {
-      const filterButtons = document.querySelectorAll(".btn-filter");
-
-      filterButtons.forEach((button) => {
-        button.addEventListener("click", function() {
-          // Remover active de todos
-          filterButtons.forEach((btn) => btn.classList.remove("active"));
-
-          // Adicionar active no clicado
-          this.classList.add("active");
-
-          // Filtrar notificações
-          const filter = this.dataset.filter;
-          filterNotifications(filter);
+                document.getElementById('emptyState').style.display = visible === 0 ? 'block' :
+                    'none';
+            });
         });
-      });
-    }
 
-    // Filtrar notificações
-    function filterNotifications(filter) {
-      const notifications = document.querySelectorAll(".notification-card");
+        // ── Abrir modal ao clicar no card ─────────────────
+        document.querySelectorAll('.notification-card').forEach(function(card) {
+            card.addEventListener('click', function(e) {
+                if (e.target.closest('.card-actions')) return;
+                openNotifModal(card);
+            });
+        });
 
-      notifications.forEach((notification) => {
-        if (filter === "all") {
-          notification.style.display = "block";
-        } else if (filter === "unread") {
-          notification.style.display = notification.classList.contains(
-              "unread"
-            ) ?
-            "block" :
-            "none";
+        function openNotifModal(card) {
+            var id = card.dataset.id;
+            var source = card.dataset.source;
+            var type = card.dataset.type;
+            var title = card.dataset.title;
+            var body = card.dataset.body;
+            var ago = card.dataset.ago;
+            var action = card.dataset.action;
+            var isRead = card.dataset.read === '1';
+
+            document.getElementById('modalNotifTitle').textContent = title;
+
+            // Ícone no modal
+            var iconMap = {
+                info: ['bi-info-circle-fill', 'icon-info'],
+                success: ['bi-check-circle-fill', 'icon-success'],
+                warning: ['bi-exclamation-triangle-fill', 'icon-warning'],
+                error: ['bi-x-circle-fill', 'icon-error'],
+                payment: ['bi-currency-dollar', 'icon-payment'],
+                music: ['bi-disc-fill', 'icon-music'],
+                system: ['bi-gear-fill', 'icon-system'],
+                broadcast: ['bi-broadcast', 'icon-broadcast'],
+            };
+            var [ico, icoClass] = iconMap[type] || ['bi-bell-fill', 'icon-info'];
+
+            document.getElementById('modalNotifBody').innerHTML =
+                '<div class="text-center mb-3">' +
+                '  <div class="modal-notif-icon ' + icoClass + ' mx-auto"><i class="bi ' + ico +
+                '"></i></div>' +
+                '</div>' +
+                '<p class="text-muted small text-center mb-3"><i class="bi bi-clock me-1"></i>' + ago + '</p>' +
+                '<p style="font-size:.9rem;line-height:1.7">' + body.replace(/\n/g, '<br>') + '</p>';
+
+            // Botão toggle read
+            document.getElementById('modalToggleBtn').innerHTML = isRead ?
+                '<button class="btn btn-sm btn-outline-secondary" id="modalBtnToggleRead"><i class="bi bi-envelope me-1"></i>Marcar como não lida</button>' :
+                '<button class="btn btn-sm btn-outline-secondary" id="modalBtnToggleRead"><i class="bi bi-check2 me-1"></i>Marcar como lida</button>';
+
+            document.getElementById('modalBtnToggleRead').addEventListener('click', function() {
+                if (isRead) {
+                    doMarkUnread(id, source, card);
+                } else {
+                    doMarkRead(id, source, card);
+                }
+                notifModal.hide();
+            });
+
+            // Botões de acção dependendo do tipo
+            var actionsHtml = '';
+            if (action) {
+                actionsHtml += '<a href="' + action +
+                    '" class="btn-action-primary btn"><i class="bi bi-box-arrow-up-right me-1"></i>Ver agora</a>';
+            }
+            if (type === 'payment' || type === 'music') {
+                actionsHtml +=
+                    '<button class="btn-action-later btn" data-bs-dismiss="modal" id="modalBtnLater">Ver mais tarde</button>';
+            }
+            actionsHtml +=
+                '<button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Fechar</button>';
+
+            document.getElementById('modalActionBtns').innerHTML = actionsHtml;
+
+            // "Ver mais tarde" — marca como não lida (volta ao estado não lido)
+            var laterBtn = document.getElementById('modalBtnLater');
+            if (laterBtn) {
+                laterBtn.addEventListener('click', function() {
+                    doMarkUnread(id, source, card);
+                });
+            }
+
+            // Ao abrir o modal, se não lida, marca como lida automaticamente
+            if (!isRead) {
+                doMarkRead(id, source, card);
+            }
+
+            notifModal.show();
+        }
+
+        // ── Marcar como lida ──────────────────────────────
+        async function doMarkRead(id, source, card) {
+            var r = await api({
+                action: 'mark_read',
+                id: id,
+                source: source
+            });
+            if (r.ok) {
+                card.classList.remove('unread');
+                card.dataset.read = '1';
+                var tb = card.querySelector('.btn-toggle-read');
+                if (tb) {
+                    tb.title = 'Marcar como não lida';
+                    tb.querySelector('i').className = 'bi bi-envelope';
+                }
+                updateCounts();
+            }
+        }
+
+        // ── Marcar como não lida ──────────────────────────
+        async function doMarkUnread(id, source, card) {
+            var r = await api({
+                action: 'mark_unread',
+                id: id,
+                source: source
+            });
+            if (r.ok) {
+                card.classList.add('unread');
+                card.dataset.read = '0';
+                var tb = card.querySelector('.btn-toggle-read');
+                if (tb) {
+                    tb.title = 'Marcar como lida';
+                    tb.querySelector('i').className = 'bi bi-check-lg';
+                }
+                updateCounts();
+            }
+        }
+
+        // ── Botões inline dos cards ───────────────────────
+        document.querySelectorAll('.notification-card').forEach(function(card) {
+            var id = card.dataset.id;
+            var source = card.dataset.source;
+
+            // Toggle read/unread
+            var tb = card.querySelector('.btn-toggle-read');
+            if (tb) {
+                tb.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    if (card.dataset.read === '0') {
+                        doMarkRead(id, source, card);
+                    } else {
+                        doMarkUnread(id, source, card);
+                    }
+                });
+            }
+
+            // Delete
+            var db = card.querySelector('.btn-delete');
+            if (db) {
+                db.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    confirmAction('Eliminar esta notificação?', async function() {
+                        var r = await api({
+                            action: 'delete_one',
+                            id: id,
+                            source: source
+                        });
+                        if (r.ok) {
+                            card.style.transition = 'opacity .25s';
+                            card.style.opacity = '0';
+                            setTimeout(function() {
+                                card.remove();
+                                updateCounts();
+                            }, 260);
+                            toast('Notificação eliminada.');
+                        } else {
+                            toast(r.message, false);
+                        }
+                    });
+                });
+            }
+        });
+
+        // ── Marcar todas como lidas ───────────────────────
+        document.getElementById('btnMarkAll').addEventListener('click', async function() {
+            var r = await api({
+                action: 'mark_all_read'
+            });
+            if (r.ok) {
+                document.querySelectorAll('.notification-card.unread').forEach(function(c) {
+                    c.classList.remove('unread');
+                    c.dataset.read = '1';
+                    var tb = c.querySelector('.btn-toggle-read');
+                    if (tb) {
+                        tb.title = 'Marcar como não lida';
+                        tb.querySelector('i').className = 'bi bi-envelope';
+                    }
+                });
+                updateCounts();
+                toast('Todas as notificações marcadas como lidas.');
+            } else {
+                toast(r.message, false);
+            }
+        });
+
+        // ── Limpar todas ──────────────────────────────────
+        document.getElementById('btnDeleteAll').addEventListener('click', function() {
+            confirmAction('Eliminar todas as notificações? Esta acção não pode ser desfeita.',
+                async function() {
+                    var r = await api({
+                        action: 'delete_all'
+                    });
+                    if (r.ok) {
+                        document.querySelectorAll('.notification-card').forEach(function(c) {
+                            c.remove();
+                        });
+                        document.querySelectorAll('.group-label').forEach(function(g) {
+                            g.remove();
+                        });
+                        document.getElementById('emptyState').style.display = 'block';
+                        updateCounts();
+                        toast('Todas as notificações eliminadas.');
+                    } else {
+                        toast(r.message, false);
+                    }
+                });
+        });
+
+        // ── Actualizar ────────────────────────────────────
+        document.getElementById('btnRefresh').addEventListener('click', function() {
+            location.reload();
+        });
+
+        // ── Helper confirmação ────────────────────────────
+        function confirmAction(msg, cb) {
+            document.getElementById('confirmMsg').textContent = msg;
+            var btn = document.getElementById('confirmOkBtn');
+            var newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+            newBtn.addEventListener('click', function() {
+                confirmModal.hide();
+                cb();
+            });
+            confirmModal.show();
+        }
+
+        // ── Actualizar contadores ─────────────────────────
+        function updateCounts() {
+            var cards = document.querySelectorAll('.notification-card');
+            var unread = document.querySelectorAll('.notification-card.unread');
+            var total = cards.length;
+            var unrdCnt = unread.length;
+            var rdCnt = total - unrdCnt;
+
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statUnread').textContent = unrdCnt;
+            document.getElementById('statRead').textContent = rdCnt;
+            document.getElementById('countAll').textContent = total;
+            document.getElementById('countUnread').textContent = unrdCnt;
+
+            // Barra
+            var pct = total > 0 ? Math.round(rdCnt / total * 100) : 0;
+            var fill = document.getElementById('ratioFill');
+            if (fill) fill.style.width = pct + '%';
+
+            // Badge navbar
+            var badge = document.getElementById('navBadge');
+            if (badge) {
+                if (unrdCnt > 0) {
+                    badge.textContent = unrdCnt > 99 ? '99+' : unrdCnt;
+                    badge.style.display = '';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+        }
+
+        // ── Guardar preferências ──────────────────────────
+        document.getElementById('btnSavePrefs').addEventListener('click', async function() {
+            var prefs = {};
+            document.querySelectorAll('.pref-switch').forEach(function(sw) {
+                prefs[sw.dataset.pref] = sw.checked ? 1 : 0;
+            });
+            var r = await api(Object.assign({
+                action: 'save_prefs'
+            }, prefs));
+            if (r.ok) {
+                toast('Preferências guardadas!');
+            } else {
+                toast(r.message, false);
+            }
+        });
+
+        // ── Push Notifications (Web Push API) ────────────
+        var pushCard = document.getElementById('pushCard');
+        var btnPush = document.getElementById('btnEnablePush');
+        var pushStat = document.getElementById('pushStatus');
+
+        function urlBase64ToUint8Array(base64String) {
+            var padding = '='.repeat((4 - base64String.length % 4) % 4);
+            var base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+            var rawData = window.atob(base64);
+            var output = new Uint8Array(rawData.length);
+            for (var i = 0; i < rawData.length; ++i) output[i] = rawData.charCodeAt(i);
+            return output;
+        }
+
+        if ('serviceWorker' in navigator && 'PushManager' in window) {
+            // Registar Service Worker
+            navigator.serviceWorker.register('../sw.js')
+                .then(function(reg) {
+                    // Verificar se já tem permissão
+                    if (Notification.permission === 'granted') {
+                        pushCard.style.display = 'none'; // Já activado
+                    }
+
+                    btnPush.addEventListener('click', async function() {
+                        if (VAPID_PUBLIC_KEY === 'SUBSTITUI_PELA_TUA_VAPID_PUBLIC_KEY') {
+                            pushStat.style.display = '';
+                            pushStat.textContent = '⚠️ VAPID key não configurada no servidor.';
+                            return;
+                        }
+                        try {
+                            var permission = await Notification.requestPermission();
+                            if (permission !== 'granted') {
+                                pushStat.style.display = '';
+                                pushStat.textContent = 'Permissão negada pelo browser.';
+                                return;
+                            }
+                            var subscription = await reg.pushManager.subscribe({
+                                userVisibleOnly: true,
+                                applicationServerKey: urlBase64ToUint8Array(
+                                    VAPID_PUBLIC_KEY)
+                            });
+                            var r = await api({
+                                action: 'subscribe_push',
+                                subscription: JSON.stringify(subscription)
+                            });
+                            if (r.ok) {
+                                pushCard.style.display = 'none';
+                                toast('Notificações push activadas!');
+                                document.getElementById('prefPush').checked = true;
+                            } else {
+                                pushStat.style.display = '';
+                                pushStat.textContent = r.message;
+                            }
+                        } catch (err) {
+                            pushStat.style.display = '';
+                            pushStat.textContent = 'Erro: ' + err.message;
+                        }
+                    });
+                })
+                .catch(function() {
+                    pushCard.style.display = 'none'; // SW não disponível — esconde o card
+                });
         } else {
-          const type = notification.dataset.type;
-          notification.style.display = type === filter ? "block" : "none";
-        }
-      });
-
-      // Mostrar/esconder grupos de data baseado em visibilidade
-      updateDateGroups();
-    }
-
-    // Atualizar grupos de data
-    function updateDateGroups() {
-      const dateGroups = document.querySelectorAll(
-        ".notification-group-date"
-      );
-      const notifications = document.querySelectorAll(".notification-card");
-
-      dateGroups.forEach((group) => {
-        let nextElement = group.nextElementSibling;
-        let hasVisibleNotifications = false;
-
-        while (
-          nextElement &&
-          !nextElement.classList.contains("notification-group-date")
-        ) {
-          if (
-            nextElement.classList.contains("notification-card") &&
-            nextElement.style.display !== "none"
-          ) {
-            hasVisibleNotifications = true;
-            break;
-          }
-          nextElement = nextElement.nextElementSibling;
+            pushCard.style.display = 'none'; // Browser não suporta push
         }
 
-        group.style.display = hasVisibleNotifications ? "block" : "none";
-      });
-    }
+        // ── Polling do badge (a cada 30s) ─────────────────
+        async function pollBadge() {
+            try {
+                var r = await api({
+                    action: 'get_count'
+                });
+                if (r.ok) {
+                    var badge = document.getElementById('navBadge');
+                    if (badge) {
+                        if (r.count > 0) {
+                            badge.textContent = r.count > 99 ? '99+' : r.count;
+                            badge.style.display = '';
+                        } else {
+                            badge.style.display = 'none';
+                        }
+                    }
+                }
+            } catch (e) {}
+        }
+        setInterval(pollBadge, 30000);
 
-    // Abrir notificação
-    function openNotification(element, notificationId) {
-      const id = notificationId || element.dataset.id;
-      currentNotificationId = id;
-
-      // Buscar detalhes da notificação
-      const title = element.querySelector("h6").textContent;
-      const content = element.querySelector("p").textContent;
-      const time = element
-        .querySelector(".notification-time")
-        .textContent.trim();
-      const type = element
-        .querySelector(".notification-type-badge")
-        .cloneNode(true);
-
-      // Remover marcação de não lida
-      if (element.classList.contains("unread")) {
-        element.classList.remove("unread");
-        updateUnreadCount();
-      }
-
-      // Preencher modal
-      document.getElementById("notificationModalTitle").textContent = title;
-
-      let typeHtml = "";
-      if (type) {
-        typeHtml = `<div class="mb-3">${type.outerHTML}</div>`;
-      }
-
-      document.getElementById("notificationModalBody").innerHTML = `
-        <p class="text-muted small">${time}</p>
-        <p class="mb-4">${content}</p>
-        ${typeHtml}
-        <hr>
-        <div class="d-flex gap-2">
-          <button class="btn btn-sm btn-outline-primary" onclick="event.stopPropagation(); window.location.href='#'">
-            <i class="bi bi-box-arrow-up-right me-2"></i> Ver detalhes completos
-          </button>
-        </div>
-      `;
-
-      notificationModal.show();
-    }
-
-    // Marcar como lida
-    function markAsRead(id) {
-      const notification = document.querySelector(
-        `.notification-card[data-id="${id}"]`
-      );
-      if (notification) {
-        notification.classList.remove("unread");
-        updateUnreadCount();
-        showToast("Notificação marcada como lida");
-      }
-    }
-
-    // Marcar notificação atual como lida
-    function markCurrentAsRead() {
-      if (currentNotificationId) {
-        markAsRead(currentNotificationId);
-      }
-      notificationModal.hide();
-    }
-
-    // Arquivar notificação
-    function archiveNotification(id) {
-      const notification = document.querySelector(
-        `.notification-card[data-id="${id}"]`
-      );
-      if (notification) {
-        notification.style.display = "none";
-        updateDateGroups();
-        showToast("Notificação arquivada");
-      }
-    }
-
-    // Marcar todas como lidas
-    function markAllAsRead() {
-      document
-        .querySelectorAll(".notification-card.unread")
-        .forEach((notification) => {
-          notification.classList.remove("unread");
-        });
-      updateUnreadCount();
-      showToast("Todas as notificações foram marcadas como lidas");
-    }
-
-    // Arquivar todas
-    function archiveAll() {
-      document.getElementById("confirmModalMessage").innerHTML =
-        "Tem certeza que deseja arquivar todas as notificações?";
-
-      document.getElementById("confirmActionBtn").onclick = function() {
-        document
-          .querySelectorAll(".notification-card")
-          .forEach((notification) => {
-            notification.style.display = "none";
-          });
-        updateDateGroups();
-        confirmModal.hide();
-        showToast("Todas as notificações foram arquivadas");
-      };
-
-      confirmModal.show();
-    }
-
-    // Limpar todas
-    function clearAll() {
-      document.getElementById("confirmModalMessage").innerHTML =
-        "Tem certeza que deseja limpar todas as notificações? Esta ação não pode ser desfeita.";
-
-      document.getElementById("confirmActionBtn").onclick = function() {
-        document
-          .querySelectorAll(".notification-card")
-          .forEach((notification) => {
-            notification.remove();
-          });
-        updateDateGroups();
-        confirmModal.hide();
-        showToast("Todas as notificações foram removidas");
-      };
-
-      confirmModal.show();
-    }
-
-    // Atualizar contador de não lidas
-    function updateUnreadCount() {
-      const unreadCount = document.querySelectorAll(
-        ".notification-card.unread"
-      ).length;
-
-      // Atualizar badge no header
-      const headerBadge = document.querySelector(
-        ".notifications-header .badge"
-      );
-      if (headerBadge) {
-        headerBadge.innerHTML = `<i class="bi bi-envelope-fill text-primary me-2"></i>
-          <strong>${unreadCount} não lida${unreadCount !== 1 ? "s" : ""
-          }</strong> • 
-          ${document.querySelectorAll(".notification-card").length} no total`;
-      }
-
-      // Atualizar badge no filtro
-      const filterBadge = document.querySelector(
-        '.btn-filter[data-filter="unread"] .badge'
-      );
-      if (filterBadge) {
-        filterBadge.textContent = unreadCount;
-      }
-
-      // Atualizar badge no ícone da navbar
-      const navbarBadge = document.querySelector(".user-menu .badge");
-      if (navbarBadge) {
-        navbarBadge.textContent = unreadCount;
-      }
-    }
-
-    // Salvar preferências
-    function savePreferences() {
-      showToast("Preferências salvas com sucesso!");
-    }
-
-    // Logout
-    function logout() {
-      window.location = "logout";
-    }
-
-    // Mostrar toast (você precisará implementar um sistema de toast)
-    function showToast(message) {
-      // Implementar toast se necessário
-      console.log("Toast:", message);
-    }
-
-    // Placeholder para funções não implementadas
-    window.tryReconnect = function() {
-      console.log("Tentando reconectar...");
-    };
-  </script>
+    }); // fim DOMContentLoaded
+    </script>
 </body>
 
 </html>

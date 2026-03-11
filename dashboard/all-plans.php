@@ -46,38 +46,38 @@ $plan_meta = [
     <link rel="stylesheet" href="../css/dashboard-style.css" />
     <link rel="stylesheet" href="../css/lastest-style.css" />
     <style>
-        /* Espaçamento extra para o badge no topo dos featured cards */
-        .pt-6 {
-            padding-top: 3rem !important;
-        }
+    /* Espaçamento extra para o badge no topo dos featured cards */
+    .pt-6 {
+        padding-top: 3rem !important;
+    }
 
-        :root {
-            --pink: #FF0089;
-            --pink-dark: #cc006e;
-            --pink-soft: rgba(255, 0, 137, .10);
-            --surface: #0f0f13;
-            --card: #18181f;
-            --border: #2a2a35;
-            --text: #e8e8f0;
-            --muted: #888899;
-        }
+    :root {
+        --pink: #FF0089;
+        --pink-dark: #cc006e;
+        --pink-soft: rgba(255, 0, 137, .10);
+        --surface: #0f0f13;
+        --card: #18181f;
+        --border: #2a2a35;
+        --text: #e8e8f0;
+        --muted: #888899;
+    }
 
-        .back-link {
-            color: var(--muted);
-            font-size: .9rem;
-            text-decoration: none;
-        }
+    .back-link {
+        color: var(--muted);
+        font-size: .9rem;
+        text-decoration: none;
+    }
 
-        .back-link:hover {
-            color: var(--text);
-        }
+    .back-link:hover {
+        color: var(--text);
+    }
 
-        /* Badges personalizados */
-        .badge.bg-wasomupfy {
-            background-color: rgba(255, 0, 157, 0.1) !important;
-            color: #ff009d !important;
-            border: 1px solid rgba(255, 0, 157, 0.2);
-        }
+    /* Badges personalizados */
+    .badge.bg-wasomupfy {
+        background-color: rgba(255, 0, 157, 0.1) !important;
+        color: #ff009d !important;
+        border: 1px solid rgba(255, 0, 157, 0.2);
+    }
     </style>
 </head>
 
@@ -92,11 +92,11 @@ $plan_meta = [
             </a>
             <div class="ms-auto d-flex align-items-center gap-2">
                 <?php if ($logged_in): ?>
-                    <a href="/wasomupfy/dashboard/painel" class="back-link"><i class="bi bi-arrow-left me-1"></i>Voltar ao
-                        Painel</a>
+                <a href="/wasomupfy/dashboard/painel" class="back-link"><i class="bi bi-arrow-left me-1"></i>Voltar ao
+                    Painel</a>
                 <?php else: ?>
-                    <a href="../login" class="btn btn-sm btn-outline-secondary">Entrar</a>
-                    <a href="../register" class="btn btn-sm btn-wasomupfy">Criar Conta</a>
+                <a href="../login" class="btn btn-sm btn-outline-secondary">Entrar</a>
+                <a href="../register" class="btn btn-sm btn-wasomupfy">Criar Conta</a>
                 <?php endif; ?>
             </div>
         </div>
@@ -126,15 +126,15 @@ $plan_meta = [
             }
             ?>
             <?php if ($has_annual): ?>
-                <div class="d-inline-flex align-items-center gap-3 rounded-pill px-4 py-2"
-                    style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12)">
-                    <span class="text-light small">Por lançamento</span>
-                    <div class="form-check form-switch mb-0">
-                        <input class="form-check-input" type="checkbox" id="billingToggle"
-                            style="width:2.5rem;height:1.25rem;cursor:pointer">
-                    </div>
-                    <span class="text-light small">Pacote&nbsp;<span class="badge bg-success">Poupança</span></span>
+            <div class="d-inline-flex align-items-center gap-3 rounded-pill px-4 py-2"
+                style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12)">
+                <span class="text-light small">Por lançamento</span>
+                <div class="form-check form-switch mb-0">
+                    <input class="form-check-input" type="checkbox" id="billingToggle"
+                        style="width:2.5rem;height:1.25rem;cursor:pointer">
                 </div>
+                <span class="text-light small">Pacote&nbsp;<span class="badge bg-success">Poupança</span></span>
+            </div>
             <?php endif; ?>
         </div>
     </section>
@@ -186,147 +186,147 @@ $plan_meta = [
                     $artists = $plan['max_artists'];
                     $colabs  = $slug === 'label' ? 5 : 1;
                 ?>
-                    <div class="col-xl-3 col-lg-6" data-cue="zoomIn">
-                        <div class="pricing-card card <?php echo $border; ?> h-100 shadow-lg hover-lift position-relative">
+                <div class="col-xl-3 col-lg-6" data-cue="zoomIn">
+                    <div class="pricing-card card <?php echo $border; ?> h-100 shadow-lg hover-lift position-relative">
 
-                            <!-- Badge topo -->
-                            <?php if ($is_paid): ?>
-                                <div class="position-absolute top-0 start-50 translate-middle">
-                                    <span class="badge bg-success text-white fw-semibold px-4 py-2">
-                                        <i class="bi bi-check-circle me-1"></i>Plano activo
-                                    </span>
-                                </div>
-                            <?php elseif ($is_pend): ?>
-                                <div class="position-absolute top-0 start-50 translate-middle">
-                                    <span class="badge bg-warning text-dark fw-semibold px-4 py-2">
-                                        <i class="bi bi-clock me-1"></i>Pagamento pendente
-                                    </span>
-                                </div>
-                            <?php elseif ($meta['featured']): ?>
-                                <div class="position-absolute top-0 start-50 translate-middle">
-                                    <span class="badge bg-wasomupfy text-white fw-semibold px-4 py-2">
-                                        <?php echo htmlspecialchars($meta['badge']); ?>
-                                    </span>
-                                </div>
+                        <!-- Badge topo -->
+                        <?php if ($is_paid): ?>
+                        <div class="position-absolute top-0 start-50 translate-middle">
+                            <span class="badge bg-success text-white fw-semibold px-4 py-2">
+                                <i class="bi bi-check-circle me-1"></i>Plano activo
+                            </span>
+                        </div>
+                        <?php elseif ($is_pend): ?>
+                        <div class="position-absolute top-0 start-50 translate-middle">
+                            <span class="badge bg-warning text-dark fw-semibold px-4 py-2">
+                                <i class="bi bi-clock me-1"></i>Pagamento pendente
+                            </span>
+                        </div>
+                        <?php elseif ($meta['featured']): ?>
+                        <div class="position-absolute top-0 start-50 translate-middle">
+                            <span class="badge bg-wasomupfy text-white fw-semibold px-4 py-2">
+                                <?php echo htmlspecialchars($meta['badge']); ?>
+                            </span>
+                        </div>
+                        <?php endif; ?>
+
+                        <div
+                            class="card-header border-0 <?php echo ($meta['featured'] || $is_curr) ? 'pt-6' : 'pt-5'; ?> pb-4 text-center">
+
+                            <?php if (!$meta['featured'] && $meta['badge'] && !$is_curr): ?>
+                            <span class="badge bg-wasom-light text-wasom fw-semibold px-3 py-2 mb-3">
+                                <?php echo $meta['badge']; ?>
+                            </span>
                             <?php endif; ?>
 
-                            <div
-                                class="card-header border-0 <?php echo ($meta['featured'] || $is_curr) ? 'pt-6' : 'pt-5'; ?> pb-4 text-center">
+                            <h3 class="h2 fw-bold mb-3"><?php echo htmlspecialchars($plan['name_plan']); ?></h3>
 
-                                <?php if (!$meta['featured'] && $meta['badge'] && !$is_curr): ?>
-                                    <span class="badge bg-wasom-light text-wasom fw-semibold px-3 py-2 mb-3">
-                                        <?php echo $meta['badge']; ?>
+                            <div class="price-display">
+                                <!-- Preço por lançamento -->
+                                <div class="monthly-price">
+                                    <span class="price-amount display-4 fw-bold">
+                                        <?php echo number_format($plan['price_plan'], 0, ',', '.'); ?>
                                     </span>
-                                <?php endif; ?>
-
-                                <h3 class="h2 fw-bold mb-3"><?php echo htmlspecialchars($plan['name_plan']); ?></h3>
-
-                                <div class="price-display">
-                                    <!-- Preço por lançamento -->
-                                    <div class="monthly-price">
-                                        <span class="price-amount display-4 fw-bold">
-                                            <?php echo number_format($plan['price_plan'], 0, ',', '.'); ?>
-                                        </span>
-                                        <span class="price-period h5 text-muted fw-normal">
-                                            Kz/<?php
+                                    <span class="price-period h5 text-muted fw-normal">
+                                        Kz/<?php
                                                 if ($plan['type_plan'] === 'subscription') echo 'ano';
                                                 elseif ($slug === 'album') echo 'álbum';
                                                 else echo 'single';
                                                 ?>
-                                        </span>
-                                    </div>
-                                    <!-- Pacote anual (oculto por defeito) -->
-                                    <?php if ($plan['price_annual'] && $plan['annual_qty']): ?>
-                                        <div class="annual-price d-none">
-                                            <span class="price-amount display-4 fw-bold">
-                                                <?php echo number_format($plan['price_annual'], 0, ',', '.'); ?>
-                                            </span>
-                                            <span class="price-period h5 text-muted fw-normal">
-                                                Kz/<?php echo $plan['annual_qty']; ?>
-                                                <?php echo $slug === 'album' ? 'álbuns' : 'singles'; ?>
-                                            </span>
-                                            <?php if ($savings > 0): ?>
-                                                <div class="mt-1"><span class="badge bg-success">Economize
-                                                        <?php echo $savings; ?>%</span></div>
-                                            <?php endif; ?>
-                                        </div>
+                                    </span>
+                                </div>
+                                <!-- Pacote anual (oculto por defeito) -->
+                                <?php if ($plan['price_annual'] && $plan['annual_qty']): ?>
+                                <div class="annual-price d-none">
+                                    <span class="price-amount display-4 fw-bold">
+                                        <?php echo number_format($plan['price_annual'], 0, ',', '.'); ?>
+                                    </span>
+                                    <span class="price-period h5 text-muted fw-normal">
+                                        Kz/<?php echo $plan['annual_qty']; ?>
+                                        <?php echo $slug === 'album' ? 'álbuns' : 'singles'; ?>
+                                    </span>
+                                    <?php if ($savings > 0): ?>
+                                    <div class="mt-1"><span class="badge bg-success">Economize
+                                            <?php echo $savings; ?>%</span></div>
                                     <?php endif; ?>
                                 </div>
-
-                                <p class="text-muted mb-0"><?php echo htmlspecialchars($plan['description_plan'] ?? ''); ?>
-                                </p>
-                            </div>
-
-                            <div class="card-body pt-4 pb-5 px-4">
-                                <ul class="list-unstyled mb-4">
-                                    <li class="d-flex align-items-start mb-3">
-                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                        <span><strong><?php echo $plan['royalty_rate']; ?>% Royalties</strong> — ficas com
-                                            quase tudo</span>
-                                    </li>
-                                    <li class="d-flex align-items-start mb-3">
-                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                        <span>Upload de
-                                            <strong><?php echo $tracks ? $tracks . ' faixa' . ($tracks > 1 ? 's' : '') : 'faixas ilimitadas'; ?></strong></span>
-                                    </li>
-                                    <li class="d-flex align-items-start mb-3">
-                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                        <span><strong><?php echo $artists; ?>
-                                                Artista<?php echo $artists > 1 ? 's' : ''; ?></strong>
-                                            <?php echo $artists > 1 ? 'na conta' : 'principal'; ?></span>
-                                    </li>
-                                    <li class="d-flex align-items-start mb-3">
-                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                        <span><strong><?php echo $colabs; ?>
-                                                Colaborador<?php echo $colabs > 1 ? 'es' : ''; ?></strong> por faixa</span>
-                                    </li>
-                                    <li class="d-flex align-items-start mb-3">
-                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                        <span>Análise de dados <strong>avançados</strong></span>
-                                    </li>
-                                    <li class="d-flex align-items-start mb-3">
-                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                        <span><strong>ISRC e UPC grátis</strong></span>
-                                    </li>
-                                    <li class="d-flex align-items-start mb-3">
-                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                        <span>Smartlink e pre-save</span>
-                                    </li>
-                                    <li class="d-flex align-items-start mb-3">
-                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                        <span>Lançamento em <strong>72h</strong></span>
-                                    </li>
-                                    <li class="d-flex align-items-start mb-3">
-                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                        <span>Suporte local (WhatsApp + E-mail)</span>
-                                    </li>
-                                    <li class="d-flex align-items-start <?php echo $slug !== 'single' ? 'mb-3' : ''; ?>">
-                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
-                                        <span>Agendar lançamentos</span>
-                                    </li>
-                                    <?php if ($slug !== 'single'): ?>
-                                        <li class="d-flex align-items-start">
-                                            <i class="bi bi-star-fill text-warning mt-1 me-3"></i>
-                                            <span><strong>Personalizar nome de selo</strong></span>
-                                        </li>
-                                    <?php endif; ?>
-                                </ul>
-
-                                <div class="d-grid">
-                                    <a href="<?php echo $btn_href; ?>" class="btn <?php echo $btn_class; ?> btn-lg">
-                                        <?php echo $btn_label; ?>
-                                    </a>
-                                </div>
-
-                                <?php if ($is_pend): ?>
-                                    <div class="alert alert-warning mt-3 py-2 small mb-0">
-                                        <i class="bi bi-clock me-1"></i>
-                                        Tens um pagamento pendente para este plano.
-                                    </div>
                                 <?php endif; ?>
                             </div>
+
+                            <p class="text-muted mb-0"><?php echo htmlspecialchars($plan['description_plan'] ?? ''); ?>
+                            </p>
+                        </div>
+
+                        <div class="card-body pt-4 pb-5 px-4">
+                            <ul class="list-unstyled mb-4">
+                                <li class="d-flex align-items-start mb-3">
+                                    <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                    <span><strong><?php echo $plan['royalty_rate']; ?>% Royalties</strong> — ficas com
+                                        quase tudo</span>
+                                </li>
+                                <li class="d-flex align-items-start mb-3">
+                                    <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                    <span>Upload de
+                                        <strong><?php echo $tracks ? $tracks . ' faixa' . ($tracks > 1 ? 's' : '') : 'faixas ilimitadas'; ?></strong></span>
+                                </li>
+                                <li class="d-flex align-items-start mb-3">
+                                    <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                    <span><strong><?php echo $artists; ?>
+                                            Artista<?php echo $artists > 1 ? 's' : ''; ?></strong>
+                                        <?php echo $artists > 1 ? 'na conta' : 'principal'; ?></span>
+                                </li>
+                                <li class="d-flex align-items-start mb-3">
+                                    <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                    <span><strong><?php echo $colabs; ?>
+                                            Colaborador<?php echo $colabs > 1 ? 'es' : ''; ?></strong> por faixa</span>
+                                </li>
+                                <li class="d-flex align-items-start mb-3">
+                                    <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                    <span>Análise de dados <strong>avançados</strong></span>
+                                </li>
+                                <li class="d-flex align-items-start mb-3">
+                                    <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                    <span><strong>ISRC e UPC grátis</strong></span>
+                                </li>
+                                <li class="d-flex align-items-start mb-3">
+                                    <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                    <span>Smartlink e pre-save</span>
+                                </li>
+                                <li class="d-flex align-items-start mb-3">
+                                    <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                    <span>Lançamento em <strong>72h</strong></span>
+                                </li>
+                                <li class="d-flex align-items-start mb-3">
+                                    <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                    <span>Suporte local (WhatsApp + E-mail)</span>
+                                </li>
+                                <li class="d-flex align-items-start <?php echo $slug !== 'single' ? 'mb-3' : ''; ?>">
+                                    <i class="bi bi-check-circle-fill text-success mt-1 me-3"></i>
+                                    <span>Agendar lançamentos</span>
+                                </li>
+                                <?php if ($slug !== 'single'): ?>
+                                <li class="d-flex align-items-start">
+                                    <i class="bi bi-star-fill text-warning mt-1 me-3"></i>
+                                    <span><strong>Personalizar nome de selo</strong></span>
+                                </li>
+                                <?php endif; ?>
+                            </ul>
+
+                            <div class="d-grid">
+                                <a href="<?php echo $btn_href; ?>" class="btn <?php echo $btn_class; ?> btn-lg">
+                                    <?php echo $btn_label; ?>
+                                </a>
+                            </div>
+
+                            <?php if ($is_pend): ?>
+                            <div class="alert alert-warning mt-3 py-2 small mb-0">
+                                <i class="bi bi-clock me-1"></i>
+                                Tens um pagamento pendente para este plano.
+                            </div>
+                            <?php endif; ?>
                         </div>
                     </div>
+                </div>
                 <?php endforeach; ?>
 
             </div>
@@ -349,14 +349,14 @@ $plan_meta = [
                         <tr>
                             <th style="width:28%">Recursos</th>
                             <?php foreach ($plans as $p): ?>
-                                <th class="text-center py-4 <?php echo $p['is_featured'] ? 'bg-wasom-light' : ''; ?>">
-                                    <h5 class="mb-1"><?php echo htmlspecialchars($p['name_plan']); ?></h5>
-                                    <div class="text-wasom fw-bold" style="font-size:.85rem">
-                                        <?php echo number_format($p['price_plan'], 0, ',', '.'); ?>Kz/<?php
+                            <th class="text-center py-4 <?php echo $p['is_featured'] ? 'bg-wasom-light' : ''; ?>">
+                                <h5 class="mb-1"><?php echo htmlspecialchars($p['name_plan']); ?></h5>
+                                <div class="text-wasom fw-bold" style="font-size:.85rem">
+                                    <?php echo number_format($p['price_plan'], 0, ',', '.'); ?>Kz/<?php
                                                                                                         echo $p['type_plan'] === 'subscription' ? 'ano' : ($p['slug_plan'] === 'album' ? 'álbum' : 'single');
                                                                                                         ?>
-                                    </div>
-                                </th>
+                                </div>
+                            </th>
                             <?php endforeach; ?>
                         </tr>
                     </thead>
@@ -364,34 +364,34 @@ $plan_meta = [
                         <tr>
                             <td class="fw-semibold">Royalties</td>
                             <?php foreach ($plans as $p): ?>
-                                <td class="text-center <?php echo $p['is_featured'] ? 'bg-wasom-light' : ''; ?>">
-                                    <?php echo $p['royalty_rate']; ?>%</td>
+                            <td class="text-center <?php echo $p['is_featured'] ? 'bg-wasom-light' : ''; ?>">
+                                <?php echo $p['royalty_rate']; ?>%</td>
                             <?php endforeach; ?>
                         </tr>
                         <tr>
                             <td class="fw-semibold">Faixas</td>
                             <?php foreach ($plans as $p): ?>
-                                <td class="text-center <?php echo $p['is_featured'] ? 'bg-wasom-light' : ''; ?>">
-                                    <?php echo $p['max_tracks_per_release']
+                            <td class="text-center <?php echo $p['is_featured'] ? 'bg-wasom-light' : ''; ?>">
+                                <?php echo $p['max_tracks_per_release']
                                         ? $p['max_tracks_per_release'] . ' faixa' . ($p['max_tracks_per_release'] > 1 ? 's' : '')
                                         : '<strong>Ilimitadas</strong>'; ?>
-                                </td>
+                            </td>
                             <?php endforeach; ?>
                         </tr>
                         <tr>
                             <td class="fw-semibold">Artistas</td>
                             <?php foreach ($plans as $p): ?>
-                                <td class="text-center <?php echo $p['is_featured'] ? 'bg-wasom-light' : ''; ?>">
-                                    <?php echo $p['max_artists']; ?> artista<?php echo $p['max_artists'] > 1 ? 's' : ''; ?>
-                                </td>
+                            <td class="text-center <?php echo $p['is_featured'] ? 'bg-wasom-light' : ''; ?>">
+                                <?php echo $p['max_artists']; ?> artista<?php echo $p['max_artists'] > 1 ? 's' : ''; ?>
+                            </td>
                             <?php endforeach; ?>
                         </tr>
                         <tr>
                             <td class="fw-semibold">Colaboradores</td>
                             <?php foreach ($plans as $p): ?>
-                                <td class="text-center <?php echo $p['is_featured'] ? 'bg-wasom-light' : ''; ?>">
-                                    <?php echo $p['slug_plan'] === 'label' ? '5' : '1'; ?> por faixa
-                                </td>
+                            <td class="text-center <?php echo $p['is_featured'] ? 'bg-wasom-light' : ''; ?>">
+                                <?php echo $p['slug_plan'] === 'label' ? '5' : '1'; ?> por faixa
+                            </td>
                             <?php endforeach; ?>
                         </tr>
                         <?php foreach (
@@ -402,36 +402,36 @@ $plan_meta = [
                                 'Agendar Lançamentos'  => true,
                             ] as $label => $check
                         ): ?>
-                            <tr>
-                                <td class="fw-semibold"><?php echo $label; ?></td>
-                                <?php foreach ($plans as $p): ?>
-                                    <td class="text-center <?php echo $p['is_featured'] ? 'bg-wasom-light' : ''; ?>">
-                                        <i class="bi bi-check-lg text-success"></i>
-                                    </td>
-                                <?php endforeach; ?>
-                            </tr>
+                        <tr>
+                            <td class="fw-semibold"><?php echo $label; ?></td>
+                            <?php foreach ($plans as $p): ?>
+                            <td class="text-center <?php echo $p['is_featured'] ? 'bg-wasom-light' : ''; ?>">
+                                <i class="bi bi-check-lg text-success"></i>
+                            </td>
+                            <?php endforeach; ?>
+                        </tr>
                         <?php endforeach; ?>
                         <tr>
                             <td class="fw-semibold">Tempo de Lançamento</td>
                             <?php foreach ($plans as $p): ?>
-                                <td class="text-center <?php echo $p['is_featured'] ? 'bg-wasom-light' : ''; ?>">72 horas
-                                </td>
+                            <td class="text-center <?php echo $p['is_featured'] ? 'bg-wasom-light' : ''; ?>">72 horas
+                            </td>
                             <?php endforeach; ?>
                         </tr>
                         <tr>
                             <td class="fw-semibold">Suporte</td>
                             <?php foreach ($plans as $p): ?>
-                                <td class="text-center <?php echo $p['is_featured'] ? 'bg-wasom-light' : ''; ?>">WhatsApp +
-                                    E-mail</td>
+                            <td class="text-center <?php echo $p['is_featured'] ? 'bg-wasom-light' : ''; ?>">WhatsApp +
+                                E-mail</td>
                             <?php endforeach; ?>
                         </tr>
                         <tr>
                             <td class="fw-semibold">Nome do Selo</td>
                             <?php foreach ($plans as $p): ?>
-                                <td class="text-center <?php echo $p['is_featured'] ? 'bg-wasom-light' : ''; ?>">
-                                    <i
-                                        class="bi <?php echo $p['slug_plan'] !== 'single' ? 'bi-check-lg text-success' : 'bi-dash text-muted'; ?>"></i>
-                                </td>
+                            <td class="text-center <?php echo $p['is_featured'] ? 'bg-wasom-light' : ''; ?>">
+                                <i
+                                    class="bi <?php echo $p['slug_plan'] !== 'single' ? 'bi-check-lg text-success' : 'bi-dash text-muted'; ?>"></i>
+                            </td>
                             <?php endforeach; ?>
                         </tr>
                         <tr>
@@ -460,10 +460,10 @@ $plan_meta = [
                                     $c = $m['btn'];
                                 }
                             ?>
-                                <td class="text-center pt-4 <?php echo $p['is_featured'] ? 'bg-wasom-light' : ''; ?>">
-                                    <a href="<?php echo $h; ?>"
-                                        class="btn <?php echo $c; ?> btn-outline-primary w-100"><?php echo $l; ?></a>
-                                </td>
+                            <td class="text-center pt-4 <?php echo $p['is_featured'] ? 'bg-wasom-light' : ''; ?>">
+                                <a href="<?php echo $h; ?>"
+                                    class="btn <?php echo $c; ?> btn-outline-primary w-100"><?php echo $l; ?></a>
+                            </td>
                             <?php endforeach; ?>
                         </tr>
                     </tbody>
@@ -483,15 +483,15 @@ $plan_meta = [
     <script src="../js/theme.wp.js"></script>
     <script src="../js/wp.tools.js"></script>
     <script>
-        const t = document.getElementById('billingToggle');
-        if (t) {
-            t.addEventListener('change', function() {
-                document.querySelectorAll('.monthly-price').forEach(el => el.classList.toggle('d-none', this
-                    .checked));
-                document.querySelectorAll('.annual-price').forEach(el => el.classList.toggle('d-none', !this
-                    .checked));
-            });
-        }
+    const t = document.getElementById('billingToggle');
+    if (t) {
+        t.addEventListener('change', function() {
+            document.querySelectorAll('.monthly-price').forEach(el => el.classList.toggle('d-none', this
+                .checked));
+            document.querySelectorAll('.annual-price').forEach(el => el.classList.toggle('d-none', !this
+                .checked));
+        });
+    }
     </script>
 </body>
 

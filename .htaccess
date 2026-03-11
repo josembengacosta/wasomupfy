@@ -75,10 +75,10 @@ RewriteRule ^blog/([a-z0-9-]+)/?$               blog/posts/$1.php [L,QSA]
 # SUPORTE & AJUDA (páginas públicas)
 # ══════════════════════════════════════════════
 
-RewriteRule ^faq/?$                             page/support/faq.php [L]
-RewriteRule ^help/?$                            page/support/help.php [L]
-RewriteRule ^support/?$                         page/support/support.php [L]
-RewriteRule ^tutorials/?$                       page/support/tutorial.php [L]
+RewriteRule ^page/support/faq/?$                             page/support/faq.php [L]
+RewriteRule ^page/support/help/?$                            page/support/help.php [L]
+RewriteRule ^page/support/support/?$                         page/support/support.php [L]
+RewriteRule ^page/support/tutorial/?$                       page/support/tutorial.php [L]
 
 # ══════════════════════════════════════════════
 # SERVIÇOS
@@ -104,6 +104,7 @@ RewriteRule ^dashboard/painel/?$                                dashboard/painel
 RewriteRule ^dashboard/onboarding_done/?$                       dashboard/onboarding_done.php [L]
 RewriteRule ^dashboard/all-plans/?$                             dashboard/all-plans.php [L]
 RewriteRule ^dashboard/logout/?$                                dashboard/logout.php [L]
+RewriteRule ^dashboard/ajax/support_dashboard/?$              dashboard/ajax/support_dashboard.php [L]
 
 # ─── Account ──────────────────────────────────
 RewriteRule ^dashboard/account/add-user/?$                      dashboard/account/add-user.php [L]
@@ -147,8 +148,8 @@ RewriteRule ^dashboard/analytics/playlist-details/?$            dashboard/analyt
 RewriteRule ^dashboard/artists/artists-list/?$                  dashboard/artists/artists-list.php [L]
 RewriteRule ^dashboard/artists/add-artist/?$                    dashboard/artists/add-artist.php [L]
 RewriteRule ^dashboard/artists/add_artist_process/?$            dashboard/artists/add_artist_process.php [L]
-RewriteRule ^dashboard/artists/youtube/([^/]+)/?$               dashboard/artists/youtube/channel-details.php?id=$1 [L,QSA]
 RewriteRule ^dashboard/artists/youtube/ucy/?$                   dashboard/artists/youtube/ucy.php [L]
+RewriteRule ^dashboard/artists/youtube/ucy_process/?$             dashboard/artists/youtube/ucy_process.php [L]
 
 # ─── Finanças ─────────────────────────────────
 RewriteRule ^dashboard/finances/?$                              dashboard/finances/overview.php [L]
@@ -169,14 +170,17 @@ RewriteRule ^dashboard/launch/edit-release/?$                   dashboard/launch
 
 
 # ─── Páginas internas do painel ───────────────
-RewriteRule ^dashboard/notifications/?$                         dashboard/page/notifications.php [L]
-RewriteRule ^dashboard/settings/?$                              dashboard/page/settings.php [L]
+RewriteRule ^dashboard/page/notifications/?$                    dashboard/page/notifications.php [L]
+RewriteRule ^dashboard/page/settings/?$                         dashboard/page/settings.php [L]
+RewriteRule ^dashboard/page/settings_process/?$                 dashboard/page/settings_process.php [L]
 RewriteRule ^dashboard/page/support/?$                          dashboard/page/support.php [L]
 RewriteRule ^dashboard/page/faq/?$                              dashboard/page/faq.php [L]
 RewriteRule ^dashboard/page/help/?$                             dashboard/page/help.php [L]
 RewriteRule ^dashboard/page/about/?$                            dashboard/page/about.php [L]
-RewriteRule ^dashboard/page/terms/?$                            dashboard/page/politicies/terms.php [L]
-RewriteRule ^dashboard/page/privacy/?$                          dashboard/page/politicies/privacy.php [L]
+RewriteRule ^dashboard/page/politicies/terms/?$                 dashboard/page/politicies/terms.php [L]
+RewriteRule ^dashboard/page/politicies/privacy/?$               dashboard/page/politicies/privacy.php [L]
+RewriteRule ^dashboard/services/available-services/?$           dashboard/services/available-services.php [L]
+
 RewriteRule ^dashboard/payment/pay/?$                           dashboard/payment/pay.php [L]
 RewriteRule ^dashboard/payment/payment_process/?$               dashboard/payment/payment_process.php [L]
 

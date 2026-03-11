@@ -1,262 +1,488 @@
+<?php
+// ══════════════════════════════════════════════════════
+// WASOM UPFY v2.0 — Configurações
+// Arquivo: dashboard/page/settings.php
+// ══════════════════════════════════════════════════════
+require_once __DIR__ . '/../../authentic/include/functions.php';
+startSecureSession();
+checkRememberMe();
+requireLogin();
+
+$db       = getDB();
+$id_users = (int)$_SESSION['id_users'];
+$user     = getUserById($id_users);
+if (!$user) {
+  redirect('authentic/logout');
+}
+
+$first_name       = htmlspecialchars($user['first_name'] ?? '');
+$last_name        = htmlspecialchars($user['second_name'] ?? '');
+$user_artist_name = htmlspecialchars($user['name_artist_band'] ?? $user['first_name'] ?? '');
+$email_user       = htmlspecialchars($user['email_user'] ?? '');
+
+// ── Plano activo ─────────────────────────────
+// Colunas correctas: started_at / expires_at (não start_date/end_date)
+// Tabela correcta: _plans (não _plan)
+$plan = null;
+try {
+  $plan_q = $db->prepare("
+        SELECT p.name_plan, p.slug_plan, up.status_plan, up.started_at, up.expires_at
+        FROM _user_plan up
+        JOIN _plans p ON p.id_plan = up.id_plan
+        WHERE up.id_users = ? AND up.status_plan = 'active'
+        ORDER BY up.started_at DESC
+        LIMIT 1
+    ");
+  $plan_q->execute([$id_users]);
+  $plan = $plan_q->fetch(PDO::FETCH_ASSOC) ?: null;
+} catch (PDOException $e) { /* seguro */
+}
+
+// Fallback: plan_selected é INT (FK para _plans), busca o nome
+if (!$plan && !empty($user['plan_selected'])) {
+  try {
+    $p_q = $db->prepare("SELECT name_plan, slug_plan FROM _plans WHERE id_plan = ?");
+    $p_q->execute([$user['plan_selected']]);
+    $p_row = $p_q->fetch(PDO::FETCH_ASSOC);
+    if ($p_row) {
+      $plan = [
+        'name_plan'   => $p_row['name_plan'],
+        'slug_plan'   => $p_row['slug_plan'],
+        'status_plan' => 'active',
+        'started_at'  => $user['plan_activated_at'] ?? null,
+        'expires_at'  => $user['plan_expires_at']   ?? null,
+      ];
+    }
+  } catch (PDOException $e) { /* seguro */
+  }
+}
+
+// ── Artistas (integrações) ────────────────────
+try {
+  $artists_q = $db->prepare("
+        SELECT id_artist, stage_name, youtube_url, spotify_url, instagram_url
+        FROM _artist
+        WHERE id_users = ? AND status_artist = 'active'
+        ORDER BY stage_name ASC
+        LIMIT 5
+    ");
+  $artists_q->execute([$id_users]);
+  $artists = $artists_q->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+  $artists = [];
+}
+
+// ── Carregar ou criar _user_settings ─────────
+try {
+  $settings_q = $db->prepare("SELECT * FROM _user_settings WHERE id_users = ?");
+  $settings_q->execute([$id_users]);
+  $settings = $settings_q->fetch(PDO::FETCH_ASSOC);
+  if (!$settings) {
+    $db->prepare("INSERT INTO _user_settings (id_users) VALUES (?) ON DUPLICATE KEY UPDATE id_users = id_users")
+      ->execute([$id_users]);
+    $settings_q->execute([$id_users]);
+    $settings = $settings_q->fetch(PDO::FETCH_ASSOC);
+  }
+} catch (PDOException $e) {
+  $settings = [];
+}
+
+$s = array_merge([
+  'notif_email'      => 1,
+  'notif_push'       => 0,
+  'notif_streams'    => 0,
+  'notif_weekly'      => 0,
+  'theme'            => 'dark',
+  'ui_density'   => 'compact',
+  'widget_streams'   => 1,
+  'widget_financial'  => 1,
+  'widget_releases'  => 0,
+  'widget_artists'    => 1,
+  'widget_activity'  => 0,
+  'private_stats'    => 1,
+  'accept_cookies'    => 0,
+  'share_data'       => 0,
+  'two_factor'        => 0,
+  'language'         => 'pt-ao',
+  'currency'    => 'AOA',
+  'date_format'      => 'dd/mm/yyyy',
+], $settings ?: []);
+
+// ── Flash message ─────────────────────────────
+$flash = $_SESSION['settings_flash'] ?? null;
+unset($_SESSION['settings_flash']);
+
+// ── Membro desde — coluna correcta: creat_user ─
+$member_since = '—';
+if (!empty($user['creat_user'])) {
+  try {
+    $d = new DateTime($user['creat_user']);
+    $months_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+    $member_since = $d->format('d') . ' ' . $months_pt[(int)$d->format('m') - 1] . ' ' . $d->format('Y');
+  } catch (Exception $e) {
+    $member_since = '—';
+  }
+}
+
+// ── Actividade recente — tabela: _user_activity_log ─
+try {
+  $act_q = $db->prepare("
+        SELECT description, creat_activity, activity_type
+        FROM _user_activity_log
+        WHERE id_users = ?
+        ORDER BY creat_activity DESC
+        LIMIT 5
+    ");
+  $act_q->execute([$id_users]);
+  $recent_activity = $act_q->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+  $recent_activity = [];
+}
+
+// ── Status da conta — coluna correcta: status_user ─
+$status_user = $user['status_user'] ?? 'active';
+$status_map  = [
+  'active'       => ['label' => 'Activo',      'class' => 'bg-success'],
+  'inactive'     => ['label' => 'Inactivo',     'class' => 'bg-secondary'],
+  'blocked'      => ['label' => 'Bloqueado',    'class' => 'bg-danger'],
+  'processing'   => ['label' => 'Em análise',   'class' => 'bg-warning text-dark'],
+  'suspended'    => ['label' => 'Suspenso',     'class' => 'bg-warning text-dark'],
+  'fraud'        => ['label' => 'Fraude',       'class' => 'bg-danger'],
+  'pending_plan' => ['label' => 'Sem plano',    'class' => 'bg-secondary'],
+];
+$status_info = $status_map[$status_user] ?? ['label' => ucfirst($status_user), 'class' => 'bg-secondary'];
+?>
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-ao">
 
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="robots" content="noindex, nofollow" />
-  <meta name="author" content="José Mbenga da Costa" />
-  <meta name="theme-color" content="#FF0089" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-
-  <!-- Preconnect para CDNs -->
-  <link rel="preconnect" href="https://cdn.jsdelivr.net">
-
-  <title>Configurações — Wasom Upfy</title>
-
-  <!-- Favicon -->
-  <link rel="apple-touch-icon" href="../../assets/img/icones/wasomupfy_fiv_512.png" />
-  <link rel="apple-touch-startup-image" href="../../assets/img/screenshots/splash.png" />
-  <link rel="manifest" href="../manifest.json" />
-  <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon" />
-
-  <!-- CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
-  <link rel="stylesheet" href="../../css/dashboard-style.css" />
-  <link rel="stylesheet" href="../../css/lastest-style.css" />
-
-  <style>
-    /* Estilos específicos da página de configurações */
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#FF0089" />
+    <link rel="apple-touch-icon" href="../../assets/img/icones/wasomupfy_fiv_512.png" />
+    <link rel="manifest" href="../manifest.json" />
+    <title>Configurações — <?php echo APP_NAME; ?></title>
+    <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="../../css/dashboard-style.css" />
+    <link rel="stylesheet" href="../../css/lastest-style.css" />
+    <style>
     .settings-header {
-      background: linear-gradient(135deg, #FF0089 0%, #FF4D4D 100%);
-      border-radius: 20px;
-      padding: 2.5rem;
-      margin-bottom: 2rem;
-      color: white;
-      position: relative;
-      overflow: hidden;
+        background: linear-gradient(135deg, #FF0089 0%, #c8006e 60%, #7b0044 100%);
+        border-radius: 20px;
+        padding: 2.2rem 2.5rem;
+        margin-bottom: 2rem;
+        color: #fff;
+        position: relative;
+        overflow: hidden;
     }
 
-    .settings-header::before {
-      content: '\F3E5';
-      font-family: 'bootstrap-icons';
-      position: absolute;
-      right: -20px;
-      bottom: -20px;
-      font-size: 10rem;
-      opacity: 0.1;
-      color: white;
-      transform: rotate(30deg);
-    }
-
-    .settings-section {
-      margin-bottom: 2rem;
-    }
-
-    .settings-section h2 {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-      color: #FF0089;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-    }
-
-    .settings-section h2 i {
-      margin-right: 0.75rem;
-      font-size: 1.75rem;
+    .settings-header::after {
+        content: '\F3E5';
+        font-family: 'bootstrap-icons';
+        position: absolute;
+        right: -20px;
+        bottom: -24px;
+        font-size: 9rem;
+        opacity: .08;
+        color: #fff;
+        transform: rotate(30deg);
     }
 
     .settings-card {
-      background: white;
-      border-radius: 15px;
-      border: none;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-      transition: all 0.3s ease;
+        border-radius: 16px;
+        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
+        background: var(--card-bg, #fff);
+        transition: box-shadow .2s;
+        margin-bottom: 1.6rem;
     }
 
     .settings-card:hover {
-      box-shadow: 0 8px 25px rgba(255, 0, 137, 0.15);
-      transform: translateY(-2px);
+        box-shadow: 0 6px 24px rgba(255, 0, 137, .1);
     }
 
     .settings-card .card-header {
-      background: transparent;
-      border-bottom: 1px solid rgba(255, 0, 137, 0.1);
-      padding: 1.25rem 1.5rem;
+        background: transparent;
+        border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .07));
+        padding: 1rem 1.4rem;
+        border-radius: 16px 16px 0 0;
     }
 
     .settings-card .card-header h5 {
-      margin: 0;
-      color: #333;
-      font-weight: 600;
+        margin: 0;
+        font-weight: 700;
+        font-size: .95rem;
     }
 
     .settings-card .card-body {
-      padding: 1.5rem;
+        padding: 1.4rem;
+    }
+
+    .settings-section h2 {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: #FF0089;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 1rem;
     }
 
     .form-check-input:checked {
-      background-color: #FF0089;
-      border-color: #FF0089;
+        background-color: #FF0089;
+        border-color: #FF0089;
     }
 
     .form-check-input:focus {
-      border-color: #FF0089;
-      box-shadow: 0 0 0 0.2rem rgba(255, 0, 137, 0.25);
+        border-color: #FF0089;
+        box-shadow: 0 0 0 .2rem rgba(255, 0, 137, .2);
     }
 
     .form-select:focus,
     .form-control:focus {
-      border-color: #FF0089;
-      box-shadow: 0 0 0 0.2rem rgba(255, 0, 137, 0.25);
+        border-color: #FF0089;
+        box-shadow: 0 0 0 .2rem rgba(255, 0, 137, .2);
     }
 
     .btn-settings {
-      background: linear-gradient(135deg, #FF0089, #FF4D4D);
-      border: none;
-      color: white;
-      padding: 0.5rem 1.5rem;
-      border-radius: 8px;
-      font-weight: 500;
-      transition: all 0.3s ease;
+        background: linear-gradient(135deg, #FF0089, #c8006e);
+        border: none;
+        color: #fff;
+        padding: .45rem 1.2rem;
+        border-radius: 9px;
+        font-weight: 600;
+        font-size: .85rem;
+        transition: all .2s;
     }
 
     .btn-settings:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(255, 0, 137, 0.3);
-      color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 14px rgba(255, 0, 137, .35);
+        color: #fff;
     }
 
     .btn-settings-outline {
-      background: transparent;
-      border: 2px solid #FF0089;
-      color: #FF0089;
-      padding: 0.5rem 1.5rem;
-      border-radius: 8px;
-      font-weight: 500;
-      transition: all 0.3s ease;
+        background: transparent;
+        border: 1.5px solid #FF0089;
+        color: #FF0089;
+        padding: .45rem 1.2rem;
+        border-radius: 9px;
+        font-weight: 600;
+        font-size: .85rem;
+        transition: all .2s;
     }
 
     .btn-settings-outline:hover {
-      background: #FF0089;
-      color: white;
+        background: #FF0089;
+        color: #fff;
     }
 
-    .settings-divider {
-      margin: 1.5rem 0;
-      border-top: 1px solid rgba(255, 0, 137, 0.1);
+    /* ── Tema cards ── */
+    .theme-option {
+        border: 2px solid var(--border-color, rgba(0, 0, 0, .1));
+        border-radius: 12px;
+        padding: 14px 12px;
+        cursor: pointer;
+        text-align: center;
+        transition: all .2s;
+        user-select: none;
+        display: block;
     }
 
+    .theme-option:hover {
+        border-color: #FF0089;
+    }
+
+    .theme-option.active {
+        border-color: #FF0089;
+        background: rgba(255, 0, 137, .06);
+    }
+
+    .theme-option .theme-icon {
+        font-size: 1.6rem;
+        margin-bottom: 6px;
+    }
+
+    .theme-option .theme-label {
+        font-size: .78rem;
+        font-weight: 700;
+    }
+
+    .theme-option input[type="radio"] {
+        display: none;
+    }
+
+    /* ── Info grid ── */
     .info-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: .75rem;
     }
 
     .info-item {
-      background: #f8f9fa;
-      padding: 1rem;
-      border-radius: 10px;
+        background: var(--metric-bg, rgba(0, 0, 0, .025));
+        padding: .85rem 1rem;
+        border-radius: 10px;
     }
 
     .info-item strong {
-      color: #FF0089;
-      display: block;
-      margin-bottom: 0.25rem;
+        color: #FF0089;
+        display: block;
+        font-size: .7rem;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        margin-bottom: 3px;
     }
 
     .info-item p {
-      margin: 0;
-      color: #333;
+        margin: 0;
+        font-size: .88rem;
+        font-weight: 500;
     }
 
+    /* ── Integrações ── */
+    .integration-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 14px;
+        border-radius: 12px;
+        background: var(--metric-bg, rgba(0, 0, 0, .025));
+        margin-bottom: 8px;
+    }
+
+    .integration-row:last-child {
+        margin-bottom: 0;
+    }
+
+    /* ── Zona de Perigo ── */
     .danger-zone {
-      border: 2px solid #dc3545;
-      border-radius: 15px;
-      padding: 1.5rem;
-      background: rgba(220, 53, 69, 0.02);
+        border: 2px solid rgba(220, 53, 69, .3);
+        border-radius: 14px;
+        padding: 1.4rem;
+        background: rgba(220, 53, 69, .025);
     }
 
     .danger-zone h6 {
-      color: #dc3545;
-      font-weight: 600;
-      margin-bottom: 1rem;
+        color: #dc3545;
+        font-weight: 700;
+        margin-bottom: 1rem;
     }
 
-    .toast-container {
-      z-index: 1100;
+    .danger-item {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(220, 53, 69, .1);
     }
 
-    .toast-success {
-      background: linear-gradient(135deg, #10b981, #34d399);
-      color: white;
+    .danger-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
     }
 
-    .toast-error {
-      background: linear-gradient(135deg, #ef4444, #f87171);
-      color: white;
+    .danger-item-info .title {
+        font-weight: 700;
+        font-size: .88rem;
     }
 
-    .version-badge {
-      background: linear-gradient(135deg, #FF0089, #FF4D4D);
-      color: white;
-      padding: 0.5rem 1rem;
-      border-radius: 30px;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
+    .danger-item-info .desc {
+        font-size: .75rem;
+        color: var(--text-muted, #6c757d);
+        margin-top: 2px;
     }
 
-    .related-links .nav-link {
-      color: #6c757d;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      transition: all 0.3s ease;
+    /* ── Sidebar nav ── */
+    .quick-nav .list-group-item {
+        border: none;
+        padding: .6rem 1rem;
+        font-size: .85rem;
+        font-weight: 500;
+        color: var(--text-muted, #6c757d);
+        border-radius: 8px !important;
+        transition: all .15s;
     }
 
-    .related-links .nav-link:hover {
-      color: #FF0089;
-      background: rgba(255, 0, 137, 0.05);
-      transform: translateX(5px);
+    .quick-nav .list-group-item:hover,
+    .quick-nav .list-group-item.active-link {
+        background: rgba(255, 0, 137, .07);
+        color: #FF0089;
     }
 
-    .related-links .nav-link i {
-      margin-right: 0.75rem;
+    .account-status-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 7px 0;
+        border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .06));
+        font-size: .84rem;
     }
 
-    @media (max-width: 768px) {
-      .settings-header {
-        padding: 1.5rem;
-      }
-
-      .settings-header h1 {
-        font-size: 1.75rem;
-      }
-
-      .settings-card .card-body {
-        padding: 1rem;
-      }
-
-      .info-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .btn-settings,
-      .btn-settings-outline {
-        width: 100%;
-        margin: 0.25rem 0;
-      }
+    .account-status-row:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
     }
-  </style>
+
+    /* ── Toasts ── */
+    .toast-pink {
+        background: linear-gradient(135deg, #FF0089, #c8006e);
+        color: #fff;
+    }
+
+    .toast-green {
+        background: linear-gradient(135deg, #10b981, #34d399);
+        color: #fff;
+    }
+
+    .toast-red {
+        background: linear-gradient(135deg, #ef4444, #f87171);
+        color: #fff;
+    }
+
+    /* ── Activity ── */
+    .activity-row {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .06));
+        font-size: .78rem;
+    }
+
+    .activity-row:last-child {
+        border-bottom: none;
+    }
+
+    .activity-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #FF0089;
+        flex-shrink: 0;
+        margin-top: 4px;
+    }
+
+    @media(max-width:768px) {
+        .settings-header {
+            padding: 1.5rem;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    </style>
 </head>
 
 <body>
-  <!-- Tela de Carregamento -->
-  <!-- <div class="loading-screen" id="loadingScreen">
+
+    <!-- Tela de Carregamento -->
+    <!-- <div class="loading-screen" id="loadingScreen">
         <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg" class="loading-logo">
             <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2"/>
             <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
@@ -264,1177 +490,1081 @@
         <div class="spinner"></div>
     </div> -->
 
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg">
-    <div class="container-fluid">
-      <!-- Menu Button (Left) -->
-      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu"
-        aria-controls="offcanvasMenu">
-        <span class="navbar-toggler-icon"><i class="bi bi-list text-white fs-1"></i></span>
-      </button>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <!-- Menu Button (Left) -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu"
+                aria-controls="offcanvasMenu">
+                <span class="navbar-toggler-icon"><i class="bi bi-list text-white fs-1"></i></span>
+            </button>
 
-      <!-- Logo (Center on Mobile, Left on Desktop) -->
-      <a class="navbar-brand" href="../painel">
-        <!-- SVG Logo Wasom Upfy -->
-        <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+            <!-- Logo (Center on Mobile, Left on Desktop) -->
+            <a class="navbar-brand" href="../painel">
+                <!-- SVG Logo Wasom Upfy -->
+                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
                     <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
                     <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
                         fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
                 </svg> -->
-        <span class="text-light" style="
+                <span class="text-light" style="
               font-weight: bold;
               box-sizing: border-box;
               text-transform: capitalize;
               font-family: Arial, sans-serif;
             ">WASOM UPFY</span>
-      </a>
-
-      <!-- Desktop Menu -->
-      <div class="collapse navbar-collapse">
-        <ul class="navbar-nav m-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link" href="../painel"><i class="bi bi-speedometer2"></i> Dashboard</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="../launch/releases"><i class="bi bi-disc"></i> Lançamentos</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="../analytics/statistics"><i class="bi bi-bar-chart"></i> Estatísticas</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="../finances/overview"><i class="bi bi-currency-dollar"></i> Finanças</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="../artists/artists-list"><i class="bi bi-person"></i> Artistas</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="../artists/youtube/ucy"><i class="bi bi-youtube"></i> Unificação de canal
-              YouTube</a>
-          </li>
-        </ul>
-      </div>
-
-      <!-- User Icon (Right) -->
-      <div class="user-menu d-flex align-items-center">
-        <!-- Theme Toggle Button -->
-        <a class="theme-toggle text-white me-2" id="themeToggle">
-          <i class="bi bi-sun" id="themeIcon"></i>
-        </a>
-        <a href="notifications" class="text-white me-2" aria-label="Notificações">
-          <i class="bi bi-bell fs-4"></i>
-          <span class="badge bg-danger">9</span>
-        </a>
-        <a href="#" class="text-white" data-bs-toggle="dropdown">
-          <i class="bi bi-person-circle fs-4"></i>
-        </a>
-        <ul class="dropdown-menu dropdown-menu-end">
-          <li>
-            <a class="dropdown-item" href="../user/profile"><i class="bi bi-person me-2"></i>
-              <strong><?php echo $first_name; ?></strong></a>
-            <div class="text-white-50">
-              &nbsp; &nbsp; &nbsp; &nbsp; (Conta <?php echo str_pad($id_users, 6, "0", STR_PAD_LEFT); ?>)
-            </div>
-          </li>
-          <li>
-            <hr class="dropdown-divider" />
-          </li>
-          <li>
-            <a class="dropdown-item" href="../user/profile"><i class="bi bi-person me-2"></i> Meu Perfil</a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="../account/manage-account"><i class="bi bi-tools me-2"></i> Gestão de
-              Conta</a>
-          </li>
-          <li>
-            <hr class="dropdown-divider" />
-          </li>
-          <li>
-            <a class="dropdown-item" href="../page/settings"><i class="bi bi-gear me-2"></i> Configurações</a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="../page/notifications"><i class="bi bi-bell me-2"></i> Notificações</a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="../services/available-services"><i class="bi bi-star me-2"></i> Conta e
-              serviços disponíveis</a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="#?logout-wasomupfy" data-bs-toggle="modal"
-              data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right me-2"></i> Desconectar-se</a>
-          </li>
-          <li>
-            <hr class="dropdown-divider" />
-          </li>
-          <li>
-            <a class="dropdown-item" href="../page/about"><i class="bi bi-info-circle me-2"></i> Sobre</a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="../page/support"><i class="bi bi-headset me-2"></i> Enviar pedido de
-              suporte</a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="../page/faq"><i class="bi bi-chat-left-text me-2"></i> Perguntas
-              frequentes</a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="../page/help"><i class="bi bi-question-circle me-2"></i> Ajuda</a>
-          </li>
-          <li>
-            <hr class="dropdown-divider" />
-          </li>
-          <li>
-            <span class="dropdown-item-text" id="versionDropdown"></span>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Offcanvas Menu par Mobile e Desktop -->
-  <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
-    <div class="offcanvas-header">
-      <h5 class="offcanvas-title" id="offcanvasMenuLabel">
-        <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
-                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
-                        fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
-                </svg> -->
-        <span class="text-light" style="
-              font-weight: bold;
-              box-sizing: border-box;
-              text-transform: capitalize;
-              font-family: Arial, sans-serif;
-            ">WASOM UPFY</span>
-      </h5>
-      <button type="button" class="btn-close text-white" data-bs-dismiss="offcanvas" aria-label="Close">
-        <i class="bi bi-x-lg"></i>
-      </button>
-    </div>
-    <div class="offcanvas-body">
-      <ul class="nav flex-column">
-        <li class="nav-item">
-          <a class="nav-link" href="../painel"><i class="bi bi-speedometer2"></i> Dashboard</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="../launch/releases"><i class="bi bi-disc"></i> Lançamentos</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="../analytics/statistics"><i class="bi bi-bar-chart"></i> Estatísticas</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="../finances/overview"><i class="bi bi-currency-dollar"></i> Finanças</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="../artists/artists-list"><i class="bi bi-person"></i> Artistas</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="../artists/youtube/ucy"><i class="bi bi-youtube"></i> Unificação de canal
-            YouTube</a>
-        </li>
-        <!-- Links secundários exibidos apenas em mobile -->
-        <li class="nav-item d-lg-none">
-          <a class="nav-link" href="../user/profile"><i class="bi bi-person-circle"></i> Meu Perfil</a>
-        </li>
-        <li class="nav-item d-lg-none">
-          <a class="nav-link active" href="../page/settings"><i class="bi bi-gear"></i> Configurações</a>
-        </li>
-        <li class="nav-item d-lg-none">
-          <a class="nav-link" href="../page/notifications"><i class="bi bi-bell"></i> Notificações</a>
-        </li>
-        <li class="nav-item d-lg-none">
-          <a class="nav-link" href="../page/about"><i class="bi bi-info-circle"></i> Sobre</a>
-        </li>
-        <li class="nav-item d-lg-none">
-          <a class="nav-link" href="../services/available-services"><i class="bi bi-star"></i> Conta e serviços
-            disponíveis</a>
-        </li>
-        <li class="nav-item d-lg-none">
-          <a class="nav-link" href="../page/help"><i class="bi bi-question-circle"></i> Ajuda</a>
-        </li>
-        <li class="nav-item d-lg-none">
-          <a class="nav-link" href="#?logout-wasomupfy" data-bs-toggle="modal" data-bs-target="#logoutwasomupfy"><i
-              class="bi bi-box-arrow-right"></i> Desconectar-se</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- Toast para Notificações de Status -->
-  <div class="toast-container position-fixed bottom-0 end-0 p-3">
-    <div id="connectionToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-      <div class="toast-header">
-        <strong class="me-auto">Conexão</strong>
-        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Fechar"></button>
-      </div>
-      <div class="toast-body">
-        Você está offline. Alguns dados podem estar desatualizados.
-        <div class="mt-2">
-          <button class="btn btn-pink btn-sm" onclick="tryReconnect()">
-            Tentar Reconectar
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Main Content -->
-  <main class="container my-4">
-    <!-- Settings Header -->
-    <div class="settings-header">
-      <h1 class="display-5 fw-bold mb-3">
-        <i class="bi bi-gear-fill me-2"></i> Configurações
-      </h1>
-      <p class="lead mb-0">
-        Personalize sua experiência no Wasom Upfy, gerencie preferências de conta,
-        notificações, exibição e privacidade.
-      </p>
-    </div>
-
-    <!-- Grid de Configurações -->
-    <div class="row">
-      <!-- Coluna Principal -->
-      <div class="col-lg-8">
-        <!-- Perfil -->
-        <section class="settings-section" id="profile">
-          <h2><i class="bi bi-person-circle"></i> Perfil</h2>
-          <div class="settings-card card">
-            <div class="card-header">
-              <h5>Informações da Conta</h5>
-            </div>
-            <div class="card-body">
-              <div class="info-grid">
-                <div class="info-item">
-                  <strong>Nome</strong>
-                  <p>José da Costa</p>
-                </div>
-                <div class="info-item">
-                  <strong>Conta</strong>
-                  <p>Eleven Records (ID: 560108)</p>
-                </div>
-                <div class="info-item">
-                  <strong>E-mail</strong>
-                  <p>jose@exemplo.com</p>
-                </div>
-                <div class="info-item">
-                  <strong>Membro desde</strong>
-                  <p>15 Mar 2020</p>
-                </div>
-              </div>
-
-              <div class="d-flex flex-wrap gap-2 mt-3">
-                <a href="../user/profile" class="btn btn-settings">
-                  <i class="bi bi-pencil me-2"></i> Editar Perfil
-                </a>
-                <a href="../user/profile#password" class="btn btn-settings-outline">
-                  <i class="bi bi-key me-2"></i> Alterar Senha
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Notificações -->
-        <section class="settings-section" id="notifications">
-          <h2><i class="bi bi-bell"></i> Notificações</h2>
-          <div class="settings-card card">
-            <div class="card-header">
-              <h5>Preferências de Notificação</h5>
-            </div>
-            <div class="card-body">
-              <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
-                <label class="form-check-label" for="emailNotifications">
-                  <strong>Notificações por E-mail</strong>
-                  <small class="d-block text-muted">Receber atualizações sobre streams, saques e suporte</small>
-                </label>
-              </div>
-
-              <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" id="pushNotifications">
-                <label class="form-check-label" for="pushNotifications">
-                  <strong>Notificações Push</strong>
-                  <small class="d-block text-muted">Receber notificações em tempo real no navegador</small>
-                </label>
-              </div>
-
-              <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" id="highStreamNotifications">
-                <label class="form-check-label" for="highStreamNotifications">
-                  <strong>Alertas de Streams Altos</strong>
-                  <small class="d-block text-muted">Notificar quando streams ultrapassarem 1.000</small>
-                </label>
-              </div>
-
-              <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" id="weeklyDigest">
-                <label class="form-check-label" for="weeklyDigest">
-                  <strong>Resumo Semanal</strong>
-                  <small class="d-block text-muted">Receber um resumo das atividades da semana</small>
-                </label>
-              </div>
-
-              <hr class="settings-divider">
-
-              <div class="d-flex flex-wrap gap-2">
-                <button class="btn btn-settings" onclick="saveNotificationSettings()">
-                  <i class="bi bi-check-lg me-2"></i> Salvar Preferências
-                </button>
-                <button class="btn btn-settings-outline" onclick="testPushNotification()">
-                  <i class="bi bi-bell me-2"></i> Testar Notificação
-                </button>
-                <a href="../notifications" class="btn btn-settings-outline">
-                  <i class="bi bi-list me-2"></i> Ver Notificações
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Aparência -->
-        <section class="settings-section" id="appearance">
-          <h2><i class="bi bi-palette"></i> Aparência</h2>
-          <div class="settings-card card">
-            <div class="card-header">
-              <h5>Tema e Personalização</h5>
-            </div>
-            <div class="card-body">
-              <div class="mb-3">
-                <label class="form-label fw-bold">Tema</label>
-                <div class="row g-2">
-                  <div class="col-md-4">
-                    <div class="form-check">
-                      <input class="form-check-input" type="radio" name="themeOptions" id="themeDark" value="dark"
-                        checked>
-                      <label class="form-check-label" for="themeDark">
-                        <i class="bi bi-moon-stars me-1"></i> Escuro
-                      </label>
-                    </div>
-                  </div>
-                  <div class="col-md-4">
-                    <div class="form-check">
-                      <input class="form-check-input" type="radio" name="themeOptions" id="themeLight" value="light">
-                      <label class="form-check-label" for="themeLight">
-                        <i class="bi bi-sun me-1"></i> Claro
-                      </label>
-                    </div>
-                  </div>
-                  <div class="col-md-4">
-                    <div class="form-check">
-                      <input class="form-check-input" type="radio" name="themeOptions" id="themeSystem" value="system">
-                      <label class="form-check-label" for="themeSystem">
-                        <i class="bi bi-laptop me-1"></i> Sistema
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="mb-3">
-                <label class="form-label fw-bold">Cor Primária</label>
-                <div class="d-flex gap-2">
-                  <button class="btn btn-sm"
-                    style="background: #FF0089; width: 40px; height: 40px; border-radius: 10px;"
-                    onclick="setPrimaryColor('#FF0089')"></button>
-                  <button class="btn btn-sm"
-                    style="background: #1DB954; width: 40px; height: 40px; border-radius: 10px;"
-                    onclick="setPrimaryColor('#1DB954')"></button>
-                  <button class="btn btn-sm"
-                    style="background: #3b82f6; width: 40px; height: 40px; border-radius: 10px;"
-                    onclick="setPrimaryColor('#3b82f6')"></button>
-                  <button class="btn btn-sm"
-                    style="background: #f59e0b; width: 40px; height: 40px; border-radius: 10px;"
-                    onclick="setPrimaryColor('#f59e0b')"></button>
-                </div>
-              </div>
-
-              <div class="mb-3">
-                <label class="form-label fw-bold">Densidade da Interface</label>
-                <select class="form-select" id="uiDensity">
-                  <option value="comfortable">Confortável</option>
-                  <option value="compact" selected>Compacto</option>
-                  <option value="cozy">Aconchegante</option>
-                </select>
-              </div>
-
-              <button class="btn btn-settings" onclick="saveAppearanceSettings()">
-                <i class="bi bi-check-lg me-2"></i> Salvar Aparência
-              </button>
-            </div>
-          </div>
-        </section>
-
-        <!-- Dashboard -->
-        <section class="settings-section" id="dashboard">
-          <h2><i class="bi bi-speedometer2"></i> Dashboard</h2>
-          <div class="settings-card card">
-            <div class="card-header">
-              <h5>Widgets e Exibição</h5>
-            </div>
-            <div class="card-body">
-              <div class="form-check mb-2">
-                <input class="form-check-input" type="checkbox" id="showStreamChart" checked>
-                <label class="form-check-label" for="showStreamChart">
-                  Gráfico de Streams
-                </label>
-              </div>
-
-              <div class="form-check mb-2">
-                <input class="form-check-input" type="checkbox" id="showFinancialSummary" checked>
-                <label class="form-check-label" for="showFinancialSummary">
-                  Resumo Financeiro
-                </label>
-              </div>
-
-              <div class="form-check mb-2">
-                <input class="form-check-input" type="checkbox" id="showRecentReleases">
-                <label class="form-check-label" for="showRecentReleases">
-                  Lançamentos Recentes
-                </label>
-              </div>
-
-              <div class="form-check mb-2">
-                <input class="form-check-input" type="checkbox" id="showTopArtists" checked>
-                <label class="form-check-label" for="showTopArtists">
-                  Top Artistas
-                </label>
-              </div>
-
-              <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" id="showActivityFeed">
-                <label class="form-check-label" for="showActivityFeed">
-                  Feed de Atividades
-                </label>
-              </div>
-
-              <button class="btn btn-settings" onclick="saveDisplaySettings()">
-                <i class="bi bi-check-lg me-2"></i> Salvar Widgets
-              </button>
-            </div>
-          </div>
-        </section>
-
-        <!-- Privacidade -->
-        <section class="settings-section" id="privacy">
-          <h2><i class="bi bi-shield-lock"></i> Privacidade</h2>
-          <div class="settings-card card">
-            <div class="card-header">
-              <h5>Controles de Privacidade</h5>
-            </div>
-            <div class="card-body">
-              <div class="form-check mb-2">
-                <input class="form-check-input" type="checkbox" id="privateStats" checked>
-                <label class="form-check-label" for="privateStats">
-                  Estatísticas privadas (visíveis apenas para mim)
-                </label>
-              </div>
-
-              <div class="form-check mb-2">
-                <input class="form-check-input" type="checkbox" id="acceptCookies">
-                <label class="form-check-label" for="acceptCookies">
-                  Aceitar cookies analíticos
-                </label>
-              </div>
-
-              <div class="form-check mb-2">
-                <input class="form-check-input" type="checkbox" id="shareData">
-                <label class="form-check-label" for="shareData">
-                  Compartilhar dados anonimizados para melhoria do serviço
-                </label>
-              </div>
-
-              <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" id="twoFactorAuth">
-                <label class="form-check-label" for="twoFactorAuth">
-                  Autenticação de dois fatores (recomendado)
-                </label>
-              </div>
-
-              <button class="btn btn-settings" onclick="savePrivacySettings()">
-                <i class="bi bi-check-lg me-2"></i> Salvar Privacidade
-              </button>
-            </div>
-          </div>
-        </section>
-
-        <!-- Idioma e Região -->
-        <section class="settings-section" id="language">
-          <h2><i class="bi bi-globe"></i> Idioma e Região</h2>
-          <div class="settings-card card">
-            <div class="card-header">
-              <h5>Preferências Regionais</h5>
-            </div>
-            <div class="card-body">
-              <div class="mb-3">
-                <label for="languageSelect" class="form-label">Idioma</label>
-                <select class="form-select" id="languageSelect">
-                  <option value="pt-br" selected>Português (Brasil)</option>
-                  <option value="pt-pt">Português (Portugal)</option>
-                  <option value="en">English (US)</option>
-                  <option value="es">Español</option>
-                </select>
-              </div>
-
-              <div class="mb-3">
-                <label for="currencySelect" class="form-label">Moeda Principal</label>
-                <select class="form-select" id="currencySelect">
-                  <option value="BRL" selected>BRL - Real Brasileiro</option>
-                  <option value="USD">USD - Dólar Americano</option>
-                  <option value="EUR">EUR - Euro</option>
-                  <option value="AOA">AOA - Kwanza Angolano</option>
-                </select>
-              </div>
-
-              <div class="mb-3">
-                <label for="dateFormat" class="form-label">Formato de Data</label>
-                <select class="form-select" id="dateFormat">
-                  <option value="dd/mm/yyyy" selected>DD/MM/YYYY</option>
-                  <option value="mm/dd/yyyy">MM/DD/YYYY</option>
-                  <option value="yyyy-mm-dd">YYYY-MM-DD</option>
-                </select>
-              </div>
-
-              <button class="btn btn-settings" onclick="saveLanguageSettings()">
-                <i class="bi bi-check-lg me-2"></i> Salvar Preferências
-              </button>
-            </div>
-          </div>
-        </section>
-
-        <!-- Exportação -->
-        <section class="settings-section" id="export">
-          <h2><i class="bi bi-download"></i> Exportação de Dados</h2>
-          <div class="settings-card card">
-            <div class="card-header">
-              <h5>Exportar Relatórios</h5>
-            </div>
-            <div class="card-body">
-              <div class="mb-3">
-                <label for="exportFormat" class="form-label">Formato de Exportação</label>
-                <select class="form-select" id="exportFormat">
-                  <option value="csv" selected>CSV (Excel)</option>
-                  <option value="pdf">PDF (Documento)</option>
-                  <option value="json">JSON (Dados Brutos)</option>
-                </select>
-              </div>
-
-              <div class="mb-3">
-                <label class="form-label">Período para Exportar</label>
-                <div class="d-flex gap-2 flex-wrap">
-                  <button class="btn btn-sm btn-outline-primary active" onclick="setExportPeriod('month')">Último
-                    mês</button>
-                  <button class="btn btn-sm btn-outline-primary" onclick="setExportPeriod('quarter')">Último
-                    trimestre</button>
-                  <button class="btn btn-sm btn-outline-primary" onclick="setExportPeriod('year')">Último ano</button>
-                  <button class="btn btn-sm btn-outline-primary" onclick="setExportPeriod('all')">Todo período</button>
-                </div>
-              </div>
-
-              <div class="d-flex gap-2">
-                <button class="btn btn-settings" onclick="exportData()">
-                  <i class="bi bi-download me-2"></i> Exportar Agora
-                </button>
-                <button class="btn btn-settings-outline" onclick="scheduleExport()">
-                  <i class="bi bi-calendar me-2"></i> Agendar Exportação
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Integrações -->
-        <section class="settings-section" id="integrations">
-          <h2><i class="bi bi-link"></i> Integrações</h2>
-          <div class="settings-card card">
-            <div class="card-header">
-              <h5>Plataformas Conectadas</h5>
-            </div>
-            <div class="card-body">
-              <div class="d-flex align-items-center justify-content-between mb-3 p-3 bg-light rounded">
-                <div>
-                  <i class="bi bi-youtube text-danger fs-4 me-2"></i>
-                  <strong>YouTube</strong>
-                  <small class="d-block text-muted">Eleven Records Official</small>
-                </div>
-                <span class="badge bg-success">Conectado</span>
-              </div>
-
-              <div class="d-flex align-items-center justify-content-between mb-3 p-3 bg-light rounded">
-                <div>
-                  <i class="bi bi-spotify text-success fs-4 me-2"></i>
-                  <strong>Spotify</strong>
-                  <small class="d-block text-muted">Eleven Records</small>
-                </div>
-                <span class="badge bg-success">Conectado</span>
-              </div>
-
-              <div class="d-flex align-items-center justify-content-between mb-3 p-3 bg-light rounded">
-                <div>
-                  <i class="bi bi-apple text-dark fs-4 me-2"></i>
-                  <strong>Apple Music</strong>
-                  <small class="d-block text-muted">Eleven Records</small>
-                </div>
-                <span class="badge bg-success">Conectado</span>
-              </div>
-
-              <div class="d-flex gap-2 mt-3">
-                <a href="../artists/youtube/ucy" class="btn btn-settings-outline">
-                  <i class="bi bi-plus-circle me-2"></i> Conectar Nova
-                </a>
-                <a href="../account/payment-methods" class="btn btn-settings-outline">
-                  <i class="bi bi-credit-card me-2"></i> Pagamentos
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Zona de Perigo -->
-        <section class="settings-section" id="danger">
-          <h2><i class="bi bi-exclamation-triangle text-danger"></i> Zona de Perigo</h2>
-          <div class="danger-zone">
-            <h6><i class="bi bi-exclamation-circle me-2"></i> Ações Destrutivas</h6>
-
-            <div class="d-flex flex-wrap gap-2">
-              <button class="btn btn-outline-warning" onclick="deactivateAccount()">
-                <i class="bi bi-pause-circle me-2"></i> Desativar Conta
-              </button>
-              <button class="btn btn-outline-danger" onclick="deleteAccount()">
-                <i class="bi bi-trash me-2"></i> Excluir Conta Permanentemente
-              </button>
-            </div>
-            <small class="text-muted d-block mt-2">
-              Essas ações são irreversíveis. Tenha certeza antes de prosseguir.
-            </small>
-          </div>
-        </section>
-      </div>
-
-      <!-- Sidebar -->
-      <div class="col-lg-4">
-        <!-- Navegação Rápida -->
-        <div class="settings-card card mb-4">
-          <div class="card-header">
-            <h5><i class="bi bi-list-ul me-2"></i> Navegação Rápida</h5>
-          </div>
-          <div class="card-body p-0">
-            <div class="list-group list-group-flush">
-              <a href="#profile" class="list-group-item list-group-item-action">
-                <i class="bi bi-person-circle me-2" style="color: #FF0089;"></i> Perfil
-              </a>
-              <a href="#notifications" class="list-group-item list-group-item-action">
-                <i class="bi bi-bell me-2" style="color: #FF0089;"></i> Notificações
-              </a>
-              <a href="#appearance" class="list-group-item list-group-item-action">
-                <i class="bi bi-palette me-2" style="color: #FF0089;"></i> Aparência
-              </a>
-              <a href="#dashboard" class="list-group-item list-group-item-action">
-                <i class="bi bi-speedometer2 me-2" style="color: #FF0089;"></i> Dashboard
-              </a>
-              <a href="#privacy" class="list-group-item list-group-item-action">
-                <i class="bi bi-shield-lock me-2" style="color: #FF0089;"></i> Privacidade
-              </a>
-              <a href="#language" class="list-group-item list-group-item-action">
-                <i class="bi bi-globe me-2" style="color: #FF0089;"></i> Idioma e Região
-              </a>
-              <a href="#export" class="list-group-item list-group-item-action">
-                <i class="bi bi-download me-2" style="color: #FF0089;"></i> Exportação
-              </a>
-              <a href="#integrations" class="list-group-item list-group-item-action">
-                <i class="bi bi-link me-2" style="color: #FF0089;"></i> Integrações
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Status da Conta -->
-        <div class="settings-card card mb-4">
-          <div class="card-header">
-            <h5><i class="bi bi-shield-check me-2"></i> Status da Conta</h5>
-          </div>
-          <div class="card-body">
-            <div class="d-flex justify-content-between mb-2">
-              <span>Plano Atual</span>
-              <strong class="text-primary">Profissional</strong>
-            </div>
-            <div class="d-flex justify-content-between mb-2">
-              <span>Status</span>
-              <span class="badge bg-success">Ativo</span>
-            </div>
-            <div class="d-flex justify-content-between mb-2">
-              <span>Próxima cobrança</span>
-              <span>15/03/2024</span>
-            </div>
-            <div class="d-flex justify-content-between mb-3">
-              <span>Armazenamento</span>
-              <span>45% usado</span>
-            </div>
-            <div class="progress mb-3" style="height: 8px;">
-              <div class="progress-bar bg-primary" style="width: 45%"></div>
-            </div>
-            <a href="../../planos" class="btn btn-settings w-100">
-              <i class="bi bi-arrow-up-circle me-2"></i> Fazer Upgrade
             </a>
-          </div>
-        </div>
 
-        <!-- Links Relacionados -->
-        <div class="settings-card card related-links">
-          <div class="card-header">
-            <h5><i class="bi bi-link me-2"></i> Links Úteis</h5>
-          </div>
-          <div class="card-body p-0">
+            <!-- Desktop Menu -->
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav m-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../painel"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../launch/releases"><i class="bi bi-disc"></i> Lançamentos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../analytics/statistics"><i class="bi bi-bar-chart"></i>
+                            Estatísticas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../finances/overview"><i class="bi bi-currency-dollar"></i>
+                            Finanças</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../artists/artists-list"><i class="bi bi-person"></i> Artistas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../artists/youtube/ucy"><i class="bi bi-youtube"></i> Unificação de
+                            canal
+                            YouTube</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- User Icon (Right) -->
+            <div class="user-menu d-flex align-items-center">
+                <!-- Theme Toggle Button -->
+                <a class="theme-toggle text-white me-2" id="themeToggle">
+                    <i class="bi bi-sun" id="themeIcon"></i>
+                </a>
+                <a href="notifications" class="text-white me-2" aria-label="Notificações">
+                    <i class="bi bi-bell fs-4"></i>
+                    <span class="badge bg-danger">9</span>
+                </a>
+                <a href="#" class="text-white" data-bs-toggle="dropdown">
+                    <i class="bi bi-person-circle fs-4"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <a class="dropdown-item" href="../user/profile"><i class="bi bi-person me-2"></i>
+                            <strong><?php echo $first_name; ?></strong></a>
+                        <div class="text-white-50">
+                            &nbsp; &nbsp; &nbsp; &nbsp; (Conta <?php echo str_pad($id_users, 6, "0", STR_PAD_LEFT); ?>)
+                        </div>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider" />
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="../user/profile"><i class="bi bi-person me-2"></i> Meu Perfil</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="../account/manage-account"><i class="bi bi-tools me-2"></i>
+                            Gestão de
+                            Conta</a>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider" />
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="../page/settings"><i class="bi bi-gear me-2"></i>
+                            Configurações</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="../page/notifications"><i class="bi bi-bell me-2"></i>
+                            Notificações</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="../services/available-services"><i class="bi bi-star me-2"></i>
+                            Conta e
+                            serviços disponíveis</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="#?logout-wasomupfy" data-bs-toggle="modal"
+                            data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right me-2"></i>
+                            Desconectar-se</a>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider" />
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="../page/about"><i class="bi bi-info-circle me-2"></i> Sobre</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="../page/support"><i class="bi bi-headset me-2"></i> Enviar pedido
+                            de
+                            suporte</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="../page/faq"><i class="bi bi-chat-left-text me-2"></i> Perguntas
+                            frequentes</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="../page/help"><i class="bi bi-question-circle me-2"></i>
+                            Ajuda</a>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider" />
+                    </li>
+                    <li>
+                        <span class="dropdown-item-text" id="versionDropdown"></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Offcanvas Menu par Mobile e Desktop -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasMenuLabel">
+                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
+                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
+                        fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
+                </svg> -->
+                <span class="text-light" style="
+              font-weight: bold;
+              box-sizing: border-box;
+              text-transform: capitalize;
+              font-family: Arial, sans-serif;
+            ">WASOM UPFY</span>
+            </h5>
+            <button type="button" class="btn-close text-white" data-bs-dismiss="offcanvas" aria-label="Close">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        <div class="offcanvas-body">
             <ul class="nav flex-column">
-              <li class="nav-item">
-                <a class="nav-link" href="help">
-                  <i class="bi bi-question-circle"></i> Ajuda
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="support">
-                  <i class="bi bi-headset"></i> Suporte
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="faq">
-                  <i class="bi bi-chat-left-text"></i> Perguntas Frequentes
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="../../about">
-                  <i class="bi bi-info-circle"></i> Sobre
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="politicies/terms">
-                  <i class="bi bi-file-text"></i> Termos de Uso
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="politicies/privacy">
-                  <i class="bi bi-shield"></i> Política de Privacidade
-                </a>
-              </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../painel"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../launch/releases"><i class="bi bi-disc"></i> Lançamentos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../analytics/statistics"><i class="bi bi-bar-chart"></i> Estatísticas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../finances/overview"><i class="bi bi-currency-dollar"></i> Finanças</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../artists/artists-list"><i class="bi bi-person"></i> Artistas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../artists/youtube/ucy"><i class="bi bi-youtube"></i> Unificação de canal
+                        YouTube</a>
+                </li>
+                <!-- Links secundários exibidos apenas em mobile -->
+                <li class="nav-item d-lg-none">
+                    <a class="nav-link" href="../user/profile"><i class="bi bi-person-circle"></i> Meu Perfil</a>
+                </li>
+                <li class="nav-item d-lg-none">
+                    <a class="nav-link active" href="../page/settings"><i class="bi bi-gear"></i> Configurações</a>
+                </li>
+                <li class="nav-item d-lg-none">
+                    <a class="nav-link" href="../page/notifications"><i class="bi bi-bell"></i> Notificações</a>
+                </li>
+                <li class="nav-item d-lg-none">
+                    <a class="nav-link" href="../page/about"><i class="bi bi-info-circle"></i> Sobre</a>
+                </li>
+                <li class="nav-item d-lg-none">
+                    <a class="nav-link" href="../services/available-services"><i class="bi bi-star"></i> Conta e
+                        serviços
+                        disponíveis</a>
+                </li>
+                <li class="nav-item d-lg-none">
+                    <a class="nav-link" href="../page/help"><i class="bi bi-question-circle"></i> Ajuda</a>
+                </li>
+                <li class="nav-item d-lg-none">
+                    <a class="nav-link" href="#?logout-wasomupfy" data-bs-toggle="modal"
+                        data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right"></i> Desconectar-se</a>
+                </li>
             </ul>
-          </div>
         </div>
-
-        <!-- Versão -->
-        <div class="version-badge mt-3">
-          <i class="bi bi-info-circle"></i>
-          <span>Versão 2.0.0 (2025)</span>
-        </div>
-      </div>
     </div>
-  </main>
 
-  <!-- Bottom Navigation for Mobile -->
-  <nav class="bottom-nav d-lg-none">
-    <ul class="nav justify-content-around">
-      <li class="nav-item">
-        <a class="nav-link" href="../painel">
-          <i class="bi bi-speedometer2 d-block fs-5"></i>
-          <span class="small">Dashboard</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="../launch/releases">
-          <i class="bi bi-disc d-block fs-5"></i>
-          <span class="small">Lançamentos</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="../analytics/statistics">
-          <i class="bi bi-bar-chart d-block fs-5"></i>
-          <span class="small">Stats</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="../finances/overview">
-          <i class="bi bi-currency-dollar d-block fs-5"></i>
-          <span class="small">Finanças</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="../artists/artists-list">
-          <i class="bi bi-person d-block fs-5"></i>
-          <span class="small">Artistas</span>
-        </a>
-      </li>
-    </ul>
-  </nav>
-
-  <!-- ════ MODAL — Logout ════ -->
-  <div class="modal fade" id="logoutModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Terminar sessão</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <!-- Toast para Notificações de Status -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="connectionToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">Conexão</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Fechar"></button>
+            </div>
+            <div class="toast-body">
+                Você está offline. Alguns dados podem estar desatualizados.
+                <div class="mt-2">
+                    <button class="btn btn-pink btn-sm" onclick="tryReconnect()">
+                        Tentar Reconectar
+                    </button>
+                </div>
+            </div>
         </div>
-        <div class="modal-body">
-          <p class="text-center mb-0">
-            José da Costa, você tem certeza que deseja terminar sessão?
-          </p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-            Não, continuar
-          </button>
-          <button type="button" class="btn btn-danger" onclick="logout()">
-            Sim, terminar
-          </button>
-        </div>
-      </div>
     </div>
-  </div>
 
-  <!-- Modal Confirmação -->
-  <div class="modal fade" id="confirmModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="confirmModalTitle">Confirmar Ação</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <!-- ═══ MAIN ═══ -->
+    <main class="container my-4">
+
+        <?php if ($flash): ?>
+        <div class="alert alert-<?php echo $flash['type'] === 'success' ? 'success' : 'danger'; ?> alert-dismissible fade show mb-3"
+            role="alert" style="border-radius:12px">
+            <i
+                class="bi bi-<?php echo $flash['type'] === 'success' ? 'check-circle' : 'exclamation-triangle'; ?> me-2"></i>
+            <?php echo htmlspecialchars($flash['msg']); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-        <div class="modal-body" id="confirmModalBody">
-          Tem certeza que deseja realizar esta ação?
+        <?php endif; ?>
+
+        <!-- Header -->
+        <div class="settings-header">
+            <h1 class="fw-bold mb-2"><i class="bi bi-gear-fill me-2"></i>Configurações</h1>
+            <p class="lead mb-0" style="opacity:.85">Personaliza a tua experiência no Wasom Upfy — notificações,
+                aparência, privacidade e mais.</p>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-danger" id="confirmActionBtn">Confirmar</button>
+
+        <div class="row g-4">
+
+            <!-- ══ COLUNA PRINCIPAL ══ -->
+            <div class="col-lg-8">
+
+                <!-- ── Perfil ── -->
+                <section class="settings-section" id="profile">
+                    <h2><i class="bi bi-person-circle"></i>Perfil</h2>
+                    <div class="settings-card card">
+                        <div class="card-header">
+                            <h5>Informações da Conta</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="info-grid mb-3">
+                                <div class="info-item">
+                                    <strong>Nome</strong>
+                                    <p><?php echo trim($first_name . ' ' . $last_name) ?: '—'; ?></p>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Nome artístico / Editora</strong>
+                                    <p><?php echo $user_artist_name ?: '—'; ?></p>
+                                </div>
+                                <div class="info-item">
+                                    <strong>E-mail</strong>
+                                    <p><?php echo $email_user ?: '—'; ?></p>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Membro desde</strong>
+                                    <p><?php echo $member_since; ?></p>
+                                </div>
+                                <div class="info-item">
+                                    <strong>ID da conta</strong>
+                                    <p><?php echo str_pad($id_users, 6, '0', STR_PAD_LEFT); ?></p>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Plano</strong>
+                                    <p>
+                                        <?php if ($plan): ?>
+                                        <span
+                                            class="badge bg-success"><?php echo htmlspecialchars($plan['name_plan']); ?></span>
+                                        <?php else: ?>
+                                        <span class="badge bg-secondary">Sem plano activo</span>
+                                        <?php endif; ?>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="d-flex flex-wrap gap-2">
+                                <a href="../user/profile" class="btn btn-settings"><i
+                                        class="bi bi-pencil me-2"></i>Editar Perfil</a>
+                                <a href="../user/profile#password" class="btn btn-settings-outline"><i
+                                        class="bi bi-key me-2"></i>Alterar Senha</a>
+                                <a href="../user/profile" class="btn btn-settings-outline"><i
+                                        class="bi bi-tools me-2"></i>Gestão de Conta</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ── Notificações ── -->
+                <section class="settings-section" id="notifications">
+                    <h2><i class="bi bi-bell"></i>Notificações</h2>
+                    <div class="settings-card card">
+                        <div class="card-header">
+                            <h5>Preferências de Notificação</h5>
+                        </div>
+                        <div class="card-body">
+                            <form action="settings_process" method="POST">
+                                <input type="hidden" name="csrf_token"
+                                    value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>" />
+                                <input type="hidden" name="action" value="save_notifications" />
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="notif_email" name="notif_email"
+                                        value="1" <?php echo $s['notif_email'] ? 'checked' : ''; ?>>
+                                    <label class="form-check-label" for="notif_email">
+                                        <strong>Notificações por E-mail</strong>
+                                        <small class="d-block text-muted">Actualizações sobre streams, saques e
+                                            suporte</small>
+                                    </label>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="notif_push" name="notif_push"
+                                        value="1" <?php echo $s['notif_push'] ? 'checked' : ''; ?>>
+                                    <label class="form-check-label" for="notif_push">
+                                        <strong>Notificações Push</strong>
+                                        <small class="d-block text-muted">Alertas em tempo real no navegador</small>
+                                    </label>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="notif_streams"
+                                        name="notif_streams" value="1"
+                                        <?php echo $s['notif_streams'] ? 'checked' : ''; ?>>
+                                    <label class="form-check-label" for="notif_streams">
+                                        <strong>Alertas de Streams Altos</strong>
+                                        <small class="d-block text-muted">Notificar quando streams ultrapassarem 1.000
+                                            por faixa</small>
+                                    </label>
+                                </div>
+                                <div class="form-check mb-4">
+                                    <input class="form-check-input" type="checkbox" id="notif_weekly"
+                                        name="notif_weekly" value="1"
+                                        <?php echo $s['notif_weekly'] ? 'checked' : ''; ?>>
+                                    <label class="form-check-label" for="notif_weekly">
+                                        <strong>Resumo Semanal</strong>
+                                        <small class="d-block text-muted">Receber um resumo das actividades da semana
+                                            por e-mail</small>
+                                    </label>
+                                </div>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <button type="submit" class="btn btn-settings"><i
+                                            class="bi bi-check-lg me-2"></i>Guardar</button>
+                                    <button type="button" class="btn btn-settings-outline"
+                                        onclick="testPushNotification()"><i class="bi bi-bell me-2"></i>Testar
+                                        Push</button>
+                                    <a href="notifications" class="btn btn-settings-outline"><i
+                                            class="bi bi-list me-2"></i>Ver Notificações</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ── Aparência ── -->
+                <section class="settings-section" id="appearance">
+                    <h2><i class="bi bi-palette"></i>Aparência</h2>
+                    <div class="settings-card card">
+                        <div class="card-header">
+                            <h5>Tema e Interface</h5>
+                        </div>
+                        <div class="card-body">
+                            <form action="settings_process" method="POST" id="formAppearance">
+                                <input type="hidden" name="csrf_token"
+                                    value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>" />
+                                <input type="hidden" name="action" value="save_appearance" />
+                                <input type="hidden" name="theme" id="hiddenTheme"
+                                    value="<?php echo htmlspecialchars($s['theme']); ?>" />
+
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold mb-3">Tema</label>
+                                    <div class="row g-2">
+                                        <?php
+                    $themes = [
+                      'dark'   => ['icon' => 'bi-moon-stars-fill', 'label' => 'Escuro',  'desc' => 'Fundo escuro'],
+                      'light'  => ['icon' => 'bi-sun-fill',        'label' => 'Claro',   'desc' => 'Fundo claro'],
+                      'system' => ['icon' => 'bi-laptop',          'label' => 'Sistema', 'desc' => 'Igual ao SO'],
+                    ];
+                    foreach ($themes as $val => $t): ?>
+                                        <div class="col-4">
+                                            <label
+                                                class="theme-option <?php echo $s['theme'] === $val ? 'active' : ''; ?>"
+                                                id="themeCard_<?php echo $val; ?>"
+                                                onclick="selectTheme('<?php echo $val; ?>')">
+                                                <div class="theme-icon"><i class="bi <?php echo $t['icon']; ?>"></i>
+                                                </div>
+                                                <div class="theme-label"><?php echo $t['label']; ?></div>
+                                                <div style="font-size:.68rem;color:var(--text-muted,#6c757d)">
+                                                    <?php echo $t['desc']; ?></div>
+                                            </label>
+                                        </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="ui_density" class="form-label fw-bold">Densidade da Interface</label>
+                                    <select class="form-select" id="ui_density" name="ui_density">
+                                        <option value="comfortable"
+                                            <?php echo $s['ui_density'] === 'comfortable' ? 'selected' : ''; ?>>
+                                            Confortável — mais espaço entre elementos</option>
+                                        <option value="compact"
+                                            <?php echo $s['ui_density'] === 'compact'     ? 'selected' : ''; ?>>Compacto
+                                            —
+                                            padrão</option>
+                                        <option value="cozy"
+                                            <?php echo $s['ui_density'] === 'cozy'        ? 'selected' : ''; ?>>
+                                            Aconchegante — elementos maiores</option>
+                                    </select>
+                                </div>
+
+                                <button type="submit" class="btn btn-settings"><i
+                                        class="bi bi-check-lg me-2"></i>Guardar Aparência</button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ── Widgets ── -->
+                <section class="settings-section" id="dashboard">
+                    <h2><i class="bi bi-speedometer2"></i>Dashboard</h2>
+                    <div class="settings-card card">
+                        <div class="card-header">
+                            <h5>Widgets e Exibição</h5>
+                        </div>
+                        <div class="card-body">
+                            <form action="settings_process" method="POST">
+                                <input type="hidden" name="csrf_token"
+                                    value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>" />
+                                <input type="hidden" name="action" value="save_widgets" />
+                                <p class="small text-muted mb-3">Escolhe quais secções aparecem no teu painel principal.
+                                </p>
+                                <?php
+                $widgets = [
+                  'widget_streams'   => ['label' => 'Gráfico de Streams',    'desc' => 'Evolução mensal dos streams'],
+                  'widget_financial' => ['label' => 'Resumo Financeiro',      'desc' => 'Balanço de royalties e carteira'],
+                  'widget_releases'  => ['label' => 'Lançamentos Recentes',   'desc' => 'Últimos álbuns/singles submetidos'],
+                  'widget_artists'   => ['label' => 'Top Artistas',           'desc' => 'Artistas com mais streams'],
+                  'widget_activity'  => ['label' => 'Feed de Actividades',    'desc' => 'Últimas acções na plataforma'],
+                ];
+                foreach ($widgets as $key => $w): ?>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="<?php echo $key; ?>"
+                                        name="<?php echo $key; ?>" value="1" <?php echo $s[$key] ? 'checked' : ''; ?>>
+                                    <label class="form-check-label" for="<?php echo $key; ?>">
+                                        <?php echo $w['label']; ?>
+                                        <small class="d-block text-muted"><?php echo $w['desc']; ?></small>
+                                    </label>
+                                </div>
+                                <?php endforeach; ?>
+                                <div class="mt-3">
+                                    <button type="submit" class="btn btn-settings"><i
+                                            class="bi bi-check-lg me-2"></i>Guardar Widgets</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ── Privacidade ── -->
+                <section class="settings-section" id="privacy">
+                    <h2><i class="bi bi-shield-lock"></i>Privacidade</h2>
+                    <div class="settings-card card">
+                        <div class="card-header">
+                            <h5>Controlos de Privacidade</h5>
+                        </div>
+                        <div class="card-body">
+                            <form action="settings_process" method="POST">
+                                <input type="hidden" name="csrf_token"
+                                    value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>" />
+                                <input type="hidden" name="action" value="save_privacy" />
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="private_stats"
+                                        name="private_stats" value="1"
+                                        <?php echo $s['private_stats'] ? 'checked' : ''; ?>>
+                                    <label class="form-check-label" for="private_stats">
+                                        <strong>Estatísticas privadas</strong>
+                                        <small class="d-block text-muted">Visíveis apenas para mim e para a equipa Wasom
+                                            Upfy</small>
+                                    </label>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="accept_cookies"
+                                        name="accept_cookies" value="1"
+                                        <?php echo $s['accept_cookies'] ? 'checked' : ''; ?>>
+                                    <label class="form-check-label" for="accept_cookies">
+                                        <strong>Aceitar cookies analíticos</strong>
+                                        <small class="d-block text-muted">Permite melhorar a experiência com base no
+                                            comportamento de navegação</small>
+                                    </label>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="share_data" name="share_data"
+                                        value="1" <?php echo $s['share_data'] ? 'checked' : ''; ?>>
+                                    <label class="form-check-label" for="share_data">
+                                        <strong>Partilhar dados anonimizados</strong>
+                                        <small class="d-block text-muted">Contribuir para a melhoria do serviço — sem
+                                            identificação pessoal</small>
+                                    </label>
+                                </div>
+                                <button type="submit" class="btn btn-settings"><i
+                                        class="bi bi-check-lg me-2"></i>Guardar Privacidade</button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ── Idioma e Região ── -->
+                <section class="settings-section" id="language">
+                    <h2><i class="bi bi-globe"></i>Idioma e Região</h2>
+                    <div class="settings-card card">
+                        <div class="card-header">
+                            <h5>Preferências Regionais</h5>
+                        </div>
+                        <div class="card-body">
+                            <form action="settings_process" method="POST">
+                                <input type="hidden" name="csrf_token"
+                                    value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>" />
+                                <input type="hidden" name="action" value="save_language" />
+                                <div class="mb-3">
+                                    <label for="language" class="form-label fw-semibold">Idioma</label>
+                                    <select class="form-select" id="language" name="language">
+                                        <option value="pt-ao"
+                                            <?php echo $s['language'] === 'pt-ao' ? 'selected' : ''; ?>>
+                                            Português (Angola)</option>
+                                        <option value="pt-br"
+                                            <?php echo $s['language'] === 'pt-br' ? 'selected' : ''; ?>>
+                                            Português (Brasil)</option>
+                                        <option value="pt-pt"
+                                            <?php echo $s['language'] === 'pt-pt' ? 'selected' : ''; ?>>
+                                            Português (Portugal)</option>
+                                        <option value="en" <?php echo $s['language'] === 'en'    ? 'selected' : ''; ?>>
+                                            English (US)</option>
+                                        <option value="fr" <?php echo $s['language'] === 'fr'    ? 'selected' : ''; ?>>
+                                            Français</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="currency" class="form-label fw-semibold">Moeda Principal</label>
+                                    <select class="form-select" id="currency" name="currency">
+                                        <option value="AOA" <?php echo $s['currency'] === 'AOA' ? 'selected' : ''; ?>>
+                                            AOA
+                                            — Kwanza Angolano</option>
+                                        <option value="USD" <?php echo $s['currency'] === 'USD' ? 'selected' : ''; ?>>
+                                            USD
+                                            — Dólar Americano</option>
+                                        <option value="EUR" <?php echo $s['currency'] === 'EUR' ? 'selected' : ''; ?>>
+                                            EUR
+                                            — Euro</option>
+                                        <option value="BRL" <?php echo $s['currency'] === 'BRL' ? 'selected' : ''; ?>>
+                                            BRL
+                                            — Real Brasileiro</option>
+                                    </select>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="date_format" class="form-label fw-semibold">Formato de Data</label>
+                                    <select class="form-select" id="date_format" name="date_format">
+                                        <option value="dd/mm/yyyy"
+                                            <?php echo $s['date_format'] === 'dd/mm/yyyy'  ? 'selected' : ''; ?>>
+                                            DD/MM/YYYY (padrão Angola/Portugal)</option>
+                                        <option value="mm/dd/yyyy"
+                                            <?php echo $s['date_format'] === 'mm/dd/yyyy'  ? 'selected' : ''; ?>>
+                                            MM/DD/YYYY (EUA)</option>
+                                        <option value="yyyy-mm-dd"
+                                            <?php echo $s['date_format'] === 'yyyy-mm-dd'  ? 'selected' : ''; ?>>
+                                            YYYY-MM-DD (ISO 8601)</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-settings"><i
+                                        class="bi bi-check-lg me-2"></i>Guardar Preferências</button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ── Integrações ── -->
+                <section class="settings-section" id="integrations">
+                    <h2><i class="bi bi-link-45deg"></i>Integrações</h2>
+                    <div class="settings-card card">
+                        <div class="card-header">
+                            <h5>Plataformas Conectadas</h5>
+                        </div>
+                        <div class="card-body">
+                            <?php if (!empty($artists)):
+                foreach ($artists as $art): ?>
+
+                            <?php if (!empty($art['youtube_url'])): ?>
+                            <div class="integration-row">
+                                <div class="d-flex align-items-center gap-3">
+                                    <i class="bi bi-youtube text-danger fs-4"></i>
+                                    <div>
+                                        <div class="fw-semibold small">YouTube</div>
+                                        <div class="text-muted" style="font-size:.72rem">
+                                            <?php echo htmlspecialchars($art['stage_name']); ?></div>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-success">Conectado</span>
+                                    <a href="<?php echo htmlspecialchars($art['youtube_url']); ?>" target="_blank"
+                                        class="btn btn-sm btn-outline-secondary"
+                                        style="border-radius:8px;font-size:.72rem">
+                                        <i class="bi bi-box-arrow-up-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <?php endif; ?>
+
+                            <?php if (!empty($art['spotify_url'])): ?>
+                            <div class="integration-row">
+                                <div class="d-flex align-items-center gap-3">
+                                    <i class="bi bi-spotify text-success fs-4"></i>
+                                    <div>
+                                        <div class="fw-semibold small">Spotify for Artists</div>
+                                        <div class="text-muted" style="font-size:.72rem">
+                                            <?php echo htmlspecialchars($art['stage_name']); ?></div>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-success">Conectado</span>
+                                    <a href="<?php echo htmlspecialchars($art['spotify_url']); ?>" target="_blank"
+                                        class="btn btn-sm btn-outline-secondary"
+                                        style="border-radius:8px;font-size:.72rem">
+                                        <i class="bi bi-box-arrow-up-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <?php endif; ?>
+
+                            <?php if (!empty($art['instagram_url'])): ?>
+                            <div class="integration-row">
+                                <div class="d-flex align-items-center gap-3">
+                                    <i class="bi bi-instagram fs-4" style="color:#e1306c"></i>
+                                    <div>
+                                        <div class="fw-semibold small">Instagram</div>
+                                        <div class="text-muted" style="font-size:.72rem">
+                                            <?php echo htmlspecialchars($art['stage_name']); ?></div>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-success">Conectado</span>
+                                    <a href="<?php echo htmlspecialchars($art['instagram_url']); ?>" target="_blank"
+                                        class="btn btn-sm btn-outline-secondary"
+                                        style="border-radius:8px;font-size:.72rem">
+                                        <i class="bi bi-box-arrow-up-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <?php endif; ?>
+
+                            <?php endforeach;
+              else: ?>
+                            <p class="small text-muted">Nenhum artista com integrações configuradas.</p>
+                            <?php endif; ?>
+
+                            <!-- Em breve -->
+                            <?php foreach (
+                [
+                  ['bi-apple', '#555', 'Apple Music for Artists'],
+                  ['bi-tiktok', '#69c9d0', 'TikTok for Artists'],
+                ] as [$icon, $color, $name]
+              ): ?>
+                            <div class="integration-row" style="opacity:.5">
+                                <div class="d-flex align-items-center gap-3">
+                                    <i class="bi <?php echo $icon; ?> fs-4" style="color:<?php echo $color; ?>"></i>
+                                    <div>
+                                        <div class="fw-semibold small"><?php echo $name; ?></div>
+                                        <div class="text-muted" style="font-size:.72rem">Em breve</div>
+                                    </div>
+                                </div>
+                                <span class="badge bg-secondary">Em breve</span>
+                            </div>
+                            <?php endforeach; ?>
+
+                            <div class="d-flex gap-2 mt-3">
+                                <a href="../artists/youtube/ucy" class="btn btn-settings-outline"><i
+                                        class="bi bi-youtube me-1"></i>Gerir YouTube</a>
+                                <a href="../artists/artists-list" class="btn btn-settings-outline"><i
+                                        class="bi bi-person me-1"></i>Ver Artistas</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ══ ZONA DE PERIGO ══ -->
+                <section class="settings-section" id="danger">
+                    <h2 style="color:#dc3545"><i class="bi bi-exclamation-triangle"></i>Zona de Perigo</h2>
+                    <div class="danger-zone">
+                        <h6><i class="bi bi-exclamation-circle me-2"></i>Acções sensíveis — procede com cautela</h6>
+
+                        <!-- Encerrar sessões -->
+                        <div class="danger-item">
+                            <div class="danger-item-info">
+                                <div class="title"><i class="bi bi-shield-x me-2 text-warning"></i>Encerrar todas as
+                                    sessões activas</div>
+                                <div class="desc">Termina o acesso automático (remember me) em todos os dispositivos.
+                                </div>
+                            </div>
+                            <form action="settings_process" method="POST" style="flex-shrink:0">
+                                <input type="hidden" name="csrf_token"
+                                    value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>" />
+                                <input type="hidden" name="action" value="revoke_sessions" />
+                                <button type="submit" class="btn btn-outline-warning btn-sm"
+                                    style="border-radius:9px;white-space:nowrap">
+                                    <i class="bi bi-door-open me-1"></i>Encerrar sessões
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Alterar senha -->
+                        <div class="danger-item">
+                            <div class="danger-item-info">
+                                <div class="title"><i class="bi bi-key me-2 text-warning"></i>Alterar senha</div>
+                                <div class="desc">Recomendamos alterar a senha regularmente para proteger a tua conta.
+                                </div>
+                            </div>
+                            <a href="../user/profile#seguranca" class="btn btn-outline-warning btn-sm"
+                                style="border-radius:9px;flex-shrink:0;white-space:nowrap">
+                                <i class="bi bi-key me-1"></i>Alterar senha
+                            </a>
+                        </div>
+
+                        <!-- Revogar analytics -->
+                        <div class="danger-item">
+                            <div class="danger-item-info">
+                                <div class="title"><i class="bi bi-slash-circle me-2 text-warning"></i>Revogar acesso a
+                                    dados analíticos</div>
+                                <div class="desc">Remove a autorização de partilha de dados com plataformas terceiras.
+                                </div>
+                            </div>
+                            <form action="settings_process" method="POST" style="flex-shrink:0">
+                                <input type="hidden" name="csrf_token"
+                                    value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>" />
+                                <input type="hidden" name="action" value="revoke_analytics" />
+                                <button type="submit" class="btn btn-outline-warning btn-sm"
+                                    style="border-radius:9px;white-space:nowrap">
+                                    <i class="bi bi-slash-circle me-1"></i>Revogar acesso
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Desactivar conta → profile -->
+                        <div class="danger-item">
+                            <div class="danger-item-info">
+                                <div class="title"><i class="bi bi-pause-circle me-2 text-danger"></i>Desactivar conta
+                                    temporariamente</div>
+                                <div class="desc">A conta fica suspensa. Para confirmar, serás redirecccionado para a
+                                    Gestão de Conta.</div>
+                            </div>
+                            <a href="../user/profile#perigo" class="btn btn-outline-danger btn-sm"
+                                style="border-radius:9px;flex-shrink:0;white-space:nowrap">
+                                <i class="bi bi-pause-circle me-1"></i>Desactivar
+                            </a>
+                        </div>
+
+                        <!-- Eliminar conta → profile -->
+                        <div class="danger-item">
+                            <div class="danger-item-info">
+                                <div class="title"><i class="bi bi-trash3 me-2 text-danger"></i>Eliminar conta
+                                    permanentemente</div>
+                                <div class="desc">Todos os teus dados serão removidos de forma definitiva. Para
+                                    confirmar, serás redirecccionado para a Gestão de Conta.</div>
+                            </div>
+                            <a href="../user/profile#perigo" class="btn btn-danger btn-sm"
+                                style="border-radius:9px;flex-shrink:0;white-space:nowrap">
+                                <i class="bi bi-trash3 me-1"></i>Eliminar conta
+                            </a>
+                        </div>
+
+                    </div>
+                </section>
+
+            </div><!-- /col-lg-8 -->
+
+            <!-- ══ SIDEBAR ══ -->
+            <div class="col-lg-4">
+
+                <!-- Navegação rápida -->
+                <div class="settings-card card mb-3">
+                    <div class="card-header">
+                        <h5><i class="bi bi-list-ul me-2"></i>Navegação Rápida</h5>
+                    </div>
+                    <div class="card-body p-2">
+                        <div class="list-group quick-nav">
+                            <?php
+              $nav = [
+                '#profile'       => ['bi-person-circle',        'Perfil'],
+                '#notifications' => ['bi-bell',                 'Notificações'],
+                '#appearance'    => ['bi-palette',              'Aparência'],
+                '#dashboard'     => ['bi-speedometer2',         'Dashboard'],
+                '#privacy'       => ['bi-shield-lock',          'Privacidade'],
+                '#language'      => ['bi-globe',                'Idioma e Região'],
+                '#integrations'  => ['bi-link-45deg',           'Integrações'],
+                '#danger'        => ['bi-exclamation-triangle', 'Zona de Perigo'],
+              ];
+              foreach ($nav as $href => [$icon, $label]): ?>
+                            <a href="<?php echo $href; ?>" class="list-group-item list-group-item-action"
+                                style="<?php echo $href === '#danger' ? 'color:#dc3545!important' : ''; ?>">
+                                <i class="bi <?php echo $icon; ?> me-2" style="color:#FF0089"></i><?php echo $label; ?>
+                            </a>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estado da conta -->
+                <div class="settings-card card mb-3">
+                    <div class="card-header">
+                        <h5><i class="bi bi-shield-check me-2"></i>Estado da Conta</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="account-status-row">
+                            <span class="text-muted small">Plano</span>
+                            <?php if ($plan): ?>
+                            <strong class="small"
+                                style="color:#FF0089"><?php echo htmlspecialchars($plan['name_plan']); ?></strong>
+                            <?php else: ?>
+                            <span class="badge bg-secondary">Sem plano</span>
+                            <?php endif; ?>
+                        </div>
+                        <div class="account-status-row">
+                            <span class="text-muted small">Estado</span>
+                            <span
+                                class="badge <?php echo $status_info['class']; ?>"><?php echo $status_info['label']; ?></span>
+                        </div>
+                        <?php if ($plan && !empty($plan['expires_at'])): ?>
+                        <div class="account-status-row">
+                            <span class="text-muted small">Validade</span>
+                            <span class="small"><?php echo date('d/m/Y', strtotime($plan['expires_at'])); ?></span>
+                        </div>
+                        <?php endif; ?>
+                        <div class="account-status-row">
+                            <span class="text-muted small">Membro desde</span>
+                            <span class="small"><?php echo $member_since; ?></span>
+                        </div>
+                        <div class="account-status-row">
+                            <span class="text-muted small">ID</span>
+                            <span class="small fw-bold"><?php echo str_pad($id_users, 6, '0', STR_PAD_LEFT); ?></span>
+                        </div>
+                        <a href="../services/available-services" class="btn btn-settings w-100 mt-3">
+                            <i class="bi bi-arrow-up-circle me-2"></i>Ver planos
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Actividade recente -->
+                <div class="settings-card card mb-3">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Actividade Recente</h5>
+                    </div>
+                    <div class="card-body py-2">
+                        <?php if (!empty($recent_activity)):
+              foreach ($recent_activity as $act): ?>
+                        <div class="activity-row">
+                            <div class="activity-dot"></div>
+                            <div>
+                                <div style="font-size:.78rem"><?php echo htmlspecialchars($act['description'] ?? ''); ?>
+                                </div>
+                                <div style="font-size:.68rem;color:var(--text-muted,#6c757d)">
+                                    <?php echo !empty($act['creat_activity']) ? date('d/m/Y H:i', strtotime($act['creat_activity'])) : '—'; ?>
+                                </div>
+                            </div>
+                        </div>
+                        <?php endforeach;
+            else: ?>
+                        <p class="small text-muted mb-0">Sem actividade registada.</p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <!-- Links úteis -->
+                <div class="settings-card card mb-3">
+                    <div class="card-header">
+                        <h5><i class="bi bi-link me-2"></i>Links Úteis</h5>
+                    </div>
+                    <div class="card-body p-2">
+                        <ul class="nav flex-column">
+                            <?php foreach (
+                [
+                  ['help',                    'bi-question-circle', 'Ajuda'],
+                  ['support',                 'bi-headset',         'Suporte'],
+                  ['faq',                     'bi-chat-left-text',  'Perguntas Frequentes'],
+                  ['politicies/terms',        'bi-file-text',       'Termos de Uso'],
+                  ['politicies/privacy',      'bi-shield',          'Política de Privacidade'],
+                ] as [$href, $icon, $label]
+              ): ?>
+                            <li class="nav-item">
+                                <a class="nav-link py-2" href="<?php echo $href; ?>" style="font-size:.84rem">
+                                    <i class="bi <?php echo $icon; ?> me-2"
+                                        style="color:#FF0089"></i><?php echo $label; ?>
+                                </a>
+                            </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Versão -->
+                <div class="d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill text-white mb-4"
+                    style="background:linear-gradient(135deg,#FF0089,#c8006e);font-size:.8rem">
+                    <i class="bi bi-info-circle"></i>
+                    <span><?php echo APP_NAME; ?> — Versão 2.0 (2026)</span>
+                </div>
+
+            </div><!-- /sidebar -->
+        </div><!-- /row -->
+    </main>
+
+    <!-- Bottom Nav Mobile -->
+    <nav class="bottom-nav d-lg-none">
+        <ul class="nav justify-content-around">
+            <li class="nav-item"><a class="nav-link" href="../painel"><i
+                        class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="../launch/releases"><i
+                        class="bi bi-disc"></i><span>Lançamentos</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="../analytics/statistics"><i
+                        class="bi bi-bar-chart"></i><span>Stats</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="../finances/overview"><i
+                        class="bi bi-currency-dollar"></i><span>Finanças</span></a></li>
+            <li class="nav-item"><a class="nav-link active" href="settings"><i
+                        class="bi bi-gear"></i><span>Settings</span></a></li>
+        </ul>
+    </nav>
+
+    <!-- Modal Logout -->
+    <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-dark">Terminar sessão</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center text-dark">
+                    <p>Tens a certeza de que desejas terminar sessão, <strong><?php echo $first_name; ?></strong>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Não, continuar</button>
+                    <a href="../logout" class="btn btn-danger">Sim, terminar sessão</a>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="../../js/theme.wp.js"></script>
-  <script src="../../js/wp.tools.js"></script>
+    <!-- Toast -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:1200">
+        <div id="mainToast" class="toast align-items-center border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body" id="mainToastBody"></div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
 
-  <script>
-    // Inicialização
-    document.addEventListener('DOMContentLoaded', function() {
-      // Tooltips
-      const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-      tooltipTriggerList.map(function(tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-      });
+    <!-- ═══ JS ═══ -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../js/wp.tools.js"></script>
+    <script>
+    // ── Toast helper ──────────────────────────────
+    function showToast(msg, type = 'pink') {
+        const el = document.getElementById('mainToast');
+        el.className = `toast align-items-center border-0 toast-${type}`;
+        document.getElementById('mainToastBody').textContent = msg;
+        bootstrap.Toast.getOrCreateInstance(el, {
+            delay: 3500
+        }).show();
+    }
 
-      // Carregar configurações salvas
-      loadSettings();
+    // ══════════════════════════════════════════════════════
+    // TEMA — alinhado com o teu sistema theme.wp.js
+    // O teu sistema usa: body.classList.add('dark-mode')
+    //                    body.classList.add('light-mode')
+    //                    localStorage.setItem('theme', val)
+    // ══════════════════════════════════════════════════════
+    function selectTheme(val) {
+        // 1. Actualiza o campo hidden do formulário
+        document.getElementById('hiddenTheme').value = val;
 
-      // Status de conexão
-      updateConnectionStatus();
-      window.addEventListener('online', updateConnectionStatus);
-      window.addEventListener('offline', updateConnectionStatus);
+        // 2. Actualiza os cards visuais
+        document.querySelectorAll('.theme-option').forEach(el => el.classList.remove('active'));
+        const card = document.getElementById('themeCard_' + val);
+        if (card) card.classList.add('active');
 
-      // Highlight active link
-      highlightActiveLink();
-    });
+        // 3. Aplica o tema no body (igual ao theme.wp.js)
+        const body = document.body;
+        if (val === 'dark') {
+            body.classList.add('dark-mode');
+            body.classList.remove('light-mode');
+            document.getElementById('themeIcon').className = 'bi bi-moon';
+        } else if (val === 'light') {
+            body.classList.add('light-mode');
+            body.classList.remove('dark-mode');
+            document.getElementById('themeIcon').className = 'bi bi-sun';
+        } else {
+            // system: respeita a preferência do SO
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (prefersDark) {
+                body.classList.add('dark-mode');
+                body.classList.remove('light-mode');
+                document.getElementById('themeIcon').className = 'bi bi-moon';
+            } else {
+                body.classList.add('light-mode');
+                body.classList.remove('dark-mode');
+                document.getElementById('themeIcon').className = 'bi bi-sun';
+            }
+        }
 
-    // Toast
-    const toast = new bootstrap.Toast(document.getElementById('settingsToast'));
+        // 4. Guarda no localStorage (para o toggle da navbar também ler)
+        localStorage.setItem('theme', val);
+    }
 
-    // Funções de Tema
+    // Ao carregar: sincroniza os cards com o tema guardado
+    (function() {
+        const saved = localStorage.getItem('theme') || '<?php echo htmlspecialchars($s["theme"]); ?>';
+        selectTheme(saved);
+    })();
+
+    // Toggle da navbar também actualiza o card seleccionado
     const themeToggle = document.getElementById('themeToggle');
-    const themeIcon = document.getElementById('themeIcon');
-
-    function applyTheme(theme) {
-      if (theme === 'dark') {
-        document.body.classList.add('dark-mode');
-        document.body.classList.remove('light-mode');
-        themeIcon.classList.remove('bi-sun');
-        themeIcon.classList.add('bi-moon');
-        document.querySelectorAll('input[name="themeOptions"]').forEach(input => {
-          input.checked = input.value === 'dark';
+    if (themeToggle) {
+        themeToggle.addEventListener('click', function() {
+            const isDark = document.body.classList.contains('dark-mode');
+            selectTheme(isDark ? 'light' : 'dark');
         });
-      } else if (theme === 'light') {
-        document.body.classList.add('light-mode');
-        document.body.classList.remove('dark-mode');
-        themeIcon.classList.remove('bi-moon');
-        themeIcon.classList.add('bi-sun');
-        document.querySelectorAll('input[name="themeOptions"]').forEach(input => {
-          input.checked = input.value === 'light';
-        });
-      } else {
-        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        applyTheme(prefersDark ? 'dark' : 'light');
-        document.querySelectorAll('input[name="themeOptions"]').forEach(input => {
-          input.checked = input.value === 'system';
-        });
-      }
     }
 
-    themeToggle.addEventListener('click', () => {
-      const isDarkMode = document.body.classList.contains('dark-mode');
-      const newTheme = isDarkMode ? 'light' : 'dark';
-      applyTheme(newTheme);
-      localStorage.setItem('theme', newTheme);
-      showToast('Tema alterado com sucesso!');
-    });
-
-    // Theme Settings
-    document.querySelectorAll('input[name="themeOptions"]').forEach(input => {
-      input.addEventListener('change', () => {
-        const theme = input.value;
-        if (theme === 'system') {
-          localStorage.removeItem('theme');
-          applyTheme('system');
-        } else {
-          applyTheme(theme);
-          localStorage.setItem('theme', theme);
-        }
-        showToast('Tema salvo com sucesso!');
-      });
-    });
-
-    // Carregar configurações
-    function loadSettings() {
-      // Display Settings
-      const displaySettings = JSON.parse(localStorage.getItem('displaySettings')) || {};
-      document.getElementById('showStreamChart').checked = displaySettings.showStreamChart !== false;
-      document.getElementById('showFinancialSummary').checked = displaySettings.showFinancialSummary !== false;
-      document.getElementById('showRecentReleases').checked = displaySettings.showRecentReleases || false;
-      document.getElementById('showTopArtists').checked = displaySettings.showTopArtists !== false;
-      document.getElementById('showActivityFeed').checked = displaySettings.showActivityFeed || false;
-
-      // Privacy Settings
-      const privacySettings = JSON.parse(localStorage.getItem('privacySettings')) || {};
-      document.getElementById('privateStats').checked = privacySettings.privateStats !== false;
-      document.getElementById('acceptCookies').checked = privacySettings.acceptCookies || false;
-      document.getElementById('shareData').checked = privacySettings.shareData || false;
-      document.getElementById('twoFactorAuth').checked = privacySettings.twoFactorAuth || false;
-
-      // Language Settings
-      const languageSettings = JSON.parse(localStorage.getItem('languageSettings')) || {};
-      document.getElementById('languageSelect').value = languageSettings.language || 'pt-br';
-      document.getElementById('currencySelect').value = languageSettings.currency || 'BRL';
-      document.getElementById('dateFormat').value = languageSettings.dateFormat || 'dd/mm/yyyy';
-      document.getElementById('exportFormat').value = languageSettings.exportFormat || 'csv';
-
-      // Notification Settings
-      const notificationSettings = JSON.parse(localStorage.getItem('notificationSettings')) || {};
-      document.getElementById('emailNotifications').checked = notificationSettings.emailNotifications !== false;
-      document.getElementById('pushNotifications').checked = notificationSettings.pushNotifications || false;
-      document.getElementById('highStreamNotifications').checked = notificationSettings.highStreamNotifications || false;
-      document.getElementById('weeklyDigest').checked = notificationSettings.weeklyDigest || false;
-    }
-
-    // Salvar configurações
-    function saveNotificationSettings() {
-      const settings = {
-        emailNotifications: document.getElementById('emailNotifications').checked,
-        pushNotifications: document.getElementById('pushNotifications').checked,
-        highStreamNotifications: document.getElementById('highStreamNotifications').checked,
-        weeklyDigest: document.getElementById('weeklyDigest').checked
-      };
-      localStorage.setItem('notificationSettings', JSON.stringify(settings));
-      showToast('Preferências de notificação salvas!');
-    }
-
-    function saveAppearanceSettings() {
-      showToast('Configurações de aparência salvas!');
-    }
-
-    function saveDisplaySettings() {
-      const settings = {
-        showStreamChart: document.getElementById('showStreamChart').checked,
-        showFinancialSummary: document.getElementById('showFinancialSummary').checked,
-        showRecentReleases: document.getElementById('showRecentReleases').checked,
-        showTopArtists: document.getElementById('showTopArtists').checked,
-        showActivityFeed: document.getElementById('showActivityFeed').checked
-      };
-      localStorage.setItem('displaySettings', JSON.stringify(settings));
-      showToast('Widgets do dashboard salvos!');
-    }
-
-    function savePrivacySettings() {
-      const settings = {
-        privateStats: document.getElementById('privateStats').checked,
-        acceptCookies: document.getElementById('acceptCookies').checked,
-        shareData: document.getElementById('shareData').checked,
-        twoFactorAuth: document.getElementById('twoFactorAuth').checked
-      };
-      localStorage.setItem('privacySettings', JSON.stringify(settings));
-      showToast('Configurações de privacidade salvas!');
-    }
-
-    function saveLanguageSettings() {
-      const settings = {
-        language: document.getElementById('languageSelect').value,
-        currency: document.getElementById('currencySelect').value,
-        dateFormat: document.getElementById('dateFormat').value,
-        exportFormat: document.getElementById('exportFormat').value
-      };
-      localStorage.setItem('languageSettings', JSON.stringify(settings));
-      showToast('Preferências regionais salvas!');
-    }
-
-    // Exportar dados
-    function exportData() {
-      const format = document.getElementById('exportFormat').value;
-
-      if (format === 'csv') {
-        const sampleData = 'Data,Streams,Receita,Plataforma\n2025-02-18,1234,$56.78,Spotify\n2025-02-17,2345,$89.01,YouTube';
-        const blob = new Blob([sampleData], {
-          type: 'text/csv'
-        });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `relatorio_${new Date().toISOString().split('T')[0]}.csv`;
-        a.click();
-        window.URL.revokeObjectURL(url);
-        showToast('Relatório exportado com sucesso!');
-      } else {
-        showToast(`Exportação em ${format.toUpperCase()} será implementada em breve.`, 'info');
-      }
-    }
-
-    // Funções auxiliares
-    let exportPeriod = 'month';
-
-    function setExportPeriod(period) {
-      exportPeriod = period;
-      document.querySelectorAll('[onclick^="setExportPeriod"]').forEach(btn => {
-        btn.classList.remove('active');
-      });
-      event.target.classList.add('active');
-    }
-
-    function scheduleExport() {
-      showToast('Exportação agendada! Você receberá um e-mail quando estiver pronta.', 'info');
-    }
-
-    function setPrimaryColor(color) {
-      document.documentElement.style.setProperty('--primary-color', color);
-      showToast('Cor primária alterada!');
-    }
-
-    // Testar notificação push
+    // ── Push notification test ────────────────────
     function testPushNotification() {
-      if ('Notification' in window) {
-        Notification.requestPermission().then(permission => {
-          if (permission === 'granted') {
-            new Notification('Wasom Upfy', {
-              body: 'Esta é uma notificação de teste!',
-              icon: '../../assets/img/icones/wasomupfy_fiv.png',
-              badge: '../../assets/img/icones/wasomupfy_fiv.png'
-            });
-            showToast('Notificação de teste enviada!');
-          } else {
-            showToast('Permissão para notificações negada.', 'error');
-          }
-        });
-      } else {
-        showToast('Notificações não suportadas neste navegador.', 'error');
-      }
-    }
-
-    // Ações de conta
-    function deactivateAccount() {
-      document.getElementById('confirmModalTitle').textContent = 'Desativar Conta';
-      document.getElementById('confirmModalBody').innerHTML = `
-        <p>Tem certeza que deseja desativar sua conta?</p>
-        <p class="text-warning"><i class="bi bi-exclamation-triangle me-2"></i> Esta ação pode ser revertida posteriormente, mas durante o período de desativação você não receberá atualizações.</p>
-      `;
-      document.getElementById('confirmActionBtn').className = 'btn btn-warning';
-      document.getElementById('confirmActionBtn').onclick = () => {
-        bootstrap.Modal.getInstance(document.getElementById('confirmModal')).hide();
-        showToast('Conta desativada com sucesso!', 'warning');
-      };
-      new bootstrap.Modal(document.getElementById('confirmModal')).show();
-    }
-
-    function deleteAccount() {
-      document.getElementById('confirmModalTitle').textContent = 'Excluir Conta Permanentemente';
-      document.getElementById('confirmModalBody').innerHTML = `
-        <p class="text-danger"><i class="bi bi-exclamation-triangle-fill me-2"></i> <strong>Esta ação é IRREVERSÍVEL!</strong></p>
-        <p>Todos os seus dados, músicas, estatísticas e histórico serão permanentemente removidos.</p>
-        <p>Digite <strong>EXCLUIR</strong> para confirmar:</p>
-        <input type="text" class="form-control" id="confirmDeleteInput" placeholder="EXCLUIR">
-      `;
-      document.getElementById('confirmActionBtn').className = 'btn btn-danger';
-      document.getElementById('confirmActionBtn').onclick = () => {
-        const input = document.getElementById('confirmDeleteInput');
-        if (input && input.value === 'EXCLUIR') {
-          bootstrap.Modal.getInstance(document.getElementById('confirmModal')).hide();
-          showToast('Conta marcada para exclusão. Você receberá um e-mail de confirmação.', 'error');
-        } else {
-          alert('Digite EXCLUIR para confirmar.');
+        if (!('Notification' in window)) {
+            showToast('Notificações não suportadas neste navegador.', 'red');
+            return;
         }
-      };
-      new bootstrap.Modal(document.getElementById('confirmModal')).show();
-    }
-
-    // Logout
-    function logout() {
-      window.location = '../../logout';
-    }
-
-    // Status de conexão
-    function updateConnectionStatus() {
-      const isOnline = navigator.onLine;
-      const connectionToast = document.getElementById('connectionToast');
-      const toast = bootstrap.Toast.getOrCreateInstance(connectionToast);
-
-      if (!isOnline) {
-        connectionToast.querySelector('.toast-body').innerHTML = `
-          Você está offline. Alguns dados podem estar desatualizados.
-          <div class="mt-2">
-            <button class="btn btn-sm btn-primary" onclick="tryReconnect()">Tentar Reconectar</button>
-          </div>
-        `;
-        toast.show();
-      }
-    }
-
-    function tryReconnect() {
-      if (navigator.onLine) {
-        bootstrap.Toast.getInstance(document.getElementById('connectionToast')).hide();
-        showToast('Conexão restabelecida!');
-      } else {
-        alert('Ainda sem conexão. Verifique sua internet.');
-      }
-    }
-
-    // Mostrar toast
-    function showToast(message, type = 'success') {
-      const toastElement = document.getElementById('settingsToast');
-      toastElement.querySelector('.toast-body').textContent = message;
-
-      if (type === 'success') {
-        toastElement.classList.add('toast-success');
-        toastElement.classList.remove('toast-error');
-      } else if (type === 'error') {
-        toastElement.classList.add('toast-error');
-        toastElement.classList.remove('toast-success');
-      }
-
-      toast.show();
-    }
-
-    // Highlight active link
-    function highlightActiveLink() {
-      const currentPath = window.location.pathname.split('/').pop();
-      document.querySelectorAll('.dropdown-menu a, .offcanvas-body a').forEach(link => {
-        const href = link.getAttribute('href');
-        if (href && href.split('/').pop() === currentPath) {
-          link.classList.add('active');
-        }
-      });
-    }
-
-    // Service Worker
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('../../sw.js').catch(error => {
-          console.log('Service Worker error:', error);
+        Notification.requestPermission().then(p => {
+            if (p === 'granted') {
+                new Notification('Wasom Upfy', {
+                    body: 'Notificação de teste enviada com sucesso!',
+                    icon: '../../assets/img/icones/wasomupfy_fiv.png'
+                });
+                showToast('Notificação de teste enviada!');
+            } else {
+                showToast('Permissão negada pelo navegador.', 'red');
+            }
         });
-      });
     }
-  </script>
+
+    // ── Quick nav scroll spy ──────────────────────
+    const sections = document.querySelectorAll('section[id]');
+    window.addEventListener('scroll', () => {
+        let cur = '';
+        sections.forEach(s => {
+            if (window.scrollY >= s.offsetTop - 120) cur = s.id;
+        });
+        document.querySelectorAll('.quick-nav a').forEach(a => {
+            a.classList.toggle('active-link', a.getAttribute('href') === '#' + cur);
+        });
+    }, {
+        passive: true
+    });
+
+    // ── Flash toast auto ──────────────────────────
+    <?php if ($flash): ?>
+    showToast(<?php echo json_encode($flash['msg']); ?>,
+        '<?php echo $flash['type'] === 'success' ? 'green' : 'red'; ?>');
+    <?php endif; ?>
+    </script>
 </body>
 
 </html>

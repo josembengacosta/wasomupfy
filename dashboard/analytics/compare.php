@@ -69,8 +69,8 @@ function queryPeriodStreams(PDO $db, int $id_users, int $y_start, int $m_start, 
         JOIN _track t  ON t.id_track  = s.id_track
         JOIN _store st ON st.id_store = s.id_store
         WHERE t.id_users = :id_users
-          AND (s.year_stream > :y_start OR (s.year_stream = :y_start AND s.month_stream >= :m_start))
-          AND (s.year_stream < :y_end   OR (s.year_stream = :y_end   AND s.month_stream <= :m_end))
+          AND (s.year_stream > :y_start OR (s.year_stream = :y_start2 AND s.month_stream >= :m_start))
+          AND (s.year_stream < :y_end   OR (s.year_stream = :y_end2   AND s.month_stream <= :m_end))
           $store_clause
         GROUP BY s.year_stream, s.month_stream, s.id_store, st.name_store, st.slug_store
         ORDER BY s.year_stream ASC, s.month_stream ASC, st.display_order ASC
@@ -78,8 +78,8 @@ function queryPeriodStreams(PDO $db, int $id_users, int $y_start, int $m_start, 
     $stmt = $db->prepare($sql);
     $params = [
         ':id_users' => $id_users,
-        ':y_start'  => $y_start, ':m_start' => $m_start,
-        ':y_end'    => $y_end,   ':m_end'   => $m_end,
+        ':y_start'  => $y_start,  ':y_start2' => $y_start, ':m_start' => $m_start,
+        ':y_end'    => $y_end,    ':y_end2'   => $y_end,   ':m_end'   => $m_end,
     ];
     if ($store) $params[':store'] = $store;
     $stmt->execute($params);
@@ -100,8 +100,8 @@ function queryPeriodArtists(PDO $db, int $id_users, int $y_start, int $m_start, 
         JOIN _album al ON al.id_album = t.id_album
         JOIN _artist a ON a.id_artist = al.id_artist
         WHERE t.id_users = :id_users AND a.id_users = :id_users2
-          AND (s.year_stream > :y_start OR (s.year_stream = :y_start AND s.month_stream >= :m_start))
-          AND (s.year_stream < :y_end   OR (s.year_stream = :y_end   AND s.month_stream <= :m_end))
+          AND (s.year_stream > :y_start OR (s.year_stream = :y_start2 AND s.month_stream >= :m_start))
+          AND (s.year_stream < :y_end   OR (s.year_stream = :y_end2   AND s.month_stream <= :m_end))
           $store_clause
         GROUP BY a.id_artist, a.stage_name, a.photo_artist
         ORDER BY streams DESC
@@ -111,8 +111,8 @@ function queryPeriodArtists(PDO $db, int $id_users, int $y_start, int $m_start, 
     $params = [
         ':id_users'  => $id_users,
         ':id_users2' => $id_users,
-        ':y_start'   => $y_start, ':m_start' => $m_start,
-        ':y_end'     => $y_end,   ':m_end'   => $m_end,
+        ':y_start'   => $y_start, ':y_start2' => $y_start, ':m_start' => $m_start,
+        ':y_end'     => $y_end,   ':y_end2'   => $y_end,   ':m_end'   => $m_end,
     ];
     if ($store) $params[':store'] = $store;
     $stmt->execute($params);
