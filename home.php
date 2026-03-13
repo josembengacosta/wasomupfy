@@ -14,6 +14,9 @@ foreach ($plans as $p) {
     $plansBySlug[$p['slug_plan']] = $p;
 }
 
+// FAQs da categoria 'Distribuição' + 'Geral' — mais relevantes para página de planos
+$faqs = getFaqs(); // todos, filtramos abaixo
+
 $platform     = getPlatform();
 $canRegister  = (bool)$platform['allow_register'];
 $royalty      = (int)$platform['royalty_percentage'];
@@ -77,7 +80,7 @@ $planFeatures = [
     'single' => [
         [true,  'Upload de uma faixa'],
         [true,  '1 Artista'],
-        [true,  '1 Colaborador'],
+        [true,  'Colaboradores Ilimitados'],
         [true,  'Análise de dados avançados'],
         [true,  'ISRC e UPC grátis'],
         [true,  'Smartlink e pre-salve'],
@@ -89,7 +92,7 @@ $planFeatures = [
     'album' => [
         [true, 'Upload de 15 faixas'],
         [true, '1 Artista'],
-        [true, '1 Colaborador'],
+        [true, 'Colaboradores Ilimitados'],
         [true, 'Análise de dados avançados'],
         [true, 'ISRC e UPC grátis'],
         [true, 'Smartlink e pre-salve'],
@@ -101,7 +104,7 @@ $planFeatures = [
     'artist' => [
         [true, 'Upload de faixas ilimitadas'],
         [true, '1 Artista'],
-        [true, '1 Colaborador'],
+        [true, 'Colaboradores Ilimitados'],
         [true, 'Análise de dados avançados'],
         [true, 'ISRC e UPC grátis'],
         [true, 'Smartlink e pre-salve'],
@@ -113,7 +116,7 @@ $planFeatures = [
     'label' => [
         [true, 'Upload de faixas ilimitadas'],
         [true, '10 Artistas'],
-        [true, '5 Colaboradores'],
+        [true, 'Colaboradores Ilimitados'],
         [true, 'Análise de dados avançados'],
         [true, 'ISRC e UPC grátis'],
         [true, 'Smartlink e pre-salve'],
@@ -439,9 +442,12 @@ $planFeatures = [
                                     <p class="lead font-weight-lighter mt-3">
                                         <q>Distribua a sua música em plataformas como Spotify, Apple Music, Youtube,
                                             Instagram, Tiktok
-                                            e muito mais — em mais de <strong><?php echo $stores; ?> lojas</strong>
+                                            e muito mais — em mais de <strong
+                                                class="text-wasomupfy"><?php echo $stores; ?>
+                                                lojas</strong>
                                             globais.
-                                            Mantenha <strong><?php echo $royalty; ?>% dos seus royalties</strong> e
+                                            Mantenha <strong class="text-wasomupfy"><?php echo $royalty; ?>% dos seus
+                                                royalties</strong> e
                                             conserve os
                                             direitos autorais das suas músicas.</q>
                                     </p>
@@ -943,50 +949,41 @@ $planFeatures = [
                     <div class="col-lg-10 mx-auto">
                         <div class="text-center mb-5">
                             <h4 class="mb-3">Perguntas Frequentes</h4>
-                            <p class="text-body mb-0">Tire as suas dúvidas sobre os nossos planos</p>
+                            <p class="text-body mb-0">Tire as suas dúvidas sobre os nossos planos e sobre a plataforma
+                            </p>
                         </div>
-                        <div class="accordion" id="planosFAQ">
-                            <div class="accordion-item border-0 mb-3">
-                                <h5 class="accordion-header">
-                                    <button class="accordion-button bg-light-100 rounded-3" type="button"
-                                        data-bs-toggle="collapse" data-bs-target="#faq1">
-                                        Posso mudar de plano depois?
-                                    </button>
-                                </h5>
-                                <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#planosFAQ">
-                                    <div class="accordion-body">
-                                        Sim! Pode fazer upgrade ou downgrade do seu plano a qualquer momento. A
-                                        diferença de valor será ajustada proporcionalmente.
-                                    </div>
+                        <div class="text-justify">
+                            <?php if (empty($faqs)): ?>
+                                <p class="text-center text-muted">Nenhuma pergunta disponível de momento.</p>
+                            <?php else: ?>
+                                <div class="accordion" id="faqAccordion">
+                                    <?php foreach ($faqs as $fi => $faq): ?>
+                                        <div class="accordion-item border-0 mb-3 shadow-sm">
+                                            <h3 class="accordion-header">
+                                                <button
+                                                    class="accordion-button <?php echo $fi === 0 ? 'bg-wasomupfy' : 'bg-wasomupfy collapsed'; ?> rounded-3"
+                                                    type="button" data-bs-toggle="collapse"
+                                                    data-bs-target="#faqItem<?php echo $faq['id_faq']; ?>"
+                                                    aria-expanded="<?php echo $fi === 0 ? 'true' : 'false'; ?>">
+                                                    <?php echo htmlspecialchars($faq['question']); ?>
+                                                </button>
+                                            </h3>
+                                            <div id="faqItem<?php echo $faq['id_faq']; ?>"
+                                                class="accordion-collapse collapse<?php echo $fi === 0 ? ' show' : ''; ?>"
+                                                data-bs-parent="#faqAccordion">
+                                                <div class="accordion-body">
+                                                    <?php echo nl2br(htmlspecialchars($faq['answer'])); ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
                                 </div>
-                            </div>
-                            <div class="accordion-item border-0 mb-3">
-                                <h5 class="accordion-header">
-                                    <button class="accordion-button bg-light-100 rounded-3 collapsed" type="button"
-                                        data-bs-toggle="collapse" data-bs-target="#faq2">
-                                        Como funcionam os pagamentos de royalties?
-                                    </button>
-                                </h5>
-                                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#planosFAQ">
-                                    <div class="accordion-body">
-                                        Os royalties são pagos mensalmente, diretamente na sua conta bancária. Recebe
-                                        relatórios detalhados de todos os streams e downloads.
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion-item border-0">
-                                <h5 class="accordion-header">
-                                    <button class="accordion-button bg-light-100 rounded-3 collapsed" type="button"
-                                        data-bs-toggle="collapse" data-bs-target="#faq3">
-                                        Há limite de lançamentos?
-                                    </button>
-                                </h5>
-                                <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#planosFAQ">
-                                    <div class="accordion-body">
-                                        Não! Os planos Artista e Label oferecem lançamentos ilimitados. Pode distribuir
-                                        quantas músicas quiser durante a vigência do plano.
-                                    </div>
-                                </div>
+                            <?php endif; ?>
+
+                            <div class="text-center mt-4">
+                                <a href="page/support/faq" class="btn btn-outline-primary">
+                                    Ver todas as perguntas <i class="bi bi-arrow-right ms-1"></i>
+                                </a>
                             </div>
                         </div>
                     </div>

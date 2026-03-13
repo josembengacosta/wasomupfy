@@ -51,7 +51,8 @@ $planMeta = [
 ];
 
 // Calcular poupança do pacote anual (single e album têm price_annual)
-function calcSaving(array $plan): int {
+function calcSaving(array $plan): int
+{
     if (!$plan['price_annual'] || !$plan['annual_qty']) return 0;
     $full    = $plan['price_plan'] * $plan['annual_qty'];
     $annual  = $plan['price_annual'];
@@ -59,7 +60,8 @@ function calcSaving(array $plan): int {
 }
 
 // Formatar período de preço conforme tipo de plano
-function pricePeriod(array $plan): string {
+function pricePeriod(array $plan): string
+{
     if ($plan['type_plan'] === 'subscription') {
         return 'Kz/ano';
     }
@@ -114,11 +116,11 @@ $storesCount = (int)$platform['stores_count'];
 
     <!-- Preloader JS -->
     <script>
-    window.addEventListener("load", function() {
-        setTimeout(function() {
-            document.querySelector("body").classList.add("loaded")
-        }, 200)
-    })
+        window.addEventListener("load", function() {
+            setTimeout(function() {
+                document.querySelector("body").classList.add("loaded")
+            }, 200)
+        })
     </script>
 
     <link rel="shortcut icon" href="../assets/img/icones/wasomupfy_fiv1.png" type="image/x-icon">
@@ -132,64 +134,64 @@ $storesCount = (int)$platform['stores_count'];
 
     <!-- Schema Markup -->
     <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "<?php echo cfg('site_name', 'Wasom Upfy'); ?>",
-        "url": "https://www.wasomupfy.com",
-        "logo": "https://www.wasomupfy.com/logo.png",
-        "sameAs": [
-            <?php
-            $sameAs = array_filter([
-                cfg('facebook_url'),
-                cfg('instagram_url'),
-                cfg('youtube_url'),
-                cfg('tiktok_url'),
-            ]);
-            echo '"' . implode('","', $sameAs) . '"';
-            ?>
-        ],
-        "contactPoint": {
-            "@type": "ContactPoint",
-            "email": "<?php echo cfg('support_email', 'suporte@wasomupfy.com'); ?>",
-            "contactType": "customer service",
-            "hoursAvailable": {
-                "@type": "OpeningHoursSpecification",
-                "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-                "opens": "08:00",
-                "closes": "17:00"
+        {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "<?php echo cfg('site_name', 'Wasom Upfy'); ?>",
+            "url": "https://www.wasomupfy.com",
+            "logo": "https://www.wasomupfy.com/logo.png",
+            "sameAs": [
+                <?php
+                $sameAs = array_filter([
+                    cfg('facebook_url'),
+                    cfg('instagram_url'),
+                    cfg('youtube_url'),
+                    cfg('tiktok_url'),
+                ]);
+                echo '"' . implode('","', $sameAs) . '"';
+                ?>
+            ],
+            "contactPoint": {
+                "@type": "ContactPoint",
+                "email": "<?php echo cfg('support_email', 'suporte@wasomupfy.com'); ?>",
+                "contactType": "customer service",
+                "hoursAvailable": {
+                    "@type": "OpeningHoursSpecification",
+                    "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+                    "opens": "08:00",
+                    "closes": "17:00"
+                }
             }
         }
-    }
     </script>
 
     <!-- Offer Schema por plano -->
     <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "ItemList",
-        "name": "Planos <?php echo cfg('site_name', 'Wasom Upfy'); ?>",
-        "itemListElement": [
-            <?php
-            $schemaItems = [];
-            foreach ($plans as $i => $p) {
-                $schemaItems[] = json_encode([
-                    "@type"    => "ListItem",
-                    "position" => $i + 1,
-                    "item"     => [
-                        "@type"       => "Offer",
-                        "name"        => $p['name_plan'],
-                        "description" => $p['description_plan'],
-                        "price"       => number_format($p['price_plan'], 2, '.', ''),
-                        "priceCurrency" => "AOA",
-                        "url"         => "https://wasomupfy.com/plan/" . $p['slug_plan'],
-                    ]
-                ], JSON_UNESCAPED_UNICODE);
-            }
-            echo implode(",\n            ", $schemaItems);
-            ?>
-        ]
-    }
+        {
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            "name": "Planos <?php echo cfg('site_name', 'Wasom Upfy'); ?>",
+            "itemListElement": [
+                <?php
+                $schemaItems = [];
+                foreach ($plans as $i => $p) {
+                    $schemaItems[] = json_encode([
+                        "@type"    => "ListItem",
+                        "position" => $i + 1,
+                        "item"     => [
+                            "@type"       => "Offer",
+                            "name"        => $p['name_plan'],
+                            "description" => $p['description_plan'],
+                            "price"       => number_format($p['price_plan'], 2, '.', ''),
+                            "priceCurrency" => "AOA",
+                            "url"         => "https://wasomupfy.com/plan/" . $p['slug_plan'],
+                        ]
+                    ], JSON_UNESCAPED_UNICODE);
+                }
+                echo implode(",\n            ", $schemaItems);
+                ?>
+            ]
+        }
     </script>
 </head>
 
@@ -250,19 +252,19 @@ $storesCount = (int)$platform['stores_count'];
                                         $period = $p['type_plan'] === 'subscription' ? '/ano' : '';
                                         $active = ($slug === 'all') ? 'active' : '';
                                     ?>
-                                    <a title="<?php echo htmlspecialchars($p['name_plan']); ?>"
-                                        class="dropdown-item mb-3 text-body" href="<?php echo $slug; ?>">
-                                        <div class="d-flex align-items-center">
-                                            <i class="fa-solid <?php echo $icon; ?> text-wasomupfy fs-3"
-                                                style="width:35px"></i>
-                                            <div class="ms-3 lh-1">
-                                                <h5 class="mb-1"><?php echo htmlspecialchars($p['name_plan']); ?></h5>
-                                                <p class="mb-0 fs-6">Plano
-                                                    <?php echo htmlspecialchars($p['name_plan']); ?> —
-                                                    <?php echo $price . $period; ?></p>
+                                        <a title="<?php echo htmlspecialchars($p['name_plan']); ?>"
+                                            class="dropdown-item mb-3 text-body" href="<?php echo $slug; ?>">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fa-solid <?php echo $icon; ?> text-wasomupfy fs-3"
+                                                    style="width:35px"></i>
+                                                <div class="ms-3 lh-1">
+                                                    <h5 class="mb-1"><?php echo htmlspecialchars($p['name_plan']); ?></h5>
+                                                    <p class="mb-0 fs-6">Plano
+                                                        <?php echo htmlspecialchars($p['name_plan']); ?> —
+                                                        <?php echo $price . $period; ?></p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </a>
+                                        </a>
                                     <?php endforeach; ?>
                                     <a title="Todos os planos" class="dropdown-item mb-3 text-body active"
                                         href="all-plans">
@@ -379,10 +381,10 @@ $storesCount = (int)$platform['stores_count'];
                                 Entrar <i data-feather="log-in"></i>
                             </a>
                             <?php if ($canRegister): ?>
-                            <a title="Inscreva-se" href="/wasomupfy/register" class="btn btn-wasomupfy">Inscreva-se</a>
+                                <a title="Inscreva-se" href="/wasomupfy/register" class="btn btn-wasomupfy">Inscreva-se</a>
                             <?php else: ?>
-                            <span class="btn btn-secondary disabled"
-                                title="Inscrições temporariamente fechadas">Inscrições fechadas</span>
+                                <span class="btn btn-secondary disabled"
+                                    title="Inscrições temporariamente fechadas">Inscrições fechadas</span>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -481,79 +483,79 @@ $storesCount = (int)$platform['stores_count'];
                             ? 'pricing-card card border-wasom border-3 h-100 shadow-lg hover-lift position-relative'
                             : 'pricing-card card border-0 h-100 shadow-lg hover-lift';
                     ?>
-                    <div class="col-xl-3 col-lg-6" data-cue="zoomIn"
-                        <?php echo $delay ? ' data-delay="' . $delay . '"' : ''; ?>>
-                        <div class="<?php echo $cardClass; ?>">
+                        <div class="col-xl-3 col-lg-6" data-cue="zoomIn"
+                            <?php echo $delay ? ' data-delay="' . $delay . '"' : ''; ?>>
+                            <div class="<?php echo $cardClass; ?>">
 
-                            <?php if ($isFeatured): ?>
-                            <div class="position-absolute top-0 start-50 translate-middle">
-                                <span class="badge bg-wasomupfy text-white fw-semibold px-4 py-2">Melhor
-                                    Custo-Benefício</span>
-                            </div>
-                            <?php endif; ?>
-
-                            <div
-                                class="card-header border-0 <?php echo $isFeatured ? 'pt-6' : 'pt-5'; ?> pb-4 text-center">
-                                <?php if ($plan['badge_text'] && !$isFeatured): ?>
-                                <span
-                                    class="badge bg-wasom-light text-wasomupfy fw-semibold px-3 py-2 mb-3"><?php echo htmlspecialchars($plan['badge_text']); ?></span>
+                                <?php if ($isFeatured): ?>
+                                    <div class="position-absolute top-0 start-50 translate-middle">
+                                        <span class="badge bg-wasomupfy text-white fw-semibold px-4 py-2">Melhor
+                                            Custo-Benefício</span>
+                                    </div>
                                 <?php endif; ?>
 
-                                <h3 class="h2 fw-bold mb-3"><?php echo htmlspecialchars($plan['name_plan']); ?></h3>
-
-                                <div class="price-display">
-                                    <!-- Preço unitário (por lançamento / ano) -->
-                                    <div class="monthly-price<?php echo $annualNum ? '' : ' always-shown'; ?>">
-                                        <span class="price-amount display-4 fw-bold"><?php echo $priceNum; ?></span>
+                                <div
+                                    class="card-header border-0 <?php echo $isFeatured ? 'pt-6' : 'pt-5'; ?> pb-4 text-center">
+                                    <?php if ($plan['badge_text'] && !$isFeatured): ?>
                                         <span
-                                            class="price-period h5 text-muted fw-normal"><?php echo $unitSuffix; ?></span>
-                                    </div>
+                                            class="badge bg-wasom-light text-wasomupfy fw-semibold px-3 py-2 mb-3"><?php echo htmlspecialchars($plan['badge_text']); ?></span>
+                                    <?php endif; ?>
 
-                                    <!-- Preço do pacote anual (só single e album) -->
-                                    <?php if ($annualNum): ?>
-                                    <div class="annual-price d-none">
-                                        <span class="price-amount display-4 fw-bold"><?php echo $annualNum; ?></span>
-                                        <span
-                                            class="price-period h5 text-muted fw-normal"><?php echo $annualSuffix; ?></span>
-                                        <?php if ($saving > 0): ?>
-                                        <div><span class="badge bg-success mt-2">Economize
-                                                <?php echo $saving; ?>%</span></div>
+                                    <h3 class="h2 fw-bold mb-3"><?php echo htmlspecialchars($plan['name_plan']); ?></h3>
+
+                                    <div class="price-display">
+                                        <!-- Preço unitário (por lançamento / ano) -->
+                                        <div class="monthly-price<?php echo $annualNum ? '' : ' always-shown'; ?>">
+                                            <span class="price-amount display-4 fw-bold"><?php echo $priceNum; ?></span>
+                                            <span
+                                                class="price-period h5 text-muted fw-normal"><?php echo $unitSuffix; ?></span>
+                                        </div>
+
+                                        <!-- Preço do pacote anual (só single e album) -->
+                                        <?php if ($annualNum): ?>
+                                            <div class="annual-price d-none">
+                                                <span class="price-amount display-4 fw-bold"><?php echo $annualNum; ?></span>
+                                                <span
+                                                    class="price-period h5 text-muted fw-normal"><?php echo $annualSuffix; ?></span>
+                                                <?php if ($saving > 0): ?>
+                                                    <div><span class="badge bg-success mt-2">Economize
+                                                            <?php echo $saving; ?>%</span></div>
+                                                <?php endif; ?>
+                                            </div>
                                         <?php endif; ?>
                                     </div>
-                                    <?php endif; ?>
+
+                                    <p class="text-muted mb-0"><?php echo htmlspecialchars($meta['subtitle']); ?></p>
                                 </div>
 
-                                <p class="text-muted mb-0"><?php echo htmlspecialchars($meta['subtitle']); ?></p>
-                            </div>
+                                <div class="card-body pt-4 pb-5 px-4">
+                                    <!-- Features da BD -->
+                                    <ul class="list-unstyled mb-4">
+                                        <?php foreach ($plan['features'] as $feat): ?>
+                                            <li class="d-flex align-items-start mb-3">
+                                                <?php if ($feat['is_included']): ?>
+                                                    <i class="bi bi-check-circle-fill text-success mt-1 me-3 flex-shrink-0"></i>
+                                                <?php else: ?>
+                                                    <i class="bi bi-x-circle-fill text-danger mt-1 me-3 flex-shrink-0"></i>
+                                                <?php endif; ?>
+                                                <span><?php echo htmlspecialchars($feat['feature_text']); ?></span>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
 
-                            <div class="card-body pt-4 pb-5 px-4">
-                                <!-- Features da BD -->
-                                <ul class="list-unstyled mb-4">
-                                    <?php foreach ($plan['features'] as $feat): ?>
-                                    <li class="d-flex align-items-start mb-3">
-                                        <?php if ($feat['is_included']): ?>
-                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3 flex-shrink-0"></i>
+                                    <div class="d-grid">
+                                        <?php if ($canRegister): ?>
+                                            <a href="/wasomupfy/register?plan=<?php echo urlencode($slug); ?>"
+                                                class="btn <?php echo $meta['btn_class']; ?> btn-lg">
+                                                Escolher <?php echo htmlspecialchars($plan['name_plan']); ?>
+                                            </a>
                                         <?php else: ?>
-                                        <i class="bi bi-x-circle-fill text-danger mt-1 me-3 flex-shrink-0"></i>
+                                            <button class="btn btn-secondary btn-lg disabled">Inscrições Fechadas</button>
                                         <?php endif; ?>
-                                        <span><?php echo htmlspecialchars($feat['feature_text']); ?></span>
-                                    </li>
-                                    <?php endforeach; ?>
-                                </ul>
-
-                                <div class="d-grid">
-                                    <?php if ($canRegister): ?>
-                                    <a href="/wasomupfy/register?plan=<?php echo urlencode($slug); ?>"
-                                        class="btn <?php echo $meta['btn_class']; ?> btn-lg">
-                                        Escolher <?php echo htmlspecialchars($plan['name_plan']); ?>
-                                    </a>
-                                    <?php else: ?>
-                                    <button class="btn btn-secondary btn-lg disabled">Inscrições Fechadas</button>
-                                    <?php endif; ?>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
                     <?php endforeach; ?>
                 </div>
             </div>
@@ -580,10 +582,10 @@ $storesCount = (int)$platform['stores_count'];
                                     $price  = formatAOA($p['price_plan']);
                                     $period = $p['type_plan'] === 'subscription' ? '/ano' : '/' . $p['slug_plan'];
                                 ?>
-                                <th class="text-center border-0 py-4<?php echo $isFeat ? ' bg-wasom-light' : ''; ?>">
-                                    <h5 class="mb-1"><?php echo htmlspecialchars($p['name_plan']); ?></h5>
-                                    <div class="text-wasom fw-bold"><?php echo $price . $period; ?></div>
-                                </th>
+                                    <th class="text-center border-0 py-4<?php echo $isFeat ? ' bg-wasom-light' : ''; ?>">
+                                        <h5 class="mb-1"><?php echo htmlspecialchars($p['name_plan']); ?></h5>
+                                        <div class="text-wasom fw-bold"><?php echo $price . $period; ?></div>
+                                    </th>
                                 <?php endforeach; ?>
                             </tr>
                         </thead>
@@ -599,16 +601,16 @@ $storesCount = (int)$platform['stores_count'];
 
                             foreach ($tableRows as $row):
                             ?>
-                            <tr>
-                                <td class="fw-semibold"><?php echo $row['label']; ?></td>
-                                <?php foreach ($plans as $p):
-                                    $isFeat = ($planMeta[$p['slug_plan']]['featured'] ?? false) || $p['is_featured'];
-                                    $val    = $row['format']($p[$row['key']] ?? null);
-                                ?>
-                                <td class="text-center<?php echo $isFeat ? ' bg-wasom-light' : ''; ?>">
-                                    <?php echo $val; ?></td>
-                                <?php endforeach; ?>
-                            </tr>
+                                <tr>
+                                    <td class="fw-semibold"><?php echo $row['label']; ?></td>
+                                    <?php foreach ($plans as $p):
+                                        $isFeat = ($planMeta[$p['slug_plan']]['featured'] ?? false) || $p['is_featured'];
+                                        $val    = $row['format']($p[$row['key']] ?? null);
+                                    ?>
+                                        <td class="text-center<?php echo $isFeat ? ' bg-wasom-light' : ''; ?>">
+                                            <?php echo $val; ?></td>
+                                    <?php endforeach; ?>
+                                </tr>
                             <?php endforeach; ?>
 
                             <!-- Linhas estáticas (são iguais em todos os planos) -->
@@ -623,16 +625,16 @@ $storesCount = (int)$platform['stores_count'];
                             ];
                             foreach ($staticRows as $label):
                             ?>
-                            <tr>
-                                <td class="fw-semibold"><?php echo $label; ?></td>
-                                <?php foreach ($plans as $p):
-                                    $isFeat = ($planMeta[$p['slug_plan']]['featured'] ?? false) || $p['is_featured'];
-                                ?>
-                                <td class="text-center<?php echo $isFeat ? ' bg-wasom-light' : ''; ?>">
-                                    <i class="bi bi-check-lg text-success"></i>
-                                </td>
-                                <?php endforeach; ?>
-                            </tr>
+                                <tr>
+                                    <td class="fw-semibold"><?php echo $label; ?></td>
+                                    <?php foreach ($plans as $p):
+                                        $isFeat = ($planMeta[$p['slug_plan']]['featured'] ?? false) || $p['is_featured'];
+                                    ?>
+                                        <td class="text-center<?php echo $isFeat ? ' bg-wasom-light' : ''; ?>">
+                                            <i class="bi bi-check-lg text-success"></i>
+                                        </td>
+                                    <?php endforeach; ?>
+                                </tr>
                             <?php endforeach; ?>
 
                             <!-- Personalizar nome de selo — só álbum, artista, label -->
@@ -642,13 +644,13 @@ $storesCount = (int)$platform['stores_count'];
                                     $isFeat  = ($planMeta[$p['slug_plan']]['featured'] ?? false) || $p['is_featured'];
                                     $hasSelo = in_array($p['slug_plan'], ['album', 'artist', 'label']);
                                 ?>
-                                <td class="text-center<?php echo $isFeat ? ' bg-wasom-light' : ''; ?>">
-                                    <?php if ($hasSelo): ?>
-                                    <i class="bi bi-check-lg text-success"></i>
-                                    <?php else: ?>
-                                    <i class="bi bi-dash text-muted"></i>
-                                    <?php endif; ?>
-                                </td>
+                                    <td class="text-center<?php echo $isFeat ? ' bg-wasom-light' : ''; ?>">
+                                        <?php if ($hasSelo): ?>
+                                            <i class="bi bi-check-lg text-success"></i>
+                                        <?php else: ?>
+                                            <i class="bi bi-dash text-muted"></i>
+                                        <?php endif; ?>
+                                    </td>
                                 <?php endforeach; ?>
                             </tr>
 
@@ -659,14 +661,14 @@ $storesCount = (int)$platform['stores_count'];
                                     $isFeat  = ($planMeta[$p['slug_plan']]['featured'] ?? false) || $p['is_featured'];
                                     $btnCls  = $planMeta[$p['slug_plan']]['btn_class'] ?? 'btn-wasomupfy';
                                 ?>
-                                <td class="text-center pt-4<?php echo $isFeat ? ' bg-wasom-light' : ''; ?>">
-                                    <?php if ($canRegister): ?>
-                                    <a href="/wasomupfy/register?plan=<?php echo urlencode($p['slug_plan']); ?>"
-                                        class="btn <?php echo $btnCls; ?> btn-sm w-100 py-2">Escolher</a>
-                                    <?php else: ?>
-                                    <span class="btn btn-secondary btn-sm w-100 disabled">Fechado</span>
-                                    <?php endif; ?>
-                                </td>
+                                    <td class="text-center pt-4<?php echo $isFeat ? ' bg-wasom-light' : ''; ?>">
+                                        <?php if ($canRegister): ?>
+                                            <a href="/wasomupfy/register?plan=<?php echo urlencode($p['slug_plan']); ?>"
+                                                class="btn <?php echo $btnCls; ?> btn-sm w-100 py-2">Escolher</a>
+                                        <?php else: ?>
+                                            <span class="btn btn-secondary btn-sm w-100 disabled">Fechado</span>
+                                        <?php endif; ?>
+                                    </td>
                                 <?php endforeach; ?>
                             </tr>
                         </tbody>
@@ -682,36 +684,36 @@ $storesCount = (int)$platform['stores_count'];
                     <div class="col-lg-8 text-center">
                         <span class="badge bg-wasomupfy text-white fw-semibold px-3 py-2 mb-3">FAQ</span>
                         <h2 class="display-6 fw-bold mb-4">Perguntas Frequentes</h2>
-                        <p class="text-muted lead">Tire as suas dúvidas sobre os nossos planos</p>
+                        <p class="text-muted lead">Tire as suas dúvidas sobre os nossos planos e sobre a plataforma</p>
                     </div>
                 </div>
                 <div class="row justify-content-center">
                     <div class="col-lg-10">
                         <?php if (empty($faqs)): ?>
-                        <p class="text-center text-muted">Nenhuma pergunta disponível de momento.</p>
+                            <p class="text-center text-muted">Nenhuma pergunta disponível de momento.</p>
                         <?php else: ?>
-                        <div class="accordion" id="faqAccordion">
-                            <?php foreach ($faqs as $fi => $faq): ?>
-                            <div class="accordion-item border-0 mb-3 shadow-sm">
-                                <h3 class="accordion-header">
-                                    <button
-                                        class="accordion-button <?php echo $fi === 0 ? 'bg-wasomupfy' : 'bg-wasomupfy collapsed'; ?> rounded-3"
-                                        type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#faqItem<?php echo $faq['id_faq']; ?>"
-                                        aria-expanded="<?php echo $fi === 0 ? 'true' : 'false'; ?>">
-                                        <?php echo htmlspecialchars($faq['question']); ?>
-                                    </button>
-                                </h3>
-                                <div id="faqItem<?php echo $faq['id_faq']; ?>"
-                                    class="accordion-collapse collapse<?php echo $fi === 0 ? ' show' : ''; ?>"
-                                    data-bs-parent="#faqAccordion">
-                                    <div class="accordion-body">
-                                        <?php echo nl2br(htmlspecialchars($faq['answer'])); ?>
+                            <div class="accordion" id="faqAccordion">
+                                <?php foreach ($faqs as $fi => $faq): ?>
+                                    <div class="accordion-item border-0 mb-3 shadow-sm">
+                                        <h3 class="accordion-header">
+                                            <button
+                                                class="accordion-button <?php echo $fi === 0 ? 'bg-wasomupfy' : 'bg-wasomupfy collapsed'; ?> rounded-3"
+                                                type="button" data-bs-toggle="collapse"
+                                                data-bs-target="#faqItem<?php echo $faq['id_faq']; ?>"
+                                                aria-expanded="<?php echo $fi === 0 ? 'true' : 'false'; ?>">
+                                                <?php echo htmlspecialchars($faq['question']); ?>
+                                            </button>
+                                        </h3>
+                                        <div id="faqItem<?php echo $faq['id_faq']; ?>"
+                                            class="accordion-collapse collapse<?php echo $fi === 0 ? ' show' : ''; ?>"
+                                            data-bs-parent="#faqAccordion">
+                                            <div class="accordion-body">
+                                                <?php echo nl2br(htmlspecialchars($faq['answer'])); ?>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
+                                <?php endforeach; ?>
                             </div>
-                            <?php endforeach; ?>
-                        </div>
                         <?php endif; ?>
 
                         <div class="text-center mt-4">
@@ -736,9 +738,9 @@ $storesCount = (int)$platform['stores_count'];
                         </p>
                         <div class="d-flex flex-wrap justify-content-center gap-3">
                             <?php if ($canRegister): ?>
-                            <a href="/wasomupfy/register" class="btn btn-secondary btn-lg px-5 text-wasom fw-semibold">
-                                Começar Agora <i class="bi bi-arrow-right ms-2"></i>
-                            </a>
+                                <a href="/wasomupfy/register" class="btn btn-secondary btn-lg px-5 text-wasom fw-semibold">
+                                    Começar Agora <i class="bi bi-arrow-right ms-2"></i>
+                                </a>
                             <?php endif; ?>
                             <a href="../contact" class="btn btn-outline-primary btn-lg px-5">Fazer uma Pergunta</a>
                         </div>
@@ -794,34 +796,34 @@ $storesCount = (int)$platform['stores_count'];
                             Distribuição digital, marketing e gestão de carreira num só lugar.</p>
                         <div class="d-flex gap-3" role="list" aria-label="Redes sociais">
                             <?php if (cfg('instagram_url')): ?>
-                            <a href="<?php echo htmlspecialchars(cfg('instagram_url')); ?>" target="_blank"
-                                rel="external noopener noreferrer"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" aria-label="Instagram"
-                                role="listitem"><i class="fa-brands fa-instagram"></i></a>
+                                <a href="<?php echo htmlspecialchars(cfg('instagram_url')); ?>" target="_blank"
+                                    rel="external noopener noreferrer"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" aria-label="Instagram"
+                                    role="listitem"><i class="fa-brands fa-instagram"></i></a>
                             <?php endif; ?>
                             <?php if (cfg('facebook_url')): ?>
-                            <a href="<?php echo htmlspecialchars(cfg('facebook_url')); ?>" target="_blank"
-                                rel="external noopener noreferrer"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" aria-label="Facebook"
-                                role="listitem"><i class="fa-brands fa-facebook-f"></i></a>
+                                <a href="<?php echo htmlspecialchars(cfg('facebook_url')); ?>" target="_blank"
+                                    rel="external noopener noreferrer"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" aria-label="Facebook"
+                                    role="listitem"><i class="fa-brands fa-facebook-f"></i></a>
                             <?php endif; ?>
                             <?php if (cfg('youtube_url')): ?>
-                            <a href="<?php echo htmlspecialchars(cfg('youtube_url')); ?>" target="_blank"
-                                rel="external noopener noreferrer"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" aria-label="YouTube"
-                                role="listitem"><i class="fa-brands fa-youtube"></i></a>
+                                <a href="<?php echo htmlspecialchars(cfg('youtube_url')); ?>" target="_blank"
+                                    rel="external noopener noreferrer"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" aria-label="YouTube"
+                                    role="listitem"><i class="fa-brands fa-youtube"></i></a>
                             <?php endif; ?>
                             <?php if (cfg('tiktok_url')): ?>
-                            <a href="<?php echo htmlspecialchars(cfg('tiktok_url')); ?>" target="_blank"
-                                rel="external noopener noreferrer"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" aria-label="TikTok"
-                                role="listitem"><i class="fa-brands fa-tiktok"></i></a>
+                                <a href="<?php echo htmlspecialchars(cfg('tiktok_url')); ?>" target="_blank"
+                                    rel="external noopener noreferrer"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" aria-label="TikTok"
+                                    role="listitem"><i class="fa-brands fa-tiktok"></i></a>
                             <?php endif; ?>
                             <?php if (cfg('whatsapp_number')): ?>
-                            <a href="https://wa.me/<?php echo preg_replace('/\D/', '', cfg('whatsapp_number')); ?>"
-                                target="_blank" rel="external noopener noreferrer"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" aria-label="WhatsApp"
-                                role="listitem"><i class="fa-brands fa-whatsapp"></i></a>
+                                <a href="https://wa.me/<?php echo preg_replace('/\D/', '', cfg('whatsapp_number')); ?>"
+                                    target="_blank" rel="external noopener noreferrer"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" aria-label="WhatsApp"
+                                    role="listitem"><i class="fa-brands fa-whatsapp"></i></a>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -853,9 +855,9 @@ $storesCount = (int)$platform['stores_count'];
                             <li class="mb-2"><a href="../contact"
                                     class="text-reset text-decoration-none hover-white">Contacta-nos</a></li>
                             <?php if (cfg('whatsapp_number')): ?>
-                            <li class="mb-2"><a
-                                    href="https://wa.me/<?php echo preg_replace('/\D/', '', cfg('whatsapp_number')); ?>"
-                                    class="text-reset text-decoration-none hover-white">WhatsApp</a></li>
+                                <li class="mb-2"><a
+                                        href="https://wa.me/<?php echo preg_replace('/\D/', '', cfg('whatsapp_number')); ?>"
+                                        class="text-reset text-decoration-none hover-white">WhatsApp</a></li>
                             <?php endif; ?>
                         </ul>
                     </div>
@@ -867,19 +869,19 @@ $storesCount = (int)$platform['stores_count'];
                             <li class="mb-3"><span>Angola — Luanda</span></li>
                             <li class="mb-3 d-flex">
                                 <?php if (cfg('support_email')): ?>
-                                <a href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
-                                    class="text-reset text-decoration-none">
-                                    <?php echo htmlspecialchars(cfg('support_email')); ?>
-                                </a>
+                                    <a href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
+                                        class="text-reset text-decoration-none">
+                                        <?php echo htmlspecialchars(cfg('support_email')); ?>
+                                    </a>
                                 <?php endif; ?>
                             </li>
                             <?php if (cfg('info_email')): ?>
-                            <li class="mb-3 d-flex">
-                                <a href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
-                                    class="text-reset text-decoration-none">
-                                    <?php echo htmlspecialchars(cfg('info_email')); ?>
-                                </a>
-                            </li>
+                                <li class="mb-3 d-flex">
+                                    <a href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
+                                        class="text-reset text-decoration-none">
+                                        <?php echo htmlspecialchars(cfg('info_email')); ?>
+                                    </a>
+                                </li>
                             <?php endif; ?>
                             <li><span>Seg — Sex: 08h às 17h</span></li>
                         </ul>
@@ -1024,78 +1026,78 @@ $storesCount = (int)$platform['stores_count'];
     <script src="https://cdn.jsdelivr.net/npm/jarallax@2.2.0/dist/jarallax.min.js"></script>
 
     <script>
-    feather.replace({
-        width: "1em",
-        height: "1em"
-    });
+        feather.replace({
+            width: "1em",
+            height: "1em"
+        });
 
-    // Dados dos planos vindos do PHP (para o toggle de preços)
-    const plansData = <?php
-        $jsPlans = [];
-        foreach ($plans as $p) {
-            $jsPlans[$p['slug_plan']] = [
-                'unit'       => number_format($p['price_plan'], 0, ',', '.'),
-                'annual'     => $p['price_annual'] ? number_format($p['price_annual'], 0, ',', '.') : null,
-                'annual_qty' => $p['annual_qty'],
-                'type'       => $p['type_plan'],
-                'saving'     => calcSaving($p),
-            ];
-        }
-        echo json_encode($jsPlans, JSON_UNESCAPED_UNICODE);
-    ?>;
+        // Dados dos planos vindos do PHP (para o toggle de preços)
+        const plansData = <?php
+                            $jsPlans = [];
+                            foreach ($plans as $p) {
+                                $jsPlans[$p['slug_plan']] = [
+                                    'unit'       => number_format($p['price_plan'], 0, ',', '.'),
+                                    'annual'     => $p['price_annual'] ? number_format($p['price_annual'], 0, ',', '.') : null,
+                                    'annual_qty' => $p['annual_qty'],
+                                    'type'       => $p['type_plan'],
+                                    'saving'     => calcSaving($p),
+                                ];
+                            }
+                            echo json_encode($jsPlans, JSON_UNESCAPED_UNICODE);
+                            ?>;
 
-    document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function() {
 
-        // ── Toggle de período ─────────────────────
-        const billingToggle = document.getElementById('billingToggle');
-        const monthlyPrices = document.querySelectorAll('.monthly-price');
-        const annualPrices = document.querySelectorAll('.annual-price');
+            // ── Toggle de período ─────────────────────
+            const billingToggle = document.getElementById('billingToggle');
+            const monthlyPrices = document.querySelectorAll('.monthly-price');
+            const annualPrices = document.querySelectorAll('.annual-price');
 
-        if (billingToggle) {
-            billingToggle.addEventListener('change', function() {
-                const isAnnual = this.checked;
-                monthlyPrices.forEach(el => el.classList.toggle('d-none', isAnnual));
-                annualPrices.forEach(el => el.classList.toggle('d-none', !isAnnual));
-            });
-        }
+            if (billingToggle) {
+                billingToggle.addEventListener('change', function() {
+                    const isAnnual = this.checked;
+                    monthlyPrices.forEach(el => el.classList.toggle('d-none', isAnnual));
+                    annualPrices.forEach(el => el.classList.toggle('d-none', !isAnnual));
+                });
+            }
 
-        // ── Animações scroll ──────────────────────
-        const animateOnScroll = () => {
-            document.querySelectorAll('[data-cue]').forEach(el => {
-                if (el.getBoundingClientRect().top < window.innerHeight - 150) {
-                    el.classList.add('animated');
-                }
-            });
-        };
-        window.addEventListener('scroll', animateOnScroll);
-        animateOnScroll();
+            // ── Animações scroll ──────────────────────
+            const animateOnScroll = () => {
+                document.querySelectorAll('[data-cue]').forEach(el => {
+                    if (el.getBoundingClientRect().top < window.innerHeight - 150) {
+                        el.classList.add('animated');
+                    }
+                });
+            };
+            window.addEventListener('scroll', animateOnScroll);
+            animateOnScroll();
 
-        // ── Smooth scroll âncoras ─────────────────
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                const href = this.getAttribute('href');
-                if (href === '#' || href.startsWith('#faq')) return;
-                e.preventDefault();
-                const target = document.querySelector(href);
-                if (target) window.scrollTo({
-                    top: target.offsetTop - 80,
-                    behavior: 'smooth'
+            // ── Smooth scroll âncoras ─────────────────
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    const href = this.getAttribute('href');
+                    if (href === '#' || href.startsWith('#faq')) return;
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) window.scrollTo({
+                        top: target.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
                 });
             });
+
         });
 
-    });
-
-    // ── Google Tag Manager ────────────────────────
-    ! function(e, t, a, n, g) {
-        e[n] = e[n] || [], e[n].push({
-            "gtm.start": (new Date).getTime(),
-            event: "gtm.js"
-        });
-        var m = t.getElementsByTagName(a)[0],
-            r = t.createElement(a);
-        r.async = !0, r.src = "https://www.googletagmanager.com/gtm.js?id=GTM-MF4DZVH", m.parentNode.insertBefore(r, m)
-    }(window, document, "script", "dataLayer");
+        // ── Google Tag Manager ────────────────────────
+        ! function(e, t, a, n, g) {
+            e[n] = e[n] || [], e[n].push({
+                "gtm.start": (new Date).getTime(),
+                event: "gtm.js"
+            });
+            var m = t.getElementsByTagName(a)[0],
+                r = t.createElement(a);
+            r.async = !0, r.src = "https://www.googletagmanager.com/gtm.js?id=GTM-MF4DZVH", m.parentNode.insertBefore(r, m)
+        }(window, document, "script", "dataLayer");
     </script>
 </body>
 

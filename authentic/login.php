@@ -7,7 +7,7 @@ require_once __DIR__ . '/include/functions.php';
 startSecureSession();
 
 if (isLoggedIn()) {
-    redirect('/dashboard');
+    redirect('/dashboard/painel');
 }
 
 $notices = [
@@ -50,73 +50,73 @@ if (isset($_GET['remaining']) && (int)$_GET['remaining'] > 0) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-    <link rel="stylesheet" href="../css/login.css" />
+    <link rel="stylesheet" href="css/login.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/josembengacosta/wasomupfy@main/css/light.css" />
     <style>
-    :root {
-        --wasom-primary: #ff0089;
-        --wasom-secondary: #e04385;
-        --wasom-light: #fff0f7;
-        --wasom-dark: #cc0070;
-    }
+        :root {
+            --wasom-primary: #ff0089;
+            --wasom-secondary: #e04385;
+            --wasom-light: #fff0f7;
+            --wasom-dark: #cc0070;
+        }
 
-    .card {
-        border-radius: 15px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        background: rgba(255, 255, 255, 0.95);
-        margin: auto;
-    }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+            margin: auto;
+        }
 
-    .btn-wasomupfy {
-        background: linear-gradient(45deg, #ff0089, #ff0089);
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        padding: 3px 6px;
-        font-size: 1.1rem;
-        transition: all 0.3s ease;
-    }
+        .btn-wasomupfy {
+            background: linear-gradient(45deg, #ff0089, #ff0089);
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 3px 6px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
 
-    .btn-wasomupfy:hover {
-        background: linear-gradient(45deg, #e04385, #cc0070);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 10px rgba(172, 19, 19, 0.2);
-        color: white;
-    }
+        .btn-wasomupfy:hover {
+            background: linear-gradient(45deg, #e04385, #cc0070);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(172, 19, 19, 0.2);
+            color: white;
+        }
 
-    .preloader {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-        transition: opacity 0.5s ease;
-    }
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
 
-    .loaded .preloader {
-        opacity: 0;
-        pointer-events: none;
-    }
+        .loaded .preloader {
+            opacity: 0;
+            pointer-events: none;
+        }
 
-    .text-wasom {
-        color: var(--wasom-primary) !important;
-    }
+        .text-wasom {
+            color: var(--wasom-primary) !important;
+        }
 
-    .form-control:focus {
-        border-color: var(--wasom-primary);
-        box-shadow: 0 0 0 0.25rem rgba(255, 0, 137, 0.15);
-    }
+        .form-control:focus {
+            border-color: var(--wasom-primary);
+            box-shadow: 0 0 0 0.25rem rgba(255, 0, 137, 0.15);
+        }
 
-    .spinner-border {
-        border-bottom-color: #ff0089;
-        border-top-color: #ff0089;
-        border-left-color: #ff0089;
-    }
+        .spinner-border {
+            border-bottom-color: #ff0089;
+            border-top-color: #ff0089;
+            border-left-color: #ff0089;
+        }
     </style>
 </head>
 
@@ -152,23 +152,23 @@ if (isset($_GET['remaining']) && (int)$_GET['remaining'] > 0) {
                                         autocomplete="off" />
 
                                     <?php if ($notice): ?>
-                                    <div style="padding: 1rem;"
-                                        class="alert alert-success alert-dismissible fade show d-flex align-items-center mb-3"
-                                        role="alert">
-                                        <i class="bi bi-check-circle-fill me-2"></i>
-                                        <div><?php echo htmlspecialchars($notice); ?></div>
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                    </div>
+                                        <div style="padding: 1rem;"
+                                            class="alert alert-success alert-dismissible fade show d-flex align-items-center mb-3"
+                                            role="alert">
+                                            <i class="bi bi-check-circle-fill me-2"></i>
+                                            <div><?php echo htmlspecialchars($notice); ?></div>
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                        </div>
                                     <?php endif; ?>
 
                                     <?php if ($error): ?>
-                                    <div style="padding: 1rem;"
-                                        class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-3"
-                                        role="alert">
-                                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                                        <div><?php echo htmlspecialchars($error); ?></div>
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                    </div>
+                                        <div style="padding: 1rem;"
+                                            class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-3"
+                                            role="alert">
+                                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                            <div><?php echo htmlspecialchars($error); ?></div>
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                        </div>
                                     <?php endif; ?>
                                     <div class="mb-3">
                                         <label for="email_user" class="form-label">E-mail <span
@@ -231,13 +231,12 @@ if (isset($_GET['remaining']) && (int)$_GET['remaining'] > 0) {
                                 <div class="text-center mt-3">
                                     <a href="#support" data-bs-toggle="modal" data-bs-target="#support"
                                         class="text-decoration-none me-2" style="color: #ff0089">Suporte</a>|
-                                    <a href="#terms" data-bs-toggle="modal" data-bs-target="#terms"
-                                        class="text-decoration-none me-2" style="color: #ff0089">Termos</a>|
-                                    <a href="#privacy" data-bs-toggle="modal" data-bs-target="#privacy"
-                                        class="text-decoration-none me-2" style="color: #ff0089">Privacidade</a>|
+                                    <a href="page/politicies/terms" target="_blank" class="text-decoration-none me-2"
+                                        style="color: #ff0089">Termos</a>|
+                                    <a href="page/politicies/privacy" target="_blank" class="text-decoration-none me-2"
+                                        style="color: #ff0089">Privacidade</a>|
                                     <a onclick="window.location.href='home'"
-                                        class="text-muted text-decoration-none">Voltar
-                                        para home</a>
+                                        class="text-muted text-decoration-none">Voltar home</a>
                                 </div>
                             </div>
                         </div>
@@ -249,142 +248,46 @@ if (isset($_GET['remaining']) && (int)$_GET['remaining'] > 0) {
 
     <?php include __DIR__ . '/_modal_support.php'; ?>
 
-    <!-- ══ MODAL PRIVACIDADE (scrollable) ═══════════════════ -->
-    <div class="modal fade" id="privacy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-dark">Política de Privacidade</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p class="text-muted small">A Wasom Upfy valoriza a tua privacidade e protege os teus dados
-                        pessoais.</p>
-                    <div class="accordion" id="privacyAcc">
-                        <?php
-                        $pSections = [
-                            ['1. Recolha de Dados', 'Nome, e-mail, IP, telefone, dados bancários e informações necessárias para identificar o utilizador e proteger a plataforma.'],
-                            ['2. Uso dos Dados', 'Gestão de transacções, envio de comunicações, análise de uso da plataforma e protecção contra ataques.'],
-                            ['3. Armazenamento e Segurança', 'Dados armazenados em servidores seguros com criptografia. Mantemos medidas contra acesso não autorizado.'],
-                            ['4. Partilha de Dados', 'Dados podem ser partilhados com terceiros de confiança para processamento de pagamentos e análise. Esses terceiros mantêm confidencialidade.'],
-                            ['5. Os teus Direitos', 'Podes aceder, corrigir ou solicitar a eliminação dos teus dados. Contacta o Suporte para exercer esses direitos.'],
-                            ['6. Segurança Adicional', 'Chaves de recuperação, bloqueio por IP, inactivação de contas suspeitas. Contas solicitadas para eliminação são recuperáveis por 29 dias úteis.'],
-                            ['7. Cookies', 'Utilizamos cookies para personalizar a experiência e monitorar a performance. Podes desactivar nas definições do navegador.'],
-                            ['8. Alterações', 'A Wasom Upfy pode modificar esta Política a qualquer momento. Serás notificado por e-mail sobre alterações significativas.'],
-                        ];
-                        foreach ($pSections as $i => [$title, $body]):
-                        ?>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#pa<?php echo $i; ?>">
-                                    <?php echo $title; ?>
-                                </button>
-                            </h2>
-                            <div id="pa<?php echo $i; ?>" class="accordion-collapse collapse"
-                                data-bs-parent="#privacyAcc">
-                                <div class="accordion-body small"><?php echo $body; ?></div>
-                            </div>
-                        </div>
-                        <?php endforeach; ?>
-                    </div>
-                    <p class="text-muted small mt-3 mb-0">Actualizado em: 21/10/2024</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Entendido</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ══ MODAL TERMOS (scrollable) ════════════════════════ -->
-    <div class="modal fade" id="terms" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-dark">Termos de Uso</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p class="text-muted small">Ao usar a Wasom Upfy, concordas com os termos abaixo.</p>
-                    <div class="accordion" id="termsAcc">
-                        <?php
-                        $tSections = [
-                            ['1. Descrição dos Serviços', 'Plataforma de distribuição digital para +157 plataformas (Spotify, Apple Music, Amazon Music, etc.) para artistas em início ou fase estabelecida de carreira.'],
-                            ['2. Responsabilidades', 'Podes solicitar relatórios e reembolsos (até 24h). Não podes aceder com múltiplos dispositivos simultaneamente nem solicitar funcionalidades inexistentes.'],
-                            ['3. Propriedade Intelectual', 'Manténs a propriedade das tuas músicas. Concedes à Wasom Upfy o direito de distribuir em teu nome. Músicas identificadas por UPC e ISRC únicos.'],
-                            ['4. Pagamentos e Royalties', 'Transacções geridas pela equipa Wasom Upfy. Serás notificado por e-mail quando um pagamento for processado, com comprovante.'],
-                            ['5. Suspensão de Contas', 'Contas podem ser suspensas por comprovantes falsos, saques suspeitos ou dispositivos desconhecidos. Eliminadas definitivamente por fraude ou duplicação.'],
-                            ['6. Limitações', 'A Wasom Upfy não se responsabiliza por falhas em plataformas de terceiros ou problemas técnicos fora do seu controlo.'],
-                            ['7. Actualizações', 'Podemos modificar estes Termos a qualquer momento. Serás notificado sobre mudanças importantes.'],
-                            ['8. Cookies', 'Utilizamos cookies para personalizar a experiência. Podes desactivar nas definições do navegador.'],
-                        ];
-                        foreach ($tSections as $i => [$title, $body]):
-                        ?>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#ta<?php echo $i; ?>">
-                                    <?php echo $title; ?>
-                                </button>
-                            </h2>
-                            <div id="ta<?php echo $i; ?>" class="accordion-collapse collapse"
-                                data-bs-parent="#termsAcc">
-                                <div class="accordion-body small"><?php echo $body; ?></div>
-                            </div>
-                        </div>
-                        <?php endforeach; ?>
-                    </div>
-                    <p class="text-muted small mt-3 mb-0">Actualizado em: 26/06/2025</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Entendido</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add similar optimizations for privacy and terms modals -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/validacao.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/josembengacosta/wasomupfy@main/js/app.js"></script>
     <script>
-    window.addEventListener("load", function() {
-        requestAnimationFrame(() => {
-            document.querySelector("body").classList.add("loaded");
+        window.addEventListener("load", function() {
+            requestAnimationFrame(() => {
+                document.querySelector("body").classList.add("loaded");
+            });
         });
-    });
 
-    function togglePasswordVisibility() {
-        const passwordInput = document.getElementById("password_user");
-        const mostrar = document.getElementById("mostrar");
-        const mostrar1 = document.getElementById("mostrar1");
-        if (!passwordInput || !mostrar || !mostrar1) return;
-        if (passwordInput.type === "password") {
-            passwordInput.type = "text";
-            mostrar.style.display = "none";
-            mostrar1.style.display = "block";
-        } else {
-            passwordInput.type = "password";
-            mostrar1.style.display = "none";
-            mostrar.style.display = "block";
-        }
-    }
-    // Real-time email validation
-    document
-        .getElementById("email_user")
-        .addEventListener("input", function() {
-            const email = this.value;
-            const feedback = this.nextElementSibling.nextElementSibling;
-            if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-                this.classList.add("is-invalid");
-                feedback.style.display = "block";
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById("password_user");
+            const mostrar = document.getElementById("mostrar");
+            const mostrar1 = document.getElementById("mostrar1");
+            if (!passwordInput || !mostrar || !mostrar1) return;
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                mostrar.style.display = "none";
+                mostrar1.style.display = "block";
             } else {
-                this.classList.remove("is-invalid");
-                this.classList.add("is-valid");
-                feedback.style.display = "none";
+                passwordInput.type = "password";
+                mostrar1.style.display = "none";
+                mostrar.style.display = "block";
             }
-        });
+        }
+        // Real-time email validation
+        document
+            .getElementById("email_user")
+            .addEventListener("input", function() {
+                const email = this.value;
+                const feedback = this.nextElementSibling.nextElementSibling;
+                if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+                    this.classList.add("is-invalid");
+                    feedback.style.display = "block";
+                } else {
+                    this.classList.remove("is-invalid");
+                    this.classList.add("is-valid");
+                    feedback.style.display = "none";
+                }
+            });
     </script>
 </body>
 

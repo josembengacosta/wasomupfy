@@ -1180,8 +1180,6 @@ foreach ($all as $n) {
     // VAPID PUBLIC KEY (configurar no servidor)
     // ════════════════════════════════════════════════════
     const VAPID_PUBLIC_KEY = <?php
-    // Substituir pela chave real gerada no servidor
-    // php artisan webpush:vapid  ou  vendor/bin/web-push generate-vapid-keys
     echo json_encode(defined('VAPID_PUBLIC_KEY') ? VAPID_PUBLIC_KEY : 'SUBSTITUI_PELA_TUA_VAPID_PUBLIC_KEY');
 ?>;
 

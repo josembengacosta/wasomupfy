@@ -26,8 +26,7 @@ $csrf_page = getSiteCsrf();
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="author" content="José Mbenga da Costa" />
-    <meta name="keywords"
-        content="Ajuda <?php echo $siteName; ?>, cadastro de artistas, estatísticas, suporte técnico" />
+    <meta name="keywords" content="Ajuda <?php echo $siteName; ?>, royalties, distribuição, conta, suporte técnico" />
     <meta name="robots" content="follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large" />
     <meta name="theme-color" content="#FF009D" />
     <meta property="og:locale" content="pt_AO" />
@@ -38,7 +37,7 @@ $csrf_page = getSiteCsrf();
     <meta property="og:locale:alternate" content="pt_PT" />
     <meta property="og:title" content="<?php echo $siteName; ?> — Central de Ajuda" />
     <meta property="og:description"
-        content="Ajuda sobre a plataforma <?php echo $siteName; ?>, incluindo cadastro de artistas, estatísticas e suporte." />
+        content="Ajuda sobre a plataforma <?php echo $siteName; ?>: royalties, distribuição, conta, formatos de áudio e suporte." />
     <meta property="og:url" content="<?php echo $siteUrl; ?>/page/support/help" />
     <meta property="og:site_name" content="<?php echo $siteName; ?>" />
     <meta property="og:image"
@@ -47,7 +46,7 @@ $csrf_page = getSiteCsrf();
     <meta property="og:image:width" content="300" />
     <meta property="og:image:height" content="300" />
     <meta property="og:image:alt" content="<?php echo $siteName; ?>" />
-    <title><?php echo $siteName; ?> | Ajuda</title>
+    <title><?php echo $siteName; ?> | Central de Ajuda</title>
 
     <script>
     window.addEventListener("load", function() {
@@ -107,7 +106,6 @@ $csrf_page = getSiteCsrf();
                                 <a class="nav-link" href="../../blog/" title="Blogue" target="_blank"
                                     rel="external">Blogue</a>
                             </li>
-                            <!-- Planos — dinâmico -->
                             <li class="nav-item dropdown">
                                 <a title="Planos" class="nav-link" href="#" id="navbarDropdown" role="button"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -126,7 +124,7 @@ $csrf_page = getSiteCsrf();
                                         class="dropdown-item mb-3 text-body" href="../../plan/<?php echo $nSlug; ?>">
                                         <div class="d-flex align-items-center">
                                             <i class="fa-solid <?php echo $nIcon; ?> text-wasomupfy fs-3"
-                                                style="width: 35px"></i>
+                                                style="width:35px"></i>
                                             <div class="ms-3 lh-1">
                                                 <h5 class="mb-1"><?php echo htmlspecialchars($p['name_plan']); ?></h5>
                                                 <p class="mb-0 fs-6">Nosso plano
@@ -140,7 +138,7 @@ $csrf_page = getSiteCsrf();
                                         href="../../plan/all-plans">
                                         <div class="d-flex align-items-center">
                                             <i class="fa-solid fa-layer-group text-wasomupfy fs-3"
-                                                style="width: 35px"></i>
+                                                style="width:35px"></i>
                                             <div class="ms-3 lh-1">
                                                 <h5 class="mb-1">Todos os planos</h5>
                                                 <p class="mb-0 fs-6">Todos os nossos planos</p>
@@ -159,10 +157,10 @@ $csrf_page = getSiteCsrf();
                                         <div class="col">
                                             <div class="dropdown-header">Blog</div>
                                             <a title="Novidades" class="dropdown-item" href="../../blog/">Novidades</a>
-                                            <a title="Passatempo Wasom Upfy" class="dropdown-item"
+                                            <a title="Passatempo" class="dropdown-item"
                                                 href="../../blog/">Passatempo</a>
-                                            <a title="Indisponível" class="dropdown-item" href="#!">Indisponível
-                                                <span class="badge bg-warning">Indisponível</span></a>
+                                            <a title="Indisponível" class="dropdown-item" href="#!">Indisponível <span
+                                                    class="badge bg-warning">Indisponível</span></a>
                                             <div class="mt-3">
                                                 <div class="dropdown-header">Sobre</div>
                                                 <a title="A nossa marca" class="dropdown-item"
@@ -180,12 +178,12 @@ $csrf_page = getSiteCsrf();
                                                     href="../../page/services/music-distribution">Distribuição de
                                                     música</a>
                                                 <a title="Promoção de música" class="dropdown-item"
-                                                    href="../../page/services/music-promotion">Promoção de música
-                                                    <span class="badge bg-success">Novo</span></a>
+                                                    href="../../page/services/music-promotion">Promoção de música <span
+                                                        class="badge bg-success">Novo</span></a>
                                                 <a title="Serviços Personalizados" class="dropdown-item"
                                                     href="../../page/services/customized-services">Serviços
-                                                    personalizados
-                                                    <span class="badge bg-warning">Indisponível</span></a>
+                                                    personalizados <span
+                                                        class="badge bg-warning">Indisponível</span></a>
                                             </div>
                                             <div class="mt-3">
                                                 <div class="dropdown-header">Contactos</div>
@@ -203,8 +201,8 @@ $csrf_page = getSiteCsrf();
                                         <div class="col">
                                             <div class="mt-3 mt-lg-0">
                                                 <div class="dropdown-header">Sugestões</div>
-                                                <a title="Ajuda" class="dropdown-item active" href="help">Ajuda
-                                                    <span class="badge bg-success">Novo</span></a>
+                                                <a title="Ajuda" class="dropdown-item active" href="help">Ajuda <span
+                                                        class="badge bg-success">Novo</span></a>
                                                 <a title="Feedback" class="dropdown-item" href="#"
                                                     data-bs-toggle="modal" data-bs-target="#modalFeedback">Feedback</a>
                                                 <a title="Indisponível" class="dropdown-item" href="#!">Indisponível
@@ -212,8 +210,8 @@ $csrf_page = getSiteCsrf();
                                             </div>
                                             <div class="mt-3">
                                                 <div class="dropdown-header">Ajuda</div>
-                                                <a title="Tutorial" class="dropdown-item" href="tutorial">Tutorial
-                                                    <span class="badge bg-success">Novo</span></a>
+                                                <a title="Tutorial" class="dropdown-item" href="tutorial">Tutorial <span
+                                                        class="badge bg-success">Novo</span></a>
                                                 <a title="Suporte técnico" class="dropdown-item" href="support">Suporte
                                                     técnico</a>
                                                 <a title="Perguntas frequentes" class="dropdown-item"
@@ -236,14 +234,12 @@ $csrf_page = getSiteCsrf();
                                             mensagem</a></li>
                                     <?php if (cfg('support_email')): ?>
                                     <li><a title="E-mail" class="dropdown-item"
-                                            href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>">
-                                            <?php echo htmlspecialchars(cfg('support_email')); ?></a>
+                                            href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"><?php echo htmlspecialchars(cfg('support_email')); ?></a>
                                     </li>
                                     <?php endif; ?>
                                     <?php if ($whatsNum): ?>
                                     <li><a title="WhatsApp" class="dropdown-item"
-                                            href="https://wa.me/<?php echo $whatsNum; ?>">WhatsApp</a>
-                                    </li>
+                                            href="https://wa.me/<?php echo $whatsNum; ?>">WhatsApp</a></li>
                                     <?php endif; ?>
                                 </ul>
                             </li>
@@ -290,17 +286,7 @@ $csrf_page = getSiteCsrf();
                                 <!-- Sugestões -->
                                 <div id="searchSuggestions"
                                     class="search-suggestions bg-white rounded-3 shadow-lg mt-2 p-2 d-none">
-                                    <div class="suggestion-item p-2"><i
-                                            class="fa-regular fa-file-audio me-2 text-wasomupfy"></i>Formato de áudio
-                                        aceito</div>
-                                    <div class="suggestion-item p-2"><i
-                                            class="fa-regular fa-circle-dollar me-2 text-wasomupfy"></i>Como receber os
-                                        meus royalties</div>
-                                    <div class="suggestion-item p-2"><i
-                                            class="fa-regular fa-image me-2 text-wasomupfy"></i>Tamanho da capa</div>
-                                    <div class="suggestion-item p-2"><i
-                                            class="fa-regular fa-clock me-2 text-wasomupfy"></i>Prazo de distribuição
-                                    </div>
+                                    <!-- Populadas por help.js -->
                                 </div>
                             </div>
                         </div>
@@ -308,14 +294,16 @@ $csrf_page = getSiteCsrf();
                             abaixo.</p>
                         <div class="popular-searches mt-4">
                             <span class="text-white-stable me-2">Populares:</span>
-                            <a href="#!"
-                                class="badge bg-secondary text-black fw-semibold bg-opacity-15 text-decoration-none py-2 px-3 rounded-pill me-2 hover-scale">Royalties</a>
-                            <a href="#!"
-                                class="badge bg-secondary text-black fw-semibold bg-opacity-15 text-decoration-none py-2 px-3 rounded-pill me-2 hover-scale">Upload</a>
-                            <a href="#!"
-                                class="badge bg-secondary text-black fw-semibold bg-opacity-15 text-decoration-none py-2 px-3 rounded-pill me-2 hover-scale">Conta</a>
-                            <a href="#!"
-                                class="badge bg-secondary text-black fw-semibold bg-opacity-15 text-decoration-none py-2 px-3 rounded-pill me-2 hover-scale">Playlists</a>
+                            <a href="#!" data-search="royalties"
+                                class="popular-pill badge bg-secondary text-black fw-semibold bg-opacity-15 text-decoration-none py-2 px-3 rounded-pill me-2 hover-scale">Royalties</a>
+                            <a href="#!" data-search="formato de áudio aceito"
+                                class="popular-pill badge bg-secondary text-black fw-semibold bg-opacity-15 text-decoration-none py-2 px-3 rounded-pill me-2 hover-scale">Upload</a>
+                            <a href="#!" data-search="conta"
+                                class="popular-pill badge bg-secondary text-black fw-semibold bg-opacity-15 text-decoration-none py-2 px-3 rounded-pill me-2 hover-scale">Conta</a>
+                            <a href="#!" data-search="pitching playlists"
+                                class="popular-pill badge bg-secondary text-black fw-semibold bg-opacity-15 text-decoration-none py-2 px-3 rounded-pill me-2 hover-scale">Playlists</a>
+                            <a href="#!" data-search="2fa autenticação"
+                                class="popular-pill badge bg-secondary text-black fw-semibold bg-opacity-15 text-decoration-none py-2 px-3 rounded-pill me-2 hover-scale">2FA</a>
                         </div>
                     </div>
                 </div>
@@ -327,10 +315,9 @@ $csrf_page = getSiteCsrf();
             <div class="container">
                 <div id="searchResultsInfo" class="alert alert-wasomupfy mb-4 d-none">
                     <i class="fa-regular fa-circle-info me-2"></i>
-                    <span id="resultsCount">0</span> resultados encontrados para "<span id="searchTerm"></span>"
+                    <span id="resultsCount">0</span> resultado(s) encontrado(s) para "<span id="searchTerm"></span>"
                     <button type="button" class="btn-close float-end" id="clearSearch"></button>
                 </div>
-
                 <div class="row g-4 justify-content-center">
                     <div class="col-lg-3 col-md-6" data-cue="zoomIn">
                         <a href="#distribuicao"
@@ -341,11 +328,11 @@ $csrf_page = getSiteCsrf();
                                     class="icon-shape icon-lg bg-light-primary text-wasomupfy rounded-circle mb-3 mx-auto position-relative">
                                     <i class="fa-solid fa-cloud-arrow-up fs-2 text-wasomupfy icon-animated"></i>
                                     <span
-                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-wasomupfy">12</span>
+                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-wasomupfy">6</span>
                                 </div>
                                 <h5 class="fw-bold text-dark">Upload & Distribuição</h5>
-                                <p class="text-muted small mb-2">Formatos, prazos e lojas.</p>
-                                <span class="badge bg-wasomupfy text-dark">+8 artigos</span>
+                                <p class="text-muted small mb-2">Formatos, capas, prazos e lojas.</p>
+                                <span class="badge bg-wasomupfy text-dark">6 artigos</span>
                             </div>
                         </a>
                     </div>
@@ -358,11 +345,11 @@ $csrf_page = getSiteCsrf();
                                     class="icon-shape icon-lg bg-light-success text-success rounded-circle mb-3 mx-auto">
                                     <i class="fa-solid fa-sack-dollar fs-2 text-wasomupfy icon-animated"></i>
                                     <span
-                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-wasomupfy">9</span>
+                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-wasomupfy">3</span>
                                 </div>
                                 <h5 class="fw-bold text-dark">Royalties & Pagamentos</h5>
-                                <p class="text-muted small mb-2">90%, saques e relatórios.</p>
-                                <span class="badge bg-wasomupfy text-dark">+6 artigos</span>
+                                <p class="text-muted small mb-2">90%, saques e calendário.</p>
+                                <span class="badge bg-wasomupfy text-dark">3 artigos</span>
                             </div>
                         </a>
                     </div>
@@ -374,11 +361,11 @@ $csrf_page = getSiteCsrf();
                                 <div class="icon-shape icon-lg bg-light-info text-info rounded-circle mb-3 mx-auto">
                                     <i class="fa-solid fa-user-gear fs-2 text-wasomupfy icon-animated"></i>
                                     <span
-                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-wasomupfy">7</span>
+                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-wasomupfy">6</span>
                                 </div>
                                 <h5 class="fw-bold text-dark">Minha Conta</h5>
-                                <p class="text-muted small mb-2">Login, senha e perfil.</p>
-                                <span class="badge bg-wasomupfy text-dark">+5 artigos</span>
+                                <p class="text-muted small mb-2">Login, senha, 2FA e perfil.</p>
+                                <span class="badge bg-wasomupfy text-dark">6 artigos</span>
                             </div>
                         </a>
                     </div>
@@ -391,28 +378,29 @@ $csrf_page = getSiteCsrf();
                                     class="icon-shape icon-lg bg-light-warning text-warning rounded-circle mb-3 mx-auto">
                                     <i class="fa-solid fa-bullhorn fs-2 text-wasomupfy icon-animated"></i>
                                     <span
-                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-wasomupfy">11</span>
+                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-wasomupfy">3</span>
                                 </div>
                                 <h5 class="fw-bold text-dark">Marketing & Promo</h5>
-                                <p class="text-muted small mb-2">Playlists e pitching.</p>
-                                <span class="badge bg-wasomupfy text-dark">+7 artigos</span>
+                                <p class="text-muted small mb-2">Playlists, pitching e anúncios.</p>
+                                <span class="badge bg-wasomupfy text-dark">3 artigos</span>
                             </div>
                         </a>
                     </div>
                 </div>
-
                 <div class="row mt-4">
                     <div class="col-12">
                         <div class="d-flex flex-wrap justify-content-center gap-2">
                             <span class="text-muted me-2">Ver também:</span>
-                            <a href="#!" class="badge bg-wasomupfy border py-2 px-3 rounded-pill text-decoration-none">
+                            <a href="tutorial"
+                                class="badge bg-wasomupfy border py-2 px-3 rounded-pill text-decoration-none">
                                 <i class="fa-regular fa-circle-play me-1"></i> Vídeos Tutoriais
                             </a>
-                            <a href="#!" class="badge bg-wasomupfy border py-2 px-3 rounded-pill text-decoration-none">
-                                <i class="fa-regular fa-file-lines me-1"></i> Guias PDF
+                            <a href="faq" class="badge bg-wasomupfy border py-2 px-3 rounded-pill text-decoration-none">
+                                <i class="fa-regular fa-circle-question me-1"></i> Perguntas Frequentes (FAQ)
                             </a>
-                            <a href="#!" class="badge bg-wasomupfy border py-2 px-3 rounded-pill text-decoration-none">
-                                <i class="fa-regular fa-clock me-1"></i> Webinars Ao Vivo
+                            <a href="support"
+                                class="badge bg-wasomupfy border py-2 px-3 rounded-pill text-decoration-none">
+                                <i class="fa-regular fa-headset me-1"></i> Suporte Técnico
                             </a>
                         </div>
                     </div>
@@ -420,37 +408,36 @@ $csrf_page = getSiteCsrf();
             </div>
         </section>
 
-        <!-- Artigos com accordion -->
-        <section class="py-7 bg-light-100">
+        <!-- ══ Artigos com accordion ══════════════════════════════════════════ -->
+        <section id="help-articles" class="py-7 bg-light-100">
             <div class="container">
                 <div class="row">
+
                     <!-- Sidebar -->
                     <div class="col-lg-3 mb-4 mb-lg-0">
                         <div class="sticky-top" style="top: 100px">
                             <div class="card border-0 shadow-sm p-3">
                                 <h6 class="fw-bold mb-3">Navegação Rápida</h6>
-                                <div class="nav flex-column nav-pills">
+                                <div class="nav flex-column nav-pills sidebar-nav">
                                     <a class="nav-link active py-2 px-3 rounded-3 mb-1" href="#distribuicao">
                                         <i class="fa-regular fa-circle-check me-2 text-wasomupfy"></i>Distribuição
-                                        <span
-                                            class="badge bg-wasomupfy bg-opacity-10 text-wasomupfy float-end">12</span>
+                                        <span class="badge bg-wasomupfy bg-opacity-10 text-wasomupfy float-end">6</span>
                                     </a>
                                     <a class="nav-link py-2 px-3 rounded-3 mb-1" href="#financeiro">
                                         <i class="fa-regular fa-circle-check me-2 text-wasomupfy"></i>Financeiro
-                                        <span class="badge bg-wasomupfy bg-opacity-10 text-wasomupfy float-end">9</span>
+                                        <span class="badge bg-wasomupfy bg-opacity-10 text-wasomupfy float-end">3</span>
                                     </a>
                                     <a class="nav-link py-2 px-3 rounded-3 mb-1" href="#conta">
                                         <i class="fa-regular fa-circle-check me-2 text-wasomupfy"></i>Conta
-                                        <span class="badge bg-wasomupfy bg-opacity-10 text-wasomupfy float-end">7</span>
+                                        <span class="badge bg-wasomupfy bg-opacity-10 text-wasomupfy float-end">6</span>
                                     </a>
                                     <a class="nav-link py-2 px-3 rounded-3 mb-1" href="#promocao">
                                         <i class="fa-regular fa-circle-check me-2 text-wasomupfy"></i>Marketing
-                                        <span
-                                            class="badge bg-wasomupfy bg-opacity-10 text-wasomupfy float-end">11</span>
+                                        <span class="badge bg-wasomupfy bg-opacity-10 text-wasomupfy float-end">3</span>
                                     </a>
                                     <a class="nav-link py-2 px-3 rounded-3 mb-1" href="#faq-geral">
                                         <i class="fa-regular fa-circle-check me-2 text-wasomupfy"></i>FAQ Geral
-                                        <span class="badge bg-wasomupfy bg-opacity-10 text-wasomupfy float-end">5</span>
+                                        <span class="badge bg-wasomupfy bg-opacity-10 text-wasomupfy float-end">6</span>
                                     </a>
                                 </div>
                                 <hr class="my-3" />
@@ -469,6 +456,13 @@ $csrf_page = getSiteCsrf();
                                     </a>
                                     <?php endif; ?>
                                 </div>
+                                <div class="p-3 bg-wasomupfy bg-opacity-10 rounded-3 mt-2">
+                                    <i class="fa-regular fa-circle-question fs-4 text-wasomupfy mb-1 d-block"></i>
+                                    <p class="small mb-2">Não encontrou aqui? Temos mais de 20 respostas no</p>
+                                    <a href="faq" class="btn btn-sm btn-outline-wasomupfy w-100 fw-bold">
+                                        Ver FAQ Completo →
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -477,14 +471,9 @@ $csrf_page = getSiteCsrf();
                     <div class="col-lg-9">
                         <div class="d-flex align-items-center mb-4">
                             <h2 class="fw-bold mb-0 me-3">Todos os Artigos</h2>
-                            <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-outline-wasomupfy btn-sm active">Todos</button>
-                                <button type="button" class="btn btn-outline-wasomupfy btn-sm">Mais Vistos</button>
-                                <button type="button" class="btn btn-outline-wasomupfy btn-sm">Recentes</button>
-                            </div>
                         </div>
 
-                        <!-- ── Distribuição ────────────────────────────────────────── -->
+                        <!-- ── Distribuição ──────────────────────────────────────── -->
                         <div id="distribuicao" class="mb-5 scroll-margin-top-100 category-section"
                             data-category="distribuicao">
                             <div class="d-flex align-items-center mb-4">
@@ -492,17 +481,19 @@ $csrf_page = getSiteCsrf();
                                     <i class="fa-solid fa-cloud-arrow-up text-wasomupfy fs-4"></i>
                                 </div>
                                 <h3 class="fw-bold mb-0">Distribuição e Upload</h3>
-                                <span class="badge bg-wasomupfy ms-3">12 artigos</span>
+                                <span class="badge bg-wasomupfy ms-3">6 artigos</span>
                             </div>
 
                             <div class="accordion accordion-flush shadow-sm rounded-3 overflow-hidden"
                                 id="accordionDistro">
+
+                                <!-- distro1 -->
                                 <div class="accordion-item search-item border-bottom">
                                     <h2 class="accordion-header">
                                         <button class="accordion-button collapsed fw-bold" type="button"
                                             data-bs-toggle="collapse" data-bs-target="#distro1">
-                                            <i class="fa-regular fa-circle-question me-2 text-wasomupfy"></i>
-                                            Qual o formato de áudio aceito?
+                                            <i class="fa-regular fa-file-audio me-2 text-wasomupfy"></i>Qual o formato
+                                            de áudio aceito?
                                         </button>
                                     </h2>
                                     <div id="distro1" class="accordion-collapse collapse"
@@ -514,16 +505,20 @@ $csrf_page = getSiteCsrf();
                                                     <ul class="list-unstyled">
                                                         <li class="mb-2"><i
                                                                 class="fa-regular fa-circle-check text-success me-2"></i><strong>WAV
-                                                                estéreo</strong> (recomendado)</li>
+                                                                estéreo</strong> (obrigatório)</li>
                                                         <li class="mb-2"><i
                                                                 class="fa-regular fa-circle-check text-success me-2"></i><strong>16-bit
-                                                                ou 24-bit</strong></li>
+                                                                ou 24-bit</strong> (24-bit recomendado para mais
+                                                            dinâmica)</li>
                                                         <li class="mb-2"><i
-                                                                class="fa-regular fa-circle-check text-success me-2"></i><strong>44.1kHz</strong>
-                                                            (taxa de amostragem)</li>
+                                                                class="fa-regular fa-circle-check text-success me-2"></i><strong>44.1
+                                                                kHz</strong> de taxa de amostragem</li>
+                                                        <li class="mb-2"><i
+                                                                class="fa-regular fa-circle-check text-success me-2"></i>Headroom
+                                                            de <strong>-1 dB</strong> no master</li>
                                                         <li class="mb-2"><i
                                                                 class="fa-regular fa-circle-xmark text-danger me-2"></i><strong>MP3,
-                                                                AAC, OGG</strong> (não aceitos)</li>
+                                                                AAC, OGG, FLAC</strong> não são aceitos</li>
                                                     </ul>
                                                 </div>
                                                 <div class="col-md-4">
@@ -531,26 +526,28 @@ $csrf_page = getSiteCsrf();
                                                         <p class="small text-muted mb-2"><i
                                                                 class="fa-regular fa-lightbulb text-warning me-1"></i>Dica
                                                             Profissional:</p>
-                                                        <p class="small mb-0">Se a sua música tem muitos graves, opte
-                                                            por 24-bit para preservar a qualidade.</p>
+                                                        <p class="small mb-0">Músicas com muito grave soam melhor em
+                                                            24-bit. Evite compressão excessiva no master — deixe espaço
+                                                            para a dinâmica natural.</p>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="alert alert-wasomupfy mt-3 mb-0">
                                                 <i class="fa-regular fa-circle-info me-2"></i>
-                                                Use o nosso <a href="#" class="fw-bold text-wasomupfy">verificador de
-                                                    arquivos</a> antes do upload
+                                                Tamanho máximo por faixa: <strong>1 GB</strong>. Verifique sempre o
+                                                ficheiro antes do upload.
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
+                                <!-- distro2 -->
                                 <div class="accordion-item search-item border-bottom">
                                     <h2 class="accordion-header">
                                         <button class="accordion-button collapsed fw-bold" type="button"
                                             data-bs-toggle="collapse" data-bs-target="#distro2">
-                                            <i class="fa-regular fa-image me-2 text-wasomupfy"></i>
-                                            Requisitos da Arte da Capa
+                                            <i class="fa-regular fa-image me-2 text-wasomupfy"></i>Requisitos da Arte da
+                                            Capa
                                         </button>
                                     </h2>
                                     <div id="distro2" class="accordion-collapse collapse"
@@ -561,16 +558,22 @@ $csrf_page = getSiteCsrf();
                                                     <p class="fw-bold">Requisitos Técnicos:</p>
                                                     <ul>
                                                         <li>Formato: <strong>JPG ou PNG</strong></li>
-                                                        <li>Tamanho mínimo: <strong>3000 x 3000 pixels</strong></li>
-                                                        <li>Modo de cor: <strong>RGB</strong></li>
-                                                        <li>Qualidade: <strong>Alta, sem artefactos</strong></li>
+                                                        <li>Tamanho mínimo: <strong>3000 × 3000 pixels</strong></li>
+                                                        <li>Modo de cor: <strong>RGB</strong> (não CMYK)</li>
+                                                        <li>Qualidade: <strong>Alta, sem artefactos ou
+                                                                pixelização</strong></li>
                                                     </ul>
-                                                    <div class="bg-danger bg-opacity-10 p-3 rounded-3">
-                                                        <p class="text-danger mb-0">
-                                                            <i class="fa-solid fa-triangle-exclamation me-2"></i>
-                                                            <strong>Proibido:</strong> logotipos de redes sociais,
-                                                            marcas d'água, preços, QR codes, informações de contacto
+                                                    <div class="bg-danger bg-opacity-10 p-3 rounded-3 mt-2">
+                                                        <p class="text-danger mb-1 fw-bold"><i
+                                                                class="fa-solid fa-triangle-exclamation me-2"></i>Proibido:
                                                         </p>
+                                                        <ul class="small text-danger mb-0">
+                                                            <li>Logótipos de redes sociais (Instagram, TikTok, etc.)
+                                                            </li>
+                                                            <li>Marcas d'água, preços, QR codes</li>
+                                                            <li>URLs e informações de contacto</li>
+                                                            <li>Conteúdo explícito sem marcação adequada</li>
+                                                        </ul>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-5">
@@ -586,123 +589,215 @@ $csrf_page = getSiteCsrf();
                                     </div>
                                 </div>
 
+                                <!-- distro3 -->
                                 <div class="accordion-item search-item border-bottom">
                                     <h2 class="accordion-header">
                                         <button class="accordion-button collapsed fw-bold" type="button"
                                             data-bs-toggle="collapse" data-bs-target="#distro3">
-                                            <i class="fa-regular fa-clock me-2 text-wasomupfy"></i>
-                                            Prazos de Distribuição
+                                            <i class="fa-regular fa-clock me-2 text-wasomupfy"></i>Prazos de
+                                            Distribuição
                                         </button>
                                     </h2>
                                     <div id="distro3" class="accordion-collapse collapse"
                                         data-bs-parent="#accordionDistro">
                                         <div class="accordion-body">
-                                            <div class="timeline-steps">
-                                                <div class="row">
-                                                    <div class="col-4 text-center">
-                                                        <div class="step-circle bg-wasomupfy text-white">1</div>
-                                                        <p class="fw-bold mt-2 mb-0">Revisão</p>
-                                                        <small class="text-muted">24-48h</small>
-                                                    </div>
-                                                    <div class="col-4 text-center">
-                                                        <div class="step-circle bg-primary text-white">2</div>
-                                                        <p class="fw-bold mt-2 mb-0">Aprovação</p>
-                                                        <small class="text-muted">1-2 dias</small>
-                                                    </div>
-                                                    <div class="col-4 text-center">
-                                                        <div class="step-circle bg-success text-white">3</div>
-                                                        <p class="fw-bold mt-2 mb-0">Lojas</p>
-                                                        <small class="text-muted">2-5 dias</small>
-                                                    </div>
+                                            <div class="row text-center mb-3">
+                                                <div class="col-4">
+                                                    <div class="step-circle bg-wasomupfy text-white">1</div>
+                                                    <p class="fw-bold mt-2 mb-0">Revisão Interna</p>
+                                                    <small class="text-muted">24-48h</small>
+                                                </div>
+                                                <div class="col-4">
+                                                    <div class="step-circle bg-primary text-white">2</div>
+                                                    <p class="fw-bold mt-2 mb-0">Aprovação</p>
+                                                    <small class="text-muted">1-2 dias</small>
+                                                </div>
+                                                <div class="col-4">
+                                                    <div class="step-circle bg-success text-white">3</div>
+                                                    <p class="fw-bold mt-2 mb-0">Online nas Lojas</p>
+                                                    <small class="text-muted">2-5 dias</small>
                                                 </div>
                                             </div>
                                             <hr />
-                                            <table class="table table-sm">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Loja</th>
-                                                        <th>Prazo médio</th>
-                                                        <th>Recomendação</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>Spotify</td>
-                                                        <td>3-5 dias úteis</td>
-                                                        <td>2 semanas antes</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Apple Music</td>
-                                                        <td>2-3 dias úteis</td>
-                                                        <td>1 semana antes</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Deezer</td>
-                                                        <td>3-7 dias úteis</td>
-                                                        <td>2 semanas antes</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
+                                            <div class="table-responsive">
+                                                <table class="table table-sm">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Loja</th>
+                                                            <th>Prazo médio</th>
+                                                            <th>Recomendação para pitch</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td><i class="fa-brands fa-spotify text-success me-1"></i>
+                                                                Spotify</td>
+                                                            <td>3-5 dias úteis</td>
+                                                            <td>3 semanas antes</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><i class="fa-brands fa-apple text-dark me-1"></i> Apple
+                                                                Music</td>
+                                                            <td>2-3 dias úteis</td>
+                                                            <td>1 semana antes</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><i class="fa-brands fa-deezer text-warning me-1"></i>
+                                                                Deezer</td>
+                                                            <td>3-7 dias úteis</td>
+                                                            <td>2 semanas antes</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><i class="fa-brands fa-tiktok text-dark me-1"></i>
+                                                                TikTok</td>
+                                                            <td>2-4 dias úteis</td>
+                                                            <td>2 semanas antes</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="alert alert-wasomupfy mb-0">
+                                                <i class="fa-regular fa-lightbulb me-2"></i>
+                                                Envie sempre com <strong>pelo menos 3 semanas de antecedência</strong>
+                                                para garantir o pitching a playlists editoriais.
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
+                                <!-- distro4 -->
                                 <div class="accordion-item search-item border-bottom">
                                     <h2 class="accordion-header">
                                         <button class="accordion-button collapsed fw-bold" type="button"
                                             data-bs-toggle="collapse" data-bs-target="#distro4">
-                                            <i class="fa-regular fa-store me-2 text-wasomupfy"></i>
-                                            Para quais lojas distribuímos?
+                                            <i class="fa-regular fa-store me-2 text-wasomupfy"></i>Para quais lojas
+                                            distribuímos?
                                         </button>
                                     </h2>
                                     <div id="distro4" class="accordion-collapse collapse"
                                         data-bs-parent="#accordionDistro">
                                         <div class="accordion-body">
-                                            <div class="row">
-                                                <div class="col-6 col-md-4 mb-3">
-                                                    <div class="d-flex align-items-center"><i
-                                                            class="fa-brands fa-spotify text-success fs-5 me-2"></i><span>Spotify</span>
+                                            <div class="row g-2 mb-3">
+                                                <div class="col-6 col-md-4">
+                                                    <div class="d-flex align-items-center p-2 bg-light rounded-3"><i
+                                                            class="fa-brands fa-spotify text-success fs-5 me-2"></i>Spotify
                                                     </div>
                                                 </div>
-                                                <div class="col-6 col-md-4 mb-3">
-                                                    <div class="d-flex align-items-center"><i
-                                                            class="fa-brands fa-apple text-dark fs-5 me-2"></i><span>Apple
-                                                            Music</span></div>
+                                                <div class="col-6 col-md-4">
+                                                    <div class="d-flex align-items-center p-2 bg-light rounded-3"><i
+                                                            class="fa-brands fa-apple text-dark fs-5 me-2"></i>Apple
+                                                        Music</div>
                                                 </div>
-                                                <div class="col-6 col-md-4 mb-3">
-                                                    <div class="d-flex align-items-center"><i
-                                                            class="fa-brands fa-deezer text-warning fs-5 me-2"></i><span>Deezer</span>
+                                                <div class="col-6 col-md-4">
+                                                    <div class="d-flex align-items-center p-2 bg-light rounded-3"><i
+                                                            class="fa-brands fa-deezer text-warning fs-5 me-2"></i>Deezer
                                                     </div>
                                                 </div>
-                                                <div class="col-6 col-md-4 mb-3">
-                                                    <div class="d-flex align-items-center"><i
-                                                            class="fa-brands fa-tiktok text-dark fs-5 me-2"></i><span>TikTok</span>
+                                                <div class="col-6 col-md-4">
+                                                    <div class="d-flex align-items-center p-2 bg-light rounded-3"><i
+                                                            class="fa-brands fa-tiktok text-dark fs-5 me-2"></i>TikTok
                                                     </div>
                                                 </div>
-                                                <div class="col-6 col-md-4 mb-3">
-                                                    <div class="d-flex align-items-center"><i
-                                                            class="fa-brands fa-amazon text-warning fs-5 me-2"></i><span>Amazon
-                                                            Music</span></div>
+                                                <div class="col-6 col-md-4">
+                                                    <div class="d-flex align-items-center p-2 bg-light rounded-3"><i
+                                                            class="fa-brands fa-amazon text-warning fs-5 me-2"></i>Amazon
+                                                        Music</div>
                                                 </div>
-                                                <div class="col-6 col-md-4 mb-3">
-                                                    <div class="d-flex align-items-center"><i
-                                                            class="fa-solid fa-music text-primary fs-5 me-2"></i><span>TIDAL</span>
+                                                <div class="col-6 col-md-4">
+                                                    <div class="d-flex align-items-center p-2 bg-light rounded-3"><i
+                                                            class="fa-solid fa-music text-primary fs-5 me-2"></i>TIDAL
+                                                    </div>
+                                                </div>
+                                                <div class="col-6 col-md-4">
+                                                    <div class="d-flex align-items-center p-2 bg-light rounded-3"><i
+                                                            class="fa-brands fa-youtube text-danger fs-5 me-2"></i>YouTube
+                                                        Music</div>
+                                                </div>
+                                                <div class="col-6 col-md-4">
+                                                    <div class="d-flex align-items-center p-2 bg-light rounded-3"><i
+                                                            class="fa-solid fa-headphones text-info fs-5 me-2"></i>Boomplay
+                                                    </div>
+                                                </div>
+                                                <div class="col-6 col-md-4">
+                                                    <div class="d-flex align-items-center p-2 bg-light rounded-3"><i
+                                                            class="fa-solid fa-music text-wasomupfy fs-5 me-2"></i>Audiomack
                                                     </div>
                                                 </div>
                                             </div>
-                                            <p class="small text-muted mb-0">+ 150 lojas parceiras em todo o mundo</p>
+                                            <p class="small text-muted mb-0">+ mais de <strong>150 lojas e
+                                                    plataformas</strong> parceiras em todo o mundo.</p>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="text-end mt-2">
-                                <a href="#" class="text-wasomupfy text-decoration-none">Ver todos os 12 artigos <i
-                                        class="fa-regular fa-arrow-right ms-1"></i></a>
-                            </div>
+                                <!-- distro5 -->
+                                <div class="accordion-item search-item border-bottom">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed fw-bold" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#distro5">
+                                            <i class="fa-regular fa-list-check me-2 text-wasomupfy"></i>Como preencher
+                                            metadados e gerar o ISRC?
+                                        </button>
+                                    </h2>
+                                    <div id="distro5" class="accordion-collapse collapse"
+                                        data-bs-parent="#accordionDistro">
+                                        <div class="accordion-body">
+                                            <p>O <strong>ISRC</strong> (International Standard Recording Code) é gerado
+                                                automaticamente pela plataforma para cada faixa — não precisa de se
+                                                preocupar com isso.</p>
+                                            <p class="fw-bold">No formulário de upload, preencha correctamente:</p>
+                                            <ul>
+                                                <li>Nome do <strong>artista principal</strong> e artistas em
+                                                    <strong>feat.</strong>
+                                                </li>
+                                                <li><strong>Compositores</strong> com as respectivas percentagens de
+                                                    autoria</li>
+                                                <li><strong>Produtores</strong>, engenheiros de mixagem e mastering</li>
+                                                <li><strong>Género musical</strong> e idioma da letra</li>
+                                                <li>Se a letra contém <strong>conteúdo explícito</strong> (marque
+                                                    correctamente)</li>
+                                            </ul>
+                                            <div class="alert alert-danger mb-0">
+                                                <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                                                Metadados incorrectos podem atrasar a distribuição ou causar conflitos
+                                                de royalties entre compositores.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- distro6 -->
+                                <div class="accordion-item search-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed fw-bold" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#distro6">
+                                            <i class="fa-regular fa-calendar me-2 text-wasomupfy"></i>Posso agendar a
+                                            data de lançamento?
+                                        </button>
+                                    </h2>
+                                    <div id="distro6" class="accordion-collapse collapse"
+                                        data-bs-parent="#accordionDistro">
+                                        <div class="accordion-body">
+                                            <p>Sim. No formulário de upload, existe um campo <strong>"Data de
+                                                    Lançamento"</strong> onde pode escolher o dia exacto em que a música
+                                                ficará disponível ao público.</p>
+                                            <p>Recomendamos agendar para uma <strong>sexta-feira</strong>, que é o dia
+                                                oficial de lançamentos da indústria musical global (New Music Friday).
+                                            </p>
+                                            <div class="alert alert-wasomupfy mb-0">
+                                                <i class="fa-regular fa-lightbulb me-2"></i>
+                                                Para garantir pitching em playlists editoriais do Spotify, submeta com
+                                                <strong>pelo menos 3 semanas de antecedência</strong> em relação à data
+                                                de lançamento.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div><!-- /accordionDistro -->
                         </div>
 
-                        <!-- ── Financeiro ──────────────────────────────────────────── -->
+                        <!-- ── Financeiro ────────────────────────────────────────── -->
                         <div id="financeiro" class="mb-5 scroll-margin-top-100 category-section"
                             data-category="financeiro">
                             <div class="d-flex align-items-center mb-4">
@@ -710,17 +805,19 @@ $csrf_page = getSiteCsrf();
                                     <i class="fa-solid fa-sack-dollar text-success fs-4"></i>
                                 </div>
                                 <h3 class="fw-bold mb-0">Pagamentos e Royalties</h3>
-                                <span class="badge bg-wasomupfy ms-3">9 artigos</span>
+                                <span class="badge bg-wasomupfy ms-3">3 artigos</span>
                             </div>
 
                             <div class="accordion accordion-flush shadow-sm rounded-3 overflow-hidden"
                                 id="accordionFinance">
+
+                                <!-- fin1 -->
                                 <div class="accordion-item search-item border-bottom">
                                     <h2 class="accordion-header">
                                         <button class="accordion-button collapsed fw-bold" type="button"
                                             data-bs-toggle="collapse" data-bs-target="#fin1">
-                                            <i class="fa-regular fa-percent me-2 text-wasomupfy"></i>
-                                            Qual a percentagem de royalties que eu recebo?
+                                            <i class="fa-regular fa-percent me-2 text-wasomupfy"></i>Qual a percentagem
+                                            de royalties que eu recebo?
                                         </button>
                                     </h2>
                                     <div id="fin1" class="accordion-collapse collapse"
@@ -728,17 +825,17 @@ $csrf_page = getSiteCsrf();
                                         <div class="accordion-body">
                                             <div class="text-center mb-4">
                                                 <div class="display-3 fw-bold text-wasomupfy">90%</div>
-                                                <p class="text-muted">dos royalties líquidos</p>
+                                                <p class="text-muted">dos royalties líquidos vão para você</p>
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-6">
                                                     <div class="bg-light p-3 rounded-3">
                                                         <p class="fw-bold mb-2"><i
-                                                                class="fa-regular fa-check-circle text-success me-2"></i>Incluído:
-                                                        </p>
+                                                                class="fa-regular fa-check-circle text-success me-2"></i>Os
+                                                            90% incluem:</p>
                                                         <ul class="small">
-                                                            <li>Streaming (Spotify, Apple, etc)</li>
-                                                            <li>Downloads</li>
+                                                            <li>Streaming (Spotify, Apple Music, Deezer, etc.)</li>
+                                                            <li>Downloads pagos</li>
                                                             <li>Sincronização (quando aplicável)</li>
                                                         </ul>
                                                     </div>
@@ -750,211 +847,480 @@ $csrf_page = getSiteCsrf();
                                                             cobrem:</p>
                                                         <ul class="small">
                                                             <li>Infraestrutura da plataforma</li>
-                                                            <li>Suporte ao artista</li>
-                                                            <li>Taxas administrativas</li>
+                                                            <li>Suporte dedicado ao artista</li>
+                                                            <li>Taxas administrativas e operacionais</li>
                                                         </ul>
                                                     </div>
                                                 </div>
+                                            </div>
+                                            <div class="alert alert-wasomupfy mt-3 mb-0">
+                                                <i class="fa-regular fa-circle-info me-2"></i>
+                                                Os royalties líquidos são calculados <em>após</em> as deduções das
+                                                próprias plataformas (ex.: o Spotify já retém a sua parte antes de
+                                                repassar à distribuidora).
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
+                                <!-- fin2 -->
                                 <div class="accordion-item search-item border-bottom">
                                     <h2 class="accordion-header">
                                         <button class="accordion-button collapsed fw-bold" type="button"
                                             data-bs-toggle="collapse" data-bs-target="#fin2">
-                                            <i class="fa-regular fa-calendar me-2 text-wasomupfy"></i>
-                                            Calendário de Pagamentos
+                                            <i class="fa-regular fa-calendar me-2 text-wasomupfy"></i>Calendário de
+                                            Pagamentos
                                         </button>
                                     </h2>
                                     <div id="fin2" class="accordion-collapse collapse"
                                         data-bs-parent="#accordionFinance">
                                         <div class="accordion-body">
+                                            <p class="small text-muted mb-3">Os dados de streaming chegam com atraso das
+                                                plataformas. O calendário abaixo explica quando ficam disponíveis e
+                                                quando são pagos:</p>
                                             <div class="table-responsive">
-                                                <table class="table table-bordered">
-                                                    <thead>
+                                                <table class="table table-bordered table-sm">
+                                                    <thead class="table-light">
                                                         <tr>
-                                                            <th>Mês de Stream</th>
+                                                            <th>Mês dos Streams</th>
                                                             <th>Relatório Disponível</th>
-                                                            <th>Pagamento</th>
+                                                            <th>Pagamento Processado</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         <tr>
                                                             <td>Janeiro</td>
-                                                            <td>Março (dia 15)</td>
-                                                            <td>Março (dia 20)</td>
+                                                            <td>Março — dia 15</td>
+                                                            <td>Março — dia 20</td>
                                                         </tr>
                                                         <tr>
                                                             <td>Fevereiro</td>
-                                                            <td>Abril (dia 15)</td>
-                                                            <td>Abril (dia 20)</td>
+                                                            <td>Abril — dia 15</td>
+                                                            <td>Abril — dia 20</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Março</td>
+                                                            <td>Maio — dia 15</td>
+                                                            <td>Maio — dia 20</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
                                             </div>
+                                            <p class="small text-muted mb-0">O padrão repete-se mensalmente. Pode
+                                                acompanhar os ganhos em tempo real no seu dashboard, filtrado por loja,
+                                                artista ou período.</p>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+
+                                <!-- fin3 -->
+                                <div class="accordion-item search-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed fw-bold" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#fin3">
+                                            <i class="fa-regular fa-wallet me-2 text-wasomupfy"></i>Como e quando posso
+                                            solicitar o levantamento?
+                                        </button>
+                                    </h2>
+                                    <div id="fin3" class="accordion-collapse collapse"
+                                        data-bs-parent="#accordionFinance">
+                                        <div class="accordion-body">
+                                            <p>Após atingir o <strong>valor mínimo de levantamento</strong> definido
+                                                para o seu plano, aceda ao dashboard → <strong>Finanças → Solicitar
+                                                    Levantamento</strong> e escolha o método de pagamento:</p>
+                                            <ul>
+                                                <li>Transferência bancária (IBAN)</li>
+                                                <li>Outros métodos disponíveis na sua carteira <?php echo $siteName; ?>
+                                                </li>
+                                            </ul>
+                                            <div class="alert alert-wasomupfy mb-0">
+                                                <i class="fa-regular fa-triangle-exclamation me-2"></i>
+                                                Certifique-se de que os seus dados bancários estão correctos nas
+                                                <strong>Definições da Conta</strong> antes de solicitar — pagamentos
+                                                devolvidos por dados incorrectos podem levar tempo adicional a ser
+                                                reprocessados.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div><!-- /accordionFinance -->
                         </div>
 
-                        <!-- ── Conta ───────────────────────────────────────────────── -->
-                        <div id="conta" class="mb-5 scroll-margin-top-100">
+                        <!-- ── Conta & Segurança ──────────────────────────────────── -->
+                        <div id="conta" class="mb-5 scroll-margin-top-100 category-section" data-category="conta">
                             <div class="d-flex align-items-center mb-4">
                                 <div class="bg-light-info rounded-circle p-3 me-3">
                                     <i class="fa-solid fa-user-shield text-info fs-4"></i>
                                 </div>
                                 <h3 class="fw-bold mb-0">Conta e Segurança</h3>
+                                <span class="badge bg-wasomupfy ms-3">6 artigos</span>
                             </div>
 
                             <div class="accordion accordion-flush shadow-sm rounded-3 overflow-hidden"
                                 id="accordionAccount">
-                                <div class="accordion-item search-item">
+
+                                <!-- acc1 -->
+                                <div class="accordion-item search-item border-bottom">
                                     <h2 class="accordion-header">
                                         <button class="accordion-button collapsed fw-bold" type="button"
                                             data-bs-toggle="collapse" data-bs-target="#acc1">
                                             <i class="fa-solid fa-gear me-2 text-wasomupfy"></i>Como verificar o meu
-                                            perfil no Spotify (S4A)?
+                                            perfil no Spotify for Artists (S4A)?
                                         </button>
                                     </h2>
                                     <div id="acc1" class="accordion-collapse collapse"
                                         data-bs-parent="#accordionAccount">
                                         <div class="accordion-body text-muted">
-                                            Após o seu primeiro lançamento estar online, pode reivindicar o seu perfil
-                                            no
-                                            <a href="https://artists.spotify.com" target="_blank">Spotify for
-                                                Artists</a>.
-                                            Se precisar de acesso rápido antes do lançamento (Instant Access), entre em
-                                            contacto com o nosso suporte para verificarmos a disponibilidade.
+                                            <p>Após o seu <strong>primeiro lançamento estar online</strong>, pode
+                                                reivindicar o seu perfil artístico em <a
+                                                    href="https://artists.spotify.com" target="_blank"
+                                                    class="text-wasomupfy fw-bold">artists.spotify.com</a>.</p>
+                                            <p>Se precisar de acesso antecipado (Instant Access) antes do lançamento
+                                                estar live, entre em contacto com o nosso suporte — verificamos a
+                                                disponibilidade caso a caso.</p>
+                                            <p class="mb-0">O mesmo processo aplica-se ao <strong>Apple Music for
+                                                    Artists</strong> e ao painel de artistas do <strong>Amazon
+                                                    Music</strong>.</p>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="accordion-item search-item">
+
+                                <!-- acc2 -->
+                                <div class="accordion-item search-item border-bottom">
                                     <h2 class="accordion-header">
                                         <button class="accordion-button collapsed fw-bold" type="button"
                                             data-bs-toggle="collapse" data-bs-target="#acc2">
-                                            <i class="fa-solid fa-lock me-2 text-wasomupfy"></i>Esqueci a minha senha, o
-                                            que fazer?
+                                            <i class="fa-solid fa-lock me-2 text-wasomupfy"></i>Esqueci a minha senha —
+                                            o que fazer?
                                         </button>
                                     </h2>
                                     <div id="acc2" class="accordion-collapse collapse"
                                         data-bs-parent="#accordionAccount">
                                         <div class="accordion-body text-muted">
-                                            No ecrã de login, clique em "Esqueci a Senha". Enviaremos um link de
-                                            redefinição
-                                            segura para o seu e-mail cadastrado.
+                                            <p>Na página de login, clique em <strong>"Esqueci a Senha"</strong>.
+                                                Enviaremos um link de redefinição seguro para o seu e-mail cadastrado,
+                                                válido por <strong>1 hora</strong>.</p>
+                                            <ul>
+                                                <li>Defina uma senha com mínimo 8 caracteres, misturando letras, números
+                                                    e símbolos</li>
+                                                <li>Verifique a caixa de <strong>spam</strong> caso o e-mail não apareça
+                                                    na caixa de entrada</li>
+                                                <li>Se continuar sem acesso, abra um ticket em <a href="support"
+                                                        class="text-wasomupfy fw-bold">Suporte Técnico</a></li>
+                                            </ul>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+
+                                <!-- acc3 -->
+                                <div class="accordion-item search-item border-bottom">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed fw-bold" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#acc3">
+                                            <i class="fa-solid fa-shield-halved me-2 text-wasomupfy"></i>Como activar a
+                                            autenticação em dois factores (2FA)?
+                                        </button>
+                                    </h2>
+                                    <div id="acc3" class="accordion-collapse collapse"
+                                        data-bs-parent="#accordionAccount">
+                                        <div class="accordion-body">
+                                            <p>Aceda ao dashboard → <strong>Definições → Segurança</strong> e active o
+                                                2FA.</p>
+                                            <p>Utilizamos autenticação por <strong>e-mail (OTP)</strong>: após inserir a
+                                                senha no login, um código temporário é enviado para o seu e-mail que
+                                                deverá inserir para concluir o acesso. O código expira ao fim de
+                                                <strong>10 minutos</strong>.
+                                            </p>
+                                            <div class="alert alert-success mb-0">
+                                                <i class="fa-solid fa-shield-check me-2"></i>
+                                                <strong>Altamente recomendado</strong> para contas que gerem artistas ou
+                                                recebem royalties. O 2FA é a proteção mais eficaz contra acessos não
+                                                autorizados.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- acc4 -->
+                                <div class="accordion-item search-item border-bottom">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed fw-bold" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#acc4">
+                                            <i class="fa-regular fa-envelope-open me-2 text-wasomupfy"></i>Como funciona
+                                            a verificação de e-mail?
+                                        </button>
+                                    </h2>
+                                    <div id="acc4" class="accordion-collapse collapse"
+                                        data-bs-parent="#accordionAccount">
+                                        <div class="accordion-body text-muted">
+                                            <p>Após o cadastro, enviamos um e-mail de verificação. Clique no botão
+                                                <strong>"Verificar e-mail"</strong> para activar a conta. Enquanto não
+                                                verificar, o acesso ao dashboard ficará limitado.
+                                            </p>
+                                            <p>Se não receber o e-mail em alguns minutos, entre no painel e clique em
+                                                <strong>"Reenviar verificação"</strong>. O link expira ao fim de
+                                                <strong>24 horas</strong>.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- acc5 -->
+                                <div class="accordion-item search-item border-bottom">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed fw-bold" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#acc5">
+                                            <i class="fa-regular fa-pause-circle me-2 text-wasomupfy"></i>Como
+                                            desactivar ou reactivar a minha conta?
+                                        </button>
+                                    </h2>
+                                    <div id="acc5" class="accordion-collapse collapse"
+                                        data-bs-parent="#accordionAccount">
+                                        <div class="accordion-body">
+                                            <p><strong>Para desactivar:</strong> Definições → Conta → <em>"Desactivar
+                                                    conta"</em>. A conta ficará suspensa, mas os dados são preservados.
+                                                O perfil e músicas ficam invisíveis para terceiros.</p>
+                                            <p><strong>Para reactivar:</strong> Basta fazer login novamente. O sistema
+                                                detecta a desactivação e apresenta um diálogo a perguntar se deseja
+                                                restaurar. Após confirmar, tudo regressa ao normal com todos os dados
+                                                intactos.</p>
+                                            <div class="alert alert-warning mb-0">
+                                                <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                                                A opção <strong>"Eliminar conta"</strong> (também em Definições → Conta)
+                                                é <em>irreversível</em>. Exporte os seus relatórios financeiros antes de
+                                                prosseguir.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- acc6 -->
+                                <div class="accordion-item search-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed fw-bold" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#acc6">
+                                            <i class="fa-regular fa-users me-2 text-wasomupfy"></i>Como adicionar
+                                            colaboradores à minha conta?
+                                        </button>
+                                    </h2>
+                                    <div id="acc6" class="accordion-collapse collapse"
+                                        data-bs-parent="#accordionAccount">
+                                        <div class="accordion-body">
+                                            <p>Aceda ao dashboard → <strong>Definições → Colaboradores</strong> e
+                                                convide utilizadores por e-mail. Pode definir o nível de acesso de cada
+                                                colaborador:</p>
+                                            <ul>
+                                                <li><strong>Visualizador</strong> — apenas lê estatísticas, sem acesso
+                                                    financeiro</li>
+                                                <li><strong>Editor</strong> — gere artistas e lançamentos</li>
+                                                <li><strong>Administrador</strong> — acesso total, exceto dados
+                                                    financeiros sensíveis</li>
+                                            </ul>
+                                            <p class="mb-0 small text-muted">Ideal para managers, produtores e equipas
+                                                de marketing que precisam de trabalhar na conta sem acesso a royalties e
+                                                dados bancários.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div><!-- /accordionAccount -->
                         </div>
 
-                        <!-- ── Marketing ──────────────────────────────────────────── -->
-                        <div id="promocao" class="mb-5 scroll-margin-top-100">
+                        <!-- ── Marketing ─────────────────────────────────────────── -->
+                        <div id="promocao" class="mb-5 scroll-margin-top-100 category-section"
+                            data-category="marketing">
                             <div class="d-flex align-items-center mb-4">
                                 <div class="bg-light-warning rounded-circle p-3 me-3">
                                     <i class="fa-solid fa-bullhorn text-warning fs-4"></i>
                                 </div>
                                 <h3 class="fw-bold mb-0">Marketing e Promoção</h3>
+                                <span class="badge bg-wasomupfy ms-3">3 artigos</span>
                             </div>
 
                             <div class="accordion accordion-flush shadow-sm rounded-3 overflow-hidden"
                                 id="accordionMarketing">
-                                <div class="accordion-item">
+
+                                <!-- mkt1 -->
+                                <div class="accordion-item search-item border-bottom">
                                     <h2 class="accordion-header">
                                         <button class="accordion-button collapsed fw-bold" type="button"
                                             data-bs-toggle="collapse" data-bs-target="#mkt1">
                                             <i class="fa-solid fa-music me-2 text-wasomupfy"></i>Como ser incluído em
-                                            playlists?
+                                            playlists editoriais?
                                         </button>
                                     </h2>
                                     <div id="mkt1" class="accordion-collapse collapse"
                                         data-bs-parent="#accordionMarketing">
                                         <div class="accordion-body">
-                                            <p>Faça pitching directamente pelo painel com até 4 semanas de antecedência.
-                                                Inclua informações sobre género, mood e instrumentos.</p>
+                                            <p>O <strong>pitching para playlists editoriais</strong> é feito
+                                                directamente pelo painel, com até <strong>4 semanas de
+                                                    antecedência</strong>. Para aumentar as hipóteses de selecção,
+                                                preencha:</p>
+                                            <ul>
+                                                <li>Género musical e sub-género</li>
+                                                <li>Mood da música (energético, melancólico, relaxante, etc.)</li>
+                                                <li>Instrumentos principais</li>
+                                                <li>Contexto e história por detrás do lançamento</li>
+                                            </ul>
+                                            <div class="alert alert-wasomupfy mb-0">
+                                                <i class="fa-regular fa-lightbulb me-2"></i>
+                                                Só é possível fazer pitching para músicas com <strong>data de lançamento
+                                                    futura</strong>. Após publicação, apenas playlists algorítmicas e de
+                                                utilizadores ficam disponíveis.
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="accordion-item">
+
+                                <!-- mkt2 -->
+                                <div class="accordion-item search-item border-bottom">
                                     <h2 class="accordion-header">
                                         <button class="accordion-button collapsed fw-bold" type="button"
                                             data-bs-toggle="collapse" data-bs-target="#mkt2">
-                                            <i class="fa-solid fa-chart-line me-2 text-wasomupfy"></i>Posso fazer
-                                            anúncios?
+                                            <i class="fa-solid fa-chart-line me-2 text-wasomupfy"></i>Posso criar
+                                            anúncios a partir do painel?
                                         </button>
                                     </h2>
                                     <div id="mkt2" class="accordion-collapse collapse"
                                         data-bs-parent="#accordionMarketing">
                                         <div class="accordion-body">
-                                            <p>Sim, oferecemos integração com Facebook/Instagram Ads directamente do
-                                                painel.</p>
+                                            <p>Sim. Oferecemos integração com <strong>Facebook/Instagram Ads e TikTok
+                                                    for Business</strong> directamente do painel. Pode criar campanhas
+                                                de promoção de lançamentos, pré-saves e segmentação por país sem sair da
+                                                plataforma.</p>
+                                            <p class="mb-0 small text-muted">Esta funcionalidade faz parte do plano de
+                                                <a href="../../page/services/music-promotion"
+                                                    class="text-wasomupfy fw-bold">Promoção de Música</a>. Para serviços
+                                                personalizados, consulte a nossa página de <a
+                                                    href="../../page/services/customized-services"
+                                                    class="text-wasomupfy fw-bold">Serviços Premium</a>.
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+
+                                <!-- mkt3 -->
+                                <div class="accordion-item search-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed fw-bold" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#mkt3">
+                                            <i class="fa-brands fa-tiktok me-2 text-wasomupfy"></i>Como tirar o máximo
+                                            partido do TikTok?
+                                        </button>
+                                    </h2>
+                                    <div id="mkt3" class="accordion-collapse collapse"
+                                        data-bs-parent="#accordionMarketing">
+                                        <div class="accordion-body">
+                                            <p>A música fica disponível na biblioteca do TikTok após a distribuição.
+                                                Para maximizar o impacto:</p>
+                                            <ul>
+                                                <li>Seleccione o <strong>melhor excerto</strong> (hook ou refrão)
+                                                    durante o upload — será o que aparece no TikTok</li>
+                                                <li>Crie vídeos de <strong>15 a 30 segundos</strong> a usar a música
+                                                    antes do lançamento</li>
+                                                <li>Incentive fãs e criadores a usarem a faixa nos seus vídeos</li>
+                                                <li>Um único vídeo viral pode gerar centenas de milhares de streams</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div><!-- /accordionMarketing -->
                         </div>
+
                     </div><!-- /col-lg-9 -->
-                </div>
-            </div>
+                </div><!-- /row -->
+            </div><!-- /container -->
         </section>
 
-        <!-- FAQ Geral -->
-        <section id="faq-geral" class="py-5 bg-light-100">
+        <!-- ══ FAQ Rápido + link para FAQ completo ════════════════════════════ -->
+        <section id="faq-geral" class="py-5 bg-light-100 border-top">
             <div class="container">
                 <div class="text-center mb-5">
                     <span class="badge bg-wasomupfy bg-opacity-10 text-wasomupfy py-2 px-3 rounded-pill mb-3">FAQ</span>
-                    <h2 class="fw-bold">Perguntas Frequentes</h2>
-                    <p class="text-muted">Respostas rápidas para as dúvidas mais comuns</p>
+                    <h2 class="fw-bold">Respostas Rápidas</h2>
+                    <p class="text-muted">As dúvidas mais frequentes — resumidas aqui para si.</p>
                 </div>
                 <div class="row g-4">
-                    <div class="col-md-6 col-lg-3">
+                    <div class="col-md-6 col-lg-4">
                         <div class="card h-100 border-0 shadow-sm hover-lift">
                             <div class="card-body">
                                 <div class="d-flex align-items-center mb-3">
                                     <i class="fa-regular fa-file-audio text-wasomupfy fs-3 me-3"></i>
                                     <h6 class="fw-bold mb-0">Posso enviar covers?</h6>
                                 </div>
-                                <p class="small text-muted mb-0">Sim, desde que possua a licença mecânica necessária.
-                                    Entre em contacto para mais informações.</p>
+                                <p class="small text-muted mb-0">Sim, desde que possua a <strong>licença
+                                        mecânica</strong> necessária. Entre em contacto com o nosso suporte para mais
+                                    informações sobre como obter a licença.</p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-lg-3">
+                    <div class="col-md-6 col-lg-4">
                         <div class="card h-100 border-0 shadow-sm hover-lift">
                             <div class="card-body">
                                 <div class="d-flex align-items-center mb-3">
                                     <i class="fa-regular fa-pen-to-square text-wasomupfy fs-3 me-3"></i>
-                                    <h6 class="fw-bold mb-0">Como editar um lançamento?</h6>
+                                    <h6 class="fw-bold mb-0">Como editar um lançamento já aprovado?</h6>
                                 </div>
-                                <p class="small text-muted mb-0">Após aprovado, não é possível editar. Cancele e faça um
-                                    novo upload com as correcções.</p>
+                                <p class="small text-muted mb-0">Após aprovação, não é possível editar directamente.
+                                    Solicite o cancelamento pelo painel e faça um novo upload com as correcções
+                                    necessárias.</p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-lg-3">
+                    <div class="col-md-6 col-lg-4">
                         <div class="card h-100 border-0 shadow-sm hover-lift">
                             <div class="card-body">
                                 <div class="d-flex align-items-center mb-3">
                                     <i class="fa-regular fa-trash-can text-wasomupfy fs-3 me-3"></i>
-                                    <h6 class="fw-bold mb-0">Como remover uma música?</h6>
+                                    <h6 class="fw-bold mb-0">Como remover uma música das lojas?</h6>
                                 </div>
-                                <p class="small text-muted mb-0">Solicite a remoção pelo painel. O processo leva de 2 a
-                                    5 dias úteis em todas as lojas.</p>
+                                <p class="small text-muted mb-0">Solicite a remoção pelo painel. O processo leva de
+                                    <strong>2 a 5 dias úteis</strong> em todas as lojas. Note que os streams gerados até
+                                    à data de remoção são pagos normalmente.
+                                </p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-lg-3">
+                    <div class="col-md-6 col-lg-4">
                         <div class="card h-100 border-0 shadow-sm hover-lift">
                             <div class="card-body">
                                 <div class="d-flex align-items-center mb-3">
                                     <i class="fa-regular fa-clock text-wasomupfy fs-3 me-3"></i>
-                                    <h6 class="fw-bold mb-0">Agendar lançamento?</h6>
+                                    <h6 class="fw-bold mb-0">Posso agendar um lançamento?</h6>
                                 </div>
-                                <p class="small text-muted mb-0">Sim, escolha a data no upload. Recomendamos 2-3 semanas
-                                    de antecedência para melhor performance.</p>
+                                <p class="small text-muted mb-0">Sim, escolha a data exacta no formulário de upload.
+                                    Recomendamos <strong>sexta-feira</strong> (New Music Friday) e 2-3 semanas de
+                                    antecedência para melhor performance.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 border-0 shadow-sm hover-lift">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="fa-solid fa-layer-group text-wasomupfy fs-3 me-3"></i>
+                                    <h6 class="fw-bold mb-0">Qual plano escolher?</h6>
+                                </div>
+                                <p class="small text-muted mb-0">Depende da sua necessidade:
+                                    <strong>Single/Álbum</strong> para lançamentos pontuais; <strong>Artista</strong>
+                                    para gestão contínua; <strong>Label</strong> para selos com múltiplos artistas.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div
+                            class="card h-100 border-0 shadow-sm hover-lift bg-wasomupfy bg-opacity-5 border-wasomupfy">
+                            <div class="card-body d-flex flex-column justify-content-center text-center py-4">
+                                <i class="fa-regular fa-circle-question text-wasomupfy fs-1 mb-3"></i>
+                                <h6 class="fw-bold mb-2">Tem mais dúvidas?</h6>
+                                <p class="small text-muted mb-3">Consulte as nossas mais de <strong>20 perguntas e
+                                        respostas</strong> completas no FAQ.</p>
+                                <a href="faq" class="btn btn-wasomupfy btn-sm rounded-pill fw-bold">
+                                    Ver FAQ Completo <i class="fa-solid fa-arrow-right ms-1"></i>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -994,10 +1360,10 @@ $csrf_page = getSiteCsrf();
                                         <p class="small text-muted mb-3">Resposta em até 24h</p>
                                         <?php if (cfg('support_email')): ?>
                                         <a href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
-                                            class="small text-wasomupfy"><?php echo htmlspecialchars(cfg('support_email')); ?></a>
+                                            class="small text-wasomupfy d-block mb-2"><?php echo htmlspecialchars(cfg('support_email')); ?></a>
                                         <?php endif; ?>
                                         <a href="../../contact"
-                                            class="btn btn-sm btn-outline-wasomupfy w-100 mt-3">Enviar Email</a>
+                                            class="btn btn-sm btn-outline-wasomupfy w-100 mt-1">Enviar Email</a>
                                     </div>
                                 </div>
                             </div>
@@ -1010,7 +1376,7 @@ $csrf_page = getSiteCsrf();
                                         <?php if ($whatsNum): ?>
                                         <a href="https://wa.me/<?php echo $whatsNum; ?>" target="_blank"
                                             rel="noopener noreferrer" class="btn btn-sm btn-success w-100">
-                                            <i class="fa-brands fa-whatsapp me-2"></i> +<?php echo $whatsNum; ?>
+                                            <i class="fa-brands fa-whatsapp me-2"></i>+<?php echo $whatsNum; ?>
                                         </a>
                                         <?php endif; ?>
                                     </div>
@@ -1028,8 +1394,8 @@ $csrf_page = getSiteCsrf();
                                     class="btn btn-wasomupfy rounded-pill px-5 py-3 fw-bold shadow-lg">
                                     Abrir Chamado Técnico <i class="fa-solid fa-arrow-right ms-2"></i>
                                 </a>
-                                <a href="#" class="btn btn-outline-secondary rounded-pill px-4 py-3 fw-bold">
-                                    <i class="fa-regular fa-calendar me-2"></i> Agendar Call
+                                <a href="faq" class="btn btn-outline-secondary rounded-pill px-4 py-3 fw-bold">
+                                    <i class="fa-regular fa-circle-question me-2"></i>Ver FAQ Completo
                                 </a>
                             </div>
                         </div>
@@ -1077,41 +1443,35 @@ $csrf_page = getSiteCsrf();
                             <?php if (cfg('instagram_url')): ?>
                             <a href="<?php echo htmlspecialchars(cfg('instagram_url')); ?>" target="_blank"
                                 rel="external noopener noreferrer" aria-label="Instagram"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                <i class="fa-brands fa-instagram"></i>
-                            </a>
+                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem"><i
+                                    class="fa-brands fa-instagram"></i></a>
                             <?php endif; ?>
                             <?php if (cfg('facebook_url')): ?>
                             <a href="<?php echo htmlspecialchars(cfg('facebook_url')); ?>" target="_blank"
                                 rel="external noopener noreferrer" aria-label="Facebook"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                <i class="fa-brands fa-facebook-f"></i>
-                            </a>
+                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem"><i
+                                    class="fa-brands fa-facebook-f"></i></a>
                             <?php endif; ?>
                             <?php if (cfg('youtube_url')): ?>
                             <a href="<?php echo htmlspecialchars(cfg('youtube_url')); ?>" target="_blank"
                                 rel="external noopener noreferrer" aria-label="YouTube"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                <i class="fa-brands fa-youtube"></i>
-                            </a>
+                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem"><i
+                                    class="fa-brands fa-youtube"></i></a>
                             <?php endif; ?>
                             <?php if (cfg('linkedin_url')): ?>
                             <a href="<?php echo htmlspecialchars(cfg('linkedin_url')); ?>" target="_blank"
                                 rel="external noopener noreferrer" aria-label="LinkedIn"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                <i class="fa-brands fa-linkedin-in"></i>
-                            </a>
+                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem"><i
+                                    class="fa-brands fa-linkedin-in"></i></a>
                             <?php endif; ?>
                             <?php if ($whatsNum): ?>
                             <a href="https://wa.me/<?php echo $whatsNum; ?>" target="_blank"
                                 rel="external noopener noreferrer" aria-label="WhatsApp"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                <i class="fa-brands fa-whatsapp"></i>
-                            </a>
+                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem"><i
+                                    class="fa-brands fa-whatsapp"></i></a>
                             <?php endif; ?>
                         </div>
                     </div>
-
                     <div class="col-lg-3 col-6">
                         <h3 class="fw-bold mb-3">Empresa</h3>
                         <ul class="list-unstyled mb-0">
@@ -1125,15 +1485,12 @@ $csrf_page = getSiteCsrf();
                                     class="text-reset text-decoration-none hover-white">Serviços Premium</a></li>
                         </ul>
                     </div>
-
                     <div class="col-lg-3 col-6">
                         <h3 class="fw-bold mb-3">Suporte</h3>
                         <ul class="list-unstyled mb-0">
-                            <li class="mb-2">
-                                <a href="https://www.facebook.com/m.me/2007900989425052" target="_blank"
+                            <li class="mb-2"><a href="https://www.facebook.com/m.me/2007900989425052" target="_blank"
                                     rel="external noopener noreferrer"
-                                    class="text-reset text-decoration-none hover-white">Atendimento</a>
-                            </li>
+                                    class="text-reset text-decoration-none hover-white">Atendimento</a></li>
                             <li class="mb-2"><a href="help"
                                     class="text-reset text-decoration-none hover-white">Ajuda</a></li>
                             <li class="mb-2"><a href="../../contact"
@@ -1144,7 +1501,6 @@ $csrf_page = getSiteCsrf();
                             <?php endif; ?>
                         </ul>
                     </div>
-
                     <div class="col-lg-3 col-12">
                         <h3 class="fw-bold mb-3">Contacto</h3>
                         <ul class="list-unstyled mb-0 text-muted small">
@@ -1153,20 +1509,17 @@ $csrf_page = getSiteCsrf();
                                     <?php echo htmlspecialchars(cfg('company_city', 'Luanda')); ?></span>
                             </li>
                             <?php if (cfg('info_email')): ?>
-                            <li class="mb-3 d-flex">
-                                <a href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
+                            <li class="mb-3 d-flex"><a href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
                                     class="text-reset text-decoration-none"><?php echo htmlspecialchars(cfg('info_email')); ?></a>
                             </li>
                             <?php endif; ?>
                             <?php if (cfg('support_email')): ?>
-                            <li class="mb-3 d-flex">
-                                <a href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
+                            <li class="mb-3 d-flex"><a
+                                    href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
                                     class="text-reset text-decoration-none"><?php echo htmlspecialchars(cfg('support_email')); ?></a>
                             </li>
                             <?php endif; ?>
-                            <li class="d-flex">
-                                <span>Seg — Sex: 08h às 17h</span>
-                            </li>
+                            <li class="d-flex"><span>Seg — Sex: 08h às 17h</span></li>
                         </ul>
                     </div>
                 </div>
@@ -1290,7 +1643,8 @@ $csrf_page = getSiteCsrf();
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/imagesloaded/5.0.0/imagesloaded.pkgd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jarallax@2.2.0/dist/jarallax.min.js"></script>
-    <script src="../../js/tutorial.js"></script>
+    <!-- help.js substitui tutorial.js nesta página -->
+    <script src="js/help.js"></script>
     <script src="../../js/cookies.js"></script>
 
     <script>
@@ -1323,24 +1677,19 @@ $csrf_page = getSiteCsrf();
                 el.value = token;
             });
         }
-
         var fModal = document.getElementById('formFeedback');
         if (!fModal) return;
-
         fModal.addEventListener('submit', function(e) {
             e.preventDefault();
             if (!fModal.checkValidity()) {
                 fModal.classList.add('was-validated');
                 return;
             }
-
             var btn = document.getElementById('btn-feedback-modal');
             var msgBox = document.getElementById('feedback-modal-msg');
             var base = document.body.dataset.basePath || '../..';
-
             btn.disabled = true;
             btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>A enviar…';
-
             fetch(base + '/ajax/feedback.php', {
                     method: 'POST',
                     headers: {

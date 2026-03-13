@@ -16,6 +16,9 @@ define('APP_NAME',    'Wasom Upfy');
 define('APP_VERSION', '2.0');
 define('APP_URL',     'http://localhost/wasomupfy'); // Mudar em produção
 define('APP_ENV',     'production');                 // 'development' = debug local | 'production' = envio real
+define('VAPID_PUBLIC_KEY',  'BKGIW47bet8LzqCcTTV3B_pJLgUxA1xdJgtlYEU9LcJArBrZRmKipIlYblrVDMBX54bn-5T7hydeuXGB1NxGVl4'); // a chave Public Key
+define('VAPID_PRIVATE_KEY', 'sEsX8fwLAmksOgTy0MlLrgVMaq5BnYGIDkKh7K5ok7s');   // a chave Private Key
+define('VAPID_SUBJECT',     'mailto:suporte@wasomupfy.com');
 
 // ─── Segurança de Login ───────────────────────
 define('MAX_LOGIN_ATTEMPTS', 5);  // Tentativas antes do bloqueio nível 2
@@ -36,7 +39,7 @@ define('MAIL_PORT',     587);              // 587 = TLS | 465 = SSL
 define('MAIL_SECURE',   'tls');            // 'tls' | 'ssl'
 define('MAIL_USER',     'wasomupfy@gmail.com');  // conta SMTP (ex: seuemail@gmail.com)
 define('MAIL_PASS',     'prntkiazqafmoesg');
-define('MAIL_FROM',     'noreply@wasomupfy.com');
+define('MAIL_FROM',     'wasomupfy@gmail.com');  // ← deve ser igual ao MAIL_USER no Gmail
 define('MAIL_FROM_NAME', APP_NAME);
 // ─── Modo debug de email ──────────────────────
 // 0 = sem output | 1 = cliente | 2 = cliente+servidor

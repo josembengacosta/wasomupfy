@@ -81,6 +81,27 @@ function getUserById(int $id): ?array
     return $stmt->fetch() ?: null;
 }
 
+// ════════════════════════════════════════════════
+// ONBOARDING
+// ════════════════════════════════════════════════
+
+/**
+ * Marca o onboarding como concluído para o utilizador.
+ * Actualiza _users.onboarding_done = 1.
+ */
+function markOnboardingDone(int $id_users): void
+{
+    try {
+        getDB()->prepare("
+            UPDATE _users SET onboarding_done = 1 WHERE id_users = ?
+        ")->execute([$id_users]);
+
+        logActivity($id_users, 'onboarding', 'Onboarding concluído pelo utilizador');
+    } catch (Throwable $e) {
+        error_log('[markOnboardingDone] ' . $e->getMessage());
+    }
+}
+
 function emailExists(string $email): bool
 {
     $db = getDB();
@@ -584,7 +605,38 @@ function sendEmail(string $to, string $subject, string $body, string $altBody = 
         return true;
     }
 
-    // ── Produção: tentar PHPMailer, fallback para mail() nativo ─────
+    // ── Produção: WasomMailer (SMTP nativo) → PHPMailer → mail() ────
+    // Prioridade: WasomMailer (sempre disponível, funciona em localhost via SMTP)
+    // Fallback 1: PHPMailer (se Composer instalado)
+    // Fallback 2: mail() nativo (não funciona em localhost sem MTA)
+
+    // ── 1. WasomMailer — SMTP nativo, sem dependências externas ─────
+    if (MAIL_USER !== '') {
+        $mailer_path = __DIR__ . '/WasomMailer.php';
+        if (file_exists($mailer_path)) {
+            require_once $mailer_path;
+            try {
+                $wm = new \Wasom\Mailer();
+                $wm->host     = MAIL_HOST;
+                $wm->port     = MAIL_PORT;
+                $wm->secure   = defined('MAIL_SECURE') ? MAIL_SECURE : 'tls';
+                $wm->username = MAIL_USER;
+                $wm->password = MAIL_PASS;
+                $wm->debug    = defined('MAIL_DEBUG') ? MAIL_DEBUG : 0;
+                $wm->setFrom(MAIL_FROM, MAIL_FROM_NAME)
+                    ->addAddress($to)
+                    ->setSubject($subject)
+                    ->setBody($body, $altBody ?: strip_tags($body));
+                $wm->send();
+                return true;
+            } catch (\Wasom\MailerException $e) {
+                error_log('[WASOM EMAIL ERROR] WasomMailer: ' . $e->getMessage());
+                // Não retorna false — tenta PHPMailer a seguir
+            }
+        }
+    }
+
+    // ── 2. PHPMailer via Composer (se instalado) ─────────────────
     $vendor_composer = __DIR__ . '/../../vendor/autoload.php';
     $vendor_manual   = __DIR__ . '/../vendor/phpmailer/src/PHPMailer.php';
     $has_phpmailer   = false;
@@ -611,23 +663,20 @@ function sendEmail(string $to, string $subject, string $body, string $altBody = 
             $mail->Port       = MAIL_PORT;
             $mail->CharSet    = 'UTF-8';
             $mail->SMTPDebug  = defined('MAIL_DEBUG') ? MAIL_DEBUG : 0;
-
             $mail->setFrom(MAIL_FROM, MAIL_FROM_NAME);
             $mail->addAddress($to);
             $mail->isHTML(true);
             $mail->Subject = $subject;
             $mail->Body    = $body;
             $mail->AltBody = $altBody ?: strip_tags($body);
-
             $mail->send();
             return true;
         } catch (Exception $e) {
             error_log('[WASOM EMAIL ERROR] PHPMailer: ' . $e->getMessage());
-            return false;
         }
     }
 
-    // Fallback nativo (sem PHPMailer configurado)
+    // ── 3. Fallback nativo — último recurso, não funciona em localhost
     $headers  = "MIME-Version: 1.0\r\n";
     $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
     $headers .= "From: " . MAIL_FROM_NAME . " <" . MAIL_FROM . ">\r\n";

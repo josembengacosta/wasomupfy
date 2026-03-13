@@ -1,0 +1,235 @@
+
+// ══════════════════════════════════════════════════════════════════
+// 6. Renderizar alertas no HTML
+//    Chama getDashboardAlerts() e imprime o HTML dos avisos.
+//    Incluir logo após o header/navbar em cada página:
+//      <?php renderDashboardAlerts($user, $platform); ?>
+// ══════════════════════════════════════════════════════════════════
+function renderDashboardAlerts(array $user, array $platform): void {
+$alerts = getDashboardAlerts($user, $platform);
+if (empty($alerts)) return;
+
+$colorMap = [
+'danger' => ['bg' => 'rgba(239,68,68,.08)', 'border' => 'rgba(239,68,68,.25)', 'text' => '#ef4444'],
+'warning' => ['bg' => 'rgba(234,179,8,.08)', 'border' => 'rgba(234,179,8,.25)', 'text' => '#eab308'],
+'info' => ['bg' => 'rgba(99,102,241,.08)', 'border' => 'rgba(99,102,241,.25)', 'text' => '#6366f1'],
+'success' => ['bg' => 'rgba(34,197,94,.08)', 'border' => 'rgba(34,197,94,.25)', 'text' => '#22c55e'],
+];
+
+echo '<div class="wu-alerts-wrap" id="wuAlertsWrap"
+    style="display:flex;flex-direction:column;gap:8px;margin-bottom:1.2rem;">';
+    foreach ($alerts as $i => $alert) {
+    $c = $colorMap[$alert['type']] ?? $colorMap['info'];
+    $id = 'wuAlert' . $i;
+    $dis = $alert['dismiss'] ? "data-dismiss=\"{$id}\"" : '';
+    echo "<div id=\"{$id}\" style=\" display:flex;align-items:flex-start;gap:10px; background:{$c['bg']}; border:1px
+        solid {$c['border']}; border-radius:12px;padding:.75rem 1rem; font-size:.83rem;color:{$c['text']};
+        transition:opacity .3s,max-height .3s; \">";
+        echo "<i class=\"bi {$alert['icon']}\" style=\"font-size:1rem;flex-shrink:0;margin-top:1px;\"></i>";
+        echo "<span style=\"flex:1;color:rgba(232,232,240,.85);line-height:1.6;\">{$alert['message']}";
+            if (!empty($alert['action'])) {
+            $label = htmlspecialchars($alert['action']['label']);
+            $url = htmlspecialchars($alert['action']['url']);
+            echo " <a href=\"{$url}\"
+                style=\"color:{$c['text']};font-weight:700;text-decoration:underline;white-space:nowrap;\">{$label}
+                →</a>";
+            }
+            echo '</span>';
+        if ($alert['dismiss']) {
+        echo "<button type=\"button\" {$dis} onclick=\"wuDismissAlert('{$id}')\"
+            style=\"background:none;border:none;color:rgba(255,255,255,.3);
+            cursor:pointer;font-size:1.1rem;line-height:1;padding:0;flex-shrink:0;\" aria-label=\"Fechar\">×</button>";
+        }
+        echo '</div>';
+    }
+    echo '</div>';
+echo '<script>
+function wuDismissAlert(id) {
+    var el = document.getElementById(id);
+    if (el) {
+        el.style.opacity = "0";
+        setTimeout(function() {
+            el.style.display = "none";
+        }, 300);
+    }
+}
+</script>';
+}
+
+
+// ══════════════════════════════════════════════════════════════════
+// 7. Notificações — helpers para o dashboard
+// (A lógica completa está em ajax/notifications_api.php;
+// estas funções são para acesso síncrono no PHP da página.)
+// ══════════════════════════════════════════════════════════════════
+function getUnreadNotifCount(int $id_users): int {
+try {
+$db = getDB();
+
+// Notificações directas não lidas
+$s1 = $db->prepare("
+SELECT COUNT(*) FROM _notification
+WHERE id_users = ? AND is_read = 0
+");
+$s1->execute([$id_users]);
+$direct = (int)$s1->fetchColumn();
+
+// Broadcasts não lidos (via _broadcast_receipt)
+$s2 = $db->prepare("
+SELECT COUNT(*) FROM _broadcast_receipt
+WHERE id_users = ? AND is_read = 0
+");
+$s2->execute([$id_users]);
+$broadcast = (int)$s2->fetchColumn();
+
+return $direct + $broadcast;
+
+} catch (Throwable $e) {
+error_log('[getUnreadNotifCount] ' . $e->getMessage());
+return 0;
+}
+}
+
+function getRecentNotifs(int $id_users, int $limit = 5): array {
+try {
+$db = getDB();
+$stmt = $db->prepare("
+SELECT id_notification, type, title, body, action_url, is_read, creat_notification
+FROM _notification
+WHERE id_users = ?
+ORDER BY creat_notification DESC
+LIMIT ?
+");
+$stmt->execute([$id_users, $limit]);
+return $stmt->fetchAll();
+} catch (Throwable $e) {
+error_log('[getRecentNotifs] ' . $e->getMessage());
+return [];
+}
+}
+
+
+// ══════════════════════════════════════════════════════════════════
+// 8. Configuração da plataforma — helpers de acesso rápido
+// ══════════════════════════════════════════════════════════════════
+function getPlatformConfig(): array {
+$p = getDashboardPlatform();
+return [
+'royalty_percentage' => (float)($p['royalty_percentage'] ?? 90.00),
+'platform_fee' => (float)($p['platform_fee'] ?? 10.00),
+'currency_default' => $p['currency_default'] ?? 'AOA',
+'usd_to_aoa_rate' => (float)($p['usd_to_aoa_rate'] ?? 900.00),
+'contact_email' => $p['contact_email'] ?? 'suporte@wasomupfy.com',
+'stores_count' => (int)($p['stores_count'] ?? 150),
+'allow_register' => (bool)($p['allow_register'] ?? true),
+'allow_login' => (bool)($p['allow_login'] ?? true),
+'version' => $p['version'] ?? '2.0',
+];
+}
+
+// Converte USD → AOA usando a taxa da plataforma
+function usdToAoa(float $usd): float {
+$rate = (float)(getDashboardPlatform()['usd_to_aoa_rate'] ?? 900.00);
+return round($usd * $rate, 2);
+}
+
+// Formata valor em AOA: 2000 → "2.000 Kz"
+function formatAOA(float $value): string {
+return number_format($value, 0, ',', '.') . ' Kz';
+}
+
+// Formata valor em USD: 1.5 → "1,50 USD"
+function formatUSD(float $value): string {
+return number_format($value, 2, ',', '.') . ' USD';
+}
+
+// Formata royalty: calcula parte do utilizador com base na taxa da plataforma
+function calcRoyalty(float $total_usd): array {
+$cfg = getPlatformConfig();
+$pct = $cfg['royalty_percentage'] / 100;
+$user = round($total_usd * $pct, 4);
+$platform = round($total_usd * ($cfg['platform_fee'] / 100), 4);
+return [
+'total' => $total_usd,
+'user_usd' => $user,
+'plat_usd' => $platform,
+'user_aoa' => usdToAoa($user),
+'plat_aoa' => usdToAoa($platform),
+'pct' => $cfg['royalty_percentage'],
+];
+}
+
+
+// ══════════════════════════════════════════════════════════════════
+// 9. Estado do plano — helper para a UI
+// Devolve array com informação de apresentação do plano activo.
+// ══════════════════════════════════════════════════════════════════
+function getPlanBadge(array $user): array {
+if (empty($user['plan_selected'])) {
+return [
+'label' => 'Sem Plano',
+'color' => '#6b7280',
+'icon' => 'bi-dash-circle',
+'active' => false,
+];
+}
+
+$name = $user['name_plan'] ?? 'Plano';
+
+if (!empty($user['plan_expired'])) {
+return [
+'label' => $name . ' (Expirado)',
+'color' => '#ef4444',
+'icon' => 'bi-x-circle-fill',
+'active' => false,
+];
+}
+
+$days = $user['plan_days_left'] ?? null;
+$color = '#22c55e'; // verde
+if ($days !== null && $days <= 7) $color='#eab308' ; // âmbar if ($days !==null && $days <=3) $color='#ef4444' ; //
+    vermelho $suffix='' ; if ($days !==null) { $suffix=' · ' . $days . ' ' . ($days===1 ? 'dia' : 'dias' ); } return
+    [ 'label'=> $name . $suffix,
+    'color' => $color,
+    'icon' => 'bi-check-circle-fill',
+    'active' => (bool)$user['plan_active'],
+    'days' => $days,
+    ];
+    }
+
+
+    // ══════════════════════════════════════════════════════════════════
+    // 10. Utilitários gerais do dashboard
+    // ══════════════════════════════════════════════════════════════════
+
+    // Formata data/hora em pt-AO: "13 mar. 2026 às 14:30"
+    function formatDatePT(string $datetime, bool $time = true): string {
+    if (empty($datetime)) return '—';
+    $ts = strtotime($datetime);
+    $months = ['', 'jan.', 'fev.', 'mar.', 'abr.', 'mai.', 'jun.',
+    'jul.', 'ago.', 'set.', 'out.', 'nov.', 'dez.'];
+    $d = date('j', $ts);
+    $m = $months[(int)date('n', $ts)];
+    $y = date('Y', $ts);
+    $t = $time ? ' às ' . date('H:i', $ts) : '';
+    return "{$d} {$m} {$y}{$t}";
+    }
+
+    // "há 5 minutos", "há 2 horas", "há 3 dias", etc.
+    function timeAgo(string $datetime): string {
+    $diff = time() - strtotime($datetime);
+    if ($diff < 60) return 'agora mesmo' ; if ($diff < 3600) return 'há ' . floor($diff / 60) . ' min' ; if ($diff <
+        86400) return 'há ' . floor($diff / 3600) . 'h' ; if ($diff < 604800) return 'há ' . floor($diff / 86400) . ' '
+        . (floor($diff / 86400)===1 ? 'dia' : 'dias' ); return formatDatePT($datetime, false); } // Trunca texto com
+        reticências: truncate('texto longo', 40) function truncate(string $text, int $length=60, string $suffix='…' ):
+        string { $text=strip_tags($text); if (mb_strlen($text) <=$length) return $text; return rtrim(mb_substr($text, 0,
+        $length)) . $suffix; } // Gera URL de avatar via initials (fallback quando não há foto) // Devolve string CSS
+        inline para usar no style de um div. function avatarInitials(string $name, int $size=40): string {
+        $parts=array_filter(explode(' ', trim($name)));
+    $initials = mb_strtoupper(
+        mb_substr($parts[0] ?? ' ?', 0, 1) . mb_substr(end($parts) ?? '' , 0, 1) );
+        $colors=['#FF0089','#6366f1','#22c55e','#eab308','#f97316','#06b6d4']; $color=$colors[array_sum(array_map('ord',
+        str_split($name))) % count($colors)]; return "width:{$size}px;height:{$size}px;border-radius:50%;"
+        . "background:{$color};display:inline-flex;align-items:center;"
+        . "justify-content:center;font-family:'Syne',sans-serif;" . "font-weight:900;font-size:" . round($size * 0.38)
+        . "px;color:#fff;" . "flex-shrink:0;\" data-initials=\"{$initials}"; }

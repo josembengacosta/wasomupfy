@@ -298,121 +298,25 @@ $error  = isset($_GET['error'])  ? ($errors[$_GET['error']]  ?? 'Erro desconheci
                             <div class="card-footer text-center py-2 small">
                                 <a href="#support" data-bs-toggle="modal" data-bs-target="#support"
                                     class="text-wasom me-1">Suporte</a> |
-                                <a href="#terms" data-bs-toggle="modal" data-bs-target="#terms"
-                                    class="text-wasom mx-1">Termos</a> |
-                                <a href="#privacy" data-bs-toggle="modal" data-bs-target="#privacy"
+                                <a href="page/politicies/terms" target="_blank" class="text-wasom mx-1">Termos</a> |
+                                <a href="page/politicies/privacy" target="_blank"
                                     class="text-wasom mx-1">Privacidade</a> |
-                                <a href="home" class="text-muted ms-1">Voltar home</a>
+                                <a onclick="window.location.href='home'" class="text-muted text-decoration-none">Voltar
+                                    home</a>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
-
         </div>
     </main>
 
     <?php include __DIR__ . '/_modal_support.php'; ?>
 
-    <!-- ══ MODAL PRIVACIDADE (scrollable) ═══════════════════ -->
-    <div class="modal fade" id="privacy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-dark">Política de Privacidade</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p class="text-muted small">A Wasom Upfy valoriza a tua privacidade e protege os teus dados
-                        pessoais.</p>
-                    <div class="accordion" id="privacyAcc">
-                        <?php
-                        $pSections = [
-                            ['1. Recolha de Dados', 'Nome, e-mail, IP, telefone, dados bancários e informações necessárias para identificar o utilizador e proteger a plataforma.'],
-                            ['2. Uso dos Dados', 'Gestão de transacções, envio de comunicações, análise de uso da plataforma e protecção contra ataques.'],
-                            ['3. Armazenamento e Segurança', 'Dados armazenados em servidores seguros com criptografia. Mantemos medidas contra acesso não autorizado.'],
-                            ['4. Partilha de Dados', 'Dados podem ser partilhados com terceiros de confiança para processamento de pagamentos e análise. Esses terceiros mantêm confidencialidade.'],
-                            ['5. Os teus Direitos', 'Podes aceder, corrigir ou solicitar a eliminação dos teus dados. Contacta o Suporte para exercer esses direitos.'],
-                            ['6. Segurança Adicional', 'Chaves de recuperação, bloqueio por IP, inactivação de contas suspeitas. Contas solicitadas para eliminação são recuperáveis por 29 dias úteis.'],
-                            ['7. Cookies', 'Utilizamos cookies para personalizar a experiência e monitorar a performance. Podes desactivar nas definições do navegador.'],
-                            ['8. Alterações', 'A Wasom Upfy pode modificar esta Política a qualquer momento. Serás notificado por e-mail sobre alterações significativas.'],
-                        ];
-                        foreach ($pSections as $i => [$title, $body]):
-                        ?>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#pa<?php echo $i; ?>">
-                                        <?php echo $title; ?>
-                                    </button>
-                                </h2>
-                                <div id="pa<?php echo $i; ?>" class="accordion-collapse collapse"
-                                    data-bs-parent="#privacyAcc">
-                                    <div class="accordion-body small"><?php echo $body; ?></div>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                    <p class="text-muted small mt-3 mb-0">Actualizado em: 21/10/2024</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Entendido</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ══ MODAL TERMOS (scrollable) ════════════════════════ -->
-    <div class="modal fade" id="terms" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-dark">Termos de Uso</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p class="text-muted small">Ao usar a Wasom Upfy, concordas com os termos abaixo.</p>
-                    <div class="accordion" id="termsAcc">
-                        <?php
-                        $tSections = [
-                            ['1. Descrição dos Serviços', 'Plataforma de distribuição digital para +157 plataformas (Spotify, Apple Music, Amazon Music, etc.) para artistas em início ou fase estabelecida de carreira.'],
-                            ['2. Responsabilidades', 'Podes solicitar relatórios e reembolsos (até 24h). Não podes aceder com múltiplos dispositivos simultaneamente nem solicitar funcionalidades inexistentes.'],
-                            ['3. Propriedade Intelectual', 'Manténs a propriedade das tuas músicas. Concedes à Wasom Upfy o direito de distribuir em teu nome. Músicas identificadas por UPC e ISRC únicos.'],
-                            ['4. Pagamentos e Royalties', 'Transacções geridas pela equipa Wasom Upfy. Serás notificado por e-mail quando um pagamento for processado, com comprovante.'],
-                            ['5. Suspensão de Contas', 'Contas podem ser suspensas por comprovantes falsos, saques suspeitos ou dispositivos desconhecidos. Eliminadas definitivamente por fraude ou duplicação.'],
-                            ['6. Limitações', 'A Wasom Upfy não se responsabiliza por falhas em plataformas de terceiros ou problemas técnicos fora do seu controlo.'],
-                            ['7. Actualizações', 'Podemos modificar estes Termos a qualquer momento. Serás notificado sobre mudanças importantes.'],
-                            ['8. Cookies', 'Utilizamos cookies para personalizar a experiência. Podes desactivar nas definições do navegador.'],
-                        ];
-                        foreach ($tSections as $i => [$title, $body]):
-                        ?>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#ta<?php echo $i; ?>">
-                                        <?php echo $title; ?>
-                                    </button>
-                                </h2>
-                                <div id="ta<?php echo $i; ?>" class="accordion-collapse collapse"
-                                    data-bs-parent="#termsAcc">
-                                    <div class="accordion-body small"><?php echo $body; ?></div>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                    <p class="text-muted small mt-3 mb-0">Actualizado em: 26/06/2025</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Entendido</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
-    <script src="../js/validacao.js"></script>
+    <script src="js/validacao.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/josembengacosta/wasomupfy@main/js/app.js"></script>
     <script>
         // ── Preloader ─────────────────────────────────────────

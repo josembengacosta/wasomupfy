@@ -58,21 +58,66 @@ function cfg(string $key, string $default = ''): string {
 }
 
 // ── 4. _platform — estado e taxas ────────────
+// ARQUITECTURA DE CONTROLO INDEPENDENTE:
+//   site_status          → controla o site público  (lido por site.php)
+//   status               → controla o dashboard     (lido por functions.php)
+//   Admin pode colocar o site em manutenção sem afectar o dashboard, e vice-versa.
+//
+// Auto-expiry: se site_status é 'maintenance'/'blocked' e site_maintenance_end
+// já passou, restaura automaticamente para 'active' sem intervenção do admin.
 function getPlatform(): array {
     static $p = null;
     if ($p === null) {
-        $p = getSiteDB()
-            ->query("SELECT * FROM _platform ORDER BY id_platform ASC LIMIT 1")
-            ->fetch();
-        if (!$p) $p = [
-            'status'          => 'active',
-            'allow_register'  => 1,
-            'allow_login'     => 1,
-            'royalty_percentage' => 90,
-            'stores_count'    => 157,
-            'usd_to_aoa_rate' => 900,
-            'currency_default'=> 'AOA',
-        ];
+        $db = getSiteDB();
+        $p  = $db->query("SELECT * FROM _platform ORDER BY id_platform ASC LIMIT 1")->fetch();
+
+        if (!$p) {
+            $p = [
+                'site_status'        => 'active',
+                'status'             => 'active',
+                'allow_register'     => 1,
+                'allow_login'        => 1,
+                'royalty_percentage' => 90,
+                'stores_count'       => 157,
+                'usd_to_aoa_rate'    => 900,
+                'currency_default'   => 'AOA',
+            ];
+            return $p;
+        }
+
+        // ── Auto-expiry do site público ───────────────────────────────
+        // Usa site_maintenance_end e actualiza site_status.
+        // NÃO toca em 'status' (dashboard) — são independentes.
+        $expirable = ['maintenance', 'blocked'];
+        if (
+            in_array($p['site_status'], $expirable, true) &&
+            !empty($p['site_maintenance_end']) &&
+            strtotime($p['site_maintenance_end']) <= time()
+        ) {
+            try {
+                $db->prepare("
+                    UPDATE _platform SET
+                        site_status               = 'active',
+                        site_maintenance_msg      = NULL,
+                        site_maintenance_start    = NULL,
+                        site_maintenance_end      = NULL,
+                        site_maintenance_services = NULL,
+                        modif_platform            = NOW()
+                    WHERE id_platform = ?
+                ")->execute([$p['id_platform']]);
+
+                $p['site_status']               = 'active';
+                $p['site_maintenance_msg']      = null;
+                $p['site_maintenance_start']    = null;
+                $p['site_maintenance_end']      = null;
+                $p['site_maintenance_services'] = null;
+
+                error_log('[getPlatform] Auto-expiry site: site_status restaurado para active.');
+
+            } catch (Throwable $e) {
+                error_log('[getPlatform] Auto-expiry site falhou: ' . $e->getMessage());
+            }
+        }
     }
     return $p;
 }
@@ -282,19 +327,6 @@ function trackVisitor(string $page_url, ?string $page_title = null): void {
             VALUES (?, ?, ?)
         ")->execute([$id_visitor, $page_url, $page_title]);
 
-        // Também gravar na _visit (tabela simples legada)
-        $db->prepare("
-            INSERT INTO _visit (ip_visit, browser_visit, country_visit, city_visit, page_visit, views_visit, session_visit)
-            VALUES (?, ?, ?, ?, ?, 1, ?)
-            ON DUPLICATE KEY UPDATE views_visit = views_visit + 1
-        ")->execute([
-            $ip, $ua,
-            $geo['country'] ?? null,
-            $geo['city']    ?? null,
-            $page_url,
-            $session_id,
-        ]);
-
     } catch (Throwable $e) {
         // Tracking nunca deve quebrar a página
         if (APP_ENV === 'development') {
@@ -416,17 +448,128 @@ function submitContactForm(array $data): array {
     return ['ok' => true, 'msg' => 'Mensagem enviada com sucesso! Responderemos em breve.'];
 }
 
-// ── 11. Verificar estado da plataforma ────────
-// Chamar no topo de cada página pública.
-// Se a plataforma estiver em manutenção redireciona.
+// ── 11. Verificar estado da plataforma + visitante ─────────────────
+//
+// PÁGINAS LIVRES — sempre acessíveis independentemente do estado da plataforma.
+// Razão: suporte/termos/privacidade/cookies são direitos do utilizador e
+// devem estar disponíveis mesmo em manutenção ou bloqueio.
+//
+// FUTURO: quando existir controlo por página na BD (_page_control),
+// esta lista poderá ser substituída por uma query dinâmica que verifica
+// se a página está activa, suspensa ou bloqueada individualmente.
+// Por agora é um array estático fácil de manter.
+//
+// $current_page: identificador da página actual (ex: 'home', 'terms').
+//   Usar sempre que se chama checkPlatformStatus() — evita loops.
 function checkPlatformStatus(string $current_page = ''): void {
+
+    // ── Páginas de status — nunca redireccionam (evita loops) ────────
+    $status_pages = ['maintenance', '403', '404', '500', '503', 'offline'];
+
+    // ── Páginas livres — acessíveis mesmo com plataforma bloqueada ───
+    // Inclui suporte, políticas legais e ajuda ao utilizador.
+    // Visitantes bloqueados por IP também podem aceder às páginas legais.
+    $free_pages = [
+        // Suporte e ajuda
+        'support', 'faq', 'help', 'tutorial',
+        // Políticas legais (direito do utilizador)
+        'terms', 'privacy', 'cookies',
+        // Contacto (pode ser necessário mesmo em manutenção)
+        'contact',
+    ];
+
+    // Páginas de status e páginas livres saem imediatamente
+    if (in_array($current_page, $status_pages, true)) return;
+    if (in_array($current_page, $free_pages, true))   return;
+
+    // ── 11a. Estado global da plataforma ─────────────────────────────
+    // getPlatform() já correu o auto-expiry — se o tempo expirou,
+    // o status já está 'active' aqui, sem necessidade de redirect.
     $p = getPlatform();
-    if ($p['status'] === 'maintenance' && $current_page !== 'maintenance') {
-        $msg = urlencode($p['maintenance_msg'] ?? 'Estamos em manutenção. Voltamos em breve.');
-        header('Location: ' . APP_URL . '/maintenance.php?msg=' . $msg);
+
+    // Ler site_status (coluna dedicada ao site público)
+    // 'status' é reservado para o dashboard — não usar aqui.
+    $site_st = $p['site_status'] ?? 'active';
+
+    if ($site_st === 'maintenance') {
+        header('Location: ' . APP_URL . '/status/maintenance.php');
         exit;
     }
+
+    if ($site_st === 'blocked') {
+        header('HTTP/1.1 503 Service Unavailable');
+        header('Location: ' . APP_URL . '/status/503.php');
+        exit;
+    }
+
+    if ($site_st === 'unauthorized') {
+        header('HTTP/1.1 403 Forbidden');
+        header('Location: ' . APP_URL . '/status/403.php');
+        exit;
+    }
+
+    // ── 11b. Verificar se o IP do visitante está bloqueado ────────────
+    // Páginas legais (terms, privacy, cookies) estão isentas mesmo aqui —
+    // já saíram no bloco $free_pages acima.
+    checkVisitorStatus();
 }
+
+// Verifica se o IP actual está bloqueado na tabela _visitor.
+// Em caso de bloco temporário já expirado, faz o UPDATE automático.
+function checkVisitorStatus(): void {
+    try {
+        $ip  = getVisitorIp();
+        $db  = getSiteDB();
+
+        $stmt = $db->prepare("
+            SELECT status_visitor, block_type, block_until
+            FROM _visitor
+            WHERE ip_address = ?
+            ORDER BY id_visitor DESC
+            LIMIT 1
+        ");
+        $stmt->execute([$ip]);
+        $visitor = $stmt->fetch();
+
+        if (!$visitor) return; // IP desconhecido — deixar passar
+
+        if ($visitor['status_visitor'] === 'blocked') {
+            // Bloco temporário já expirou? → desbloquear automaticamente
+            if (
+                $visitor['block_type'] === 'temporary' &&
+                !empty($visitor['block_until']) &&
+                strtotime($visitor['block_until']) < time()
+            ) {
+                $db->prepare("
+                    UPDATE _visitor SET
+                        status_visitor = 'active',
+                        block_type     = NULL,
+                        block_reason   = NULL,
+                        block_until    = NULL,
+                        modif_visitor  = NOW()
+                    WHERE ip_address = ?
+                ")->execute([$ip]);
+                return; // agora está activo
+            }
+
+            // Ainda bloqueado → 403
+            header('HTTP/1.1 403 Forbidden');
+            header('Location: ' . APP_URL . '/status/403.php');
+            exit;
+        }
+
+        if ($visitor['status_visitor'] === 'suspicious') {
+            // Suspeito: registar nos logs mas não bloquear
+            error_log('[checkVisitorStatus] Suspicious IP: ' . $ip);
+        }
+
+    } catch (Throwable $e) {
+        if (APP_ENV === 'development') {
+            error_log('[checkVisitorStatus] ' . $e->getMessage());
+        }
+    }
+}
+
 
 // ── 12. Contar estatísticas públicas ──────────
 function getPublicStats(): array {

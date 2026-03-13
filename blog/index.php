@@ -41,7 +41,8 @@
     <!-- título e subtítulo -->
     <h1 class="coming-title">O Backstage está a ser preparado</h1>
     <p class="coming-subtitle">
-      Estamos a afinar os detalhes para te trazer o guia definitivo sobre como conquistar o mercado musical. O Blog da
+      Estamos a afinar os detalhes para te trazer o guia definitivo sobre como conquistar o mercado musical. O
+      Blog da
       Wasom Upfy chega em breve.
     </p>
 
@@ -156,12 +157,13 @@
                 class="fab fa-facebook-f"></i></a>
             <a href="https://whatsapp.com/channel/0029VaCEDqo59PwWpU0nGa04" target="_blank"
               class="footer-icon-circle"><i class="fab fa-whatsapp"></i></a>
-            <a href="https://www.linkedin.com/company/wasom-upfy" target="_blank" class="footer-icon-circle"><i
-                class="fab fa-linkedin"></i></a>
+            <a href="https://www.linkedin.com/company/wasom-upfy" target="_blank"
+              class="footer-icon-circle"><i class="fab fa-linkedin"></i></a>
             <a href="https://www.youtube.com/@wasomupfy" target="_blank" class="footer-icon-circle"><i
                 class="fab fa-youtube"></i></a>
           </div>
-          <p class="mt-4 small text-secondary">© 2026 Wasom Upfy – distribuição global com raízes angolanas.</p>
+          <p class="mt-4 small text-secondary">© 2026 Wasom Upfy – distribuição global com raízes angolanas.
+          </p>
         </div>
       </div>
     </div>
@@ -174,9 +176,9 @@
   <script>
     // simula um contador regressivo para 48 dias a partir de agora (apenas estético)
     // ==================== CONTADOR REAL ====================
-    // DATA FIXA: 30 de Março de 2026
+    // DATA FIXA: 30 de Abril de 2026
     // Usamos uma data no futuro que NÃO muda quando a página é recarregada
-    const launchDate = new Date('March 30, 2026 00:00:00').getTime();
+    const launchDate = new Date('April 30, 2026 00:00:00').getTime();
 
     function updateRealCounter() {
       const now = new Date().getTime();
@@ -217,33 +219,49 @@
     // Validação avançada de email
     function validateEmail(email) {
       // Regex completo para validação de email (RFC 5322)
-      const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      const emailRegex =
+        /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
       // Verificações adicionais
       if (!email || email.length === 0) {
-        return { valid: false, message: 'O e-mail é obrigatório' };
+        return {
+          valid: false,
+          message: 'O e-mail é obrigatório'
+        };
       }
 
       if (email.length > 254) {
-        return { valid: false, message: 'E-mail muito longo (máx. 254 caracteres)' };
+        return {
+          valid: false,
+          message: 'E-mail muito longo (máx. 254 caracteres)'
+        };
       }
 
       if (!emailRegex.test(email)) {
-        return { valid: false, message: 'Por favor, insere um e-mail válido (ex: nome@dominio.com)' };
+        return {
+          valid: false,
+          message: 'Por favor, insere um e-mail válido (ex: nome@dominio.com)'
+        };
       }
 
       // Verifica domínios temporários comuns (opcional)
       const tempDomains = ['tempmail.com', 'throwaway.com', 'mailinator.com'];
       const domain = email.split('@')[1];
       if (tempDomains.includes(domain)) {
-        return { valid: false, message: 'E-mails temporários não são permitidos' };
+        return {
+          valid: false,
+          message: 'E-mails temporários não são permitidos'
+        };
       }
 
-      return { valid: true, message: 'E-mail válido!' };
+      return {
+        valid: true,
+        message: 'E-mail válido!'
+      };
     }
 
     // Validação em tempo real
-    emailInput.addEventListener('input', function (e) {
+    emailInput.addEventListener('input', function(e) {
       const validation = validateEmail(e.target.value);
 
       if (!validation.valid) {
@@ -270,7 +288,7 @@
     }
 
     // Interceptar submit do formulário para validação final
-    emailForm.addEventListener('submit', function (e) {
+    emailForm.addEventListener('submit', function(e) {
       const validation = validateEmail(emailInput.value);
 
       if (!validation.valid) {
@@ -289,7 +307,7 @@
 
     // ==================== MASCARA PARA O FORM DO FOOTER ====================
     // (mantém funcionalidade igual, mas sem enviar para lugar nenhum)
-    document.querySelector('.newsletter-input + .btn-rose').addEventListener('click', function () {
+    document.querySelector('.newsletter-input + .btn-rose').addEventListener('click', function() {
       const footerEmail = document.querySelector('.newsletter-input').value;
       if (validateEmail(footerEmail).valid) {
         showToast('Inscrição no footer realizada! (demonstração)');

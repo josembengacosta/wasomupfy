@@ -2,11 +2,15 @@
 // WASOM UPFY v2.0 - Painel Principal
 // Arquivo: dashboard/painel.php
 require_once __DIR__ . '/../authentic/include/functions.php';
+require_once __DIR__ . '/include/platform.php';
 startSecureSession();
 checkRememberMe();
 requireLogin();
+$platform = checkDashboardStatus();
+$user     = getUserById($_SESSION['id_users']);
 
 $user = getUserById((int)$_SESSION['id_users']);
+
 if (!$user) {
     session_destroy();
     redirect('/login', ['error' => 'csrf']);
@@ -14,6 +18,7 @@ if (!$user) {
 
 $first_name     = htmlspecialchars($user['first_name']);
 $user_name      = htmlspecialchars($user['user_name'] ?? '');
+$name_artist_band      = htmlspecialchars($user['name_artist_band'] ?? 'Cria Perfil Artistíco');
 $email_verified = (bool)$user['email_verified'];
 $plan_selected  = $user['plan_selected'];
 $onboard_done   = (bool)($user['onboarding_done'] ?? false);
@@ -39,6 +44,12 @@ $plan_paid = ($user['status_user'] === 'active' && !empty($user['plan_activated_
 $as = getDB()->prepare('SELECT COUNT(*) as total FROM _artist WHERE id_users = ?');
 $as->execute([$id_users]);
 $has_artist = (int)($as->fetch()['total'] ?? 0) > 0;
+
+// Foto do utilizador — usada em ambos os lugares do dropdown (conta + perfil)
+$user_photo = $user['photo_user'] ?? null;
+
+// Contagem de notificações não lidas (badge no navbar)
+$notif_count = getUnreadNotifCount($id_users);
 
 // Dados de sessão e segurança
 $ls = getDB()->prepare('SELECT last_login_at, last_login_ip FROM _users_security WHERE id_users = ?');
@@ -87,6 +98,19 @@ elseif (str_contains($ua_raw, 'Opera'))   $browser = 'Opera';
 $sess_location = trim(($current_session['city'] ?? '') . ', ' . ($current_session['country'] ?? ''), ', ');
 if (!$sess_location) $sess_location = 'Localização desconhecida';
 $sess_ip = $current_session['ip_address'] ?? ($sec['last_login_ip'] ?? '—');
+
+// Payment intent activo (para mostrar referência inline no onboarding step 3)
+$ob_intent = null;
+if ($plan_selected && !$plan_paid) {
+    $pi = getDB()->prepare("
+        SELECT reference_code, amount_expected, expires_at
+        FROM _payment_intent
+        WHERE id_users = ? AND status IN ('created','waiting_payment','under_review')
+        ORDER BY creat_intent DESC LIMIT 1
+    ");
+    $pi->execute([$id_users]);
+    $ob_intent = $pi->fetch() ?: null;
+}
 
 // Conta bancaria para saque (tabela _account existente)
 $bank_stmt = getDB()->prepare("
@@ -216,6 +240,7 @@ $chart_json_datasets = json_encode($chart_datasets);
     <meta name="theme-color" content="#FF0089" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="#FF0089" />
+    <meta name="csrf-token" content="<?php echo $_SESSION['csrf_token']; ?>">
     <link rel="apple-touch-icon" href="../assets/img/icones/wasomupfy_fiv_512.png" />
     <link rel="apple-touch-startup-image" href="../assets/img/screenshots/splash.png" />
     <link rel="manifest" href="manifest.json" />
@@ -346,26 +371,70 @@ $chart_json_datasets = json_encode($chart_datasets);
                 <a class="theme-toggle text-white me-2" id="themeToggle">
                     <i class="bi bi-sun" id="themeIcon"></i>
                 </a>
-                <a href="../notifications" class="text-white me-2" aria-label="Notificações">
+                <a href="page/notifications" class="text-white me-2 position-relative" aria-label="Notificações"
+                    id="navNotifBtn">
                     <i class="bi bi-bell fs-4"></i>
-                    <span class="badge bg-danger">9</span>
+                    <?php if ($notif_count > 0): ?>
+                    <span id="navNotifBadge" class="position-absolute translate-middle badge rounded-pill" style="top:2px;left:calc(100% - 4px);background:#FF0089;font-size:.6rem;
+                               min-width:18px;height:18px;padding:0 5px;line-height:18px;
+                               box-shadow:0 0 0 2px #1a1a2e;">
+                        <?php echo $notif_count > 99 ? '99+' : $notif_count; ?>
+                    </span>
+                    <?php else: ?>
+                    <span id="navNotifBadge" class="position-absolute translate-middle badge rounded-pill" style="top:2px;left:calc(100% - 4px);background:#FF0089;font-size:.6rem;
+                               min-width:18px;height:18px;padding:0 5px;line-height:18px;
+                               box-shadow:0 0 0 2px #1a1a2e;display:none;">0</span>
+                    <?php endif; ?>
                 </a>
                 <a href="#" class="text-white" data-bs-toggle="dropdown">
-                    <i class="bi bi-person-circle fs-4"></i>
+                    <?php if ($user_photo): ?>
+                    <img src="../assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
+                        width="32" height="32" class="rounded-circle flex-shrink-0"
+                        style="object-fit:cover;border:2px solid #FF4D4D" alt="Foto conta"
+                        onerror="this.onerror=null;this.src='../assets/img/avatar/avatar_wasomupfy.png'">
+                    <?php else: ?>
+                    <img src="../assets/img/avatar/avatar_wasomupfy.png" width="32" height="32"
+                        class="rounded-circle flex-shrink-0" style="object-fit:cover;" alt="Avatar">
+                    <?php endif; ?>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li>
-                        <a class="dropdown-item" href="user/profile"><i class="bi bi-person me-2"></i>
-                            <strong><?php echo $first_name; ?></strong></a>
-                        <div class="text-white-50">
-                            &nbsp; &nbsp; &nbsp; &nbsp; (Conta <?php echo str_pad($id_users, 6, "0", STR_PAD_LEFT); ?>)
-                        </div>
+                        <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="account/manage-account">
+                            <?php if ($user_photo): ?>
+                            <img src="../assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
+                                width="32" height="32" class="rounded-circle flex-shrink-0"
+                                style="object-fit:cover;border:2px solid #FF4D4D" alt="Foto conta"
+                                onerror="this.onerror=null;this.src='../assets/img/avatar/avatar_wasomupfy.png'">
+                            <?php else: ?>
+                            <img src="../assets/img/avatar/avatar_wasomupfy.png" width="32" height="32"
+                                class="rounded-circle flex-shrink-0" style="object-fit:cover;" alt="Avatar">
+                            <?php endif; ?>
+                            <div class="overflow-hidden">
+                                <div class="fw-bold text-truncate" style="max-width:160px">
+                                    <?php echo $name_artist_band; ?></div>
+                                <div class="text-white-50" style="font-size:.72rem">
+                                    Conta <?php echo str_pad($id_users, 6, "0", STR_PAD_LEFT); ?>
+                                </div>
+                            </div>
+                        </a>
                     </li>
                     <li>
                         <hr class="dropdown-divider" />
                     </li>
                     <li>
-                        <a class="dropdown-item" href="user/profile"><i class="bi bi-person me-2"></i> Meu Perfil</a>
+                        <a class="dropdown-item d-flex align-items-center gap-2" href="user/profile">
+                            <?php if ($user_photo): ?>
+                            <img src="../assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
+                                width="28" height="28" class="rounded-circle flex-shrink-0" style="object-fit:cover"
+                                alt="Foto perfil"
+                                onerror="this.onerror=null;this.src='../assets/img/avatar/avatar_wasomupfy.png'">
+                            <?php else: ?>
+                            <img src="../assets/img/avatar/avatar_wasomupfy.png" width="28" height="28"
+                                class="rounded-circle flex-shrink-0" style="object-fit:cover" alt="Perfil"
+                                onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\'bi bi-person-circle fs-5 flex-shrink-0\'></i>')">
+                            <?php endif; ?>
+                            Meu Perfil
+                        </a>
                     </li>
                     <li>
                         <a class="dropdown-item" href="account/manage-account"><i class="bi bi-tools me-2"></i> Gestão
@@ -420,7 +489,8 @@ $chart_json_datasets = json_encode($chart_datasets);
         </div>
     </nav>
 
-    <!-- Offcanvas Menu par Mobile e Desktop -->
+
+    <!-- Offcanvas Menu para Mobile -->
     <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
         <div class="offcanvas-header">
             <h5 class="offcanvas-title" id="offcanvasMenuLabel">
@@ -447,7 +517,7 @@ $chart_json_datasets = json_encode($chart_datasets);
                     <a class="nav-link" href="painel"><i class="bi bi-speedometer2"></i> Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/dashboard/releases"><i class="bi bi-disc"></i> Lançamentos</a>
+                    <a class="nav-link" href="launch/releases"><i class="bi bi-disc"></i> Lançamentos</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="analytics/statistics"><i class="bi bi-bar-chart"></i> Estatísticas</a>
@@ -462,27 +532,26 @@ $chart_json_datasets = json_encode($chart_datasets);
                     <a class="nav-link" href="artists/youtube/ucy"><i class="bi bi-youtube"></i> Unificação de canal
                         YouTube</a>
                 </li>
-                <!-- Links secundários exibidos apenas em mobile -->
-                <li class="nav-item d-lg-none">
+                <li class="nav-item">
                     <a class="nav-link" href="user/profile"><i class="bi bi-person-circle"></i> Meu Perfil</a>
                 </li>
-                <li class="nav-item d-lg-none">
+                <li class="nav-item">
                     <a class="nav-link" href="page/settings"><i class="bi bi-gear"></i> Configurações</a>
                 </li>
-                <li class="nav-item d-lg-none">
+                <li class="nav-item">
                     <a class="nav-link" href="page/notifications"><i class="bi bi-bell"></i> Notificações</a>
                 </li>
-                <li class="nav-item d-lg-none">
+                <li class="nav-item">
                     <a class="nav-link" href="page/about"><i class="bi bi-info-circle"></i> Sobre</a>
                 </li>
-                <li class="nav-item d-lg-none">
+                <li class="nav-item">
                     <a class="nav-link" href="services/available-services"><i class="bi bi-star"></i> Conta e serviços
                         disponíveis</a>
                 </li>
-                <li class="nav-item d-lg-none">
+                <li class="nav-item">
                     <a class="nav-link" href="page/help"><i class="bi bi-question-circle"></i> Ajuda</a>
                 </li>
-                <li class="nav-item d-lg-none">
+                <li class="nav-item">
                     <a class="nav-link" href="#?logout-wasomupfy" data-bs-toggle="modal"
                         data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right"></i> Desconectar-se</a>
                 </li>
@@ -513,77 +582,106 @@ $chart_json_datasets = json_encode($chart_datasets);
 
         <?php /* ============================================
     BANNERS DE NOTIFICACAO DO PAINEL
-    Regra: Bootstrap alert com X para acções pendentes
-    do utilizador. Toastr para eventos em background.
-    Página de notificações para histórico completo.
+    Estilo: inline CSS consistente com renderDashboardAlerts().
+    Bootstrap alert nativo removido — um único sistema visual.
+    Lógica de prioridade:
+      Nível 1 (danger)  — bloqueia distribuição
+      Nível 2 (warning) — importante, requer atenção
+      Nível 3 (info)    — informativo / acção opcional
     ============================================ */ ?>
+
+        <?php renderDashboardAlerts($user, $platform); ?>
+
+        <?php
+        // Cor map para helpers inline — idêntico ao renderDashboardAlerts()
+        $alertColors = [
+            'danger'  => ['bg' => 'rgba(239,68,68,.08)',  'border' => 'rgba(239,68,68,.25)',  'text' => '#ef4444'],
+            'warning' => ['bg' => 'rgba(234,179,8,.08)',  'border' => 'rgba(234,179,8,.25)',  'text' => '#eab308'],
+            'info'    => ['bg' => 'rgba(99,102,241,.08)', 'border' => 'rgba(99,102,241,.25)', 'text' => '#6366f1'],
+        ];
+        function wuAlert(string $type, string $icon, string $message, ?array $action = null, bool $dismiss = true, string $id = ''): void
+        {
+            global $alertColors;
+            $c   = $alertColors[$type] ?? $alertColors['info'];
+            $eid = $id ?: ('wuPanelAlert_' . md5($message));
+            echo "<div id=\"{$eid}\" style=\"display:flex;align-items:flex-start;gap:10px;"
+                . "background:{$c['bg']};border:1px solid {$c['border']};border-radius:12px;"
+                . "padding:.75rem 1rem;font-size:.83rem;margin-bottom:.6rem;"
+                . "transition:opacity .3s;\">";
+            echo "<i class=\"bi {$icon}\" style=\"font-size:1rem;flex-shrink:0;margin-top:1px;color:{$c['text']};\"></i>";
+            echo "<span style=\"flex:1;color:rgba(232,232,240,.85);line-height:1.6;\">{$message}";
+            if ($action) {
+                echo " <a href=\"{$action['url']}\" style=\"color:{$c['text']};font-weight:700;"
+                    . "text-decoration:underline;white-space:nowrap\">{$action['label']} &rarr;</a>";
+            }
+            echo '</span>';
+            if ($dismiss) {
+                echo "<button type=\"button\" onclick=\"(function(el){el.style.opacity='0';"
+                    . "setTimeout(function(){el.style.display='none'},300)})(document.getElementById('{$eid}'))\" "
+                    . "style=\"background:none;border:none;color:rgba(255,255,255,.3);cursor:pointer;"
+                    . "font-size:1.1rem;line-height:1;padding:0;flex-shrink:0\" aria-label=\"Fechar\">&times;</button>";
+            }
+            echo '</div>';
+        }
+        ?>
 
         <?php /* ── NÍVEL 1: Crítico — bloqueia distribuição ── */ ?>
 
         <?php if (!$email_verified): ?>
-        <div class="alert alert-warning alert-dismissible d-flex align-items-center gap-3 mb-3" role="alert"
-            id="banner-email">
-            <i class="bi bi-envelope-exclamation-fill fs-4 flex-shrink-0"></i>
-            <div class="flex-grow-1">
-                <strong>Email não verificado.</strong>
-                Verifica o teu e-mail para garantir o acesso à conta e receber notificações de pagamentos.
-                <a href="account/manage-account" class="alert-link ms-1">Verificar agora &rarr;</a>
-            </div>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-        </div>
+        <?php wuAlert(
+                'danger',
+                'bi-envelope-exclamation-fill',
+                '<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta e receber notificações de pagamentos.',
+                ['label' => 'Verificar agora', 'url' => 'user/profile#perfil'],
+                true,
+                'banner-email'
+            ); ?>
         <?php endif; ?>
 
         <?php if ($plan && !$plan_paid): ?>
-        <div class="alert alert-warning alert-dismissible d-flex align-items-center gap-3 mb-3" role="alert"
-            id="banner-plan-pending">
-            <i class="bi bi-clock-history fs-4 flex-shrink-0"></i>
-            <div class="flex-grow-1">
-                <strong>Pagamento pendente — <?php echo htmlspecialchars($plan['name_plan']); ?>.</strong>
-                O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados
-                até confirmação.
-                <a href="payment/pay" class="alert-link ms-1 fw-bold">Finalizar pagamento &rarr;</a>
-            </div>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-        </div>
+        <?php wuAlert(
+                'warning',
+                'bi-clock-history',
+                '<strong>Pagamento pendente — ' . htmlspecialchars($plan['name_plan']) . '.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados até confirmação.',
+                ['label' => 'Finalizar pagamento', 'url' => 'payment/pay'],
+                true,
+                'banner-plan-pending'
+            ); ?>
         <?php elseif (!$plan): ?>
-        <div class="alert alert-danger d-flex align-items-center gap-3 mb-3" role="alert" id="banner-plan">
-            <i class="bi bi-credit-card-fill fs-4 flex-shrink-0"></i>
-            <div class="flex-grow-1">
-                <strong>Sem plano activo.</strong>
-                Escolhe um plano para começar a distribuir a tua música para +150 plataformas.
-                <a href="all-plans" class="alert-link ms-1 fw-bold">Ver planos &rarr;</a>
-            </div>
-        </div>
+        <?php wuAlert(
+                'danger',
+                'bi-credit-card-fill',
+                '<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir a tua música para +150 plataformas.',
+                ['label' => 'Ver planos', 'url' => 'all-plans'],
+                false,
+                'banner-plan'
+            ); ?>
         <?php endif; ?>
 
         <?php /* ── NÍVEL 2: Importante — perfil incompleto ── */ ?>
 
         <?php if ($plan_paid && !$has_artist): ?>
-        <div class="alert alert-info alert-dismissible d-flex align-items-center gap-3 mb-3" role="alert"
-            id="banner-artist">
-            <i class="bi bi-person-plus-fill fs-4 flex-shrink-0"></i>
-            <div class="flex-grow-1">
-                <strong>Cria o teu perfil de artista.</strong>
-                Tens plano activo mas ainda não criaste um perfil. Precisas de um para poder lançar música.
-                <a href="artists/add-artist" class="alert-link ms-1">Criar agora &rarr;</a>
-            </div>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-        </div>
+        <?php wuAlert(
+                'info',
+                'bi-person-plus-fill',
+                '<strong>Cria o teu perfil de artista.</strong> Tens plano activo mas ainda não criaste um perfil. Precisas de um para poder lançar música.',
+                ['label' => 'Criar agora', 'url' => 'artists/add-artist'],
+                true,
+                'banner-artist'
+            ); ?>
         <?php endif; ?>
 
         <?php /* ── NÍVEL 3: Informativo — conta bancária ── */ ?>
 
         <?php if ($plan_paid && $has_artist && !$bank_account): ?>
-        <div class="alert alert-secondary alert-dismissible d-flex align-items-center gap-3 mb-3" role="alert"
-            id="banner-bank">
-            <i class="bi bi-bank fs-4 flex-shrink-0"></i>
-            <div class="flex-grow-1">
-                <strong>Conta bancária não registada.</strong>
-                Para poder sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.
-                <a href="finances/create-account" class="alert-link ms-1">Registar agora &rarr;</a>
-            </div>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-        </div>
+        <?php wuAlert(
+                'info',
+                'bi-bank',
+                '<strong>Conta bancária não registada.</strong> Para poder sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.',
+                ['label' => 'Registar agora', 'url' => 'finances/create-account'],
+                true,
+                'banner-bank'
+            ); ?>
         <?php endif; ?>
 
         <?php /* ── NÍVEL 3: Conta bancária rejeitada ── */ ?>
@@ -597,19 +695,21 @@ $chart_json_datasets = json_encode($chart_datasets);
         }
         ?>
         <?php if ($rejected_account): ?>
-        <div class="alert alert-danger alert-dismissible d-flex align-items-center gap-3 mb-3" role="alert"
-            id="banner-account-rejected">
-            <i class="bi bi-x-circle-fill fs-4 flex-shrink-0"></i>
-            <div class="flex-grow-1">
-                <strong>Conta <?php echo htmlspecialchars($rejected_account['type_account']); ?> rejeitada.</strong>
-                <?php if ($rejected_account['reject_reason']): ?>
-                Motivo: <em><?php echo htmlspecialchars($rejected_account['reject_reason']); ?></em>.
-                <?php endif; ?>
-                Actualiza os dados e submete novamente.
-                <a href="finances/create-account" class="alert-link ms-1">Corrigir agora &rarr;</a>
-            </div>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-        </div>
+        <?php
+            $rej_msg = '<strong>Conta ' . htmlspecialchars($rejected_account['type_account']) . ' rejeitada.</strong>';
+            if ($rejected_account['reject_reason']) {
+                $rej_msg .= ' Motivo: <em>' . htmlspecialchars($rejected_account['reject_reason']) . '</em>.';
+            }
+            $rej_msg .= ' Actualiza os dados e submete novamente.';
+            wuAlert(
+                'danger',
+                'bi-x-circle-fill',
+                $rej_msg,
+                ['label' => 'Corrigir agora', 'url' => 'finances/create-account'],
+                true,
+                'banner-account-rejected'
+            );
+            ?>
         <?php endif; ?>
 
         <!-- Header da Pagina Inicial -->
@@ -631,171 +731,373 @@ $chart_json_datasets = json_encode($chart_datasets);
             }
             </style>
         </div>
-        <!-- Onboarding Modal -->
+        <!-- ════ ONBOARDING MODAL ════ -->
         <?php if (!$onboard_done): ?>
-        <div class="modal fade" id="onboardingModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal fade" id="onboardingModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="onboardingModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content">
-                    <div class="modal-header" style="background:linear-gradient(135deg,#FF0089,#FF4D4D);color:#fff">
-                        <h5 class="modal-title fw-bold">
-                            <i class="bi bi-stars me-2"></i>Bem-vindo(a) ao Wasom Upfy, <?php echo $first_name; ?>!
-                        </h5>
+
+                    <!-- Header gradiente -->
+                    <div class="modal-header border-0 pb-0"
+                        style="background:linear-gradient(135deg,#FF0089,#FF4D4D);color:#fff;border-radius:.5rem .5rem 0 0">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-stars fs-5"></i>
+                            <h5 class="modal-title fw-bold mb-0" id="onboardingModalLabel">
+                                Bem-vindo(a) ao Wasom Upfy, <?php echo $first_name; ?>!
+                            </h5>
+                        </div>
                     </div>
+
+                    <!-- Barra de progresso contínua -->
+                    <div style="background:rgba(255,0,137,.15);height:4px">
+                        <div id="ob-progress-bar"
+                            style="height:100%;background:#FF0089;transition:width .35s ease;width:20%"></div>
+                    </div>
+
                     <div class="modal-body p-4">
 
-                        <!-- Progress dots -->
-                        <div class="d-flex justify-content-center mb-4 gap-3" id="ob-dots">
+                        <!-- Progress dots + label de step -->
+                        <div class="d-flex justify-content-center align-items-center gap-3 mb-4">
                             <span class="ob-dot active" data-step="1"></span>
                             <span class="ob-dot" data-step="2"></span>
                             <span class="ob-dot" data-step="3"></span>
                             <span class="ob-dot" data-step="4"></span>
+                            <span class="ob-dot" data-step="5"></span>
                         </div>
 
-                        <!-- Step 1: Boas vindas -->
+                        <!-- ── STEP 1: Boas-vindas ── -->
                         <div class="ob-step" id="ob-1">
-                            <div class="text-center mb-3"><i class="bi bi-emoji-smile-fill"
-                                    style="font-size:3rem;color:#FF0089"></i></div>
+                            <div class="text-center mb-3">
+                                <i class="bi bi-emoji-smile-fill" style="font-size:3rem;color:#FF0089"></i>
+                            </div>
                             <h5 class="text-center fw-bold">A tua conta foi criada com sucesso!</h5>
-                            <p class="text-muted text-center">O Wasom Upfy distribui a tua música para mais de 150 lojas
-                                digitais mundiais.</p>
+                            <p class="text-muted text-center mb-3">
+                                O Wasom Upfy distribui a tua música para mais de 150 lojas digitais mundiais.
+                            </p>
                             <hr>
-                            <ul class="list-unstyled">
-                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Distribui para
-                                    +150 plataformas incluindo Spotify, Apple Music e Deezer</li>
-                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Recebe
-                                    royalties directamente na tua carteira</li>
-                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Acompanha
-                                    streams e estatisticas em tempo real</li>
-                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Suporte
-                                    dedicado em portugues</li>
+                            <ul class="list-unstyled mb-3">
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    Distribui para +150 plataformas incluindo Spotify, Apple Music e Deezer
+                                </li>
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    Recebe royalties directamente na tua carteira
+                                </li>
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    Acompanha streams e estatísticas em tempo real
+                                </li>
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    Suporte dedicado em português
+                                </li>
                             </ul>
-                            <div class="alert alert-info small">
+
+                            <!-- Push notifications -->
+                            <div class="border rounded-3 p-3 mb-3"
+                                style="background:rgba(99,102,241,.06);border-color:rgba(99,102,241,.2)!important">
+                                <div class="d-flex align-items-start gap-2">
+                                    <i class="bi bi-bell-fill mt-1 flex-shrink-0" style="color:#6366f1"></i>
+                                    <div class="flex-grow-1">
+                                        <div class="fw-semibold small mb-1">Activa as notificações push</div>
+                                        <p class="text-muted mb-2" style="font-size:.8rem">
+                                            Sabe quando os teus pagamentos são confirmados, lançamentos aprovados e
+                                            mais — sem precisares de verificar o dashboard.
+                                        </p>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary" id="ob-btn-push"
+                                            onclick="obRequestPush(this)">
+                                            <i class="bi bi-bell me-1"></i>Activar notificações
+                                        </button>
+                                        <span id="ob-push-status" class="ms-2 small text-muted"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="alert alert-info small mb-0">
                                 <i class="bi bi-clock me-1"></i>
-                                <strong>Aviso de sessão:</strong> Por segurança, se não iniciares sessão por <strong>30
-                                    dias</strong> consecutivos, a tua sessão expira automaticamente e precisas de fazer
-                                login novamente.
+                                <strong>Aviso de sessão:</strong> Se não iniciares sessão por
+                                <strong>30 dias</strong> consecutivos, a sessão expira automaticamente.
                             </div>
                         </div>
 
-                        <!-- Step 2: Email -->
+                        <!-- ── STEP 2: Email ── -->
                         <div class="ob-step d-none" id="ob-2">
-                            <div class="text-center mb-3"><i class="bi bi-envelope-check-fill"
-                                    style="font-size:3rem;color:#FF0089"></i></div>
+                            <div class="text-center mb-3">
+                                <i class="bi bi-envelope-check-fill" style="font-size:3rem;color:#FF0089"></i>
+                            </div>
                             <h5 class="text-center fw-bold">Verificação de Email</h5>
                             <?php if (!$email_verified): ?>
-                            <p class="text-muted text-center">
-                                Enviamos um codigo de 6 digitos para
+                            <p class="text-muted text-center mb-3">
+                                Enviámos um código de 6 dígitos para
                                 <strong><?php echo htmlspecialchars($user['email_user']); ?></strong>.
                             </p>
                             <div class="alert alert-warning">
                                 <i class="bi bi-clock-history me-2"></i>
                                 O teu email ainda não foi verificado. Podes continuar e verificar mais tarde em
-                                <strong>Conta > Gerir Conta</strong>. O codigo não expira.
+                                <strong>Perfil &rsaquo; Segurança</strong>. O código não expira.
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <a href="user/porfile#perfil" class="btn btn-sm btn-outline-warning">
+                                    <i class="bi bi-envelope me-1"></i>Verificar email agora
+                                </a>
                             </div>
                             <?php else: ?>
                             <p class="text-muted text-center">
-                                O seu email foi verificado:
-                                <strong><?php echo htmlspecialchars($user['email_user']); ?></strong>.
+                                <strong><?php echo htmlspecialchars($user['email_user']); ?></strong>
                             </p>
-                            <div class="alert alert-success text-center">
-                                <i class="bi bi-patch-check-fill me-2"></i> Email verificado!
+                            <div class="alert alert-success text-center mb-0">
+                                <i class="bi bi-patch-check-fill me-2"></i>Email verificado com sucesso!
                             </div>
                             <?php endif; ?>
                         </div>
 
-                        <!-- Step 3: Plano -->
+                        <!-- ── STEP 3: Plano + Instruções de pagamento ── -->
                         <div class="ob-step d-none" id="ob-3">
-                            <div class="text-center mb-3"><i class="bi bi-star-fill"
-                                    style="font-size:3rem;color:#FF0089"></i></div>
+                            <div class="text-center mb-3">
+                                <i class="bi bi-star-fill" style="font-size:3rem;color:#FF0089"></i>
+                            </div>
                             <h5 class="text-center fw-bold">O teu Plano</h5>
-                            <?php if ($plan): ?>
-                            <div class="card border-0 shadow-sm p-3 mb-3"
-                                style="border-left:4px solid #FF0089!important">
+
+                            <?php if ($plan_paid): ?>
+                            <!-- Plano activo e pago -->
+                            <div class="alert alert-success text-center mb-3">
+                                <i class="bi bi-patch-check-fill me-2"></i>
+                                Plano <strong><?php echo htmlspecialchars($plan['name_plan']); ?></strong> activo!
+                                A distribuição está disponível.
+                            </div>
+
+                            <?php elseif ($plan && !$plan_paid): ?>
+                            <!-- Plano seleccionado mas por pagar -->
+                            <div class="card border-0 p-3 mb-3"
+                                style="border-left:4px solid #FF0089!important;background:rgba(255,0,137,.06)">
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div>
                                         <h6 class="fw-bold mb-1"><?php echo htmlspecialchars($plan['name_plan']); ?>
                                         </h6>
                                         <p class="text-muted small mb-1">
-                                            <?php echo htmlspecialchars($plan['description_plan'] ?? ''); ?></p>
-                                        <small><i class="bi bi-percent me-1"></i><?php echo $plan['royalty_rate']; ?>%
-                                            royalties para ti</small>
+                                            <?php echo htmlspecialchars($plan['description_plan'] ?? ''); ?>
+                                        </p>
+                                        <small>
+                                            <i class="bi bi-percent me-1"></i>
+                                            <?php echo $plan['royalty_rate'] ?? '90'; ?>% royalties para ti
+                                        </small>
                                     </div>
-                                    <div class="text-end">
-                                        <strong
-                                            style="color:#FF0089"><?php echo number_format($plan['price_plan'], 2, ',', '.'); ?>
-                                            AOA</strong>
+                                    <div class="text-end flex-shrink-0 ms-3">
+                                        <span class="fw-bold" style="color:#FF0089">
+                                            <?php echo number_format($plan['price_plan'], 0, ',', '.'); ?> AOA
+                                        </span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="alert alert-warning">
-                                <i class="bi bi-credit-card me-2"></i>
-                                Pagamento pendente. Procede ao pagamento para activar a distribuicao.
-                                <a href="payment/pay" class="alert-link d-block mt-1 fw-bold">Finalizar
-                                    pagamento &rarr;</a>
+
+                            <!-- Instruções de pagamento inline -->
+                            <div class="card border-0 mb-0"
+                                style="background:rgba(234,179,8,.06);border:1px solid rgba(234,179,8,.25)!important;border-radius:12px">
+                                <div class="card-body p-3">
+                                    <div class="fw-semibold small mb-2">
+                                        <i class="bi bi-credit-card me-1" style="color:#eab308"></i>
+                                        Como efectuar o pagamento
+                                    </div>
+                                    <?php if ($ob_intent): ?>
+                                    <!-- Referência gerada -->
+                                    <div class="d-flex align-items-center justify-content-between mb-2 p-2 rounded"
+                                        style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)">
+                                        <div>
+                                            <div class="text-muted" style="font-size:.7rem">Referência de pagamento
+                                            </div>
+                                            <div class="fw-bold font-monospace"
+                                                style="font-size:1.1rem;letter-spacing:.1em;color:#FF0089">
+                                                <?php echo htmlspecialchars($ob_intent['reference_code']); ?>
+                                            </div>
+                                        </div>
+                                        <button type="button"
+                                            onclick="navigator.clipboard.writeText('<?php echo $ob_intent['reference_code']; ?>');this.innerHTML='<i class=\'bi bi-check-lg\'></i>';setTimeout(()=>this.innerHTML='<i class=\'bi bi-copy\'></i>',2000)"
+                                            class="btn btn-sm btn-outline-secondary">
+                                            <i class="bi bi-copy"></i>
+                                        </button>
+                                    </div>
+                                    <?php if ($ob_intent['expires_at']): ?>
+                                    <div class="text-muted mb-2" style="font-size:.75rem">
+                                        <i class="bi bi-clock me-1"></i>
+                                        Referência válida até
+                                        <strong><?php echo date('d/m/Y H:i', strtotime($ob_intent['expires_at'])); ?></strong>
+                                    </div>
+                                    <?php endif; ?>
+                                    <?php endif; ?>
+
+                                    <ul class="list-unstyled small mb-2 text-muted">
+                                        <li class="mb-1">
+                                            <i class="bi bi-1-circle me-1" style="color:#eab308"></i>
+                                            Transferência bancária ou Multicaixa Express
+                                        </li>
+                                        <li class="mb-1">
+                                            <i class="bi bi-2-circle me-1" style="color:#eab308"></i>
+                                            Usa a referência acima como descrição/motivo
+                                        </li>
+                                        <li class="mb-1">
+                                            <i class="bi bi-3-circle me-1" style="color:#eab308"></i>
+                                            Submete o comprovativo em <strong>Finanças › Pagamento</strong>
+                                        </li>
+                                    </ul>
+                                    <a href="payment/pay" class="btn btn-sm btn-wasomupfy w-100">
+                                        <i class="bi bi-upload me-1"></i>Submeter comprovativo &rarr;
+                                    </a>
+                                </div>
                             </div>
+
                             <?php else: ?>
+                            <!-- Sem plano seleccionado -->
                             <p class="text-center text-muted mb-3">Ainda não escolheste um plano.</p>
                             <div class="d-grid gap-2">
-                                <a href="all-plans#single" class="btn btn-outline-pink btn-sm text-start"><i
-                                        class="bi bi-music-note me-2"></i><strong>Single</strong> — Lançamentos
-                                    avulsos</a>
-                                <a href="all-plans#album" class="btn btn-outline-pink btn-sm text-start"><i
-                                        class="bi bi-disc me-2"></i><strong>Album</strong> — Pacote de lançamentos</a>
-                                <a href="all-plans#artist" class="btn btn-outline-pink btn-sm text-start"><i
-                                        class="bi bi-person-badge me-2"></i><strong>Artist</strong> — Para artistas
-                                    activos</a>
-                                <a href="all-plans#label" class="btn btn-outline-pink btn-sm text-start"><i
-                                        class="bi bi-building me-2"></i><strong>Label</strong> — Para editoras</a>
+                                <a href="all-plans#single" class="btn btn-outline-pink btn-sm text-start">
+                                    <i class="bi bi-music-note me-2"></i>
+                                    <strong>Single</strong> — Lançamentos avulsos
+                                </a>
+                                <a href="all-plans#album" class="btn btn-outline-pink btn-sm text-start">
+                                    <i class="bi bi-disc me-2"></i>
+                                    <strong>Album</strong> — Pacote de lançamentos
+                                </a>
+                                <a href="all-plans#artist" class="btn btn-outline-pink btn-sm text-start">
+                                    <i class="bi bi-person-badge me-2"></i>
+                                    <strong>Artist</strong> — Para artistas activos
+                                </a>
+                                <a href="all-plans#label" class="btn btn-outline-pink btn-sm text-start">
+                                    <i class="bi bi-building me-2"></i>
+                                    <strong>Label</strong> — Para editoras
+                                </a>
                             </div>
                             <?php endif; ?>
                         </div>
 
-                        <!-- Step 4: Artista -->
+                        <!-- ── STEP 4: Perfil de Artista ── -->
                         <div class="ob-step d-none" id="ob-4">
-                            <div class="text-center mb-3"><i class="bi bi-person-badge-fill"
-                                    style="font-size:3rem;color:#FF0089"></i></div>
+                            <div class="text-center mb-3">
+                                <i class="bi bi-person-badge-fill" style="font-size:3rem;color:#FF0089"></i>
+                            </div>
                             <h5 class="text-center fw-bold">Perfil de Artista</h5>
-                            <p class="text-muted text-center">Para distribuir música precisas de um perfil de artista.
+                            <p class="text-muted text-center">
+                                Para distribuir música precisas de um perfil de artista.
                             </p>
                             <?php if ($has_artist): ?>
-                            <div class="alert alert-success text-center">
-                                <i class="bi bi-check-circle-fill me-2"></i> Ja tens um perfil de artista. Tudo pronto!
+                            <div class="alert alert-success text-center mb-3">
+                                <i class="bi bi-check-circle-fill me-2"></i>
+                                Já tens um perfil de artista. Tudo pronto!
+                            </div>
+                            <div class="d-grid">
+                                <a href="launch/releases" class="btn btn-wasomupfy">
+                                    <i class="bi bi-rocket-takeoff me-2"></i>Começar a distribuir agora
+                                </a>
                             </div>
                             <?php else: ?>
                             <div class="alert alert-info small">
                                 <i class="bi bi-info-circle me-2"></i>
-                                <strong>Nome artistico:</strong> No plano Single, o nome de selo é atribuido por nós.
-                                Nos planos
-                                Album, Artist e Label podes personalizar ao criar um lançamento.
+                                <strong>Nome artístico:</strong> No plano Single, o nome de selo é atribuído por nós.
+                                Nos planos Album, Artist e Label podes personalizar ao criar um lançamento.
                             </div>
                             <div class="d-grid gap-2 mt-3">
-                                <a href="../dashboard/artists/add-artist" class="btn btn-wasomupfy">
+                                <a href="artists/add-artist" class="btn btn-wasomupfy">
                                     <i class="bi bi-person-plus me-2"></i>Criar Perfil de Artista
                                 </a>
-                                <button type="button" class="btn btn-link text-muted" id="ob-skip-artist">Criar mais
-                                    tarde</button>
+                                <button type="button" class="btn btn-link text-muted" id="ob-skip-artist">
+                                    Criar mais tarde
+                                </button>
                             </div>
                             <?php endif; ?>
                         </div>
 
-                    </div>
-                    <div class="modal-footer d-flex justify-content-between align-items-center">
+                        <!-- ── STEP 5: Pronto! ── -->
+                        <div class="ob-step d-none" id="ob-5">
+                            <div class="text-center mb-3">
+                                <i class="bi bi-trophy-fill" style="font-size:3rem;color:#FF0089"></i>
+                            </div>
+                            <h5 class="text-center fw-bold">Estás pronto(a)!</h5>
+                            <p class="text-muted text-center mb-4">
+                                O teu painel Wasom Upfy está configurado. Aqui está o resumo do que tens a fazer a
+                                seguir:
+                            </p>
+
+                            <!-- Checklist dinâmica -->
+                            <ul class="list-group list-group-flush mb-3">
+                                <li class="list-group-item d-flex align-items-center gap-2 px-0">
+                                    <?php if ($email_verified): ?>
+                                    <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                                    <span>Email verificado</span>
+                                    <?php else: ?>
+                                    <i class="bi bi-circle text-warning fs-5"></i>
+                                    <span>
+                                        <a href="user/porfile#perfil" class="text-warning fw-semibold">
+                                            Verificar email
+                                        </a>
+                                    </span>
+                                    <?php endif; ?>
+                                </li>
+                                <li class="list-group-item d-flex align-items-center gap-2 px-0">
+                                    <?php if ($plan_paid): ?>
+                                    <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                                    <span>Plano activo —
+                                        <?php echo htmlspecialchars($plan['name_plan'] ?? ''); ?></span>
+                                    <?php elseif ($plan): ?>
+                                    <i class="bi bi-clock-fill text-warning fs-5"></i>
+                                    <span>
+                                        <a href="payment/pay" class="text-warning fw-semibold">
+                                            Confirmar pagamento do plano
+                                        </a>
+                                    </span>
+                                    <?php else: ?>
+                                    <i class="bi bi-circle text-danger fs-5"></i>
+                                    <span>
+                                        <a href="all-plans" class="text-danger fw-semibold">
+                                            Escolher um plano
+                                        </a>
+                                    </span>
+                                    <?php endif; ?>
+                                </li>
+                                <li class="list-group-item d-flex align-items-center gap-2 px-0">
+                                    <?php if ($has_artist): ?>
+                                    <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                                    <span>Perfil de artista criado</span>
+                                    <?php else: ?>
+                                    <i class="bi bi-circle text-muted fs-5"></i>
+                                    <span>
+                                        <a href="artists/add-artist" class="text-muted">
+                                            Criar perfil de artista
+                                        </a>
+                                        <span class="badge bg-secondary ms-1" style="font-size:.65rem">opcional
+                                            agora</span>
+                                    </span>
+                                    <?php endif; ?>
+                                </li>
+                            </ul>
+
+                            <div class="d-grid">
+                                <button type="button" class="btn btn-wasomupfy btn-lg" id="ob-finish"
+                                    onclick="finishOnboarding()">
+                                    <i class="bi bi-house-door me-2"></i>Entrar no Painel
+                                </button>
+                            </div>
+                        </div>
+
+                    </div><!-- /modal-body -->
+
+                    <div class="modal-footer d-flex justify-content-between align-items-center border-top">
                         <button type="button" class="btn btn-outline-secondary d-none" id="ob-prev">
-                            <i class="bi bi-arrow-left me-1"></i> Anterior
+                            <i class="bi bi-arrow-left me-1"></i>Anterior
                         </button>
                         <div></div>
                         <button type="button" class="btn btn-wasomupfy" id="ob-next">
                             Continuar <i class="bi bi-arrow-right ms-1"></i>
                         </button>
-                        <button type="button" class="btn btn-success d-none" id="ob-finish"
-                            onclick="finishOnboarding()">
-                            <i class="bi bi-check-lg me-1"></i> Entrar no Painel
-                        </button>
+                        <!-- ob-finish está dentro do step 5 para melhor layout -->
+                        <span id="ob-finish-placeholder"></span>
                     </div>
+
                 </div>
             </div>
         </div>
         <?php endif; ?>
+        <!-- ════ FIM ONBOARDING MODAL ════ -->
 
 
         <!-- Balance Card -->
@@ -1213,6 +1515,35 @@ $chart_json_datasets = json_encode($chart_datasets);
     <!-- ════ MODAL — Logout  FIM ════ -->
 
     <script>
+    // ── Badge de notificações — polling leve a cada 60s ──────────
+    (function() {
+        function refreshNotifBadge() {
+            fetch('ajax/notifications_api.php?action=count', {
+                    credentials: 'same-origin'
+                })
+                .then(r => r.json())
+                .then(data => {
+                    var badge = document.getElementById('navNotifBadge');
+                    if (!badge) return;
+                    var count = parseInt(data.unread || 0);
+                    if (count > 0) {
+                        badge.textContent = count > 99 ? '99+' : count;
+                        badge.style.display = '';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                })
+                .catch(function() {});
+        }
+        // Primeira actualização após 30s para não sobrecarregar o load inicial
+        setTimeout(function() {
+            refreshNotifBadge();
+            setInterval(refreshNotifBadge, 60000);
+        }, 30000);
+    })();
+    </script>
+
+    <script>
     function logout_wasomupfy() {
         window.location = 'logout';
     }
@@ -1294,23 +1625,25 @@ $chart_json_datasets = json_encode($chart_datasets);
     </script>
 
     <script>
-    // ══════════════════════════════════════
-    // ONBOARDING
-    // ══════════════════════════════════════
+    // ══════════════════════════════════════════════════
+    // ONBOARDING — lógica (TOTAL agora é 5)
+    // CSRF lido do meta tag — não hardcoded em PHP inline
+    // ══════════════════════════════════════════════════
     (function() {
-        const TOTAL = 4;
+        const TOTAL = 5;
         let current = 1;
 
         const modal = document.getElementById('onboardingModal');
-        if (!modal) return; // onboarding_done = true, modal nao existe
+        if (!modal) return;
 
         const btnNext = document.getElementById('ob-next');
         const btnPrev = document.getElementById('ob-prev');
-        const btnFinish = document.getElementById('ob-finish');
         const btnSkip = document.getElementById('ob-skip-artist');
         const dots = document.querySelectorAll('.ob-dot');
+        const progBar = document.getElementById('ob-progress-bar');
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')
+            ?.getAttribute('content') ?? '';
 
-        // Abrir modal automaticamente
         const bsModal = new bootstrap.Modal(modal, {
             backdrop: 'static'
         });
@@ -1324,32 +1657,79 @@ $chart_json_datasets = json_encode($chart_datasets);
             // Dots
             dots.forEach((d, i) => d.classList.toggle('active', i + 1 === current));
 
-            // Botoes
+            // Barra de progresso
+            if (progBar) progBar.style.width = ((current / TOTAL) * 100) + '%';
+
+            // Botões do footer
             btnPrev.classList.toggle('d-none', current === 1);
             btnNext.classList.toggle('d-none', current === TOTAL);
-            btnFinish.classList.toggle('d-none', current !== TOTAL);
         }
 
         btnNext.addEventListener('click', () => {
             if (current < TOTAL) goTo(current + 1);
         });
-        btnPrev.addEventListener('click',
-            () => {
-                if (current > 1) goTo(current - 1);
-            });
-        if (btnSkip) btnSkip.addEventListener('click', () => goTo(TOTAL)); // ja e o step 4, avanca para finish
+        btnPrev.addEventListener('click', () => {
+            if (current > 1) goTo(current - 1);
+        });
 
+        // "Criar mais tarde" — salta para o step final
+        if (btnSkip) btnSkip.addEventListener('click', () => goTo(TOTAL));
+
+        // Push notifications — pedido de permissão
+        window.obRequestPush = function(btn) {
+            if (!('Notification' in window) || !('serviceWorker' in navigator)) {
+                document.getElementById('ob-push-status').textContent = 'Não suportado neste dispositivo.';
+                btn.disabled = true;
+                return;
+            }
+            if (Notification.permission === 'granted') {
+                document.getElementById('ob-push-status').innerHTML =
+                    '<i class="bi bi-check-circle-fill text-success"></i> Já activadas';
+                btn.disabled = true;
+                return;
+            }
+            Notification.requestPermission().then(function(perm) {
+                if (perm === 'granted') {
+                    document.getElementById('ob-push-status').innerHTML =
+                        '<i class="bi bi-check-circle-fill text-success"></i> Activadas!';
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="bi bi-bell-fill me-1"></i>Notificações activas';
+                    btn.classList.replace('btn-outline-secondary', 'btn-outline-success');
+                } else {
+                    document.getElementById('ob-push-status').textContent =
+                        'Podes activar nas definições do browser.';
+                    btn.disabled = true;
+                }
+            });
+        };
+
+        // finishOnboarding — chamado pelo botão no step 5
         window.finishOnboarding = function() {
-            // Marcar onboarding como feito via fetch
-            fetch('/wasomupfy/dashboard/onboarding_done', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    csrf: '<?php echo $_SESSION["csrf_token"]; ?>'
+            var btn = document.getElementById('ob-finish');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>A guardar…';
+            }
+            fetch('onboarding_done', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        csrf: csrfToken
+                    }),
                 })
-            }).finally(() => bsModal.hide());
+                .then(r => r.json())
+                .then(data => {
+                    if (data.ok) {
+                        bsModal.hide();
+                        window.location.reload();
+                    } else {
+                        bsModal.hide();
+                    }
+                })
+                .catch(() => bsModal.hide());
         };
     })();
     </script>

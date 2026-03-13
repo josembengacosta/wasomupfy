@@ -5,7 +5,43 @@
 
 Options -Indexes
 RewriteEngine On
+
+# ══════════════════════════════════════════════
+# PÁGINAS DE ERRO PERSONALIZADAS (Apache)
+# Activa quando o Apache gera o erro directamente
+# (ficheiro não encontrado, PHP fatal, forbidden
+#  por regra .htaccess, servidor sobrecarregado)
+# As páginas PHP tratam dos erros gerados pelo
+# próprio código via http_response_code().
+# ══════════════════════════════════════════════
+
+ErrorDocument 400 /wasomupfy/status/404.php
+ErrorDocument 403 /wasomupfy/status/403.php
+ErrorDocument 404 /wasomupfy/status/404.php
+ErrorDocument 405 /wasomupfy/status/404.php
+ErrorDocument 500 /wasomupfy/status/500.php
+ErrorDocument 502 /wasomupfy/status/503.php
+ErrorDocument 503 /wasomupfy/status/503.php
+ErrorDocument 504 /wasomupfy/status/503.php
 RewriteBase /wasomupfy/
+
+# ══════════════════════════════════════════════
+# PÁGINAS DE ERRO PERSONALIZADAS (Apache)
+# Activa quando o Apache gera o erro directamente
+# (ficheiro não encontrado, PHP fatal, forbidden
+#  por regra .htaccess, servidor sobrecarregado)
+# As páginas PHP tratam dos erros gerados pelo
+# próprio código via http_response_code().
+# ══════════════════════════════════════════════
+
+ErrorDocument 400 /wasomupfy/dashboard/status/404.php
+ErrorDocument 403 /wasomupfy/dashboard/status/403.php
+ErrorDocument 404 /wasomupfy/dashboard/status/404.php
+ErrorDocument 405 /wasomupfy/dashboard/status/404.php
+ErrorDocument 500 /wasomupfy/dashboard/status/500.php
+ErrorDocument 502 /wasomupfy/dashboard/status/503.php
+ErrorDocument 503 /wasomupfy/dashboard/status/503.php
+ErrorDocument 504 /wasomupfy/dashboard/status/503.php
 
 # ─── Bloquear ficheiros sensíveis ─────────────
 RewriteRule \.(sql|log|env|sh|bak)$ - [F,L]
@@ -87,14 +123,37 @@ RewriteRule ^page/support/tutorial/?$                       page/support/tutoria
 RewriteRule ^page/services/music-distribution/?$     page/services/music-distribution.php [L]
 RewriteRule ^page/services/music-promotion/?$        page/services/music-promotion.php [L]
 RewriteRule ^page/services/customized-services/?$             page/services/customized-services.php [L]
+RewriteRule ^page/services/contact/?$             page/services/contact.php [L]
 
 # ══════════════════════════════════════════════
 # POLÍTICAS
 # ══════════════════════════════════════════════
 
-RewriteRule ^terms/?$                           page/politicies/terms.php [L]
-RewriteRule ^privacy/?$                         page/politicies/privacy.php [L]
-RewriteRule ^cookies/?$                         page/politicies/cookies.php [L]
+RewriteRule ^page/politicies/terms/?$                           page/politicies/terms.php [L]
+RewriteRule ^page/politicies/privacy/?$                         page/politicies/privacy.php [L]
+RewriteRule ^page/politicies/cookies/?$                         page/politicies/cookies.php [L]
+
+# ══════════════════════════════════════════════
+# STATUS / ERROS DO SITE PÚBLICO
+# ══════════════════════════════════════════════
+# Rotas limpas para as páginas da pasta status/
+# NUNCA adicionar checkPlatformStatus() nelas.
+# offline.php: sem BD nem CDN — servida pelo SW.
+# ══════════════════════════════════════════════
+
+RewriteRule ^status/maintenance/?$              status/maintenance.php [L]
+RewriteRule ^status/403/?$                      status/403.php [L]
+RewriteRule ^status/404/?$                      status/404.php [L]
+RewriteRule ^status/500/?$                      status/500.php [L]
+RewriteRule ^status/503/?$                      status/503.php [L]
+RewriteRule ^status/offline/?$                  status/offline.php [L]
+
+RewriteRule ^dashboard/status/maintenance/?$              dashboard/status/maintenance.php [L]
+RewriteRule ^dashboard/status/403/?$                      dashboard/status/403.php [L]
+RewriteRule ^dashboard/status/404/?$                      dashboard/status/404.php [L]
+RewriteRule ^dashboard/status/500/?$                      dashboard/status/500.php [L]
+RewriteRule ^dashboard/status/503/?$                      dashboard/status/503.php [L]
+RewriteRule ^dashboard/status/unauthorized/?$             dashboard/status/unauthorized.php [L]
 
 # ══════════════════════════════════════════════
 # DASHBOARD — PAINEL PRINCIPAL
@@ -105,6 +164,7 @@ RewriteRule ^dashboard/onboarding_done/?$                       dashboard/onboar
 RewriteRule ^dashboard/all-plans/?$                             dashboard/all-plans.php [L]
 RewriteRule ^dashboard/logout/?$                                dashboard/logout.php [L]
 RewriteRule ^dashboard/ajax/support_dashboard/?$              dashboard/ajax/support_dashboard.php [L]
+RewriteRule ^dashboard/ajax/notifications_api/?$              dashboard/ajax/notifications_api.php [L]
 
 # ─── Account ──────────────────────────────────
 RewriteRule ^dashboard/account/add-user/?$                      dashboard/account/add-user.php [L]

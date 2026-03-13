@@ -487,7 +487,7 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/single';
                                             </li>
                                             <li class="d-flex align-items-start mb-3">
                                                 <i class="bi bi-check-lg text-success mt-1 me-3"></i>
-                                                <span><strong>1 Colaborador</strong> por faixa</span>
+                                                <span><strong>Colaboradores Ilimitados</strong></span>
                                             </li>
                                             <li class="d-flex align-items-start mb-3">
                                                 <i class="bi bi-check-lg text-success mt-1 me-3"></i>
@@ -720,10 +720,9 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/single';
                                 </h3>
                                 <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#singleFaqAccordion">
                                     <div class="accordion-body">
-                                        Sim! O plano Single permite 1 colaborador por faixa. Você pode adicionar
-                                        featuring, produtores, compositores, etc. Todos os colaboradores recebem os
-                                        créditos adequados nas plataformas e podem receber sua parte dos royalties
-                                        através do nosso sistema de split automático.
+                                        Sim! O plano Single permite colaboradores Ilimitados. Você pode
+                                        adicionar
+                                        admininistrador, analista, editor, etc.
                                     </div>
                                 </div>
                             </div>
