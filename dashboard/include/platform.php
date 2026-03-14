@@ -434,50 +434,92 @@ function renderDashboardAlerts(array $user, array $platform): void
     if (empty($alerts)) return;
 
     $colorMap = [
-        'danger' => ['bg' => 'rgba(239,68,68,.08)', 'border' => 'rgba(239,68,68,.25)', 'text' => '#ef4444'],
-        'warning' => ['bg' => 'rgba(234,179,8,.08)', 'border' => 'rgba(234,179,8,.25)', 'text' => '#eab308'],
-        'info' => ['bg' => 'rgba(99,102,241,.08)', 'border' => 'rgba(99,102,241,.25)', 'text' => '#6366f1'],
-        'success' => ['bg' => 'rgba(34,197,94,.08)', 'border' => 'rgba(34,197,94,.25)', 'text' => '#22c55e'],
+        'danger'  => ['bg' => 'rgba(239,68,68,.08)',  'border' => 'rgba(239,68,68,.25)',  'text' => '#ef4444'],
+        'warning' => ['bg' => 'rgba(234,179,8,.08)',  'border' => 'rgba(234,179,8,.25)',  'text' => '#eab308'],
+        'info'    => ['bg' => 'rgba(99,102,241,.08)', 'border' => 'rgba(99,102,241,.25)', 'text' => '#6366f1'],
+        'success' => ['bg' => 'rgba(34,197,94,.08)',  'border' => 'rgba(34,197,94,.25)',  'text' => '#22c55e'],
     ];
 
-    echo '<div class="wu-alerts-wrap" id="wuAlertsWrap"
-    style="display:flex;flex-direction:column;gap:8px;margin-bottom:1.2rem;">';
+    // Injectar CSS de tema uma única vez por página
+    static $css_injected = false;
+    if (!$css_injected) {
+        echo '<style>
+.wu-alert-msg {
+    flex: 1;
+    line-height: 1.6;
+    /* Light: texto escuro legível */
+    color: #1e1e2e;
+}
+.wu-alert-dismiss {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    line-height: 1;
+    padding: 0;
+    flex-shrink: 0;
+    /* Light: cinza visível */
+    color: #6b7280;
+    transition: color .2s;
+}
+.wu-alert-dismiss:hover { color: #374151; }
+
+/* Dark mode — texto claro */
+body.dark-mode .wu-alert-msg,
+[data-theme="dark"] .wu-alert-msg,
+.dark .wu-alert-msg {
+    color: rgba(232,232,240,.85);
+}
+body.dark-mode .wu-alert-dismiss,
+[data-theme="dark"] .wu-alert-dismiss,
+.dark .wu-alert-dismiss {
+    color: rgba(255,255,255,.35);
+}
+body.dark-mode .wu-alert-dismiss:hover,
+[data-theme="dark"] .wu-alert-dismiss:hover {
+    color: rgba(255,255,255,.7);
+}
+</style>';
+        $css_injected = true;
+    }
+
+    echo '<div class="wu-alerts-wrap" id="wuAlertsWrap" style="display:flex;flex-direction:column;gap:8px;margin-bottom:1.2rem;">';
+
     foreach ($alerts as $i => $alert) {
-        $c = $colorMap[$alert['type']] ?? $colorMap['info'];
-        $id = 'wuAlert' . $i;
-        $dis = $alert['dismiss'] ? "data-dismiss=\"{$id}\"" : '';
-        echo "<div id=\"{$id}\" style=\" display:flex;align-items:flex-start;gap:10px; background:{$c['bg']}; border:1px
-        solid {$c['border']}; border-radius:12px;padding:.75rem 1rem; font-size:.83rem;color:{$c['text']};
-        transition:opacity .3s,max-height .3s; \">";
-        echo "<i class=\"bi {$alert['icon']}\" style=\"font-size:1rem;flex-shrink:0;margin-top:1px;\"></i>";
-        echo "<span style=\"flex:1;color:rgba(232,232,240,.85);line-height:1.6;\">{$alert['message']}";
+        $c   = $colorMap[$alert['type']] ?? $colorMap['info'];
+        $id  = 'wuAlert' . $i;
+
+        echo "<div id=\"{$id}\" style=\""
+            . "display:flex;align-items:flex-start;gap:10px;"
+            . "background:{$c['bg']};"
+            . "border:1px solid {$c['border']};"
+            . "border-radius:12px;padding:.75rem 1rem;"
+            . "font-size:.83rem;"
+            . "transition:opacity .3s;\">";
+
+        // Ícone — sempre na cor do tipo de alerta
+        echo "<i class=\"bi {$alert['icon']}\" style=\"font-size:1rem;flex-shrink:0;margin-top:2px;color:{$c['text']};\"></i>";
+
+        // Texto — usa classe para adaptar ao tema
+        echo '<span class="wu-alert-msg">' . $alert['message'];
         if (!empty($alert['action'])) {
             $label = htmlspecialchars($alert['action']['label']);
-            $url = htmlspecialchars($alert['action']['url']);
-            echo " <a href=\"{$url}\"
-                style=\"color:{$c['text']};font-weight:700;text-decoration:underline;white-space:nowrap;\">{$label}
-                →</a>";
+            $url   = htmlspecialchars($alert['action']['url']);
+            echo " <a href=\"{$url}\" style=\"color:{$c['text']};font-weight:700;text-decoration:underline;white-space:nowrap\">{$label} &rarr;</a>";
         }
         echo '</span>';
+
+        // Botão dismiss — usa classe para adaptar ao tema
         if ($alert['dismiss']) {
-            echo "<button type=\"button\" {$dis} onclick=\"wuDismissAlert('{$id}')\"
-            style=\"background:none;border:none;color:rgba(255,255,255,.3);
-            cursor:pointer;font-size:1.1rem;line-height:1;padding:0;flex-shrink:0;\" aria-label=\"Fechar\">×</button>";
+            echo "<button type=\"button\" class=\"wu-alert-dismiss\" aria-label=\"Fechar\""
+                . " onclick=\"(function(el){el.style.opacity='0';setTimeout(function(){el.style.display='none'},300)})"
+                . "(document.getElementById('{$id}'))\">&times;</button>";
         }
+
         echo '</div>';
     }
+
     echo '</div>';
-    echo '<script>
-function wuDismissAlert(id) {
-    var el = document.getElementById(id);
-    if (el) {
-        el.style.opacity = "0";
-        setTimeout(function() {
-            el.style.display = "none";
-        }, 300);
-    }
-}
-</script>';
 }
 
 // ══════════════════════════════════════════════════════════════════

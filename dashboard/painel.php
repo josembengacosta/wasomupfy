@@ -608,18 +608,18 @@ $chart_json_datasets = json_encode($chart_datasets);
                 . "background:{$c['bg']};border:1px solid {$c['border']};border-radius:12px;"
                 . "padding:.75rem 1rem;font-size:.83rem;margin-bottom:.6rem;"
                 . "transition:opacity .3s;\">";
-            echo "<i class=\"bi {$icon}\" style=\"font-size:1rem;flex-shrink:0;margin-top:1px;color:{$c['text']};\"></i>";
-            echo "<span style=\"flex:1;color:rgba(232,232,240,.85);line-height:1.6;\">{$message}";
+            echo "<i class=\"bi {$icon}\" style=\"font-size:1rem;flex-shrink:0;margin-top:2px;color:{$c['text']};\"></i>";
+            echo '<span class="wu-alert-msg">' . $message;
             if ($action) {
                 echo " <a href=\"{$action['url']}\" style=\"color:{$c['text']};font-weight:700;"
                     . "text-decoration:underline;white-space:nowrap\">{$action['label']} &rarr;</a>";
             }
             echo '</span>';
             if ($dismiss) {
-                echo "<button type=\"button\" onclick=\"(function(el){el.style.opacity='0';"
-                    . "setTimeout(function(){el.style.display='none'},300)})(document.getElementById('{$eid}'))\" "
-                    . "style=\"background:none;border:none;color:rgba(255,255,255,.3);cursor:pointer;"
-                    . "font-size:1.1rem;line-height:1;padding:0;flex-shrink:0\" aria-label=\"Fechar\">&times;</button>";
+                echo "<button type=\"button\" class=\"wu-alert-dismiss\" aria-label=\"Fechar\""
+                    . " onclick=\"(function(el){el.style.opacity='0';"
+                    . "setTimeout(function(){el.style.display='none'},300)})(document.getElementById('{$eid}'))\">"
+                    . "&times;</button>";
             }
             echo '</div>';
         }
@@ -1504,11 +1504,11 @@ $chart_json_datasets = json_encode($chart_datasets);
                     <button type="button" class="btn btn-outline-secondary flex-fill" data-bs-dismiss="modal">
                         <i class="bi bi-arrow-left me-1"></i>Não, continuar
                     </button>
-                    <button class="btn btn-danger flex-fill" type="button" onclick="logout_wasomupfy()">
-                        <i class="bi bi-box-arrow-right me-1"></i>Sim, terminar
+                    <button class="btn btn-danger flex-fill"
+                        onclick="window.location='<?php echo rtrim(APP_URL, '/'); ?>/logout'">
+                        <i class="bi bi-box-arrow-right me-1"></i>Terminar
                     </button>
                 </div>
-
             </div>
         </div>
     </div>
@@ -1541,12 +1541,6 @@ $chart_json_datasets = json_encode($chart_datasets);
             setInterval(refreshNotifBadge, 60000);
         }, 30000);
     })();
-    </script>
-
-    <script>
-    function logout_wasomupfy() {
-        window.location = 'logout';
-    }
     </script>
 
     <!-- Bootstrap JS and Popper.js -->
