@@ -12,6 +12,7 @@ RewriteEngine On
 # (ficheiro não encontrado, PHP fatal, forbidden
 #  por regra .htaccess, servidor sobrecarregado)
 # As páginas PHP tratam dos erros gerados pelo
+# PARA AS PAGINAS QUANDO O USUARIO ESTIVER LOGADO
 # próprio código via http_response_code().
 # ══════════════════════════════════════════════
 
@@ -32,6 +33,7 @@ RewriteBase /wasomupfy/
 #  por regra .htaccess, servidor sobrecarregado)
 # As páginas PHP tratam dos erros gerados pelo
 # próprio código via http_response_code().
+# PARA AS PAGINAS QUANDO O USUARIO ESTIVER LOGADO
 # ══════════════════════════════════════════════
 
 ErrorDocument 400 /wasomupfy/dashboard/status/404.php
@@ -253,47 +255,25 @@ RewriteRule ^dashboard/error/503/?$                             dashboard/page/e
 RewriteRule ^dashboard/maintenance/?$                           dashboard/page/error/maintenance.php [L]
 
 # ══════════════════════════════════════════════
-# PAINEL ADMIN
+# PAINEL ADMIN — AUTH
 # ══════════════════════════════════════════════
 
-RewriteRule ^admin/?$                                   admin/home.php [L]
+RewriteRule ^admin/login/?$                     admin/auth/login.php [L]
+RewriteRule ^admin/login-process/?$             admin/auth/login-process.php [L]
+RewriteRule ^admin/logout/?$                    admin/auth/logout.php [L]
+RewriteRule ^admin/forgot-password/?$           admin/auth/forgot-password.php [L]
+RewriteRule ^admin/forgot-password-process/?$   admin/auth/forgot-password-process.php [L]
+RewriteRule ^admin/reset-password/?$            admin/auth/reset-password.php [L,QSA]
+RewriteRule ^admin/reset-password-process/?$    admin/auth/reset-password-process.php [L,QSA]
+RewriteRule ^admin/confirm-code/?$              admin/auth/confirm-email-code.php [L,QSA]
+RewriteRule ^admin/lockscreen/?$                admin/auth/lockscreen.php [L]
+RewriteRule ^admin/lockscreen-process/?$        admin/auth/lockscreen-process.php [L]
 
-RewriteRule ^admin/users/?$                             admin/users/all-users.php [L]
-RewriteRule ^admin/users/online/?$                      admin/users/online-users.php [L]
-RewriteRule ^admin/users/([0-9]+)/?$                    admin/users/view.php?id=$1 [L,QSA]
+# ══════════════════════════════════════════════
+# PAINEL ADMIN — PÁGINAS (a adicionar quando chegarmos lá)
+# ══════════════════════════════════════════════
 
-RewriteRule ^admin/employees/?$                         admin/employees/all-employees.php [L]
-RewriteRule ^admin/employees/([0-9]+)/?$                admin/employees/view.php?id=$1 [L,QSA]
-
-RewriteRule ^admin/releases/?$                          admin/releases/all-releases.php [L]
-RewriteRule ^admin/releases/pending/?$                  admin/releases/pending.php [L]
-RewriteRule ^admin/releases/([0-9]+)/?$                 admin/releases/view.php?id=$1 [L,QSA]
-
-RewriteRule ^admin/finances/?$                          admin/finances/index.php [L]
-RewriteRule ^admin/finances/withdrawals/?$              admin/finances/withdrawals.php [L]
-RewriteRule ^admin/finances/payments/?$                 admin/finances/payments.php [L]
-RewriteRule ^admin/finances/royalties/?$                admin/finances/royalties.php [L]
-
-RewriteRule ^admin/plans/?$                             admin/plans/index.php [L]
-RewriteRule ^admin/plans/([0-9]+)/edit/?$               admin/plans/edit.php?id=$1 [L,QSA]
-
-RewriteRule ^admin/analytics/?$                         admin/analytics/home.php [L]
-RewriteRule ^admin/reports/?$                           admin/analytics/custom-reports.php [L]
-
-RewriteRule ^admin/visitors/?$                          admin/security/visitors.php [L]
-RewriteRule ^admin/security/?$                          admin/security/home.php [L]
-RewriteRule ^admin/audit/?$                             admin/security/audit-log.php [L]
-
-RewriteRule ^admin/cms/?$                               admin/cms/index.php [L]
-RewriteRule ^admin/blog/?$                              admin/cms/blog.php [L]
-RewriteRule ^admin/blog/([0-9]+)/edit/?$                admin/cms/blog-edit.php?id=$1 [L,QSA]
-RewriteRule ^admin/faq/?$                               admin/cms/faq.php [L]
-
-RewriteRule ^admin/support/?$                           admin/support/index.php [L]
-RewriteRule ^admin/support/([0-9]+)/?$                  admin/support/ticket.php?id=$1 [L,QSA]
-
-RewriteRule ^admin/settings/?$                          admin/settings/index.php [L]
-RewriteRule ^admin/settings/platform/?$                 admin/settings/platform.php [L]
+RewriteRule ^admin/?$                           admin/home.php [L]
 
 # ══════════════════════════════════════════════
 # FALLBACK — .php na raiz sem extensão
