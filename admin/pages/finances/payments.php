@@ -14,11 +14,11 @@
     <link rel="apple-touch-startup-image" href="../../../assets/img/screenshots/splash.png">
     <link rel="manifest" href="../../../manifest.json">
     <title>Gerenciamento de Pagamentos — Wasom Upfy</title>
-    <link rel="shortcut icon" href="../../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
+    <link rel="shortcut icon" href="../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
     <link rel="stylesheet" href="../../../css/libs/plugins.css">
     <link rel="stylesheet" href="../../../css/libs/scrollue.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
-    <link rel="stylesheet" href="../../../css/lastest-style.css">
+    <link rel="stylesheet" href="../css/lastest-style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <!-- Google Fonts - Poppins -->

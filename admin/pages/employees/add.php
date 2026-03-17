@@ -14,11 +14,11 @@
     <link rel="apple-touch-startup-image" href="../../../assets/img/screenshots/splash.png">
     <link rel="manifest" href="manifest.json">
     <title>Adicionar Funcionário — Wasom Upfy</title>
-    <link rel="shortcut icon" href="../../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
+    <link rel="shortcut icon" href="../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
     <link rel="stylesheet" href="../../../css/libs/plugins.css">
     <link rel="stylesheet" href="../../../css/libs/scrollue.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
-    <link rel="stylesheet" href="../../../css/lastest-style.css">
+    <link rel="stylesheet" href="../css/lastest-style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <!-- Google Fonts - Poppins -->
@@ -950,7 +950,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../../js/lastest.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             // Elementos do formulário
             const form = document.getElementById('create-user-form');
             const genderInput = document.getElementById('gender');
@@ -1070,7 +1070,7 @@
                         badge.className = 'badge bg-primary badge-role';
                         badge.textContent = role === 'admin' ? 'Administrador' :
                             role === 'distributor' ? 'Distribuidor' :
-                                role === 'analyst' ? 'Analista' : 'Financeiro';
+                            role === 'analyst' ? 'Analista' : 'Financeiro';
                         previewRoles.appendChild(badge);
                     });
                 }
@@ -1099,11 +1099,11 @@
             });
 
             // Avatar preview
-            avatarInput.addEventListener('change', function (e) {
+            avatarInput.addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (file) {
                     const reader = new FileReader();
-                    reader.onload = function (event) {
+                    reader.onload = function(event) {
                         previewAvatar.innerHTML = '';
                         const img = document.createElement('img');
                         img.src = event.target.result;
@@ -1118,7 +1118,7 @@
             });
 
             // Gerar senha
-            generatePasswordBtn.addEventListener('click', function () {
+            generatePasswordBtn.addEventListener('click', function() {
                 const password = generateStrongPassword();
                 passwordInput.value = password;
                 updatePasswordStrength(password);
@@ -1126,7 +1126,7 @@
             });
 
             // Copiar senha
-            copyPasswordBtn.addEventListener('click', function () {
+            copyPasswordBtn.addEventListener('click', function() {
                 if (passwordInput.value) {
                     navigator.clipboard.writeText(passwordInput.value).then(() => {
                         const originalText = copyPasswordBtn.innerHTML;
@@ -1139,12 +1139,12 @@
             });
 
             // Validar senha ao digitar (caso o campo não seja readonly)
-            passwordInput.addEventListener('input', function () {
+            passwordInput.addEventListener('input', function() {
                 updatePasswordStrength(this.value);
             });
 
             // Enviar formulário
-            form.addEventListener('submit', function (e) {
+            form.addEventListener('submit', function(e) {
                 e.preventDefault();
 
                 // Validações adicionais podem ser adicionadas aqui

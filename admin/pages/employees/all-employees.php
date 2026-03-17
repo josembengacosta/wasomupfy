@@ -13,16 +13,212 @@
     <link rel="apple-touch-icon" href="../../../assets/img/icones/wasomupfy_fiv_512.png">
     <link rel="apple-touch-startup-image" href="../../../assets/img/screenshots/splash.png">
     <link rel="manifest" href="manifest.json">
-    <title>Finanças e Rendimentos — Wasom Upfy</title>
-    <link rel="shortcut icon" href="../../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
+    <title>Todos Funcionários — Wasom Upfy</title>
+    <link rel="shortcut icon" href="../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
     <link rel="stylesheet" href="../../../css/libs/plugins.css">
     <link rel="stylesheet" href="../../../css/libs/scrollue.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
-    <link rel="stylesheet" href="../../../css/lastest-style.css">
+    <link rel="stylesheet" href="../css/lastest-style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <!-- Google Fonts - Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        .fade-in-custom {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .status-badge {
+            padding: 0.35em 0.65em;
+            border-radius: 0.25rem;
+            font-size: 0.75em;
+            font-weight: 700;
+        }
+
+        .status-active {
+            background-color: #198754;
+            color: white;
+        }
+
+        .status-suspended {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .status-review {
+            background-color: #ffc107;
+            color: #212529;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 50rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-suspended {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .status-review {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .email-link {
+            color: (var(--primary-light));
+            text-decoration: none;
+        }
+
+        .profile-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .profile-img-lg {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .streaming-progress {
+            height: 10px;
+            border-radius: 5px;
+        }
+
+        .fade-in-custom {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 50rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-suspended {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .status-review {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .email-link {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .email-link:hover {
+            text-decoration: underline;
+        }
+
+        .profile-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .profile-img-lg {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .btn-wasomupfy {
+            background-color: #FF0089;
+            border-color: #FF0089;
+            color: white;
+        }
+
+        .btn-wasomupfy:hover {
+            background-color: #e0007a;
+            border-color: #e0007a;
+            color: white;
+        }
+
+        .search-container {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .sorting-asc::after {
+            content: " ▲";
+            font-size: 0.8em;
+        }
+
+        .sorting-desc::after {
+            content: " ▼";
+            font-size: 0.8em;
+        }
+
+        .table th {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .table th:hover {
+            background-color: #f8f9fa;
+        }
+
+        #user-results-count {
+            font-weight: 600;
+            color: #FF0089;
+        }
+
+        .badge-role {
+            font-size: 0.75em;
+            margin-right: 0.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .btn-group-sm .btn {
+            padding: 0.25rem 0.5rem;
+        }
+    </style>
 </head>
 
 <body>
@@ -76,26 +272,26 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="#collapseAdmins" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                    <a href="#collapseAdmins" class="nav-link active" data-bs-toggle="collapse" aria-expanded="false"
                         aria-controls="collapseAdmins">
                         <i class="bi bi-person-gear"></i>
                         <span>Gestão de Admins</span>
                         <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
                     </a>
                     <div class="collapse" id="collapseAdmins">
-                        <a href="../employees/all-employees" class="nav-link">
+                        <a href="all-employees" class="nav-link active">
                             <i class="bi bi-people"></i>
                             <span>Listar Admins</span>
                         </a>
-                        <a href="../employees/add" class="nav-link">
+                        <a href="add" class="nav-link">
                             <i class="bi bi-person-plus"></i>
                             <span>Adicionar</span>
                         </a>
-                        <a href="../employees/edit" class="nav-link">
+                        <a href="edit" class="nav-link">
                             <i class="bi bi-person-gear"></i>
                             <span>Editar</span>
                         </a>
-                        <a href="../employees/delete" class="nav-link">
+                        <a href="delete" class="nav-link">
                             <i class="bi bi-person-x"></i>
                             <span>Excluir</span>
                         </a>
@@ -111,7 +307,7 @@
                     <div class="collapse" id="collapseUsers">
                         <a href="../users/all-users" class="nav-link">
                             <i class="bi bi-people"></i>
-                            <span>Listar Usuários</span>
+                            <span>Todos Usuários</span>
                         </a>
                         <a href="../users/add" class="nav-link">
                             <i class="bi bi-person-plus"></i>
@@ -158,13 +354,13 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a href="artist/accounts-users" class="nav-link">
+                    <a href="../artist/accounts-users" class="nav-link">
                         <i class="bi bi-person-check"></i>
                         <span>Contas e Usuários</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="collaborators-artist" class="nav-link active">
+                    <a href="../artist/collaborators-artist" class="nav-link">
                         <i class="bi bi-people"></i>
                         <span>Artistas e Colaboradores</span>
                     </a>
@@ -225,7 +421,7 @@
                             <i class="bi bi-check2-all"></i>
                             <span>Verificar Canais</span>
                         </a>
-                        <a href="../distribution/monetization" class="nav-link">
+                        <a href="../integration/monetization" class="nav-link">
                             <i class="bi bi-youtube"></i>
                             <span>Gerenciamento de Conteúdo Monetizado</span>
                         </a>
@@ -411,113 +607,248 @@
             <div class="container-fluid p-0">
                 <div class="row mb-3 mt-2">
                     <div class="welcome-text col-auto d-sm-block">
-                        <h2 class="h4 mb-2">Artistas e Colaboradores</span></h2>
+                        <h2 class="h4 mb-2"><i class="bi bi-people-fill me-2"></i>Todos Funcionários</h2>
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb mb-0">
-                                <li class="breadcrumb-item"><a href="releases" class="text-secondary">Artistas</a>
+                                <li class="breadcrumb-item"><a href="all-employees"
+                                        class="text-secondary">Funcionários</a>
                                 </li>
-                                <li class="breadcrumb-item active text-secondary" aria-current="page">Artistas e
-                                    Colaboradores</li>
+                                <li class="breadcrumb-item active text-secondary" aria-current="page">Todos Funcionários
+                                </li>
                             </ol>
                         </nav>
                     </div>
                     <div class="col-auto ms-auto text-end mt-n1 mt-3 mb-2">
+                        <button class="btn btn-outline-primary me-2 shadow-sm" onclick="exportData('csv')">
+                            <i class="bi bi-download me-1"></i> Exportar CSV
+                        </button>
                         <button class="btn btn-wasomupfy text-white shadow-sm" data-bs-toggle="modal"
                             data-bs-target="#addArtistwasomupfy">
-                            <i class="align-middle bi bi-plus"></i> Adcionar artista</button>
+                            <i class="bi bi-plus me-1"></i> Adicionar Funcionário
+                        </button>
                     </div>
+
                     <!-- Stats Description -->
                     <p class="stats-description mt-2">
-                        Encontras aqui o lançamento de todas as contas da plataforma, mais poderá depender se és
-                        administrador regional ou glboal para veres alguns lançamentos disponíveis. Caso tenhas dúvidas
-                        em
-                        alguns lançamentos faça a pesquisa do mesmo através do seu <strong>Título</strong>,
-                        <strong>Artista</strong> ou <strong>UPC</strong>.
+                        Gerencie todos os funcionários da plataforma aqui. Utilize os filtros para encontrar
+                        funcionários específicos por ID, nome, função, país ou status.
                     </p>
+
                     <!-- Filtros -->
-                    <div class="search-container fade-in-custom">
+                    <div class="search-container fade-in-custom mt-3">
                         <div class="row g-3">
-                            <div class="col-md-3">
-                                <label for="artist-id">ID:</label>
-                                <input type="number" class="form-control" min="1" id="artist-id" placeholder="ID">
+                            <div class="col-md-2">
+                                <label for="user-id" class="form-label">ID:</label>
+                                <input type="number" class="form-control" id="user-id" placeholder="ID" min="1">
                             </div>
-                            <div class="col-md-3">
-                                <label for="artist-name">Artista:</label>
-                                <input type="text" class="form-control" id="artist-name" placeholder="Nome do artista">
+                            <div class="col-md-2">
+                                <label for="user-account" class="form-label">Conta:</label>
+                                <input type="text" class="form-control" id="user-account" placeholder="Conta">
                             </div>
-                            <div class="col-md-3">
-                                <label for="artist-date">Data de criação:</label>
-                                <input type="date" class="form-control" id="artist-date">
+                            <div class="col-md-2">
+                                <label for="user-name" class="form-label">Nome:</label>
+                                <input type="text" class="form-control" id="user-name" placeholder="Nome">
                             </div>
-                            <div class="col-md-3">
-                                <label for="artist-role">Função:</label>
-                                <select class="form-select" id="artist-role">
-                                    <option value="">Todas</option>
-                                    <option value="interpreter">Intérprete</option>
-                                    <option value="composer">Compositor</option>
-                                    <option value="producer">Produtor</option>
+                            <div class="col-md-2">
+                                <label for="user-role" class="form-label">Função:</label>
+                                <select class="form-select" id="user-role" multiple style="height: 38px;">
+                                    <option value="admin">Administrador</option>
+                                    <option value="distributor">Distribuidor</option>
+                                    <option value="analyst">Analista</option>
+                                    <option value="financial">Financeiro</option>
+                                </select>
+                                <small class="text-muted">Ctrl+click para múltiplas</small>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="user-country" class="form-label">País:</label>
+                                <select class="form-select" id="user-country">
+                                    <option value="">Todos</option>
+                                    <option value="AO">Angola</option>
+                                    <option value="PT">Portugal</option>
+                                    <option value="BR">Brasil</option>
+                                    <option value="MZ">Moçambique</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="user-status" class="form-label">Estado:</label>
+                                <select class="form-select" id="user-status">
+                                    <option value="">Todos</option>
+                                    <option value="active">Ativo</option>
+                                    <option value="suspended">Suspenso</option>
+                                    <option value="review">Revisão</option>
                                 </select>
                             </div>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center mt-2 mb-2">
-                            <button class="btn btn-wasomupfy text-white" id="clear-filters"><i
-                                    class="bi bi-eraser me-2"></i> Limpar
-                                Filtros</button>
-                            <span id="results-count"></span>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <button class="btn btn-outline-secondary" id="clear-user-filters">
+                                <i class="bi bi-eraser me-2"></i> Limpar Filtros
+                            </button>
+                            <span class="fw-bold" id="user-results-count">0 resultados</span>
                         </div>
                     </div>
-                </div>
 
-                <div class="card fade-in-custom">
-                    <div class="table-responsive">
-                        <table id="artists-table" class="table table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Conta</th>
-                                    <th>Artista</th>
-                                    <th>Função</th>
-                                    <th>Spotify</th>
-                                    <th>Apple Music</th>
-                                    <th>Criação</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="artists-list">
-                                <!-- Dados serão carregados via JavaScript -->
-                            </tbody>
-                        </table>
+                    <!-- Tabela -->
+                    <div class="card fade-in-custom mt-3">
+                        <div class="table-responsive">
+                            <table id="users-table" class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th data-sort="id">ID</th>
+                                        <th>Foto</th>
+                                        <th data-sort="account">Conta</th>
+                                        <th data-sort="name">Nome</th>
+                                        <th data-sort="username">Usuário</th>
+                                        <th>Funções</th>
+                                        <th data-sort="email">E-mail</th>
+                                        <th data-sort="country">País</th>
+                                        <th data-sort="city">Cidade</th>
+                                        <th data-sort="status">Estado</th>
+                                        <th data-sort="createdAt">Criação</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="users-list">
+                                    <!-- Dados serão carregados via JavaScript -->
+                                    <tr>
+                                        <td colspan="12" class="text-center py-5">
+                                            <div class="spinner-border text-primary" role="status">
+                                                <span class="visually-hidden">Carregando...</span>
+                                            </div>
+                                            <p class="mt-2">Carregando funcionários...</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <nav aria-label="Navegação de páginas" class="py-3">
+                            <ul class="pagination justify-content-center mb-0" id="users-pagination"></ul>
+                        </nav>
                     </div>
-
-                    <nav aria-label="Page navigation">
-                        <ul class="pagination justify-content-center" id="pagination"></ul>
-                    </nav>
                 </div>
             </div>
         </div>
     </div>
+    </div>
 
-    <!-- Modal de Edição -->
-    <div class="modal fade" id="editArtistModal" tabindex="-1" aria-hidden="true">
+    <!-- Modal de Visualização -->
+    <div class="modal fade" id="viewUserModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Editar Artista</h5>
+                    <h5 class="modal-title">Detalhes do Funcionário</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body" id="edit-artist-body">
-                    <!-- Formulário será carregado via JavaScript -->
+                <div class="modal-body" id="view-user-body">
+                    <!-- Conteúdo será preenchido via JavaScript -->
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="save-artist-changes">Salvar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal de Exclusão -->
-    <div class="modal fade" id="deleteArtistModal" tabindex="-1" aria-hidden="true">
+    <!-- Modal add new user -->
+    <div class="modal fade" id="addArtistwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="addArtistwasomupfyLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addArtistwasomupfyLabel">Adicionar Funcionário</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="employee-form">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="emp-name" class="form-label">Nome Completo *</label>
+                                    <input type="text" class="form-control" id="emp-name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="emp-account" class="form-label">Conta *</label>
+                                    <input type="text" class="form-control" id="emp-account" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="emp-username" class="form-label">Nome de Usuário *</label>
+                                    <input type="text" class="form-control" id="emp-username" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="emp-email" class="form-label">E-mail *</label>
+                                    <input type="email" class="form-control" id="emp-email" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="emp-phone" class="form-label">Telefone</label>
+                                    <input type="tel" class="form-control" id="emp-phone"
+                                        placeholder="+244 9xx xxx xxx">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="emp-country" class="form-label">País *</label>
+                                    <select class="form-select" id="emp-country" required>
+                                        <option value="">Selecione</option>
+                                        <option value="AO">Angola</option>
+                                        <option value="PT">Portugal</option>
+                                        <option value="BR">Brasil</option>
+                                        <option value="MZ">Moçambique</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="emp-city" class="form-label">Cidade</label>
+                                    <input type="text" class="form-control" id="emp-city">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="emp-roles" class="form-label">Funções *</label>
+                                    <select class="form-select" id="emp-roles" multiple required>
+                                        <option value="admin">Administrador</option>
+                                        <option value="distributor">Distribuidor</option>
+                                        <option value="analyst">Analista</option>
+                                        <option value="financial">Financeiro</option>
+                                    </select>
+                                    <small class="text-muted">Ctrl+click para selecionar múltiplas funções</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="emp-status" class="form-label">Estado *</label>
+                                    <select class="form-select" id="emp-status" required>
+                                        <option value="active">Ativo</option>
+                                        <option value="review">Em Revisão</option>
+                                        <option value="suspended">Suspenso</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="emp-plan" class="form-label">Plano</label>
+                                    <select class="form-select" id="emp-plan">
+                                        <option value="Single">Single</option>
+                                        <option value="Profissional">Profissional</option>
+                                        <option value="Enterprise">Enterprise</option>
+                                        <option value="Admin">Admin</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="emp-notes" class="form-label">Observações</label>
+                            <textarea class="form-control" id="emp-notes" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-wasomupfy" id="save-employee-btn">Salvar Funcionário</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação de Exclusão -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -525,90 +856,16 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Tem certeza que deseja excluir este artista?</p>
-                    <div class="mb-3">
-                        <label for="delete-artist-password" class="form-label">Digite sua senha:</label>
-                        <input type="password" class="form-control" id="delete-artist-password" required>
-                        <div class="invalid-feedback">Por favor, insira sua senha</div>
-                    </div>
+                    <p id="delete-message">Tem certeza que deseja excluir este funcionário?</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger" id="confirm-artist-delete">Excluir</button>
+                    <button type="button" class="btn btn-danger" id="confirm-delete-btn">Excluir</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal add artist -->
-    <div class="modal fade" id="addArtistwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="addArtistwasomupfyLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content modal-bottom">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5 text-dark" id="addArtistwasomupfyLabel">Artista ou Colaborador</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="artist-form">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-floating mb-3 d-none">
-                                    <input type="text" class="form-control" name="name" value="" required>
-                                    <label class="form-label">ID</label>
-                                </div>
-                                <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" name="account" value="" required>
-                                    <label class="form-label">Conta</label>
-                                </div>
-                                <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" name="account" value="" required>
-                                    <label class="form-label">Artista</label>
-                                </div>
-                                <div class="form-floating mb-3">
-                                    <select class="form-select" name="role" required>
-                                        <option value="interpreter">Intérprete</option>
-                                        <option value="composer">Compositor</option>
-                                        <option value="producer">Produtor</option>
-                                    </select>
-                                    <label class="form-label">Função</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating mb-3">
-                                    <input type="url" class="form-control" name="spotify" value="">
-                                    <label class="form-label">Link Spotify</label>
-                                </div>
-                                <div class="form-floating mb-3">
-                                    <input type="url" class="form-control" name="apple_music" value="">
-                                    <label class="form-label">Link Apple Music</label>
-                                </div>
-                                <div class="form-floating mb-3">
-                                    <input type="date" class="form-control" name="creation_date" value="" required>
-                                    <label class="form-label">Data de Criação</label>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <div>
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-                    </div>
-                    <div>
-                        <button class="btn btn-wasomupfy text-white" type="button"
-                            name="logout_wasomupfy">Salvar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- ════ MODAL — Logout  FIM ════ -->
-
-    <!-- Floating Action Button -->
-    <div class="fab" onclick="showQuickAction()" aria-label="Ações Rápidas">
-        <i class="bi bi-plus-lg"></i>
-    </div>
 
     <!-- Footer -->
     <footer>
@@ -672,8 +929,165 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../../js/lastest.js"></script>
-    <script src="data/database.collaborators.js"></script>
-    <script src="js/collaborators.js" type="module"></script>
+    <script src="data/database.all.employees.js"></script>
+    <script src="js/employees.js"></script>
+    <script>
+        // Funções globais para exportação
+        function exportData(format) {
+            if (typeof window.employeesData !== 'undefined') {
+                const data = window.employeesData.getEmployees();
+                const headers = ['ID', 'Conta', 'Nome', 'Usuário', 'Funções', 'E-mail', 'País', 'Cidade', 'Estado',
+                    'Criação', 'Telefone', 'Plano'
+                ];
+                const rows = data.map(emp => [
+                    emp.id,
+                    emp.account,
+                    emp.name,
+                    emp.username,
+                    emp.roles.join(', '),
+                    emp.email,
+                    emp.country,
+                    emp.city,
+                    emp.status,
+                    emp.createdAt,
+                    emp.phone,
+                    emp.plan
+                ]);
+
+                if (format === 'csv') {
+                    let csvContent = headers.join(';') + '\n';
+                    rows.forEach(row => {
+                        csvContent += row.join(';') + '\n';
+                    });
+
+                    const blob = new Blob([csvContent], {
+                        type: 'text/csv;charset=utf-8;'
+                    });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `funcionarios_${new Date().toISOString().split('T')[0]}.csv`;
+                    link.click();
+                    URL.revokeObjectURL(url);
+
+                    showNotification('Dados exportados com sucesso!', 'success');
+                }
+            }
+        }
+
+        // Função de notificação
+        function showNotification(message, type = 'success') {
+            // Verifica se já existe uma notificação ativa
+            const existingNotification = document.querySelector('.global-notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+
+            // Cria a notificação
+            const notification = document.createElement('div');
+            notification.className =
+                `global-notification alert alert-${type} alert-dismissible fade show position-fixed`;
+            notification.style.cssText = `
+                top: 20px;
+                right: 20px;
+                z-index: 9999;
+                min-width: 300px;
+                max-width: 400px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            `;
+            notification.innerHTML = `
+                <strong>${type === 'success' ? '✓ Sucesso!' : type === 'error' ? '✗ Erro!' : '⚠ Atenção!'}</strong>
+                <span class="ms-1">${message}</span>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+            `;
+
+            // Adiciona ao documento
+            document.body.appendChild(notification);
+
+            // Remove automaticamente após 5 segundos
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+
+        // Função de ação rápida
+        function showQuickAction() {
+            const modal = new bootstrap.Modal(document.getElementById('addArtistwasomupfy'));
+            modal.show();
+        }
+
+        // Inicialização quando o DOM estiver carregado
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar tooltips do Bootstrap
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            const tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+
+            // Configurar modal de exclusão
+            const confirmDeleteModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+            let employeeToDelete = null;
+
+            // Configurar botão de salvar funcionário
+            document.getElementById('save-employee-btn').addEventListener('click', function() {
+                const form = document.getElementById('employee-form');
+                const requiredFields = form.querySelectorAll('[required]');
+                let isValid = true;
+
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        isValid = false;
+                        field.classList.add('is-invalid');
+                    } else {
+                        field.classList.remove('is-invalid');
+                    }
+                });
+
+                if (isValid) {
+                    // Aqui você faria uma requisição AJAX para salvar
+                    const modal = bootstrap.Modal.getInstance(document.getElementById(
+                        'addArtistwasomupfy'));
+                    modal.hide();
+                    showNotification('Funcionário adicionado com sucesso!', 'success');
+                    form.reset();
+
+                    // Em produção, aqui você recarregaria os dados
+                    if (typeof window.employeesData !== 'undefined') {
+                        setTimeout(() => {
+                            if (typeof window.employeesData.getEmployees === 'function') {
+                                // Recarrega a tabela
+                                const event = new Event('reloadTable');
+                                window.dispatchEvent(event);
+                            }
+                        }, 1000);
+                    }
+                } else {
+                    showNotification('Por favor, preencha todos os campos obrigatórios.', 'warning');
+                }
+            });
+
+            // Configurar modal de confirmação de exclusão
+            document.getElementById('confirm-delete-btn').addEventListener('click', function() {
+                if (employeeToDelete) {
+                    if (typeof window.employeesData !== 'undefined' && typeof window.employeesData
+                        .deleteEmployee === 'function') {
+                        window.employeesData.deleteEmployee(employeeToDelete);
+                        confirmDeleteModal.hide();
+                        showNotification('Funcionário excluído com sucesso!', 'success');
+
+                        // Recarrega a tabela
+                        setTimeout(() => {
+                            const event = new Event('reloadTable');
+                            window.dispatchEvent(event);
+                        }, 500);
+                    }
+                    employeeToDelete = null;
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

@@ -13,12 +13,12 @@
     <link rel="apple-touch-icon" href="../../../assets/img/icones/wasomupfy_fiv_512.png">
     <link rel="apple-touch-startup-image" href="../../../assets/img/screenshots/splash.png">
     <link rel="manifest" href="manifest.json">
-    <title>Todos lançamentos — Wasom Upfy</title>
-    <link rel="shortcut icon" href="../../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
+    <title>Verificar — Wasom Upfy</title>
+    <link rel="shortcut icon" href="../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
     <link rel="stylesheet" href="../../../css/libs/plugins.css">
     <link rel="stylesheet" href="../../../css/libs/scrollue.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
-    <link rel="stylesheet" href="../../../css/lastest-style.css">
+    <link rel="stylesheet" href="../css/lastest-style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <!-- Google Fonts - Poppins -->
@@ -170,22 +170,22 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#collapseDistribution" class="nav-link active" data-bs-toggle="collapse"
-                        aria-expanded="false" aria-controls="collapseDistribution">
+                    <a href="#collapseDistribution" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseDistribution">
                         <i class="bi bi-globe"></i>
                         <span>Distribuição</span>
                         <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
                     </a>
                     <div class="collapse" id="collapseDistribution">
-                        <a href="releases" class="nav-link active">
+                        <a href="../distribution/releases" class="nav-link">
                             <i class="bi bi-rocket-takeoff"></i>
                             <span>Lançamentos</span>
                         </a>
-                        <a href="store" class="nav-link">
+                        <a href="../distribution/store" class="nav-link">
                             <i class="bi bi-shop"></i>
                             <span>Lojas Digitais</span>
                         </a>
-                        <a href="schedule" class="nav-link">
+                        <a href="../distribution/schedule" class="nav-link">
                             <i class="bi bi-calendar-event"></i>
                             <span>Agendar Lançamento</span>
                         </a>
@@ -210,22 +210,22 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#collapseIntegration" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseIntegration">
+                    <a href="#collapseIntegration" class="nav-link active" data-bs-toggle="collapse"
+                        aria-expanded="false" aria-controls="collapseIntegration">
                         <i class="bi bi-youtube"></i>
                         <span>Unificação e V. Youtube</span>
                         <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
                     </a>
                     <div class="collapse" id="collapseIntegration">
-                        <a href="../integration/youtube" class="nav-link">
+                        <a href="verify-channel" class="nav-link">
                             <i class="bi bi-gear"></i>
                             <span>Configurar Integração</span>
                         </a>
-                        <a href="../integration/verify" class="nav-link">
+                        <a href="verify" class="nav-link active">
                             <i class="bi bi-check2-all"></i>
                             <span>Verificar Canais</span>
                         </a>
-                        <a href="../distribution/monetization" class="nav-link">
+                        <a href="monetization" class="nav-link">
                             <i class="bi bi-youtube"></i>
                             <span>Gerenciamento de Conteúdo Monetizado</span>
                         </a>
@@ -411,21 +411,19 @@
             <div class="container-fluid p-0">
                 <div class="row mb-3 mt-2">
                     <div class="welcome-text col-auto d-sm-block">
-                        <h2 class="h4 mb-2">Todos lançamentos</span></h2>
+                        <h2 class="h4 mb-2">Verificar</span></h2>
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb mb-0">
-                                <li class="breadcrumb-item"><a href="releases" class="text-secondary">Distribuição</a>
+                                <li class="breadcrumb-item"><a href="verify" class="text-secondary">Youtube</a>
                                 </li>
-                                <li class="breadcrumb-item active text-secondary" aria-current="page">Lançamentos</li>
+                                <li class="breadcrumb-item active text-secondary" aria-current="page">Verificar</li>
                             </ol>
                         </nav>
                     </div>
                     <div class="col-auto ms-auto text-end mt-n1 mt-3 mb-2">
-                        <a class="text-secondary shadow-sm me-2" href="">Pedidos de alteração
-                        </a>
-                        <a class="text-secondary shadow-sm" href="">Pedidos de eliminação</a>
-                        <button class="btn btn-wasomupfy text-white shadow-sm">
-                            <i class="align-middle bi bi-plus" onclick=""></i> Novo lançamento</button>
+                        <button class="btn btn-wasomupfy text-white shadow-sm" data-bs-toggle="modal"
+                            data-bs-target="#addArtistwasomupfy">
+                            <i class="align-middle bi bi-plus"></i> Adcionar </button>
                     </div>
                     <!-- Stats Description -->
                     <p class="stats-description mt-2">
@@ -435,103 +433,96 @@
                         alguns lançamentos faça a pesquisa do mesmo através do seu <strong>Título</strong>,
                         <strong>Artista</strong> ou <strong>UPC</strong>.
                     </p>
-                    <div class="search-container date-range fade-in-custom">
+                    <!-- Filtros -->
+                    <div class="search-container fade-in-custom">
                         <div class="row g-3">
                             <div class="col-md-2">
-                                <label for="dateRange">ID:</label>
-                                <input type="number" class="form-control" min="1" id="search-id" placeholder="ID">
+                                <label for="youtube-id">ID:</label>
+                                <input type="number" class="form-control" min="1" id="youtube-id" placeholder="ID">
                             </div>
                             <div class="col-md-2">
-                                <label for="dateRange">Título do Álbum:</label>
-                                <input type="text" class="form-control" id="search-title" placeholder="Título do Álbum">
+                                <label for="youtube-account">Conta:</label>
+                                <input type="text" class="form-control" id="youtube-account"
+                                    placeholder="Nome da conta">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="youtube-artist">Artista:</label>
+                                <input type="text" class="form-control" id="youtube-artist"
+                                    placeholder="Nome do artista">
                             </div>
                             <div class="col-md-2">
-                                <label for="dateRange">Artista:</label>
-                                <input type="text" class="form-control" id="search-artist" placeholder="Artista">
+                                <label for="youtube-date">Data de pedido:</label>
+                                <input type="date" class="form-control" id="youtube-date">
                             </div>
-                            <div class="col-md-2">
-                                <label for="dateRange">Ano:</label>
-                                <input type="number" class="form-control" min="1" id="search-year" placeholder="Ano">
-                            </div>
-                            <div class="col-md-2">
-                                <label for="dateRange">UPC:</label>
-                                <input type="text" class="form-control" id="search-upc" placeholder="UPC">
-                            </div>
-                            <div class="col-md-2">
-                                <label for="dateRange">Filtrar estado</label>
-                                <select class="form-select" id="search-status">
-                                    <option value="">Todos os Status</option>
-                                    <option value="approved">Aprovado</option>
-                                    <option value="rejected">Reprovado</option>
+                            <div class="col-md-3">
+                                <label for="youtube-status">Estado:</label>
+                                <select class="form-select" id="youtube-status">
+                                    <option value="">Todos</option>
                                     <option value="pending">Pendente</option>
-                                    <option value="draft">Rascunho</option>
+                                    <option value="verified">Verificado</option>
+                                    <option value="rejected">Rejeitado</option>
+                                    <option value="expired">Expirado</option>
                                 </select>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="d-flex justify-content-between align-items-center mt-2 mb-2">
-                        <button class="btn btn-wasomupfy text-white" id="clear-filters"><i
-                                class="bi bi-eraser me-2"></i> Limpar
-                            Filtros</button>
-                        <span id="result-count">0 álbuns encontrados</span>
+                        <div class="d-flex justify-content-between align-items-center mt-2 mb-2">
+                            <button class="btn btn-wasomupfy text-white" id="clear-filters"><i
+                                    class="bi bi-eraser me-2"></i> Limpar
+                                Filtros</button>
+                        </div>
                     </div>
                 </div>
 
-
-                <!-- Tabela -->
                 <div class="card fade-in-custom">
                     <div class="table-responsive">
-                        <table class="table table-striped table-hover">
+                        <table id="youtube-table" class="table table-striped table-hover">
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Título</th>
+                                    <th>Conta</th>
                                     <th>Artista</th>
-                                    <th>UPC</th>
+                                    <th>Link do canal</th>
                                     <th>Estado</th>
-                                    <th>Género Principal</th>
-                                    <th>Data de lançamento</th>
-                                    <th>Arte da Capa</th>
-                                    <th>Acções</th>
+                                    <th>Data do pedido</th>
+                                    <th>Ações</th>
                                 </tr>
                             </thead>
-                            <tbody id="album-list">
-                                <!-- Linhas serão geradas dinamicamente via JavaScript -->
+                            <tbody id="youtube-list">
+                                <!-- Dados serão carregados via JavaScript -->
                             </tbody>
                         </table>
                     </div>
 
-                    <!-- Paginação -->
-                    <nav aria-label="Navegação de páginas">
-                        <ul class="pagination" id="pagination"></ul>
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center" id="pagination"></ul>
                     </nav>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal para Edição -->
-    <div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
+
+    <!-- Modal Edição -->
+    <div class="modal fade" id="editYoutubeModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Editar Lançamento</h5>
+                    <h5 class="modal-title">Editar Canal YouTube</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body" id="edit-modal-body">
+                <div class="modal-body" id="edit-youtube-body">
                     <!-- Formulário será preenchido via JS -->
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="save-changes">Salvar Alterações</button>
+                    <button type="button" class="btn btn-primary" id="save-youtube-changes">Salvar</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal para Exclusão -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <!-- Modal Exclusão -->
+    <div class="modal fade" id="deleteYoutubeModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -539,9 +530,9 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Tem certeza que deseja excluir este lançamento?</p>
+                    <p id="delete-confirm-text">Tem certeza que deseja excluir este canal?</p>
                     <div class="mb-3">
-                        <label for="delete-password" class="form-label">Digite sua senha para confirmar:</label>
+                        <label for="delete-password" class="form-label">Digite sua senha:</label>
                         <input type="password" class="form-control" id="delete-password" required>
                     </div>
                 </div>
@@ -552,6 +543,68 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal add artist -->
+    <div class="modal fade" id="addArtistwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="addArtistwasomupfyLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content modal-bottom">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-dark" id="addArtistwasomupfyLabel">Pedido de UVY</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="artist-form">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="name" value="" required>
+                                    <label class="form-label">ID</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="account" value="" required>
+                                    <label class="form-label">Conta</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="account" value="" required>
+                                    <label class="form-label">Artista</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <select class="form-select" name="role" required>
+                                        <option value="verified">Verificado</option>
+                                        <option value="pending">Pendente</option>
+                                        <option value="rejected">Rejeitado</option>
+                                        <option value="expired">Expirado</option>
+                                    </select>
+                                    <label class="form-label">Estado</label>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-floating mb-3">
+                                    <input type="url" class="form-control" name="channel_link" value="">
+                                    <label class="form-label">Link do Canal</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="date" class="form-control" name="creation_date" value="" required>
+                                    <label class="form-label">Data de Criação</label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <div>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+                    <div>
+                        <button class="btn btn-wasomupfy text-white" type="button"
+                            name="logout_wasomupfy">Salvar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ════ MODAL — Logout  FIM ════ -->
 
     <!-- Floating Action Button -->
     <div class="fab" onclick="showQuickAction()" aria-label="Ações Rápidas">
@@ -620,8 +673,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../../js/lastest.js"></script>
-    <script src="data/database.albums.js"></script>
-    <script src="js/releases.js" type="module"></script>
+    <script src="data/database.youtube.js"></script>
+    <script src="js/youtube.js" type="module"></script>
 </body>
 
 </html>

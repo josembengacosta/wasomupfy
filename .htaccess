@@ -255,25 +255,101 @@ RewriteRule ^dashboard/error/503/?$                             dashboard/page/e
 RewriteRule ^dashboard/maintenance/?$                           dashboard/page/error/maintenance.php [L]
 
 # ══════════════════════════════════════════════
-# PAINEL ADMIN — AUTH
+# WASOM UPFY v2.0 — Rotas do Painel Admin
 # ══════════════════════════════════════════════
 
-RewriteRule ^admin/login/?$                     admin/auth/login.php [L]
-RewriteRule ^admin/login-process/?$             admin/auth/login-process.php [L]
-RewriteRule ^admin/logout/?$                    admin/auth/logout.php [L]
-RewriteRule ^admin/forgot-password/?$           admin/auth/forgot-password.php [L]
-RewriteRule ^admin/forgot-password-process/?$   admin/auth/forgot-password-process.php [L]
-RewriteRule ^admin/reset-password/?$            admin/auth/reset-password.php [L,QSA]
-RewriteRule ^admin/reset-password-process/?$    admin/auth/reset-password-process.php [L,QSA]
-RewriteRule ^admin/confirm-code/?$              admin/auth/confirm-email-code.php [L,QSA]
-RewriteRule ^admin/lockscreen/?$                admin/auth/lockscreen.php [L]
-RewriteRule ^admin/lockscreen-process/?$        admin/auth/lockscreen-process.php [L]
 
-# ══════════════════════════════════════════════
-# PAINEL ADMIN — PÁGINAS (a adicionar quando chegarmos lá)
-# ══════════════════════════════════════════════
+# ── AUTH ──────────────────────────────────────
+RewriteRule ^admin/login/?$                         admin/auth/login.php [L]
+RewriteRule ^admin/login-process/?$                 admin/auth/login-process.php [L]
+RewriteRule ^admin/logout/?$                        admin/auth/logout.php [L]
+RewriteRule ^admin/forgot-password/?$               admin/auth/forgot-password.php [L]
+RewriteRule ^admin/forgot-password-process/?$       admin/auth/forgot-password-process.php [L]
+RewriteRule ^admin/reset-password/?$                admin/auth/reset-password.php [L,QSA]
+RewriteRule ^admin/reset-password-process/?$        admin/auth/reset-password-process.php [L,QSA]
+RewriteRule ^admin/confirm-code/?$                  admin/auth/confirm-email-code.php [L,QSA]
+RewriteRule ^admin/lockscreen/?$                    admin/auth/lockscreen.php [L]
+RewriteRule ^admin/lockscreen-process/?$            admin/auth/lockscreen-process.php [L]
 
-RewriteRule ^admin/?$                           admin/home.php [L]
+# ── HOME (dashboard) ──────────────────────────
+RewriteRule ^admin/?$                               admin/home.php [L]
+
+# ── PERFIL ────────────────────────────────────
+RewriteRule ^admin/profile/?$                       admin/pages/user/profile.php [L]
+RewriteRule ^admin/profile-process/?$               admin/pages/user/profile-process.php [L]
+
+# ── ANALYTICS ─────────────────────────────────
+RewriteRule ^admin/analytics/?$                     admin/pages/analytics/home.php [L]
+RewriteRule ^admin/visitors/?$                      admin/pages/analytics/visitors.php [L]
+RewriteRule ^admin/reports/?$                       admin/pages/analytics/reports.php [L]
+
+# ── FUNCIONÁRIOS (Employees) ──────────────────
+RewriteRule ^admin/employees/?$                     admin/pages/employees/index.php [L]
+RewriteRule ^admin/employees/new/?$                 admin/pages/employees/new.php [L]
+RewriteRule ^admin/employees/edit/([0-9]+)/?$       admin/pages/employees/edit.php?id=$1 [L,QSA]
+RewriteRule ^admin/employees/process/?$             admin/pages/employees/process.php [L]
+
+# ── UTILIZADORES ──────────────────────────────
+RewriteRule ^admin/users/?$                         admin/pages/users/index.php [L]
+RewriteRule ^admin/users/available/?$               admin/pages/users/available.php [L]
+RewriteRule ^admin/users/unavailable/?$             admin/pages/users/unavailable.php [L]
+RewriteRule ^admin/users/view/([0-9]+)/?$           admin/pages/users/view.php?id=$1 [L,QSA]
+RewriteRule ^admin/users/edit/([0-9]+)/?$           admin/pages/users/edit.php?id=$1 [L,QSA]
+RewriteRule ^admin/users/process/?$                 admin/pages/users/process.php [L]
+
+# ── ARTISTAS E COLABORADORES ──────────────────
+RewriteRule ^admin/artists/?$                       admin/pages/artist/index.php [L]
+RewriteRule ^admin/artists/view/([0-9]+)/?$         admin/pages/artist/view.php?id=$1 [L,QSA]
+RewriteRule ^admin/collaborators/?$                 admin/pages/artist/collaborators.php [L]
+
+# ── LANÇAMENTOS ───────────────────────────────
+RewriteRule ^admin/releases/?$                      admin/pages/distribution/releases.php [L]
+RewriteRule ^admin/releases/pending/?$              admin/pages/distribution/pending.php [L]
+RewriteRule ^admin/releases/view/([0-9]+)/?$        admin/pages/distribution/view.php?id=$1 [L,QSA]
+RewriteRule ^admin/releases/process/?$              admin/pages/distribution/process.php [L]
+
+# ── DISTRIBUIÇÃO ──────────────────────────────
+RewriteRule ^admin/distribution/stores/?$           admin/pages/distribution/stores.php [L]
+RewriteRule ^admin/distribution/schedule/?$         admin/pages/distribution/schedule.php [L]
+
+# ── FINANÇAS ──────────────────────────────────
+RewriteRule ^admin/finances/?$                      admin/pages/finances/index.php [L]
+RewriteRule ^admin/finances/payments/?$             admin/pages/finances/payments.php [L]
+RewriteRule ^admin/finances/withdrawals/?$          admin/pages/finances/withdrawals.php [L]
+RewriteRule ^admin/finances/reports/?$              admin/pages/finances/reports.php [L]
+RewriteRule ^admin/finances/process/?$              admin/pages/finances/process.php [L]
+
+# ── INTEGRAÇÃO / YOUTUBE ──────────────────────
+RewriteRule ^admin/integration/config/?$            admin/pages/integration/config.php [L]
+RewriteRule ^admin/integration/channels/?$          admin/pages/integration/channels.php [L]
+RewriteRule ^admin/integration/process/?$           admin/pages/integration/process.php [L]
+
+# ── SUPORTE ───────────────────────────────────
+RewriteRule ^admin/support/?$                       admin/pages/support/index.php [L]
+RewriteRule ^admin/support/([0-9]+)/?$              admin/pages/support/view.php?id=$1 [L,QSA]
+RewriteRule ^admin/support/process/?$               admin/pages/support/process.php [L]
+
+# ── AUDITORIA ─────────────────────────────────
+RewriteRule ^admin/audit/?$                         admin/pages/audit/index.php [L]
+
+# ── BLOG / CMS ────────────────────────────────
+RewriteRule ^admin/cms/posts/?$                     admin/pages/cms/posts.php [L]
+RewriteRule ^admin/cms/posts/new/?$                 admin/pages/cms/post-edit.php [L]
+RewriteRule ^admin/cms/posts/edit/([0-9]+)/?$       admin/pages/cms/post-edit.php?id=$1 [L,QSA]
+RewriteRule ^admin/cms/categories/?$                admin/pages/cms/categories.php [L]
+RewriteRule ^admin/cms/faq/?$                       admin/pages/cms/faq.php [L]
+RewriteRule ^admin/cms/process/?$                   admin/pages/cms/process.php [L]
+
+# ── AJUDA ─────────────────────────────────────
+RewriteRule ^admin/faq/?$                           admin/pages/help/faq.php [L]
+RewriteRule ^admin/help/contact/?$                  admin/pages/help/contact.php [L]
+
+# ── CONFIGURAÇÕES ─────────────────────────────
+RewriteRule ^admin/settings/?$                      admin/pages/settings/index.php [L]
+RewriteRule ^admin/settings/process/?$              admin/pages/settings/process.php [L]
+
+# ── ERRO 403 Admin ────────────────────────────
+RewriteRule ^admin/error/403/?$                     admin/pages/error/403.php [L]
 
 # ══════════════════════════════════════════════
 # FALLBACK — .php na raiz sem extensão

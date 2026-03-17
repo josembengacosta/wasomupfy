@@ -6,6 +6,7 @@
 // ══════════════════════════════════════════════
 
 require_once __DIR__ . '/auth/include/functions_admin.php';
+require_once __DIR__ . '/include/platform_admin.php';
 startAdminSession();
 checkAdminRememberMe();
 requireAdminLogin();
@@ -631,414 +632,13 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
 </head>
 
 <body>
+
     <div class="wrapper">
         <!-- Sidebar Overlay -->
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-        <!-- Sidebar -->
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="d-flex align-items-center">
-                    <img src="../assets/img/brand/wasomupfy_brand.png" alt="Logo Wasom Upfy" class="rounded-circle me-2"
-                        style="height: 40px" />
-                    <span class="brand-text">Wasom Upfy</span>
-                </div>
-                <i class="bi bi-chevron-left toggle-icon" id="sidebarCollapse" title="Colapsar/Expandir Menu"
-                    aria-label="Colapsar/Expandir Menu"></i>
-            </div>
-            <ul class="nav flex-column mt-3">
-                <li class="nav-item">
-                    <a href="<?php echo APP_URL; ?>/admin" class="nav-link active">
-                        <i class="bi bi-speedometer2"></i>
-                        <span>Painel de Controle</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseAnalytics" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseAnalytics">
-                        <i class="bi bi-graph-up"></i>
-                        <span>Estatísticas e Análises</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem"></i>
-                    </a>
-                    <div class="collapse" id="collapseAnalytics">
-                        <a href="<?php echo APP_URL; ?>/admin/analytics" class="nav-link">
-                            <i class="bi bi-bar-chart-line"></i><span>Visão Geral</span>
-                        </a>
-                        <a href="<?php echo APP_URL; ?>/admin/visitors" class="nav-link">
-                            <i class="bi bi-eye"></i><span>Visitantes</span>
-                        </a>
-                        <a href="<?php echo APP_URL; ?>/admin/reports" class="nav-link">
-                            <i class="bi bi-file-earmark-bar-graph"></i><span>Relatórios</span>
-                        </a>
-                    </div>
-                </li>
-                <?php if (hasPermission($admin_id, 'employees.view')): ?>
-                <li class="nav-item">
-                    <a href="#collapseAdmins" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseAdmins">
-                        <i class="bi bi-person-gear"></i>
-                        <span>Gestão de Admins</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem"></i>
-                    </a>
-                    <div class="collapse" id="collapseAdmins">
-                        <a href="<?php echo APP_URL; ?>/admin/employees" class="nav-link">
-                            <i class="bi bi-people"></i><span>Listar Admins</span>
-                        </a>
-                    </div>
-                </li>
-                <?php endif; ?>
-                <?php if (hasPermission($admin_id, 'users.view')): ?>
-                <li class="nav-item">
-                    <a href="#collapseUsers" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseUsers">
-                        <i class="bi bi-person-gear"></i>
-                        <span>Gestão de Usuários</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem"></i>
-                    </a>
-                    <div class="collapse" id="collapseUsers">
-                        <a href="<?php echo APP_URL; ?>/admin/users" class="nav-link">
-                            <i class="bi bi-people"></i><span>Todos Usuários</span>
-                        </a>
-                        <a href="<?php echo APP_URL; ?>/admin/users/available-account" class="nav-link">
-                            <i class="bi bi-person-check"></i><span>Contas Disponíveis</span>
-                        </a>
-                        <a href="<?php echo APP_URL; ?>/admin/users/unavailable-account" class="nav-link">
-                            <i class="bi bi-person-exclamation"></i><span>Contas Indisponíveis</span>
-                        </a>
-                    </div>
-                </li>
-                <?php endif; ?>
-                <?php if (hasPermission($admin_id, 'music.view')): ?>
-                <li class="nav-item">
-                    <a href="#collapseSongs" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseSongs">
-                        <i class="bi bi-music-note-list"></i>
-                        <span>Gestão de Músicas</span>
-                        <?php if ($pending_releases > 0 && hasPermission($admin_id, 'music.approve')): ?>
-                        <span class="badge bg-danger ms-1"
-                            style="font-size:.65rem"><?php echo $pending_releases; ?></span>
-                        <?php endif; ?>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem"></i>
-                    </a>
-                    <div class="collapse" id="collapseSongs">
-                        <a href="<?php echo APP_URL; ?>/admin/releases" class="nav-link">
-                            <i class="bi bi-collection"></i><span>Todos os Lançamentos</span>
-                        </a>
-                        <?php if (hasPermission($admin_id, 'music.approve')): ?>
-                        <a href="<?php echo APP_URL; ?>/admin/releases/pending" class="nav-link">
-                            <i class="bi bi-hourglass-split"></i><span>Pendentes</span>
-                        </a>
-                        <?php endif; ?>
-                    </div>
-                </li>
-                <?php endif; ?>
-                <li class="nav-item">
-                    <a href="<?php echo APP_URL; ?>/admin/users/available-account" class="nav-link">
-                        <i class="bi bi-person-check"></i>
-                        <span>Contas e Usuários</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="<?php echo APP_URL; ?>/admin/users" class="nav-link">
-                        <i class="bi bi-people"></i>
-                        <span>Artistas e Colaboradores</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseDistribution" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseDistribution">
-                        <i class="bi bi-globe"></i>
-                        <span>Distribuição</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem"></i>
-                    </a>
-                    <div class="collapse" id="collapseDistribution">
-                        <a href="<?php echo APP_URL; ?>/admin/releases" class="nav-link">
-                            <i class="bi bi-rocket-takeoff"></i><span>Lançamentos</span>
-                        </a>
-                    </div>
-                </li>
-                <?php if (hasPermission($admin_id, 'finances.view')): ?>
-                <li class="nav-item">
-                    <a href="<?php echo APP_URL; ?>/admin/finances/payments" class="nav-link">
-                        <i class="bi bi-wallet2"></i>
-                        <span>Pagamentos</span>
-                        <?php if ($pending_payments > 0): ?>
-                        <span class="badge bg-warning text-dark ms-1"
-                            style="font-size:.65rem"><?php echo $pending_payments; ?></span>
-                        <?php endif; ?>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="<?php echo APP_URL; ?>/admin/finances" class="nav-link">
-                        <i class="bi bi-currency-dollar"></i>
-                        <span>Finanças e Rendimentos</span>
-                    </a>
-                </li>
-                <?php endif; ?>
-                <li class="nav-item">
-                    <a href="#collapseIntegration" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseIntegration">
-                        <i class="bi bi-youtube"></i>
-                        <span>Unificação e V. Youtube</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem"></i>
-                    </a>
-                    <div class="collapse" id="collapseIntegration">
-                        <a href="<?php echo APP_URL; ?>/admin/integration/verify" class="nav-link">
-                            <i class="bi bi-gear"></i><span>Configurar Integração</span>
-                        </a>
-                        <a href="<?php echo APP_URL; ?>/admin/integration/verify-channel" class="nav-link">
-                            <i class="bi bi-check2-all"></i><span>Verificar Canais</span>
-                        </a>
-                    </div>
-                </li>
-                <?php if (hasPermission($admin_id, 'support.view')): ?>
-                <li class="nav-item">
-                    <a href="#collapseSupport" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseSupport">
-                        <i class="bi bi-headset"></i>
-                        <span>Suporte</span>
-                        <?php if ($open_tickets > 0): ?>
-                        <span class="badge bg-danger ms-1" style="font-size:.65rem"><?php echo $open_tickets; ?></span>
-                        <?php endif; ?>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem"></i>
-                    </a>
-                    <div class="collapse" id="collapseSupport">
-                        <a href="<?php echo APP_URL; ?>/admin/support" class="nav-link">
-                            <i class="bi bi-envelope"></i><span>Tickets de Suporte</span>
-                        </a>
-                    </div>
-                </li>
-                <?php endif; ?>
-                <li class="nav-item">
-                    <a href="#collapseHelp" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseHelp">
-                        <i class="bi bi-question-circle"></i>
-                        <span>Ajuda</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem"></i>
-                    </a>
-                    <div class="collapse" id="collapseHelp">
-                        <a href="<?php echo APP_URL; ?>/admin/faq" class="nav-link">
-                            <i class="bi bi-messenger"></i><span>FAQs</span>
-                        </a>
-                        <a href="<?php echo APP_URL; ?>/admin/help/contact" class="nav-link">
-                            <i class="bi bi-telephone"></i><span>Contacto com suporte</span>
-                        </a>
-                    </div>
-                </li>
-                <?php if (hasPermission($admin_id, 'settings.view')): ?>
-                <li class="nav-item">
-                    <a href="<?php echo APP_URL; ?>/admin/settings" class="nav-link">
-                        <i class="bi bi-sliders"></i>
-                        <span>Configurações</span>
-                    </a>
-                </li>
-                <?php endif; ?>
-                <li class="nav-item mt-4">
-                    <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#logoutwasomupfy">
-                        <i class="bi bi-box-arrow-right"></i>
-                        <span>Logout</span>
-                    </a>
-                </li>
-                <li class="nav-item mt-2">
-                    <a href="<?php echo APP_URL; ?>" target="_blank" class="nav-link">
-                        <i class="bi bi-box-arrow-in-up-right"></i>
-                        <span>Visitar Site</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-        <!-- Content -->
+        <?php require_once __DIR__ . '/include/sidebar.php'; ?>
         <div class="content w-100" id="mainContent">
-            <nav class="navbar navbar-expand-lg">
-                <button class="navbar-toggler" type="button" id="sidebarToggle" aria-label="Abrir/Fechar Menu">
-                    <i class="bi bi-list text-white"></i>
-                </button>
-                <div class="ms-auto d-flex align-items-center">
-                    <button class="btn btn-outline-light btn-sm me-2" onclick="toggleDarkMode()"
-                        aria-label="Alternar Modo Escuro">
-                        <i class="bi bi-moon"></i>
-                    </button>
-
-                    <!-- Notificações reais -->
-                    <div class="dropdown me-2 position-relative">
-                        <button class="btn btn-outline-light btn-sm position-relative" type="button"
-                            data-bs-toggle="dropdown" aria-label="Notificações">
-                            <i class="bi bi-bell"></i>
-                            <?php if ($total_notifs > 0): ?>
-                            <span
-                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"><?php echo $total_notifs; ?></span>
-                            <?php endif; ?>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-start p-0" style="min-width: 260px">
-                            <li
-                                class="dropdown-header bg-dark text-white p-2 d-flex justify-content-between align-items-center">
-                                <span>Notificações</span>
-                                <span class="badge bg-danger"><?php echo $total_notifs; ?></span>
-                            </li>
-                            <?php if ($pending_releases > 0 && hasPermission($admin_id, 'music.approve')): ?>
-                            <li><a class="dropdown-item p-2" href="<?php echo APP_URL; ?>/admin/releases/pending">
-                                    <i
-                                        class="bi bi-hourglass-split text-warning me-2"></i><?php echo $pending_releases; ?>
-                                    lançamento(s) pendente(s)
-                                </a></li>
-                            <?php endif; ?>
-                            <?php if ($pending_payments > 0 && hasPermission($admin_id, 'finances.view')): ?>
-                            <li><a class="dropdown-item p-2" href="<?php echo APP_URL; ?>/admin/finances/payments">
-                                    <i class="bi bi-credit-card text-info me-2"></i><?php echo $pending_payments; ?>
-                                    pagamento(s) por aprovar
-                                </a></li>
-                            <?php endif; ?>
-                            <?php if ($open_tickets > 0 && hasPermission($admin_id, 'support.view')): ?>
-                            <li><a class="dropdown-item p-2" href="<?php echo APP_URL; ?>/admin/support">
-                                    <i class="bi bi-headset text-danger me-2"></i><?php echo $open_tickets; ?> ticket(s)
-                                    em aberto
-                                </a></li>
-                            <?php endif; ?>
-                            <?php if ($total_notifs === 0): ?>
-                            <li><span class="dropdown-item p-2 text-muted">Sem notificações pendentes</span></li>
-                            <?php endif; ?>
-                            <li class="dropdown-footer text-center p-2">
-                                <a href="<?php echo APP_URL; ?>/admin/support" class="text-primary">Ver todas</a>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <!-- Mensagens -->
-                    <div class="dropdown me-2 position-relative">
-                        <button class="btn btn-outline-light btn-sm position-relative" type="button"
-                            data-bs-toggle="dropdown" aria-label="Mensagens">
-                            <i class="bi bi-envelope"></i>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-start p-0" style="min-width: 250px">
-                            <li class="dropdown-header bg-dark text-white p-2">Mensagens</li>
-                            <li><a class="dropdown-item p-2" href="<?php echo APP_URL; ?>/admin/support">
-                                    <i class="bi bi-ticket me-2"></i>Ver tickets de suporte
-                                </a></li>
-                            <li class="dropdown-footer text-center p-2">
-                                <a href="<?php echo APP_URL; ?>/admin/support" class="text-primary">Ir para suporte</a>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <!-- Perfil admin real -->
-                    <div class="dropdown">
-                        <button class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center"
-                            type="button" data-bs-toggle="dropdown" aria-label="Menu do Usuário">
-                            <?php if ($admin_photo): ?>
-                            <img src="../assets/comprovantes/uploads/employees/<?php echo htmlspecialchars($admin_photo); ?>"
-                                alt="" class="rounded-circle me-1" style="height:24px;width:24px;object-fit:cover" />
-                            <?php else: ?>
-                            <span class="rounded-circle me-1 d-inline-flex align-items-center justify-content-center"
-                                style="height:24px;width:24px;background:#FF0089;font-size:.6rem;font-weight:800;color:#fff;flex-shrink:0">
-                                <?php echo adm_initials($admin_name, explode(' ', $admin_fullname, 2)[1] ?? ''); ?>
-                            </span>
-                            <?php endif; ?>
-                            <span><?php echo htmlspecialchars($admin_name); ?></span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li>
-                                <a class="dropdown-item" href="<?php echo APP_URL; ?>/admin/settings">
-                                    <i class="bi bi-person me-2"></i>Perfil
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="<?php echo APP_URL; ?>/admin/settings">
-                                    <i class="bi bi-sliders me-2"></i>Configurações
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="<?php echo APP_URL; ?>/admin/faq">
-                                    <i class="bi bi-question-circle me-2"></i>Ajuda
-                                </a>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider" />
-                            </li>
-                            <li>
-                                <a class="dropdown-item text-danger" href="#" data-bs-toggle="modal"
-                                    data-bs-target="#logoutwasomupfy">
-                                    <i class="bi bi-box-arrow-right me-2"></i>Sair
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-
-            <div class="connection-status" id="connectionStatus"></div>
-            <div class="status-notification" id="statusNotification"></div>
-
-            <!-- ════ MODAL — Logout MELHORADO ════ -->
-            <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false"
-                tabindex="-1" aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content modal-bottom">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">
-                                <i class="bi bi-box-arrow-right me-2 text-danger"></i>Terminar sessão
-                            </h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <!-- Card do admin -->
-                            <div class="logout-admin-card">
-                                <div class="logout-admin-avatar">
-                                    <?php if ($admin_photo): ?>
-                                    <img src="../assets/comprovantes/uploads/employees/<?php echo htmlspecialchars($admin_photo); ?>"
-                                        alt="" />
-                                    <?php else: ?>
-                                    <?php echo adm_initials($admin_name, explode(' ', $admin_fullname, 2)[1] ?? ''); ?>
-                                    <?php endif; ?>
-                                </div>
-                                <div>
-                                    <div class="logout-admin-name"><?php echo htmlspecialchars($admin_fullname); ?>
-                                    </div>
-                                    <div class="logout-admin-role"><?php echo getRoleLabel($admin_role); ?> ·
-                                        <?php echo htmlspecialchars($admin_email); ?></div>
-                                </div>
-                            </div>
-
-                            <!-- Informações da sessão -->
-                            <div class="logout-modal-session">
-                                <div class="logout-session-row">
-                                    <i class="bi bi-geo-alt"></i>
-                                    <span>Endereço IP</span>
-                                    <strong><?php echo htmlspecialchars($client_ip); ?></strong>
-                                </div>
-                                <div class="logout-session-row">
-                                    <i class="bi bi-browser-chrome"></i>
-                                    <span>Navegador</span>
-                                    <strong><?php echo htmlspecialchars($browser); ?></strong>
-                                </div>
-                                <div class="logout-session-row">
-                                    <i class="bi bi-laptop"></i>
-                                    <span>Sistema</span>
-                                    <strong><?php echo htmlspecialchars($os); ?></strong>
-                                </div>
-                                <div class="logout-session-row">
-                                    <i class="bi bi-clock-history"></i>
-                                    <span>Tempo de sessão</span>
-                                    <strong><?php echo $session_mins > 0 ? $session_mins . ' min' : 'Recém iniciada'; ?></strong>
-                                </div>
-                            </div>
-
-                            <p class="text-center text-dark mb-0" style="font-size:.88rem">
-                                Tens a certeza de que desejas terminar a sessão?
-                            </p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                <i class="bi bi-x me-1"></i>Cancelar
-                            </button>
-                            <a href="<?php echo APP_URL; ?>/admin/logout" class="btn btn-danger">
-                                <i class="bi bi-box-arrow-right me-1"></i>Sim, terminar sessão
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- ════ FIM MODAL Logout ════ -->
+            <?php require_once __DIR__ . '/include/navbar.php'; ?>
 
             <div class="container-fluid p-0">
                 <!-- Welcome + Clock + Acções -->
@@ -1071,18 +671,30 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end">
                                     <h6 class="dropdown-header">Opções rápidas</h6>
+                                    <?php if (hasPermission($admin_id, 'music.approve')): ?>
                                     <a class="dropdown-item"
-                                        href="<?php echo APP_URL; ?>/admin/releases/pending">Aprovar Lançamentos</a>
+                                        href="<?php echo APP_URL; ?>/admin/releases/pending">Aprovar
+                                        Lançamentos</a>
+                                    <?php endif; ?>
+                                    <?php if (hasPermission($admin_id, 'finances.view')): ?>
                                     <a class="dropdown-item"
-                                        href="<?php echo APP_URL; ?>/admin/finances/payments">Aprovar Pagamentos</a>
+                                        href="<?php echo APP_URL; ?>/admin/finances/payments">Aprovar
+                                        Pagamentos</a>
+                                    <?php endif; ?>
+                                    <?php if (hasPermission($admin_id, 'employees.edit')): ?>
                                     <a class="dropdown-item" href="<?php echo APP_URL; ?>/admin/employees">Novo
                                         funcionário</a>
+                                    <?php endif; ?>
+                                    <?php if (hasPermission($admin_id, 'settings.view')): ?>
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item"
                                         href="<?php echo APP_URL; ?>/admin/settings">Configurações</a>
+                                    <?php endif; ?>
+                                    <?php if (hasPermission($admin_id, 'audit.view')): ?>
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="<?php echo APP_URL; ?>/admin/audit">Log de
                                         Auditoria</a>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                             <button class="btn btn-light bg-white shadow-sm">
@@ -1253,7 +865,8 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                         <p class="mb-2">Vê relatórios sobre a receita de hoje</p>
                                         <div class="mb-0">
                                             <a href="<?php echo APP_URL; ?>/admin/finances/payments"
-                                                class="card-link">Ver relatório <i class="bi bi-arrow-right"></i></a>
+                                                class="card-link">Ver
+                                                relatório <i class="bi bi-arrow-right"></i></a>
                                         </div>
                                     </div>
                                     <div class="d-inline-block ms-3">
@@ -1284,8 +897,8 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                                 Upfy</strong></p>
                                         <div class="mb-0">
                                             <a href="<?php echo APP_URL; ?>/admin/users/available-account"
-                                                class="card-link">Ver as Contas Disponíveis <i
-                                                    class="bi bi-arrow-right"></i></a>
+                                                class="card-link">Ver
+                                                as Contas Disponíveis <i class="bi bi-arrow-right"></i></a>
                                         </div>
                                     </div>
                                     <div class="d-inline-block ms-3">
@@ -1347,7 +960,8 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                         <p class="mb-2">Lançamentos aguardando revisão e aprovação</p>
                                         <div class="mb-0">
                                             <a href="<?php echo APP_URL; ?>/admin/releases/pending"
-                                                class="card-link">Rever agora <i class="bi bi-arrow-right"></i></a>
+                                                class="card-link">Rever
+                                                agora <i class="bi bi-arrow-right"></i></a>
                                         </div>
                                     </div>
                                     <div class="d-inline-block ms-3">
@@ -1562,8 +1176,8 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                 </div>
                                 <div class="col-4">
                                     <h6 class="text-white-stable">Receita</h6>
-                                    <h4 id="revenue" class="counter"
-                                        data-valor="<?php echo adm_fmt_aoa($revenue_total); ?>" data-tipo="moeda">kz0
+                                    <h4 id="revenue" class="counter" data-valor="<?php echo ($revenue_total); ?>"
+                                        data-tipo="moeda">kz0
                                     </h4>
                                 </div>
                             </div>
@@ -2081,6 +1695,8 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
             </div>
             <?php endif; ?>
         </div>
+    </div>
+    </div>
     </div>
 
     <!-- Floating Action Button -->

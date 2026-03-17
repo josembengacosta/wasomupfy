@@ -13,12 +13,12 @@
     <link rel="apple-touch-icon" href="../../../assets/img/icones/wasomupfy_fiv_512.png">
     <link rel="apple-touch-startup-image" href="../../../assets/img/screenshots/splash.png">
     <link rel="manifest" href="manifest.json">
-    <title>Visão geral — Wasom Upfy</title>
-    <link rel="shortcut icon" href="../../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
+    <title>Finanças e Rendimentos — Wasom Upfy</title>
+    <link rel="shortcut icon" href="../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
     <link rel="stylesheet" href="../../../css/libs/plugins.css">
     <link rel="stylesheet" href="../../../css/libs/scrollue.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
-    <link rel="stylesheet" href="../../../css/lastest-style.css">
+    <link rel="stylesheet" href="../css/lastest-style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <!-- Google Fonts - Poppins -->
@@ -49,14 +49,14 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#collapseAnalytics" class="nav-link active" data-bs-toggle="collapse" aria-expanded="false"
+                    <a href="#collapseAnalytics" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
                         aria-controls="collapseAnalytics">
                         <i class="bi bi-graph-up"></i>
                         <span>Estatísticas e Análises</span>
                         <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
                     </a>
                     <div class="collapse" id="collapseAnalytics">
-                        <a href="../analytics/home" class="nav-link active">
+                        <a href="../analytics/home" class="nav-link">
                             <i class="bi bi-bar-chart-line"></i>
                             <span>Visão Geral</span>
                         </a>
@@ -111,7 +111,7 @@
                     <div class="collapse" id="collapseUsers">
                         <a href="../users/all-users" class="nav-link">
                             <i class="bi bi-people"></i>
-                            <span>Todos Usuários</span>
+                            <span>Listar Usuários</span>
                         </a>
                         <a href="../users/add" class="nav-link">
                             <i class="bi bi-person-plus"></i>
@@ -225,7 +225,7 @@
                             <i class="bi bi-check2-all"></i>
                             <span>Verificar Canais</span>
                         </a>
-                        <a href="../integration/monetization" class="nav-link">
+                        <a href="../distribution/monetization" class="nav-link">
                             <i class="bi bi-youtube"></i>
                             <span>Gerenciamento de Conteúdo Monetizado</span>
                         </a>
@@ -411,258 +411,85 @@
             <div class="container-fluid p-0">
                 <div class="row mb-3 mt-2">
                     <div class="welcome-text col-auto d-sm-block">
-                        <h2 class="h4 mb-2"><i class="bi bi-bar-chart-line me-2"></i>Visão Geral</span></h2>
+                        <h2 class="h4 mb-2">Gestão Geral</span></h2>
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb mb-0">
-                                <li class="breadcrumb-item"><a href="home" class="text-secondary">Estatísticas e
-                                        Análises</a>
+                                <li class="breadcrumb-item"><a href="../manager/gestion"
+                                        class="text-secondary">Definir</a>
                                 </li>
-                                <li class="breadcrumb-item active text-secondary" aria-current="page">Visão Geral</li>
+                                <li class="breadcrumb-item active text-secondary" aria-current="page">Gestão Geral</li>
                             </ol>
                         </nav>
                     </div>
-                    <div class="col-auto ms-auto text-end mt-n1 mt-3 mb-2">
-                        <a class="text-secondary shadow-sm me-2" href="">Ver Playlist</a>
-                        <a class="text-secondary shadow-sm me-2" href="">Todos territórios</a>
-                        <a class="text-secondary shadow-sm" href="">Todos os relatórios</a>
-                        <button class="btn btn-wasomupfy text-white shadow-sm" data-bs-toggle="modal"
-                            data-bs-target="#addArtistwasomupfy">
-                            <i class="align-middle bi bi-plus"></i> Adcionar dados</button>
-                    </div>
                     <!-- Stats Description -->
                     <p class="stats-description mt-2">
-                        Encontras aqui o lançamento de todas as contas da plataforma, mais poderá depender se és
-                        administrador regional ou glboal para veres alguns lançamentos disponíveis. Caso tenhas dúvidas
-                        em
-                        alguns lançamentos faça a pesquisa do mesmo através do seu <strong>Título</strong>,
-                        <strong>Artista</strong> ou <strong>UPC</strong>.
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi veritatis dicta omnis accusantium
+                        expedita repudiandae dolorem dignissimos quisquam. Sapiente magnam corrupti assumenda minus,
+                        animi itaque explicabo a autem nemo ipsam!.
                     </p>
-                    <!-- Filtros -->
-                    <div class="search-container fade-in-custom">
-                        <div class="row g-3">
-                            <div class="col-md-2">
-                                <label for="stats-id">ID:</label>
-                                <input type="number" class="form-control" id="stats-id" placeholder="ID">
-                            </div>
-                            <div class="col-md-2">
-                                <label for="stats-account">Conta:</label>
-                                <input type="text" class="form-control" id="stats-account" placeholder="Conta">
-                            </div>
-                            <div class="col-md-2">
-                                <label for="stats-track">Música:</label>
-                                <input type="text" class="form-control" id="stats-track" placeholder="Música">
-                            </div>
-                            <div class="col-md-2">
-                                <label for="stats-artist">Artista:</label>
-                                <input type="text" class="form-control" id="stats-artist" placeholder="Artista">
-                            </div>
-                            <div class="col-md-2">
-                                <label for="stats-playlist">Playlist:</label>
-                                <select class="form-select" id="stats-playlist">
-                                    <option value="">Todas</option>
-                                    <option value="Top 50">Top 50</option>
-                                    <option value="Viral">Viral</option>
-                                    <option value="Editorial">Editorial</option>
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <label for="stats-territory">Território:</label>
-                                <select class="form-select" id="stats-territory">
-                                    <option value="">Todos</option>
-                                    <option value="AO">Angola</option>
-                                    <option value="PT">Portugal</option>
-                                    <option value="BR">Brasil</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center mt-2 mb-2">
-                            <button class="btn btn-wasomupfy text-white" id="clear-stats-filters"><i
-                                    class="bi bi-eraser me-2"></i> Limpar
-                                Filtros</button>
-                            <span class="" id="results-count">0 resultados</span>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Tabela -->
-                <div class="card fade-in-custom mt-3">
-                    <div class="table-responsive">
-                        <table id="stats-table" class="table table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Conta</th>
-                                    <th>Música</th>
-                                    <th>Artista</th>
-                                    <th>Streams</th>
-                                    <th>Plataforma</th>
-                                    <th>Playlist</th>
-                                    <th>Território</th>
-                                    <th>Data de reprodução</th>
-                                    <th>Açcões</th>
-                                </tr>
-                            </thead>
-                            <tbody id="stats-list">
-                                <!-- Dados serão carregados via JavaScript -->
-                            </tbody>
-                        </table>
+                    <div class="row justify-content-center">
+                        <div class="col-xl-5 col-lg-6 col-md-8 col-12 m-auto">
+                            <div class="card shadow-sm">
+                                <div class="card-body p-3">
+                                    <form class="needs-validation" method="post" action="login_process.php" novalidate>
+                                        <div class="text-center mt-3">
+                                            <p>A aréa para <strong>Gestão geral</strong> apenas pode ser acessada por
+                                                gestores autorizados paa realizar a gestão das funcionalidades. Digite a
+                                                sua senha de acesso abaixo para iniciar com suas actividades.</p>
+                                        </div>
+                                        <input type="hidden" name="csrf_token"
+                                            value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
+                                        <div class="mb-3">
+                                            <div class="input-group">
+                                                <input type="password" class="form-control" id="password_user" required
+                                                    name="password_user" placeholder="Insira a sua senha" maxlength="60"
+                                                    autocomplete="off" />
+                                                <button type="button" class="btn btn-outline-secondary"
+                                                    onclick="togglePasswordVisibility()" id="mostrar"
+                                                    aria-label="Mostrar senha"><i data-feather="eye"></i></button>
+                                                <button type="button" class="btn btn-outline-secondary"
+                                                    onclick="togglePasswordVisibility()" style="display: none;"
+                                                    id="mostrar1" aria-label="Esconder senha"><i
+                                                        data-feather="eye-off"></i></button>
+                                                <div class="invalid-feedback">Por favor insira a sua senha.</div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-4 d-flex align-items-center justify-content-between">
+                                            <a href="forgot-password"
+                                                class="text-decoration-none text-secondary">Esqueceu
+                                                sua senha?</a>
+                                        </div>
+                                        <div class="d-grid">
+                                            <button class="btn btn-wasomupfy text-white" type="submit">Conecta-se <i
+                                                    data-feather="arrow-right"></i></button>
+                                        </div>
+                                        <!-- <div class="text-center mt-3">
+                                        <a href="register" class="text-decoration-underline fw-bold" style="color: #FF0089;  font-weight: bold;">Precisa de uma conta? Crie uma agora.</a>
+                                    </div> -->
+                                    </form>
+                                    <!-- <div class="text-center mt-3">
+                                    <a href="#support" data-bs-toggle="modal" data-bs-target="#support" class="text-decoration-none me-2" style="color: #FF0089;">Suporte</a>|
+                                    <a href="#terms" data-bs-toggle="modal" data-bs-target="#terms" class="text-decoration-none me-2" style="color: #FF0089;">Termos</a>|
+                                    <a href="#privacy" data-bs-toggle="modal" data-bs-target="#privacy" class="text-decoration-none me-2" style="color: #FF0089;">Privacidade</a>|
+                                    <a href="../home" class="text-muted text-decoration-none">Voltar para home</a>
+                                </div> -->
+
+                                    <div class="text-center mt-3">
+                                        <p>Caso é um dos gestores autorizados e não consegue acessar está aréa, entre em
+                                            contacto com a <a href="#" class="text-decoration-none"
+                                                style="color:#FF0089" data-bs-toggle="modal"
+                                                data-bs-target="#support">equipa de suporte</a></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <nav aria-label="Page navigation">
-                        <ul class="pagination justify-content-center" id="stats-pagination"></ul>
-                    </nav>
                 </div>
             </div>
         </div>
     </div>
 
-
-
-    <!-- Modal de Visualização -->
-    <div class="modal fade" id="viewStatsModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Detalhes da Estatística</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-4 text-center">
-                            <img id="stats-cover" src="" class="img-fluid rounded mb-3" alt="Capa"
-                                style="max-height: 250px;">
-                        </div>
-                        <div class="col-md-8">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <p><strong>Música:</strong> <span id="view-track"></span></p>
-                                    <p><strong>Artista:</strong> <span id="view-artist"></span></p>
-                                    <p><strong>Streams:</strong> <span id="view-streams"></span></p>
-                                </div>
-                                <div class="col-md-6">
-                                    <p><strong>Plataforma:</strong> <span id="view-platform"></span></p>
-                                    <p><strong>Playlist:</strong> <span id="view-playlist"></span></p>
-                                    <p><strong>Território:</strong> <span id="view-territory"></span></p>
-                                </div>
-                            </div>
-                            <div class="mt-3">
-                                <p><strong>Data:</strong> <span id="view-date"></span></p>
-                                <p><strong>Link:</strong> <a id="view-link" href="#" target="_blank">Abrir na
-                                        plataforma</a></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal de Edição -->
-    <div class="modal fade" id="editStatsModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Editar Estatística</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" id="edit-stats-body">
-                    <!-- Formulário será preenchido via JavaScript -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="save-stats-changes">Salvar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal de Exclusão -->
-    <div class="modal fade" id="deleteStatsModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Confirmar Exclusão</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p id="delete-stats-message">Tem certeza que deseja excluir esta estatística?</p>
-                    <div class="mb-3">
-                        <label for="delete-stats-password" class="form-label">Digite sua senha:</label>
-                        <input type="password" class="form-control" id="delete-stats-password" required>
-                        <div class="invalid-feedback">Por favor, insira sua senha</div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger" id="confirm-stats-delete">Excluir</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal add artist -->
-    <div class="modal fade" id="addArtistwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="addArtistwasomupfyLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content modal-bottom">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5 text-dark" id="addArtistwasomupfyLabel">Pedido de UVY</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="artist-form">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" name="name" value="" required>
-                                    <label class="form-label">ID</label>
-                                </div>
-                                <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" name="account" value="" required>
-                                    <label class="form-label">Conta</label>
-                                </div>
-                                <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" name="account" value="" required>
-                                    <label class="form-label">Artista</label>
-                                </div>
-                                <div class="form-floating mb-3">
-                                    <select class="form-select" name="role" required>
-                                        <option value="verified">Verificado</option>
-                                        <option value="pending">Pendente</option>
-                                        <option value="rejected">Rejeitado</option>
-                                        <option value="expired">Expirado</option>
-                                    </select>
-                                    <label class="form-label">Estado</label>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-floating mb-3">
-                                    <input type="url" class="form-control" name="channel_link" value="">
-                                    <label class="form-label">Link do Canal</label>
-                                </div>
-                                <div class="form-floating mb-3">
-                                    <input type="date" class="form-control" name="creation_date" value="" required>
-                                    <label class="form-label">Data de Criação</label>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <div>
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-                    </div>
-                    <div>
-                        <button class="btn btn-wasomupfy text-white" type="button"
-                            name="logout_wasomupfy">Salvar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- ════ MODAL — Logout  FIM ════ -->
 
     <!-- Floating Action Button -->
     <div class="fab" onclick="showQuickAction()" aria-label="Ações Rápidas">
@@ -682,7 +509,6 @@
             </div>
         </div>
     </footer>
-
 
     <!-- Bottom Navigation -->
     <!-- <nav class="bottom-nav">
@@ -732,8 +558,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../../js/lastest.js"></script>
-    <script src="data/database.home.js"></script>
-    <script src="js/analytics.js" type="module"></script>
+    <script src="https://cdn.jsdelivr.net/gh/josembengacosta/wasomupfy@main/js/app.js"></script>
+    <script src="data/database.earnings.js"></script>
+    <script src="js/earnings.js" type="module"></script>
 </body>
 
 </html>

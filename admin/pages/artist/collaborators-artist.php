@@ -13,12 +13,12 @@
     <link rel="apple-touch-icon" href="../../../assets/img/icones/wasomupfy_fiv_512.png">
     <link rel="apple-touch-startup-image" href="../../../assets/img/screenshots/splash.png">
     <link rel="manifest" href="manifest.json">
-    <title>Verificar — Wasom Upfy</title>
-    <link rel="shortcut icon" href="../../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
+    <title>Finanças e Rendimentos — Wasom Upfy</title>
+    <link rel="shortcut icon" href="../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
     <link rel="stylesheet" href="../../../css/libs/plugins.css">
     <link rel="stylesheet" href="../../../css/libs/scrollue.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
-    <link rel="stylesheet" href="../../../css/lastest-style.css">
+    <link rel="stylesheet" href="../css/lastest-style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <!-- Google Fonts - Poppins -->
@@ -158,13 +158,13 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a href="../artist/accounts-users" class="nav-link">
+                    <a href="artist/accounts-users" class="nav-link">
                         <i class="bi bi-person-check"></i>
                         <span>Contas e Usuários</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="../artist/collaborators-artist" class="nav-link">
+                    <a href="collaborators-artist" class="nav-link active">
                         <i class="bi bi-people"></i>
                         <span>Artistas e Colaboradores</span>
                     </a>
@@ -210,22 +210,22 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#collapseIntegration" class="nav-link active" data-bs-toggle="collapse"
-                        aria-expanded="false" aria-controls="collapseIntegration">
+                    <a href="#collapseIntegration" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
+                        aria-controls="collapseIntegration">
                         <i class="bi bi-youtube"></i>
                         <span>Unificação e V. Youtube</span>
                         <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
                     </a>
                     <div class="collapse" id="collapseIntegration">
-                        <a href="verify-channel" class="nav-link">
+                        <a href="../integration/youtube" class="nav-link">
                             <i class="bi bi-gear"></i>
                             <span>Configurar Integração</span>
                         </a>
-                        <a href="verify" class="nav-link active">
+                        <a href="../integration/verify" class="nav-link">
                             <i class="bi bi-check2-all"></i>
                             <span>Verificar Canais</span>
                         </a>
-                        <a href="monetization" class="nav-link">
+                        <a href="../distribution/monetization" class="nav-link">
                             <i class="bi bi-youtube"></i>
                             <span>Gerenciamento de Conteúdo Monetizado</span>
                         </a>
@@ -411,19 +411,20 @@
             <div class="container-fluid p-0">
                 <div class="row mb-3 mt-2">
                     <div class="welcome-text col-auto d-sm-block">
-                        <h2 class="h4 mb-2">Verificar</span></h2>
+                        <h2 class="h4 mb-2">Artistas e Colaboradores</span></h2>
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb mb-0">
-                                <li class="breadcrumb-item"><a href="verify" class="text-secondary">Youtube</a>
+                                <li class="breadcrumb-item"><a href="releases" class="text-secondary">Artistas</a>
                                 </li>
-                                <li class="breadcrumb-item active text-secondary" aria-current="page">Verificar</li>
+                                <li class="breadcrumb-item active text-secondary" aria-current="page">Artistas e
+                                    Colaboradores</li>
                             </ol>
                         </nav>
                     </div>
                     <div class="col-auto ms-auto text-end mt-n1 mt-3 mb-2">
                         <button class="btn btn-wasomupfy text-white shadow-sm" data-bs-toggle="modal"
                             data-bs-target="#addArtistwasomupfy">
-                            <i class="align-middle bi bi-plus"></i> Adcionar </button>
+                            <i class="align-middle bi bi-plus"></i> Adcionar artista</button>
                     </div>
                     <!-- Stats Description -->
                     <p class="stats-description mt-2">
@@ -436,32 +437,25 @@
                     <!-- Filtros -->
                     <div class="search-container fade-in-custom">
                         <div class="row g-3">
-                            <div class="col-md-2">
-                                <label for="youtube-id">ID:</label>
-                                <input type="number" class="form-control" min="1" id="youtube-id" placeholder="ID">
-                            </div>
-                            <div class="col-md-2">
-                                <label for="youtube-account">Conta:</label>
-                                <input type="text" class="form-control" id="youtube-account"
-                                    placeholder="Nome da conta">
+                            <div class="col-md-3">
+                                <label for="artist-id">ID:</label>
+                                <input type="number" class="form-control" min="1" id="artist-id" placeholder="ID">
                             </div>
                             <div class="col-md-3">
-                                <label for="youtube-artist">Artista:</label>
-                                <input type="text" class="form-control" id="youtube-artist"
-                                    placeholder="Nome do artista">
-                            </div>
-                            <div class="col-md-2">
-                                <label for="youtube-date">Data de pedido:</label>
-                                <input type="date" class="form-control" id="youtube-date">
+                                <label for="artist-name">Artista:</label>
+                                <input type="text" class="form-control" id="artist-name" placeholder="Nome do artista">
                             </div>
                             <div class="col-md-3">
-                                <label for="youtube-status">Estado:</label>
-                                <select class="form-select" id="youtube-status">
-                                    <option value="">Todos</option>
-                                    <option value="pending">Pendente</option>
-                                    <option value="verified">Verificado</option>
-                                    <option value="rejected">Rejeitado</option>
-                                    <option value="expired">Expirado</option>
+                                <label for="artist-date">Data de criação:</label>
+                                <input type="date" class="form-control" id="artist-date">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="artist-role">Função:</label>
+                                <select class="form-select" id="artist-role">
+                                    <option value="">Todas</option>
+                                    <option value="interpreter">Intérprete</option>
+                                    <option value="composer">Compositor</option>
+                                    <option value="producer">Produtor</option>
                                 </select>
                             </div>
                         </div>
@@ -469,25 +463,27 @@
                             <button class="btn btn-wasomupfy text-white" id="clear-filters"><i
                                     class="bi bi-eraser me-2"></i> Limpar
                                 Filtros</button>
+                            <span id="results-count"></span>
                         </div>
                     </div>
                 </div>
 
                 <div class="card fade-in-custom">
                     <div class="table-responsive">
-                        <table id="youtube-table" class="table table-striped table-hover">
+                        <table id="artists-table" class="table table-striped table-hover">
                             <thead>
                                 <tr>
                                     <th>ID</th>
                                     <th>Conta</th>
                                     <th>Artista</th>
-                                    <th>Link do canal</th>
-                                    <th>Estado</th>
-                                    <th>Data do pedido</th>
+                                    <th>Função</th>
+                                    <th>Spotify</th>
+                                    <th>Apple Music</th>
+                                    <th>Criação</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
-                            <tbody id="youtube-list">
+                            <tbody id="artists-list">
                                 <!-- Dados serão carregados via JavaScript -->
                             </tbody>
                         </table>
@@ -501,28 +497,27 @@
         </div>
     </div>
 
-
-    <!-- Modal Edição -->
-    <div class="modal fade" id="editYoutubeModal" tabindex="-1" aria-hidden="true">
+    <!-- Modal de Edição -->
+    <div class="modal fade" id="editArtistModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Editar Canal YouTube</h5>
+                    <h5 class="modal-title">Editar Artista</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body" id="edit-youtube-body">
-                    <!-- Formulário será preenchido via JS -->
+                <div class="modal-body" id="edit-artist-body">
+                    <!-- Formulário será carregado via JavaScript -->
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="save-youtube-changes">Salvar</button>
+                    <button type="button" class="btn btn-primary" id="save-artist-changes">Salvar</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal Exclusão -->
-    <div class="modal fade" id="deleteYoutubeModal" tabindex="-1" aria-hidden="true">
+    <!-- Modal de Exclusão -->
+    <div class="modal fade" id="deleteArtistModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -530,15 +525,16 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p id="delete-confirm-text">Tem certeza que deseja excluir este canal?</p>
+                    <p>Tem certeza que deseja excluir este artista?</p>
                     <div class="mb-3">
-                        <label for="delete-password" class="form-label">Digite sua senha:</label>
-                        <input type="password" class="form-control" id="delete-password" required>
+                        <label for="delete-artist-password" class="form-label">Digite sua senha:</label>
+                        <input type="password" class="form-control" id="delete-artist-password" required>
+                        <div class="invalid-feedback">Por favor, insira sua senha</div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger" id="confirm-delete">Excluir</button>
+                    <button type="button" class="btn btn-danger" id="confirm-artist-delete">Excluir</button>
                 </div>
             </div>
         </div>
@@ -550,14 +546,14 @@
         <div class="modal-dialog">
             <div class="modal-content modal-bottom">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5 text-dark" id="addArtistwasomupfyLabel">Pedido de UVY</h1>
+                    <h1 class="modal-title fs-5 text-dark" id="addArtistwasomupfyLabel">Artista ou Colaborador</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="artist-form">
                         <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-floating mb-3">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3 d-none">
                                     <input type="text" class="form-control" name="name" value="" required>
                                     <label class="form-label">ID</label>
                                 </div>
@@ -571,18 +567,21 @@
                                 </div>
                                 <div class="form-floating mb-3">
                                     <select class="form-select" name="role" required>
-                                        <option value="verified">Verificado</option>
-                                        <option value="pending">Pendente</option>
-                                        <option value="rejected">Rejeitado</option>
-                                        <option value="expired">Expirado</option>
+                                        <option value="interpreter">Intérprete</option>
+                                        <option value="composer">Compositor</option>
+                                        <option value="producer">Produtor</option>
                                     </select>
-                                    <label class="form-label">Estado</label>
+                                    <label class="form-label">Função</label>
                                 </div>
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <div class="form-floating mb-3">
-                                    <input type="url" class="form-control" name="channel_link" value="">
-                                    <label class="form-label">Link do Canal</label>
+                                    <input type="url" class="form-control" name="spotify" value="">
+                                    <label class="form-label">Link Spotify</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="url" class="form-control" name="apple_music" value="">
+                                    <label class="form-label">Link Apple Music</label>
                                 </div>
                                 <div class="form-floating mb-3">
                                     <input type="date" class="form-control" name="creation_date" value="" required>
@@ -673,8 +672,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../../js/lastest.js"></script>
-    <script src="data/database.youtube.js"></script>
-    <script src="js/youtube.js" type="module"></script>
+    <script src="data/database.collaborators.js"></script>
+    <script src="js/collaborators.js" type="module"></script>
 </body>
 
 </html>

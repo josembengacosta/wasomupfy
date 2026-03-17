@@ -13,12 +13,12 @@
     <link rel="apple-touch-icon" href="../../../assets/img/icones/wasomupfy_fiv_512.png">
     <link rel="apple-touch-startup-image" href="../../../assets/img/screenshots/splash.png">
     <link rel="manifest" href="manifest.json">
-    <title>Excluír Usuário — Wasom Upfy</title>
-    <link rel="shortcut icon" href="../../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
+    <title>Contas Indisponível — Wasom Upfy</title>
+    <link rel="shortcut icon" href="../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
     <link rel="stylesheet" href="../../../css/libs/plugins.css">
     <link rel="stylesheet" href="../../../css/libs/scrollue.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
-    <link rel="stylesheet" href="../../../css/lastest-style.css">
+    <link rel="stylesheet" href="../css/lastest-style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <!-- Google Fonts - Poppins -->
@@ -37,6 +37,10 @@
             to {
                 opacity: 1;
             }
+        }
+
+        .btn-wasomupfy {
+            background-color: #6f42c1;
         }
 
         .status-badge {
@@ -59,6 +63,11 @@
         .status-review {
             background-color: #ffc107;
             color: #212529;
+        }
+
+        .email-link {
+            color: #d93025;
+            text-decoration: none;
         }
 
         .role-badge {
@@ -105,13 +114,46 @@
         }
 
         .role-checkbox:checked+.role-label {
-            background-color: #ff66b2;
+            background-color: #0d6efd;
             color: white;
         }
 
+        .profile-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 50rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-suspended {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .status-review {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
         .email-link {
-            color: (var(--primary-light));
+            color: #3b82f6;
             text-decoration: none;
+        }
+
+        .btn-wasomupfy {
+            background-color: #6c757d;
         }
 
         .role-selector {
@@ -222,7 +264,7 @@
                             <i class="bi bi-person-gear"></i>
                             <span>Editar</span>
                         </a>
-                        <a href="delete" class="nav-link active">
+                        <a href="delete" class="nav-link">
                             <i class="bi bi-person-x"></i>
                             <span>Excluir</span>
                         </a>
@@ -230,7 +272,7 @@
                             <i class="bi bi-person-check"></i>
                             <span>Contas Disponíveis</span>
                         </a>
-                        <a href="unavailable-account" class="nav-link">
+                        <a href="unavailable-account" class="nav-link active">
                             <i class="bi bi-person-exclamation"></i>
                             <span>Contas Indisponíveis</span>
                         </a>
@@ -512,22 +554,25 @@
             <div class="container-fluid p-0">
                 <div class="row mb-3 mt-2">
                     <div class="welcome-text col-auto d-sm-block">
-                        <h2 class="h4 mb-2"><i class="bi bi-person-x-fill me-2"></i>Excluír Usuário</span></h2>
+                        <h2 class="h4 mb-2"><i class="bi bi-person-fill-exclamation me-2"></i>Contas Indisponível</span>
+                        </h2>
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb mb-0">
-                                <li class="breadcrumb-item"><a href="delete" class="text-secondary">Usuários</a>
+                                <li class="breadcrumb-item"><a href="unavailable-account"
+                                        class="text-secondary">Usuários</a>
                                 </li>
-                                <li class="breadcrumb-item active text-secondary" aria-current="page">Excluír Usuário
-                                </li>
+                                <li class="breadcrumb-item active text-secondary" aria-current="page">Contas
+                                    Indisponível</li>
                             </ol>
                         </nav>
                     </div>
                     <div class="col-auto ms-auto text-end mt-n1 mt-3 mb-2">
                         <a class="text-secondary shadow-sm me-2" href="all-users">Todos Usuários</a>
+                        <a class="text-secondary shadow-sm me-2" href="delete">Excluír Usuários</a>
                         <a class="text-secondary shadow-sm" href="edit">Editar Usuário</a>
-                        <button class="btn btn-wasomupfy text-white shadow-sm" data-bs-toggle="modal"
-                            data-bs-target="#addArtistwasomupfy">
-                            <i class="align-middle bi bi-plus"></i> Adcionar dados</button>
+                        <button class="btn btn-wasomupfy text-white shadow-sm"
+                            onclick="window.location='available-account'">
+                            <i class="align-middle bi bi-person-check"></i> Contas Disponível</button>
                     </div>
                     <!-- Stats Description -->
                     <p class="stats-description mt-2">
@@ -576,7 +621,6 @@
                                 <label for="user-status">Estado:</label>
                                 <select class="form-select" id="user-status">
                                     <option value="">Todos</option>
-                                    <option value="active">Ativo</option>
                                     <option value="suspended">Suspenso</option>
                                     <option value="review">Revisão</option>
                                 </select>
@@ -666,6 +710,25 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal de Visualização -->
+    <div class="modal fade" id="viewUserModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detalhes do Usuário</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="view-user-body">
+                    <!-- Conteúdo será preenchido via JavaScript -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal add new user -->
     <div class="modal fade" id="addArtistwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="addArtistwasomupfyLabel" aria-hidden="true">
@@ -679,10 +742,6 @@
                     <form id="artist-form">
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" name="name" value="" required>
-                                    <label class="form-label">ID</label>
-                                </div>
                                 <div class="form-floating mb-3">
                                     <input type="text" class="form-control" name="account" value="" required>
                                     <label class="form-label">Conta</label>
@@ -1140,8 +1199,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../../js/lastest.js"></script>
-    <script src="data/database.all.users.js"></script>
-    <script src="js/delete.js" type="module"></script>
+    <script src="data/database.unavailable.account.js"></script>
+    <script src="js/unavailable.account.js" type="module"></script>
 
 </body>
 

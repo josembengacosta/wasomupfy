@@ -13,12 +13,12 @@
     <link rel="apple-touch-icon" href="../../../assets/img/icones/wasomupfy_fiv_512.png">
     <link rel="apple-touch-startup-image" href="../../../assets/img/screenshots/splash.png">
     <link rel="manifest" href="manifest.json">
-    <title>Contas Disponível — Wasom Upfy</title>
-    <link rel="shortcut icon" href="../../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
+    <title>Todos Usuários — Wasom Upfy</title>
+    <link rel="shortcut icon" href="../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
     <link rel="stylesheet" href="../../../css/libs/plugins.css">
     <link rel="stylesheet" href="../../../css/libs/scrollue.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
-    <link rel="stylesheet" href="../../../css/lastest-style.css">
+    <link rel="stylesheet" href="../css/lastest-style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <!-- Google Fonts - Poppins -->
@@ -37,10 +37,6 @@
             to {
                 opacity: 1;
             }
-        }
-
-        .btn-wasomupfy {
-            background-color: #6f42c1;
         }
 
         .status-badge {
@@ -63,66 +59,6 @@
         .status-review {
             background-color: #ffc107;
             color: #212529;
-        }
-
-        .email-link {
-            color: #d93025;
-            text-decoration: none;
-        }
-
-        .role-badge {
-            margin-right: 0.3rem;
-            margin-bottom: 0.3rem;
-        }
-
-        .profile-img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .profile-img-lg {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .streaming-progress {
-            height: 10px;
-            border-radius: 5px;
-        }
-
-        .role-selector {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-        }
-
-        .role-checkbox {
-            display: none;
-        }
-
-        .role-label {
-            padding: 0.25rem 0.75rem;
-            border-radius: 1rem;
-            background-color: #e9ecef;
-            cursor: pointer;
-            font-size: 0.875rem;
-        }
-
-        .role-checkbox:checked+.role-label {
-            background-color: #0d6efd;
-            color: white;
-        }
-
-        .profile-img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
         }
 
         .status-badge {
@@ -148,22 +84,27 @@
         }
 
         .email-link {
-            color: #3b82f6;
+            color: (var(--primary-light));
             text-decoration: none;
         }
 
-        .btn-wasomupfy {
-            background-color: #6c757d;
+        .profile-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
         }
 
-        .role-selector {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
+        .profile-img-lg {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
         }
 
-        .role-checkbox {
-            margin-right: 0.5rem;
+        .streaming-progress {
+            height: 10px;
+            border-radius: 5px;
         }
     </style>
 </head>
@@ -252,7 +193,7 @@
                         <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
                     </a>
                     <div class="collapse" id="collapseUsers">
-                        <a href="all-users" class="nav-link">
+                        <a href="all-users" class="nav-link active">
                             <i class="bi bi-people"></i>
                             <span>Todos Usuários</span>
                         </a>
@@ -268,7 +209,7 @@
                             <i class="bi bi-person-x"></i>
                             <span>Excluir</span>
                         </a>
-                        <a href="available-account" class="nav-link active">
+                        <a href="available-account" class="nav-link">
                             <i class="bi bi-person-check"></i>
                             <span>Contas Disponíveis</span>
                         </a>
@@ -554,24 +495,22 @@
             <div class="container-fluid p-0">
                 <div class="row mb-3 mt-2">
                     <div class="welcome-text col-auto d-sm-block">
-                        <h2 class="h4 mb-2"><i class="bi bi-person-check-fill me-2"></i>Contas Disponível</span></h2>
+                        <h2 class="h4 mb-2"><i class="bi bi-people-fill me-2"></i>Todos Usuários</span></h2>
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb mb-0">
-                                <li class="breadcrumb-item"><a href="available-account"
-                                        class="text-secondary">Usuários</a>
+                                <li class="breadcrumb-item"><a href="all-users" class="text-secondary">Usuários</a>
                                 </li>
-                                <li class="breadcrumb-item active text-secondary" aria-current="page">Contas Disponível
+                                <li class="breadcrumb-item active text-secondary" aria-current="page">Todos Usuários
                                 </li>
                             </ol>
                         </nav>
                     </div>
                     <div class="col-auto ms-auto text-end mt-n1 mt-3 mb-2">
-                        <a class="text-secondary shadow-sm me-2" href="all-users">Todos Usuários</a>
-                        <a class="text-secondary shadow-sm me-2" href="delete">Excluír Usuários</a>
-                        <a class="text-secondary shadow-sm" href="edit">Editar Usuário</a>
-                        <button class="btn btn-wasomupfy text-white shadow-sm"
-                            onclick="window.location='unavailable-account'">
-                            <i class="align-middle bi bi-person-exclamation"></i> Contas Indisponível</button>
+                        <a class="text-secondary shadow-sm me-2" href="edit">Editar Usuário</a>
+                        <a class="text-secondary shadow-sm" href="delete">Excluír Usuário</a>
+                        <button class="btn btn-wasomupfy text-white shadow-sm" data-bs-toggle="modal"
+                            data-bs-target="#addArtistwasomupfy">
+                            <i class="align-middle bi bi-plus"></i> Adcionar dados</button>
                     </div>
                     <!-- Stats Description -->
                     <p class="stats-description mt-2">
@@ -581,7 +520,6 @@
                         alguns lançamentos faça a pesquisa do mesmo através do seu <strong>Título</strong>,
                         <strong>Artista</strong> ou <strong>UPC</strong>.
                     </p>
-
                     <!-- Filtros -->
                     <div class="search-container fade-in-custom mt-3">
                         <div class="row g-3">
@@ -619,8 +557,10 @@
                             <div class="col-md-2">
                                 <label for="user-status">Estado:</label>
                                 <select class="form-select" id="user-status">
-                                    <option value="" disabled>Todos</option>
-                                    <option value="active">Activo</option>
+                                    <option value="">Todos</option>
+                                    <option value="active">Ativo</option>
+                                    <option value="suspended">Suspenso</option>
+                                    <option value="review">Revisão</option>
                                 </select>
                             </div>
                         </div>
@@ -657,53 +597,10 @@
                                 </tbody>
                             </table>
                         </div>
-                        <nav aria-label="Page navigation">
+                        <nav aria-label="Navegação de páginas">
                             <ul class="pagination justify-content-center" id="users-pagination"></ul>
                         </nav>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-
-    <!-- Modal de Confirmação de Exclusão -->
-    <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title">
-                        <i class="bi bi-exclamation-triangle"></i> Confirmar Exclusão
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="alert alert-warning">
-                        <h6>Você está excluindo o seguinte usuário:</h6>
-                        <ul class="mb-3">
-                            <li><strong>ID:</strong> <span id="deleteModalUserId"></span></li>
-                            <li><strong>Nome:</strong> <span id="deleteModalUserName"></span></li>
-                            <li><strong>E-mail:</strong> <span id="deleteModalUserEmail"></span></li>
-                        </ul>
-                        <p class="mb-0 text-danger"><i class="bi bi-shield-lock"></i> Esta ação requer confirmação por
-                            senha</p>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="deletePassword" class="form-label">Digite sua senha de administrador:</label>
-                        <input type="password" class="form-control" id="deletePassword" placeholder="Sua senha">
-                        <div class="invalid-feedback" id="passwordFeedback"></div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="bi bi-x-circle"></i> Cancelar
-                    </button>
-                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
-                        <i class="bi bi-trash"></i> Confirmar Exclusão
-                    </button>
                 </div>
             </div>
         </div>
@@ -727,19 +624,25 @@
         </div>
     </div>
 
+
     <!-- Modal add new user -->
     <div class="modal fade" id="addArtistwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="addArtistwasomupfyLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content modal-bottom">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5 text-dark" id="addArtistwasomupfyLabel">Adcionar Usuário</h1>
+                    <h1 class="modal-title fs-5 text-dark" id="addArtistwasomupfyLabel">Adcionar Usuário
+                    </h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="artist-form">
                         <div class="row">
                             <div class="col-md-12">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="name" value="" required>
+                                    <label class="form-label">ID</label>
+                                </div>
                                 <div class="form-floating mb-3">
                                     <input type="text" class="form-control" name="account" value="" required>
                                     <label class="form-label">Conta</label>
@@ -1129,11 +1032,6 @@
     </div>
     <!-- ════ MODAL — Logout  FIM ════ -->
 
-    <!-- Floating Action Button -->
-    <div class="fab" onclick="showQuickAction()" aria-label="Ações Rápidas">
-        <i class="bi bi-plus-lg"></i>
-    </div>
-
     <!-- Footer -->
     <footer>
         <div class="container">
@@ -1147,7 +1045,6 @@
             </div>
         </div>
     </footer>
-
 
     <!-- Bottom Navigation -->
     <!-- <nav class="bottom-nav">
@@ -1197,9 +1094,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../../js/lastest.js"></script>
-    <script src="data/database.available.account.js"></script>
-    <script src="js/available.account.js" type="module"></script>
-
+    <script src="data/database.all.users.js"></script>
+    <script src="js/users.js" type="module"></script>
 </body>
 
 </html>

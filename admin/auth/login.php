@@ -730,9 +730,9 @@ $feedback = match ($msg_type) {
                         <div class="input-group">
                             <input type="email" class="form-control" id="email_admin" name="email_employees"
                                 placeholder="email@wasomupfy.com" maxlength="255" autocomplete="email" required />
-                            <span class="btn-eye" style="pointer-events:none">
+                            <button type="button" class="btn-eye" style="pointer-events:none">
                                 <i class="bi bi-envelope"></i>
-                            </span>
+                            </button>
                         </div>
                         <div class="invalid-feedback" id="email-feedback">
                             Introduz um e-mail válido.

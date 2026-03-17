@@ -375,7 +375,7 @@ foreach ($all as $n) {
         color: var(--text-muted, #6c757d);
         margin-bottom: .4rem;
         display: -webkit-box;
-        -webkit-line-clamp: 2;
+         line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
     }

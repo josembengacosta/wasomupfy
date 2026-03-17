@@ -1,994 +1,1683 @@
+<?php
+// ══════════════════════════════════════════════
+// WASOM UPFY v2.0 — Perfil do Admin
+// Arquivo: admin/pages/user/profile.php
+// .htaccess: ^admin/profile/?$ → este ficheiro
+// ══════════════════════════════════════════════
+
+require_once __DIR__ . '/../../auth/include/functions_admin.php';
+require_once __DIR__ . '/../../include/platform_admin.php';
+startAdminSession();
+checkAdminRememberMe();
+requireAdminLogin();
+requireNoLockscreen();
+
+$db = getDB();
+
+$admin_id       = (int)$_SESSION['admin_id'];
+$admin_name     = $_SESSION['admin_name']      ?? '';
+$admin_fullname = $_SESSION['admin_full_name'] ?? $admin_name;
+$admin_role     = $_SESSION['admin_role']      ?? '';
+$admin_photo    = $_SESSION['admin_photo']     ?? null;
+$admin_email    = $_SESSION['admin_email']     ?? '';
+
+// ── Dados completos do admin ──
+$admin = $db->prepare("
+    SELECT e.*,
+           s.recovery_key, s.login_attempts, s.block_level,
+           s.last_login_at, s.last_login_ip, s.lockscreen,
+           s.remember_token, s.reset_password_token
+    FROM _employees e
+    LEFT JOIN _employees_security s ON s.id_employees = e.id_employees
+    WHERE e.id_employees = ?
+    LIMIT 1
+");
+$admin->execute([$admin_id]);
+$admin = $admin->fetch();
+
+if (!$admin) {
+  adminRedirect('/admin/login');
+}
+
+// ── Permissões do admin ──
+$perms = getAdminPermissions($admin_id);
+
+// ── Atividade recente (últimas 10 acções) ──
+$activity = $db->prepare("
+    SELECT action, entity, entity_id, creat_log, ip_address
+    FROM _audit_log
+    WHERE id_employees = ?
+    ORDER BY creat_log DESC
+    LIMIT 10
+");
+$activity->execute([$admin_id]);
+$activity_list = $activity->fetchAll();
+
+// ── Feedback de operações ──
+$msg  = $_GET['msg']  ?? null;
+$type = $_GET['type'] ?? null;
+
+$feedback = match ($msg) {
+  'profile_ok'  => ['success', 'bi-check-circle', 'Perfil actualizado com sucesso.'],
+  'password_ok' => ['success', 'bi-check-circle', 'Senha alterada com sucesso.'],
+  'password_err' => ['danger',  'bi-x-circle',     'Senha actual incorrecta.'],
+  'password_w'  => ['warning', 'bi-exclamation-triangle', 'As senhas não coincidem ou não cumprem os requisitos.'],
+  'photo_ok'    => ['success', 'bi-check-circle', 'Foto de perfil actualizada.'],
+  'error'       => ['danger',  'bi-exclamation-octagon', 'Ocorreu um erro. Tenta novamente.'],
+  default       => null,
+};
+
+// ── Helpers ──
+function adm_initials_p(string $f, string $s = ''): string
+{
+  return mb_strtoupper(mb_substr(trim($f), 0, 1, 'UTF-8'), 'UTF-8')
+    . mb_strtoupper(mb_substr(trim($s), 0, 1, 'UTF-8'), 'UTF-8');
+}
+
+function adm_fmt_dt(string $dt): string
+{
+  $ts = strtotime($dt);
+  if (!$ts) return '—';
+  $d = time() - $ts;
+  if ($d < 60)    return 'agora';
+  if ($d < 3600)  return floor($d / 60) . 'min atrás';
+  if ($d < 86400) return floor($d / 3600) . 'h atrás';
+  $months = ['', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+  return date('d', $ts) . ' ' . $months[(int)date('n', $ts)] . ' ' . date('Y', $ts) . ', ' . date('H:i', $ts);
+}
+
+function action_icon(string $a): string
+{
+  $map = [
+    'auth.login'               => ['bi-box-arrow-in-right', 'text-success'],
+    'auth.logout'              => ['bi-box-arrow-right',   'text-secondary'],
+    'auth.failed_login'        => ['bi-x-circle',          'text-danger'],
+    'auth.password_changed'    => ['bi-shield-lock',       'text-warning'],
+    'auth.reset_requested'     => ['bi-key',               'text-info'],
+    'auth.lockscreen_unlocked' => ['bi-unlock',            'text-success'],
+    'auth.auto_login'          => ['bi-lightning-charge',  'text-info'],
+  ];
+  $r = $map[$a] ?? ['bi-activity', 'text-muted'];
+  return "<i class=\"bi {$r[0]} {$r[1]}\"></i>";
+}
+
+function action_label(string $a): string
+{
+  $map = [
+    'auth.login'               => 'Início de sessão',
+    'auth.logout'              => 'Fim de sessão',
+    'auth.failed_login'        => 'Tentativa de login falhada',
+    'auth.password_changed'    => 'Senha alterada',
+    'auth.reset_requested'     => 'Reset de senha solicitado',
+    'auth.lockscreen_unlocked' => 'Ecrã desbloqueado',
+    'auth.auto_login'          => 'Login automático (cookie)',
+  ];
+  return $map[$a] ?? str_replace(['.', '_'], [' → ', ' '], $a);
+}
+
+// ── Info da sessão para modal logout ──
+$session_start = $_SESSION['_start_time'] ?? time();
+if (!isset($_SESSION['_start_time'])) $_SESSION['_start_time'] = time();
+$session_mins  = max(0, (int)floor((time() - $session_start) / 60));
+$client_ip     = $_SERVER['REMOTE_ADDR'] ?? '—';
+$ua            = $_SERVER['HTTP_USER_AGENT'] ?? '';
+$browser = 'Desconhecido';
+if (str_contains($ua, 'Edg'))        $browser = 'Microsoft Edge';
+elseif (str_contains($ua, 'Chrome')) $browser = 'Google Chrome';
+elseif (str_contains($ua, 'Firefox')) $browser = 'Firefox';
+elseif (str_contains($ua, 'Safari')) $browser = 'Safari';
+$os = 'Desconhecido';
+if (str_contains($ua, 'Windows NT 10')) $os = 'Windows 10/11';
+elseif (str_contains($ua, 'Windows'))   $os = 'Windows';
+elseif (str_contains($ua, 'Mac OS'))    $os = 'macOS';
+elseif (str_contains($ua, 'Android'))   $os = 'Android';
+elseif (str_contains($ua, 'iPhone'))    $os = 'iOS';
+elseif (str_contains($ua, 'Linux'))     $os = 'Linux';
+
+// ── Pending notifications ──
+$pending_releases = (int)$db->query("SELECT COUNT(*) FROM _album WHERE status_album IN ('pending','under_review')")->fetchColumn();
+$pending_payments = (int)$db->query("SELECT COUNT(*) FROM _payment WHERE status_payment='pending'")->fetchColumn();
+$open_tickets     = (int)$db->query("SELECT COUNT(*) FROM _support_ticket WHERE status_ticket NOT IN ('closed','resolved')")->fetchColumn();
+$total_notifs     = $pending_releases + $pending_payments + $open_tickets;
+
+// ── Role label ──
+function role_badge(string $r): string
+{
+  return match ($r) {
+    'super_admin' => '<span class="badge bg-danger">Super Admin</span>',
+    'admin'       => '<span class="badge bg-primary">Administrador</span>',
+    'editor'      => '<span class="badge bg-info">Editor</span>',
+    'support'     => '<span class="badge bg-secondary">Suporte</span>',
+    default       => '<span class="badge bg-dark">' . ucfirst($r) . '</span>',
+  };
+}
+?>
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-ao">
 
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="robots" content="noindex, nofollow" />
-  <meta name="author" content="José Mbenga da Costa" />
-  <meta name="theme-color" content="#FF0089" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="#FF0089" />
-  <link rel="apple-touch-icon" href="../../../assets/img/icones/wasomupfy_fiv_512.png" />
-  <link rel="apple-touch-startup-image" href="../../../assets/img/screenshots/splash.png" />
-  <link rel="manifest" href="manifest.json" />
-  <title>Perfil do Usuário</title>
-  <link rel="shortcut icon" href="../../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon" />
-  <link rel="stylesheet" href="../../../css/libs/plugins.css" />
-  <link rel="stylesheet" href="../../../css/libs/scrollue.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
-  <link rel="stylesheet" href="../../../css/lastest-style.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
-  <!-- Google Fonts - Poppins -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  <style>
-    .profile-avatar {
-      width: 150px;
-      height: 150px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 5px solid #fff;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="author" content="José Mbenga da Costa" />
+    <meta name="theme-color" content="#FF0089" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="csrf-token" content="<?php echo htmlspecialchars($_SESSION['admin_csrf_token']); ?>" />
+    <title>Perfil — <?php echo htmlspecialchars($admin_fullname); ?> — Wasom Upfy Admin</title>
+    <link rel="shortcut icon" href="../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon" />
+    <link rel="stylesheet" href="../css/libs/plugins.css" />
+    <link rel="stylesheet" href="../css/libs/scrollue.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
+    <link rel="stylesheet" href="../css/lastest-style.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
 
+    <style>
+    /* ── Profile Header ── */
     .profile-header {
-      background: linear-gradient(135deg, #ff009d 0%, #6c63ff 100%);
-      color: white;
-      padding: 2rem 0;
-      margin-bottom: 2rem;
-      border-radius: 0 0 10px 10px;
+        background: linear-gradient(135deg, #FF0089 0%, #6c63ff 100%);
+        color: white;
+        padding: 2rem 0 0;
+        margin-bottom: 0;
+        border-radius: 0;
+        position: relative;
+        overflow: hidden;
     }
 
-    .nav-pills .nav-link.active {
-      background-color: #6c5ce7;
+    .profile-header::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image:
+            linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px);
+        background-size: 32px 32px;
+        pointer-events: none;
     }
 
-    .nav-pills .nav-link {
-      color: #6c5ce7;
+    .profile-avatar-wrap {
+        position: relative;
+        display: inline-block;
     }
 
-    .card {
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
-      margin-bottom: 20px;
-      border: none;
+    .profile-avatar {
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid rgba(255, 255, 255, .3);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, .3);
     }
 
-    .badge-role {
-      margin-right: 5px;
-      margin-bottom: 5px;
+    .profile-avatar-initials {
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, .2);
+        border: 4px solid rgba(255, 255, 255, .3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: 800;
+        color: #fff;
     }
 
-    .status-badge {
-      padding: 5px 10px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 500;
+    .avatar-upload-btn {
+        position: absolute;
+        bottom: 4px;
+        right: 4px;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #fff;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: .75rem;
+        color: #FF0089;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
+        transition: transform .2s;
     }
 
-    .status-active {
-      background-color: #d1fae5;
-      color: #065f46;
+    .avatar-upload-btn:hover {
+        transform: scale(1.1);
     }
 
-    .status-review {
-      background-color: #fef3c7;
-      color: #92400e;
+    /* ── Nav pills ── */
+    .profile-tabs {
+        border-bottom: 2px solid rgba(255, 255, 255, .2);
+        margin-top: 16px;
     }
 
-    .status-suspended {
-      background-color: #fee2e2;
-      color: #991b1b;
+    .profile-tabs .nav-link {
+        color: rgba(255, 255, 255, .7);
+        border-radius: 0;
+        padding: 10px 20px;
+        font-size: .88rem;
+        font-weight: 500;
+        border: none;
+        background: none;
+        transition: color .2s, border-bottom .2s;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -2px;
     }
-  </style>
+
+    .profile-tabs .nav-link:hover {
+        color: #fff;
+    }
+
+    .profile-tabs .nav-link.active {
+        color: #fff;
+        border-bottom-color: #fff;
+    }
+
+    /* ── Info card lateral ── */
+    .info-sidebar-card {
+        background: var(--card-bg, #fff);
+        border-radius: 12px;
+        border: 1px solid var(--border-color, #e8e8f0);
+        padding: 18px;
+        margin-bottom: 16px;
+    }
+
+    .info-sidebar-card .info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border-color, #f0f0f8);
+        font-size: .83rem;
+    }
+
+    .info-sidebar-card .info-row:last-child {
+        border-bottom: none;
+    }
+
+    .info-sidebar-card .info-label {
+        opacity: .6;
+    }
+
+    .info-sidebar-card .info-value {
+        font-weight: 600;
+        text-align: right;
+        max-width: 60%;
+        word-break: break-all;
+    }
+
+    /* ── Security items ── */
+    .security-item {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 16px 0;
+        border-bottom: 1px solid var(--border-color, #f0f0f8);
+    }
+
+    .security-item:last-child {
+        border-bottom: none;
+    }
+
+    .security-item-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+
+    .security-item-body {
+        flex: 1;
+    }
+
+    .security-item-title {
+        font-size: .9rem;
+        font-weight: 600;
+        margin-bottom: 3px;
+    }
+
+    .security-item-desc {
+        font-size: .8rem;
+        opacity: .6;
+        line-height: 1.5;
+    }
+
+    /* ── Recovery key ── */
+    .recovery-key-box {
+        background: rgba(255, 0, 137, .06);
+        border: 1px solid rgba(255, 0, 137, .2);
+        border-radius: 10px;
+        padding: 14px 18px;
+        font-family: 'Courier New', monospace;
+        font-size: 1rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        color: #FF0089;
+        text-align: center;
+        cursor: pointer;
+        user-select: all;
+        transition: background .2s;
+        position: relative;
+    }
+
+    .recovery-key-box:hover {
+        background: rgba(255, 0, 137, .1);
+    }
+
+    .recovery-key-box .copy-hint {
+        font-size: .7rem;
+        font-weight: 400;
+        opacity: .6;
+        display: block;
+        margin-top: 4px;
+        letter-spacing: 0;
+        font-family: inherit;
+    }
+
+    /* ── Activity timeline ── */
+    .activity-item-adm {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border-color, #f0f0f8);
+    }
+
+    .activity-item-adm:last-child {
+        border-bottom: none;
+    }
+
+    .activity-icon-wrap {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--bs-light, #f8f9fa);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 1rem;
+    }
+
+    .activity-info-adm {
+        flex: 1;
+    }
+
+    .activity-title-adm {
+        font-size: .85rem;
+        font-weight: 600;
+        margin-bottom: 2px;
+    }
+
+    .activity-meta-adm {
+        font-size: .75rem;
+        opacity: .55;
+    }
+
+    /* ── Permission badges ── */
+    .perm-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 8px;
+    }
+
+    .perm-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: .8rem;
+        border: 1px solid;
+    }
+
+    .perm-item.granted {
+        background: rgba(34, 197, 94, .08);
+        border-color: rgba(34, 197, 94, .25);
+        color: #166534;
+    }
+
+    .perm-item.denied {
+        background: rgba(239, 68, 68, .06);
+        border-color: rgba(239, 68, 68, .2);
+        color: #991b1b;
+        opacity: .6;
+    }
+
+    .perm-item.default_ {
+        background: rgba(59, 130, 246, .08);
+        border-color: rgba(59, 130, 246, .2);
+        color: #1e40af;
+    }
+
+    /* ── Logout modal ── */
+    .logout-admin-card {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 14px 16px;
+        background: #f8f7fc;
+        border-radius: 12px;
+        margin-bottom: 14px;
+    }
+
+    .logout-admin-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #FF0089, #ff6bb5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: .95rem;
+        color: #fff;
+        flex-shrink: 0;
+        overflow: hidden;
+    }
+
+    .logout-admin-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .logout-session-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 0;
+        font-size: .84rem;
+        color: #555;
+        border-bottom: 1px solid rgba(0, 0, 0, .06);
+    }
+
+    .logout-session-row:last-child {
+        border-bottom: none;
+    }
+
+    .logout-session-row i {
+        color: #FF0089;
+        width: 16px;
+        flex-shrink: 0;
+    }
+
+    .logout-session-row strong {
+        color: #222;
+        margin-left: auto;
+        text-align: right;
+        font-size: .82rem;
+    }
+
+    .logout-modal-session {
+        background: rgba(0, 0, 0, .04);
+        border: 1px solid rgba(0, 0, 0, .08);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+
+    /* ── Password strength ── */
+    .strength-bar {
+        height: 4px;
+        border-radius: 2px;
+        background: #e8e8f0;
+        overflow: hidden;
+        margin: 8px 0 4px;
+    }
+
+    .strength-fill {
+        height: 100%;
+        border-radius: 2px;
+        width: 0;
+        transition: width .3s, background .3s;
+    }
+
+    .strength-label {
+        font-size: .74rem;
+        color: #aaa;
+    }
+    </style>
 </head>
 
 <body>
-  <div class="wrapper">
-    <!-- Sidebar Overlay -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="wrapper">
+        <!-- Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        <?php require_once __DIR__ . '../../../include/sidebar.php'; ?>
+        <div class="content w-100" id="mainContent">
+            <?php require_once __DIR__ . '../../../include/navbar.php'; ?>
 
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-      <div class="sidebar-header">
-        <div class="d-flex align-items-center">
-          <img src="../../../assets/img/brand/wasomupfy_brand.png" alt="Logo Wasom Upfy" class="rounded-circle me-2"
-            style="height: 40px" />
-          <span class="brand-text">Wasom Upfy</span>
-        </div>
-        <i class="bi bi-chevron-left toggle-icon" id="sidebarCollapse" title="Colapsar/Expandir Menu"
-          aria-label="Colapsar/Expandir Menu"></i>
-      </div>
-      <ul class="nav flex-column mt-3">
-        <li class="nav-item">
-          <a href="../../home" class="nav-link">
-            <i class="bi bi-speedometer2"></i>
-            <span>Painel de Controle</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="#collapseAnalytics" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-            aria-controls="collapseAnalytics">
-            <i class="bi bi-graph-up"></i>
-            <span>Estatísticas e Análises</span>
-            <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem"></i>
-          </a>
-          <div class="collapse" id="collapseAnalytics">
-            <a href="../analytics/home" class="nav-link">
-              <i class="bi bi-bar-chart-line"></i>
-              <span>Visão Geral</span>
-            </a>
-            <a href="../analytics/artists" class="nav-link">
-              <i class="bi bi-person-lines-fill"></i>
-              <span>Desempenho por Artista</span>
-            </a>
-            <a href="../analytics/stores" class="nav-link">
-              <i class="bi bi-shop"></i>
-              <span>Desempenho por Loja Digital</span>
-            </a>
-            <a href="../analytics/reports" class="nav-link">
-              <i class="bi bi-file-earmark-bar-graph"></i>
-              <span>Relatórios Personalizados</span>
-            </a>
-          </div>
-        </li>
+            <!-- ══ PROFILE HEADER ══ -->
+            <div class="profile-header">
+                <div class="container-fluid px-4">
+                    <!-- Feedback -->
+                    <?php if ($feedback): ?>
+                    <div class="alert alert-<?php echo $feedback[0]; ?> alert-dismissible fade show mb-3" role="alert">
+                        <i class="bi <?php echo $feedback[1]; ?> me-2"></i><?php echo htmlspecialchars($feedback[2]); ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    <?php endif; ?>
 
-        <li class="nav-item">
-          <a href="#collapseAdmins" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-            aria-controls="collapseAdmins">
-            <i class="bi bi-person-gear"></i>
-            <span>Gestão de Admins</span>
-            <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem"></i>
-          </a>
-          <div class="collapse" id="collapseAdmins">
-            <a href="../employees/all-employees" class="nav-link">
-              <i class="bi bi-people"></i>
-              <span>Listar Admins</span>
-            </a>
-            <a href="../employees/add" class="nav-link">
-              <i class="bi bi-person-plus"></i>
-              <span>Adicionar</span>
-            </a>
-            <a href="../employees/edit" class="nav-link">
-              <i class="bi bi-person-gear"></i>
-              <span>Editar</span>
-            </a>
-            <a href="../employees/delete" class="nav-link">
-              <i class="bi bi-person-x"></i>
-              <span>Excluir</span>
-            </a>
-          </div>
-        </li>
-        <li class="nav-item">
-          <a href="#collapseUsers" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-            aria-controls="collapseUsers">
-            <i class="bi bi-person-gear"></i>
-            <span>Gestão de Usuários</span>
-            <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem"></i>
-          </a>
-          <div class="collapse" id="collapseUsers">
-            <a href="../users/all-users" class="nav-link">
-              <i class="bi bi-people"></i>
-              <span>Todos Usuários</span>
-            </a>
-            <a href="../users/add" class="nav-link">
-              <i class="bi bi-person-plus"></i>
-              <span>Adicionar</span>
-            </a>
-            <a href="../users/edit" class="nav-link">
-              <i class="bi bi-person-gear"></i>
-              <span>Editar</span>
-            </a>
-            <a href="../users/delete" class="nav-link">
-              <i class="bi bi-person-x"></i>
-              <span>Excluir</span>
-            </a>
-            <a href="../users/available-account" class="nav-link">
-              <i class="bi bi-person-check"></i>
-              <span>Contas Disponíveis</span>
-            </a>
-            <a href="../users/unavailable-account" class="nav-link">
-              <i class="bi bi-person-exclamation"></i>
-              <span>Contas Indisponíveis</span>
-            </a>
-          </div>
-        </li>
-        <li class="nav-item">
-          <a href="#collapseSongs" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-            aria-controls="collapseSongs">
-            <i class="bi bi-music-note-list"></i>
-            <span>Gestão de Músicas</span>
-            <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem"></i>
-          </a>
-          <div class="collapse" id="collapseSongs">
-            <a href="../music/revise" class="nav-link">
-              <i class="bi bi-eye"></i>
-              <span>Revisar Envios</span>
-            </a>
-            <a href="../music/approve" class="nav-link">
-              <i class="bi bi-check-circle"></i>
-              <span>Aprovar</span>
-            </a>
-            <a href="../music/reject" class="nav-link">
-              <i class="bi bi-x-circle"></i>
-              <span>Rejeitar</span>
-            </a>
-          </div>
-        </li>
-        <li class="nav-item">
-          <a href="../artist/accounts-users" class="nav-link">
-            <i class="bi bi-person-check"></i>
-            <span>Contas e Usuários</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="../artist/collaborators-artist" class="nav-link">
-            <i class="bi bi-people"></i>
-            <span>Artistas e Colaboradores</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="#collapseDistribution" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-            aria-controls="collapseDistribution">
-            <i class="bi bi-globe"></i>
-            <span>Distribuição</span>
-            <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem"></i>
-          </a>
-          <div class="collapse" id="collapseDistribution">
-            <a href="../distribution/releases" class="nav-link">
-              <i class="bi bi-rocket-takeoff"></i>
-              <span>Lançamentos</span>
-            </a>
-            <a href="../distribution/store" class="nav-link">
-              <i class="bi bi-shop"></i>
-              <span>Lojas Digitais</span>
-            </a>
-            <a href="../distribution/schedule" class="nav-link">
-              <i class="bi bi-calendar-event"></i>
-              <span>Agendar Lançamento</span>
-            </a>
-          </div>
-        </li>
-        <li class="nav-item">
-          <a href="../manager/gestion" class="nav-link">
-            <i class="bi bi-star"></i>
-            <span>Gestão Geral</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="../finances/payments" class="nav-link">
-            <i class="bi bi-wallet2"></i>
-            <span>Pagamentos</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="../finances/earnings" class="nav-link">
-            <i class="bi bi-currency-dollar"></i>
-            <span>Finanças e Rendimentos</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="#collapseIntegration" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-            aria-controls="collapseIntegration">
-            <i class="bi bi-youtube"></i>
-            <span>Unificação e V. Youtube</span>
-            <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem"></i>
-          </a>
-          <div class="collapse" id="collapseIntegration">
-            <a href="../integration/youtube" class="nav-link">
-              <i class="bi bi-gear"></i>
-              <span>Configurar Integração</span>
-            </a>
-            <a href="../integration/verify" class="nav-link">
-              <i class="bi bi-check2-all"></i>
-              <span>Verificar Canais</span>
-            </a>
-            <a href="../integration/monetization" class="nav-link">
-              <i class="bi bi-youtube"></i>
-              <span>Gerenciamento de Conteúdo Monetizado</span>
-            </a>
-          </div>
-        </li>
+                    <div class="row align-items-end">
+                        <div class="col-auto">
+                            <div class="profile-avatar-wrap">
+                                <?php if ($admin_photo): ?>
+                                <img src="../assets/comprovantes/uploads/employees/<?php echo htmlspecialchars($admin_photo); ?>"
+                                    alt="<?php echo htmlspecialchars($admin_fullname); ?>" class="profile-avatar" />
+                                <?php else: ?>
+                                <div class="profile-avatar-initials">
+                                    <?php echo adm_initials_p($admin['first_name'], $admin['second_name'] ?? ''); ?>
+                                </div>
+                                <?php endif; ?>
+                                <button class="avatar-upload-btn" type="button"
+                                    onclick="document.getElementById('photo-input').click()" title="Alterar foto">
+                                    <i class="bi bi-camera-fill"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <h2 class="mb-1"><?php echo htmlspecialchars($admin_fullname); ?></h2>
+                            <p class="mb-1 opacity-75" style="font-size:.9rem">
+                                <i
+                                    class="bi bi-at me-1"></i><?php echo htmlspecialchars($admin['user_employees'] ?? '—'); ?>
+                                &nbsp;·&nbsp;
+                                <i
+                                    class="bi bi-envelope me-1"></i><?php echo htmlspecialchars($admin['email_employees']); ?>
+                            </p>
+                            <p class="mb-0 opacity-75" style="font-size:.85rem">
+                                <i
+                                    class="bi bi-telephone me-1"></i><?php echo htmlspecialchars($admin['tel_employees'] ?? '—'); ?>
+                                &nbsp;·&nbsp;
+                                <?php echo role_badge($admin_role); ?>
+                                &nbsp;
+                                <?php if ($admin['status_employees'] === 'active'): ?>
+                                <span class="badge bg-success">Activo</span>
+                                <?php elseif ($admin['status_employees'] === 'suspended'): ?>
+                                <span class="badge bg-warning text-dark">Suspenso</span>
+                                <?php else: ?>
+                                <span class="badge bg-danger"><?php echo ucfirst($admin['status_employees']); ?></span>
+                                <?php endif; ?>
+                            </p>
+                        </div>
+                        <div class="col-auto text-end pb-1">
+                            <small class="opacity-60" style="font-size:.78rem">
+                                <i class="bi bi-clock me-1"></i>
+                                Último login:
+                                <?php echo $admin['last_login_at'] ? adm_fmt_dt($admin['last_login_at']) : '—'; ?>
+                            </small>
+                        </div>
+                    </div>
 
-        <li class="nav-item">
-          <a href="#collapseSupport" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-            aria-controls="collapseSupport">
-            <i class="bi bi-headset"></i>
-            <span>Suporte</span>
-            <span class="badge bg-danger badge-notification">3</span>
-            <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem"></i>
-          </a>
-          <div class="collapse" id="collapseSupport">
-            <a href="../messages/inbox" class="nav-link">
-              <i class="bi bi-envelope"></i>
-              <span>Caixa de entrada</span>
-            </a>
-            <a href="../messages/compose" class="nav-link">
-              <i class="bi bi-pencil"></i>
-              <span>Enviar mensagens</span>
-            </a>
-          </div>
-        </li>
-
-        <li class="nav-item">
-          <a href="#collapseHelp" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-            aria-controls="collapseHelp">
-            <i class="bi bi-question-circle"></i>
-            <span>Ajuda</span>
-            <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem"></i>
-          </a>
-          <div class="collapse" id="collapseHelp">
-            <a href="../help/faqs" class="nav-link">
-              <i class="bi bi-messenger"></i>
-              <span>FAQs</span>
-            </a>
-            <a href="../help/tutorials" class="nav-link">
-              <i class="bi bi-book"></i>
-              <span>Tutoriais</span>
-            </a>
-            <a href="../help/contact" class="nav-link">
-              <i class="bi bi-telephone"></i>
-              <span>Contacto com suporte</span>
-            </a>
-          </div>
-        </li>
-        <li class="nav-item">
-          <a href="../settings/config" class="nav-link">
-            <i class="bi bi-sliders"></i>
-            <span>Configurações</span>
-          </a>
-        </li>
-        <li class="nav-item mt-4">
-          <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#logoutwasomupfy">
-            <i class="bi bi-box-arrow-right"></i>
-            <span>Logout</span>
-          </a>
-        </li>
-        <li class="nav-item mt-4">
-          <a href="http://localhost:5500/home" target="_blank" class="nav-link">
-            <i class="bi bi-box-arrow-in-up-right"></i>
-            <span>Visitar Site</span>
-          </a>
-        </li>
-      </ul>
-    </div>
-
-    <!-- Content -->
-    <div class="content w-100" id="mainContent">
-      <nav class="navbar navbar-expand-lg">
-        <button class="navbar-toggler" type="button" id="sidebarToggle" aria-label="Abrir/Fechar Menu">
-          <i class="bi bi-list text-white"></i>
-        </button>
-        <div class="ms-auto d-flex align-items-center">
-          <button class="btn btn-outline-light btn-sm me-2" onclick="toggleDarkMode()"
-            aria-label="Alternar Modo Escuro">
-            <i class="bi bi-moon"></i>
-          </button>
-          <div class="dropdown me-2 position-relative">
-            <button class="btn btn-outline-light btn-sm position-relative" type="button" data-bs-toggle="dropdown"
-              aria-label="Notificações">
-              <i class="bi bi-bell"></i>
-              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">5</span>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-start p-0" style="min-width: 250px">
-              <li class="dropdown-header bg-dark text-white p-2">
-                Notificações (5)
-              </li>
-              <li>
-                <a class="dropdown-item p-2" href="#">Novo artista registrado</a>
-              </li>
-              <li>
-                <a class="dropdown-item p-2" href="#">Música atingiu 1000 plays</a>
-              </li>
-              <li>
-                <a class="dropdown-item p-2" href="#">Atualização do sistema disponível</a>
-              </li>
-              <li class="dropdown-footer text-center p-2">
-                <a href="#" class="text-primary">Ver todas</a>
-              </li>
-            </ul>
-          </div>
-          <div class="dropdown me-2 position-relative">
-            <button class="btn btn-outline-light btn-sm position-relative" type="button" data-bs-toggle="dropdown"
-              aria-label="Mensagens">
-              <i class="bi bi-envelope"></i>
-              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">2</span>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-start p-0" style="min-width: 250px">
-              <li class="dropdown-header bg-dark text-white p-2">
-                Mensagens (2)
-              </li>
-              <li>
-                <a class="dropdown-item p-2" href="#">Suporte #4521 - Novo ticket</a>
-              </li>
-              <li>
-                <a class="dropdown-item p-2" href="#">Mensagem de artista</a>
-              </li>
-              <li class="dropdown-footer text-center p-2">
-                <a href="#" class="text-primary">Ver todas</a>
-              </li>
-            </ul>
-          </div>
-          <div class="dropdown">
-            <button class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center" type="button"
-              data-bs-toggle="dropdown" aria-label="Menu do Usuário">
-              <img src="../../../assets/img/avatar/avatar.png" alt="Usuário" class="rounded-circle me-1"
-                style="height: 24px" />
-              <span>Cristiano Amadeu</span>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end">
-              <li>
-                <a class="dropdown-item active" href="../user/profile"><i class="bi bi-person me-2"></i>Perfil</a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="../settings/config"><i class="bi bi-sliders me-2"></i>Configurações</a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="../help/help"><i class="bi bi-question-circle me-2"></i>Ajuda</a>
-              </li>
-              <li>
-                <hr class="dropdown-divider" />
-              </li>
-              <li>
-                <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutwasomupfy" href="#"><i
-                    class="bi bi-box-arrow-right me-2"></i>Sair</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-
-      <!-- Adicione isso dentro da tag <nav class="bottom-nav"> -->
-      <div class="connection-status" id="connectionStatus"></div>
-      <div class="status-notification" id="statusNotification"></div>
-
-      <!-- ════ MODAL — Logout ════ -->
-      <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content modal-bottom">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">
-                Terminar sessão
-              </h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <div class="container">
-                <div class="row justify-content-center text-center">
-                  <div class="col-md-12 content-center justify-center text-center">
-                    <p class="text-center text-dark">
-                      @josembengadacosta você tem certeza de que desejas
-                      terminar sessão?
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <div>
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
-                  Não, continuar
-                </button>
-              </div>
-              <div>
-                <button class="btn btn-danger" type="button" name="logout_wasomupfy" onclick="logout_wasomupfy()">
-                  Sim, terminar
-                </button>
-              </div>
-              <script type="text/javascript">
-                function logout_wasomupfy() {
-                  window.location = "logout";
-                }
-              </script>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- ════ MODAL — Logout  FIM ════ -->
-
-      <div class="container-fluid p-0">
-        <div class="row mb-3 mt-2">
-          <!-- Cabeçalho do Perfil -->
-          <div class="profile-header">
-            <div class="container">
-              <div class="row align-items-center">
-                <div class="col-md-2 text-center">
-                  <img src="https://i.pravatar.cc/150" alt="Avatar" class="profile-avatar mb-3" />
-                  <button class="btn btn-light btn-sm">
-                    <i class="bi bi-camera me-1"></i> Alterar
-                  </button>
-                </div>
-                <div class="col-md-6">
-                  <h2>Maria Silva</h2>
-                  <p class="mb-1">
-                    <i class="bi bi-person-badge me-2"></i> @maria.silva
-                  </p>
-                  <p class="mb-1">
-                    <i class="bi bi-envelope me-2"></i>
-                    maria.silva@example.com
-                  </p>
-                  <p class="mb-0">
-                    <i class="bi bi-geo-alt me-2"></i> Lisboa, Portugal
-                  </p>
-                </div>
-                <div class="col-md-4 text-end">
-                  <span class="status-badge status-active">Ativo</span>
-                  <div class="mt-3">
-                    <span class="badge bg-primary badge-role">Administrador</span>
-                    <span class="badge bg-primary badge-role">Financeiro</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="container">
-            <div class="row">
-              <div class="col-md-3">
-                <ul class="nav nav-pills flex-column mb-4">
-                  <li class="nav-item">
-                    <a class="nav-link active" href="#overview" data-bs-toggle="pill">
-                      <i class="bi bi-person-lines-fill me-2"></i> Visão Geral
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#activity" data-bs-toggle="pill">
-                      <i class="bi bi-activity me-2"></i> Atividade
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#settings" data-bs-toggle="pill">
-                      <i class="bi bi-gear me-2"></i> Configurações
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#security" data-bs-toggle="pill">
-                      <i class="bi bi-shield-lock me-2"></i> Segurança
-                    </a>
-                  </li>
-                </ul>
-
-                <div class="card">
-                  <div class="card-body">
-                    <h6 class="card-title">
-                      <i class="bi bi-info-circle me-2"></i> Informações
-                    </h6>
-                    <ul class="list-group list-group-flush">
-                      <li class="list-group-item px-0 d-flex justify-content-between">
-                        <span>ID do Usuário:</span>
-                        <span class="text-muted">1005</span>
-                      </li>
-                      <li class="list-group-item px-0 d-flex justify-content-between">
-                        <span>Membro desde:</span>
-                        <span class="text-muted">15/03/2022</span>
-                      </li>
-                      <li class="list-group-item px-0 d-flex justify-content-between">
-                        <span>Último login:</span>
-                        <span class="text-muted">Hoje, 14:30</span>
-                      </li>
+                    <!-- Tabs -->
+                    <ul class="nav profile-tabs mt-3" id="profileTabs">
+                        <li class="nav-item"><a class="nav-link active" href="#overview" data-bs-toggle="pill"><i
+                                    class="bi bi-person-lines-fill me-1"></i>Visão Geral</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#activity" data-bs-toggle="pill"><i
+                                    class="bi bi-activity me-1"></i>Actividade</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#settings" data-bs-toggle="pill"><i
+                                    class="bi bi-gear me-1"></i>Editar Perfil</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#security" data-bs-toggle="pill"><i
+                                    class="bi bi-shield-lock me-1"></i>Segurança</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#permissions" data-bs-toggle="pill"><i
+                                    class="bi bi-key me-1"></i>Permissões</a></li>
                     </ul>
-                  </div>
                 </div>
-              </div>
+            </div>
 
-              <div class="col-md-9">
-                <div class="tab-content">
-                  <!-- Aba Visão Geral -->
-                  <div class="tab-pane fade show active" id="overview">
-                    <div class="card">
-                      <div class="card-body">
-                        <h5 class="card-title">
-                          <i class="bi bi-person-lines-fill me-2"></i>
-                          Informações Pessoais
-                        </h5>
-                        <div class="row mt-4">
-                          <div class="col-md-6">
-                            <p>
-                              <strong>Nome Completo:</strong> Maria da Silva
-                              Santos
-                            </p>
-                            <p>
-                              <strong>Data de Nascimento:</strong> 15/08/1985
-                            </p>
-                            <p><strong>Gênero:</strong> Feminino</p>
-                          </div>
-                          <div class="col-md-6">
-                            <p><strong>Telefone:</strong> +351 912 345 678</p>
-                            <p>
-                              <strong>Endereço:</strong> Rua das Flores, 123
-                            </p>
-                            <p>
-                              <strong>Código Postal:</strong> 1000-001 Lisboa
-                            </p>
-                          </div>
+            <!-- ══ CONTEÚDO DAS TABS ══ -->
+            <div class="container-fluid px-4 py-4">
+                <div class="row">
+
+                    <!-- Coluna lateral -->
+                    <div class="col-md-3 mb-4">
+                        <div class="info-sidebar-card">
+                            <h6 class="mb-3"
+                                style="font-size:.85rem;font-weight:700;opacity:.7;text-transform:uppercase;letter-spacing:.5px">
+                                Informações</h6>
+                            <div class="info-row">
+                                <span class="info-label">ID</span>
+                                <span class="info-value">#<?php echo $admin_id; ?></span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Membro desde</span>
+                                <span
+                                    class="info-value"><?php echo date('d/m/Y', strtotime($admin['creat_employees'])); ?></span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Último login</span>
+                                <span
+                                    class="info-value"><?php echo $admin['last_login_at'] ? adm_fmt_dt($admin['last_login_at']) : '—'; ?></span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">IP do login</span>
+                                <span class="info-value"
+                                    style="font-family:monospace;font-size:.78rem"><?php echo htmlspecialchars($admin['last_login_ip'] ?? '—'); ?></span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Tentativas login</span>
+                                <span class="info-value">
+                                    <?php
+                  $att = (int)($admin['login_attempts'] ?? 0);
+                  $cls = $att === 0 ? 'success' : ($att < 3 ? 'warning' : 'danger');
+                  echo "<span class='badge bg-{$cls}'>{$att}</span>";
+                  ?>
+                                </span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Lockscreen</span>
+                                <span class="info-value">
+                                    <?php echo $admin['lockscreen'] ? '<span class="badge bg-warning text-dark">Activo</span>' : '<span class="badge bg-success">Inactivo</span>'; ?>
+                                </span>
+                            </div>
                         </div>
-                      </div>
-                    </div>
 
-                    <div class="card">
-                      <div class="card-body">
-                        <h5 class="card-title">
-                          <i class="bi bi-briefcase me-2"></i> Informações
-                          Profissionais
-                        </h5>
-                        <div class="row mt-4">
-                          <div class="col-md-6">
-                            <p><strong>Cargo:</strong> Gerente Financeiro</p>
-                            <p><strong>Departamento:</strong> Financeiro</p>
-                          </div>
-                          <div class="col-md-6">
-                            <p>
-                              <strong>Data de Contratação:</strong> 01/02/2020
-                            </p>
-                            <p><strong>Supervisor:</strong> João Oliveira</p>
-                          </div>
+                        <!-- Links rápidos -->
+                        <div class="info-sidebar-card">
+                            <h6 class="mb-3"
+                                style="font-size:.85rem;font-weight:700;opacity:.7;text-transform:uppercase;letter-spacing:.5px">
+                                Acções rápidas</h6>
+                            <a href="#security"
+                                class="tab-link d-flex align-items-center gap-2 text-decoration-none py-2"
+                                data-tab="security" style="font-size:.84rem;cursor:pointer">
+                                <i class="bi bi-key-fill" style="color:#FF0089"></i> Alterar senha
+                            </a>
+                            <a href="#security"
+                                class="tab-link d-flex align-items-center gap-2 text-decoration-none py-2"
+                                data-tab="security" style="font-size:.84rem;cursor:pointer">
+                                <i class="bi bi-shield-lock-fill" style="color:#FF0089"></i> Chave de recuperação
+                            </a>
+                            <a href="#settings"
+                                class="tab-link d-flex align-items-center gap-2 text-decoration-none py-2"
+                                data-tab="settings" style="font-size:.84rem;cursor:pointer">
+                                <i class="bi bi-camera-fill" style="color:#FF0089"></i> Alterar foto
+                            </a>
+                            <a href="<?php echo APP_URL; ?>/admin/audit"
+                                class="d-flex align-items-center gap-2 text-decoration-none py-2"
+                                style="font-size:.84rem">
+                                <i class="bi bi-journal-text" style="color:#FF0089"></i> Log de auditoria
+                            </a>
                         </div>
-                      </div>
                     </div>
-                  </div>
 
-                  <!-- Aba Atividade -->
-                  <div class="tab-pane fade" id="activity">
-                    <div class="card">
-                      <div class="card-body">
-                        <h5 class="card-title">
-                          <i class="bi bi-activity me-2"></i> Histórico de
-                          Atividades
-                        </h5>
-                        <div class="mt-4">
-                          <div class="d-flex mb-4">
-                            <div class="flex-shrink-0">
-                              <i class="bi bi-check-circle-fill text-success fs-4"></i>
-                            </div>
-                            <div class="flex-grow-1 ms-3">
-                              <h6 class="mb-1">Login realizado</h6>
-                              <p class="mb-1 text-muted">
-                                Sessão iniciada a partir de um novo
-                                dispositivo
-                              </p>
-                              <small class="text-muted">Hoje, 14:30</small>
-                            </div>
-                          </div>
-                          <div class="d-flex mb-4">
-                            <div class="flex-shrink-0">
-                              <i class="bi bi-file-earmark-text-fill text-primary fs-4"></i>
-                            </div>
-                            <div class="flex-grow-1 ms-3">
-                              <h6 class="mb-1">Relatório gerado</h6>
-                              <p class="mb-1 text-muted">
-                                Relatório financeiro mensal exportado para PDF
-                              </p>
-                              <small class="text-muted">Ontem, 16:45</small>
-                            </div>
-                          </div>
-                          <div class="d-flex mb-4">
-                            <div class="flex-shrink-0">
-                              <i class="bi bi-shield-lock-fill text-warning fs-4"></i>
-                            </div>
-                            <div class="flex-grow-1 ms-3">
-                              <h6 class="mb-1">Senha alterada</h6>
-                              <p class="mb-1 text-muted">
-                                Senha de acesso atualizada
-                              </p>
-                              <small class="text-muted">3 dias atrás</small>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                    <!-- Conteúdo das tabs -->
+                    <div class="col-md-9">
+                        <div class="tab-content">
 
-                  <!-- Aba Configurações -->
-                  <div class="tab-pane fade" id="settings">
-                    <div class="card">
-                      <div class="card-body">
-                        <h5 class="card-title">
-                          <i class="bi bi-gear me-2"></i> Configurações do
-                          Perfil
-                        </h5>
-                        <form class="mt-4">
-                          <div class="row mb-3">
-                            <div class="col-md-6">
-                              <label for="firstName" class="form-label">Primeiro Nome</label>
-                              <input type="text" class="form-control" id="firstName" value="Maria" />
-                            </div>
-                            <div class="col-md-6">
-                              <label for="lastName" class="form-label">Sobrenome</label>
-                              <input type="text" class="form-control" id="lastName" value="Silva Santos" />
-                            </div>
-                          </div>
-                          <div class="mb-3">
-                            <label for="email" class="form-label">E-mail</label>
-                            <input type="email" class="form-control" id="email" value="maria.silva@example.com" />
-                          </div>
-                          <div class="mb-3">
-                            <label for="phone" class="form-label">Telefone</label>
-                            <input type="tel" class="form-control" id="phone" value="+351 912 345 678" />
-                          </div>
-                          <div class="mb-3">
-                            <label for="country" class="form-label">País</label>
-                            <select class="form-select" id="country">
-                              <option value="PT" selected>Portugal</option>
-                              <option value="AO">Angola</option>
-                              <option value="BR">Brasil</option>
-                              <option value="MZ">Moçambique</option>
-                            </select>
-                          </div>
-                          <div class="mb-3">
-                            <label for="timezone" class="form-label">Fuso Horário</label>
-                            <select class="form-select" id="timezone">
-                              <option selected>(UTC+00:00) Lisboa</option>
-                              <option>(UTC+01:00) Luanda</option>
-                              <option>(UTC-03:00) São Paulo</option>
-                            </select>
-                          </div>
-                          <button type="submit" class="btn btn-primary">
-                            Salvar Alterações
-                          </button>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
+                            <!-- ══ ABA — Visão Geral ══ -->
+                            <div class="tab-pane fade show active" id="overview">
+                                <div class="card mb-4">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-4"><i class="bi bi-person-lines-fill me-2"
+                                                style="color:#FF0089"></i>Informações Pessoais</h5>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p><strong>Nome completo:</strong>
+                                                    <?php echo htmlspecialchars($admin_fullname); ?></p>
+                                                <p><strong>Username:</strong>
+                                                    <?php echo htmlspecialchars($admin['user_employees'] ?? '—'); ?></p>
+                                                <p><strong>Género:</strong>
+                                                    <?php echo $admin['gender'] === 'M' ? 'Masculino' : ($admin['gender'] === 'F' ? 'Feminino' : '—'); ?>
+                                                </p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p><strong>E-mail:</strong>
+                                                    <?php echo htmlspecialchars($admin['email_employees']); ?></p>
+                                                <p><strong>E-mail alternativo:</strong>
+                                                    <?php echo htmlspecialchars($admin['email_employees_other'] ?? '—'); ?>
+                                                </p>
+                                                <p><strong>Telefone:</strong>
+                                                    <?php echo htmlspecialchars($admin['tel_employees'] ?? '—'); ?></p>
+                                            </div>
+                                        </div>
+                                        <?php if (!empty($admin['about_employees'])): ?>
+                                        <div class="mt-2">
+                                            <p class="mb-1"><strong>Sobre mim:</strong></p>
+                                            <p class="text-muted">
+                                                <?php echo nl2br(htmlspecialchars($admin['about_employees'])); ?></p>
+                                        </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
 
-                  <div class="d-flex justify-content-between align-items-center p-3 border rounded">
-                    <div>
-                      <h6 class="mb-1">Dispositivos Conectados</h6>
-                      <p class="mb-0 text-muted">2 dispositivos ativos</p>
-                    </div>
-                    <button class="btn btn-outline-primary">Gerenciar</button>
-                  </div>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-4"><i class="bi bi-briefcase me-2"
+                                                style="color:#FF0089"></i>Informações Profissionais</h5>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p><strong>Cargo / Role:</strong>
+                                                    <?php echo getRoleLabel($admin_role); ?></p>
+                                                <p><strong>Estado:</strong>
+                                                    <?php if ($admin['status_employees'] === 'active'): ?>
+                                                    <span class="badge bg-success">Activo</span>
+                                                    <?php else: ?>
+                                                    <span
+                                                        class="badge bg-danger"><?php echo ucfirst($admin['status_employees']); ?></span>
+                                                    <?php endif; ?>
+                                                </p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p><strong>Membro desde:</strong>
+                                                    <?php echo date('d/m/Y', strtotime($admin['creat_employees'])); ?>
+                                                </p>
+                                                <p><strong>Última actualização:</strong>
+                                                    <?php echo date('d/m/Y H:i', strtotime($admin['modif_employees'])); ?>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ══ ABA — Actividade ══ -->
+                            <div class="tab-pane fade" id="activity">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-4">
+                                            <h5 class="card-title mb-0"><i class="bi bi-activity me-2"
+                                                    style="color:#FF0089"></i>Histórico de Actividades</h5>
+                                            <?php if (hasPermission($admin_id, 'audit.view')): ?>
+                                            <a href="<?php echo APP_URL; ?>/admin/audit"
+                                                class="btn btn-sm btn-outline-secondary">
+                                                <i class="bi bi-journal-text me-1"></i>Log completo
+                                            </a>
+                                            <?php endif; ?>
+                                        </div>
+
+                                        <?php if (empty($activity_list)): ?>
+                                        <div class="text-center py-4 text-muted">
+                                            <i class="bi bi-inbox"
+                                                style="font-size:2rem;opacity:.3;display:block;margin-bottom:8px"></i>
+                                            Nenhuma actividade registada ainda.
+                                        </div>
+                                        <?php else: ?>
+                                        <?php foreach ($activity_list as $act): ?>
+                                        <div class="activity-item-adm">
+                                            <div class="activity-icon-wrap">
+                                                <?php echo action_icon($act['action']); ?>
+                                            </div>
+                                            <div class="activity-info-adm">
+                                                <div class="activity-title-adm">
+                                                    <?php echo htmlspecialchars(action_label($act['action'])); ?></div>
+                                                <div class="activity-meta-adm">
+                                                    <?php if ($act['entity']): ?><?php echo htmlspecialchars($act['entity']); ?>
+                                                    · <?php endif; ?>
+                                                    <?php if ($act['ip_address']): ?><code
+                                                        style="font-size:.72rem"><?php echo htmlspecialchars($act['ip_address']); ?></code>
+                                                    · <?php endif; ?>
+                                                    <?php echo adm_fmt_dt($act['creat_log']); ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ══ ABA — Editar Perfil ══ -->
+                            <div class="tab-pane fade" id="settings">
+                                <div class="card mb-4">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-4"><i class="bi bi-person-gear me-2"
+                                                style="color:#FF0089"></i>Editar Perfil</h5>
+                                        <form method="POST" action="<?php echo APP_URL; ?>/admin/profile-process"
+                                            id="form-profile" novalidate onsubmit="return false">
+                                            <input type="hidden" name="csrf_token"
+                                                value="<?php echo htmlspecialchars($_SESSION['admin_csrf_token']); ?>" />
+                                            <input type="hidden" name="action" value="update_profile" />
+
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Primeiro Nome <span
+                                                            class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control" name="first_name" required
+                                                        value="<?php echo htmlspecialchars($admin['first_name']); ?>"
+                                                        maxlength="50" />
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Apelido</label>
+                                                    <input type="text" class="form-control" name="second_name"
+                                                        value="<?php echo htmlspecialchars($admin['second_name'] ?? ''); ?>"
+                                                        maxlength="80" />
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <label class="form-label">E-mail <span
+                                                            class="text-danger">*</span></label>
+                                                    <input type="email" class="form-control" name="email_employees"
+                                                        required
+                                                        value="<?php echo htmlspecialchars($admin['email_employees']); ?>"
+                                                        maxlength="255" />
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">E-mail alternativo</label>
+                                                    <input type="email" class="form-control"
+                                                        name="email_employees_other"
+                                                        value="<?php echo htmlspecialchars($admin['email_employees_other'] ?? ''); ?>"
+                                                        maxlength="255" />
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Telefone</label>
+                                                    <input type="tel" class="form-control" name="tel_employees"
+                                                        value="<?php echo htmlspecialchars($admin['tel_employees'] ?? ''); ?>"
+                                                        maxlength="20" />
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Género</label>
+                                                    <select class="form-select" name="gender">
+                                                        <option value="M"
+                                                            <?php echo $admin['gender'] === 'M' ? 'selected' : ''; ?>>
+                                                            Masculino</option>
+                                                        <option value="F"
+                                                            <?php echo $admin['gender'] === 'F' ? 'selected' : ''; ?>>
+                                                            Feminino</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label">URL / Website</label>
+                                                <input type="url" class="form-control" name="url_employees"
+                                                    value="<?php echo htmlspecialchars($admin['url_employees'] ?? ''); ?>"
+                                                    maxlength="255" placeholder="https://..." />
+                                            </div>
+
+                                            <div class="mb-4">
+                                                <label class="form-label">Sobre mim</label>
+                                                <textarea class="form-control" name="about_employees" rows="3"
+                                                    maxlength="1000"
+                                                    placeholder="Uma breve descrição sobre ti..."><?php echo htmlspecialchars($admin['about_employees'] ?? ''); ?></textarea>
+                                            </div>
+
+                                            <button type="button" class="btn btn-primary" id="btn-save-profile">
+                                                <span class="spinner-border spinner-border-sm d-none me-1"
+                                                    id="spin-profile"></span>
+                                                <i class="bi bi-check-circle me-1"></i>Guardar Alterações
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <!-- Foto de perfil -->
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-4"><i class="bi bi-camera me-2"
+                                                style="color:#FF0089"></i>Foto de Perfil</h5>
+                                        <form method="POST" action="<?php echo APP_URL; ?>/admin/profile-process"
+                                            enctype="multipart/form-data" id="form-photo">
+                                            <input type="hidden" name="csrf_token"
+                                                value="<?php echo htmlspecialchars($_SESSION['admin_csrf_token']); ?>" />
+                                            <input type="hidden" name="action" value="update_photo" />
+                                            <!-- Input oculto — activado pelo botão e pela drop zone -->
+                                            <input type="file" name="photo" id="photo-input"
+                                                accept="image/jpeg,image/png,image/webp" style="display:none" />
+
+                                            <div class="row align-items-center g-4">
+                                                <!-- Preview actual -->
+                                                <div class="col-auto">
+                                                    <div style="position:relative;display:inline-block">
+                                                        <div id="photo-preview-wrap" style="width:96px;height:96px;border-radius:50%;overflow:hidden;
+                                      border:3px solid rgba(255,0,137,.3);
+                                      box-shadow:0 0 0 4px rgba(255,0,137,.08)">
+                                                            <?php if ($admin_photo): ?>
+                                                            <img id="photo-preview"
+                                                                src="../assets/comprovantes/uploads/employees/<?php echo htmlspecialchars($admin_photo); ?>"
+                                                                alt=""
+                                                                style="width:100%;height:100%;object-fit:cover" />
+                                                            <?php else: ?>
+                                                            <div id="photo-preview-initials" style="width:100%;height:100%;background:#FF0089;display:flex;
+                                          align-items:center;justify-content:center;
+                                          font-weight:800;font-size:1.5rem;color:#fff">
+                                                                <?php echo adm_initials_p($admin['first_name'], $admin['second_name'] ?? ''); ?>
+                                                            </div>
+                                                            <?php endif; ?>
+                                                        </div>
+                                                        <!-- Badge de câmara sobre a foto -->
+                                                        <button type="button"
+                                                            onclick="document.getElementById('photo-input').click()"
+                                                            style="position:absolute;bottom:2px;right:2px;width:28px;height:28px;
+                                         border-radius:50%;background:#FF0089;border:2px solid #fff;
+                                         display:flex;align-items:center;justify-content:center;
+                                         cursor:pointer;font-size:.75rem;color:#fff;box-shadow:0 2px 6px rgba(0,0,0,.25)"
+                                                            title="Seleccionar foto">
+                                                            <i class="bi bi-camera-fill"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Zona de upload / drop -->
+                                                <div class="col">
+                                                    <div id="photo-drop-zone"
+                                                        onclick="document.getElementById('photo-input').click()" style="border:2px dashed rgba(255,0,137,.3);border-radius:12px;
+                                    padding:24px 20px;text-align:center;cursor:pointer;
+                                    transition:background .2s,border-color .2s;
+                                    background:rgba(255,0,137,.03)">
+                                                        <i class="bi bi-cloud-arrow-up"
+                                                            style="font-size:2rem;color:#FF0089;opacity:.6;display:block;margin-bottom:8px"></i>
+                                                        <div style="font-size:.88rem;font-weight:600;margin-bottom:4px">
+                                                            Clica ou arrasta a foto aqui
+                                                        </div>
+                                                        <div style="font-size:.76rem;opacity:.55">
+                                                            JPG, PNG ou WebP · Máximo 2MB
+                                                        </div>
+                                                        <div id="photo-filename"
+                                                            style="font-size:.78rem;color:#FF0089;margin-top:8px;display:none;font-weight:600">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="d-flex gap-2 mt-3 flex-wrap">
+                                                        <button type="submit" id="btn-upload-photo"
+                                                            class="btn btn-primary btn-sm" disabled>
+                                                            <span class="spinner-border spinner-border-sm d-none me-1"
+                                                                id="spin-photo"></span>
+                                                            <i class="bi bi-upload me-1"></i>Guardar foto
+                                                        </button>
+                                                        <?php if ($admin_photo): ?>
+                                                        <form method="POST"
+                                                            action="<?php echo APP_URL; ?>/admin/profile-process"
+                                                            style="display:inline">
+                                                            <input type="hidden" name="csrf_token"
+                                                                value="<?php echo htmlspecialchars($_SESSION['admin_csrf_token']); ?>" />
+                                                            <input type="hidden" name="action" value="remove_photo" />
+                                                            <button type="submit" class="btn btn-outline-danger btn-sm"
+                                                                onclick="return confirm('Remover a foto de perfil?')">
+                                                                <i class="bi bi-trash me-1"></i>Remover foto
+                                                            </button>
+                                                        </form>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ══ ABA — Segurança ══ -->
+                            <div class="tab-pane fade" id="security">
+
+                                <!-- Alterar senha -->
+                                <div class="card mb-4">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-4"><i class="bi bi-lock me-2"
+                                                style="color:#FF0089"></i>Alterar Senha</h5>
+                                        <form method="POST" action="<?php echo APP_URL; ?>/admin/profile-process"
+                                            id="form-password" novalidate onsubmit="return false">
+                                            <input type="hidden" name="csrf_token"
+                                                value="<?php echo htmlspecialchars($_SESSION['admin_csrf_token']); ?>" />
+                                            <input type="hidden" name="action" value="change_password" />
+
+                                            <div class="mb-3">
+                                                <label class="form-label">Senha Actual <span
+                                                        class="text-danger">*</span></label>
+                                                <div class="input-group">
+                                                    <input type="password" class="form-control" name="current_password"
+                                                        id="current_password" required maxlength="128"
+                                                        placeholder="A tua senha actual"
+                                                        autocomplete="current-password" />
+                                                    <button type="button" class="btn btn-outline-secondary"
+                                                        onclick="togglePw('current_password','eye-cur')">
+                                                        <i class="bi bi-eye" id="eye-cur"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label">Nova Senha <span
+                                                        class="text-danger">*</span></label>
+                                                <div class="input-group">
+                                                    <input type="password" class="form-control" name="new_password"
+                                                        id="new_password" required maxlength="128"
+                                                        placeholder="Mínimo 8 caracteres" autocomplete="new-password" />
+                                                    <button type="button" class="btn btn-outline-secondary"
+                                                        onclick="togglePw('new_password','eye-new')">
+                                                        <i class="bi bi-eye" id="eye-new"></i>
+                                                    </button>
+                                                </div>
+                                                <div class="strength-bar">
+                                                    <div class="strength-fill" id="pw-strength-fill"></div>
+                                                </div>
+                                                <div class="strength-label" id="pw-strength-label">Escreve a nova senha
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-4">
+                                                <label class="form-label">Confirmar Nova Senha <span
+                                                        class="text-danger">*</span></label>
+                                                <div class="input-group">
+                                                    <input type="password" class="form-control" name="confirm_password"
+                                                        id="confirm_password" required maxlength="128"
+                                                        placeholder="Repete a nova senha" autocomplete="new-password" />
+                                                    <button type="button" class="btn btn-outline-secondary"
+                                                        onclick="togglePw('confirm_password','eye-conf')">
+                                                        <i class="bi bi-eye" id="eye-conf"></i>
+                                                    </button>
+                                                </div>
+                                                <div id="pw-match-err"
+                                                    style="font-size:.78rem;color:#ef4444;margin-top:4px;display:none">
+                                                    As senhas não coincidem.</div>
+                                            </div>
+
+                                            <!-- Requisitos -->
+                                            <div class="mb-4 p-3 rounded"
+                                                style="background:rgba(255,0,137,.05);border:1px solid rgba(255,0,137,.15)">
+                                                <p
+                                                    style="font-size:.78rem;font-weight:600;margin-bottom:8px;opacity:.7">
+                                                    Requisitos da senha:</p>
+                                                <div class="row g-1" style="font-size:.78rem">
+                                                    <div class="col-6"><span id="req-len" class="text-muted"><i
+                                                                class="bi bi-circle me-1"></i>Mínimo 8 caracteres</span>
+                                                    </div>
+                                                    <div class="col-6"><span id="req-up" class="text-muted"><i
+                                                                class="bi bi-circle me-1"></i>Uma maiúscula</span></div>
+                                                    <div class="col-6"><span id="req-low" class="text-muted"><i
+                                                                class="bi bi-circle me-1"></i>Uma minúscula</span></div>
+                                                    <div class="col-6"><span id="req-num" class="text-muted"><i
+                                                                class="bi bi-circle me-1"></i>Um número</span></div>
+                                                    <div class="col-6"><span id="req-sym" class="text-muted"><i
+                                                                class="bi bi-circle me-1"></i>Um símbolo</span></div>
+                                                    <div class="col-6"><span id="req-match" class="text-muted"><i
+                                                                class="bi bi-circle me-1"></i>Senhas coincidem</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <button type="button" class="btn btn-danger" id="btn-change-pw">
+                                                <span class="spinner-border spinner-border-sm d-none me-1"
+                                                    id="spin-pw"></span>
+                                                <i class="bi bi-lock me-1"></i>Alterar Senha
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <!-- Chave de recuperação -->
+                                <div class="card mb-4">
+                                    <div class="card-body">
+                                        <div class="security-item">
+                                            <div class="security-item-icon"
+                                                style="background:rgba(234,179,8,.1);color:#eab308">
+                                                <i class="bi bi-key-fill"></i>
+                                            </div>
+                                            <div class="security-item-body">
+                                                <div class="security-item-title">Chave de Recuperação</div>
+                                                <div class="security-item-desc mb-3">
+                                                    Usa esta chave para recuperar o acesso à tua conta caso percas a
+                                                    senha.
+                                                    Guarda-a num local seguro — <strong>nunca a partilhes</strong>.
+                                                </div>
+                                                <div class="recovery-key-box" id="recovery-key-box"
+                                                    onclick="copyRecoveryKey()">
+                                                    <?php echo htmlspecialchars($admin['recovery_key']); ?>
+                                                    <span class="copy-hint"><i class="bi bi-clipboard me-1"></i>Clica
+                                                        para copiar</span>
+                                                </div>
+                                                <div id="copy-feedback"
+                                                    style="font-size:.75rem;color:#22c55e;margin-top:6px;display:none">
+                                                    <i class="bi bi-check-circle me-1"></i>Copiado para a área de
+                                                    transferência!
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Lockscreen -->
+                                <div class="card mb-4">
+                                    <div class="card-body">
+                                        <div class="security-item">
+                                            <div class="security-item-icon"
+                                                style="background:rgba(99,102,241,.1);color:#6366f1">
+                                                <i class="bi bi-display"></i>
+                                            </div>
+                                            <div class="security-item-body">
+                                                <div class="security-item-title">Ecrã de Bloqueio (Lockscreen)</div>
+                                                <div class="security-item-desc">
+                                                    Quando o lockscreen está activo, é necessário introduzir um código
+                                                    de 6 dígitos
+                                                    para aceder ao painel após a sessão ficar inactiva.
+                                                    Estado actual:
+                                                    <?php echo $admin['lockscreen'] ? '<span class="badge bg-warning text-dark">Activo</span>' : '<span class="badge bg-success">Inactivo</span>'; ?>
+                                                </div>
+                                            </div>
+                                            <div class="flex-shrink-0">
+                                                <?php if ($admin['lockscreen']): ?>
+                                                <form method="POST"
+                                                    action="<?php echo APP_URL; ?>/admin/profile-process"
+                                                    style="display:inline">
+                                                    <input type="hidden" name="csrf_token"
+                                                        value="<?php echo htmlspecialchars($_SESSION['admin_csrf_token']); ?>" />
+                                                    <input type="hidden" name="action" value="disable_lockscreen" />
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                        <i class="bi bi-unlock me-1"></i>Desactivar
+                                                    </button>
+                                                </form>
+                                                <?php else: ?>
+                                                <form method="POST"
+                                                    action="<?php echo APP_URL; ?>/admin/profile-process"
+                                                    style="display:inline">
+                                                    <input type="hidden" name="csrf_token"
+                                                        value="<?php echo htmlspecialchars($_SESSION['admin_csrf_token']); ?>" />
+                                                    <input type="hidden" name="action" value="enable_lockscreen" />
+                                                    <button type="submit" class="btn btn-sm btn-outline-primary">
+                                                        <i class="bi bi-lock me-1"></i>Activar
+                                                    </button>
+                                                </form>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 2FA -->
+                                <div class="card mb-4">
+                                    <div class="card-body">
+                                        <div class="security-item">
+                                            <div class="security-item-icon"
+                                                style="background:rgba(255,0,137,.1);color:#FF0089">
+                                                <i class="bi bi-shield-check"></i>
+                                            </div>
+                                            <div class="security-item-body">
+                                                <div class="security-item-title">Autenticação de Dois Factores (2FA)
+                                                </div>
+                                                <div class="security-item-desc">
+                                                    Adiciona uma camada extra de segurança ao teu login com um código
+                                                    temporário gerado por uma aplicação TOTP (ex: Google Authenticator,
+                                                    Authy).
+                                                    <br><span class="badge bg-secondary mt-1">Em desenvolvimento</span>
+                                                </div>
+                                            </div>
+                                            <div class="flex-shrink-0">
+                                                <button class="btn btn-sm btn-outline-secondary" disabled
+                                                    title="Em desenvolvimento">
+                                                    <i class="bi bi-phone me-1"></i>Activar 2FA
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Sessões activas -->
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-3"><i class="bi bi-laptop me-2"
+                                                style="color:#FF0089"></i>Sessão Actual</h5>
+                                        <div class="d-flex align-items-center gap-3 flex-wrap">
+                                            <div style="font-size:.85rem">
+                                                <div><strong><i
+                                                            class="bi bi-browser-chrome me-1"></i><?php echo htmlspecialchars($browser); ?></strong>
+                                                    — <?php echo htmlspecialchars($os); ?></div>
+                                                <div class="text-muted" style="font-size:.78rem">
+                                                    IP: <code><?php echo htmlspecialchars($client_ip); ?></code>
+                                                    · Sessão iniciada há <?php echo $session_mins; ?> min
+                                                    · Último login:
+                                                    <?php echo $admin['last_login_at'] ? adm_fmt_dt($admin['last_login_at']) : '—'; ?>
+                                                </div>
+                                            </div>
+                                            <div class="ms-auto">
+                                                <span class="badge bg-success"><i class="bi bi-circle-fill me-1"
+                                                        style="font-size:.5rem"></i>Sessão activa</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- ══ ABA — Permissões ══ -->
+                            <div class="tab-pane fade" id="permissions">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-4">
+                                            <h5 class="card-title mb-0"><i class="bi bi-key me-2"
+                                                    style="color:#FF0089"></i>Permissões do Perfil</h5>
+                                            <span class="badge"
+                                                style="background:rgba(255,0,137,.1);color:#FF0089;font-size:.78rem">
+                                                Role: <?php echo getRoleLabel($admin_role); ?>
+                                            </span>
+                                        </div>
+
+                                        <?php if ($admin_role === 'super_admin'): ?>
+                                        <div class="alert alert-success mb-4">
+                                            <i class="bi bi-shield-fill-check me-2"></i>
+                                            <strong>Super Administrador</strong> — Acesso total a todas as
+                                            funcionalidades da plataforma, sem restrições.
+                                        </div>
+                                        <?php else: ?>
+                                        <p style="font-size:.84rem;opacity:.7;margin-bottom:20px">
+                                            As permissões assinaladas com <span class="badge"
+                                                style="background:rgba(59,130,246,.1);color:#1e40af">Padrão</span>
+                                            são as predefinidas para o teu role. As marcadas com
+                                            <span class="badge"
+                                                style="background:rgba(34,197,94,.1);color:#166534">Concedida</span>
+                                            foram atribuídas explicitamente. As
+                                            <span class="badge"
+                                                style="background:rgba(239,68,68,.08);color:#991b1b">Negada</span>
+                                            foram explicitamente revogadas.
+                                        </p>
+
+                                        <?php
+                      // Permissões padrão por role (espelha o functions_admin.php)
+                      $role_defaults = [
+                        'admin'   => ['employees.view', 'employees.edit', 'users.view', 'users.edit', 'music.view', 'music.approve', 'finances.view', 'finances.edit', 'analytics.view', 'support.view', 'support.edit', 'audit.view', 'settings.view', 'settings.edit'],
+                        'editor'  => ['music.view', 'music.approve', 'analytics.view'],
+                        'support' => ['support.view', 'analytics.view'],
+                      ];
+
+                      $all_permissions = [
+                        'Utilizadores'   => ['users.view', 'users.edit'],
+                        'Músicas'        => ['music.view', 'music.approve'],
+                        'Finanças'       => ['finances.view', 'finances.edit'],
+                        'Analytics'      => ['analytics.view'],
+                        'Suporte'        => ['support.view', 'support.edit'],
+                        'Funcionários'   => ['employees.view', 'employees.edit'],
+                        'Auditoria'      => ['audit.view'],
+                        'Configurações'  => ['settings.view', 'settings.edit'],
+                      ];
+
+                      $defaults_for_role = $role_defaults[$admin_role] ?? [];
+                      ?>
+
+                                        <?php foreach ($all_permissions as $group => $perm_list): ?>
+                                        <div class="mb-4">
+                                            <h6 class="text-muted mb-2"
+                                                style="font-size:.78rem;text-transform:uppercase;letter-spacing:.5px">
+                                                <?php echo $group; ?></h6>
+                                            <div class="perm-grid">
+                                                <?php foreach ($perm_list as $perm):
+                              $explicit = $perms[$perm] ?? null; // null = sem regra na BD
+                              if ($explicit === true) {
+                                $cls = 'granted';
+                                $ico = 'bi-check-circle-fill';
+                                $lbl = 'Concedida';
+                              } elseif ($explicit === false) {
+                                $cls = 'denied';
+                                $ico = 'bi-x-circle-fill';
+                                $lbl = 'Negada';
+                              } elseif (in_array($perm, $defaults_for_role)) {
+                                $cls = 'default_';
+                                $ico = 'bi-circle-fill';
+                                $lbl = 'Padrão';
+                              } else {
+                                $cls = 'denied';
+                                $ico = 'bi-x-circle';
+                                $lbl = 'Sem acesso';
+                              }
+                              $perm_name = str_replace(['.view', '.edit', '.approve'], [' — ver', ' — editar', ' — aprovar'], $perm);
+                            ?>
+                                                <div class="perm-item <?php echo $cls; ?>">
+                                                    <i class="bi <?php echo $ico; ?>"></i>
+                                                    <span><?php echo htmlspecialchars($perm_name); ?></span>
+                                                    <small class="ms-auto opacity-75"><?php echo $lbl; ?></small>
+                                                </div>
+                                                <?php endforeach; ?>
+                                            </div>
+                                        </div>
+                                        <?php endforeach; ?>
+
+                                        <?php if (hasPermission($admin_id, 'employees.edit')): ?>
+                                        <div class="alert alert-info mt-3" style="font-size:.82rem">
+                                            <i class="bi bi-info-circle me-2"></i>
+                                            Para alterar as permissões de um funcionário, vai a
+                                            <a href="<?php echo APP_URL; ?>/admin/employees" class="alert-link">Gestão
+                                                de Admins</a>.
+                                        </div>
+                                        <?php endif; ?>
+                                        <?php endif; ?>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div><!-- /tab-content -->
+                    </div><!-- /col-md-9 -->
+                </div><!-- /row -->
+            </div><!-- /container-fluid -->
+
+        </div><!-- /content -->
+    </div><!-- /wrapper -->
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p class="mb-2">© 2026 Wasom Upfy. Todos os direitos reservados.</p>
+                    <a href="<?php echo APP_URL; ?>/page/politicies/terms" class="me-2">Termos de Uso</a>
+                    <a href="<?php echo APP_URL; ?>/page/politicies/privacy" class="me-2">Privacidade</a>
+                    <a href="<?php echo APP_URL; ?>/admin/support">Suporte</a>
                 </div>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
+    </footer>
+
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-content">
+            <img src="../assets/img/brand/wasomupfy_brand.png" class="loader-image" alt="Carregando" />
+            <div class="loader-progress"></div>
+        </div>
     </div>
-  </div>
 
-  <!-- Modal Alterar Senha -->
-  <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Alterar Senha</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <form>
-          <div class="modal-body">
-            <div class="mb-3">
-              <label for="currentPassword" class="form-label">Senha Atual</label>
-              <input type="password" class="form-control" id="currentPassword" required />
-            </div>
-            <div class="mb-3">
-              <label for="newPassword" class="form-label">Nova Senha</label>
-              <input type="password" class="form-control" id="newPassword" required />
-              <div class="form-text">
-                A senha deve conter pelo menos 8 caracteres, incluindo números
-                e letras maiúsculas e minúsculas.
-              </div>
-            </div>
-            <div class="mb-3">
-              <label for="confirmPassword" class="form-label">Confirmar Nova Senha</label>
-              <input type="password" class="form-control" id="confirmPassword" required />
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-              Cancelar
-            </button>
-            <button type="submit" class="btn btn-primary">
-              Alterar Senha
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    // Neutralizar o código legado do lastest.js que tenta aceder a
+    // modais/elementos que não existem nesta página (devicesModal, twoFAModal, etc.)
+    window.__profilePage = true;
+    </script>
+    <script src="../js/lastest.js"></script>
+    <script src="../js/lastest.min.js"></script>
 
-  <!-- Modal Gerenciar Dispositivos -->
-  <div class="modal fade" id="devicesModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Dispositivos Conectados</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div class="table-responsive">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Dispositivo</th>
-                  <th>Localização</th>
-                  <th>Última Atividade</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <i class="bi bi-laptop fs-4 me-2"></i>
-                    <span>Chrome - Windows 10</span>
-                  </td>
-                  <td>Lisboa, Portugal</td>
-                  <td>Hoje, 14:30</td>
-                  <td>
-                    <button class="btn btn-sm btn-outline-danger">
-                      Desconectar
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <i class="bi bi-phone fs-4 me-2"></i>
-                    <span>Safari - iPhone 13</span>
-                  </td>
-                  <td>Porto, Portugal</td>
-                  <td>Ontem, 18:45</td>
-                  <td>
-                    <button class="btn btn-sm btn-outline-danger">
-                      Desconectar
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-            Fechar
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
 
-  <!-- Modal Ativar 2FA -->
-  <div class="modal fade" id="twoFAModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Ativar Autenticação de Dois Fatores</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div class="text-center mb-4">
-            <img src="https://via.placeholder.com/200x200?text=QR+Code" alt="QR Code" class="img-fluid mb-3" />
-            <p>Escaneie este QR code com seu aplicativo de autenticação</p>
-          </div>
-          <div class="mb-3">
-            <label for="verificationCode" class="form-label">Código de Verificação</label>
-            <input type="text" class="form-control" id="verificationCode" placeholder="Digite o código de 6 dígitos" />
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-            Cancelar
-          </button>
-          <button type="button" class="btn btn-primary">
-            Verificar e Ativar
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
+        // ── Toggle visibilidade de senha ──
+        window.togglePw = function(inputId, iconId) {
+            const inp = document.getElementById(inputId);
+            const ico = document.getElementById(iconId);
+            if (!inp || !ico) return;
+            inp.type = inp.type === 'password' ? 'text' : 'password';
+            ico.className = inp.type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+            inp.focus();
+        };
 
-  <!-- Footer -->
-  <footer>
-    <div class="container">
-      <div class="row">
-        <div class="col-12 text-center">
-          <p class="mb-2">© 2026 Wasom Upfy. Todos os direitos reservados.</p>
-          <a href="#" class="me-2">Termos de Uso</a>
-          <a href="#" class="me-2">Privacidade</a>
-          <a href="#">Suporte</a>
-        </div>
-      </div>
-    </div>
-  </footer>
+        // ── Validação e força da senha ──
+        const newPwInp = document.getElementById('new_password');
+        const confPwInp = document.getElementById('confirm_password');
+        const strengthFl = document.getElementById('pw-strength-fill');
+        const strengthLb = document.getElementById('pw-strength-label');
+        const matchErr = document.getElementById('pw-match-err');
 
-  <!-- Bottom Navigation -->
-  <!-- <nav class="bottom-nav">
-    <ul>
-        <li>
-            <a href="home" class="active">
-                <i class="bi bi-speedometer2"></i>
-                <span>Dashboard</span>
-            </a>
-        </li>
-        <li>
-            <a href="../music/approve">
-                <i class="bi bi-music-note-list"></i>
-                <span>Músicas</span>
-            </a>
-        </li>
-        <li>
-            <a href="../users/all-users">
-                <i class="bi bi-people"></i>
-                <span>Usuários</span>
-            </a>
-        </li>
-        <li>
-            <a href="../finances/earnings">
-                <i class="bi bi-currency-dollar"></i>
-                <span>Finanças</span>
-            </a>
-        </li>
-        <li>
-            <a href="../settings/config">
-                <i class="bi bi-sliders"></i>
-                <span>Config</span>
-            </a>
-        </li>
-    </ul>
-</nav> -->
+        const reqs = {
+            len: {
+                el: document.getElementById('req-len'),
+                fn: v => v.length >= 8
+            },
+            up: {
+                el: document.getElementById('req-up'),
+                fn: v => /[A-Z]/.test(v)
+            },
+            low: {
+                el: document.getElementById('req-low'),
+                fn: v => /[a-z]/.test(v)
+            },
+            num: {
+                el: document.getElementById('req-num'),
+                fn: v => /[0-9]/.test(v)
+            },
+            sym: {
+                el: document.getElementById('req-sym'),
+                fn: v => /[!@#$%^&*\-_+=?]/.test(v)
+            },
+            match: {
+                el: document.getElementById('req-match'),
+                fn: (v, c) => v.length > 0 && v === c
+            },
+        };
 
-  <div class="page-loader" id="pageLoader">
-    <div class="loader-content">
-      <!-- Sua imagem pulsante -->
-      <img src="../../../assets/img/brand/wasomupfy_brand.png" class="loader-image" alt="Carregando" />
-      <!-- Barra de progresso agora perfeitamente centralizada -->
-      <div class="loader-progress"></div>
-    </div>
-  </div>
+        const levels = [{
+                w: '0%',
+                c: '#e8e8f0',
+                l: 'Escreve a nova senha'
+            },
+            {
+                w: '20%',
+                c: '#ef4444',
+                l: 'Muito fraca'
+            },
+            {
+                w: '40%',
+                c: '#f97316',
+                l: 'Fraca'
+            },
+            {
+                w: '60%',
+                c: '#eab308',
+                l: 'Razoável'
+            },
+            {
+                w: '80%',
+                c: '#22c55e',
+                l: 'Forte'
+            },
+            {
+                w: '100%',
+                c: '#16a34a',
+                l: 'Muito forte'
+            },
+        ];
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="../../../js/lastest.js"></script>
-  <script>
-    // Adicionando funcionalidade aos botões de segurança
-    document.addEventListener("DOMContentLoaded", function () {
-      // Botão Gerenciar Dispositivos
-      document
-        .querySelector("#security .btn-outline-primary")
-        .addEventListener("click", function () {
-          var devicesModal = new bootstrap.Modal(
-            document.getElementById("devicesModal")
-          );
-          devicesModal.show();
+        function updateReqs() {
+            const v = newPwInp ? newPwInp.value : '';
+            const c = confPwInp ? confPwInp.value : '';
+            let met = 0;
+
+            Object.entries(reqs).forEach(([k, r]) => {
+                const ok = k === 'match' ? r.fn(v, c) : r.fn(v);
+                if (r.el) {
+                    r.el.className = ok ? 'text-success' : 'text-muted';
+                    r.el.querySelector('i').className = ok ? 'bi bi-check-circle-fill me-1' :
+                        'bi bi-circle me-1';
+                }
+                if (ok && k !== 'match') met++;
+            });
+
+            const lvl = levels[met];
+            if (strengthFl) {
+                strengthFl.style.width = lvl.w;
+                strengthFl.style.background = lvl.c;
+            }
+            if (strengthLb) {
+                strengthLb.textContent = lvl.l;
+                strengthLb.style.color = met === 0 ? '#aaa' : lvl.c;
+            }
+            if (matchErr) matchErr.style.display = (c.length > 0 && v !== c) ? 'block' : 'none';
+        }
+
+        if (newPwInp) newPwInp.addEventListener('input', updateReqs);
+        if (confPwInp) confPwInp.addEventListener('input', updateReqs);
+
+        // ── Submeter alterar senha ──
+        const btnPw = document.getElementById('btn-change-pw');
+        const formPw = document.getElementById('form-password');
+        const spinPw = document.getElementById('spin-pw');
+
+        if (btnPw && formPw) {
+            btnPw.addEventListener('click', function() {
+                const v = newPwInp ? newPwInp.value : '';
+                const c = confPwInp ? confPwInp.value : '';
+                const cur = document.getElementById('current_password');
+
+                if (!cur || !cur.value) {
+                    cur && cur.classList.add('is-invalid');
+                    return;
+                }
+                if (!reqs.len.fn(v) || !reqs.up.fn(v) || !reqs.low.fn(v) || !reqs.num.fn(v) || !reqs.sym
+                    .fn(v)) {
+                    newPwInp && newPwInp.classList.add('is-invalid');
+                    return;
+                }
+                if (v !== c) {
+                    confPwInp && confPwInp.classList.add('is-invalid');
+                    if (matchErr) {
+                        matchErr.style.display = 'block';
+                    }
+                    return;
+                }
+
+                if (spinPw) spinPw.classList.remove('d-none');
+                btnPw.disabled = true;
+                formPw.submit();
+            });
+        }
+
+        // ── Submeter perfil ──
+        const btnPrf = document.getElementById('btn-save-profile');
+        const formPrf = document.getElementById('form-profile');
+        const spinPrf = document.getElementById('spin-profile');
+
+        if (btnPrf && formPrf) {
+            btnPrf.addEventListener('click', function() {
+                if (spinPrf) spinPrf.classList.remove('d-none');
+                btnPrf.disabled = true;
+                formPrf.submit();
+            });
+        }
+
+        // ── Copiar chave de recuperação ──
+        window.copyRecoveryKey = function() {
+            const box = document.getElementById('recovery-key-box');
+            const txt = box ? box.childNodes[0].textContent.trim() : '';
+            const fb = document.getElementById('copy-feedback');
+
+            if (navigator.clipboard && txt) {
+                navigator.clipboard.writeText(txt).then(() => {
+                    if (fb) {
+                        fb.style.display = 'block';
+                        setTimeout(() => {
+                            fb.style.display = 'none';
+                        }, 3000);
+                    }
+                });
+            } else {
+                // Fallback
+                const ta = document.createElement('textarea');
+                ta.value = txt;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                if (fb) {
+                    fb.style.display = 'block';
+                    setTimeout(() => {
+                        fb.style.display = 'none';
+                    }, 3000);
+                }
+            }
+        };
+
+        // ── Upload de foto — drop zone + preview ──
+        const photoInput = document.getElementById('photo-input');
+        const dropZone = document.getElementById('photo-drop-zone');
+        const previewWrap = document.getElementById('photo-preview-wrap');
+        const fileNameEl = document.getElementById('photo-filename');
+        const btnUpload = document.getElementById('btn-upload-photo');
+        const spinPhoto = document.getElementById('spin-photo');
+        const formPhoto = document.getElementById('form-photo');
+
+        function handlePhotoFile(file) {
+            if (!file) return;
+
+            // Validar tipo e tamanho no cliente
+            const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+            if (!allowed.includes(file.type)) {
+                alert('Formato inválido. Usa JPG, PNG ou WebP.');
+                return;
+            }
+            if (file.size > 2 * 1024 * 1024) {
+                alert('Ficheiro demasiado grande. Máximo 2MB.');
+                return;
+            }
+
+            // Preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewWrap.innerHTML =
+                    `<img src="${e.target.result}" alt="" style="width:100%;height:100%;object-fit:cover" />`;
+            };
+            reader.readAsDataURL(file);
+
+            // Mostrar nome do ficheiro
+            if (fileNameEl) {
+                fileNameEl.textContent = '✓ ' + file.name;
+                fileNameEl.style.display = 'block';
+            }
+
+            // Activar botão
+            if (btnUpload) btnUpload.disabled = false;
+        }
+
+        if (photoInput) {
+            photoInput.addEventListener('change', function() {
+                handlePhotoFile(this.files[0]);
+            });
+        }
+
+        // Drag & Drop
+        if (dropZone) {
+            dropZone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.style.background = 'rgba(255,0,137,.08)';
+                this.style.borderColor = '#FF0089';
+            });
+            dropZone.addEventListener('dragleave', function() {
+                this.style.background = 'rgba(255,0,137,.03)';
+                this.style.borderColor = 'rgba(255,0,137,.3)';
+            });
+            dropZone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.style.background = 'rgba(255,0,137,.03)';
+                this.style.borderColor = 'rgba(255,0,137,.3)';
+                const file = e.dataTransfer.files[0];
+                if (file && photoInput) {
+                    // Transferir para o input real
+                    const dt = new DataTransfer();
+                    dt.items.add(file);
+                    photoInput.files = dt.files;
+                    handlePhotoFile(file);
+                }
+            });
+        }
+
+        // Submit do form de foto com loading
+        if (formPhoto && btnUpload) {
+            btnUpload.addEventListener('click', function() {
+                if (spinPhoto) spinPhoto.classList.remove('d-none');
+                btnUpload.disabled = true;
+                formPhoto.submit();
+            });
+        }
+
+        // ── Links rápidos da coluna lateral → activar tab correcto ──
+        document.querySelectorAll('.tab-link[data-tab]').forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const tabEl = document.querySelector('a[href="#' + this.dataset.tab + '"]');
+                if (tabEl) bootstrap.Tab.getOrCreateInstance(tabEl).show();
+                // Scroll suave para o conteúdo
+                const pane = document.getElementById(this.dataset.tab);
+                if (pane) setTimeout(() => pane.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                }), 150);
+            });
         });
 
-      // Botão Ativar 2FA
-      document
-        .querySelectorAll("#security .btn-outline-primary")[1]
-        .addEventListener("click", function () {
-          var twoFAModal = new bootstrap.Modal(
-            document.getElementById("twoFAModal")
-          );
-          twoFAModal.show();
-        });
-
-      // Validação do formulário de alteração de senha
-      document
-        .querySelector("#changePasswordModal form")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
-          const newPassword = document.getElementById("newPassword").value;
-          const confirmPassword =
-            document.getElementById("confirmPassword").value;
-
-          if (newPassword !== confirmPassword) {
-            alert("As senhas não coincidem!");
-            return;
-          }
-
-          if (newPassword.length < 8) {
-            alert("A senha deve ter pelo menos 8 caracteres!");
-            return;
-          }
-
-          alert("Senha alterada com sucesso!");
-          var modal = bootstrap.Modal.getInstance(
-            document.getElementById("changePasswordModal")
-          );
-          modal.hide();
-        });
+        // ── Restaurar tab activa via URL param ──
+        const urlParams = new URLSearchParams(window.location.search);
+        const tab = urlParams.get('tab');
+        if (tab) {
+            const tabEl = document.querySelector(`a[href="#${tab}"]`);
+            if (tabEl) {
+                bootstrap.Tab.getOrCreateInstance(tabEl).show();
+            }
+        }
     });
-  </script>
+    </script>
 </body>
 
 </html>
