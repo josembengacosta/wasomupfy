@@ -760,3 +760,12 @@ if (!function_exists('wuAlert')) {
 | 4 — Modal logout HTML | Antes do `</body>` |
 | 5 — `renderDashboardAlerts` + `wuAlert` | Dentro do `.container`, antes do conteúdo |
 | 5 — Polling badge | Antes do `</body>`, depois dos scripts |
+
+
+
+
+
+
+Muito bom; entao vamos para a pagina add novo admin, o tal super importante, vais alterar a area de Cargo*,  é importante ter o checkbox para avisar para a pessoa que esta sendo addcionado, a mensagem cai no email add, vai junto com a senha, email, usuario, e outras informacaoes importante, e vamos ja preparar um caminho para quando clicar no botao (so pode ser botao, porque assim vai fazer com que quem esta sendo convidado nao saiba do caminho que o botao mostra, afim que possa copiar e colar este link), o caminho deve ser algo do tipo primeiro levaria com ele um token unico, que depois de clicar la deve levar para uma pagina que estara mesmo dentro de auth/ que vai se responsabilizar na verificacao deste token, vamos pedir, que insira o emial ou usuario e senha gerado, depois disso vamos lhe pedir para sei la colocar um codigo ou referencia, depois disso ai podemos dizer para alterar a senha para o novo, depois disso ai podemos lhe levar para o login, afim que possa colocar as suas crendeciias e logar numa boa, pela proxima vez, se tentar clicar de novo para este mesmo link que foi enviado para o email deve recusar, sem necessidade de mostrar a informacao de motivo disso, acredito que se alguem pegar o telefone de um dos nossos funcionarios e clicar no botao e procurar saber para que serve o botao e ate onde leva, isso seria uma brecha ao sistema, entao depois de verificar que tal lhe mostrar aquele falha de resposta de navegador, aquele falha de nao responder... voce sabe como isso é... Mais essas paginas nao cria agora, focate ainda no add.php e no emial e os dados e caminhos ja escrito, porque depois dissso iremos de atacar as paginas ncessario para isso.
+
+Lembra-te de que o admin quem escolhe se vai activar ja a pessoa que esta add, ... voce ja sabe daquilo que eu gosto... Mbora ao trabalho Claude.

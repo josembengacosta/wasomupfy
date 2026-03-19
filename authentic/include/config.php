@@ -52,3 +52,13 @@ define('MAX_FILE_SIZE', 10 * 1024 * 1024); // 10MB
 // ─── Caminhos ─────────────────────────────────
 define('AUTHENTIC_URL', APP_URL . '/authentic');
 define('DASHBOARD_URL', APP_URL . '/dashboard');
+
+// ─── Painel Admin ────────────────────────────
+// ADMIN_PATH — caminho da pasta do painel.
+// DEVE coincidir com:
+//   1. O nome real da pasta no servidor (admin/)
+//   2. O valor em _admin_config WHERE config_key='admin_path'
+//   3. As rotas no .htaccess raiz (^ADMIN_PATH/...)
+// Para rodar o caminho: alterar aqui + renomear pasta + executar
+// o gerador de .htaccess em admin/pages/settings/security.php
+define('ADMIN_PATH', 'wu-panel-2026'); // Exemplo: 'admin' ou 'admin-panel' ou 'wu-panel-2026'

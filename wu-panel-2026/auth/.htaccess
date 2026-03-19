@@ -1,0 +1,18 @@
+# ══════════════════════════════════════════════
+# WASOM UPFY v2.0 — .htaccess da pasta admin/auth
+# Localização: /wasomupfy/wu-panel-2026/auth/.htaccess
+# ══════════════════════════════════════════════
+
+Options -Indexes
+
+RewriteEngine On
+
+# Bloquear acesso directo à pasta include
+RewriteRule ^include/ - [F,L]
+
+# Bloquear _process.php via GET
+RewriteCond %{REQUEST_METHOD} !POST
+RewriteRule _process\.php$ ../login [R=302,L]
+
+# ─── Redirecionar admin já autenticado ─────────
+# (a verificação real é feita no PHP)

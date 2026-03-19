@@ -255,93 +255,101 @@ RewriteRule ^dashboard/error/503/?$                             dashboard/page/e
 RewriteRule ^dashboard/maintenance/?$                           dashboard/page/error/maintenance.php [L]
 
 # ##WASOM_ADMIN_START## — NÃO remover esta linha
-# Secção do painel admin — gerada automaticamente
-# Última actualização: 2026-03-18 22:05:39 | Caminho: wu-panel-2026
+# ══════════════════════════════════════════════
+# WASOM UPFY v2.0 — Rotas do Painel Admin
+# Ficheiro: adicionar ao .htaccess principal
+# ══════════════════════════════════════════════
 
-# ── Auth ──
-RewriteRule ^wu-panel-2026/login/?$                         wu-panel-2026/auth/login.php [L]
-RewriteRule ^wu-panel-2026/login-process/?$                 wu-panel-2026/auth/login-process.php [L]
-RewriteRule ^wu-panel-2026/logout/?$                        wu-panel-2026/auth/logout.php [L]
-RewriteRule ^wu-panel-2026/forgot-password/?$               wu-panel-2026/auth/forgot-password.php [L]
-RewriteRule ^wu-panel-2026/forgot-password-process/?$       wu-panel-2026/auth/forgot-password-process.php [L]
-RewriteRule ^wu-panel-2026/reset-password/?$                wu-panel-2026/auth/reset-password.php [L,QSA]
-RewriteRule ^wu-panel-2026/reset-password-process/?$        wu-panel-2026/auth/reset-password-process.php [L,QSA]
-RewriteRule ^wu-panel-2026/confirm-code/?$                  wu-panel-2026/auth/confirm-email-code.php [L,QSA]
-RewriteRule ^wu-panel-2026/lockscreen/?$                    wu-panel-2026/auth/lockscreen.php [L]
-RewriteRule ^wu-panel-2026/lockscreen-process/?$            wu-panel-2026/auth/lockscreen-process.php [L]
-RewriteRule ^wu-panel-2026/invite/accept/?$                 wu-panel-2026/auth/invite-accept.php [L,QSA]
+# ── AUTH ──────────────────────────────────────
+RewriteRule ^wu-panel/login/?$                         wu-panel/auth/login.php [L]
+RewriteRule ^wu-panel/login-process/?$                 wu-panel/auth/login-process.php [L]
+RewriteRule ^wu-panel/logout/?$                        wu-panel/auth/logout.php [L]
+RewriteRule ^wu-panel/forgot-password/?$               wu-panel/auth/forgot-password.php [L]
+RewriteRule ^wu-panel/forgot-password-process/?$       wu-panel/auth/forgot-password-process.php [L]
+RewriteRule ^wu-panel/reset-password/?$                wu-panel/auth/reset-password.php [L,QSA]
+RewriteRule ^wu-panel/reset-password-process/?$        wu-panel/auth/reset-password-process.php [L,QSA]
+RewriteRule ^wu-panel/confirm-code/?$                  wu-panel/auth/confirm-email-code.php [L,QSA]
+RewriteRule ^wu-panel/lockscreen/?$                    wu-panel/auth/lockscreen.php [L]
+RewriteRule ^wu-panel/lockscreen-process/?$            wu-panel/auth/lockscreen-process.php [L]
+RewriteRule ^wu-panel/invite/accept/?$                 wu-panel/auth/invite-accept.php [L,QSA]
 
-# ── Home ──
-RewriteRule ^wu-panel-2026/?$                               wu-panel-2026/home.php [L]
+# ── HOME ──────────────────────────────────────
+RewriteRule ^wu-panel/?$                               wu-panel/home.php [L]
 
-# ── Perfil ──
-RewriteRule ^wu-panel-2026/profile/?$                       wu-panel-2026/pages/user/profile.php [L]
-RewriteRule ^wu-panel-2026/profile-process/?$               wu-panel-2026/pages/user/profile-process.php [L]
+# ── PERFIL ────────────────────────────────────
+RewriteRule ^wu-panel/profile/?$                       wu-panel/pages/user/profile.php [L]
+RewriteRule ^wu-panel/profile-process/?$               wu-panel/pages/user/profile-process.php [L]
 
-# ── Analytics ──
-RewriteRule ^wu-panel-2026/analytics/?$                     wu-panel-2026/pages/analytics/home.php [L]
-RewriteRule ^wu-panel-2026/analytics/artists/?$             wu-panel-2026/pages/analytics/artists.php [L]
-RewriteRule ^wu-panel-2026/analytics/stores/?$              wu-panel-2026/pages/analytics/stores.php [L]
-RewriteRule ^wu-panel-2026/analytics/online-users/?$        wu-panel-2026/pages/analytics/online-users.php [L]
-RewriteRule ^wu-panel-2026/analytics/reports/?$             wu-panel-2026/pages/analytics/reports.php [L]
-RewriteRule ^wu-panel-2026/analytics/visitors/?$            wu-panel-2026/pages/analytics/visites.php [L]
+# ── ANALYTICS ─────────────────────────────────
+RewriteRule ^wu-panel/analytics/?$                     wu-panel/pages/analytics/home.php [L]
+RewriteRule ^wu-panel/analytics/artists/?$             wu-panel/pages/analytics/artists.php [L]
+RewriteRule ^wu-panel/analytics/stores/?$              wu-panel/pages/analytics/stores.php [L]
+RewriteRule ^wu-panel/analytics/online-users/?$        wu-panel/pages/analytics/online-users.php [L]
+RewriteRule ^wu-panel/analytics/reports/?$             wu-panel/pages/analytics/reports.php [L]
+RewriteRule ^wu-panel/analytics/visitors/?$            wu-panel/pages/analytics/visites.php [L]
 
-# ── Funcionários ──
-RewriteRule ^wu-panel-2026/employees/?$                     wu-panel-2026/pages/employees/all-employees.php [L]
-RewriteRule ^wu-panel-2026/employees/add/?$                 wu-panel-2026/pages/employees/add.php [L]
-RewriteRule ^wu-panel-2026/employees/add-process/?$         wu-panel-2026/pages/employees/add-process.php [L]
-RewriteRule ^wu-panel-2026/employees/edit/?$                wu-panel-2026/pages/employees/edit.php [L,QSA]
-RewriteRule ^wu-panel-2026/employees/edit-process/?$        wu-panel-2026/pages/employees/edit-process.php [L,QSA]
-RewriteRule ^wu-panel-2026/employees/delete/?$              wu-panel-2026/pages/employees/delete.php [L,QSA]
-RewriteRule ^wu-panel-2026/employees/view/?$                wu-panel-2026/pages/employees/view.php [L,QSA]
+# ── FUNCIONÁRIOS ──────────────────────────────
+RewriteRule ^wu-panel/employees/?$                     wu-panel/pages/employees/all-employees.php [L]
+RewriteRule ^wu-panel/employees/add/?$                 wu-panel/pages/employees/add.php [L]
+RewriteRule ^wu-panel/employees/add-process/?$         wu-panel/pages/employees/add-process.php [L]
+RewriteRule ^wu-panel/employees/edit/?$                wu-panel/pages/employees/edit.php [L,QSA]
+RewriteRule ^wu-panel/employees/delete/?$              wu-panel/pages/employees/delete.php [L,QSA]
 
-# ── Utilizadores ──
-RewriteRule ^wu-panel-2026/users/?$                         wu-panel-2026/pages/users/all-users.php [L]
-RewriteRule ^wu-panel-2026/users/add/?$                     wu-panel-2026/pages/users/add.php [L]
-RewriteRule ^wu-panel-2026/users/edit/?$                    wu-panel-2026/pages/users/edit.php [L,QSA]
-RewriteRule ^wu-panel-2026/users/delete/?$                  wu-panel-2026/pages/users/delete.php [L,QSA]
-RewriteRule ^wu-panel-2026/users/available-account/?$       wu-panel-2026/pages/users/available-account.php [L]
-RewriteRule ^wu-panel-2026/users/unavailable-account/?$     wu-panel-2026/pages/users/unavailable-account.php [L]
+# ── UTILIZADORES ──────────────────────────────
+RewriteRule ^wu-panel/users/?$                         wu-panel/pages/users/all-users.php [L]
+RewriteRule ^wu-panel/users/add/?$                     wu-panel/pages/users/add.php [L]
+RewriteRule ^wu-panel/users/edit/?$                    wu-panel/pages/users/edit.php [L,QSA]
+RewriteRule ^wu-panel/users/delete/?$                  wu-panel/pages/users/delete.php [L,QSA]
+RewriteRule ^wu-panel/users/available-account/?$       wu-panel/pages/users/available-account.php [L]
+RewriteRule ^wu-panel/users/unavailable-account/?$     wu-panel/pages/users/unavailable-account.php [L]
 
-# ── Artistas ──
-RewriteRule ^wu-panel-2026/accounts-users/?$                wu-panel-2026/pages/artist/accounts-users.php [L]
-RewriteRule ^wu-panel-2026/collaborators/?$                 wu-panel-2026/pages/artist/collaborators-artist.php [L]
+# ── ARTISTAS E COLABORADORES ──────────────────
+RewriteRule ^wu-panel/accounts-users/?$                wu-panel/pages/artist/accounts-users.php [L]
+RewriteRule ^wu-panel/collaborators/?$                 wu-panel/pages/artist/collaborators-artist.php [L]
 
-# ── Músicas ──
-RewriteRule ^wu-panel-2026/music/revise/?$                  wu-panel-2026/pages/distribution/releases.php?filter=pending [L,QSA]
-RewriteRule ^wu-panel-2026/music/approve/?$                 wu-panel-2026/pages/distribution/releases.php?filter=pending [L,QSA]
-RewriteRule ^wu-panel-2026/music/reject/?$                  wu-panel-2026/pages/distribution/releases.php?filter=rejected [L,QSA]
+# ── MÚSICAS (páginas a criar) ─────────────────
+# Nota: music/revise, approve, reject não existem ainda.
+# Por agora apontam para releases.php com parâmetro filter.
+# Quando criares as páginas basta mudar o destino.
+RewriteRule ^wu-panel/music/revise/?$                  wu-panel/pages/distribution/releases.php?filter=pending [L,QSA]
+RewriteRule ^wu-panel/music/approve/?$                 wu-panel/pages/distribution/releases.php?filter=pending [L,QSA]
+RewriteRule ^wu-panel/music/reject/?$                  wu-panel/pages/distribution/releases.php?filter=rejected [L,QSA]
 
-# ── Distribuição ──
-RewriteRule ^wu-panel-2026/releases/?$                      wu-panel-2026/pages/distribution/releases.php [L]
-RewriteRule ^wu-panel-2026/monetization/?$                  wu-panel-2026/pages/distribution/monetization.php [L]
+# ── DISTRIBUIÇÃO / LANÇAMENTOS ────────────────
+RewriteRule ^wu-panel/releases/?$                      wu-panel/pages/distribution/releases.php [L]
+RewriteRule ^wu-panel/monetization/?$                  wu-panel/pages/distribution/monetization.php [L]
+# Nota: distribution/stores e distribution/schedule não existem ainda.
+# RewriteRule ^wu-panel/distribution/stores/?$         wu-panel/pages/distribution/stores.php [L]
+# RewriteRule ^wu-panel/distribution/schedule/?$       wu-panel/pages/distribution/schedule.php [L]
 
-# ── Manager ──
-RewriteRule ^wu-panel-2026/manager/gestion/?$               wu-panel-2026/pages/manager/gestion.php [L]
-RewriteRule ^wu-panel-2026/manager/activity/?$              wu-panel-2026/pages/manager/activity.php [L]
-RewriteRule ^wu-panel-2026/manager/timeline/?$              wu-panel-2026/pages/manager/timeline.php [L]
-RewriteRule ^wu-panel-2026/manager/top-music/?$             wu-panel-2026/pages/manager/top-music.php [L]
+# ── MANAGER (super_admin + admin) ─────────────
+RewriteRule ^wu-panel/manager/gestion/?$               wu-panel/pages/manager/gestion.php [L]
+RewriteRule ^wu-panel/manager/activity/?$              wu-panel/pages/manager/activity.php [L]
+RewriteRule ^wu-panel/manager/timeline/?$              wu-panel/pages/manager/timeline.php [L]
+RewriteRule ^wu-panel/manager/top-music/?$             wu-panel/pages/manager/top-music.php [L]
 
-# ── Finanças ──
-RewriteRule ^wu-panel-2026/finances/?$                      wu-panel-2026/pages/finances/earnings.php [L]
-RewriteRule ^wu-panel-2026/finances/payments/?$             wu-panel-2026/pages/finances/payments.php [L]
+# ── FINANÇAS ──────────────────────────────────
+RewriteRule ^wu-panel/finances/?$                      wu-panel/pages/finances/earnings.php [L]
+RewriteRule ^wu-panel/finances/payments/?$             wu-panel/pages/finances/payments.php [L]
 
-# ── Integração ──
-RewriteRule ^wu-panel-2026/integration/verify/?$            wu-panel-2026/pages/integration/verify.php [L]
-RewriteRule ^wu-panel-2026/integration/verify-channel/?$    wu-panel-2026/pages/integration/verify-channel.php [L]
+# ── INTEGRAÇÃO / YOUTUBE ──────────────────────
+RewriteRule ^wu-panel/integration/verify/?$            wu-panel/pages/integration/verify.php [L]
+RewriteRule ^wu-panel/integration/verify-channel/?$    wu-panel/pages/integration/verify-channel.php [L]
 
-# ── Mensagens ──
-RewriteRule ^wu-panel-2026/messages/inbox/?$                wu-panel-2026/pages/messages/inbox.php [L]
-RewriteRule ^wu-panel-2026/messages/compose/?$              wu-panel-2026/pages/messages/compose.php [L]
+# ── MENSAGENS / SUPORTE ───────────────────────
+RewriteRule ^wu-panel/messages/inbox/?$                wu-panel/pages/messages/inbox.php [L]
+RewriteRule ^wu-panel/messages/compose/?$              wu-panel/pages/messages/compose.php [L]
 
-# ── Ajuda ──
-RewriteRule ^wu-panel-2026/help/contact/?$                  wu-panel-2026/pages/help/contact.php [L]
+# ── AJUDA ─────────────────────────────────────
+RewriteRule ^wu-panel/help/contact/?$                  wu-panel/pages/help/contact.php [L]
+# Nota: help/faqs e help/tutorials não existem ainda.
+# RewriteRule ^wu-panel/help/faqs/?$                   wu-panel/pages/help/faqs.php [L]
+# RewriteRule ^wu-panel/help/tutorials/?$              wu-panel/pages/help/tutorials.php [L]
 
-# ── Configurações + Segurança ──
-RewriteRule ^wu-panel-2026/settings/?$                      wu-panel-2026/pages/settings/config.php [L]
-RewriteRule ^wu-panel-2026/settings/security/?$             wu-panel-2026/pages/settings/security.php [L]
-RewriteRule ^wu-panel-2026/settings/security-process/?$     wu-panel-2026/pages/settings/security-process.php [L]
-RewriteRule ^wu-panel-2026/audit/?$                         wu-panel-2026/pages/manager/audit.php [L,QSA]
+# ── CONFIGURAÇÕES (a criar) ───────────────────
+RewriteRule ^wu-panel/settings/?$                      wu-panel/pages/settings/security.php [L]
+RewriteRule ^wu-panel/settings/security/?$             wu-panel/pages/settings/security.php [L]
+RewriteRule ^wu-panel/settings/security-process/?$     wu-panel/pages/settings/security-process.php [L]
 
 # ##WASOM_ADMIN_END## — NÃO remover esta linha
 
