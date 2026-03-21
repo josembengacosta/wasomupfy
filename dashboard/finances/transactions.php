@@ -4,25 +4,105 @@
 // Arquivo: dashboard/finances/transactions.php
 // ══════════════════════════════════════════════════════
 require_once __DIR__ . '/../../authentic/include/functions.php';
+require_once __DIR__ . '/../include/platform.php';
 startSecureSession();
 checkRememberMe();
 requireLogin();
+$platform = checkDashboardStatus();
+$user     = checkUserAccess((int)$_SESSION['id_users']);
 
-$db       = getDB();
-$id_users = (int)$_SESSION['id_users'];
-$user     = getUserById($id_users);
-if (!$user) {
-    redirect('authentic/logout');
-}
+$id_users       = (int)$user['id_users'];
+$first_name     = htmlspecialchars($user['first_name']);
+$user_name      = htmlspecialchars($user['user_name'] ?? '');
+$email_verified = (bool)$user['email_verified'];
+$plan_selected  = $user['plan_selected'];
+$onboard_done   = (bool)($user['onboarding_done'] ?? false);
+$user_photo     = $user['photo_user'] ?? null;
+$name_artist_band = htmlspecialchars($user['name_artist_band'] ?? 'Cria Perfil Artístico');
+$notif_count    = getUnreadNotifCount($id_users);
+$db             = getDB();
 
-// ── Plano ──────────────────────────────────────
-$plan = null;
-if ($user['plan_selected']) {
-    $ps = $db->prepare("SELECT * FROM _plans WHERE id_plan = ?");
-    $ps->execute([$user['plan_selected']]);
+// ── Saldo ─────────────────────────────────────
+$w = $db->prepare('SELECT balance_aoa FROM _wallet WHERE id_users = ?');
+$w->execute([$id_users]);
+$balance = $w->fetch() ?: ['balance_aoa' => 0];
+
+// ── Plano ─────────────────────────────────────
+$plan_id     = (int)$user['plan_selected'];
+$plan        = null;
+$max_artists = 1;
+if ($plan_id) {
+    $ps = $db->prepare('SELECT * FROM _plans WHERE id_plan = ?');
+    $ps->execute([$plan_id]);
     $plan = $ps->fetch();
+    if ($plan) $max_artists = (int)($plan['max_artists'] ?? 1);
 }
 $plan_name = $plan ? htmlspecialchars($plan['name_plan']) : 'Sem plano';
+
+// ── Plano ─────────────────────────────────────
+$plan      = null;
+$plan_paid = ($user['status_user'] === 'active' && !empty($user['plan_activated_at']));
+if ($plan_selected) {
+    $ps = $db->prepare('SELECT * FROM _plans WHERE id_plan = ?');
+    $ps->execute([$plan_selected]);
+    $plan = $ps->fetch();
+}
+
+// Adicionar verificação de expiração do plano
+$plan_expired = false;
+if ($plan_paid && !empty($user['plan_expires_at'])) {
+    $plan_expired = strtotime($user['plan_expires_at']) < time();
+}
+
+// ── Artistas ──────────────────────────────────
+$as = $db->prepare('SELECT COUNT(*) AS total FROM _artist WHERE id_users = ?');
+$as->execute([$id_users]);
+$has_artist = (int)($as->fetch()['total'] ?? 0) > 0;
+
+// ── Conta bancária ────────────────────────────
+$ba = $db->prepare("SELECT id_account FROM _account WHERE id_users = ? AND status_account = 'verified' LIMIT 1");
+$ba->execute([$id_users]);
+$bank_account = $ba->fetch();
+
+// ── Conta rejeitada ───────────────────────────
+$rejected_account = null;
+if ($plan_paid) {
+    $rj = $db->prepare("SELECT type_account, reject_reason FROM _account WHERE id_users = ? AND status_account = 'rejected' LIMIT 1");
+    $rj->execute([$id_users]);
+    $rejected_account = $rj->fetch();
+}
+
+// ── Sessão info (modal logout) ────────────────
+$ls = $db->prepare('SELECT last_login_at, last_login_ip FROM _users_security WHERE id_users = ?');
+$ls->execute([$id_users]);
+$sec = $ls->fetch();
+
+$sess_stmt = $db->prepare("
+    SELECT ip_address, user_agent, country, city, creat_session, last_activity
+    FROM _users_sessions WHERE id_users = ? AND is_active = 1
+    ORDER BY last_activity DESC LIMIT 1
+");
+$sess_stmt->execute([$id_users]);
+$current_session  = $sess_stmt->fetch();
+$session_duration_str = '—';
+if ($current_session && $current_session['creat_session']) {
+    $secs = time() - strtotime($current_session['creat_session']);
+    if ($secs < 60)     $session_duration_str = $secs . 's';
+    elseif ($secs < 3600)  $session_duration_str = floor($secs / 60) . 'min';
+    elseif ($secs < 86400) $session_duration_str = floor($secs / 3600) . 'h ' . floor(($secs % 3600) / 60) . 'min';
+    else                   $session_duration_str = floor($secs / 86400) . 'd ' . floor(($secs % 86400) / 3600) . 'h';
+}
+$member_since   = $user['creat_user'] ? date('d/m/Y', strtotime($user['creat_user'])) : '—';
+$last_login_str = ($sec && $sec['last_login_at']) ? date('d/m/Y H:i', strtotime($sec['last_login_at'])) : '—';
+$ua_raw   = $current_session['user_agent'] ?? '';
+$browser  = 'Desconhecido';
+if (str_contains($ua_raw, 'Edg'))     $browser = 'Microsoft Edge';
+elseif (str_contains($ua_raw, 'Chrome'))  $browser = 'Google Chrome';
+elseif (str_contains($ua_raw, 'Firefox')) $browser = 'Mozilla Firefox';
+elseif (str_contains($ua_raw, 'Safari'))  $browser = 'Safari';
+elseif (str_contains($ua_raw, 'Opera'))   $browser = 'Opera';
+$sess_location = trim(($current_session['city'] ?? '') . ', ' . ($current_session['country'] ?? ''), ', ') ?: 'Desconhecida';
+$sess_ip       = $current_session['ip_address'] ?? ($sec['last_login_ip'] ?? '—');
 
 // ── Artistas do utilizador ─────────────────────
 $artists_q = $db->prepare("
@@ -90,323 +170,362 @@ $role_colors = [
 ];
 ?>
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-ao">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="robots" content="noindex, nofollow" />
-    <meta name="theme-color" content="#FF0089" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <link rel="apple-touch-icon" href="../../assets/img/icones/wasomupfy_fiv_512.png" />
-    <link rel="manifest" href="../manifest.json" />
+    <?php require_once __DIR__ . '/../include/head.php'; ?>
     <title>Divisão de Royalties — <?php echo APP_NAME; ?></title>
-    <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
-    <link rel="stylesheet" href="../../css/dashboard-style.css" />
-    <link rel="stylesheet" href="../../css/lastest-style.css" />
     <style>
-        .split-artist-card {
-            background: var(--card-bg, #fff);
-            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
-            border-radius: 20px;
-            overflow: hidden;
-            margin-bottom: 24px;
-            transition: box-shadow .2s;
-        }
+    .split-artist-card {
+        background: var(--card-bg, #fff);
+        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
+        border-radius: 20px;
+        overflow: hidden;
+        margin-bottom: 24px;
+        transition: box-shadow .2s;
+    }
 
-        .split-artist-card:hover {
-            box-shadow: 0 6px 32px rgba(255, 0, 137, .08);
-        }
+    .split-artist-card:hover {
+        box-shadow: 0 6px 32px rgba(255, 0, 137, .08);
+    }
 
-        .artist-header {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 20px 24px;
-            border-bottom: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
-            background: linear-gradient(135deg, rgba(255, 0, 137, .03), transparent);
-        }
+    .artist-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 20px 24px;
+        border-bottom: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
+        background: linear-gradient(135deg, rgba(255, 0, 137, .03), transparent);
+    }
 
-        .artist-avatar {
-            width: 52px;
-            height: 52px;
-            border-radius: 14px;
-            object-fit: cover;
-            flex-shrink: 0;
-            background: rgba(255, 0, 137, .08);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            overflow: hidden;
-        }
+    .artist-avatar {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        object-fit: cover;
+        flex-shrink: 0;
+        background: rgba(255, 0, 137, .08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        overflow: hidden;
+    }
 
-        .artist-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+    .artist-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 
-        .royalty-bar-wrap {
-            padding: 16px 24px;
-        }
+    .royalty-bar-wrap {
+        padding: 16px 24px;
+    }
 
-        .royalty-bar-label {
-            display: flex;
-            justify-content: space-between;
-            font-size: .75rem;
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
+    .royalty-bar-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: .75rem;
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
 
-        .royalty-bar {
-            height: 8px;
-            border-radius: 10px;
-            background: var(--border-color, rgba(0, 0, 0, .07));
-            overflow: hidden;
-        }
+    .royalty-bar {
+        height: 8px;
+        border-radius: 10px;
+        background: var(--border-color, rgba(0, 0, 0, .07));
+        overflow: hidden;
+    }
 
-        .royalty-bar-fill {
-            height: 100%;
-            border-radius: 10px;
-            background: linear-gradient(90deg, #FF0089, #FF4D4D);
-            transition: width .5s ease;
-        }
+    .royalty-bar-fill {
+        height: 100%;
+        border-radius: 10px;
+        background: linear-gradient(90deg, #FF0089, #FF4D4D);
+        transition: width .5s ease;
+    }
 
-        .royalty-bar-fill.over {
-            background: linear-gradient(90deg, #dc3545, #ff6b6b);
-        }
+    .royalty-bar-fill.over {
+        background: linear-gradient(90deg, #dc3545, #ff6b6b);
+    }
 
-        .beneficiary-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: .84rem;
-        }
+    .beneficiary-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: .84rem;
+    }
 
-        .beneficiary-table th {
-            font-size: .68rem;
-            font-weight: 700;
-            color: var(--text-muted, #6c757d);
-            text-transform: uppercase;
-            letter-spacing: .5px;
-            padding: 8px 24px;
-            border-bottom: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
-            white-space: nowrap;
-        }
+    .beneficiary-table th {
+        font-size: .68rem;
+        font-weight: 700;
+        color: var(--text-muted, #6c757d);
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        padding: 8px 24px;
+        border-bottom: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
+        white-space: nowrap;
+    }
 
-        .beneficiary-table td {
-            padding: 12px 24px;
-            border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .05));
-            vertical-align: middle;
-        }
+    .beneficiary-table td {
+        padding: 12px 24px;
+        border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .05));
+        vertical-align: middle;
+    }
 
-        .beneficiary-table tr:last-child td {
-            border-bottom: none;
-        }
+    .beneficiary-table tr:last-child td {
+        border-bottom: none;
+    }
 
-        .beneficiary-table tr:hover td {
-            background: rgba(255, 0, 137, .02);
-        }
+    .beneficiary-table tr:hover td {
+        background: rgba(255, 0, 137, .02);
+    }
 
-        .role-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: .67rem;
-            font-weight: 700;
-        }
+    .role-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: .67rem;
+        font-weight: 700;
+    }
 
-        .pct-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: rgba(255, 0, 137, .08);
-            font-size: .85rem;
-            font-weight: 800;
-            color: #FF0089;
-            border: 2px solid rgba(255, 0, 137, .15);
-        }
+    .pct-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: rgba(255, 0, 137, .08);
+        font-size: .85rem;
+        font-weight: 800;
+        color: #FF0089;
+        border: 2px solid rgba(255, 0, 137, .15);
+    }
 
-        .btn-split-del {
-            background: none;
-            border: none;
-            color: #dc3545;
-            font-size: .85rem;
-            cursor: pointer;
-            padding: 4px 8px;
-            border-radius: 8px;
-            transition: background .15s;
-        }
+    .btn-split-del {
+        background: none;
+        border: none;
+        color: #dc3545;
+        font-size: .85rem;
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: 8px;
+        transition: background .15s;
+    }
 
-        .btn-split-del:hover {
-            background: rgba(220, 53, 69, .08);
-        }
+    .btn-split-del:hover {
+        background: rgba(220, 53, 69, .08);
+    }
 
-        .empty-splits {
-            text-align: center;
-            padding: 32px 24px;
-            color: var(--text-muted, #6c757d);
-        }
+    .empty-splits {
+        text-align: center;
+        padding: 32px 24px;
+        color: var(--text-muted, #6c757d);
+    }
 
-        .empty-splits .icon {
-            font-size: 2.5rem;
-            opacity: .18;
-            margin-bottom: 8px;
-        }
+    .empty-splits .icon {
+        font-size: 2.5rem;
+        opacity: .18;
+        margin-bottom: 8px;
+    }
 
-        .pct-remaining-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: .78rem;
-            font-weight: 700;
-            background: rgba(25, 135, 84, .1);
-            color: #198754;
-            border: 1.5px solid rgba(25, 135, 84, .2);
-        }
+    .pct-remaining-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: .78rem;
+        font-weight: 700;
+        background: rgba(25, 135, 84, .1);
+        color: #198754;
+        border: 1.5px solid rgba(25, 135, 84, .2);
+    }
 
-        .pct-remaining-badge.warn {
-            background: rgba(255, 193, 7, .1);
-            color: #856404;
-            border-color: rgba(255, 193, 7, .3);
-        }
+    .pct-remaining-badge.warn {
+        background: rgba(255, 193, 7, .1);
+        color: #856404;
+        border-color: rgba(255, 193, 7, .3);
+    }
 
-        .pct-remaining-badge.danger {
-            background: rgba(220, 53, 69, .08);
-            color: #dc3545;
-            border-color: rgba(220, 53, 69, .2);
-        }
+    .pct-remaining-badge.danger {
+        background: rgba(220, 53, 69, .08);
+        color: #dc3545;
+        border-color: rgba(220, 53, 69, .2);
+    }
 
-        .finances-hero {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            border-radius: 20px;
-            padding: 28px 32px;
-            color: #fff;
-            position: relative;
-            overflow: hidden;
-            margin-bottom: 28px;
-        }
+    .finances-hero {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        border-radius: 20px;
+        padding: 28px 32px;
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 28px;
+    }
 
-        .finances-hero::after {
-            content: '';
-            position: absolute;
-            right: -60px;
-            top: -60px;
-            width: 260px;
-            height: 260px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255, 0, 137, .18), transparent 70%);
-        }
+    .finances-hero::after {
+        content: '';
+        position: absolute;
+        right: -60px;
+        top: -60px;
+        width: 260px;
+        height: 260px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255, 0, 137, .18), transparent 70%);
+    }
 
-        .finances-hero::before {
-            content: '';
-            position: absolute;
-            left: -40px;
-            bottom: -40px;
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255, 77, 77, .1), transparent 70%);
-        }
+    .finances-hero::before {
+        content: '';
+        position: absolute;
+        left: -40px;
+        bottom: -40px;
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255, 77, 77, .1), transparent 70%);
+    }
     </style>
 </head>
 
 <body>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
-                <span class="navbar-toggler-icon"><i class="bi bi-list text-white fs-1"></i></span>
-            </button>
-            <a class="navbar-brand" href="../painel">
-                <span class="text-light" style="font-weight:bold;font-family:Arial,sans-serif">WASOM UPFY</span>
-            </a>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav m-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="../painel"><i class="bi bi-speedometer2"></i>
-                            Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../launch/releases"><i class="bi bi-disc"></i>
-                            Lançamentos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../analytics/statistics"><i
-                                class="bi bi-bar-chart"></i> Estatísticas</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="../finances/overview"><i
-                                class="bi bi-currency-dollar"></i> Finanças</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../artists/artists-list"><i class="bi bi-person"></i>
-                            Artistas</a></li>
-                </ul>
-            </div>
-            <div class="user-menu d-flex align-items-center">
-                <a class="theme-toggle text-white me-2" id="themeToggle"><i class="bi bi-sun" id="themeIcon"></i></a>
-                <a href="../notifications" class="text-white me-2"><i class="bi bi-bell fs-4"></i></a>
-                <a href="#" class="text-white" data-bs-toggle="dropdown"><i class="bi bi-person-circle fs-4"></i></a>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="../user/profile"><i
-                                class="bi bi-person me-2"></i><strong><?php echo $user_artist_name; ?></strong></a></li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li><a class="dropdown-item" href="../user/profile"><i class="bi bi-person me-2"></i> Meu Perfil</a>
-                    </li>
-                    <li><a class="dropdown-item" href="../account/manage-account"><i class="bi bi-tools me-2"></i>
-                            Gestão de Conta</a></li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li><a class="dropdown-item" href="../page/settings"><i class="bi bi-gear me-2"></i>
-                            Configurações</a></li>
-                    <li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal"
-                            data-bs-target="#logoutwasomupfy">
-                            <i class="bi bi-box-arrow-right me-2"></i> Desconectar-se</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Offcanvas Mobile -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title text-light" style="font-weight:bold;font-family:Arial,sans-serif">WASOM UPFY</h5>
-            <button type="button" class="btn-close text-white" data-bs-dismiss="offcanvas"><i
-                    class="bi bi-x-lg"></i></button>
-        </div>
-        <div class="offcanvas-body">
-            <ul class="nav flex-column">
-                <li class="nav-item"><a class="nav-link" href="../painel"><i class="bi bi-speedometer2"></i>
-                        Dashboard</a></li>
-                <li class="nav-item"><a class="nav-link" href="../launch/releases"><i class="bi bi-disc"></i>
-                        Lançamentos</a></li>
-                <li class="nav-item"><a class="nav-link" href="../analytics/statistics"><i class="bi bi-bar-chart"></i>
-                        Estatísticas</a></li>
-                <li class="nav-item"><a class="nav-link active" href="../finances/overview"><i
-                            class="bi bi-currency-dollar"></i> Finanças</a></li>
-                <li class="nav-item"><a class="nav-link" href="../artists/artists-list"><i class="bi bi-person"></i>
-                        Artistas</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../user/profile"><i
-                            class="bi bi-person-circle"></i> Meu Perfil</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/settings"><i class="bi bi-gear"></i>
-                        Configurações</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link text-danger" href="#" data-bs-toggle="modal"
-                        data-bs-target="#logoutwasomupfy">
-                        <i class="bi bi-box-arrow-right"></i> Desconectar-se</a></li>
-            </ul>
-        </div>
-    </div>
-
+    <!-- ═══ NAVBAR ═══ -->
+    <?php require_once __DIR__ . '/../include/sidebar.php'; ?>
     <!-- Main -->
     <div class="container my-4">
+        <?php /* ============================================
+    BANNERS DE NOTIFICACAO DO PAINEL
+    Estilo: inline CSS consistente com renderDashboardAlerts().
+    Bootstrap alert nativo removido — um único sistema visual.
+    Lógica de prioridade:
+      Nível 1 (danger)  — bloqueia distribuição
+      Nível 2 (warning) — importante, requer atenção
+      Nível 3 (info)    — informativo / acção opcional
+    ============================================ */ ?>
 
+        <?php renderDashboardAlerts($user, $platform); ?>
+
+        <?php
+        // Cor map para helpers inline — idêntico ao renderDashboardAlerts()
+        $alertColors = [
+            'danger'  => ['bg' => 'rgba(239,68,68,.08)',  'border' => 'rgba(239,68,68,.25)',  'text' => '#ef4444'],
+            'warning' => ['bg' => 'rgba(234,179,8,.08)',  'border' => 'rgba(234,179,8,.25)',  'text' => '#eab308'],
+            'info'    => ['bg' => 'rgba(99,102,241,.08)', 'border' => 'rgba(99,102,241,.25)', 'text' => '#6366f1'],
+        ];
+        function wuAlert(string $type, string $icon, string $message, ?array $action = null, bool $dismiss = true, string $id = ''): void
+        {
+            global $alertColors;
+            $c   = $alertColors[$type] ?? $alertColors['info'];
+            $eid = $id ?: ('wuPanelAlert_' . md5($message));
+            echo "<div id=\"{$eid}\" style=\"display:flex;align-items:flex-start;gap:10px;"
+                . "background:{$c['bg']};border:1px solid {$c['border']};border-radius:12px;"
+                . "padding:.75rem 1rem;font-size:.83rem;margin-bottom:.6rem;"
+                . "transition:opacity .3s;\">";
+            echo "<i class=\"bi {$icon}\" style=\"font-size:1rem;flex-shrink:0;margin-top:2px;color:{$c['text']};\"></i>";
+            echo '<span class="wu-alert-msg">' . $message;
+            if ($action) {
+                echo " <a href=\"{$action['url']}\" style=\"color:{$c['text']};font-weight:700;"
+                    . "text-decoration:underline;white-space:nowrap\">{$action['label']} &rarr;</a>";
+            }
+            echo '</span>';
+            if ($dismiss) {
+                echo "<button type=\"button\" class=\"wu-alert-dismiss\" aria-label=\"Fechar\""
+                    . " onclick=\"(function(el){el.style.opacity='0';"
+                    . "setTimeout(function(){el.style.display='none'},300)})(document.getElementById('{$eid}'))\">"
+                    . "&times;</button>";
+            }
+            echo '</div>';
+        }
+        ?>
+
+        <?php /* ── NÍVEL 1: Crítico — bloqueia distribuição ── */ ?>
+
+        <?php if (!$email_verified): ?>
+        <?php wuAlert(
+                'danger',
+                'bi-envelope-exclamation-fill',
+                '<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta e receber notificações de pagamentos.',
+                ['label' => 'Verificar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/user/profile#perfil'],
+                true,
+                'banner-email'
+            ); ?>
+        <?php endif; ?>
+
+        <?php if ($plan && !$plan_paid): ?>
+        <?php wuAlert(
+                'warning',
+                'bi-clock-history',
+                '<strong>Pagamento pendente — ' . htmlspecialchars($plan['name_plan']) . '.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados até confirmação.',
+                ['label' => 'Finalizar pagamento', 'url' => APP_URL . '/' . APP_URL_PANEL . '/payment/pay'],
+                true,
+                'banner-plan-pending'
+            ); ?>
+        <?php elseif (!$plan): ?>
+        <?php wuAlert(
+                'danger',
+                'bi-credit-card-fill',
+                '<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir a tua música para +150 plataformas.',
+                ['label' => 'Ver planos', 'url' => APP_URL . '/' . APP_URL_PANEL . '/all-plans'],
+                false,
+                'banner-plan'
+            ); ?>
+        <?php endif; ?>
+
+        <?php /* ── NÍVEL 2: Importante — perfil incompleto ── */ ?>
+
+        <?php if ($plan_paid && !$has_artist): ?>
+        <?php wuAlert(
+                'info',
+                'bi-person-plus-fill',
+                '<strong>Cria o teu perfil de artista.</strong> Tens plano activo mas ainda não criaste um perfil. Precisas de um para poder lançar música.',
+                ['label' => 'Criar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/add-artist'],
+                true,
+                'banner-artist'
+            ); ?>
+        <?php endif; ?>
+
+        <?php /* ── NÍVEL 3: Informativo — conta bancária ── */ ?>
+
+        <?php if ($plan_paid && $has_artist && !$bank_account): ?>
+        <?php wuAlert(
+                'info',
+                'bi-bank',
+                '<strong>Conta bancária não registada.</strong> Para poder sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.',
+                ['label' => 'Registar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/withdraw'],
+                true,
+                'banner-bank'
+            ); ?>
+        <?php endif; ?>
+
+        <?php /* ── NÍVEL 3: Conta bancária rejeitada ── */ ?>
+
+        <?php
+        $rejected_account = null;
+        if ($plan_paid) {
+            $rej_stmt = getDB()->prepare("SELECT type_account, reject_reason FROM _account WHERE id_users = ? AND status_account = 'rejected' LIMIT 1");
+            $rej_stmt->execute([$id_users]);
+            $rejected_account = $rej_stmt->fetch();
+        }
+        ?>
+        <?php if ($rejected_account): ?>
+        <?php
+            $rej_msg = '<strong>Conta ' . htmlspecialchars($rejected_account['type_account']) . ' rejeitada.</strong>';
+            if ($rejected_account['reject_reason']) {
+                $rej_msg .= ' Motivo: <em>' . htmlspecialchars($rejected_account['reject_reason']) . '</em>.';
+            }
+            $rej_msg .= ' Actualiza os dados e submete novamente.';
+            wuAlert(
+                'danger',
+                'bi-x-circle-fill',
+                $rej_msg,
+                ['label' => 'Corrigir agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/withdraw'],
+                true,
+                'banner-account-rejected'
+            );
+            ?>
+        <?php endif; ?>
         <!-- Hero -->
         <div class="finances-hero">
             <div class="row align-items-center" style="position:relative;z-index:1">
@@ -429,11 +548,11 @@ $role_colors = [
                 </div>
                 <div class="col-md-4 text-md-end mt-3 mt-md-0">
                     <?php if (!empty($artists)): ?>
-                        <button class="btn btn-sm fw-bold"
-                            style="background:#FF0089;color:#fff;border:none;border-radius:20px;padding:10px 24px"
-                            data-bs-toggle="modal" data-bs-target="#modalNewSplit">
-                            <i class="bi bi-plus me-1"></i>Nova divisão
-                        </button>
+                    <button class="btn btn-sm fw-bold"
+                        style="background:#FF0089;color:#fff;border:none;border-radius:20px;padding:10px 24px"
+                        data-bs-toggle="modal" data-bs-target="#modalNewSplit">
+                        <i class="bi bi-plus me-1"></i>Nova divisão
+                    </button>
                     <?php endif; ?>
                     <a href="overview" class="btn btn-sm ms-2"
                         style="background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:20px">
@@ -445,181 +564,164 @@ $role_colors = [
 
         <!-- Alertas -->
         <?php if ($success === 'created'): ?>
-            <div class="alert alert-success d-flex align-items-center gap-2 mb-4" style="border-radius:14px">
-                <i class="bi bi-check-circle-fill"></i> Divisão criada com sucesso.
-                <button class="btn-close ms-auto" data-bs-dismiss="alert"></button>
-            </div>
+        <div class="alert alert-success d-flex align-items-center gap-2 mb-4" style="border-radius:14px">
+            <i class="bi bi-check-circle-fill"></i> Divisão criada com sucesso.
+            <button class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        </div>
         <?php elseif ($success === 'deleted'): ?>
-            <div class="alert alert-info d-flex align-items-center gap-2 mb-4" style="border-radius:14px">
-                <i class="bi bi-info-circle-fill"></i> Divisão removida.
-                <button class="btn-close ms-auto" data-bs-dismiss="alert"></button>
-            </div>
+        <div class="alert alert-info d-flex align-items-center gap-2 mb-4" style="border-radius:14px">
+            <i class="bi bi-info-circle-fill"></i> Divisão removida.
+            <button class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        </div>
         <?php elseif (!empty($error) && isset($errs[$error])): ?>
-            <div class="alert alert-danger d-flex align-items-center gap-2 mb-4" style="border-radius:14px">
-                <i class="bi bi-exclamation-triangle-fill"></i> <?php echo htmlspecialchars($errs[$error]); ?>
-                <button class="btn-close ms-auto" data-bs-dismiss="alert"></button>
-            </div>
+        <div class="alert alert-danger d-flex align-items-center gap-2 mb-4" style="border-radius:14px">
+            <i class="bi bi-exclamation-triangle-fill"></i> <?php echo htmlspecialchars($errs[$error]); ?>
+            <button class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        </div>
         <?php endif; ?>
 
         <!-- Sem artistas -->
         <?php if (empty($artists)): ?>
-            <div class="split-artist-card text-center p-5">
-                <div style="font-size:3rem;opacity:.2;margin-bottom:12px">🎤</div>
-                <h5 class="fw-bold">Nenhum artista encontrado</h5>
-                <p class="text-muted small mb-4">Precisas de ter pelo menos um artista registado para criar divisões de
-                    royalties.</p>
-                <a href="../artists/add-artist" class="btn btn-sm fw-bold px-4"
-                    style="background:#FF0089;color:#fff;border:none;border-radius:20px">
-                    <i class="bi bi-plus me-1"></i>Adicionar artista
-                </a>
-            </div>
+        <div class="split-artist-card text-center p-5">
+            <div style="font-size:3rem;opacity:.2;margin-bottom:12px">🎤</div>
+            <h5 class="fw-bold">Nenhum artista encontrado</h5>
+            <p class="text-muted small mb-4">Precisas de ter pelo menos um artista registado para criar divisões de
+                royalties.</p>
+            <a href="../artists/add-artist" class="btn btn-sm fw-bold px-4"
+                style="background:#FF0089;color:#fff;border:none;border-radius:20px">
+                <i class="bi bi-plus me-1"></i>Adicionar artista
+            </a>
+        </div>
 
         <?php else: ?>
 
-            <!-- Cards por artista -->
-            <?php foreach ($artists as $art):
+        <!-- Cards por artista -->
+        <?php foreach ($artists as $art):
                 $aid     = $art['id_artist'];
                 $splits  = $splits_by_artist[$aid] ?? [];
                 $used    = (float)($total_pct_by_artist[$aid] ?? 0);
                 $free    = max(0.0, 100.0 - $used);
                 $bar_pct = min(100, $used);
             ?>
-                <div class="split-artist-card" id="artist-card-<?php echo $aid; ?>">
+        <div class="split-artist-card" id="artist-card-<?php echo $aid; ?>">
 
-                    <!-- Header artista -->
-                    <div class="artist-header">
-                        <div class="artist-avatar">
-                            <?php if ($art['photo_artist']): ?>
-                                <img src="<?php echo htmlspecialchars($cover_url . $art['photo_artist']); ?>"
-                                    onerror="this.parentElement.innerHTML='🎤'" alt="" />
-                                <?php else: ?>🎤<?php endif; ?>
-                        </div>
-                        <div style="flex:1;min-width:0">
-                            <div class="fw-bold" style="font-size:.97rem"><?php echo htmlspecialchars($art['stage_name']); ?>
-                            </div>
-                            <div class="text-muted" style="font-size:.75rem">
-                                <?php echo count($splits); ?> colaborador<?php echo count($splits) !== 1 ? 'es' : ''; ?>
-                                &nbsp;·&nbsp;
-                                <?php if ($used > 100): ?>
-                                    <span style="color:#dc3545;font-weight:600">Excede 100% — revê os valores</span>
-                                <?php elseif ($used >= 100): ?>
-                                    <span style="color:#856404;font-weight:600">100% distribuído</span>
-                                <?php else: ?>
-                                    <span style="color:#198754;font-weight:600"><?php echo number_format($free, 1); ?>%
-                                        disponível</span>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                        <button class="btn btn-sm"
-                            style="background:rgba(255,0,137,.08);color:#FF0089;border:1px solid rgba(255,0,137,.2);border-radius:10px;font-size:.75rem;font-weight:700;flex-shrink:0"
-                            onclick="openSplitModal(<?php echo $aid; ?>, '<?php echo addslashes(htmlspecialchars($art['stage_name'])); ?>', <?php echo number_format($free, 2, '.', ''); ?>)">
-                            <i class="bi bi-plus me-1"></i>Adicionar
-                        </button>
+            <!-- Header artista -->
+            <div class="artist-header">
+                <div class="artist-avatar">
+                    <?php if ($art['photo_artist']): ?>
+                    <img src="<?php echo htmlspecialchars($cover_url . $art['photo_artist']); ?>"
+                        onerror="this.parentElement.innerHTML='🎤'" alt="" />
+                    <?php else: ?>🎤<?php endif; ?>
+                </div>
+                <div style="flex:1;min-width:0">
+                    <div class="fw-bold" style="font-size:.97rem"><?php echo htmlspecialchars($art['stage_name']); ?>
                     </div>
-
-                    <!-- Barra progresso -->
-                    <div class="royalty-bar-wrap">
-                        <div class="royalty-bar-label">
-                            <span class="text-muted" style="font-size:.72rem">Royalties distribuídos</span>
-                            <span
-                                style="font-weight:800;font-size:.82rem;color:<?php echo $used > 100 ? '#dc3545' : ($used >= 100 ? '#856404' : '#FF0089'); ?>">
-                                <?php echo number_format($used, 1); ?>%
-                            </span>
-                        </div>
-                        <div class="royalty-bar">
-                            <div class="royalty-bar-fill <?php echo $used > 100 ? 'over' : ''; ?>"
-                                style="width:<?php echo $bar_pct; ?>%"></div>
-                        </div>
+                    <div class="text-muted" style="font-size:.75rem">
+                        <?php echo count($splits); ?> colaborador<?php echo count($splits) !== 1 ? 'es' : ''; ?>
+                        &nbsp;·&nbsp;
+                        <?php if ($used > 100): ?>
+                        <span style="color:#dc3545;font-weight:600">Excede 100% — revê os valores</span>
+                        <?php elseif ($used >= 100): ?>
+                        <span style="color:#856404;font-weight:600">100% distribuído</span>
+                        <?php else: ?>
+                        <span style="color:#198754;font-weight:600"><?php echo number_format($free, 1); ?>%
+                            disponível</span>
+                        <?php endif; ?>
                     </div>
+                </div>
+                <button class="btn btn-sm"
+                    style="background:rgba(255,0,137,.08);color:#FF0089;border:1px solid rgba(255,0,137,.2);border-radius:10px;font-size:.75rem;font-weight:700;flex-shrink:0"
+                    onclick="openSplitModal(<?php echo $aid; ?>, '<?php echo addslashes(htmlspecialchars($art['stage_name'])); ?>', <?php echo number_format($free, 2, '.', ''); ?>)">
+                    <i class="bi bi-plus me-1"></i>Adicionar
+                </button>
+            </div>
 
-                    <!-- Tabela beneficiários -->
-                    <?php if (empty($splits)): ?>
-                        <div class="empty-splits">
-                            <div class="icon">🤝</div>
-                            <div class="small">Nenhuma divisão criada para este artista.</div>
-                            <div class="text-muted" style="font-size:.72rem;margin-top:4px">Clica em "Adicionar" para criar a
-                                primeira divisão.</div>
-                        </div>
-                    <?php else: ?>
-                        <div class="table-responsive">
-                            <table class="beneficiary-table">
-                                <thead>
-                                    <tr>
-                                        <th>Colaborador</th>
-                                        <th>Função</th>
-                                        <th>Conta Wasom</th>
-                                        <th class="text-center">%</th>
-                                        <th class="text-center">Acções</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($splits as $sp):
+            <!-- Barra progresso -->
+            <div class="royalty-bar-wrap">
+                <div class="royalty-bar-label">
+                    <span class="text-muted" style="font-size:.72rem">Royalties distribuídos</span>
+                    <span
+                        style="font-weight:800;font-size:.82rem;color:<?php echo $used > 100 ? '#dc3545' : ($used >= 100 ? '#856404' : '#FF0089'); ?>">
+                        <?php echo number_format($used, 1); ?>%
+                    </span>
+                </div>
+                <div class="royalty-bar">
+                    <div class="royalty-bar-fill <?php echo $used > 100 ? 'over' : ''; ?>"
+                        style="width:<?php echo $bar_pct; ?>%"></div>
+                </div>
+            </div>
+
+            <!-- Tabela beneficiários -->
+            <?php if (empty($splits)): ?>
+            <div class="empty-splits">
+                <div class="icon">🤝</div>
+                <div class="small">Nenhuma divisão criada para este artista.</div>
+                <div class="text-muted" style="font-size:.72rem;margin-top:4px">Clica em "Adicionar" para criar a
+                    primeira divisão.</div>
+            </div>
+            <?php else: ?>
+            <div class="table-responsive">
+                <table class="beneficiary-table">
+                    <thead>
+                        <tr>
+                            <th>Colaborador</th>
+                            <th>Função</th>
+                            <th>Conta Wasom</th>
+                            <th class="text-center">%</th>
+                            <th class="text-center">Acções</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($splits as $sp):
                                         $rc = $role_colors[$sp['role_collab']] ?? $role_colors['other'];
                                         $rl = $role_labels[$sp['role_collab']] ?? 'Outro';
                                     ?>
-                                        <tr>
-                                            <td>
-                                                <div class="fw-semibold"><?php echo htmlspecialchars($sp['name_collab']); ?></div>
-                                                <?php if ($sp['email_collab']): ?>
-                                                    <div class="text-muted" style="font-size:.72rem">
-                                                        <?php echo htmlspecialchars($sp['email_collab']); ?></div>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td>
-                                                <span class="role-chip"
-                                                    style="background:<?php echo $rc['bg']; ?>;color:<?php echo $rc['color']; ?>">
-                                                    <?php echo $rl; ?>
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <?php if ($sp['id_users']): ?>
-                                                    <span class="role-chip" style="background:rgba(25,135,84,.1);color:#198754">
-                                                        <i class="bi bi-check-circle-fill" style="font-size:.7rem"></i> Verificado
-                                                    </span>
-                                                <?php else: ?>
-                                                    <span class="role-chip" style="background:rgba(108,117,125,.08);color:#6c757d">
-                                                        <i class="bi bi-dash-circle" style="font-size:.7rem"></i> Externo
-                                                    </span>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td class="text-center">
-                                                <div class="pct-badge"><?php echo number_format((float)$sp['royalty_share'], 1); ?>%
-                                                </div>
-                                            </td>
-                                            <td class="text-center">
-                                                <button class="btn-split-del" title="Remover"
-                                                    onclick="confirmDelete(<?php echo (int)$sp['id_collab']; ?>, <?php echo $aid; ?>, '<?php echo addslashes(htmlspecialchars($sp['name_collab'])); ?>')">
-                                                    <i class="bi bi-trash3"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    <?php endif; ?>
-                </div>
-            <?php endforeach; ?>
+                        <tr>
+                            <td>
+                                <div class="fw-semibold"><?php echo htmlspecialchars($sp['name_collab']); ?></div>
+                                <?php if ($sp['email_collab']): ?>
+                                <div class="text-muted" style="font-size:.72rem">
+                                    <?php echo htmlspecialchars($sp['email_collab']); ?></div>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <span class="role-chip"
+                                    style="background:<?php echo $rc['bg']; ?>;color:<?php echo $rc['color']; ?>">
+                                    <?php echo $rl; ?>
+                                </span>
+                            </td>
+                            <td>
+                                <?php if ($sp['id_users']): ?>
+                                <span class="role-chip" style="background:rgba(25,135,84,.1);color:#198754">
+                                    <i class="bi bi-check-circle-fill" style="font-size:.7rem"></i> Verificado
+                                </span>
+                                <?php else: ?>
+                                <span class="role-chip" style="background:rgba(108,117,125,.08);color:#6c757d">
+                                    <i class="bi bi-dash-circle" style="font-size:.7rem"></i> Externo
+                                </span>
+                                <?php endif; ?>
+                            </td>
+                            <td class="text-center">
+                                <div class="pct-badge"><?php echo number_format((float)$sp['royalty_share'], 1); ?>%
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <button class="btn-split-del" title="Remover"
+                                    onclick="confirmDelete(<?php echo (int)$sp['id_collab']; ?>, <?php echo $aid; ?>, '<?php echo addslashes(htmlspecialchars($sp['name_collab'])); ?>')">
+                                    <i class="bi bi-trash3"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+            <?php endif; ?>
+        </div>
+        <?php endforeach; ?>
         <?php endif; ?>
 
     </div><!-- /container -->
-
-    <!-- Bottom Nav Mobile -->
-    <nav class="bottom-nav d-lg-none">
-        <ul class="nav justify-content-around">
-            <li class="nav-item"><a class="nav-link" href="../painel"><i
-                        class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../launch/releases"><i
-                        class="bi bi-disc"></i><span>Lançamentos</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../analytics/statistics"><i
-                        class="bi bi-bar-chart"></i><span>Stats</span></a></li>
-            <li class="nav-item"><a class="nav-link active" href="../finances/overview"><i
-                        class="bi bi-currency-dollar"></i><span>Finanças</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../artists/artists-list"><i
-                        class="bi bi-person"></i><span>Artistas</span></a></li>
-        </ul>
-    </nav>
-
 
     <!-- ═══ MODAL — Nova divisão ═══ -->
     <div class="modal fade" id="modalNewSplit" tabindex="-1" data-bs-backdrop="static">
@@ -649,10 +751,10 @@ $role_colors = [
                                 onchange="updateRemainingPct(this.value)">
                                 <option value="">— Selecciona um artista —</option>
                                 <?php foreach ($artists as $a): ?>
-                                    <option value="<?php echo $a['id_artist']; ?>"
-                                        data-free="<?php echo number_format(max(0, 100 - ($total_pct_by_artist[$a['id_artist']] ?? 0)), 2, '.', ''); ?>">
-                                        <?php echo htmlspecialchars($a['stage_name']); ?>
-                                    </option>
+                                <option value="<?php echo $a['id_artist']; ?>"
+                                    data-free="<?php echo number_format(max(0, 100 - ($total_pct_by_artist[$a['id_artist']] ?? 0)), 2, '.', ''); ?>">
+                                    <?php echo htmlspecialchars($a['stage_name']); ?>
+                                </option>
                                 <?php endforeach; ?>
                             </select>
                             <div class="invalid-feedback">Selecciona um artista.</div>
@@ -681,7 +783,7 @@ $role_colors = [
                                 <select name="role_collab" class="form-select" required>
                                     <option value="">— Selecciona —</option>
                                     <?php foreach ($role_labels as $val => $lbl): ?>
-                                        <option value="<?php echo $val; ?>"><?php echo $lbl; ?></option>
+                                    <option value="<?php echo $val; ?>"><?php echo $lbl; ?></option>
                                     <?php endforeach; ?>
                                 </select>
                                 <div class="invalid-feedback">Selecciona uma função.</div>
@@ -767,841 +869,86 @@ $role_colors = [
     </div>
 
 
-    <!-- ═══ MODAL — Logout ═══ -->
-    <div class="modal fade" id="logoutwasomupfy" tabindex="-1" data-bs-backdrop="static">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-dark">Terminar sessão</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body text-center text-dark">
-                    <p>Tens a certeza de que desejas terminar sessão?</p>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-primary" data-bs-dismiss="modal">Não, continuar</button>
-                    <a href="../logout" class="btn btn-danger">Sim, terminar sessão</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <script src="../../js/theme.wp.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/theme.wp.js"></script>
     <script>
-        // Actualizar % disponível ao mudar artista
-        function updateRemainingPct(artistId) {
-            const sel = document.getElementById('selectArtist');
-            const opt = sel.options[sel.selectedIndex];
-            const free = parseFloat(opt?.dataset?.free ?? 100);
-            const wrap = document.getElementById('pctRemainingWrap');
-            const badge = document.getElementById('pctRemainingBadge');
-            const val = document.getElementById('pctRemainingVal');
-            const inp = document.getElementById('inputPct');
+    // Actualizar % disponível ao mudar artista
+    function updateRemainingPct(artistId) {
+        const sel = document.getElementById('selectArtist');
+        const opt = sel.options[sel.selectedIndex];
+        const free = parseFloat(opt?.dataset?.free ?? 100);
+        const wrap = document.getElementById('pctRemainingWrap');
+        const badge = document.getElementById('pctRemainingBadge');
+        const val = document.getElementById('pctRemainingVal');
+        const inp = document.getElementById('inputPct');
 
-            if (!artistId) {
-                wrap.style.display = 'none';
-                return;
-            }
-
-            wrap.style.display = 'block';
-            val.textContent = free.toFixed(1);
-            badge.className = 'pct-remaining-badge' + (free <= 0 ? ' danger' : free < 20 ? ' warn' : '');
-            inp.max = free > 0 ? free : 0;
-            inp.disabled = free <= 0;
-            inp.placeholder = free <= 0 ? 'Sem % disponível' : '0.0';
+        if (!artistId) {
+            wrap.style.display = 'none';
+            return;
         }
 
-        // Abrir modal pré-seleccionado para artista específico
-        function openSplitModal(artistId, artistName, free) {
-            const sel = document.getElementById('selectArtist');
-            sel.value = artistId;
-            updateRemainingPct(artistId);
-            new bootstrap.Modal(document.getElementById('modalNewSplit')).show();
-        }
-
-        // Confirmar delete
-        function confirmDelete(collabId, artistId, name) {
-            document.getElementById('deleteCollabId').value = collabId;
-            document.getElementById('deleteArtistId').value = artistId;
-            document.getElementById('deleteCollabName').textContent = name;
-            new bootstrap.Modal(document.getElementById('modalDeleteSplit')).show();
-        }
-
-        // Validação do form
-        document.getElementById('formNewSplit').addEventListener('submit', function(e) {
-            const sel = document.getElementById('selectArtist');
-            const pct = document.getElementById('inputPct');
-            const pctVal = parseFloat(pct.value);
-            let ok = true;
-
-            sel.classList.toggle('is-invalid', !sel.value);
-            if (!sel.value) ok = false;
-
-            const pctOk = pct.value && !isNaN(pctVal) && pctVal >= 0.1 && pctVal <= parseFloat(pct.max || 100);
-            pct.classList.toggle('is-invalid', !pctOk);
-            if (!pctOk) ok = false;
-
-            if (!this.checkValidity()) ok = false;
-            this.classList.add('was-validated');
-            if (!ok) e.preventDefault();
-        });
-
-        // Toastr feedback
-        <?php if ($success === 'created'): ?>
-            toastr.success('Divisão criada com sucesso!', '', {
-                timeOut: 4000,
-                positionClass: 'toast-top-right'
-            });
-        <?php elseif ($success === 'deleted'): ?>
-            toastr.info('Divisão removida.', '', {
-                timeOut: 3000,
-                positionClass: 'toast-top-right'
-            });
-        <?php elseif (!empty($error) && isset($errs[$error])): ?>
-            toastr.error('<?php echo addslashes($errs[$error]); ?>', 'Erro', {
-                timeOut: 5000,
-                positionClass: 'toast-top-right'
-            });
-        <?php endif; ?>
-    </script>
-</body>
-
-</html>
-
-<!DOCTYPE html>
-<html lang="pt-br">
-
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="robots" content="noindex, nofollow">
-    <meta name="author" content="José Mbenga da Costa" />
-    <meta name="theme-color" content="#FF0089">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="../../assets/img/icones/wasomupfy_fiv_512.png">
-    <link rel="apple-touch-startup-image" href="../../assets/img/screenshots/splash.png">
-    <link rel="manifest" href="../manifest.json">
-    <title>Conta de saque — Wasom Upfy</title>
-    <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
-    <link href="
-https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css
-" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <!-- Select2 Bootstrap 5 Theme (opcional, para melhor integração) -->
-    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"
-        rel="stylesheet" />
-    <link rel="stylesheet" href="../../css/dashboard-style.css">
-    <link rel="stylesheet" href="../../css/lastest-style.css">
-</head>
-<!-- javacript para habilitar o form de ID-->
-<script type="text/javascript">
-    function other_link1() {
-        if (link2.style.display = 'none');
-        link1.style.display = 'block';
-
+        wrap.style.display = 'block';
+        val.textContent = free.toFixed(1);
+        badge.className = 'pct-remaining-badge' + (free <= 0 ? ' danger' : free < 20 ? ' warn' : '');
+        inp.max = free > 0 ? free : 0;
+        inp.disabled = free <= 0;
+        inp.placeholder = free <= 0 ? 'Sem % disponível' : '0.0';
     }
-</script>
-<script type="text/javascript">
-    function other_link() {
-        if (link1.style.display = 'none');
-        link2.style.display = 'block';
+
+    // Abrir modal pré-seleccionado para artista específico
+    function openSplitModal(artistId, artistName, free) {
+        const sel = document.getElementById('selectArtist');
+        sel.value = artistId;
+        updateRemainingPct(artistId);
+        new bootstrap.Modal(document.getElementById('modalNewSplit')).show();
     }
-</script>
 
-<style>
-    #link2 {
-        display: none;
+    // Confirmar delete
+    function confirmDelete(collabId, artistId, name) {
+        document.getElementById('deleteCollabId').value = collabId;
+        document.getElementById('deleteArtistId').value = artistId;
+        document.getElementById('deleteCollabName').textContent = name;
+        new bootstrap.Modal(document.getElementById('modalDeleteSplit')).show();
     }
-</style>
 
-<body>
+    // Validação do form
+    document.getElementById('formNewSplit').addEventListener('submit', function(e) {
+        const sel = document.getElementById('selectArtist');
+        const pct = document.getElementById('inputPct');
+        const pctVal = parseFloat(pct.value);
+        let ok = true;
 
-    <!-- Tela de Carregamento -->
-    <!-- <div class="loading-screen" id="loadingScreen">
-        <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg" class="loading-logo">
-            <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2"/>
-            <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
-        </svg>
-        <div class="spinner"></div>
-    </div> -->
+        sel.classList.toggle('is-invalid', !sel.value);
+        if (!sel.value) ok = false;
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <!-- Menu Button (Left) -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu"
-                aria-controls="offcanvasMenu">
-                <span class="navbar-toggler-icon"><i class="bi bi-list text-white fs-1"></i></span>
-            </button>
+        const pctOk = pct.value && !isNaN(pctVal) && pctVal >= 0.1 && pctVal <= parseFloat(pct.max || 100);
+        pct.classList.toggle('is-invalid', !pctOk);
+        if (!pctOk) ok = false;
 
-            <!-- Logo (Center on Mobile, Left on Desktop) -->
-            <a class="navbar-brand" href="../painel">
-                <!-- SVG Logo Wasom Upfy -->
-                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
-                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
-                        fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
-                </svg> -->
-                <span class="text-light"
-                    style="font-weight: bold; box-sizing: border-box; text-transform: capitalize; font-family:Arial, sans-serif">WASOM
-                    UPFY</span>
-            </a>
+        if (!this.checkValidity()) ok = false;
+        this.classList.add('was-validated');
+        if (!ok) e.preventDefault();
+    });
 
-            <!-- Desktop Menu -->
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav m-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="../painel"><i class="bi bi-speedometer2"></i>
-                            Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../launch/releases"><i class="bi bi-disc"></i>
-                            Lançamentos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../analytics/statistics"><i
-                                class="bi bi-bar-chart"></i>
-                            Estatísticas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../finances/overview"><i
-                                class="bi bi-currency-dollar"></i>
-                            Finanças</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../artists/artists-list"><i class="bi bi-person"></i>
-                            Artistas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../artists/youtube/ucy"><i class="bi bi-youtube"></i>
-                            Unificação de canal YouTube</a></li>
-                </ul>
-            </div>
-
-            <!-- User Icon (Right) -->
-            <div class="user-menu d-flex align-items-center">
-                <!-- Theme Toggle Button -->
-                <a class="theme-toggle text-white me-2" id="themeToggle">
-                    <i class="bi bi-sun" id="themeIcon"></i>
-                </a>
-                <a href="../notifications" class="text-white me-2" aria-label="Notificações">
-                    <i class="bi bi-bell fs-4"></i>
-                    <span class="badge bg-danger">9</span>
-                </a>
-                <a href="#" class="text-white" data-bs-toggle="dropdown">
-                    <i class="bi bi-person-circle fs-4"></i>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="../user/profile"><i class="bi bi-person me-2"></i>
-                            <strong>Eleven
-                                Records</strong></a>
-                        <div class="text-white-50"> &nbsp; &nbsp; &nbsp;
-                            &nbsp;
-                            (Conta <?php echo str_pad($id_users, 6, "0", STR_PAD_LEFT); ?>)</div>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item" href="../user/profile"><i class="bi bi-person me-2"></i> Meu
-                            Perfil</a>
-                    </li>
-                    <li><a class="dropdown-item" href="../account/manage-account"><i class="bi bi-tools me-2"></i>
-                            Gestão de Conta</a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item" href="../page/settings"><i class="bi bi-gear me-2"></i>
-                            Configurações</a></li>
-                    <li><a class="dropdown-item" href="../page/notifications"><i class="bi bi-bell me-2"></i>
-                            Notificações</a></li>
-                    <li><a class="dropdown-item" href="../services/available-services"><i class="bi bi-star me-2"></i>
-                            Conta e
-                            serviços disponíveis</a></li>
-                    <li><a class="dropdown-item" href="#?logout-wasomupfy" data-bs-toggle="modal"
-                            data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right me-2"></i>
-                            Desconectar-se</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item" href="../page/about"><i class="bi bi-info-circle me-2"></i>
-                            Sobre</a>
-                    </li>
-                    <li><a class="dropdown-item" href="../page/support"><i class="bi bi-headset me-2"></i> Enviar
-                            pedido de suporte</a></li>
-                    <li><a class="dropdown-item" href="../page/faq"><i class="bi bi-chat-left-text me-2"></i>
-                            Perguntas frequentes</a></li>
-                    <li><a class="dropdown-item" href="../page/help"><i class="bi bi-question-circle me-2"></i>
-                            Ajuda</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><span class="dropdown-item-text" id="versionDropdown"></span></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Offcanvas Menu para Mobile e Desktop -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasMenuLabel">
-                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
-                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
-                        fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
-                </svg> -->
-                <span class="text-light"
-                    style="font-weight: bold; box-sizing: border-box; text-transform: capitalize; font-family:Arial, sans-serif">WASOM
-                    UPFY</span>
-            </h5>
-            <button type="button" class="btn-close text-white" data-bs-dismiss="offcanvas" aria-label="Close">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-        <div class="offcanvas-body">
-            <ul class="nav flex-column">
-                <li class="nav-item"><a class="nav-link" href="../painel"><i class="bi bi-speedometer2"></i>
-                        Dashboard</a></li>
-                <li class="nav-item"><a class="nav-link" href="../launch/releases"><i class="bi bi-disc"></i>
-                        Lançamentos</a></li>
-                <li class="nav-item"><a class="nav-link" href="../analytics/statistics"><i class="bi bi-bar-chart"></i>
-                        Estatísticas</a></li>
-                <li class="nav-item"><a class="nav-link" href="../finances/overview"><i
-                            class="bi bi-currency-dollar"></i>
-                        Finanças</a></li>
-                <li class="nav-item"><a class="nav-link" href="../artists/artists-list"><i class="bi bi-person"></i>
-                        Artistas</a></li>
-                <li class="nav-item"><a class="nav-link" href="../artists/youtube/ucy"><i class="bi bi-youtube"></i>
-                        Unificação
-                        de
-                        canal YouTube</a></li>
-                <!-- Links secundários exibidos apenas em mobile -->
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../user/profile"><i
-                            class="bi bi-person-circle"></i> Meu
-                        Perfil</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link active" href="../page/settings"><i
-                            class="bi bi-gear"></i> Configurações</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/notifications"><i
-                            class="bi bi-bell"></i> Notificações</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/about"><i
-                            class="bi bi-info-circle"></i> Sobre</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../services/available-services"><i
-                            class="bi bi-star"></i>
-                        Conta e serviços disponíveis</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/help"><i
-                            class="bi bi-question-circle"></i>
-                        Ajuda</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="#?logout-wasomupfy" data-bs-toggle="modal"
-                        data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right"></i>
-                        Desconectar-se</a></li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- Toast para Notificações de Status -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="connectionToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <strong class="me-auto">Conexão</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Fechar"></button>
-            </div>
-            <div class="toast-body">
-                Você está offline. Alguns dados podem estar desatualizados.
-                <div class="mt-2">
-                    <button class="btn btn-pink btn-sm" onclick="tryReconnect()">Tentar Reconectar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Main Content -->
-    <div class="container my-4">
-        <!-- Welcome Section -->
-        <div class="page-header">
-            <div class="row align-items-center mb-4">
-                <div class="col-auto">
-                    <div class="page-header-compact">
-                        <h1>
-                            <i class="bi bi-pie-chart-fill me-3"></i>
-                            Divisão de Royalties
-                        </h1>
-                        <p class="lead">
-                            Todas as divisões feitas em cada faixa distribuída nesta conta encontram-se
-                            registradas aqui, bem como podes fazer novas divisões para colaboradores.
-                        </p>
-                    </div>
-                </div>
-                <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                    <button class="btn btn-pink" data-bs-toggle="modal" data-bs-target="#creatnewRoyal"><i
-                            class="bi bi-plus"></i> Nova divisão</button>
-                    <button class="btn btn-light" onclick="window.location='overview'"><i class="bi bi-arrow-left"></i>
-                        Voltar</button>
-                </div>
-            </div>
-
-            <style>
-                .page-header::before {
-                    content: '\F4F5';
-                    /* bi-pie-chart-fill */
-                }
-            </style>
-        </div>
-
-        <!-- Launch Card para actualizar a conta express -->
-        <div class="launch-card mb-4 mt-4">
-            <div class="card">
-                <div class="align-items-lg-center">
-                    <div class="text-center">
-                        <div class="welcome-text d-flex justify-content-between align-items-center">
-                            <h5 style="font-weight: unset;" class="text-secondary">Título da faixa
-                                Artista</h5>
-
-                            <a href="#other_link1" data-bs-toggle="collapse" id='link1'
-                                data-bs-target="#collapseOneAccount" onclick="other_link()" aria-expanded="false"
-                                aria-controls="collapseOneAccount" class="text-secondary"> Ver detalhes</a>
-
-                            <a href="#other_link2" data-bs-toggle="collapse" id='link2'
-                                data-bs-target="#collapseOneAccount" onclick="other_link1()" aria-expanded="false"
-                                aria-controls="collapseOneAccount" class="text-secondary"> Ocultar detalhes</a>
-
-                        </div>
-                        <div id="collapseOneAccount" class="accordion-collapse collapse w-100"
-                            data-bs-parent="#accordionExample">
-                            <div class="mt-3">
-                                <div class="welcome-text d-flex justify-content-between align-items-center">
-                                    <h5>Beneficíarios</h5>
-                                </div>
-                                <div class="welcome-text d-flex justify-content-between align-items-center">
-                                    <h6 style="font-weight: unset;" class="text-secondary">N.ª</h6>
-                                    <span class="text-secondary">1</span>
-                                </div>
-                                <div class="welcome-text d-flex justify-content-between align-items-center">
-                                    <h6 style="font-weight: unset;" class="text-secondary">Artista</h6>
-                                    <span class="text-secondary">Mbenga</span>
-                                </div>
-                                <div class="welcome-text d-flex justify-content-between align-items-center">
-                                    <h6 style="font-weight: unset;" class="text-secondary">Percetagem</h6>
-                                    <span class="text-secondary">10%</span>
-                                </div>
-                                <div class="welcome-text d-flex justify-content-between align-items-center">
-                                    <h6 style="font-weight: unset;" class="text-secondary">E-mail:</h6>
-                                    <span class="text-secondary">josembengadacosta@wasomupfy.com</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Launch Card para actualizar a conta IBAN -->
-
-        <!-- Modal para criar contas -->
-        <div class="modal fade" id="creatnewRoyal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-            aria-labelledby="creatnewRoyalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5 text-dark" id="creatnewRoyalLabel">Dividir royalties</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="card row justify-content-center text-center">
-                            <div class="card-header row">
-                                <p class="stats-description text-start">
-                                    Faça a divisão dos seus royalties com os colaboradores das faixas disponíveis.
-                                    Disponível 100% para distribuição.
-                                </p>
-                            </div>
-                            <div class="card-body">
-                                <!-- Launch Card para actualizar a conta express -->
-                                <div class="launch-card">
-                                    <div class="align-items-lg-center">
-                                        <div class="text-start">
-                                            <h6 class="font-bold">Disponível
-                                                <span class="text-success">100%</sapn>
-                                            </h6>
-                                            <div class="mt-4">
-                                                <form method="POST" action="/split-royalties.php"
-                                                    class="needs-validation mb-2 row text-start" id="validation-form"
-                                                    novalidate>
-                                                    <input type="hidden" name="csrf_token"
-                                                        value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
-                                                    <input type="text" name="honeypot" style="display: none;" value>
-                                                    <!-- Container para campos dinâmicos -->
-                                                    <div id="dynamic-fields">
-                                                        <div class="field-group mb-3" data-index="0">
-                                                            <div class="row">
-                                                                <div class="mb-2 col-md-12">
-                                                                    <label for="name_share_0" class="form-label">Faixa
-                                                                        a
-                                                                        partilhar
-                                                                        <span
-                                                                            class="text-danger text-xs">*</span></label>
-                                                                    <input type="text" autocomplete="off"
-                                                                        id="name_share_0" name="name_share[]"
-                                                                        placeholder="Insira o nome da faixa" required
-                                                                        class="form-control" value>
-                                                                    <div class="invalid-feedback">Por
-                                                                        favor,
-                                                                        insira
-                                                                        o
-                                                                        nome
-                                                                        da
-                                                                        faixa.</div>
-                                                                </div>
-                                                                <div class="mb-2 col-md-8">
-                                                                    <label for="name_author_band_0"
-                                                                        class="form-label">Artista
-                                                                        <span
-                                                                            class="text-danger text-xs">*</span></label>
-                                                                    <input type="text" maxlength="60"
-                                                                        placeholder="Insira o nome do artista"
-                                                                        class="form-control" autocomplete="off"
-                                                                        id="name_author_band_0"
-                                                                        name="name_author_band[]" list="list_author_0"
-                                                                        required>
-                                                                    <datalist id="list_author_0">
-                                                                        <option value="Artista 1">
-                                                                        <option value="Artista 2">
-                                                                            <!-- Preencha com dados dinâmicos do back-end, se disponível -->
-                                                                    </datalist>
-                                                                    <div class="invalid-feedback">Por
-                                                                        favor,
-                                                                        insira
-                                                                        o
-                                                                        nome
-                                                                        do
-                                                                        artista.</div>
-                                                                </div>
-                                                                <div class="mb-2 col-md-4">
-                                                                    <label for="por_0" class="form-label">Percentagem
-                                                                        <span
-                                                                            class="text-danger text-xs">*</span></label>
-                                                                    <input type="number" autocomplete="off" id="por_0"
-                                                                        name="por[]" step="0.1" min="1" max="100"
-                                                                        class="form-control" placeholder="%" required
-                                                                        value>
-                                                                    <div class="invalid-feedback">Insira
-                                                                        uma
-                                                                        percentagem
-                                                                        válida
-                                                                        (1-100).</div>
-                                                                </div>
-                                                                <div class="mb-2 col-md-12">
-                                                                    <label for="email_share_0" class="form-label">E-mail
-                                                                        da
-                                                                        conta
-                                                                        <span
-                                                                            class="text-danger text-xs">*</span></label>
-                                                                    <br>
-                                                                    <small>O
-                                                                        e-mail
-                                                                        da
-                                                                        conta
-                                                                        a
-                                                                        receber
-                                                                        deve
-                                                                        ser
-                                                                        uma
-                                                                        conta
-                                                                        Wasom
-                                                                        Upfy,
-                                                                        neste
-                                                                        caso
-                                                                        o
-                                                                        artista
-                                                                        que
-                                                                        vai
-                                                                        receber
-                                                                        os
-                                                                        royalties
-                                                                        desta
-                                                                        faixa
-                                                                        deve
-                                                                        ter
-                                                                        uma
-                                                                        conta
-                                                                        na
-                                                                        plataforma
-                                                                        para
-                                                                        poder
-                                                                        ter
-                                                                        acesso
-                                                                        aos
-                                                                        royalties.</small>
-                                                                    <input type="email" autocomplete="off"
-                                                                        id="email_share_0" name="email_share[]"
-                                                                        placeholder="Insira o email da conta Wasom Upfy"
-                                                                        required class="form-control mt-2" value>
-                                                                    <div class="invalid-feedback">Insira
-                                                                        um
-                                                                        e-mail
-                                                                        válido
-                                                                        da
-                                                                        conta
-                                                                        Wasom
-                                                                        Upfy.</div>
-                                                                </div>
-                                                                <div class="col-md-12 mb-2">
-                                                                    <button type="button"
-                                                                        class="btn btn-outline-danger btn-sm delete-field"
-                                                                        style="display: none;"
-                                                                        aria-label="Remover faixa">Remover
-                                                                        campo</button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="mt-2">
-                                                        <button type="button" class="btn btn-pink form-control"
-                                                            id="add-field">+
-                                                            Adicionar
-                                                            novo</button>
-                                                    </div>
-                                                    <div class="mt-3">
-                                                        <small>Ao
-                                                            prosseguir
-                                                            com esta
-                                                            ação,
-                                                            concorda
-                                                            em fazer
-                                                            a
-                                                            divisão
-                                                            de
-                                                            royalties
-                                                            da faixa
-                                                            selecionada
-                                                            para o
-                                                            artista
-                                                            assinar,
-                                                            bem como
-                                                            também
-                                                            demonstra
-                                                            que está
-                                                            de
-                                                            acordo
-                                                            com a
-                                                            percentagem
-                                                            dada.</small>
-                                                    </div>
-                                                    <div class="mt-3">
-                                                        <button type="submit"
-                                                            class="btn btn-outline-pink  form-control">
-                                                            Dividir</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer row">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Modal para criar contas fim -->
-    </div>
-
-    <nav class="bottom-nav d-lg-none">
-        <ul class="nav justify-content-around">
-            <li class="nav-item"><a class="nav-link" href="../painel" aria-label="Ir para Dashboard"><i
-                        class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../launch/releases" aria-label="Ir para Lançamentos"><i
-                        class="bi bi-disc"></i><span>Lançamentos</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../analytics/statistics" aria-label="Ir para Estatísticas"><i
-                        class="bi bi-bar-chart"></i><span>Estatísticas</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../finances/overview" aria-label="Ir para Finanças"><i
-                        class="bi bi-currency-dollar"></i><span>Finanças</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../artists/artists-list" aria-label="Ir para Artistas"><i
-                        class="bi bi-person"></i><span>Artistas</span></a></li>
-        </ul>
-    </nav>
-
-    <!-- ════ MODAL — Logout ════ -->
-    <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">Terminar
-                        sessão</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="container">
-                        <div class="row justify-content-center text-center">
-                            <div class="col-md-12 content-center justify-center text-center">
-                                <p class="text-center text-dark">@josembengadacosta
-                                    você tem
-                                    certeza
-                                    de que desejas terminar
-                                    sessão?</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <div>
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Não,
-                            continuar</button>
-                    </div>
-                    <div>
-                        <button class="btn btn-danger" type="button" name="logout_wasomupfy"
-                            onclick="logout_wasomupfy()">Sim,
-                            terminar
-                            sessão</button>
-                    </div>
-                    <script type="text/javascript">
-                        function logout_wasomupfy() {
-                            window.location = '../logout';
-                        }
-                    </script>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- ════ MODAL — Logout  FIM ════ -->
-
-    <!-- Bootstrap JS and Popper.js -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../../js/validacao.js"></script>
-    <!-- SweetAlert2 -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.min.js"></script>
-    <!-- Toastr -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <script src="../../js/theme.wp.js"></script>
-    <script src="../../js/wp.tools.js"></script>
-    <script>
-        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-    </script>
-    <script>
-        $(document).ready(() => {
-            // Contador para índices únicos
-            let fieldIndex = 1;
-
-            // Adicionar novo grupo de campos
-            $("#add-field").click(() => {
-                const newField = `
-                <div class="field-group mb-3" data-index="${fieldIndex}">
-                    <hr>
-                    <div class="row">
-                        <div class="mb-2 col-md-12">
-                            <label for="name_share_${fieldIndex}" class="form-label">Faixa a partilhar <span class="text-danger text-xs">*</span></label>
-                            <input type="text" autocomplete="off" id="name_share_${fieldIndex}" name="name_share[]" placeholder="Insira o nome da faixa" required class="form-control" value="">
-                            <div class="invalid-feedback">Por favor, insira o nome da faixa.</div>
-                        </div>
-                        <div class="mb-2 col-md-8">
-                            <label for="name_author_band_${fieldIndex}" class="form-label">Artista <span class="text-danger text-xs">*</span></label>
-                            <input type="text" maxlength="60" placeholder="Insira o nome do artista" class="form-control" autocomplete="off" id="name_author_band_${fieldIndex}" name="name_author_band[]" list="list_author_${fieldIndex}" required>
-                            <datalist id="list_author_${fieldIndex}">
-                                <option value="Artista 1">
-                                <option value="Artista 2">
-                            </datalist>
-                            <div class="invalid-feedback">Por favor, insira o nome do artista.</div>
-                        </div>
-                        <div class="mb-2 col-md-4">
-                            <label for="por_${fieldIndex}" class="form-label">Percentagem <span class="text-danger text-xs">*</span></label>
-                            <input type="number" autocomplete="off" id="por_${fieldIndex}" name="por[]" step="0.1" min="1" max="100" class="form-control" placeholder="%" required value="">
-                            <div class="invalid-feedback">Insira uma percentagem válida (1-100).</div>
-                        </div>
-                        <div class="mb-2 col-md-12">
-                            <label for="email_share_${fieldIndex}" class="form-label">E-mail da conta <span class="text-danger text-xs">*</span></label>
-                            <br>
-                            <small>O e-mail da conta a receber deve ser uma conta Wasom Upfy, neste caso o artista que vai receber os royalties desta faixa deve ter uma conta na plataforma para poder ter acesso aos royalties.</small>
-                            <input type="email" autocomplete="off" id="email_share_${fieldIndex}" name="email_share[]" placeholder="Insira o email da conta Wasom Upfy" required class="form-control mt-2" value="">
-                            <div class="invalid-feedback">Insira um e-mail válido da conta Wasom Upfy.</div>
-                        </div>
-                        <div class="col-md-12 mb-2">
-                            <button type="button" class="btn btn-outline-danger btn-sm delete-field" aria-label="Remover faixa">Remover campo</button>
-                        </div>
-                    </div>
-                </div>`;
-                $("#dynamic-fields").append(newField);
-                fieldIndex++;
-            });
-
-            // Deletar grupo de campos
-            $(document).on("click", ".delete-field", function() {
-                $(this).closest(".field-group").remove();
-            });
-
-            // Validação do formulário
-            $("#validation-form").validate({
-                rules: {
-                    "name_share[]": {
-                        required: true,
-                        maxlength: 100
-                    },
-                    "name_author_band[]": {
-                        required: true,
-                        maxlength: 60
-                    },
-                    "por[]": {
-                        required: true,
-                        number: true,
-                        min: 1,
-                        max: 100
-                    },
-                    "email_share[]": {
-                        required: true,
-                        email: true,
-                        maxlength: 60
-                    }
-                },
-                messages: {
-                    "name_share[]": {
-                        required: "Insira o nome da faixa.",
-                        maxlength: "Máximo 100 caracteres."
-                    },
-                    "name_author_band[]": {
-                        required: "Insira o nome do artista.",
-                        maxlength: "Máximo 60 caracteres."
-                    },
-                    "por[]": {
-                        required: "Insira a percentagem.",
-                        number: "Insira um número válido.",
-                        min: "A percentagem deve ser no mínimo 1.",
-                        max: "A percentagem não pode exceder 100."
-                    },
-                    "email_share[]": {
-                        required: "Insira um e-mail.",
-                        email: "Insira um e-mail válido."
-                    }
-                },
-                errorPlacement: (error, element) => {
-                    error.insertAfter(element);
-                },
-                highlight: (element) => {
-                    $(element).addClass("is-invalid").removeClass("is-valid");
-                },
-                unhighlight: (element) => {
-                    $(element).removeClass("is-invalid").addClass("is-valid");
-                }
-            });
-        });
-    </script>
-    <script>
-        $(function() {
-            var Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 5000
-            });
-
-            $('.toastrDefaultInfo').click(function() {
-                toastr.info(
-                    'Para visualizar os dados da suas carteiras financeiras basta clicar <q>Express</q> ou <q>IBAN</q>'
-                )
-            });
-
-        });
+    // Toastr feedback
+    <?php if ($success === 'created'): ?>
+    toastr.success('Divisão criada com sucesso!', '', {
+        timeOut: 4000,
+        positionClass: 'toast-top-right'
+    });
+    <?php elseif ($success === 'deleted'): ?>
+    toastr.info('Divisão removida.', '', {
+        timeOut: 3000,
+        positionClass: 'toast-top-right'
+    });
+    <?php elseif (!empty($error) && isset($errs[$error])): ?>
+    toastr.error('<?php echo addslashes($errs[$error]); ?>', 'Erro', {
+        timeOut: 5000,
+        positionClass: 'toast-top-right'
+    });
+    <?php endif; ?>
     </script>
 </body>
 

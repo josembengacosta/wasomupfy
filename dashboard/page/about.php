@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-ao">
 
 <head>
   <meta charset="utf-8" />
@@ -14,7 +14,7 @@
   <!-- Preconnect para CDNs -->
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
 
-  <title>Sobre — Wasom Upfy</title>
+  <title>Sobre — <?php echo APP_NAME; ?></title>
 
   <!-- Favicon -->
   <link rel="apple-touch-icon" href="../../assets/img/icones/wasomupfy_fiv_512.png" />
@@ -25,9 +25,9 @@
   <!-- CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
-  <link rel="stylesheet" href="../../css/dashboard-style.css" />
-  <link rel="stylesheet" href="../../css/lastest-style.css" />
-  <link rel="stylesheet" href="../../css/about.css" />
+  <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/dashboard-style.css" />
+  <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/lastest-style.css" />
+  <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/about.css" />
 </head>
 
 <!-- Tela de Carregamento -->
@@ -59,9 +59,9 @@
       <span class="text-light" style="
               font-weight: bold;
               box-sizing: border-box;
-              text-transform: capitalize;
+              text-transform: uppercase;
               font-family: Arial, sans-serif;
-            ">WASOM UPFY</span>
+            "><?php echo APP_NAME; ?></span>
     </a>
 
     <!-- Desktop Menu -->
@@ -177,9 +177,9 @@
       <span class="text-light" style="
               font-weight: bold;
               box-sizing: border-box;
-              text-transform: capitalize;
+              text-transform: uppercase;
               font-family: Arial, sans-serif;
-            ">WASOM UPFY</span>
+            "><?php echo APP_NAME; ?></span>
     </h5>
     <button type="button" class="btn-close text-white" data-bs-dismiss="offcanvas" aria-label="Close">
       <i class="bi bi-x-lg"></i>
@@ -712,9 +712,9 @@
 
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="../../js/theme.wp.js"></script>
-<script src="../../js/theme.wp.js"></script>
-<script src="../../js/wp.tools.js"></script>
+<script src="<?php echo APP_URL  ?>/js/theme.wp.js"></script>
+<script src="<?php echo APP_URL  ?>/js/theme.wp.js"></script>
+<script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
 
 <script>
   // Inicialização

@@ -165,8 +165,8 @@ RewriteRule ^dashboard/painel/?$                                dashboard/painel
 RewriteRule ^dashboard/onboarding_done/?$                       dashboard/onboarding_done.php [L]
 RewriteRule ^dashboard/all-plans/?$                             dashboard/all-plans.php [L]
 RewriteRule ^dashboard/logout/?$                                dashboard/logout.php [L]
-RewriteRule ^dashboard/ajax/support_dashboard/?$              dashboard/ajax/support_dashboard.php [L]
-RewriteRule ^dashboard/ajax/notifications_api/?$              dashboard/ajax/notifications_api.php [L]
+RewriteRule ^dashboard/ajax/support_dashboard/?$                dashboard/ajax/support_dashboard.php [L]
+RewriteRule ^dashboard/ajax/notifications_api/?$                dashboard/ajax/notifications_api.php [L]
 
 # ─── Account ──────────────────────────────────
 RewriteRule ^dashboard/account/add-user/?$                      dashboard/account/add-user.php [L]
@@ -197,38 +197,38 @@ RewriteRule ^dashboard/user/profile/?$                          dashboard/user/p
 RewriteRule ^dashboard/user/profile_process/?$                  dashboard/user/profile_process.php [L]
 
 # ─── Analytics ────────────────────────────────
-RewriteRule ^dashboard/analytics/statistics/?$                  dashboard/analytics/statistics.php [L]
-RewriteRule ^dashboard/analytics/export/?$                      dashboard/analytics/export.php [L]
-RewriteRule ^dashboard/analytics/report/?$                      dashboard/analytics/report.php [L]
-RewriteRule ^dashboard/analytics/compare/?$                     dashboard/analytics/compare.php [L]
-RewriteRule ^dashboard/analytics/launches/?$                    dashboard/analytics/launches.php [L]
-RewriteRule ^dashboard/analytics/artist-details/?$              dashboard/analytics/artist-details.php [L]
-RewriteRule ^dashboard/analytics/country-details/?$             dashboard/analytics/country-details.php [L]
-RewriteRule ^dashboard/analytics/playlist-details/?$            dashboard/analytics/playlist-details.php [L]
+RewriteRule ^dashboard/statistics/?$                  dashboard/analytics/statistics.php [L]
+RewriteRule ^dashboard/export/?$                      dashboard/analytics/export.php [L]
+RewriteRule ^dashboard/report/?$                      dashboard/analytics/report.php [L]
+RewriteRule ^dashboard/compare/?$                     dashboard/analytics/compare.php [L]
+RewriteRule ^dashboard/launches/?$                    dashboard/analytics/launches.php [L]
+RewriteRule ^dashboard/artist-details/?$              dashboard/analytics/artist-details.php [L]
+RewriteRule ^dashboard/country-details/?$             dashboard/analytics/country-details.php [L]
+RewriteRule ^dashboard/playlist-details/?$            dashboard/analytics/playlist-details.php [L]
 
 # ─── Artistas ─────────────────────────────────
-RewriteRule ^dashboard/artists/artists-list/?$                  dashboard/artists/artists-list.php [L]
-RewriteRule ^dashboard/artists/add-artist/?$                    dashboard/artists/add-artist.php [L]
+RewriteRule ^dashboard/artists-list/?$                  dashboard/artists/artists-list.php [L]
+RewriteRule ^dashboard/add-artist/?$                    dashboard/artists/add-artist.php [L]
 RewriteRule ^dashboard/artists/add_artist_process/?$            dashboard/artists/add_artist_process.php [L]
-RewriteRule ^dashboard/artists/youtube/ucy/?$                   dashboard/artists/youtube/ucy.php [L]
-RewriteRule ^dashboard/artists/youtube/ucy_process/?$             dashboard/artists/youtube/ucy_process.php [L]
+RewriteRule ^dashboard/youtube/ucy/?$                   dashboard/artists/youtube/ucy.php [L]
+RewriteRule ^dashboard/youtube/ucy_process/?$             dashboard/artists/youtube/ucy_process.php [L]
 
 # ─── Finanças ─────────────────────────────────
-RewriteRule ^dashboard/finances/?$                              dashboard/finances/overview.php [L]
-RewriteRule ^dashboard/finances/overview/?$                     dashboard/finances/overview.php [L]
-RewriteRule ^dashboard/finances/transactions/?$                 dashboard/finances/transactions.php [L]
-RewriteRule ^dashboard/finances/withdraw/?$                     dashboard/finances/withdraw.php [L]
-RewriteRule ^dashboard/finances/withdrawal_process/?$           dashboard/finances/withdrawal_process.php [L]
-RewriteRule ^dashboard/finances/_modal_withdrawal/?$            dashboard/finances/_modal_withdrawal.php [L]
+RewriteRule ^dashboard/?$                              dashboard/finances/overview.php [L]
+RewriteRule ^dashboard/overview/?$                     dashboard/finances/overview.php [L]
+RewriteRule ^dashboard/transactions/?$                 dashboard/finances/transactions.php [L]
+RewriteRule ^dashboard/withdraw/?$                     dashboard/finances/withdraw.php [L]
+RewriteRule ^dashboard/finances/withdrawal_process/?$  dashboard/finances/withdrawal_process.php [L]
+RewriteRule ^dashboard/_modal_withdrawal/?$            dashboard/finances/_modal_withdrawal.php [L]
 RewriteRule ^dashboard/finances/account_process/?$              dashboard/finances/account_process.php [L]
 
 # ─── Lançamentos ──────────────────────────────
-RewriteRule ^dashboard/launch/releases/?$                       dashboard/launch/releases.php [L]
+RewriteRule ^dashboard/releases/?$                       dashboard/launch/releases.php [L]
 RewriteRule ^dashboard/launch/releases_process/?$               dashboard/launch/releases_process.php [L]
 RewriteRule ^dashboard/launch/creat_release_process/?$          dashboard/launch/creat_release_process.php [L]
-RewriteRule ^dashboard/launch/creat-release/?$                  dashboard/launch/creat-release.php [L]
-RewriteRule ^dashboard/launch/draft-release/?$                  dashboard/launch/draft-release.php [L]
-RewriteRule ^dashboard/launch/edit-release/?$                   dashboard/launch/edit-release.php [L]
+RewriteRule ^dashboard/creat-release/?$                  dashboard/launch/creat-release.php [L]
+RewriteRule ^dashboard/draft-release/?$                  dashboard/launch/draft-release.php [L]
+RewriteRule ^dashboard/edit-release/?$                   dashboard/launch/edit-release.php [L]
 
 
 # ─── Páginas internas do painel ───────────────

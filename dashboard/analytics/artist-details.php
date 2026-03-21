@@ -4,19 +4,105 @@
 // Arquivo: dashboard/analytics/artist-details.php
 // ══════════════════════════════════════════════════════
 require_once __DIR__ . '/../../authentic/include/functions.php';
+require_once __DIR__ . '/../include/platform.php';
 startSecureSession();
 checkRememberMe();
 requireLogin();
+$platform = checkDashboardStatus();
+$user     = checkUserAccess((int)$_SESSION['id_users']);
 
-$db       = getDB();
-$id_users = (int)$_SESSION['id_users'];
-$user     = getUserById($id_users);
-if (!$user) {
-  redirect('../logout');
+$id_users       = (int)$user['id_users'];
+$first_name     = htmlspecialchars($user['first_name']);
+$user_name      = htmlspecialchars($user['user_name'] ?? '');
+$email_verified = (bool)$user['email_verified'];
+$plan_selected  = $user['plan_selected'];
+$onboard_done   = (bool)($user['onboarding_done'] ?? false);
+$user_photo     = $user['photo_user'] ?? null;
+$name_artist_band = htmlspecialchars($user['name_artist_band'] ?? 'Cria Perfil Artístico');
+$notif_count    = getUnreadNotifCount($id_users);
+$db             = getDB();
+
+// ── Saldo ─────────────────────────────────────
+$w = $db->prepare('SELECT balance_aoa FROM _wallet WHERE id_users = ?');
+$w->execute([$id_users]);
+$balance = $w->fetch() ?: ['balance_aoa' => 0];
+
+// ── Plano ─────────────────────────────────────
+$plan_id     = (int)$user['plan_selected'];
+$plan        = null;
+$max_artists = 1;
+if ($plan_id) {
+    $ps = $db->prepare('SELECT * FROM _plans WHERE id_plan = ?');
+    $ps->execute([$plan_id]);
+    $plan = $ps->fetch();
+    if ($plan) $max_artists = (int)($plan['max_artists'] ?? 1);
+}
+$plan_name = $plan ? htmlspecialchars($plan['name_plan']) : 'Sem plano';
+
+// ── Plano ─────────────────────────────────────
+$plan      = null;
+$plan_paid = ($user['status_user'] === 'active' && !empty($user['plan_activated_at']));
+if ($plan_selected) {
+    $ps = $db->prepare('SELECT * FROM _plans WHERE id_plan = ?');
+    $ps->execute([$plan_selected]);
+    $plan = $ps->fetch();
 }
 
-$first_name       = htmlspecialchars($user['first_name']);
-$user_artist_name = htmlspecialchars($user['name_artist_band'] ?? $user['first_name']);
+// Adicionar verificação de expiração do plano
+$plan_expired = false;
+if ($plan_paid && !empty($user['plan_expires_at'])) {
+    $plan_expired = strtotime($user['plan_expires_at']) < time();
+}
+
+// ── Artistas ──────────────────────────────────
+$as = $db->prepare('SELECT COUNT(*) AS total FROM _artist WHERE id_users = ?');
+$as->execute([$id_users]);
+$has_artist = (int)($as->fetch()['total'] ?? 0) > 0;
+
+// ── Conta bancária ────────────────────────────
+$ba = $db->prepare("SELECT id_account FROM _account WHERE id_users = ? AND status_account = 'verified' LIMIT 1");
+$ba->execute([$id_users]);
+$bank_account = $ba->fetch();
+
+// ── Conta rejeitada ───────────────────────────
+$rejected_account = null;
+if ($plan_paid) {
+    $rj = $db->prepare("SELECT type_account, reject_reason FROM _account WHERE id_users = ? AND status_account = 'rejected' LIMIT 1");
+    $rj->execute([$id_users]);
+    $rejected_account = $rj->fetch();
+}
+
+// ── Sessão info (modal logout) ────────────────
+$ls = $db->prepare('SELECT last_login_at, last_login_ip FROM _users_security WHERE id_users = ?');
+$ls->execute([$id_users]);
+$sec = $ls->fetch();
+
+$sess_stmt = $db->prepare("
+    SELECT ip_address, user_agent, country, city, creat_session, last_activity
+    FROM _users_sessions WHERE id_users = ? AND is_active = 1
+    ORDER BY last_activity DESC LIMIT 1
+");
+$sess_stmt->execute([$id_users]);
+$current_session  = $sess_stmt->fetch();
+$session_duration_str = '—';
+if ($current_session && $current_session['creat_session']) {
+    $secs = time() - strtotime($current_session['creat_session']);
+    if ($secs < 60)     $session_duration_str = $secs . 's';
+    elseif ($secs < 3600)  $session_duration_str = floor($secs / 60) . 'min';
+    elseif ($secs < 86400) $session_duration_str = floor($secs / 3600) . 'h ' . floor(($secs % 3600) / 60) . 'min';
+    else                   $session_duration_str = floor($secs / 86400) . 'd ' . floor(($secs % 86400) / 3600) . 'h';
+}
+$member_since   = $user['creat_user'] ? date('d/m/Y', strtotime($user['creat_user'])) : '—';
+$last_login_str = ($sec && $sec['last_login_at']) ? date('d/m/Y H:i', strtotime($sec['last_login_at'])) : '—';
+$ua_raw   = $current_session['user_agent'] ?? '';
+$browser  = 'Desconhecido';
+if (str_contains($ua_raw, 'Edg'))     $browser = 'Microsoft Edge';
+elseif (str_contains($ua_raw, 'Chrome'))  $browser = 'Google Chrome';
+elseif (str_contains($ua_raw, 'Firefox')) $browser = 'Mozilla Firefox';
+elseif (str_contains($ua_raw, 'Safari'))  $browser = 'Safari';
+elseif (str_contains($ua_raw, 'Opera'))   $browser = 'Opera';
+$sess_location = trim(($current_session['city'] ?? '') . ', ' . ($current_session['country'] ?? ''), ', ') ?: 'Desconhecida';
+$sess_ip       = $current_session['ip_address'] ?? ($sec['last_login_ip'] ?? '—');
 
 // ── Parâmetros da URL ─────────────────────────
 $id_artist   = isset($_GET['artist']) ? (int)$_GET['artist'] : 0;
@@ -24,7 +110,7 @@ $filter_year = isset($_GET['year'])   ? (int)$_GET['year']   : (int)date('Y');
 $filter_store = isset($_GET['store']) ? (int)$_GET['store']  : 0; // 0 = todos
 
 if (!$id_artist) {
-  redirect('dashboard/analytics/statistics#artist');
+    redirect(APP_URL_PANEL . '/statistics#artist');
 }
 
 // ── Validar que o artista pertence ao utilizador ──
@@ -39,8 +125,8 @@ $artist_q->execute([$id_artist, $id_users]);
 $artist = $artist_q->fetch();
 
 if (!$artist) {
-  // Artista não encontrado ou não pertence ao utilizador
-  redirect('dashboard/analytics/statistics#artist');
+    // Artista não encontrado ou não pertence ao utilizador
+    redirect(APP_URL_PANEL . '/statistics#artist');
 }
 
 // ── Anos disponíveis ──────────────────────────
@@ -124,56 +210,56 @@ $chart_raw = $chart_q->fetchAll(PDO::FETCH_ASSOC);
 
 // Organizar para Chart.js
 $store_colors = [
-  'spotify'       => ['border' => '#1db954', 'bg' => 'rgba(29,185,84,0.4)'],
-  'apple-music'   => ['border' => '#fc3c44', 'bg' => 'rgba(252,60,68,0.4)'],
-  'amazon-music'  => ['border' => '#00a8e0', 'bg' => 'rgba(0,168,224,0.4)'],
-  'deezer'        => ['border' => '#ff0089', 'bg' => 'rgba(255,0,137,0.4)'],
-  'tidal'         => ['border' => '#00ffff', 'bg' => 'rgba(0,255,255,0.3)'],
-  'youtube-music' => ['border' => '#ff0000', 'bg' => 'rgba(255,0,0,0.4)'],
-  'boomplay'      => ['border' => '#f5a623', 'bg' => 'rgba(245,166,35,0.4)'],
-  'tiktok'        => ['border' => '#69c9d0', 'bg' => 'rgba(105,201,208,0.4)'],
-  'itunes'        => ['border' => '#c864c8', 'bg' => 'rgba(200,100,200,0.4)'],
-  'default'       => ['border' => '#aaa',   'bg' => 'rgba(170,170,170,0.3)'],
+    'spotify'       => ['border' => '#1db954', 'bg' => 'rgba(29,185,84,0.4)'],
+    'apple-music'   => ['border' => '#fc3c44', 'bg' => 'rgba(252,60,68,0.4)'],
+    'amazon-music'  => ['border' => '#00a8e0', 'bg' => 'rgba(0,168,224,0.4)'],
+    'deezer'        => ['border' => '#ff0089', 'bg' => 'rgba(255,0,137,0.4)'],
+    'tidal'         => ['border' => '#00ffff', 'bg' => 'rgba(0,255,255,0.3)'],
+    'youtube-music' => ['border' => '#ff0000', 'bg' => 'rgba(255,0,0,0.4)'],
+    'boomplay'      => ['border' => '#f5a623', 'bg' => 'rgba(245,166,35,0.4)'],
+    'tiktok'        => ['border' => '#69c9d0', 'bg' => 'rgba(105,201,208,0.4)'],
+    'itunes'        => ['border' => '#c864c8', 'bg' => 'rgba(200,100,200,0.4)'],
+    'default'       => ['border' => '#aaa',   'bg' => 'rgba(170,170,170,0.3)'],
 ];
 
 $store_icons = [
-  'spotify'       => 'bi-spotify',
-  'apple-music'   => 'bi-apple',
-  'amazon-music'  => 'bi-music-note-beamed',
-  'deezer'        => 'bi-music-player',
-  'tidal'         => 'bi-water',
-  'youtube-music' => 'bi-youtube',
-  'boomplay'      => 'bi-soundwave',
-  'tiktok'        => 'bi-tiktok',
-  'itunes'        => 'bi-music-note',
-  'default'       => 'bi-music-note-beamed',
+    'spotify'       => 'bi-spotify',
+    'apple-music'   => 'bi-apple',
+    'amazon-music'  => 'bi-music-note-beamed',
+    'deezer'        => 'bi-music-player',
+    'tidal'         => 'bi-water',
+    'youtube-music' => 'bi-youtube',
+    'boomplay'      => 'bi-soundwave',
+    'tiktok'        => 'bi-tiktok',
+    'itunes'        => 'bi-music-note',
+    'default'       => 'bi-music-note-beamed',
 ];
 
 $chart_stores   = [];
 $chart_by_store = [];
 foreach ($chart_raw as $row) {
-  $mid = (int)$row['month_stream'];
-  $sid = (int)$row['id_store'];
-  if (!isset($chart_stores[$sid])) {
-    $chart_stores[$sid] = ['name' => $row['name_store'], 'slug' => $row['slug_store']];
-    $chart_by_store[$sid] = array_fill(1, 12, 0);
-  }
-  $chart_by_store[$sid][$mid] = (int)$row['streams'];
+    $mid = (int)$row['month_stream'];
+    $sid = (int)$row['id_store'];
+    if (!isset($chart_stores[$sid])) {
+        $chart_stores[$sid] = ['name' => $row['name_store'], 'slug' => $row['slug_store']];
+        $chart_by_store[$sid] = array_fill(1, 12, 0);
+    }
+    $chart_by_store[$sid][$mid] = (int)$row['streams'];
 }
 
 $chart_datasets = [];
 foreach ($chart_stores as $sid => $sinfo) {
-  $slug   = $sinfo['slug'];
-  $colors = $store_colors[$slug] ?? $store_colors['default'];
-  $chart_datasets[] = [
-    'label'           => $sinfo['name'],
-    'data'            => array_values($chart_by_store[$sid]),
-    'borderColor'     => $colors['border'],
-    'backgroundColor' => $colors['bg'],
-    'fill'            => true,
-    'stack'           => 'combined',
-    'tension'         => 0.3,
-  ];
+    $slug   = $sinfo['slug'];
+    $colors = $store_colors[$slug] ?? $store_colors['default'];
+    $chart_datasets[] = [
+        'label'           => $sinfo['name'],
+        'data'            => array_values($chart_by_store[$sid]),
+        'borderColor'     => $colors['border'],
+        'backgroundColor' => $colors['bg'],
+        'fill'            => true,
+        'stack'           => 'combined',
+        'tension'         => 0.3,
+    ];
 }
 
 $months_pt_short = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
@@ -216,8 +302,8 @@ $tracks = $tracks_q->fetchAll(PDO::FETCH_ASSOC);
 // Helper: formatar duração
 function formatDuration(?int $sec): string
 {
-  if (!$sec) return '—';
-  return gmdate($sec >= 3600 ? 'H:i:s' : 'i:s', $sec);
+    if (!$sec) return '—';
+    return gmdate($sec >= 3600 ? 'H:i:s' : 'i:s', $sec);
 }
 
 $base_url  = rtrim(APP_URL, '/');
@@ -225,25 +311,13 @@ $cover_url = $base_url . '/assets/comprovantes/uploads/covers/';
 $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
 ?>
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-ao">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="robots" content="noindex, nofollow" />
-    <meta name="theme-color" content="#FF0089" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <link rel="apple-touch-icon" href="../../assets/img/icones/wasomupfy_fiv_512.png" />
-    <link rel="manifest" href="../manifest.json" />
+    <?php require_once __DIR__ . '/../include/head.php'; ?>
     <title><?php echo htmlspecialchars($artist['stage_name']); ?> — Estatísticas — <?php echo APP_NAME; ?></title>
-    <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
-    <link rel="stylesheet" href="../../css/dashboard-style.css" />
-    <link rel="stylesheet" href="../../css/lastest-style.css" />
-    <link rel="stylesheet" href="../../css/artist-list.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/artist-list.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
     /* ══ Hero do artista ══ */
@@ -465,612 +539,546 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
 
 <body>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <!-- Menu Button (Left) -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu"
-                aria-controls="offcanvasMenu">
-                <span class="navbar-toggler-icon"><i class="bi bi-list text-white fs-1"></i></span>
-            </button>
-
-            <!-- Logo (Center on Mobile, Left on Desktop) -->
-            <a class="navbar-brand" href="../painel">
-                <!-- SVG Logo Wasom Upfy -->
-                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
-                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
-                        fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
-                </svg> -->
-                <span class="text-light" style="
-              font-weight: bold;
-              box-sizing: border-box;
-              text-transform: capitalize;
-              font-family: Arial, sans-serif;
-            ">WASOM UPFY</span>
-            </a>
-
-            <!-- Desktop Menu -->
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav m-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="../painel"><i class="bi bi-speedometer2"></i> Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../launch/releases"><i class="bi bi-disc"></i> Lançamentos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../analytics/statistics"><i class="bi bi-bar-chart"></i>
-                            Estatísticas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../finances/overview"><i class="bi bi-currency-dollar"></i>
-                            Finanças</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../artists/artists-list"><i class="bi bi-person"></i> Artistas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../artists/youtube/ucy"><i class="bi bi-youtube"></i> Unificação de
-                            canal
-                            YouTube</a>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- User Icon (Right) -->
-            <div class="user-menu d-flex align-items-center">
-                <!-- Theme Toggle Button -->
-                <a class="theme-toggle text-white me-2" id="themeToggle">
-                    <i class="bi bi-sun" id="themeIcon"></i>
-                </a>
-                <a href="../page/notifications" class="text-white me-2" aria-label="Notificações">
-                    <i class="bi bi-bell fs-4"></i>
-                    <span class="badge bg-danger">9</span>
-                </a>
-                <a href="#" class="text-white" data-bs-toggle="dropdown">
-                    <i class="bi bi-person-circle fs-4"></i>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li>
-                        <a class="dropdown-item" href="../user/profile"><i class="bi bi-person me-2"></i>
-                            <strong><?php echo $first_name; ?></strong></a>
-                        <div class="text-white-50">
-                            &nbsp; &nbsp; &nbsp; &nbsp; (Conta <?php echo str_pad($id_users, 6, "0", STR_PAD_LEFT); ?>)
-                        </div>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../user/profile"><i class="bi bi-person me-2"></i> Meu Perfil</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../account/manage-account"><i class="bi bi-tools me-2"></i>
-                            Gestão de
-                            Conta</a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../page/settings"><i class="bi bi-gear me-2"></i>
-                            Configurações</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../page/notifications"><i class="bi bi-bell me-2"></i>
-                            Notificações</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../services/available-services"><i class="bi bi-star me-2"></i>
-                            Conta e
-                            serviços disponíveis</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="#?logout-wasomupfy" data-bs-toggle="modal"
-                            data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right me-2"></i>
-                            Desconectar-se</a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../page/about"><i class="bi bi-info-circle me-2"></i> Sobre</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../page/support"><i class="bi bi-headset me-2"></i> Enviar pedido
-                            de
-                            suporte</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../page/faq"><i class="bi bi-chat-left-text me-2"></i> Perguntas
-                            frequentes</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../page/help"><i class="bi bi-question-circle me-2"></i>
-                            Ajuda</a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li>
-                        <span class="dropdown-item-text" id="versionDropdown"></span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Offcanvas Menu for Mobile -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasMenuLabel">
-                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
-                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
-                        fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
-                </svg> -->
-                <span class="text-light" style="
-              font-weight: bold;
-              box-sizing: border-box;
-              text-transform: capitalize;
-              font-family: Arial, sans-serif;
-            ">WASOM UPFY</span>
-            </h5>
-            <button type="button" class="btn-close text-white" data-bs-dismiss="offcanvas" aria-label="Close">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-        <div class="offcanvas-body">
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link" href="../painel"><i class="bi bi-speedometer2"></i> Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../launch/releases"><i class="bi bi-disc"></i> Lançamentos</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../analytics/statistics"><i class="bi bi-bar-chart"></i> Estatísticas</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../finances/overview"><i class="bi bi-currency-dollar"></i> Finanças</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../artists/artists-list"><i class="bi bi-person"></i> Artistas</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../artists/youtube/ucy"><i class="bi bi-youtube"></i> Unificação de canal
-                        YouTube</a>
-                </li>
-            </ul>
-            <div class="version-info">Versão 2.1 (2026)</div>
-        </div>
-    </div>
+    <!-- ═══ NAVBAR ═══ -->
+    <?php require_once __DIR__ . '/../include/sidebar.php'; ?>
 
     <!-- Main Content -->
     <div class="container my-4">
+        <?php /* ============================================
+    BANNERS DE NOTIFICACAO DO PAINEL
+    Estilo: inline CSS consistente com renderDashboardAlerts().
+    Bootstrap alert nativo removido — um único sistema visual.
+    Lógica de prioridade:
+      Nível 1 (danger)  — bloqueia distribuição
+      Nível 2 (warning) — importante, requer atenção
+      Nível 3 (info)    — informativo / acção opcional
+    ============================================ */ ?>
 
-        <!-- ═══ MAIN ═══ -->
-        <div class="container my-4">
+        <?php renderDashboardAlerts($user, $platform); ?>
 
-            <!-- ── Hero do artista ── -->
-            <div class="artist-hero">
-                <?php if ($artist['cover_artist']): ?>
-                <div class="hero-cover"
-                    style="background-image:url('<?php echo htmlspecialchars($photo_url . $artist['cover_artist']); ?>')">
-                </div>
+        <?php
+        // Cor map para helpers inline — idêntico ao renderDashboardAlerts()
+        $alertColors = [
+            'danger'  => ['bg' => 'rgba(239,68,68,.08)',  'border' => 'rgba(239,68,68,.25)',  'text' => '#ef4444'],
+            'warning' => ['bg' => 'rgba(234,179,8,.08)',  'border' => 'rgba(234,179,8,.25)',  'text' => '#eab308'],
+            'info'    => ['bg' => 'rgba(99,102,241,.08)', 'border' => 'rgba(99,102,241,.25)', 'text' => '#6366f1'],
+        ];
+        function wuAlert(string $type, string $icon, string $message, ?array $action = null, bool $dismiss = true, string $id = ''): void
+        {
+            global $alertColors;
+            $c   = $alertColors[$type] ?? $alertColors['info'];
+            $eid = $id ?: ('wuPanelAlert_' . md5($message));
+            echo "<div id=\"{$eid}\" style=\"display:flex;align-items:flex-start;gap:10px;"
+                . "background:{$c['bg']};border:1px solid {$c['border']};border-radius:12px;"
+                . "padding:.75rem 1rem;font-size:.83rem;margin-bottom:.6rem;"
+                . "transition:opacity .3s;\">";
+            echo "<i class=\"bi {$icon}\" style=\"font-size:1rem;flex-shrink:0;margin-top:2px;color:{$c['text']};\"></i>";
+            echo '<span class="wu-alert-msg">' . $message;
+            if ($action) {
+                echo " <a href=\"{$action['url']}\" style=\"color:{$c['text']};font-weight:700;"
+                    . "text-decoration:underline;white-space:nowrap\">{$action['label']} &rarr;</a>";
+            }
+            echo '</span>';
+            if ($dismiss) {
+                echo "<button type=\"button\" class=\"wu-alert-dismiss\" aria-label=\"Fechar\""
+                    . " onclick=\"(function(el){el.style.opacity='0';"
+                    . "setTimeout(function(){el.style.display='none'},300)})(document.getElementById('{$eid}'))\">"
+                    . "&times;</button>";
+            }
+            echo '</div>';
+        }
+        ?>
+
+        <?php /* ── NÍVEL 1: Crítico — bloqueia distribuição ── */ ?>
+
+        <?php if (!$email_verified): ?>
+        <?php wuAlert(
+                'danger',
+                'bi-envelope-exclamation-fill',
+                '<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta e receber notificações de pagamentos.',
+                ['label' => 'Verificar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/user/profile#perfil'],
+                true,
+                'banner-email'
+            ); ?>
+        <?php endif; ?>
+
+        <?php if ($plan && !$plan_paid): ?>
+        <?php wuAlert(
+                'warning',
+                'bi-clock-history',
+                '<strong>Pagamento pendente — ' . htmlspecialchars($plan['name_plan']) . '.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados até confirmação.',
+                ['label' => 'Finalizar pagamento', 'url' => APP_URL . '/' . APP_URL_PANEL . '/payment/pay'],
+                true,
+                'banner-plan-pending'
+            ); ?>
+        <?php elseif (!$plan): ?>
+        <?php wuAlert(
+                'danger',
+                'bi-credit-card-fill',
+                '<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir a tua música para +150 plataformas.',
+                ['label' => 'Ver planos', 'url' => APP_URL . '/' . APP_URL_PANEL . '/all-plans'],
+                false,
+                'banner-plan'
+            ); ?>
+        <?php endif; ?>
+
+        <?php /* ── NÍVEL 2: Importante — perfil incompleto ── */ ?>
+
+        <?php if ($plan_paid && !$has_artist): ?>
+        <?php wuAlert(
+                'info',
+                'bi-person-plus-fill',
+                '<strong>Cria o teu perfil de artista.</strong> Tens plano activo mas ainda não criaste um perfil. Precisas de um para poder lançar música.',
+                ['label' => 'Criar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/add-artist'],
+                true,
+                'banner-artist'
+            ); ?>
+        <?php endif; ?>
+
+        <?php /* ── NÍVEL 3: Informativo — conta bancária ── */ ?>
+
+        <?php if ($plan_paid && $has_artist && !$bank_account): ?>
+        <?php wuAlert(
+                'info',
+                'bi-bank',
+                '<strong>Conta bancária não registada.</strong> Para poder sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.',
+                ['label' => 'Registar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/withdraw'],
+                true,
+                'banner-bank'
+            ); ?>
+        <?php endif; ?>
+
+        <?php /* ── NÍVEL 3: Conta bancária rejeitada ── */ ?>
+
+        <?php
+        $rejected_account = null;
+        if ($plan_paid) {
+            $rej_stmt = getDB()->prepare("SELECT type_account, reject_reason FROM _account WHERE id_users = ? AND status_account = 'rejected' LIMIT 1");
+            $rej_stmt->execute([$id_users]);
+            $rejected_account = $rej_stmt->fetch();
+        }
+        ?>
+        <?php if ($rejected_account): ?>
+        <?php
+            $rej_msg = '<strong>Conta ' . htmlspecialchars($rejected_account['type_account']) . ' rejeitada.</strong>';
+            if ($rejected_account['reject_reason']) {
+                $rej_msg .= ' Motivo: <em>' . htmlspecialchars($rejected_account['reject_reason']) . '</em>.';
+            }
+            $rej_msg .= ' Actualiza os dados e submete novamente.';
+            wuAlert(
+                'danger',
+                'bi-x-circle-fill',
+                $rej_msg,
+                ['label' => 'Corrigir agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/withdraw'],
+                true,
+                'banner-account-rejected'
+            );
+            ?>
+        <?php endif; ?>
+
+        <!-- ── Hero do artista ── -->
+        <div class="artist-hero">
+            <?php if ($artist['cover_artist']): ?>
+            <div class="hero-cover"
+                style="background-image:url('<?php echo htmlspecialchars($photo_url . $artist['cover_artist']); ?>')">
+            </div>
+            <?php endif; ?>
+            <div class="hero-body">
+                <?php if ($artist['photo_artist']): ?>
+                <img class="artist-photo" src="<?php echo htmlspecialchars($photo_url . $artist['photo_artist']); ?>"
+                    onerror="this.outerHTML='<div class=\'artist-photo-placeholder\'>🎤</div>'"
+                    alt="<?php echo htmlspecialchars($artist['stage_name']); ?>" />
+                <?php else: ?>
+                <div class="artist-photo-placeholder">🎤</div>
                 <?php endif; ?>
-                <div class="hero-body">
-                    <?php if ($artist['photo_artist']): ?>
-                    <img class="artist-photo"
-                        src="<?php echo htmlspecialchars($photo_url . $artist['photo_artist']); ?>"
-                        onerror="this.outerHTML='<div class=\'artist-photo-placeholder\'>🎤</div>'"
-                        alt="<?php echo htmlspecialchars($artist['stage_name']); ?>" />
-                    <?php else: ?>
-                    <div class="artist-photo-placeholder">🎤</div>
-                    <?php endif; ?>
-                    <div class="artist-hero-info">
-                        <h2><?php echo htmlspecialchars($artist['stage_name']); ?></h2>
-                        <div class="meta">
-                            <?php if ($artist['genre_main']): ?>
-                            <span><i
-                                    class="bi bi-music-note me-1"></i><?php echo htmlspecialchars($artist['genre_main']); ?><?php if ($artist['genre_secondary']): ?>
-                                /
-                                <?php echo htmlspecialchars($artist['genre_secondary']);
-                                                                                                            endif; ?></span>
-                            <?php endif; ?>
-                            <?php if ($artist['country']): ?>
-                            <span><i
-                                    class="bi bi-geo-alt me-1"></i><?php echo htmlspecialchars($artist['country']); ?><?php if ($artist['city']): ?>,
-                                <?php echo htmlspecialchars($artist['city']);
-                                                                                                      endif; ?></span>
-                            <?php endif; ?>
-                            <span><i class="bi bi-disc me-1"></i><?php echo (int)$totals['total_tracks']; ?>
-                                faixa<?php echo $totals['total_tracks'] != 1 ? 's' : ''; ?></span>
-                        </div>
-                        <?php if ($artist['instagram_url'] || $artist['spotify_url'] || $artist['youtube_url']): ?>
-                        <div class="social-links mt-2">
-                            <?php if ($artist['instagram_url']): ?>
-                            <a href="<?php echo htmlspecialchars($artist['instagram_url']); ?>" target="_blank"
-                                rel="noopener" data-bs-toggle="tooltip" title="Instagram"><i
-                                    class="bi bi-instagram"></i></a>
-                            <?php endif; ?>
-                            <?php if ($artist['spotify_url']): ?>
-                            <a href="<?php echo htmlspecialchars($artist['spotify_url']); ?>" target="_blank"
-                                rel="noopener" data-bs-toggle="tooltip" title="Spotify"><i
-                                    class="bi bi-spotify"></i></a>
-                            <?php endif; ?>
-                            <?php if ($artist['youtube_url']): ?>
-                            <a href="<?php echo htmlspecialchars($artist['youtube_url']); ?>" target="_blank"
-                                rel="noopener" data-bs-toggle="tooltip" title="YouTube"><i
-                                    class="bi bi-youtube"></i></a>
-                            <?php endif; ?>
-                        </div>
+                <div class="artist-hero-info">
+                    <h2><?php echo htmlspecialchars($artist['stage_name']); ?></h2>
+                    <div class="meta">
+                        <?php if ($artist['genre_main']): ?>
+                        <span><i
+                                class="bi bi-music-note me-1"></i><?php echo htmlspecialchars($artist['genre_main']); ?><?php if ($artist['genre_secondary']): ?>
+                            /
+                            <?php echo htmlspecialchars($artist['genre_secondary']);
+                                                                                                                            endif; ?></span>
+                        <?php endif; ?>
+                        <?php if ($artist['country']): ?>
+                        <span><i
+                                class="bi bi-geo-alt me-1"></i><?php echo htmlspecialchars($artist['country']); ?><?php if ($artist['city']): ?>,
+                            <?php echo htmlspecialchars($artist['city']);
+                                                                                                                        endif; ?></span>
+                        <?php endif; ?>
+                        <span><i class="bi bi-disc me-1"></i><?php echo (int)$totals['total_tracks']; ?>
+                            faixa<?php echo $totals['total_tracks'] != 1 ? 's' : ''; ?></span>
+                    </div>
+                    <?php if ($artist['instagram_url'] || $artist['spotify_url'] || $artist['youtube_url']): ?>
+                    <div class="social-links mt-2">
+                        <?php if ($artist['instagram_url']): ?>
+                        <a href="<?php echo htmlspecialchars($artist['instagram_url']); ?>" target="_blank"
+                            rel="noopener" data-bs-toggle="tooltip" title="Instagram"><i
+                                class="bi bi-instagram"></i></a>
+                        <?php endif; ?>
+                        <?php if ($artist['spotify_url']): ?>
+                        <a href="<?php echo htmlspecialchars($artist['spotify_url']); ?>" target="_blank" rel="noopener"
+                            data-bs-toggle="tooltip" title="Spotify"><i class="bi bi-spotify"></i></a>
+                        <?php endif; ?>
+                        <?php if ($artist['youtube_url']): ?>
+                        <a href="<?php echo htmlspecialchars($artist['youtube_url']); ?>" target="_blank" rel="noopener"
+                            data-bs-toggle="tooltip" title="YouTube"><i class="bi bi-youtube"></i></a>
                         <?php endif; ?>
                     </div>
-                    <div class="ms-auto d-flex gap-2 flex-wrap align-items-start">
-                        <a href="statistics#artist" class="btn btn-sm"
-                            style="background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:10px">
-                            <i class="bi bi-arrow-left me-1"></i>Voltar
-                        </a>
-                        <a href="artist-details?artist=<?php echo $id_artist; ?>&year=<?php echo $filter_year; ?><?php echo $filter_store ? '&store=' . $filter_store : ''; ?>"
-                            class="btn btn-sm"
-                            style="background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:10px">
-                            <i class="bi bi-arrow-clockwise me-1"></i>Actualizar
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ── Barra de filtros ── -->
-            <form method="GET" action="artist-details">
-                <input type="hidden" name="artist" value="<?php echo $id_artist; ?>" />
-                <div class="filter-bar">
-                    <div>
-                        <label>Ano</label>
-                        <select name="year" class="form-select form-select-sm" style="min-width:100px"
-                            onchange="this.form.submit()">
-                            <?php foreach ($available_years as $y): ?>
-                            <option value="<?php echo $y; ?>" <?php echo $y == $filter_year ? 'selected' : ''; ?>>
-                                <?php echo $y; ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div>
-                        <label>Plataforma</label>
-                        <select name="store" class="form-select form-select-sm" style="min-width:160px"
-                            onchange="this.form.submit()">
-                            <option value="0" <?php echo !$filter_store ? 'selected' : ''; ?>>Todas as plataformas
-                            </option>
-                            <?php foreach ($stores as $st): ?>
-                            <option value="<?php echo $st['id_store']; ?>"
-                                <?php echo $st['id_store'] == $filter_store ? 'selected' : ''; ?>>
-                                <?php echo htmlspecialchars($st['name_store']); ?>
-                            </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="ms-auto d-flex align-items-end"
-                        style="font-size:.78rem;color:var(--text-muted,#6c757d)">
-                        <i class="bi bi-info-circle me-1"></i>
-                        <?php echo $filter_year; ?>
-                        <?php echo $filter_store && isset($store_map[$filter_store]) ? '— ' . htmlspecialchars($store_map[$filter_store]['name_store']) : '— Todas as plataformas'; ?>
-                    </div>
-                </div>
-            </form>
-
-            <!-- ── Cards de totais ── -->
-            <div class="row g-3 mb-4">
-                <div class="col-6 col-md-3">
-                    <div class="stat-hero-card">
-                        <div class="stat-label">Streams</div>
-                        <div class="stat-value" style="color:#FF0089">
-                            <?php echo number_format((int)$totals['total_streams']); ?></div>
-                        <i class="bi bi-headphones stat-icon"></i>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="stat-hero-card">
-                        <div class="stat-label">Downloads</div>
-                        <div class="stat-value" style="color:#0d6efd">
-                            <?php echo number_format((int)$totals['total_downloads']); ?></div>
-                        <i class="bi bi-download stat-icon"></i>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="stat-hero-card">
-                        <div class="stat-label">Receita (Kz)</div>
-                        <div class="stat-value" style="color:#198754;font-size:1.3rem">
-                            Kz<?php echo number_format((float)$totals['total_revenue'], 2); ?></div>
-                        <i class="bi bi-currency-dollar stat-icon"></i>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="stat-hero-card">
-                        <div class="stat-label">Faixas activas</div>
-                        <div class="stat-value" style="color:#6c757d"><?php echo (int)$totals['total_tracks']; ?></div>
-                        <i class="bi bi-disc stat-icon"></i>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ── Gráfico streams por mês ── -->
-            <div class="chart-card mb-4">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h6 class="mb-0"><i class="bi bi-graph-up me-2 text-pink"></i>Streams por mês —
-                            <?php echo $filter_year; ?></h6>
-                    </div>
-                    <?php if (empty($chart_datasets)): ?>
-                    <div class="empty-section">
-                        <div class="icon"><i class="bi bi-bar-chart"></i></div>
-                        <div class="small fw-semibold mb-1">Sem dados de streams para <?php echo $filter_year; ?>.</div>
-                        <div class="small">Os streams são importados mensalmente após entrega dos relatórios pelas
-                            plataformas.</div>
-                    </div>
-                    <?php else: ?>
-                    <div class="p-3">
-                        <canvas id="streamChart" style="max-height:300px"></canvas>
-                    </div>
                     <?php endif; ?>
                 </div>
-            </div>
 
-            <!-- ── Plataformas ── -->
-            <?php if (!empty($platforms_data)): ?>
-            <div class="card mb-4" style="border-radius:16px">
-                <div class="card-header">
-                    <h6 class="mb-0"><i class="bi bi-collection me-2 text-pink"></i>Streams por plataforma</h6>
-                </div>
-                <div class="card-body pt-2">
-                    <?php
-            $max_plat = max(array_column($platforms_data, 'total_streams') ?: [1]);
-            foreach ($platforms_data as $pd):
-              $slug   = $pd['slug_store'];
-              $colors = $store_colors[$slug] ?? $store_colors['default'];
-              $icon   = $store_icons[$slug]  ?? $store_icons['default'];
-              $pct    = $max_plat > 0 ? round(($pd['total_streams'] / $max_plat) * 100) : 0;
-            ?>
-                    <div class="platform-row">
-                        <div class="platform-dot" style="background:<?php echo $colors['border']; ?>"></div>
-                        <i class="<?php echo $icon; ?>"
-                            style="font-size:1rem;color:<?php echo $colors['border']; ?>;min-width:20px"></i>
-                        <div style="min-width:130px;font-size:.82rem;font-weight:600">
-                            <?php echo htmlspecialchars($pd['name_store']); ?></div>
-                        <div class="platform-bar-bg">
-                            <div class="platform-bar-fill"
-                                style="width:<?php echo $pct; ?>%;background:<?php echo $colors['border']; ?>"></div>
-                        </div>
-                        <div style="font-size:.78rem;font-weight:700;min-width:80px;text-align:right">
-                            <?php echo number_format((int)$pd['total_streams']); ?>
-                            <span style="font-size:.65rem;font-weight:400;color:var(--text-muted,#6c757d)">
-                                streams</span>
-                        </div>
-                        <div style="font-size:.72rem;color:var(--text-muted,#6c757d);min-width:70px;text-align:right">
-                            $<?php echo number_format((float)$pd['total_revenue'], 2); ?>
-                        </div>
-                    </div>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-            <?php endif; ?>
-
-            <!-- ── Tabela de faixas ── -->
-            <div class="table-card mb-4">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h6 class="mb-0"><i class="bi bi-music-note-list me-2 text-pink"></i>Faixas</h6>
-                        <span class="badge bg-secondary"><?php echo count($tracks); ?></span>
-                    </div>
-                    <?php if (empty($tracks)): ?>
-                    <div class="empty-section">
-                        <div class="icon"><i class="bi bi-music-note"></i></div>
-                        <div class="small fw-semibold mb-1">Nenhuma faixa activa encontrada.</div>
-                        <div class="small">As faixas aparecem aqui após aprovação pela equipa Wasom Upfy.</div>
-                    </div>
-                    <?php else: ?>
-                    <div class="table-responsive">
-                        <table id="tracksTable" class="table table-striped table-hover mb-0">
-                            <thead>
-                                <tr>
-                                    <th style="width:52px">Capa</th>
-                                    <th>Faixa</th>
-                                    <th>Álbum</th>
-                                    <th>Duração</th>
-                                    <th>Streams <?php echo $filter_year; ?></th>
-                                    <th>Downloads</th>
-                                    <th>Receita (Kz)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($tracks as $track): ?>
-                                <tr>
-                                    <td>
-                                        <?php if ($track['img_cover']): ?>
-                                        <img class="track-cover"
-                                            src="<?php echo htmlspecialchars($cover_url . $track['img_cover']); ?>"
-                                            onerror="this.outerHTML='<div class=\'track-cover-placeholder\'>🎵</div>'"
-                                            alt="" />
-                                        <?php else: ?>
-                                        <div class="track-cover-placeholder">🎵</div>
-                                        <?php endif; ?>
-                                    </td>
-                                    <td>
-                                        <div class="fw-semibold" style="font-size:.87rem">
-                                            <?php echo htmlspecialchars($track['title_track']); ?>
-                                            <?php if ($track['explicit'] === 'YES'): ?>
-                                            <span class="explicit-badge">E</span>
-                                            <?php endif; ?>
-                                        </div>
-                                        <?php if ($track['name_author']): ?>
-                                        <div class="feat-text">
-                                            <?php echo htmlspecialchars($track['name_author']); ?><?php if ($track['name_author_feat']): ?>
-                                            feat. <?php echo htmlspecialchars($track['name_author_feat']);
-                                                                                  endif; ?>
-                                        </div>
-                                        <?php endif; ?>
-                                    </td>
-                                    <td style="font-size:.82rem">
-                                        <?php echo htmlspecialchars($track['title_album']); ?>
-                                        <span class="badge bg-light text-muted ms-1"
-                                            style="font-size:.6rem"><?php echo strtoupper($track['type_album']); ?></span>
-                                    </td>
-                                    <td class="small text-muted">
-                                        <?php echo formatDuration($track['duration_seconds']); ?>
-                                    </td>
-                                    <td class="fw-bold" style="color:#FF0089">
-                                        <?php echo number_format((int)$track['total_streams']); ?></td>
-                                    <td class="small"><?php echo number_format((int)$track['total_downloads']); ?></td>
-                                    <td class="small fw-semibold" style="color:#198754">
-                                        $<?php echo number_format((float)$track['total_revenue'], 4); ?></td>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                    <?php endif; ?>
-                </div>
-            </div>
-
-            <!-- ── Bio (se existir) ── -->
-            <?php if ($artist['bio']): ?>
-            <div class="card mb-4" style="border-radius:16px">
-                <div class="card-header">
-                    <h6 class="mb-0"><i class="bi bi-person-lines-fill me-2 text-pink"></i>Biografia</h6>
-                </div>
-                <div class="card-body" style="font-size:.87rem;line-height:1.7;white-space:pre-line">
-                    <?php echo nl2br(htmlspecialchars($artist['bio'])); ?>
-                </div>
-            </div>
-            <?php endif; ?>
-
-        </div><!-- /container -->
-
-        <!-- Bottom Nav Mobile -->
-        <nav class="bottom-nav d-lg-none">
-            <ul class="nav justify-content-around">
-                <li class="nav-item"><a class="nav-link" href="../painel"><i
-                            class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
-                <li class="nav-item"><a class="nav-link" href="../launch/releases"><i
-                            class="bi bi-disc"></i><span>Lançamentos</span></a></li>
-                <li class="nav-item"><a class="nav-link active" href="statistics"><i
-                            class="bi bi-bar-chart"></i><span>Estatísticas</span></a></li>
-                <li class="nav-item"><a class="nav-link" href="../finances/overview"><i
-                            class="bi bi-currency-dollar"></i><span>Finanças</span></a></li>
-                <li class="nav-item"><a class="nav-link" href="../artists/artists-list"><i
-                            class="bi bi-person"></i><span>Artistas</span></a></li>
-            </ul>
-        </nav>
-
-        <!-- Modal Logout -->
-        <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title text-dark">Terminar sessão</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body text-center text-dark">
-                        <p>Tens a certeza de que desejas terminar sessão, <strong><?php echo $first_name; ?></strong>?
-                        </p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Não, continuar</button>
-                        <a href="../logout" class="btn btn-danger">Sim, terminar sessão</a>
-                    </div>
+                <div class="ms-auto d-flex gap-2 flex-wrap align-items-start">
+                    <a href="statistics#artist" class="btn btn-sm"
+                        style="background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:10px">
+                        <i class="bi bi-arrow-left me-1"></i>Voltar
+                    </a>
+                    <a href="artist-details?artist=<?php echo $id_artist; ?>&year=<?php echo $filter_year; ?><?php echo $filter_store ? '&store=' . $filter_store : ''; ?>"
+                        class="btn btn-sm"
+                        style="background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:10px">
+                        <i class="bi bi-arrow-clockwise me-1"></i>Actualizar
+                    </a>
                 </div>
             </div>
         </div>
 
-        <!-- ═══ JS ═══ -->
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-        <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-        <script src="../../js/theme.wp.js"></script>
-        <script src="../../js/wp.tools.js"></script>
-        <script>
-        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
+        <!-- ── Barra de filtros ── -->
+        <form method="GET" action="artist-details">
+            <input type="hidden" name="artist" value="<?php echo $id_artist; ?>" />
+            <div class="filter-bar">
+                <div>
+                    <label>Ano</label>
+                    <select name="year" class="form-select form-select-sm" style="min-width:100px"
+                        onchange="this.form.submit()">
+                        <?php foreach ($available_years as $y): ?>
+                        <option value="<?php echo $y; ?>" <?php echo $y == $filter_year ? 'selected' : ''; ?>>
+                            <?php echo $y; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div>
+                    <label>Plataforma</label>
+                    <select name="store" class="form-select form-select-sm" style="min-width:160px"
+                        onchange="this.form.submit()">
+                        <option value="0" <?php echo !$filter_store ? 'selected' : ''; ?>>Todas as plataformas
+                        </option>
+                        <?php foreach ($stores as $st): ?>
+                        <option value="<?php echo $st['id_store']; ?>"
+                            <?php echo $st['id_store'] == $filter_store ? 'selected' : ''; ?>>
+                            <?php echo htmlspecialchars($st['name_store']); ?>
+                        </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="ms-auto d-flex align-items-end" style="font-size:.78rem;color:var(--text-muted,#6c757d)">
+                    <i class="bi bi-info-circle me-1"></i>
+                    <?php echo $filter_year; ?>
+                    <?php echo $filter_store && isset($store_map[$filter_store]) ? '— ' . htmlspecialchars($store_map[$filter_store]['name_store']) : '— Todas as plataformas'; ?>
+                </div>
+            </div>
+        </form>
 
-        <?php if (!empty($tracks)): ?>
-        $(document).ready(function() {
-            $('#tracksTable').DataTable({
-                paging: true,
-                searching: true,
-                ordering: true,
-                info: true,
-                lengthChange: false,
-                pageLength: 10,
-                order: [
-                    [4, 'desc']
-                ], // ordenar por streams DESC
-                columnDefs: [{
-                        orderable: false,
-                        targets: [0]
-                    },
-                    {
-                        type: 'num-fmt',
-                        targets: [4, 5, 6]
-                    }
-                ],
-                language: {
-                    search: 'Pesquisar faixa:',
-                    info: 'A mostrar _START_ a _END_ de _TOTAL_ faixas',
-                    paginate: {
-                        next: 'Próximo',
-                        previous: 'Anterior'
-                    },
-                    emptyTable: 'Nenhuma faixa encontrada.'
-                }
-            });
-        });
+        <!-- ── Cards de totais ── -->
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-md-3">
+                <div class="stat-hero-card">
+                    <div class="stat-label">Streams</div>
+                    <div class="stat-value" style="color:#FF0089">
+                        <?php echo number_format((int)$totals['total_streams']); ?></div>
+                    <i class="bi bi-headphones stat-icon"></i>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-hero-card">
+                    <div class="stat-label">Downloads</div>
+                    <div class="stat-value" style="color:#0d6efd">
+                        <?php echo number_format((int)$totals['total_downloads']); ?></div>
+                    <i class="bi bi-download stat-icon"></i>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-hero-card">
+                    <div class="stat-label">Receita (Kz)</div>
+                    <div class="stat-value" style="color:#198754;font-size:1.3rem">
+                        Kz<?php echo number_format((float)$totals['total_revenue'], 2); ?></div>
+                    <i class="bi bi-currency-dollar stat-icon"></i>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-hero-card">
+                    <div class="stat-label">Faixas activas</div>
+                    <div class="stat-value" style="color:#6c757d"><?php echo (int)$totals['total_tracks']; ?></div>
+                    <i class="bi bi-disc stat-icon"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Gráfico streams por mês ── -->
+        <div class="chart-card mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0"><i class="bi bi-graph-up me-2 text-pink"></i>Streams por mês —
+                        <?php echo $filter_year; ?></h6>
+                </div>
+                <?php if (empty($chart_datasets)): ?>
+                <div class="empty-section">
+                    <div class="icon"><i class="bi bi-bar-chart"></i></div>
+                    <div class="small fw-semibold mb-1">Sem dados de streams para <?php echo $filter_year; ?>.</div>
+                    <div class="small">Os streams são importados mensalmente após entrega dos relatórios pelas
+                        plataformas.</div>
+                </div>
+                <?php else: ?>
+                <div class="p-3">
+                    <canvas id="streamChart" style="max-height:300px"></canvas>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <!-- ── Plataformas ── -->
+        <?php if (!empty($platforms_data)): ?>
+        <div class="card mb-4" style="border-radius:16px">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="bi bi-collection me-2 text-pink"></i>Streams por plataforma</h6>
+            </div>
+            <div class="card-body pt-2">
+                <?php
+                    $max_plat = max(array_column($platforms_data, 'total_streams') ?: [1]);
+                    foreach ($platforms_data as $pd):
+                        $slug   = $pd['slug_store'];
+                        $colors = $store_colors[$slug] ?? $store_colors['default'];
+                        $icon   = $store_icons[$slug]  ?? $store_icons['default'];
+                        $pct    = $max_plat > 0 ? round(($pd['total_streams'] / $max_plat) * 100) : 0;
+                    ?>
+                <div class="platform-row">
+                    <div class="platform-dot" style="background:<?php echo $colors['border']; ?>"></div>
+                    <i class="<?php echo $icon; ?>"
+                        style="font-size:1rem;color:<?php echo $colors['border']; ?>;min-width:20px"></i>
+                    <div style="min-width:130px;font-size:.82rem;font-weight:600">
+                        <?php echo htmlspecialchars($pd['name_store']); ?></div>
+                    <div class="platform-bar-bg">
+                        <div class="platform-bar-fill"
+                            style="width:<?php echo $pct; ?>%;background:<?php echo $colors['border']; ?>"></div>
+                    </div>
+                    <div style="font-size:.78rem;font-weight:700;min-width:80px;text-align:right">
+                        <?php echo number_format((int)$pd['total_streams']); ?>
+                        <span style="font-size:.65rem;font-weight:400;color:var(--text-muted,#6c757d)">
+                            streams</span>
+                    </div>
+                    <div style="font-size:.72rem;color:var(--text-muted,#6c757d);min-width:70px;text-align:right">
+                        $<?php echo number_format((float)$pd['total_revenue'], 2); ?>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
         <?php endif; ?>
 
-        <?php if (!empty($chart_datasets)): ?>
-        const ctx = document.getElementById('streamChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: <?php echo json_encode($months_pt_short); ?>,
-                datasets: <?php echo json_encode($chart_datasets); ?>
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                interaction: {
-                    mode: 'index',
-                    intersect: false
+        <!-- ── Tabela de faixas ── -->
+        <div class="table-card mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0"><i class="bi bi-music-note-list me-2 text-pink"></i>Faixas</h6>
+                    <span class="badge bg-secondary"><?php echo count($tracks); ?></span>
+                </div>
+                <?php if (empty($tracks)): ?>
+                <div class="empty-section">
+                    <div class="icon"><i class="bi bi-music-note"></i></div>
+                    <div class="small fw-semibold mb-1">Nenhuma faixa activa encontrada.</div>
+                    <div class="small">As faixas aparecem aqui após aprovação pela equipa Wasom Upfy.</div>
+                </div>
+                <?php else: ?>
+                <div class="table-responsive">
+                    <table id="tracksTable" class="table table-striped table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width:52px">Capa</th>
+                                <th>Faixa</th>
+                                <th>Álbum</th>
+                                <th>Duração</th>
+                                <th>Streams <?php echo $filter_year; ?></th>
+                                <th>Downloads</th>
+                                <th>Receita (Kz)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($tracks as $track): ?>
+                            <tr>
+                                <td>
+                                    <?php if ($track['img_cover']): ?>
+                                    <img class="track-cover"
+                                        src="<?php echo htmlspecialchars($cover_url . $track['img_cover']); ?>"
+                                        onerror="this.outerHTML='<div class=\'track-cover-placeholder\'>🎵</div>'"
+                                        alt="" />
+                                    <?php else: ?>
+                                    <div class="track-cover-placeholder">🎵</div>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <div class="fw-semibold" style="font-size:.87rem">
+                                        <?php echo htmlspecialchars($track['title_track']); ?>
+                                        <?php if ($track['explicit'] === 'YES'): ?>
+                                        <span class="explicit-badge">E</span>
+                                        <?php endif; ?>
+                                    </div>
+                                    <?php if ($track['name_author']): ?>
+                                    <div class="feat-text">
+                                        <?php echo htmlspecialchars($track['name_author']); ?><?php if ($track['name_author_feat']): ?>
+                                        feat.
+                                        <?php echo htmlspecialchars($track['name_author_feat']);
+                                                                                                            endif; ?>
+                                    </div>
+                                    <?php endif; ?>
+                                </td>
+                                <td style="font-size:.82rem">
+                                    <?php echo htmlspecialchars($track['title_album']); ?>
+                                    <span class="badge bg-light text-muted ms-1"
+                                        style="font-size:.6rem"><?php echo strtoupper($track['type_album']); ?></span>
+                                </td>
+                                <td class="small text-muted">
+                                    <?php echo formatDuration($track['duration_seconds']); ?>
+                                </td>
+                                <td class="fw-bold" style="color:#FF0089">
+                                    <?php echo number_format((int)$track['total_streams']); ?></td>
+                                <td class="small"><?php echo number_format((int)$track['total_downloads']); ?></td>
+                                <td class="small fw-semibold" style="color:#198754">
+                                    $<?php echo number_format((float)$track['total_revenue'], 4); ?></td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <!-- ── Bio (se existir) ── -->
+        <?php if ($artist['bio']): ?>
+        <div class="card mb-4" style="border-radius:16px">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="bi bi-person-lines-fill me-2 text-pink"></i>Biografia</h6>
+            </div>
+            <div class="card-body" style="font-size:.87rem;line-height:1.7;white-space:pre-line">
+                <?php echo nl2br(htmlspecialchars($artist['bio'])); ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
+    </div><!-- /container -->
+
+    <script>
+    const BASE_URL = <?php echo rtrim(APP_URL, '/' . APP_URL_PANEL); ?>;
+    (function() {
+        function refreshBadge() {
+            fetch(BASE_URL + '/ajax/notifications_api.php?action=count', {
+                    credentials: 'same-origin'
+                })
+                .then(r => r.json())
+                .then(data => {
+                    var b = document.getElementById('navNotifBadge');
+                    if (!b) return;
+                    var n = parseInt(data.unread || 0);
+                    b.textContent = n > 99 ? '99+' : n;
+                    b.style.display = n > 0 ? '' : 'none';
+                }).catch(function() {});
+        }
+        setTimeout(function() {
+            refreshBadge();
+            setInterval(refreshBadge, 60000);
+        }, 30000);
+    })();
+    </script>
+
+    <!-- ═══ JS ═══ -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/theme.wp.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
+    <script>
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
+
+    <?php if (!empty($tracks)): ?>
+    $(document).ready(function() {
+        $('#tracksTable').DataTable({
+            paging: true,
+            searching: true,
+            ordering: true,
+            info: true,
+            lengthChange: false,
+            pageLength: 10,
+            order: [
+                [4, 'desc']
+            ], // ordenar por streams DESC
+            columnDefs: [{
+                    orderable: false,
+                    targets: [0]
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        stacked: true,
-                        title: {
-                            display: true,
-                            text: 'Streams'
-                        }
-                    },
-                    x: {
-                        stacked: true,
-                        title: {
-                            display: true,
-                            text: 'Mês'
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        position: 'top'
-                    },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false
-                    }
+                {
+                    type: 'num-fmt',
+                    targets: [4, 5, 6]
                 }
+            ],
+            language: {
+                search: 'Pesquisar faixa:',
+                info: 'A mostrar _START_ a _END_ de _TOTAL_ faixas',
+                paginate: {
+                    next: 'Próximo',
+                    previous: 'Anterior'
+                },
+                emptyTable: 'Nenhuma faixa encontrada.'
             }
         });
-        <?php endif; ?>
-        </script>
+    });
+    <?php endif; ?>
+
+    <?php if (!empty($chart_datasets)): ?>
+    const ctx = document.getElementById('streamChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: <?php echo json_encode($months_pt_short); ?>,
+            datasets: <?php echo json_encode($chart_datasets); ?>
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    stacked: true,
+                    title: {
+                        display: true,
+                        text: 'Streams'
+                    }
+                },
+                x: {
+                    stacked: true,
+                    title: {
+                        display: true,
+                        text: 'Mês'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top'
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false
+                }
+            }
+        }
+    });
+    <?php endif; ?>
+    </script>
 </body>
 
 </html>

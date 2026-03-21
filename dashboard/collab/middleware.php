@@ -40,7 +40,7 @@ if (!empty($_SESSION['collab_id']) && !empty($_SESSION['collab_id_users'])) {
 
     // Requer mudança de senha pendente?
     if (!empty($_SESSION['collab_must_change'])) {
-        header('Location: ' . rtrim(APP_URL,'/') . '/dashboard/account/collab-login');
+        header('Location: ' . rtrim(APP_URL, '/') . '/ ' . APP_URL_PANEL . '/account/collab-login');
         exit;
     }
 
@@ -56,19 +56,19 @@ if (!empty($_SESSION['collab_id']) && !empty($_SESSION['collab_id_users'])) {
     if (!$collab) {
         // Conta bloqueada/removida entretanto
         session_destroy();
-        header('Location: ' . rtrim(APP_URL,'/') . '/dashboard/account/collab-login?error=access');
+        header('Location: ' . rtrim(APP_URL, '/') . '/ ' . APP_URL_PANEL . '/account/collab-login?error=access');
         exit;
     }
 
     // Actualizar last_seen
     $db->prepare("UPDATE _collaborators SET last_seen_at = NOW() WHERE id_collab = ?")
-       ->execute([$collab['id_collab']]);
+        ->execute([$collab['id_collab']]);
 
     // Carregar dados do proprietário (para as queries das páginas usarem)
     $user = getUserById((int)$_SESSION['collab_id_users']);
     if (!$user) {
         session_destroy();
-        header('Location: ' . rtrim(APP_URL,'/') . '/dashboard/account/collab-login');
+        header('Location: ' . rtrim(APP_URL, '/') . '/ ' . APP_URL_PANEL . '/account/collab-login');
         exit;
     }
 
@@ -98,9 +98,9 @@ if (!empty($_SESSION['collab_id']) && !empty($_SESSION['collab_id_users'])) {
         exit;
     }
 
-// ────────────────────────────────────────────
-// CASO 2: Sessão normal de utilizador
-// ────────────────────────────────────────────
+    // ────────────────────────────────────────────
+    // CASO 2: Sessão normal de utilizador
+    // ────────────────────────────────────────────
 } elseif (!empty($_SESSION['id_users'])) {
 
     checkRememberMe();
@@ -115,17 +115,18 @@ if (!empty($_SESSION['collab_id']) && !empty($_SESSION['collab_id_users'])) {
     $first_name = htmlspecialchars($user['first_name']);
     $user_name  = htmlspecialchars($user['user_name'] ?? '');
 
-// ────────────────────────────────────────────
-// CASO 3: Sem sessão — redirecionar para login
-// ────────────────────────────────────────────
+    // ────────────────────────────────────────────
+    // CASO 3: Sem sessão — redirecionar para login
+    // ────────────────────────────────────────────
 } else {
     $current = urlencode($_SERVER['REQUEST_URI'] ?? '');
-    header('Location: ' . rtrim(APP_URL,'/') . '/login?redirect=' . $current);
+    header('Location: ' . rtrim(APP_URL, '/') . '/login?redirect=' . $current);
     exit;
 }
 
 // ── Helper: retorna true se o colaborador tem permissão ──
-function collabCan(string $permission): bool {
+function collabCan(string $permission): bool
+{
     global $is_collab, $collab_role;
     if (!$is_collab) return true; // utilizador normal tem tudo
     $permissions = [

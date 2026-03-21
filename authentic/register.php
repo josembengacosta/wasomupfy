@@ -34,7 +34,7 @@ $error_messages = [
 $error = isset($_GET['error']) ? ($error_messages[$_GET['error']] ?? '') : '';
 ?>
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-ao">
 
 <head>
     <meta charset="utf-8" />
@@ -54,377 +54,377 @@ $error = isset($_GET['error']) ? ($error_messages[$_GET['error']] ?? '') : '';
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/josembengacosta/wasomupfy@main/css/light.css" />
 </head>
 <style>
-:root {
-    --wasom-primary: #ff0089;
-    --wasom-secondary: #e04385;
-    --wasom-light: #fff0f7;
-    --wasom-dark: #cc0070;
-}
-
-.card {
-    border-radius: 15px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-    background: rgba(255, 255, 255, 0.98);
-    margin: auto;
-    border: none;
-    overflow: hidden;
-}
-
-.btn-wasomupfy {
-    background: linear-gradient(45deg,
-            var(--wasom-primary),
-            var(--wasom-secondary));
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    padding: 3px 6px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-
-
-.btn-wasomupfy:hover {
-    background: linear-gradient(45deg,
-            var(--wasom-dark),
-            var(--wasom-secondary));
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(255, 0, 137, 0.25);
-    color: white;
-}
-
-.btn-outline-wasom {
-    border: 2px solid var(--wasom-primary);
-    color: var(--wasom-primary);
-    background: transparent;
-    border-radius: 10px;
-    padding: 10px 20px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-}
-
-.btn-outline-wasom:hover {
-    background: var(--wasom-primary);
-    color: white;
-    transform: translateY(-2px);
-}
-
-.step-progress {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 2rem;
-    position: relative;
-    padding: 0 1rem;
-}
-
-.step-progress::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50px;
-    right: 50px;
-    height: 2px;
-    background: #e9ecef;
-    transform: translateY(-50%);
-    z-index: 1;
-}
-
-.step-item {
-    position: relative;
-    z-index: 2;
-    text-align: center;
-    flex: 1;
-}
-
-.step-circle {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #e9ecef;
-    color: #6c757d;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 0.5rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    border: 3px solid white;
-}
-
-.step-item.active .step-circle {
-    background: var(--wasom-primary);
-    color: white;
-    transform: scale(1.1);
-    box-shadow: 0 0 0 3px rgba(255, 0, 137, 0.2);
-}
-
-.step-item.completed .step-circle {
-    background: var(--wasom-primary);
-    color: white;
-}
-
-.step-title {
-    font-size: 0.85rem;
-    color: #6c757d;
-    font-weight: 500;
-}
-
-.step-item.active .step-title {
-    color: var(--wasom-primary);
-    font-weight: 600;
-}
-
-.form-step {
-    display: none;
-    animation: fadeIn 0.5s ease;
-}
-
-.form-step.active {
-    display: block;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
+    :root {
+        --wasom-primary: #ff0089;
+        --wasom-secondary: #e04385;
+        --wasom-light: #fff0f7;
+        --wasom-dark: #cc0070;
     }
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
+    .card {
+        border-radius: 15px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        background: rgba(255, 255, 255, 0.98);
+        margin: auto;
+        border: none;
+        overflow: hidden;
     }
-}
 
-.input-group {
-    position: relative;
-}
+    .btn-wasomupfy {
+        background: linear-gradient(45deg,
+                var(--wasom-primary),
+                var(--wasom-secondary));
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 3px 6px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
 
-.input-group-text {
-    background: var(--wasom-light);
-    border: 1px solid #dee2e6;
-    border-right: none;
-}
 
-.form-control:focus {
-    border-color: var(--wasom-primary);
-    box-shadow: 0 0 0 0.25rem rgba(255, 0, 137, 0.15);
-}
 
-.password-requirements {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 1rem;
-    margin-top: 1rem;
-    border-left: 4px solid var(--wasom-primary);
-}
+    .btn-wasomupfy:hover {
+        background: linear-gradient(45deg,
+                var(--wasom-dark),
+                var(--wasom-secondary));
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(255, 0, 137, 0.25);
+        color: white;
+    }
 
-.requirements-title {
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: #495057;
-}
+    .btn-outline-wasom {
+        border: 2px solid var(--wasom-primary);
+        color: var(--wasom-primary);
+        background: transparent;
+        border-radius: 10px;
+        padding: 10px 20px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
 
-.requirements-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
+    .btn-outline-wasom:hover {
+        background: var(--wasom-primary);
+        color: white;
+        transform: translateY(-2px);
+    }
 
-.requirements-list li {
-    display: flex;
-    align-items: center;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-}
+    .step-progress {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+        position: relative;
+        padding: 0 1rem;
+    }
 
-.req-icon {
-    margin-right: 0.5rem;
-    font-size: 1rem;
-}
-
-.req-icon.valid {
-    color: #28a745;
-}
-
-.req-icon.invalid {
-    color: #dc3545;
-}
-
-.strength-meter {
-    height: 8px;
-    margin-top: 5px;
-    border-radius: 4px;
-    background: #e9ecef;
-    overflow: hidden;
-    position: relative;
-}
-
-.strength-fill {
-    height: 100%;
-    width: 0%;
-    border-radius: 4px;
-    transition: all 0.3s ease;
-}
-
-.strength-text {
-    font-size: 0.8rem;
-    margin-top: 0.25rem;
-    text-align: right;
-}
-
-.password-wrapper {
-    position: relative;
-}
-
-.toggle-password {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    color: #6c757d;
-    cursor: pointer;
-    z-index: 10;
-}
-
-.form-radio-group {
-    display: flex;
-    gap: 2rem;
-    margin-top: 0.5rem;
-}
-
-.form-radio-label {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    border: 2px solid #dee2e6;
-    transition: all 0.3s ease;
-    flex: 1;
-    justify-content: center;
-}
-
-.form-radio-label:hover {
-    border-color: var(--wasom-primary);
-}
-
-.form-radio-label.active {
-    border-color: var(--wasom-primary);
-    background: rgba(255, 0, 137, 0.05);
-}
-
-.form-radio-input {
-    display: none;
-}
-
-.form-radio-text {
-    margin-left: 0.5rem;
-    font-weight: 500;
-}
-
-.review-item {
-    padding: 1rem;
-    border-bottom: 1px solid #e9ecef;
-}
-
-.review-item:last-child {
-    border-bottom: none;
-}
-
-.review-label {
-    font-weight: 600;
-    color: #495057;
-    min-width: 120px;
-}
-
-.review-value {
-    color: #6c757d;
-}
-
-.preloader {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    transition: opacity 0.5s ease;
-}
-
-.loaded .preloader {
-    opacity: 0;
-    pointer-events: none;
-}
-
-.spinner-border {
-    border-bottom-color: var(--wasom-primary);
-    border-top-color: var(--wasom-primary);
-    border-left-color: var(--wasom-primary);
-}
-
-.select-wrapper {
-    position: relative;
-}
-
-.select-wrapper::after {
-    content: "";
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 16px;
-    height: 16px;
-    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');
-    pointer-events: none;
-}
-
-.form-check-input:checked {
-    background-color: var(--wasom-primary);
-    border-color: var(--wasom-primary);
-}
-
-.text-wasom {
-    color: var(--wasom-primary) !important;
-}
-
-.birthday-selects {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 1rem;
-}
-
-@media (max-width: 768px) {
     .step-progress::before {
-        left: 30px;
-        right: 30px;
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50px;
+        right: 50px;
+        height: 2px;
+        background: #e9ecef;
+        transform: translateY(-50%);
+        z-index: 1;
+    }
+
+    .step-item {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        flex: 1;
     }
 
     .step-circle {
-        width: 32px;
-        height: 32px;
-        font-size: 0.9rem;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #e9ecef;
+        color: #6c757d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 0.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: 3px solid white;
+    }
+
+    .step-item.active .step-circle {
+        background: var(--wasom-primary);
+        color: white;
+        transform: scale(1.1);
+        box-shadow: 0 0 0 3px rgba(255, 0, 137, 0.2);
+    }
+
+    .step-item.completed .step-circle {
+        background: var(--wasom-primary);
+        color: white;
     }
 
     .step-title {
-        font-size: 0.75rem;
+        font-size: 0.85rem;
+        color: #6c757d;
+        font-weight: 500;
     }
 
-    .birthday-selects {
-        grid-template-columns: 1fr;
+    .step-item.active .step-title {
+        color: var(--wasom-primary);
+        font-weight: 600;
+    }
+
+    .form-step {
+        display: none;
+        animation: fadeIn 0.5s ease;
+    }
+
+    .form-step.active {
+        display: block;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .input-group {
+        position: relative;
+    }
+
+    .input-group-text {
+        background: var(--wasom-light);
+        border: 1px solid #dee2e6;
+        border-right: none;
+    }
+
+    .form-control:focus {
+        border-color: var(--wasom-primary);
+        box-shadow: 0 0 0 0.25rem rgba(255, 0, 137, 0.15);
+    }
+
+    .password-requirements {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-top: 1rem;
+        border-left: 4px solid var(--wasom-primary);
+    }
+
+    .requirements-title {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #495057;
+    }
+
+    .requirements-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .requirements-list li {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .req-icon {
+        margin-right: 0.5rem;
+        font-size: 1rem;
+    }
+
+    .req-icon.valid {
+        color: #28a745;
+    }
+
+    .req-icon.invalid {
+        color: #dc3545;
+    }
+
+    .strength-meter {
+        height: 8px;
+        margin-top: 5px;
+        border-radius: 4px;
+        background: #e9ecef;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .strength-fill {
+        height: 100%;
+        width: 0%;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+    }
+
+    .strength-text {
+        font-size: 0.8rem;
+        margin-top: 0.25rem;
+        text-align: right;
+    }
+
+    .password-wrapper {
+        position: relative;
+    }
+
+    .toggle-password {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #6c757d;
+        cursor: pointer;
+        z-index: 10;
     }
 
     .form-radio-group {
-        flex-direction: column;
-        gap: 0.5rem;
+        display: flex;
+        gap: 2rem;
+        margin-top: 0.5rem;
     }
-}
+
+    .form-radio-label {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        border: 2px solid #dee2e6;
+        transition: all 0.3s ease;
+        flex: 1;
+        justify-content: center;
+    }
+
+    .form-radio-label:hover {
+        border-color: var(--wasom-primary);
+    }
+
+    .form-radio-label.active {
+        border-color: var(--wasom-primary);
+        background: rgba(255, 0, 137, 0.05);
+    }
+
+    .form-radio-input {
+        display: none;
+    }
+
+    .form-radio-text {
+        margin-left: 0.5rem;
+        font-weight: 500;
+    }
+
+    .review-item {
+        padding: 1rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .review-item:last-child {
+        border-bottom: none;
+    }
+
+    .review-label {
+        font-weight: 600;
+        color: #495057;
+        min-width: 120px;
+    }
+
+    .review-value {
+        color: #6c757d;
+    }
+
+    .preloader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease;
+    }
+
+    .loaded .preloader {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .spinner-border {
+        border-bottom-color: var(--wasom-primary);
+        border-top-color: var(--wasom-primary);
+        border-left-color: var(--wasom-primary);
+    }
+
+    .select-wrapper {
+        position: relative;
+    }
+
+    .select-wrapper::after {
+        content: "";
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 16px;
+        height: 16px;
+        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');
+        pointer-events: none;
+    }
+
+    .form-check-input:checked {
+        background-color: var(--wasom-primary);
+        border-color: var(--wasom-primary);
+    }
+
+    .text-wasom {
+        color: var(--wasom-primary) !important;
+    }
+
+    .birthday-selects {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .step-progress::before {
+            left: 30px;
+            right: 30px;
+        }
+
+        .step-circle {
+            width: 32px;
+            height: 32px;
+            font-size: 0.9rem;
+        }
+
+        .step-title {
+            font-size: 0.75rem;
+        }
+
+        .birthday-selects {
+            grid-template-columns: 1fr;
+        }
+
+        .form-radio-group {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+    }
 </style>
 
 <body data-theme="default" data-layout="fluid">
@@ -480,22 +480,22 @@ $error = isset($_GET['error']) ? ($error_messages[$_GET['error']] ?? '') : '';
                                     id="registration-form" novalidate>
 
                                     <?php if ($selected_plan): ?>
-                                    <div style="padding: 1rem;"
-                                        class="alert alert-info d-flex align-items-center mb-3 py-2">
-                                        <i class="bi bi-check-circle-fill me-2"></i>
-                                        Plano
-                                        <strong>&nbsp;<?php echo htmlspecialchars(ucfirst($selected_plan)); ?></strong>&nbsp;pré-selecionado
-                                    </div>
+                                        <div style="padding: 1rem;"
+                                            class="alert alert-info d-flex align-items-center mb-3 py-2">
+                                            <i class="bi bi-check-circle-fill me-2"></i>
+                                            Plano
+                                            <strong>&nbsp;<?php echo htmlspecialchars(ucfirst($selected_plan)); ?></strong>&nbsp;pré-selecionado
+                                        </div>
                                     <?php endif; ?>
 
                                     <?php if ($error): ?>
-                                    <div style="padding: 1rem;"
-                                        class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4"
-                                        role="alert">
-                                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                                        <div><?php echo htmlspecialchars($error); ?></div>
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                    </div>
+                                        <div style="padding: 1rem;"
+                                            class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4"
+                                            role="alert">
+                                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                            <div><?php echo htmlspecialchars($error); ?></div>
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                        </div>
                                     <?php endif; ?>
                                     <input type="hidden" name="csrf_token"
                                         value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>" />
@@ -567,9 +567,9 @@ $error = isset($_GET['error']) ? ($error_messages[$_GET['error']] ?? '') : '';
                                                         required>
                                                         <option value="" selected disabled>Dia</option>
                                                         <?php for ($i = 1; $i <= 31; $i++): ?>
-                                                        <option value="<?php echo $i; ?>">
-                                                            <?php echo $i; ?>
-                                                        </option>
+                                                            <option value="<?php echo $i; ?>">
+                                                                <?php echo $i; ?>
+                                                            </option>
                                                         <?php endfor; ?>
                                                     </select>
 
@@ -595,9 +595,9 @@ $error = isset($_GET['error']) ? ($error_messages[$_GET['error']] ?? '') : '';
                                                         <option value="" selected disabled>Ano</option>
                                                         <?php for ($i = date('Y') - 18; $i >= date('Y') -
                                                             100; $i--): ?>
-                                                        <option value="<?php echo $i; ?>">
-                                                            <?php echo $i; ?>
-                                                        </option>
+                                                            <option value="<?php echo $i; ?>">
+                                                                <?php echo $i; ?>
+                                                            </option>
                                                         <?php endfor; ?>
                                                     </select>
                                                 </div>
@@ -1176,410 +1176,410 @@ $error = isset($_GET['error']) ? ($error_messages[$_GET['error']] ?? '') : '';
     <script src="js/validacao.js"></script>
 
     <script>
-    // Sistema de Etapas
-    let currentStep = 1;
-    const totalSteps = 4;
+        // Sistema de Etapas
+        let currentStep = 1;
+        const totalSteps = 4;
 
-    function updateProgressSteps() {
-        document.querySelectorAll(".step-item").forEach((item, index) => {
-            const stepNum = parseInt(item.dataset.step);
-            item.classList.remove("active", "completed");
+        function updateProgressSteps() {
+            document.querySelectorAll(".step-item").forEach((item, index) => {
+                const stepNum = parseInt(item.dataset.step);
+                item.classList.remove("active", "completed");
 
-            if (stepNum < currentStep) {
-                item.classList.add("completed");
-            } else if (stepNum === currentStep) {
-                item.classList.add("active");
-            }
-        });
-    }
-
-    function showStep(step) {
-        document.querySelectorAll(".form-step").forEach((el) => {
-            el.classList.remove("active");
-        });
-
-        const stepEl = document.getElementById(`step-${step}`);
-        if (stepEl) {
-            stepEl.classList.add("active");
-            currentStep = step;
-            updateProgressSteps();
-
-            // Scroll to top of form
-            stepEl.scrollIntoView({
-                behavior: "smooth",
-                block: "start",
+                if (stepNum < currentStep) {
+                    item.classList.add("completed");
+                } else if (stepNum === currentStep) {
+                    item.classList.add("active");
+                }
             });
         }
-    }
 
-    function nextStep(step) {
-        if (!validateCurrentStep()) return;
-        showStep(step);
-    }
+        function showStep(step) {
+            document.querySelectorAll(".form-step").forEach((el) => {
+                el.classList.remove("active");
+            });
 
-    function prevStep(step) {
-        showStep(step);
-    }
+            const stepEl = document.getElementById(`step-${step}`);
+            if (stepEl) {
+                stepEl.classList.add("active");
+                currentStep = step;
+                updateProgressSteps();
 
-    // Validação do passo atual
-    function validateCurrentStep() {
-        const stepEl = document.getElementById(`step-${currentStep}`);
-        const inputs = stepEl.querySelectorAll(
-            "input[required], select[required]"
-        );
-        let isValid = true;
+                // Scroll to top of form
+                stepEl.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                });
+            }
+        }
 
-        // Reset validation
-        inputs.forEach((input) => {
-            input.classList.remove("is-invalid");
-        });
+        function nextStep(step) {
+            if (!validateCurrentStep()) return;
+            showStep(step);
+        }
 
-        // Validação específica para cada passo
-        switch (currentStep) {
-            case 1:
-                // Validação de e-mail
-                const email = document.getElementById("email").value;
-                const confirmEmail = document.getElementById("confirm_email").value;
+        function prevStep(step) {
+            showStep(step);
+        }
 
-                if (!email || !validateEmail(email)) {
-                    document.getElementById("email").classList.add("is-invalid");
-                    isValid = false;
-                }
+        // Validação do passo atual
+        function validateCurrentStep() {
+            const stepEl = document.getElementById(`step-${currentStep}`);
+            const inputs = stepEl.querySelectorAll(
+                "input[required], select[required]"
+            );
+            let isValid = true;
 
-                if (email !== confirmEmail) {
-                    document
-                        .getElementById("confirm_email")
-                        .classList.add("is-invalid");
-                    isValid = false;
-                }
+            // Reset validation
+            inputs.forEach((input) => {
+                input.classList.remove("is-invalid");
+            });
 
-                // Validação de nome
-                const fullname = document.getElementById("fullname_user").value;
-                if (!fullname || fullname.length < 6) {
-                    document
-                        .getElementById("fullname_user")
-                        .classList.add("is-invalid");
-                    isValid = false;
-                }
+            // Validação específica para cada passo
+            switch (currentStep) {
+                case 1:
+                    // Validação de e-mail
+                    const email = document.getElementById("email").value;
+                    const confirmEmail = document.getElementById("confirm_email").value;
 
-                // Validação de data de nascimento
-                const day = document.getElementById("birth_day").value;
-                const month = document.getElementById("birth_month").value;
-                const year = document.getElementById("birth_year").value;
+                    if (!email || !validateEmail(email)) {
+                        document.getElementById("email").classList.add("is-invalid");
+                        isValid = false;
+                    }
 
-                if (!day || !month || !year) {
-                    document.getElementById("birthday-error").style.display = "block";
-                    isValid = false;
-                } else {
-                    // Valida se é maior de 18 anos
-                    const birthDate = new Date(year, month - 1, day);
-                    const today = new Date();
-                    const age = today.getFullYear() - birthDate.getFullYear();
-                    const monthDiff = today.getMonth() - birthDate.getMonth();
+                    if (email !== confirmEmail) {
+                        document
+                            .getElementById("confirm_email")
+                            .classList.add("is-invalid");
+                        isValid = false;
+                    }
 
-                    if (age < 18 || (age === 18 && monthDiff < 0)) {
-                        document.getElementById("birthday-error").textContent =
-                            "Você deve ter pelo menos 18 anos para se cadastrar.";
-                        document.getElementById("birthday-error").style.display =
+                    // Validação de nome
+                    const fullname = document.getElementById("fullname_user").value;
+                    if (!fullname || fullname.length < 6) {
+                        document
+                            .getElementById("fullname_user")
+                            .classList.add("is-invalid");
+                        isValid = false;
+                    }
+
+                    // Validação de data de nascimento
+                    const day = document.getElementById("birth_day").value;
+                    const month = document.getElementById("birth_month").value;
+                    const year = document.getElementById("birth_year").value;
+
+                    if (!day || !month || !year) {
+                        document.getElementById("birthday-error").style.display = "block";
+                        isValid = false;
+                    } else {
+                        // Valida se é maior de 18 anos
+                        const birthDate = new Date(year, month - 1, day);
+                        const today = new Date();
+                        const age = today.getFullYear() - birthDate.getFullYear();
+                        const monthDiff = today.getMonth() - birthDate.getMonth();
+
+                        if (age < 18 || (age === 18 && monthDiff < 0)) {
+                            document.getElementById("birthday-error").textContent =
+                                "Você deve ter pelo menos 18 anos para se cadastrar.";
+                            document.getElementById("birthday-error").style.display =
+                                "block";
+                            isValid = false;
+                        } else {
+                            document.getElementById("birthday-error").style.display =
+                                "none";
+                        }
+                    }
+
+                    // Validação de gênero
+                    const genderSelected = document.querySelector(
+                        'input[name="gender"]:checked'
+                    );
+                    if (!genderSelected) {
+                        document
+                            .querySelector(".form-radio-group")
+                            .classList.add("is-invalid");
+                        isValid = false;
+                    }
+                    break;
+
+                case 2:
+                    // Validação de país e cidade
+                    const country = document.getElementById("country").value;
+                    const city = document.getElementById("city").value;
+
+                    if (!country) {
+                        document.getElementById("country").classList.add("is-invalid");
+                        isValid = false;
+                    }
+
+                    if (!city) {
+                        document.getElementById("city").classList.add("is-invalid");
+                        isValid = false;
+                    }
+                    break;
+
+                case 3:
+                    // Validação de senha
+                    const password = document.getElementById("password").value;
+                    const confirmPassword =
+                        document.getElementById("confirm_password").value;
+
+                    if (!validatePasswordStrength(password)) {
+                        document.getElementById("password").classList.add("is-invalid");
+                        isValid = false;
+                    }
+
+                    if (password !== confirmPassword) {
+                        document
+                            .getElementById("confirm_password")
+                            .classList.add("is-invalid");
+                        document.getElementById("password-match-error").style.display =
                             "block";
                         isValid = false;
                     } else {
-                        document.getElementById("birthday-error").style.display =
+                        document.getElementById("password-match-error").style.display =
                             "none";
                     }
-                }
+                    break;
+            }
 
-                // Validação de gênero
-                const genderSelected = document.querySelector(
-                    'input[name="gender"]:checked'
-                );
-                if (!genderSelected) {
-                    document
-                        .querySelector(".form-radio-group")
-                        .classList.add("is-invalid");
-                    isValid = false;
-                }
-                break;
-
-            case 2:
-                // Validação de país e cidade
-                const country = document.getElementById("country").value;
-                const city = document.getElementById("city").value;
-
-                if (!country) {
-                    document.getElementById("country").classList.add("is-invalid");
-                    isValid = false;
-                }
-
-                if (!city) {
-                    document.getElementById("city").classList.add("is-invalid");
-                    isValid = false;
-                }
-                break;
-
-            case 3:
-                // Validação de senha
-                const password = document.getElementById("password").value;
-                const confirmPassword =
-                    document.getElementById("confirm_password").value;
-
-                if (!validatePasswordStrength(password)) {
-                    document.getElementById("password").classList.add("is-invalid");
-                    isValid = false;
-                }
-
-                if (password !== confirmPassword) {
-                    document
-                        .getElementById("confirm_password")
-                        .classList.add("is-invalid");
-                    document.getElementById("password-match-error").style.display =
-                        "block";
-                    isValid = false;
-                } else {
-                    document.getElementById("password-match-error").style.display =
-                        "none";
-                }
-                break;
+            return isValid;
         }
 
-        return isValid;
-    }
-
-    // Função auxiliar para validar e-mail
-    function validateEmail(email) {
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return re.test(email);
-    }
-
-    // Validação de senha em tempo real
-    function validatePassword() {
-        const password = document.getElementById("password").value;
-        validatePasswordStrength(password);
-        validatePasswordMatch();
-    }
-
-    function validatePasswordStrength(password) {
-        let strength = 0;
-        const requirements = {
-            length: password.length >= 10,
-            upper: /[A-Z]/.test(password),
-            lower: /[a-z]/.test(password),
-            number: /[0-9]/.test(password),
-            special: /[^A-Za-z0-9]/.test(password),
-        };
-
-        // Atualizar ícones
-        document.getElementById("icon-length").className = requirements.length ?
-            "bi bi-check-circle req-icon valid" :
-            "bi bi-x-circle req-icon invalid";
-        document.getElementById("icon-letter").className =
-            requirements.upper && requirements.lower ?
-            "bi bi-check-circle req-icon valid" :
-            "bi bi-x-circle req-icon invalid";
-        document.getElementById("icon-number").className =
-            requirements.number || requirements.special ?
-            "bi bi-check-circle req-icon valid" :
-            "bi bi-x-circle req-icon invalid";
-
-        // Calcular força
-        if (requirements.length) strength += 25;
-        if (requirements.upper && requirements.lower) strength += 25;
-        if (requirements.number) strength += 25;
-        if (requirements.special) strength += 25;
-
-        // Atualizar barra
-        const fill = document.getElementById("strength-fill");
-        const text = document.getElementById("strength-text");
-
-        fill.style.width = `${strength}%`;
-
-        if (strength < 50) {
-            fill.style.backgroundColor = "#dc3545";
-            text.textContent = "Senha fraca";
-            text.style.color = "#dc3545";
-            return false;
-        } else if (strength < 75) {
-            fill.style.backgroundColor = "#ffc107";
-            text.textContent = "Senha média";
-            text.style.color = "#ffc107";
-            return false;
-        } else {
-            fill.style.backgroundColor = "#28a745";
-            text.textContent = "Senha forte";
-            text.style.color = "#28a745";
-            return true;
+        // Função auxiliar para validar e-mail
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
         }
-    }
 
-    function validatePasswordMatch() {
-        const password = document.getElementById("password").value;
-        const confirmPassword =
-            document.getElementById("confirm_password").value;
-        const errorElement = document.getElementById("password-match-error");
-
-        if (confirmPassword && password !== confirmPassword) {
-            document
-                .getElementById("confirm_password")
-                .classList.add("is-invalid");
-            errorElement.style.display = "block";
-            return false;
-        } else {
-            document
-                .getElementById("confirm_password")
-                .classList.remove("is-invalid");
-            errorElement.style.display = "none";
-            return true;
+        // Validação de senha em tempo real
+        function validatePassword() {
+            const password = document.getElementById("password").value;
+            validatePasswordStrength(password);
+            validatePasswordMatch();
         }
-    }
 
-    // Alternar visibilidade da senha
-    function togglePasswordVisibility(fieldId) {
-        const input = document.getElementById(fieldId);
-        const button = input.nextElementSibling;
+        function validatePasswordStrength(password) {
+            let strength = 0;
+            const requirements = {
+                length: password.length >= 10,
+                upper: /[A-Z]/.test(password),
+                lower: /[a-z]/.test(password),
+                number: /[0-9]/.test(password),
+                special: /[^A-Za-z0-9]/.test(password),
+            };
 
-        if (input.type === "password") {
-            input.type = "text";
-            button.innerHTML = '<i class="bi bi-eye-slash"></i>';
-        } else {
-            input.type = "password";
-            button.innerHTML = '<i class="bi bi-eye"></i>';
+            // Atualizar ícones
+            document.getElementById("icon-length").className = requirements.length ?
+                "bi bi-check-circle req-icon valid" :
+                "bi bi-x-circle req-icon invalid";
+            document.getElementById("icon-letter").className =
+                requirements.upper && requirements.lower ?
+                "bi bi-check-circle req-icon valid" :
+                "bi bi-x-circle req-icon invalid";
+            document.getElementById("icon-number").className =
+                requirements.number || requirements.special ?
+                "bi bi-check-circle req-icon valid" :
+                "bi bi-x-circle req-icon invalid";
+
+            // Calcular força
+            if (requirements.length) strength += 25;
+            if (requirements.upper && requirements.lower) strength += 25;
+            if (requirements.number) strength += 25;
+            if (requirements.special) strength += 25;
+
+            // Atualizar barra
+            const fill = document.getElementById("strength-fill");
+            const text = document.getElementById("strength-text");
+
+            fill.style.width = `${strength}%`;
+
+            if (strength < 50) {
+                fill.style.backgroundColor = "#dc3545";
+                text.textContent = "Senha fraca";
+                text.style.color = "#dc3545";
+                return false;
+            } else if (strength < 75) {
+                fill.style.backgroundColor = "#ffc107";
+                text.textContent = "Senha média";
+                text.style.color = "#ffc107";
+                return false;
+            } else {
+                fill.style.backgroundColor = "#28a745";
+                text.textContent = "Senha forte";
+                text.style.color = "#28a745";
+                return true;
+            }
         }
-    }
 
-    // Atualizar dados de revisão
-    function updateReviewData() {
-        document.getElementById("review-email").textContent =
-            document.getElementById("email").value;
-        document.getElementById("review-fullname").textContent =
-            document.getElementById("fullname_user").value;
+        function validatePasswordMatch() {
+            const password = document.getElementById("password").value;
+            const confirmPassword =
+                document.getElementById("confirm_password").value;
+            const errorElement = document.getElementById("password-match-error");
 
-        // Data de nascimento
-        const day = document.getElementById("birth_day").value;
-        const month = document.getElementById("birth_month").value;
-        const year = document.getElementById("birth_year").value;
-        if (day && month && year) {
-            const monthNames = [
-                "Janeiro",
-                "Fevereiro",
-                "Março",
-                "Abril",
-                "Maio",
-                "Junho",
-                "Julho",
-                "Agosto",
-                "Setembro",
-                "Outubro",
-                "Novembro",
-                "Dezembro",
-            ];
-            document.getElementById(
-                "review-birthdate"
-            ).textContent = `${day} de ${
+            if (confirmPassword && password !== confirmPassword) {
+                document
+                    .getElementById("confirm_password")
+                    .classList.add("is-invalid");
+                errorElement.style.display = "block";
+                return false;
+            } else {
+                document
+                    .getElementById("confirm_password")
+                    .classList.remove("is-invalid");
+                errorElement.style.display = "none";
+                return true;
+            }
+        }
+
+        // Alternar visibilidade da senha
+        function togglePasswordVisibility(fieldId) {
+            const input = document.getElementById(fieldId);
+            const button = input.nextElementSibling;
+
+            if (input.type === "password") {
+                input.type = "text";
+                button.innerHTML = '<i class="bi bi-eye-slash"></i>';
+            } else {
+                input.type = "password";
+                button.innerHTML = '<i class="bi bi-eye"></i>';
+            }
+        }
+
+        // Atualizar dados de revisão
+        function updateReviewData() {
+            document.getElementById("review-email").textContent =
+                document.getElementById("email").value;
+            document.getElementById("review-fullname").textContent =
+                document.getElementById("fullname_user").value;
+
+            // Data de nascimento
+            const day = document.getElementById("birth_day").value;
+            const month = document.getElementById("birth_month").value;
+            const year = document.getElementById("birth_year").value;
+            if (day && month && year) {
+                const monthNames = [
+                    "Janeiro",
+                    "Fevereiro",
+                    "Março",
+                    "Abril",
+                    "Maio",
+                    "Junho",
+                    "Julho",
+                    "Agosto",
+                    "Setembro",
+                    "Outubro",
+                    "Novembro",
+                    "Dezembro",
+                ];
+                document.getElementById(
+                    "review-birthdate"
+                ).textContent = `${day} de ${
             monthNames[parseInt(month) - 1]
           } de ${year}`;
+            }
+
+            // Gênero
+            const gender = document.querySelector('input[name="gender"]:checked');
+            if (gender) {
+                const genderText = {
+                    M: "Masculino",
+                    F: "Feminino",
+                    O: "Outro",
+                };
+                document.getElementById("review-gender").textContent =
+                    genderText[gender.value];
+            }
+
+            // País e cidade
+            const countrySelect = document.getElementById("country");
+            document.getElementById("review-country").textContent =
+                countrySelect.options[countrySelect.selectedIndex].text;
+            document.getElementById("review-city").textContent =
+                document.getElementById("city").value;
+
+            // Telefone
+            const phone = document.getElementById("phone").value;
+            document.getElementById("review-phone").textContent =
+                phone || "Não informado";
         }
 
-        // Gênero
-        const gender = document.querySelector('input[name="gender"]:checked');
-        if (gender) {
-            const genderText = {
-                M: "Masculino",
-                F: "Feminino",
-                O: "Outro",
-            };
-            document.getElementById("review-gender").textContent =
-                genderText[gender.value];
-        }
-
-        // País e cidade
-        const countrySelect = document.getElementById("country");
-        document.getElementById("review-country").textContent =
-            countrySelect.options[countrySelect.selectedIndex].text;
-        document.getElementById("review-city").textContent =
-            document.getElementById("city").value;
-
-        // Telefone
-        const phone = document.getElementById("phone").value;
-        document.getElementById("review-phone").textContent =
-            phone || "Não informado";
-    }
-
-    // Manipular o envio do formulário
-    document
-        .getElementById("registration-form")
-        .addEventListener("submit", function(e) {
-            e.preventDefault();
-
-            if (
-                !validateCurrentStep() ||
-                !document.getElementById("terms_agree").checked
-            ) {
-                document.getElementById("terms_agree").classList.add("is-invalid");
-                return;
-            }
-
-            // Mostrar loading
-            const submitBtn = document.getElementById("submit-btn");
-            const submitText = document.getElementById("submit-text");
-            const submitSpinner = document.getElementById("submit-spinner");
-
-            submitBtn.disabled = true;
-            submitText.textContent = "Criando conta...";
-            submitSpinner.classList.remove("d-none");
-
-            // Simular envio (substituir por AJAX real)
-            // Submeter o formulário para o PHP processar
-            this.submit();
-        });
-
-    // Atualizar dados de revisão ao mostrar o passo 4
-    document
-        .getElementById("step-4")
-        .addEventListener("animationstart", function() {
-            if (currentStep === 4) {
-                updateReviewData();
-            }
-        });
-
-    // Estilizar radio buttons
-    document.querySelectorAll(".form-radio-input").forEach((input) => {
-        input.addEventListener("change", function() {
-            document.querySelectorAll(".form-radio-label").forEach((label) => {
-                label.classList.remove("active");
-            });
-            this.parentElement.classList.add("active");
-        });
-    });
-
-    // Preloader
-    window.addEventListener("load", () => {
-        setTimeout(() => document.body.classList.add("loaded"), 300);
-    });
-
-    // Inicializar
-    document.addEventListener("DOMContentLoaded", function() {
-        updateProgressSteps();
-
-        // Adicionar validação em tempo real
-        document.getElementById("email").addEventListener("blur", function() {
-            if (this.value && !validateEmail(this.value)) {
-                this.classList.add("is-invalid");
-            } else {
-                this.classList.remove("is-invalid");
-            }
-        });
-
+        // Manipular o envio do formulário
         document
-            .getElementById("confirm_email")
-            .addEventListener("blur", function() {
-                const email = document.getElementById("email").value;
-                if (this.value && this.value !== email) {
+            .getElementById("registration-form")
+            .addEventListener("submit", function(e) {
+                e.preventDefault();
+
+                if (
+                    !validateCurrentStep() ||
+                    !document.getElementById("terms_agree").checked
+                ) {
+                    document.getElementById("terms_agree").classList.add("is-invalid");
+                    return;
+                }
+
+                // Mostrar loading
+                const submitBtn = document.getElementById("submit-btn");
+                const submitText = document.getElementById("submit-text");
+                const submitSpinner = document.getElementById("submit-spinner");
+
+                submitBtn.disabled = true;
+                submitText.textContent = "Criando conta...";
+                submitSpinner.classList.remove("d-none");
+
+                // Simular envio (substituir por AJAX real)
+                // Submeter o formulário para o PHP processar
+                this.submit();
+            });
+
+        // Atualizar dados de revisão ao mostrar o passo 4
+        document
+            .getElementById("step-4")
+            .addEventListener("animationstart", function() {
+                if (currentStep === 4) {
+                    updateReviewData();
+                }
+            });
+
+        // Estilizar radio buttons
+        document.querySelectorAll(".form-radio-input").forEach((input) => {
+            input.addEventListener("change", function() {
+                document.querySelectorAll(".form-radio-label").forEach((label) => {
+                    label.classList.remove("active");
+                });
+                this.parentElement.classList.add("active");
+            });
+        });
+
+        // Preloader
+        window.addEventListener("load", () => {
+            setTimeout(() => document.body.classList.add("loaded"), 300);
+        });
+
+        // Inicializar
+        document.addEventListener("DOMContentLoaded", function() {
+            updateProgressSteps();
+
+            // Adicionar validação em tempo real
+            document.getElementById("email").addEventListener("blur", function() {
+                if (this.value && !validateEmail(this.value)) {
                     this.classList.add("is-invalid");
                 } else {
                     this.classList.remove("is-invalid");
                 }
             });
-    });
+
+            document
+                .getElementById("confirm_email")
+                .addEventListener("blur", function() {
+                    const email = document.getElementById("email").value;
+                    if (this.value && this.value !== email) {
+                        this.classList.add("is-invalid");
+                    } else {
+                        this.classList.remove("is-invalid");
+                    }
+                });
+        });
     </script>
 </body>
 

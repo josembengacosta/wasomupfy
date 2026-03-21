@@ -215,7 +215,7 @@ function fmt_streams(int $n): string
 }
 ?>
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-ao">
 
 <head>
     <meta charset="utf-8" />

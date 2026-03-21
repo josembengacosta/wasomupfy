@@ -13,8 +13,9 @@ define('DB_CHARSET', 'utf8mb4');
 
 // ─── Aplicação ────────────────────────────────
 define('APP_NAME',    'Wasom Upfy');
-define('APP_VERSION', '2.0');
+define('APP_VERSION', '146.0.3856.62');
 define('APP_URL',     'http://localhost/wasomupfy'); // Mudar em produção
+define('APP_URL_PANEL',     'dashboard');
 define('APP_ENV',     'production');                 // 'development' = debug local | 'production' = envio real
 define('VAPID_PUBLIC_KEY',  'BKGIW47bet8LzqCcTTV3B_pJLgUxA1xdJgtlYEU9LcJArBrZRmKipIlYblrVDMBX54bn-5T7hydeuXGB1NxGVl4'); // a chave Public Key
 define('VAPID_PRIVATE_KEY', 'sEsX8fwLAmksOgTy0MlLrgVMaq5BnYGIDkKh7K5ok7s');   // a chave Private Key
@@ -52,6 +53,7 @@ define('MAX_FILE_SIZE', 10 * 1024 * 1024); // 10MB
 // ─── Caminhos ─────────────────────────────────
 define('AUTHENTIC_URL', APP_URL . '/authentic');
 define('DASHBOARD_URL', APP_URL . '/dashboard');
+
 
 // ─── Painel Admin ────────────────────────────
 // ADMIN_PATH — caminho da pasta do painel.

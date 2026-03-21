@@ -4,19 +4,105 @@
 // Arquivo: dashboard/analytics/report.php
 // ══════════════════════════════════════════════════════
 require_once __DIR__ . '/../../authentic/include/functions.php';
+require_once __DIR__ . '/../include/platform.php';
 startSecureSession();
 checkRememberMe();
 requireLogin();
+$platform = checkDashboardStatus();
+$user     = checkUserAccess((int)$_SESSION['id_users']);
 
-$db       = getDB();
-$id_users = (int)$_SESSION['id_users'];
-$user     = getUserById($id_users);
-if (!$user) {
-  redirect('authentic/logout');
+$id_users       = (int)$user['id_users'];
+$first_name     = htmlspecialchars($user['first_name']);
+$user_name      = htmlspecialchars($user['user_name'] ?? '');
+$email_verified = (bool)$user['email_verified'];
+$plan_selected  = $user['plan_selected'];
+$onboard_done   = (bool)($user['onboarding_done'] ?? false);
+$user_photo     = $user['photo_user'] ?? null;
+$name_artist_band = htmlspecialchars($user['name_artist_band'] ?? 'Cria Perfil Artístico');
+$notif_count    = getUnreadNotifCount($id_users);
+$db             = getDB();
+
+// ── Saldo ─────────────────────────────────────
+$w = $db->prepare('SELECT balance_aoa FROM _wallet WHERE id_users = ?');
+$w->execute([$id_users]);
+$balance = $w->fetch() ?: ['balance_aoa' => 0];
+
+// ── Plano ─────────────────────────────────────
+$plan_id     = (int)$user['plan_selected'];
+$plan        = null;
+$max_artists = 1;
+if ($plan_id) {
+    $ps = $db->prepare('SELECT * FROM _plans WHERE id_plan = ?');
+    $ps->execute([$plan_id]);
+    $plan = $ps->fetch();
+    if ($plan) $max_artists = (int)($plan['max_artists'] ?? 1);
+}
+$plan_name = $plan ? htmlspecialchars($plan['name_plan']) : 'Sem plano';
+
+// ── Plano ─────────────────────────────────────
+$plan      = null;
+$plan_paid = ($user['status_user'] === 'active' && !empty($user['plan_activated_at']));
+if ($plan_selected) {
+    $ps = $db->prepare('SELECT * FROM _plans WHERE id_plan = ?');
+    $ps->execute([$plan_selected]);
+    $plan = $ps->fetch();
 }
 
-$first_name       = htmlspecialchars($user['first_name']);
-$user_artist_name = htmlspecialchars($user['name_artist_band'] ?? $user['first_name']);
+// Adicionar verificação de expiração do plano
+$plan_expired = false;
+if ($plan_paid && !empty($user['plan_expires_at'])) {
+    $plan_expired = strtotime($user['plan_expires_at']) < time();
+}
+
+// ── Artistas ──────────────────────────────────
+$as = $db->prepare('SELECT COUNT(*) AS total FROM _artist WHERE id_users = ?');
+$as->execute([$id_users]);
+$has_artist = (int)($as->fetch()['total'] ?? 0) > 0;
+
+// ── Conta bancária ────────────────────────────
+$ba = $db->prepare("SELECT id_account FROM _account WHERE id_users = ? AND status_account = 'verified' LIMIT 1");
+$ba->execute([$id_users]);
+$bank_account = $ba->fetch();
+
+// ── Conta rejeitada ───────────────────────────
+$rejected_account = null;
+if ($plan_paid) {
+    $rj = $db->prepare("SELECT type_account, reject_reason FROM _account WHERE id_users = ? AND status_account = 'rejected' LIMIT 1");
+    $rj->execute([$id_users]);
+    $rejected_account = $rj->fetch();
+}
+
+// ── Sessão info (modal logout) ────────────────
+$ls = $db->prepare('SELECT last_login_at, last_login_ip FROM _users_security WHERE id_users = ?');
+$ls->execute([$id_users]);
+$sec = $ls->fetch();
+
+$sess_stmt = $db->prepare("
+    SELECT ip_address, user_agent, country, city, creat_session, last_activity
+    FROM _users_sessions WHERE id_users = ? AND is_active = 1
+    ORDER BY last_activity DESC LIMIT 1
+");
+$sess_stmt->execute([$id_users]);
+$current_session  = $sess_stmt->fetch();
+$session_duration_str = '—';
+if ($current_session && $current_session['creat_session']) {
+    $secs = time() - strtotime($current_session['creat_session']);
+    if ($secs < 60)     $session_duration_str = $secs . 's';
+    elseif ($secs < 3600)  $session_duration_str = floor($secs / 60) . 'min';
+    elseif ($secs < 86400) $session_duration_str = floor($secs / 3600) . 'h ' . floor(($secs % 3600) / 60) . 'min';
+    else                   $session_duration_str = floor($secs / 86400) . 'd ' . floor(($secs % 86400) / 3600) . 'h';
+}
+$member_since   = $user['creat_user'] ? date('d/m/Y', strtotime($user['creat_user'])) : '—';
+$last_login_str = ($sec && $sec['last_login_at']) ? date('d/m/Y H:i', strtotime($sec['last_login_at'])) : '—';
+$ua_raw   = $current_session['user_agent'] ?? '';
+$browser  = 'Desconhecido';
+if (str_contains($ua_raw, 'Edg'))     $browser = 'Microsoft Edge';
+elseif (str_contains($ua_raw, 'Chrome'))  $browser = 'Google Chrome';
+elseif (str_contains($ua_raw, 'Firefox')) $browser = 'Mozilla Firefox';
+elseif (str_contains($ua_raw, 'Safari'))  $browser = 'Safari';
+elseif (str_contains($ua_raw, 'Opera'))   $browser = 'Opera';
+$sess_location = trim(($current_session['city'] ?? '') . ', ' . ($current_session['country'] ?? ''), ', ') ?: 'Desconhecida';
+$sess_ip       = $current_session['ip_address'] ?? ($sec['last_login_ip'] ?? '—');
 
 // ── Relatórios agrupados por mês/ano ──────────
 // Campo report_file na tabela _royalty guarda o PDF gerado pela equipa
@@ -51,591 +137,368 @@ $totals = $totals_q->fetch();
 
 // ── Helpers ────────────────────────────────────
 $months_pt = [
-  1 => 'Janeiro',
-  2 => 'Fevereiro',
-  3 => 'Março',
-  4 => 'Abril',
-  5 => 'Maio',
-  6 => 'Junho',
-  7 => 'Julho',
-  8 => 'Agosto',
-  9 => 'Setembro',
-  10 => 'Outubro',
-  11 => 'Novembro',
-  12 => 'Dezembro'
+    1 => 'Janeiro',
+    2 => 'Fevereiro',
+    3 => 'Março',
+    4 => 'Abril',
+    5 => 'Maio',
+    6 => 'Junho',
+    7 => 'Julho',
+    8 => 'Agosto',
+    9 => 'Setembro',
+    10 => 'Outubro',
+    11 => 'Novembro',
+    12 => 'Dezembro'
 ];
 $status_map = [
-  'pending'    => ['label' => 'Pendente',    'class' => 'bg-warning text-dark'],
-  'processing' => ['label' => 'A processar', 'class' => 'bg-primary text-white'],
-  'paid'       => ['label' => 'Pago',        'class' => 'bg-success text-white'],
-  'cancelled'  => ['label' => 'Cancelado',   'class' => 'bg-secondary text-white'],
+    'pending'    => ['label' => 'Pendente',    'class' => 'bg-warning text-dark'],
+    'processing' => ['label' => 'A processar', 'class' => 'bg-primary text-white'],
+    'paid'       => ['label' => 'Pago',        'class' => 'bg-success text-white'],
+    'cancelled'  => ['label' => 'Cancelado',   'class' => 'bg-secondary text-white'],
 ];
 $base_url    = rtrim(APP_URL, '/');
 $reports_url = $base_url . '/assets/reports/';
 ?>
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-ao">
 
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="robots" content="noindex, nofollow" />
-  <meta name="theme-color" content="#FF0089" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <link rel="apple-touch-icon" href="../../assets/img/icones/wasomupfy_fiv_512.png" />
-  <link rel="manifest" href="../manifest.json" />
-  <title>Relatórios — <?php echo APP_NAME; ?></title>
-  <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
-  <link rel="stylesheet" href="../../css/dashboard-style.css" />
-  <link rel="stylesheet" href="../../css/lastest-style.css" />
+    <?php require_once __DIR__ . '/../include/head.php'; ?>
+    <title>Relatórios — <?php echo APP_NAME; ?></title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
 </head>
 
 <body>
 
-  <!-- Tela de Carregamento -->
-  <!-- <div class="loading-screen" id="loadingScreen">
-        <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg" class="loading-logo">
-            <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2"/>
-            <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
-        </svg>
-        <div class="spinner"></div>
-    </div> -->
+    <!-- ═══ NAVBAR ═══ -->
+    <?php require_once __DIR__ . '/../include/sidebar.php'; ?>
 
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg">
-    <div class="container-fluid">
-      <!-- Menu Button (Left) -->
-      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu"
-        aria-controls="offcanvasMenu">
-        <span class="navbar-toggler-icon"><i class="bi bi-list text-white fs-1"></i></span>
-      </button>
+    <!-- ═══ MAIN ═══ -->
+    <div class="container my-4">
 
-      <!-- Logo (Center on Mobile, Left on Desktop) -->
-      <a class="navbar-brand" href="../painel">
-        <!-- SVG Logo Wasom Upfy -->
-        <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
-                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
-                        fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
-                </svg> -->
-        <span class="text-light" style="
-              font-weight: bold;
-              box-sizing: border-box;
-              text-transform: capitalize;
-              font-family: Arial, sans-serif;
-            ">WASOM UPFY</span>
-      </a>
+        <?php /* ============================================
+    BANNERS DE NOTIFICACAO DO PAINEL
+    Estilo: inline CSS consistente com renderDashboardAlerts().
+    Bootstrap alert nativo removido — um único sistema visual.
+    Lógica de prioridade:
+      Nível 1 (danger)  — bloqueia distribuição
+      Nível 2 (warning) — importante, requer atenção
+      Nível 3 (info)    — informativo / acção opcional
+    ============================================ */ ?>
 
-      <!-- Desktop Menu -->
-      <div class="collapse navbar-collapse">
-        <ul class="navbar-nav m-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link" href="../painel"><i class="bi bi-speedometer2"></i> Dashboard</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="../launch/releases"><i class="bi bi-disc"></i> Lançamentos</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="../analytics/statistics"><i class="bi bi-bar-chart"></i>
-              Estatísticas</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="../finances/overview"><i class="bi bi-currency-dollar"></i>
-              Finanças</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="../artists/artists-list"><i class="bi bi-person"></i> Artistas</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="../artists/youtube/ucy"><i class="bi bi-youtube"></i> Unificação de
-              canal
-              YouTube</a>
-          </li>
-        </ul>
-      </div>
+        <?php renderDashboardAlerts($user, $platform); ?>
 
-      <!-- User Icon (Right) -->
-      <div class="user-menu d-flex align-items-center">
-        <!-- Theme Toggle Button -->
-        <a class="theme-toggle text-white me-2" id="themeToggle">
-          <i class="bi bi-sun" id="themeIcon"></i>
-        </a>
-        <a href="../notifications" class="text-white me-2" aria-label="Notificações">
-          <i class="bi bi-bell fs-4"></i>
-          <span class="badge bg-danger">9</span>
-        </a>
-        <a href="#" class="text-white" data-bs-toggle="dropdown">
-          <i class="bi bi-person-circle fs-4"></i>
-        </a>
-        <ul class="dropdown-menu dropdown-menu-end">
-          <li>
-            <a class="dropdown-item" href="../user/profile"><i class="bi bi-person me-2"></i>
-              <strong><?php echo $first_name; ?></strong></a>
-            <div class="text-white-50">
-              &nbsp; &nbsp; &nbsp; &nbsp; (Conta <?php echo str_pad($id_users, 6, "0", STR_PAD_LEFT); ?>)
-            </div>
-          </li>
-          <li>
-            <hr class="dropdown-divider" />
-          </li>
-          <li>
-            <a class="dropdown-item" href="../user/profile"><i class="bi bi-person me-2"></i> Meu Perfil</a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="../account/manage-account"><i class="bi bi-tools me-2"></i>
-              Gestão de
-              Conta</a>
-          </li>
-          <li>
-            <hr class="dropdown-divider" />
-          </li>
-          <li>
-            <a class="dropdown-item" href="../page/settings"><i class="bi bi-gear me-2"></i>
-              Configurações</a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="../page/notifications"><i class="bi bi-bell me-2"></i>
-              Notificações</a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="../services/available-services"><i class="bi bi-star me-2"></i>
-              Conta e
-              serviços disponíveis</a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="#?logout-wasomupfy" data-bs-toggle="modal"
-              data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right me-2"></i>
-              Desconectar-se</a>
-          </li>
-          <li>
-            <hr class="dropdown-divider" />
-          </li>
-          <li>
-            <a class="dropdown-item" href="../page/about"><i class="bi bi-info-circle me-2"></i> Sobre</a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="../page/support"><i class="bi bi-headset me-2"></i> Enviar pedido
-              de
-              suporte</a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="../page/faq"><i class="bi bi-chat-left-text me-2"></i> Perguntas
-              frequentes</a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="../page/help"><i class="bi bi-question-circle me-2"></i>
-              Ajuda</a>
-          </li>
-          <li>
-            <hr class="dropdown-divider" />
-          </li>
-          <li>
-            <span class="dropdown-item-text" id="versionDropdown"></span>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Offcanvas Menu para Mobile e Desktop -->
-  <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
-    <div class="offcanvas-header">
-      <h5 class="offcanvas-title" id="offcanvasMenuLabel">
-        <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
-                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
-                        fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
-                </svg> -->
-        <span class="text-light" style="
-              font-weight: bold;
-              box-sizing: border-box;
-              text-transform: capitalize;
-              font-family: Arial, sans-serif;
-            ">WASOM UPFY</span>
-      </h5>
-      <button type="button" class="btn-close text-white" data-bs-dismiss="offcanvas" aria-label="Close">
-        <i class="bi bi-x-lg"></i>
-      </button>
-    </div>
-    <div class="offcanvas-body">
-      <ul class="nav flex-column">
-        <li class="nav-item">
-          <a class="nav-link" href="../painel"><i class="bi bi-speedometer2"></i> Dashboard</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="../launch/releases"><i class="bi bi-disc"></i> Lançamentos</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="../analytics/statistics"><i class="bi bi-bar-chart"></i> Estatísticas</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="../finances/overview"><i class="bi bi-currency-dollar"></i> Finanças</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="../artists/artists-list"><i class="bi bi-person"></i> Artistas</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="../youtube"><i class="bi bi-youtube"></i> Unificação de canal YouTube</a>
-        </li>
-        <!-- Links secundários exibidos apenas em mobile -->
-        <li class="nav-item d-lg-none">
-          <a class="nav-link" href="../user/profile"><i class="bi bi-person-circle"></i> Meu Perfil</a>
-        </li>
-        <li class="nav-item d-lg-none">
-          <a class="nav-link active" href="../page/settings"><i class="bi bi-gear"></i> Configurações</a>
-        </li>
-        <li class="nav-item d-lg-none">
-          <a class="nav-link" href="../page/notifications"><i class="bi bi-bell"></i> Notificações</a>
-        </li>
-        <li class="nav-item d-lg-none">
-          <a class="nav-link" href="../page/about"><i class="bi bi-info-circle"></i> Sobre</a>
-        </li>
-        <li class="nav-item d-lg-none">
-          <a class="nav-link" href="../services/available-services"><i class="bi bi-star"></i> Conta e
-            serviços
-            disponíveis</a>
-        </li>
-        <li class="nav-item d-lg-none">
-          <a class="nav-link" href="../page/help"><i class="bi bi-question-circle"></i> Ajuda</a>
-        </li>
-        <li class="nav-item d-lg-none">
-          <a class="nav-link" href="#?logout-wasomupfy" data-bs-toggle="modal"
-            data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right"></i> Desconectar-se</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- Toast para Notificações de Status -->
-  <div class="toast-container position-fixed bottom-0 end-0 p-3">
-    <div id="connectionToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-      <div class="toast-header">
-        <strong class="me-auto">Conexão</strong>
-        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Fechar"></button>
-      </div>
-      <div class="toast-body">
-        Você está offline. Alguns dados podem estar desatualizados.
-        <div class="mt-2">
-          <button class="btn btn-pink btn-sm" onclick="tryReconnect()">
-            Tentar Reconectar
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Main Content -->
-  <div class="container my-4">
-
-    <!-- Cabeçalho -->
-    <div class="page-header">
-      <div class="row align-items-center mb-4">
-        <div class="col-md-8">
-          <div class="page-header-compact">
-            <h1><i class="bi bi-file-earmark-text-fill me-3"></i>Relatórios Financeiros</h1>
-            <p class="lead">
-              Todos os relatórios mensais dos conteúdos distribuídos por esta conta estão disponíveis
-              aqui.
-              Faz o download para análise detalhada no teu dispositivo.
-            </p>
-          </div>
-        </div>
-        <div class="col-md-4 text-md-end mt-3 mt-md-0">
-          <a href="../finances/overview" class="btn btn-light">
-            <i class="bi bi-arrow-left-circle me-2"></i>Voltar às Finanças
-          </a>
-        </div>
-      </div>
-
-      <style>
-        .page-header::before {
-          content: '\F45D';
-          /* bi-file-earmark-text-fill */
+        <?php
+        // Cor map para helpers inline — idêntico ao renderDashboardAlerts()
+        $alertColors = [
+            'danger'  => ['bg' => 'rgba(239,68,68,.08)',  'border' => 'rgba(239,68,68,.25)',  'text' => '#ef4444'],
+            'warning' => ['bg' => 'rgba(234,179,8,.08)',  'border' => 'rgba(234,179,8,.25)',  'text' => '#eab308'],
+            'info'    => ['bg' => 'rgba(99,102,241,.08)', 'border' => 'rgba(99,102,241,.25)', 'text' => '#6366f1'],
+        ];
+        function wuAlert(string $type, string $icon, string $message, ?array $action = null, bool $dismiss = true, string $id = ''): void
+        {
+            global $alertColors;
+            $c   = $alertColors[$type] ?? $alertColors['info'];
+            $eid = $id ?: ('wuPanelAlert_' . md5($message));
+            echo "<div id=\"{$eid}\" style=\"display:flex;align-items:flex-start;gap:10px;"
+                . "background:{$c['bg']};border:1px solid {$c['border']};border-radius:12px;"
+                . "padding:.75rem 1rem;font-size:.83rem;margin-bottom:.6rem;"
+                . "transition:opacity .3s;\">";
+            echo "<i class=\"bi {$icon}\" style=\"font-size:1rem;flex-shrink:0;margin-top:2px;color:{$c['text']};\"></i>";
+            echo '<span class="wu-alert-msg">' . $message;
+            if ($action) {
+                echo " <a href=\"{$action['url']}\" style=\"color:{$c['text']};font-weight:700;"
+                    . "text-decoration:underline;white-space:nowrap\">{$action['label']} &rarr;</a>";
+            }
+            echo '</span>';
+            if ($dismiss) {
+                echo "<button type=\"button\" class=\"wu-alert-dismiss\" aria-label=\"Fechar\""
+                    . " onclick=\"(function(el){el.style.opacity='0';"
+                    . "setTimeout(function(){el.style.display='none'},300)})(document.getElementById('{$eid}'))\">"
+                    . "&times;</button>";
+            }
+            echo '</div>';
         }
-      </style>
-    </div>
+        ?>
 
-    <?php if (!empty($reports)): ?>
-      <!-- Cards de resumo -->
-      <div class="row g-3 mb-4">
-        <div class="col-md-4">
-          <div class="card h-100"
-            style="border-radius:16px;border:1.5px solid var(--border-color,rgba(0,0,0,.08))">
-            <div class="card-body">
-              <div class="text-muted small mb-1"><i class="bi bi-calendar-check me-1"></i>Períodos com
-                royalties</div>
-              <div class="fw-bold" style="font-size:1.6rem"><?php echo count($reports); ?></div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card h-100"
-            style="border-radius:16px;border:1.5px solid var(--border-color,rgba(0,0,0,.08))">
-            <div class="card-body">
-              <div class="text-muted small mb-1"><i class="bi bi-currency-dollar me-1"></i>Total pago (USD)
-              </div>
-              <div class="fw-bold" style="font-size:1.6rem">
-                $<?php echo number_format((float)$totals['grand_usd'], 2); ?></div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card h-100"
-            style="border-radius:16px;border:1.5px solid var(--border-color,rgba(0,0,0,.08))">
-            <div class="card-body">
-              <div class="text-muted small mb-1"><i class="bi bi-cash me-1"></i>Total pago (AOA)</div>
-              <div class="fw-bold" style="font-size:1.6rem">
-                <?php echo number_format((float)$totals['grand_aoa'], 2, ',', '.'); ?> Kz</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    <?php endif; ?>
+        <?php /* ── NÍVEL 1: Crítico — bloqueia distribuição ── */ ?>
 
-    <!-- Tabela de relatórios -->
-    <div class="table-card mb-4">
-      <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <h6 class="mb-0"><i class="bi bi-file-earmark-text me-2 text-pink"></i>Relatórios Mensais</h6>
-          <span class="badge bg-secondary"><?php echo count($reports); ?> períodos</span>
-        </div>
-        <div class="table-responsive">
-          <?php if (empty($reports)): ?>
-            <div class="text-center py-5 text-muted">
-              <i class="bi bi-file-earmark-text fs-1 d-block mb-2 opacity-25"></i>
-              <div class="small fw-semibold mb-1">Nenhum relatório disponível ainda.</div>
-              <div class="small">Os relatórios aparecem aqui após o processamento mensal dos teus royalties
-                pela equipa Wasom Upfy.</div>
-            </div>
-          <?php else: ?>
-            <table id="reportsWasomupfy" class="table table-striped table-hover mb-0">
-              <thead>
-                <tr>
-                  <th>Mês</th>
-                  <th>Ano</th>
-                  <th class="text-center">Faixas</th>
-                  <th>Valor (USD)</th>
-                  <th>Valor (AOA)</th>
-                  <th>Estado</th>
-                  <th class="text-center">Arquivo</th>
-                </tr>
-              </thead>
-              <tbody>
-                <?php foreach ($reports as $rep):
-                  $month_name = $months_pt[(int)$rep['month_royalty']] ?? '—';
-                  $st         = $status_map[$rep['status_royalty']] ?? $status_map['pending'];
-                  $has_file   = !empty($rep['report_file']);
-                ?>
-                  <tr>
-                    <td class="fw-semibold small"><?php echo $month_name; ?></td>
-                    <td class="small"><?php echo (int)$rep['year_royalty']; ?></td>
-                    <td class="small text-center"><?php echo (int)$rep['num_tracks']; ?></td>
-                    <td class="small fw-semibold">$<?php echo number_format((float)$rep['total_usd'], 4); ?>
-                    </td>
-                    <td class="small fw-semibold">
-                      <?php echo $rep['total_aoa']
-                        ? number_format((float)$rep['total_aoa'], 2, ',', '.') . ' Kz'
-                        : '—'; ?>
-                    </td>
-                    <td>
-                      <span class="badge <?php echo $st['class']; ?>"><?php echo $st['label']; ?></span>
-                    </td>
-                    <td class="text-center">
-                      <?php if ($has_file): ?>
-                        <a href="<?php echo htmlspecialchars($reports_url . $rep['report_file']); ?>"
-                          class="btn btn-sm btn-outline-pink" target="_blank" rel="noopener" download
-                          data-bs-toggle="tooltip"
-                          title="Descarregar <?php echo $month_name . ' ' . $rep['year_royalty']; ?>">
-                          <i class="bi bi-download me-1"></i>PDF
-                        </a>
-                      <?php else: ?>
-                        <span class="text-muted small" data-bs-toggle="tooltip"
-                          title="O arquivo ainda não foi gerado pela equipa.">
-                          <i class="bi bi-clock me-1"></i>A aguardar
-                        </span>
-                      <?php endif; ?>
-                    </td>
-                  </tr>
-                <?php endforeach; ?>
-              </tbody>
-            </table>
-          <?php endif; ?>
-        </div>
-      </div>
-    </div>
+        <?php if (!$email_verified): ?>
+        <?php wuAlert(
+                'danger',
+                'bi-envelope-exclamation-fill',
+                '<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta e receber notificações de pagamentos.',
+                ['label' => 'Verificar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/user/profile#perfil'],
+                true,
+                'banner-email'
+            ); ?>
+        <?php endif; ?>
 
-    <!-- Nota informativa -->
-    <div class="p-3 mb-4"
-      style="background:rgba(255,0,137,.04);border-radius:14px;border:1px solid rgba(255,0,137,.12)">
-      <div class="d-flex gap-2 align-items-start">
-        <i class="bi bi-info-circle-fill mt-1" style="color:#FF0089;flex-shrink:0"></i>
-        <div style="font-size:.8rem;color:var(--text-muted,#6c757d)">
-          Os relatórios são gerados mensalmente pela equipa Wasom Upfy após o encerramento do período de
-          reporte das plataformas de streaming.
-          Caso tenhas dúvidas sobre os valores apresentados, contacta o <a href="../page/support"
-            class="text-pink">suporte</a>.
-        </div>
-      </div>
-    </div>
+        <?php if ($plan && !$plan_paid): ?>
+        <?php wuAlert(
+                'warning',
+                'bi-clock-history',
+                '<strong>Pagamento pendente — ' . htmlspecialchars($plan['name_plan']) . '.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados até confirmação.',
+                ['label' => 'Finalizar pagamento', 'url' => APP_URL . '/' . APP_URL_PANEL . '/payment/pay'],
+                true,
+                'banner-plan-pending'
+            ); ?>
+        <?php elseif (!$plan): ?>
+        <?php wuAlert(
+                'danger',
+                'bi-credit-card-fill',
+                '<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir a tua música para +150 plataformas.',
+                ['label' => 'Ver planos', 'url' => 'all-plans'],
+                false,
+                'banner-plan'
+            ); ?>
+        <?php endif; ?>
 
-  </div><!-- /container -->
+        <?php /* ── NÍVEL 2: Importante — perfil incompleto ── */ ?>
 
-  <!-- Bottom Nav Mobile -->
-  <nav class="bottom-nav d-lg-none">
-    <ul class="nav justify-content-around">
-      <li class="nav-item"><a class="nav-link" href="../painel"><i
-            class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
-      <li class="nav-item"><a class="nav-link" href="../launch/releases"><i
-            class="bi bi-disc"></i><span>Lançamentos</span></a></li>
-      <li class="nav-item"><a class="nav-link" href="../analytics/statistics"><i
-            class="bi bi-bar-chart"></i><span>Estatísticas</span></a></li>
-      <li class="nav-item"><a class="nav-link" href="../finances/overview"><i
-            class="bi bi-currency-dollar"></i><span>Finanças</span></a></li>
-      <li class="nav-item"><a class="nav-link" href="../artists/artists-list"><i
-            class="bi bi-person"></i><span>Artistas</span></a></li>
-    </ul>
-  </nav>
+        <?php if ($plan_paid && !$has_artist): ?>
+        <?php wuAlert(
+                'info',
+                'bi-person-plus-fill',
+                '<strong>Cria o teu perfil de artista.</strong> Tens plano activo mas ainda não criaste um perfil. Precisas de um para poder lançar música.',
+                ['label' => 'Criar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/add-artist'],
+                true,
+                'banner-artist'
+            ); ?>
+        <?php endif; ?>
 
-  <!-- ════ MODAL — Logout ════ -->
-  <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
+        <?php /* ── NÍVEL 3: Informativo — conta bancária ── */ ?>
 
-        <div class="modal-header border-0 pb-0">
-          <div class="d-flex align-items-center gap-3">
-            <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-              style="width:44px;height:44px;background:rgba(220,53,69,.12)">
-              <i class="bi bi-box-arrow-right fs-5 text-danger"></i>
-            </div>
-            <div>
-              <h5 class="modal-title text-dark mb-0" id="logoutwasomupfyLabel">Terminar sessão</h5>
-              <small class="text-muted">@<?php echo $user_name; ?></small>
-            </div>
-          </div>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-        </div>
+        <?php if ($plan_paid && $has_artist && !$bank_account): ?>
+        <?php wuAlert(
+                'info',
+                'bi-bank',
+                '<strong>Conta bancária não registada.</strong> Para poder sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.',
+                ['label' => 'Registar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/withdraw'],
+                true,
+                'banner-bank'
+            ); ?>
+        <?php endif; ?>
 
-        <div class="modal-body pt-2">
-          <!-- Informação da sessão actual -->
-          <div class="rounded-3 p-3 mb-3" style="background:rgba(0,0,0,.04)">
-            <div class="row g-2" style="font-size:.82rem">
-              <div class="col-6 d-flex gap-2 align-items-start">
-                <i class="bi bi-clock text-muted mt-1 flex-shrink-0"></i>
-                <div>
-                  <div class="text-muted">Duração da sessão</div>
-                  <div class="fw-semibold text-dark"><?php echo $session_duration_str; ?></div>
+        <?php /* ── NÍVEL 3: Conta bancária rejeitada ── */ ?>
+
+        <?php
+        $rejected_account = null;
+        if ($plan_paid) {
+            $rej_stmt = getDB()->prepare("SELECT type_account, reject_reason FROM _account WHERE id_users = ? AND status_account = 'rejected' LIMIT 1");
+            $rej_stmt->execute([$id_users]);
+            $rejected_account = $rej_stmt->fetch();
+        }
+        ?>
+        <?php if ($rejected_account): ?>
+        <?php
+            $rej_msg = '<strong>Conta ' . htmlspecialchars($rejected_account['type_account']) . ' rejeitada.</strong>';
+            if ($rejected_account['reject_reason']) {
+                $rej_msg .= ' Motivo: <em>' . htmlspecialchars($rejected_account['reject_reason']) . '</em>.';
+            }
+            $rej_msg .= ' Actualiza os dados e submete novamente.';
+            wuAlert(
+                'danger',
+                'bi-x-circle-fill',
+                $rej_msg,
+                ['label' => 'Corrigir agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/withdraw'],
+                true,
+                'banner-account-rejected'
+            );
+            ?>
+        <?php endif; ?>
+        <!-- Cabeçalho -->
+        <div class="page-header">
+            <div class="row align-items-center mb-4">
+                <div class="col-md-8">
+                    <div class="page-header-compact">
+                        <h1><i class="bi bi-file-earmark-text-fill me-3"></i>Relatórios Financeiros</h1>
+                        <p class="lead">
+                            Todos os relatórios mensais dos conteúdos distribuídos por esta conta estão disponíveis
+                            aqui.
+                            Faz o download para análise detalhada no teu dispositivo.
+                        </p>
+                    </div>
                 </div>
-              </div>
-              <div class="col-6 d-flex gap-2 align-items-start">
-                <i class="bi bi-calendar3 text-muted mt-1 flex-shrink-0"></i>
-                <div>
-                  <div class="text-muted">Último acesso</div>
-                  <div class="fw-semibold text-dark"><?php echo $last_login_str; ?></div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <a href="../finances/overview" class="btn btn-light">
+                        <i class="bi bi-arrow-left-circle me-2"></i>Voltar às Finanças
+                    </a>
                 </div>
-              </div>
-              <div class="col-6 d-flex gap-2 align-items-start">
-                <i class="bi bi-globe text-muted mt-1 flex-shrink-0"></i>
-                <div>
-                  <div class="text-muted">Localização</div>
-                  <div class="fw-semibold text-dark"><?php echo htmlspecialchars($sess_location); ?>
-                  </div>
-                </div>
-              </div>
-              <div class="col-6 d-flex gap-2 align-items-start">
-                <i class="bi bi-browser-chrome text-muted mt-1 flex-shrink-0"></i>
-                <div>
-                  <div class="text-muted">Navegador</div>
-                  <div class="fw-semibold text-dark"><?php echo htmlspecialchars($browser); ?></div>
-                </div>
-              </div>
-              <div class="col-6 d-flex gap-2 align-items-start">
-                <i class="bi bi-hdd-network text-muted mt-1 flex-shrink-0"></i>
-                <div>
-                  <div class="text-muted">IP</div>
-                  <div class="fw-semibold text-dark"><?php echo htmlspecialchars($sess_ip); ?></div>
-                </div>
-              </div>
-              <div class="col-6 d-flex gap-2 align-items-start">
-                <i class="bi bi-person-badge text-muted mt-1 flex-shrink-0"></i>
-                <div>
-                  <div class="text-muted">Membro desde</div>
-                  <div class="fw-semibold text-dark"><?php echo $member_since; ?></div>
-                </div>
-              </div>
             </div>
-          </div>
 
-          <p class="text-dark text-center mb-0" style="font-size:.9rem">
-            Tens a certeza que queres terminar a sessão?<br>
-            <span class="text-muted" style="font-size:.8rem">Terás de iniciar sessão novamente para aceder
-              ao painel.</span>
-          </p>
+            <style>
+            .page-header::before {
+                content: '\F45D';
+                /* bi-file-earmark-text-fill */
+            }
+            </style>
         </div>
 
-        <div class="modal-footer border-0 pt-0 gap-2">
-          <button type="button" class="btn btn-outline-secondary flex-fill" data-bs-dismiss="modal">
-            <i class="bi bi-arrow-left me-1"></i>Não, continuar
-          </button>
-          <button class="btn btn-danger flex-fill" type="button" onclick="logout_wasomupfy()">
-            <i class="bi bi-box-arrow-right me-1"></i>Sim, terminar
-          </button>
+        <?php if (!empty($reports)): ?>
+        <!-- Cards de resumo -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="card h-100"
+                    style="border-radius:16px;border:1.5px solid var(--border-color,rgba(0,0,0,.08))">
+                    <div class="card-body">
+                        <div class="text-muted small mb-1"><i class="bi bi-calendar-check me-1"></i>Períodos com
+                            royalties</div>
+                        <div class="fw-bold" style="font-size:1.6rem"><?php echo count($reports); ?></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100"
+                    style="border-radius:16px;border:1.5px solid var(--border-color,rgba(0,0,0,.08))">
+                    <div class="card-body">
+                        <div class="text-muted small mb-1"><i class="bi bi-currency-dollar me-1"></i>Total pago (USD)
+                        </div>
+                        <div class="fw-bold" style="font-size:1.6rem">
+                            $<?php echo number_format((float)$totals['grand_usd'], 2); ?></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100"
+                    style="border-radius:16px;border:1.5px solid var(--border-color,rgba(0,0,0,.08))">
+                    <div class="card-body">
+                        <div class="text-muted small mb-1"><i class="bi bi-cash me-1"></i>Total pago (AOA)</div>
+                        <div class="fw-bold" style="font-size:1.6rem">
+                            <?php echo number_format((float)$totals['grand_aoa'], 2, ',', '.'); ?> Kz</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <!-- Tabela de relatórios -->
+        <div class="table-card mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0"><i class="bi bi-file-earmark-text me-2 text-pink"></i>Relatórios Mensais</h6>
+                    <span class="badge bg-secondary"><?php echo count($reports); ?> períodos</span>
+                </div>
+                <div class="table-responsive">
+                    <?php if (empty($reports)): ?>
+                    <div class="text-center py-5 text-muted">
+                        <i class="bi bi-file-earmark-text fs-1 d-block mb-2 opacity-25"></i>
+                        <div class="small fw-semibold mb-1">Nenhum relatório disponível ainda.</div>
+                        <div class="small">Os relatórios aparecem aqui após o processamento mensal dos teus royalties
+                            pela equipa Wasom Upfy.</div>
+                    </div>
+                    <?php else: ?>
+                    <table id="reportsWasomupfy" class="table table-striped table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Mês</th>
+                                <th>Ano</th>
+                                <th class="text-center">Faixas</th>
+                                <th>Valor (USD)</th>
+                                <th>Valor (AOA)</th>
+                                <th>Estado</th>
+                                <th class="text-center">Arquivo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($reports as $rep):
+                                    $month_name = $months_pt[(int)$rep['month_royalty']] ?? '—';
+                                    $st         = $status_map[$rep['status_royalty']] ?? $status_map['pending'];
+                                    $has_file   = !empty($rep['report_file']);
+                                ?>
+                            <tr>
+                                <td class="fw-semibold small"><?php echo $month_name; ?></td>
+                                <td class="small"><?php echo (int)$rep['year_royalty']; ?></td>
+                                <td class="small text-center"><?php echo (int)$rep['num_tracks']; ?></td>
+                                <td class="small fw-semibold">$<?php echo number_format((float)$rep['total_usd'], 4); ?>
+                                </td>
+                                <td class="small fw-semibold">
+                                    <?php echo $rep['total_aoa']
+                                                ? number_format((float)$rep['total_aoa'], 2, ',', '.') . ' Kz'
+                                                : '—'; ?>
+                                </td>
+                                <td>
+                                    <span class="badge <?php echo $st['class']; ?>"><?php echo $st['label']; ?></span>
+                                </td>
+                                <td class="text-center">
+                                    <?php if ($has_file): ?>
+                                    <a href="<?php echo htmlspecialchars($reports_url . $rep['report_file']); ?>"
+                                        class="btn btn-sm btn-outline-pink" target="_blank" rel="noopener" download
+                                        data-bs-toggle="tooltip"
+                                        title="Descarregar <?php echo $month_name . ' ' . $rep['year_royalty']; ?>">
+                                        <i class="bi bi-download me-1"></i>PDF
+                                    </a>
+                                    <?php else: ?>
+                                    <span class="text-muted small" data-bs-toggle="tooltip"
+                                        title="O arquivo ainda não foi gerado pela equipa.">
+                                        <i class="bi bi-clock me-1"></i>A aguardar
+                                    </span>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                    <?php endif; ?>
+                </div>
+            </div>
         </div>
 
-      </div>
-    </div>
-  </div>
-  <!-- ════ MODAL — Logout  FIM ════ -->
+        <!-- Nota informativa -->
+        <div class="p-3 mb-4"
+            style="background:rgba(255,0,137,.04);border-radius:14px;border:1px solid rgba(255,0,137,.12)">
+            <div class="d-flex gap-2 align-items-start">
+                <i class="bi bi-info-circle-fill mt-1" style="color:#FF0089;flex-shrink:0"></i>
+                <div style="font-size:.8rem;color:var(--text-muted,#6c757d)">
+                    Os relatórios são gerados mensalmente pela equipa Wasom Upfy após o encerramento do período de
+                    reporte das plataformas de streaming.
+                    Caso tenhas dúvidas sobre os valores apresentados, contacta o <a href="../page/support"
+                        class="text-pink">suporte</a>.
+                </div>
+            </div>
+        </div>
 
-  <script>
-    function logout_wasomupfy() {
-      window.location = '../logout';
-    }
-  </script>
+    </div><!-- /container -->
 
-  <!-- ═══ JS ═══ -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-  <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-  <script src="../../js/theme.wp.js"></script>
-  <script src="../../js/wp.tools.js"></script>
-  <script>
+    <!-- ═══ JS ═══ -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/theme.wp.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
+    <script>
     document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
     <?php if (!empty($reports)): ?>
-      $(document).ready(function() {
+    $(document).ready(function() {
         $('#reportsWasomupfy').DataTable({
-          paging: true,
-          searching: true,
-          ordering: true,
-          info: true,
-          lengthChange: false,
-          pageLength: 10,
-          order: [
-            [1, 'desc'],
-            [0, 'desc']
-          ],
-          columnDefs: [{
-            orderable: false,
-            targets: 6
-          }],
-          language: {
-            search: 'Pesquisar por mês ou ano:',
-            info: 'A mostrar _START_ a _END_ de _TOTAL_ relatórios',
-            paginate: {
-              next: 'Próximo',
-              previous: 'Anterior'
-            },
-            emptyTable: 'Nenhum relatório disponível.'
-          }
+            paging: true,
+            searching: true,
+            ordering: true,
+            info: true,
+            lengthChange: false,
+            pageLength: 10,
+            order: [
+                [1, 'desc'],
+                [0, 'desc']
+            ],
+            columnDefs: [{
+                orderable: false,
+                targets: 6
+            }],
+            language: {
+                search: 'Pesquisar por mês ou ano:',
+                info: 'A mostrar _START_ a _END_ de _TOTAL_ relatórios',
+                paginate: {
+                    next: 'Próximo',
+                    previous: 'Anterior'
+                },
+                emptyTable: 'Nenhum relatório disponível.'
+            }
         });
-      });
+    });
     <?php endif; ?>
-  </script>
+    </script>
 </body>
 
 </html>

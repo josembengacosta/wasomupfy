@@ -13,12 +13,12 @@
     <link rel="apple-touch-icon" href="../../../assets/img/icones/wasomupfy_fiv_512.png">
     <link rel="apple-touch-startup-image" href="../../../assets/img/screenshots/splash.png">
     <link rel="manifest" href="manifest.json">
-    <title>Visão geral — Wasom Upfy</title>
+    <title>Visão geral — <?php echo APP_NAME; ?></title>
     <link rel="shortcut icon" href="../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
-    <link rel="stylesheet" href="../../../css/libs/plugins.css">
-    <link rel="stylesheet" href="../../../css/libs/scrollue.css">
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/libs/plugins.css">
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/libs/scrollue.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
-    <link rel="stylesheet" href="../css/lastest-style.css">
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/lastest-style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <!-- Google Fonts - Poppins -->
@@ -36,7 +36,7 @@
                 <div class="d-flex align-items-center">
                     <img src="../../../assets/img/brand/wasomupfy_brand.png" alt="Logo Wasom Upfy"
                         class="rounded-circle me-2" style="height: 40px;">
-                    <span class="brand-text">Wasom Upfy</span>
+                    <span class="brand-text"><?php echo APP_NAME; ?></span>
                 </div>
                 <i class="bi bi-chevron-left toggle-icon" id="sidebarCollapse" title="Colapsar/Expandir Menu"
                     aria-label="Colapsar/Expandir Menu"></i>
@@ -398,9 +398,9 @@
                                     onclick="logout_wasomupfy()">Sim, terminar</button>
                             </div>
                             <script type="text/javascript">
-                            function logout_wasomupfy() {
-                                window.location = 'logout';
-                            }
+                                function logout_wasomupfy() {
+                                    window.location = 'logout';
+                                }
                             </script>
                         </div>
                     </div>
@@ -732,112 +732,112 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-    // Dados de exemplo
-    const statsData = [{
-            id: 1,
-            account: "Conta Pro",
-            track: "Melodia Tropical",
-            artist: "Carlos Dias",
-            streams: 150000,
-            platform: "deezer",
-            playlist: "Top 50",
-            territory: "AO",
-            date: "2023-06-15",
-            cover: "https://via.placeholder.com/300?text=Capa+1",
-            link: "https://open.spotify.com/track/123"
-        },
-        {
-            id: 2,
-            account: "Conta Basic",
-            track: "Noite em Luanda",
-            artist: "Ana Silva",
-            streams: 75000,
-            platform: "apple",
-            playlist: "Editorial",
-            territory: "AO",
-            date: "2023-06-14",
-            cover: "https://via.placeholder.com/300?text=Capa+2",
-            link: "https://music.apple.com/track/456"
-        },
-        {
-            id: 3,
-            account: "Conta Internacional",
-            track: "Saudades de Luanda",
-            artist: "Banda Maravilha",
-            streams: 250000,
-            platform: "spotify",
-            playlist: "Viral",
-            territory: "PT",
-            date: "2023-06-18",
-            cover: "https://via.placeholder.com/300?text=Capa+3",
-            link: "https://open.spotify.com/track/789"
-        },
-        {
-            id: 4,
-            account: "Conta Intl",
-            track: "Saudade",
-            artist: "Marco Pereira",
-            streams: 220000,
-            platform: "discogs",
-            playlist: "Sem playlist",
-            territory: "BR",
-            date: "2023-06-10",
-            cover: "https://via.placeholder.com/300?text=Capa+4",
-            link: "https://open.spotify.com/track/734"
-        }
-    ];
+        // Dados de exemplo
+        const statsData = [{
+                id: 1,
+                account: "Conta Pro",
+                track: "Melodia Tropical",
+                artist: "Carlos Dias",
+                streams: 150000,
+                platform: "deezer",
+                playlist: "Top 50",
+                territory: "AO",
+                date: "2023-06-15",
+                cover: "https://via.placeholder.com/300?text=Capa+1",
+                link: "https://open.spotify.com/track/123"
+            },
+            {
+                id: 2,
+                account: "Conta Basic",
+                track: "Noite em Luanda",
+                artist: "Ana Silva",
+                streams: 75000,
+                platform: "apple",
+                playlist: "Editorial",
+                territory: "AO",
+                date: "2023-06-14",
+                cover: "https://via.placeholder.com/300?text=Capa+2",
+                link: "https://music.apple.com/track/456"
+            },
+            {
+                id: 3,
+                account: "Conta Internacional",
+                track: "Saudades de Luanda",
+                artist: "Banda Maravilha",
+                streams: 250000,
+                platform: "spotify",
+                playlist: "Viral",
+                territory: "PT",
+                date: "2023-06-18",
+                cover: "https://via.placeholder.com/300?text=Capa+3",
+                link: "https://open.spotify.com/track/789"
+            },
+            {
+                id: 4,
+                account: "Conta Intl",
+                track: "Saudade",
+                artist: "Marco Pereira",
+                streams: 220000,
+                platform: "discogs",
+                playlist: "Sem playlist",
+                territory: "BR",
+                date: "2023-06-10",
+                cover: "https://via.placeholder.com/300?text=Capa+4",
+                link: "https://open.spotify.com/track/734"
+            }
+        ];
     </script>
     <script>
-    // Configurações
-    const itemsPerPage = 5;
-    let currentPage = 1;
-    let currentEditingId = null;
+        // Configurações
+        const itemsPerPage = 5;
+        let currentPage = 1;
+        let currentEditingId = null;
 
-    // Elementos DOM
-    const elements = {
-        list: document.getElementById("stats-list"),
-        pagination: document.getElementById("stats-pagination"),
-        resultsCount: document.getElementById("results-count"),
-        searchInputs: {
-            id: document.getElementById("stats-id"),
-            account: document.getElementById("stats-account"),
-            track: document.getElementById("stats-track"),
-            artist: document.getElementById("stats-artist"),
-            playlist: document.getElementById("stats-playlist"),
-            territory: document.getElementById("stats-territory"),
-        },
-        clearBtn: document.getElementById("clear-stats-filters"),
-        viewModal: new bootstrap.Modal("#viewStatsModal"),
-        editModal: new bootstrap.Modal("#editStatsModal"),
-        deleteModal: new bootstrap.Modal("#deleteStatsModal"),
-        saveBtn: document.getElementById("save-stats-changes"),
-        confirmDeleteBtn: document.getElementById("confirm-stats-delete"),
-        deletePassword: document.getElementById("delete-stats-password"),
-    };
+        // Elementos DOM
+        const elements = {
+            list: document.getElementById("stats-list"),
+            pagination: document.getElementById("stats-pagination"),
+            resultsCount: document.getElementById("results-count"),
+            searchInputs: {
+                id: document.getElementById("stats-id"),
+                account: document.getElementById("stats-account"),
+                track: document.getElementById("stats-track"),
+                artist: document.getElementById("stats-artist"),
+                playlist: document.getElementById("stats-playlist"),
+                territory: document.getElementById("stats-territory"),
+            },
+            clearBtn: document.getElementById("clear-stats-filters"),
+            viewModal: new bootstrap.Modal("#viewStatsModal"),
+            editModal: new bootstrap.Modal("#editStatsModal"),
+            deleteModal: new bootstrap.Modal("#deleteStatsModal"),
+            saveBtn: document.getElementById("save-stats-changes"),
+            confirmDeleteBtn: document.getElementById("confirm-stats-delete"),
+            deletePassword: document.getElementById("delete-stats-password"),
+        };
 
-    // Inicialização
-    document.addEventListener("DOMContentLoaded", initStats);
+        // Inicialização
+        document.addEventListener("DOMContentLoaded", initStats);
 
-    function initStats() {
-        renderStats(statsData);
-        setupEventListeners();
-    }
+        function initStats() {
+            renderStats(statsData);
+            setupEventListeners();
+        }
 
-    // Renderização principal
-    function renderStats(data) {
-        elements.list.innerHTML = "";
+        // Renderização principal
+        function renderStats(data) {
+            elements.list.innerHTML = "";
 
-        const paginatedData = data.slice(
-            (currentPage - 1) * itemsPerPage,
-            currentPage * itemsPerPage
-        );
+            const paginatedData = data.slice(
+                (currentPage - 1) * itemsPerPage,
+                currentPage * itemsPerPage
+            );
 
-        elements.resultsCount.textContent = `${data.length} ${data.length === 1 ? "resultado" : "resultados"
+            elements.resultsCount.textContent = `${data.length} ${data.length === 1 ? "resultado" : "resultados"
         }`;
 
-        paginatedData.forEach((item) => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
+            paginatedData.forEach((item) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
             <td>${item.id}</td>
             <td>${item.account}</td>
             <td>${item.track}</td>
@@ -866,225 +866,225 @@
                 </button>
             </td>
         `;
-            elements.list.appendChild(row);
-        });
-
-        renderPagination(data.length);
-        setupActionButtons();
-    }
-
-    // Funções auxiliares
-    function formatNumber(num) {
-        return new Intl.NumberFormat("pt-AO").format(num);
-    }
-
-    function formatDate(dateString) {
-        return new Date(dateString).toLocaleDateString("pt-AO");
-    }
-
-    function getTerritoryFlag(territory) {
-        const flags = {
-            AO: "🇦🇴",
-            PT: "🇵🇹",
-            BR: "🇧🇷",
-        };
-        return flags[territory] || "";
-    }
-
-    function getTerritoryName(territory) {
-        const names = {
-            AO: "Angola",
-            PT: "Portugal",
-            BR: "Brasil",
-        };
-        return names[territory] || territory;
-    }
-
-    function getPlatformIcon(platform) {
-        const platformIcons = {
-            spotify: '<i class="bi bi-spotify" style="color: #1DB954;"></i>',
-            apple: '<i class="bi bi-apple" style="color: #e4e4e4ff;"></i>',
-            snapchat: '<i class="bi bi-snapchat" style="color: #fcd63cff;"></i>',
-            deezer: '<i class="bi bi-music-player" style="color: #f20089ff;"></i>',
-            youtube: '<i class="bi bi-youtube" style="color: #FF0000;"></i>',
-            "youtube-music": '<i class="bi bi-youtube" style="color: #FF0000;"></i>',
-            tidal: '<i class="bi bi-music-note-list" style="color: #00FFFF;"></i>',
-            "amazon-music": '<i class="bi bi-music-note" style="color: #fcd63cff;"></i>',
-            soundcloud: '<i class="bi bi-cloud" style="color: #FF5500;"></i>',
-            pandora: '<i class="bi bi-radioactive" style="color: #005483;"></i>',
-            napster: '<i class="bi bi-music-note" style="color: #000000;"></i>',
-            kkbox: '<i class="bi bi-music-note" style="color: #33CC33;"></i>',
-            qobuz: '<i class="bi bi-music-note" style="color: #1A1A1A;"></i>',
-            iheartradio: '<i class="bi bi-heart-fill" style="color: #C6002B;"></i>',
-            audiomack: '<i class="bi bi-music-note" style="color: #FFA200;"></i>',
-            bandcamp: '<i class="bi bi-music-note" style="color: #629AA9;"></i>',
-            anghami: '<i class="bi bi-music-note" style="color: #F70F0F;"></i>',
-            boomplay: '<i class="bi bi-music-note" style="color: #00D1B2;"></i>',
-            joox: '<i class="bi bi-music-note" style="color: #FF5F5F;"></i>',
-            gaana: '<i class="bi bi-music-note" style="color: #FF3D6E;"></i>',
-            wynk: '<i class="bi bi-music-note" style="color: #4CAF50;"></i>',
-            jiosaavn: '<i class="bi bi-music-note" style="color: #00B0FF;"></i>',
-            tiktok: '<i class="bi bi-tiktok" style="color: #010101;"></i>',
-            triller: '<i class="bi bi-music-note" style="color: #FF0080;"></i>',
-            shazam: '<i class="bi bi-search" style="color: #0088FF;"></i>',
-            discogs: '<i class="bi bi-vinyl-fill" style="color: #333333;"></i>',
-            beatport: '<i class="bi bi-music-note" style="color: #94D500;"></i>',
-            junodownload: '<i class="bi bi-music-note" style="color: #FF6600;"></i>',
-            traxsource: '<i class="bi bi-music-note" style="color: #00B4FF;"></i>',
-            reverbnation: '<i class="bi bi-music-note" style="color: #E4352B;"></i>',
-            audiophile: '<i class="bi bi-music-note" style="color: #6B3FA0;"></i>',
-        };
-
-        return (
-            platformIcons[platform.toLowerCase()] ||
-            `<i class="bi bi-music-note" style="color: #6c757d;"></i> ${platform}`
-        );
-    }
-
-    function getPlatformName(platform) {
-        const platformNames = {
-            // Plataformas globais
-            spotify: "Spotify",
-            apple: "Apple Music",
-            deezer: "Deezer",
-            youtube: "YouTube Music",
-            "youtube-music": "YouTube Music",
-            tidal: "Tidal",
-            "amazon-music": "Amazon Music",
-            soundcloud: "SoundCloud",
-            pandora: "Pandora",
-            napster: "Napster",
-            iheartradio: "iHeartRadio",
-            audiomack: "Audiomack",
-            bandcamp: "Bandcamp",
-            shazam: "Shazam",
-
-            // Plataformas asiáticas
-            kkbox: "KKBOX",
-            joox: "JOOX",
-            melon: "Melon",
-            "line-music": "LINE Music",
-            bugs: "Bugs!",
-
-            // Plataformas indianas
-            gaana: "Gaana",
-            wynk: "Wynk",
-            jiosaavn: "JioSaavn",
-            hungama: "Hungama",
-
-            // Plataformas africanas
-            anghami: "Anghami",
-            boomplay: "Boomplay",
-            mdundo: "Mdundo",
-
-            // Plataformas latino-americanas
-            "claro-musica": "Claro Música",
-            "tigo-music": "Tigo Music",
-            "movistar-musica": "Movistar Música",
-
-            // Plataformas de DJs/produção
-            beatport: "Beatport",
-            traxsource: "Traxsource",
-            junodownload: "Juno Download",
-            bandlab: "BandLab",
-
-            // Plataformas de descoberta
-            discogs: "Discogs",
-            lastfm: "Last.fm",
-            musixmatch: "Musixmatch",
-
-            // Redes sociais/short-form
-            tiktok: "TikTok",
-            triller: "Triller",
-            instagram: "Instagram",
-            snapchat: "Snapchat",
-
-            // Plataformas especializadas
-            qobuz: "Qobuz",
-            idagio: "Idagio",
-            primephonic: "Primephonic",
-
-            // Plataformas de áudio 3D
-            sonicast: "Sonicast",
-            dolby: "Dolby Atmos Music",
-
-            // Outras
-            "8tracks": "8tracks",
-            slacker: "Slacker Radio",
-            rhapsody: "Rhapsody",
-            groove: "Groove Music",
-            "yandex-music": "Yandex Music",
-            "vk-music": "VK Music",
-        };
-
-        // Verifica se a plataforma existe no dicionário (case insensitive)
-        const normalizedPlatform = platform.toLowerCase().replace(/\s+/g, "-");
-        return (
-            platformNames[normalizedPlatform] ||
-            platform
-            .split("-")
-            .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-            .join(" ")
-        );
-    }
-
-    // Ações (Visualizar, Editar, Excluir)
-    function setupActionButtons() {
-        // Visualizar
-        document.querySelectorAll(".view-btn").forEach((btn) => {
-            btn.addEventListener("click", () => {
-                const itemId = parseInt(btn.dataset.id);
-                const item = statsData.find((item) => item.id === itemId);
-                showViewModal(item);
+                elements.list.appendChild(row);
             });
-        });
 
-        // Editar
-        document.querySelectorAll(".edit-btn").forEach((btn) => {
-            btn.addEventListener("click", () => {
-                currentEditingId = parseInt(btn.dataset.id);
-                const item = statsData.find((item) => item.id === currentEditingId);
-                openEditModal(item);
+            renderPagination(data.length);
+            setupActionButtons();
+        }
+
+        // Funções auxiliares
+        function formatNumber(num) {
+            return new Intl.NumberFormat("pt-AO").format(num);
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString("pt-AO");
+        }
+
+        function getTerritoryFlag(territory) {
+            const flags = {
+                AO: "🇦🇴",
+                PT: "🇵🇹",
+                BR: "🇧🇷",
+            };
+            return flags[territory] || "";
+        }
+
+        function getTerritoryName(territory) {
+            const names = {
+                AO: "Angola",
+                PT: "Portugal",
+                BR: "Brasil",
+            };
+            return names[territory] || territory;
+        }
+
+        function getPlatformIcon(platform) {
+            const platformIcons = {
+                spotify: '<i class="bi bi-spotify" style="color: #1DB954;"></i>',
+                apple: '<i class="bi bi-apple" style="color: #e4e4e4ff;"></i>',
+                snapchat: '<i class="bi bi-snapchat" style="color: #fcd63cff;"></i>',
+                deezer: '<i class="bi bi-music-player" style="color: #f20089ff;"></i>',
+                youtube: '<i class="bi bi-youtube" style="color: #FF0000;"></i>',
+                "youtube-music": '<i class="bi bi-youtube" style="color: #FF0000;"></i>',
+                tidal: '<i class="bi bi-music-note-list" style="color: #00FFFF;"></i>',
+                "amazon-music": '<i class="bi bi-music-note" style="color: #fcd63cff;"></i>',
+                soundcloud: '<i class="bi bi-cloud" style="color: #FF5500;"></i>',
+                pandora: '<i class="bi bi-radioactive" style="color: #005483;"></i>',
+                napster: '<i class="bi bi-music-note" style="color: #000000;"></i>',
+                kkbox: '<i class="bi bi-music-note" style="color: #33CC33;"></i>',
+                qobuz: '<i class="bi bi-music-note" style="color: #1A1A1A;"></i>',
+                iheartradio: '<i class="bi bi-heart-fill" style="color: #C6002B;"></i>',
+                audiomack: '<i class="bi bi-music-note" style="color: #FFA200;"></i>',
+                bandcamp: '<i class="bi bi-music-note" style="color: #629AA9;"></i>',
+                anghami: '<i class="bi bi-music-note" style="color: #F70F0F;"></i>',
+                boomplay: '<i class="bi bi-music-note" style="color: #00D1B2;"></i>',
+                joox: '<i class="bi bi-music-note" style="color: #FF5F5F;"></i>',
+                gaana: '<i class="bi bi-music-note" style="color: #FF3D6E;"></i>',
+                wynk: '<i class="bi bi-music-note" style="color: #4CAF50;"></i>',
+                jiosaavn: '<i class="bi bi-music-note" style="color: #00B0FF;"></i>',
+                tiktok: '<i class="bi bi-tiktok" style="color: #010101;"></i>',
+                triller: '<i class="bi bi-music-note" style="color: #FF0080;"></i>',
+                shazam: '<i class="bi bi-search" style="color: #0088FF;"></i>',
+                discogs: '<i class="bi bi-vinyl-fill" style="color: #333333;"></i>',
+                beatport: '<i class="bi bi-music-note" style="color: #94D500;"></i>',
+                junodownload: '<i class="bi bi-music-note" style="color: #FF6600;"></i>',
+                traxsource: '<i class="bi bi-music-note" style="color: #00B4FF;"></i>',
+                reverbnation: '<i class="bi bi-music-note" style="color: #E4352B;"></i>',
+                audiophile: '<i class="bi bi-music-note" style="color: #6B3FA0;"></i>',
+            };
+
+            return (
+                platformIcons[platform.toLowerCase()] ||
+                `<i class="bi bi-music-note" style="color: #6c757d;"></i> ${platform}`
+            );
+        }
+
+        function getPlatformName(platform) {
+            const platformNames = {
+                // Plataformas globais
+                spotify: "Spotify",
+                apple: "Apple Music",
+                deezer: "Deezer",
+                youtube: "YouTube Music",
+                "youtube-music": "YouTube Music",
+                tidal: "Tidal",
+                "amazon-music": "Amazon Music",
+                soundcloud: "SoundCloud",
+                pandora: "Pandora",
+                napster: "Napster",
+                iheartradio: "iHeartRadio",
+                audiomack: "Audiomack",
+                bandcamp: "Bandcamp",
+                shazam: "Shazam",
+
+                // Plataformas asiáticas
+                kkbox: "KKBOX",
+                joox: "JOOX",
+                melon: "Melon",
+                "line-music": "LINE Music",
+                bugs: "Bugs!",
+
+                // Plataformas indianas
+                gaana: "Gaana",
+                wynk: "Wynk",
+                jiosaavn: "JioSaavn",
+                hungama: "Hungama",
+
+                // Plataformas africanas
+                anghami: "Anghami",
+                boomplay: "Boomplay",
+                mdundo: "Mdundo",
+
+                // Plataformas latino-americanas
+                "claro-musica": "Claro Música",
+                "tigo-music": "Tigo Music",
+                "movistar-musica": "Movistar Música",
+
+                // Plataformas de DJs/produção
+                beatport: "Beatport",
+                traxsource: "Traxsource",
+                junodownload: "Juno Download",
+                bandlab: "BandLab",
+
+                // Plataformas de descoberta
+                discogs: "Discogs",
+                lastfm: "Last.fm",
+                musixmatch: "Musixmatch",
+
+                // Redes sociais/short-form
+                tiktok: "TikTok",
+                triller: "Triller",
+                instagram: "Instagram",
+                snapchat: "Snapchat",
+
+                // Plataformas especializadas
+                qobuz: "Qobuz",
+                idagio: "Idagio",
+                primephonic: "Primephonic",
+
+                // Plataformas de áudio 3D
+                sonicast: "Sonicast",
+                dolby: "Dolby Atmos Music",
+
+                // Outras
+                "8tracks": "8tracks",
+                slacker: "Slacker Radio",
+                rhapsody: "Rhapsody",
+                groove: "Groove Music",
+                "yandex-music": "Yandex Music",
+                "vk-music": "VK Music",
+            };
+
+            // Verifica se a plataforma existe no dicionário (case insensitive)
+            const normalizedPlatform = platform.toLowerCase().replace(/\s+/g, "-");
+            return (
+                platformNames[normalizedPlatform] ||
+                platform
+                .split("-")
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                .join(" ")
+            );
+        }
+
+        // Ações (Visualizar, Editar, Excluir)
+        function setupActionButtons() {
+            // Visualizar
+            document.querySelectorAll(".view-btn").forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    const itemId = parseInt(btn.dataset.id);
+                    const item = statsData.find((item) => item.id === itemId);
+                    showViewModal(item);
+                });
             });
-        });
 
-        // Excluir
-        document.querySelectorAll(".delete-btn").forEach((btn) => {
-            btn.addEventListener("click", () => {
-                currentEditingId = parseInt(btn.dataset.id);
-                const item = statsData.find((item) => item.id === currentEditingId);
-                document.getElementById(
-                    "delete-stats-message"
-                ).textContent = `Tem certeza que deseja excluir os dados de "${item.track}"?`;
-                elements.deleteModal.show();
+            // Editar
+            document.querySelectorAll(".edit-btn").forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    currentEditingId = parseInt(btn.dataset.id);
+                    const item = statsData.find((item) => item.id === currentEditingId);
+                    openEditModal(item);
+                });
             });
-        });
-    }
 
-    // Modal de Visualização
-    function showViewModal(item) {
-        document.getElementById("stats-cover").src = item.cover;
-        document.getElementById("view-track").textContent = item.track;
-        document.getElementById("view-artist").textContent = item.artist;
-        document.getElementById("view-streams").textContent = formatNumber(
-            item.streams
-        );
-        document.getElementById("view-platform").innerHTML = `${getPlatformIcon(
+            // Excluir
+            document.querySelectorAll(".delete-btn").forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    currentEditingId = parseInt(btn.dataset.id);
+                    const item = statsData.find((item) => item.id === currentEditingId);
+                    document.getElementById(
+                        "delete-stats-message"
+                    ).textContent = `Tem certeza que deseja excluir os dados de "${item.track}"?`;
+                    elements.deleteModal.show();
+                });
+            });
+        }
+
+        // Modal de Visualização
+        function showViewModal(item) {
+            document.getElementById("stats-cover").src = item.cover;
+            document.getElementById("view-track").textContent = item.track;
+            document.getElementById("view-artist").textContent = item.artist;
+            document.getElementById("view-streams").textContent = formatNumber(
+                item.streams
+            );
+            document.getElementById("view-platform").innerHTML = `${getPlatformIcon(
         item.platform
     )} ${getPlatformName(item.platform)}`;
-        document.getElementById("view-playlist").textContent = item.playlist;
-        document.getElementById("view-territory").textContent = `${getTerritoryFlag(
+            document.getElementById("view-playlist").textContent = item.playlist;
+            document.getElementById("view-territory").textContent = `${getTerritoryFlag(
         item.territory
     )} ${getTerritoryName(item.territory)}`;
-        document.getElementById("view-date").textContent = formatDate(item.date);
-        document.getElementById("view-link").href = item.link;
+            document.getElementById("view-date").textContent = formatDate(item.date);
+            document.getElementById("view-link").href = item.link;
 
-        elements.viewModal.show();
-    }
+            elements.viewModal.show();
+        }
 
-    // Modal de Edição
-    function openEditModal(item) {
-        document.getElementById("edit-stats-body").innerHTML = `
+        // Modal de Edição
+        function openEditModal(item) {
+            document.getElementById("edit-stats-body").innerHTML = `
         <form id="edit-stats-form">
             <div class="row">
                 <div class="col-md-6">
@@ -1149,120 +1149,120 @@
         </form>
     `;
 
-        elements.editModal.show();
-    }
-
-    // Filtros
-    function applyFilters() {
-        const filters = {
-            id: elements.searchInputs.id.value,
-            account: elements.searchInputs.account.value.toLowerCase(),
-            track: elements.searchInputs.track.value.toLowerCase(),
-            artist: elements.searchInputs.artist.value.toLowerCase(),
-            playlist: elements.searchInputs.playlist.value,
-            territory: elements.searchInputs.territory.value,
-        };
-
-        const filtered = statsData.filter((item) => {
-            return (
-                (!filters.id || item.id.toString().includes(filters.id)) &&
-                (!filters.account ||
-                    item.account.toLowerCase().includes(filters.account)) &&
-                (!filters.track || item.track.toLowerCase().includes(filters.track)) &&
-                (!filters.artist || item.artist.toLowerCase().includes(filters.artist)) &&
-                (!filters.playlist || item.playlist === filters.playlist) &&
-                (!filters.territory || item.territory === filters.territory)
-            );
-        });
-
-        currentPage = 1;
-        renderStats(filtered);
-    }
-
-    // Paginação
-    function renderPagination(totalItems) {
-        elements.pagination.innerHTML = "";
-        const totalPages = Math.ceil(totalItems / itemsPerPage);
-
-        // Botão Anterior
-        const prevLi = document.createElement("li");
-        prevLi.className = `page-item ${currentPage === 1 ? "disabled" : ""}`;
-        prevLi.innerHTML = `<a class="page-link" href="#" data-page="${currentPage - 1
-        }">Anterior</a>`;
-        elements.pagination.appendChild(prevLi);
-
-        // Páginas
-        for (let i = 1; i <= totalPages; i++) {
-            const li = document.createElement("li");
-            li.className = `page-item ${i === currentPage ? "active" : ""}`;
-            li.innerHTML = `<a class="page-link" href="#" data-page="${i}">${i}</a>`;
-            elements.pagination.appendChild(li);
+            elements.editModal.show();
         }
 
-        // Botão Próximo
-        const nextLi = document.createElement("li");
-        nextLi.className = `page-item ${currentPage === totalPages ? "disabled" : ""
-        }`;
-        nextLi.innerHTML = `<a class="page-link" href="#" data-page="${currentPage + 1
-        }">Próximo</a>`;
-        elements.pagination.appendChild(nextLi);
-
-        // Eventos
-        document.querySelectorAll(".page-link").forEach((link) => {
-            link.addEventListener("click", (e) => {
-                e.preventDefault();
-                const page = parseInt(link.dataset.page);
-                if (!isNaN(page) && page >= 1 && page <= totalPages) {
-                    currentPage = page;
-                    applyFilters();
-                }
-            });
-        });
-    }
-
-    // Event Listeners
-    function setupEventListeners() {
         // Filtros
-        Object.values(elements.searchInputs).forEach((input) => {
-            input.addEventListener("input", applyFilters);
-        });
+        function applyFilters() {
+            const filters = {
+                id: elements.searchInputs.id.value,
+                account: elements.searchInputs.account.value.toLowerCase(),
+                track: elements.searchInputs.track.value.toLowerCase(),
+                artist: elements.searchInputs.artist.value.toLowerCase(),
+                playlist: elements.searchInputs.playlist.value,
+                territory: elements.searchInputs.territory.value,
+            };
 
-        // Limpar filtros
-        elements.clearBtn.addEventListener("click", () => {
-            Object.values(elements.searchInputs).forEach((input) => {
-                if (input.tagName === "SELECT") {
-                    input.value = "";
-                } else {
-                    input.value = "";
-                }
+            const filtered = statsData.filter((item) => {
+                return (
+                    (!filters.id || item.id.toString().includes(filters.id)) &&
+                    (!filters.account ||
+                        item.account.toLowerCase().includes(filters.account)) &&
+                    (!filters.track || item.track.toLowerCase().includes(filters.track)) &&
+                    (!filters.artist || item.artist.toLowerCase().includes(filters.artist)) &&
+                    (!filters.playlist || item.playlist === filters.playlist) &&
+                    (!filters.territory || item.territory === filters.territory)
+                );
             });
+
             currentPage = 1;
-            renderStats(statsData);
-        });
+            renderStats(filtered);
+        }
 
-        // Salvar edição
-        elements.saveBtn.addEventListener("click", () => {
-            // Implemente a lógica para salvar
-            alert(`Dados ${currentEditingId} salvos com sucesso!`);
-            elements.editModal.hide();
-        });
+        // Paginação
+        function renderPagination(totalItems) {
+            elements.pagination.innerHTML = "";
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-        // Confirmar exclusão
-        elements.confirmDeleteBtn.addEventListener("click", () => {
-            if (!elements.deletePassword.value) {
-                elements.deletePassword.classList.add("is-invalid");
-                return;
+            // Botão Anterior
+            const prevLi = document.createElement("li");
+            prevLi.className = `page-item ${currentPage === 1 ? "disabled" : ""}`;
+            prevLi.innerHTML = `<a class="page-link" href="#" data-page="${currentPage - 1
+        }">Anterior</a>`;
+            elements.pagination.appendChild(prevLi);
+
+            // Páginas
+            for (let i = 1; i <= totalPages; i++) {
+                const li = document.createElement("li");
+                li.className = `page-item ${i === currentPage ? "active" : ""}`;
+                li.innerHTML = `<a class="page-link" href="#" data-page="${i}">${i}</a>`;
+                elements.pagination.appendChild(li);
             }
 
-            // Implemente a lógica para excluir
-            alert(`Dados ${currentEditingId} excluídos com sucesso!`);
-            elements.deleteModal.hide();
-            elements.deletePassword.value = "";
-            elements.deletePassword.classList.remove("is-invalid");
-        });
-    }
+            // Botão Próximo
+            const nextLi = document.createElement("li");
+            nextLi.className = `page-item ${currentPage === totalPages ? "disabled" : ""
+        }`;
+            nextLi.innerHTML = `<a class="page-link" href="#" data-page="${currentPage + 1
+        }">Próximo</a>`;
+            elements.pagination.appendChild(nextLi);
+
+            // Eventos
+            document.querySelectorAll(".page-link").forEach((link) => {
+                link.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    const page = parseInt(link.dataset.page);
+                    if (!isNaN(page) && page >= 1 && page <= totalPages) {
+                        currentPage = page;
+                        applyFilters();
+                    }
+                });
+            });
+        }
+
+        // Event Listeners
+        function setupEventListeners() {
+            // Filtros
+            Object.values(elements.searchInputs).forEach((input) => {
+                input.addEventListener("input", applyFilters);
+            });
+
+            // Limpar filtros
+            elements.clearBtn.addEventListener("click", () => {
+                Object.values(elements.searchInputs).forEach((input) => {
+                    if (input.tagName === "SELECT") {
+                        input.value = "";
+                    } else {
+                        input.value = "";
+                    }
+                });
+                currentPage = 1;
+                renderStats(statsData);
+            });
+
+            // Salvar edição
+            elements.saveBtn.addEventListener("click", () => {
+                // Implemente a lógica para salvar
+                alert(`Dados ${currentEditingId} salvos com sucesso!`);
+                elements.editModal.hide();
+            });
+
+            // Confirmar exclusão
+            elements.confirmDeleteBtn.addEventListener("click", () => {
+                if (!elements.deletePassword.value) {
+                    elements.deletePassword.classList.add("is-invalid");
+                    return;
+                }
+
+                // Implemente a lógica para excluir
+                alert(`Dados ${currentEditingId} excluídos com sucesso!`);
+                elements.deleteModal.hide();
+                elements.deletePassword.value = "";
+                elements.deletePassword.classList.remove("is-invalid");
+            });
+        }
     </script>
-    <script src="../../../js/lastest.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/lastest.js"></script>
 </body>
 
 </html>

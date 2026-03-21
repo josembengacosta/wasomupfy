@@ -11,12 +11,101 @@ requireLogin();
 $platform = checkDashboardStatus();
 $user     = checkUserAccess((int)$_SESSION['id_users']);
 
-$id_users   = (int)$user['id_users'];
-$first_name = htmlspecialchars($user['first_name']);
-$user_name  = htmlspecialchars($user['user_name'] ?? 'utilizador');
-$user_photo = $user['photo_user'] ?? null;
-$notif_count = getUnreadNotifCount($id_users);
+$id_users       = (int)$user['id_users'];
+$first_name     = htmlspecialchars($user['first_name']);
+$user_name      = htmlspecialchars($user['user_name'] ?? '');
+$email_verified = (bool)$user['email_verified'];
+$plan_selected  = $user['plan_selected'];
+$onboard_done   = (bool)($user['onboarding_done'] ?? false);
+$user_photo     = $user['photo_user'] ?? null;
 $name_artist_band = htmlspecialchars($user['name_artist_band'] ?? 'Cria Perfil Artístico');
+$notif_count    = getUnreadNotifCount($id_users);
+$db             = getDB();
+
+// ── Saldo ─────────────────────────────────────
+$w = $db->prepare('SELECT balance_aoa FROM _wallet WHERE id_users = ?');
+$w->execute([$id_users]);
+$balance = $w->fetch() ?: ['balance_aoa' => 0];
+
+// ── Plano ─────────────────────────────────────
+$plan_id     = (int)$user['plan_selected'];
+$plan        = null;
+$max_artists = 1;
+if ($plan_id) {
+    $ps = $db->prepare('SELECT * FROM _plans WHERE id_plan = ?');
+    $ps->execute([$plan_id]);
+    $plan = $ps->fetch();
+    if ($plan) $max_artists = (int)($plan['max_artists'] ?? 1);
+}
+$plan_name = $plan ? htmlspecialchars($plan['name_plan']) : 'Sem plano';
+
+// ── Plano ─────────────────────────────────────
+$plan      = null;
+$plan_paid = ($user['status_user'] === 'active' && !empty($user['plan_activated_at']));
+if ($plan_selected) {
+    $ps = $db->prepare('SELECT * FROM _plans WHERE id_plan = ?');
+    $ps->execute([$plan_selected]);
+    $plan = $ps->fetch();
+}
+
+// Adicionar verificação de expiração do plano
+$plan_expired = false;
+if ($plan_paid && !empty($user['plan_expires_at'])) {
+    $plan_expired = strtotime($user['plan_expires_at']) < time();
+}
+
+// ── Artistas ──────────────────────────────────
+$as = $db->prepare('SELECT COUNT(*) AS total FROM _artist WHERE id_users = ?');
+$as->execute([$id_users]);
+$has_artist = (int)($as->fetch()['total'] ?? 0) > 0;
+
+// ── Conta bancária ────────────────────────────
+$ba = $db->prepare("SELECT id_account FROM _account WHERE id_users = ? AND status_account = 'verified' LIMIT 1");
+$ba->execute([$id_users]);
+$bank_account = $ba->fetch();
+
+// ── Conta rejeitada ───────────────────────────
+$rejected_account = null;
+if ($plan_paid) {
+    $rj = $db->prepare("SELECT type_account, reject_reason FROM _account WHERE id_users = ? AND status_account = 'rejected' LIMIT 1");
+    $rj->execute([$id_users]);
+    $rejected_account = $rj->fetch();
+}
+
+// ── Sessão info (modal logout) ────────────────
+$ls = $db->prepare('SELECT last_login_at, last_login_ip FROM _users_security WHERE id_users = ?');
+$ls->execute([$id_users]);
+$sec = $ls->fetch();
+
+$sess_stmt = $db->prepare("
+    SELECT ip_address, user_agent, country, city, creat_session, last_activity
+    FROM _users_sessions WHERE id_users = ? AND is_active = 1
+    ORDER BY last_activity DESC LIMIT 1
+");
+$sess_stmt->execute([$id_users]);
+$current_session  = $sess_stmt->fetch();
+$session_duration_str = '—';
+if ($current_session && $current_session['creat_session']) {
+    $secs = time() - strtotime($current_session['creat_session']);
+    if ($secs < 60)     $session_duration_str = $secs . 's';
+    elseif ($secs < 3600)  $session_duration_str = floor($secs / 60) . 'min';
+    elseif ($secs < 86400) $session_duration_str = floor($secs / 3600) . 'h ' . floor(($secs % 3600) / 60) . 'min';
+    else                   $session_duration_str = floor($secs / 86400) . 'd ' . floor(($secs % 86400) / 3600) . 'h';
+}
+$member_since   = $user['creat_user'] ? date('d/m/Y', strtotime($user['creat_user'])) : '—';
+$last_login_str = ($sec && $sec['last_login_at']) ? date('d/m/Y H:i', strtotime($sec['last_login_at'])) : '—';
+$ua_raw   = $current_session['user_agent'] ?? '';
+$browser  = 'Desconhecido';
+if (str_contains($ua_raw, 'Edg'))     $browser = 'Microsoft Edge';
+elseif (str_contains($ua_raw, 'Chrome'))  $browser = 'Google Chrome';
+elseif (str_contains($ua_raw, 'Firefox')) $browser = 'Mozilla Firefox';
+elseif (str_contains($ua_raw, 'Safari'))  $browser = 'Safari';
+elseif (str_contains($ua_raw, 'Opera'))   $browser = 'Opera';
+$sess_location = trim(($current_session['city'] ?? '') . ', ' . ($current_session['country'] ?? ''), ', ') ?: 'Desconhecida';
+$sess_ip       = $current_session['ip_address'] ?? ($sec['last_login_ip'] ?? '—');
+
+$first_name       = htmlspecialchars($user['first_name']);
+$user_artist_name = htmlspecialchars($user['name_artist_band'] ?? $user['first_name']);
 
 // ─── Contas existentes ────────────────────────────────
 $accs_stmt = getDB()->prepare("SELECT * FROM _account WHERE id_users = ? ORDER BY type_account ASC, creat_account DESC");
@@ -33,54 +122,6 @@ foreach ($accounts as $a) {
 $can_add_express = ($acc_express === null);
 $can_add_iban    = ($acc_iban    === null);
 
-// Dados de sessão e segurança
-$ls = getDB()->prepare('SELECT last_login_at, last_login_ip FROM _users_security WHERE id_users = ?');
-$ls->execute([$id_users]);
-$sec = $ls->fetch();
-$days_inactive = 0;
-if ($sec && $sec['last_login_at']) {
-    $days_inactive = (int)floor((time() - strtotime($sec['last_login_at'])) / 86400);
-}
-
-// Sessão activa actual
-$sess_stmt = getDB()->prepare("
-    SELECT ip_address, user_agent, country, city, creat_session, last_activity
-    FROM _users_sessions
-    WHERE id_users = ? AND is_active = 1
-    ORDER BY last_activity DESC LIMIT 1
-");
-$sess_stmt->execute([$id_users]);
-$current_session = $sess_stmt->fetch();
-
-// Calcular tempo de sessão activa
-$session_duration_str = '—';
-if ($current_session && $current_session['creat_session']) {
-    $secs = time() - strtotime($current_session['creat_session']);
-    if ($secs < 60) $session_duration_str = $secs . 's';
-    elseif ($secs < 3600) $session_duration_str = floor($secs / 60) . 'min';
-    elseif ($secs < 86400) $session_duration_str = floor($secs / 3600) . 'h ' . floor(($secs % 3600) / 60) . 'min';
-    else $session_duration_str = floor($secs / 86400) . 'd ' . floor(($secs % 86400) / 3600) . 'h';
-}
-
-// Conta desde quando
-$member_since = $user['creat_user'] ? date('d/m/Y', strtotime($user['creat_user'])) : '—';
-$last_login_str = ($sec && $sec['last_login_at'])
-    ? date('d/m/Y H:i', strtotime($sec['last_login_at']))
-    : '—';
-
-// Browser simplificado a partir do user_agent
-$ua_raw    = $current_session['user_agent'] ?? '';
-$browser   = 'Navegador desconhecido';
-if (str_contains($ua_raw, 'Edg'))     $browser = 'Microsoft Edge';
-elseif (str_contains($ua_raw, 'Chrome'))  $browser = 'Google Chrome';
-elseif (str_contains($ua_raw, 'Firefox')) $browser = 'Mozilla Firefox';
-elseif (str_contains($ua_raw, 'Safari'))  $browser = 'Safari';
-elseif (str_contains($ua_raw, 'Opera'))   $browser = 'Opera';
-
-$sess_location = trim(($current_session['city'] ?? '') . ', ' . ($current_session['country'] ?? ''), ', ');
-if (!$sess_location) $sess_location = 'Localização desconhecida';
-$sess_ip = $current_session['ip_address'] ?? ($sec['last_login_ip'] ?? '—');
-
 function statusBadge(string $s): string
 {
     return match ($s) {
@@ -96,21 +137,9 @@ $banks = ['Banco Angolano de Investimentos (BAI)', 'Banco de Fomento Angola (BFA
 <html lang="pt-ao">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="robots" content="noindex, nofollow" />
-    <meta name="theme-color" content="#FF0089" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="csrf-token" content="<?php echo $_SESSION['csrf_token']; ?>">
-    <link rel="manifest" href="../manifest.json" />
-    <title>Conta de Saque — Wasom Upfy</title>
-    <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="../../css/dashboard-style.css" />
-    <link rel="stylesheet" href="../../css/lastest-style.css" />
+    <?php require_once __DIR__ . '/../include/head.php'; ?>
+    <title>Conta de Saque — <?php echo APP_NAME; ?></title>
+
     <style>
     .upload-zone {
         border: 2px dashed #dee2e6;
@@ -169,191 +198,143 @@ $banks = ['Banco Angolano de Investimentos (BAI)', 'Banco de Fomento Angola (BFA
 
 <body>
 
-    <!-- ─── Navbar ─────────────────────────────────────── -->
-    <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
-                <span class="navbar-toggler-icon"><i class="bi bi-list text-white fs-1"></i></span>
-            </button>
-            <a class="navbar-brand" href="../painel">
-                <span class="text-light"
-                    style="font-weight:bold;text-transform:capitalize;font-family:Arial,sans-serif">WASOM UPFY</span>
-            </a>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav m-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="../painel"><i class="bi bi-speedometer2"></i>
-                            Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../launch/releases"><i class="bi bi-disc"></i>
-                            Lançamentos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../analytics/statistics"><i
-                                class="bi bi-bar-chart"></i> Estatísticas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../finances/overview"><i
-                                class="bi bi-currency-dollar"></i> Finanças</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../artists/artists-list"><i class="bi bi-person"></i>
-                            Artistas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../artists/youtube/ucy"><i class="bi bi-youtube"></i>
-                            Unificação de canal YouTube</a></li>
-                </ul>
-            </div>
-            <div class="user-menu d-flex align-items-center">
-                <a class="theme-toggle text-white me-2" id="themeToggle"><i class="bi bi-sun" id="themeIcon"></i></a>
-
-                <!-- Badge de notificações -->
-                <a href="../page/notifications" class="text-white me-2 position-relative" aria-label="Notificações">
-                    <i class="bi bi-bell fs-4"></i>
-                    <?php if ($notif_count > 0): ?>
-                    <span id="navNotifBadge" class="position-absolute translate-middle badge rounded-pill" style="top:2px;left:calc(100% - 4px);background:#FF0089;font-size:.6rem;
-                                 min-width:18px;height:18px;padding:0 5px;line-height:18px;
-                                 box-shadow:0 0 0 2px #1a1a2e;">
-                        <?php echo $notif_count > 99 ? '99+' : $notif_count; ?>
-                    </span>
-                    <?php else: ?>
-                    <span id="navNotifBadge" class="position-absolute translate-middle badge rounded-pill" style="top:2px;left:calc(100% - 4px);background:#FF0089;font-size:.6rem;
-                                 min-width:18px;height:18px;padding:0 5px;line-height:18px;
-                                 box-shadow:0 0 0 2px #1a1a2e;display:none;">0</span>
-                    <?php endif; ?>
-                </a>
-
-                <!-- Foto do utilizador + dropdown -->
-                <?php if ($user_photo): ?>
-                <img src="../../assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
-                    width="35" height="35" class="rounded-circle flex-shrink-0 me-1"
-                    style="object-fit:cover;border:2px solid #FF4D4D;cursor:pointer" data-bs-toggle="dropdown"
-                    alt="Foto conta"
-                    onerror="this.onerror=null;this.src='../../assets/img/avatar/avatar_wasomupfy.png'">
-                <?php else: ?>
-                <img src="../../assets/img/avatar/avatar_wasomupfy.png" width="35" height="35"
-                    class="rounded-circle flex-shrink-0 me-1" style="object-fit:cover;cursor:pointer"
-                    data-bs-toggle="dropdown" alt="Avatar">
-                <?php endif; ?>
-
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li>
-                        <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="../account/manage-account">
-                            <?php if ($user_photo): ?>
-                            <img src="../../assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
-                                width="38" height="38" class="rounded-circle flex-shrink-0"
-                                style="object-fit:cover;border:2px solid #FF4D4D" alt="Foto conta"
-                                onerror="this.onerror=null;this.src='../../assets/img/avatar/avatar_wasomupfy.png'">
-                            <?php else: ?>
-                            <img src="../../assets/img/avatar/avatar_wasomupfy.png" width="38" height="38"
-                                class="rounded-circle flex-shrink-0" style="object-fit:cover" alt="Avatar">
-                            <?php endif; ?>
-                            <div class="overflow-hidden">
-                                <div class="fw-bold text-truncate" style="max-width:160px">
-                                    <?php echo $name_artist_band; ?></div>
-                                <div class="text-white-50" style="font-size:.72rem">Conta
-                                    <?php echo str_pad($id_users, 6, '0', STR_PAD_LEFT); ?></div>
-                            </div>
-                        </a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li>
-                        <a class="dropdown-item d-flex align-items-center gap-2" href="../user/profile">
-                            <?php if ($user_photo): ?>
-                            <img src="../../assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
-                                width="28" height="28" class="rounded-circle flex-shrink-0" style="object-fit:cover"
-                                alt="Foto perfil"
-                                onerror="this.onerror=null;this.src='../../assets/img/avatar/avatar_wasomupfy.png'">
-                            <?php else: ?>
-                            <img src="../../assets/img/avatar/avatar_wasomupfy.png" width="28" height="28"
-                                class="rounded-circle flex-shrink-0" style="object-fit:cover" alt="Perfil">
-                            <?php endif; ?>
-                            Meu Perfil
-                        </a>
-                    </li>
-                    <li><a class="dropdown-item" href="../account/manage-account"><i class="bi bi-tools me-2"></i>
-                            Gestão de Conta</a></li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li><a class="dropdown-item" href="../page/settings"><i class="bi bi-gear me-2"></i>
-                            Configurações</a></li>
-                    <li><a class="dropdown-item" href="../page/notifications"><i class="bi bi-bell me-2"></i>
-                            Notificações</a></li>
-                    <li><a class="dropdown-item" href="../services/available-services"><i class="bi bi-star me-2"></i>
-                            Conta e serviços disponíveis</a></li>
-                    <li><a class="dropdown-item" href="#?logout-wasomupfy" data-bs-toggle="modal"
-                            data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right me-2"></i>
-                            Desconectar-se</a></li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li><a class="dropdown-item" href="../page/about"><i class="bi bi-info-circle me-2"></i> Sobre</a>
-                    </li>
-                    <li><a class="dropdown-item" href="../page/support"><i class="bi bi-headset me-2"></i> Enviar pedido
-                            de suporte</a></li>
-                    <li><a class="dropdown-item" href="../page/faq"><i class="bi bi-chat-left-text me-2"></i> Perguntas
-                            frequentes</a></li>
-                    <li><a class="dropdown-item" href="../page/help"><i class="bi bi-question-circle me-2"></i>
-                            Ajuda</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- ─── Offcanvas ──────────────────────────────────── -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title"><span class="text-light"
-                    style="font-weight:bold;font-family:Arial,sans-serif">WASOM UPFY</span></h5>
-            <button type="button" class="btn-close text-white" data-bs-dismiss="offcanvas"><i
-                    class="bi bi-x-lg"></i></button>
-        </div>
-        <div class="offcanvas-body">
-            <ul class="nav flex-column">
-                <li class="nav-item"><a class="nav-link" href="../painel"><i class="bi bi-speedometer2"></i>
-                        Dashboard</a></li>
-                <li class="nav-item"><a class="nav-link" href="../launch/releases"><i class="bi bi-disc"></i>
-                        Lançamentos</a></li>
-                <li class="nav-item"><a class="nav-link" href="../analytics/statistics"><i class="bi bi-bar-chart"></i>
-                        Estatísticas</a></li>
-                <li class="nav-item"><a class="nav-link active" href="../finances/overview"><i
-                            class="bi bi-currency-dollar"></i> Finanças</a></li>
-                <li class="nav-item"><a class="nav-link" href="../artists/artists-list"><i class="bi bi-person"></i>
-                        Artistas</a></li>
-                <li class="nav-item"><a class="nav-link" href="../artists/youtube/ucy"><i class="bi bi-youtube"></i>
-                        Unificação de canal YouTube</a></li>
-                <li class="nav-item"><a class="nav-link" href="../user/profile"><i class="bi bi-person-circle"></i> Meu
-                        Perfil</a></li>
-                <li class="nav-item"><a class="nav-link" href="../page/settings"><i class="bi bi-gear"></i>
-                        Configurações</a></li>
-                <li class="nav-item"><a class="nav-link" href="../page/notifications"><i class="bi bi-bell"></i>
-                        Notificações</a></li>
-                <li class="nav-item"><a class="nav-link" href="../page/about"><i class="bi bi-info-circle"></i>
-                        Sobre</a></li>
-                <li class="nav-item"><a class="nav-link" href="../services/available-services"><i
-                            class="bi bi-star"></i> Conta e serviços disponíveis</a></li>
-                <li class="nav-item"><a class="nav-link" href="../page/help"><i class="bi bi-question-circle"></i>
-                        Ajuda</a></li>
-                <li class="nav-item"><a class="nav-link" href="#?logout-wasomupfy" data-bs-toggle="modal"
-                        data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right"></i> Desconectar-se</a></li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- ─── Toast offline ─────────────────────────────── -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="connectionToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <strong class="me-auto">Conexão</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
-            </div>
-            <div class="toast-body">
-                Estás offline. Alguns dados podem estar desactualizados.
-                <div class="mt-2"><button class="btn btn-pink btn-sm" onclick="tryReconnect()">Tentar
-                        Reconectar</button></div>
-            </div>
-        </div>
-    </div>
-
+    <!-- ═══ NAVBAR ═══ -->
+    <?php require_once __DIR__ . '/../include/sidebar.php'; ?>
     <!-- ════════════════════════════════════════════════════
      MAIN CONTENT
 ═════════════════════════════════════════════════════ -->
     <div class="container my-4">
+        <?php /* ============================================
+    BANNERS DE NOTIFICACAO DO PAINEL
+    Estilo: inline CSS consistente com renderDashboardAlerts().
+    Bootstrap alert nativo removido — um único sistema visual.
+    Lógica de prioridade:
+      Nível 1 (danger)  — bloqueia distribuição
+      Nível 2 (warning) — importante, requer atenção
+      Nível 3 (info)    — informativo / acção opcional
+    ============================================ */ ?>
 
+        <?php renderDashboardAlerts($user, $platform); ?>
+
+        <?php
+        // Cor map para helpers inline — idêntico ao renderDashboardAlerts()
+        $alertColors = [
+            'danger'  => ['bg' => 'rgba(239,68,68,.08)',  'border' => 'rgba(239,68,68,.25)',  'text' => '#ef4444'],
+            'warning' => ['bg' => 'rgba(234,179,8,.08)',  'border' => 'rgba(234,179,8,.25)',  'text' => '#eab308'],
+            'info'    => ['bg' => 'rgba(99,102,241,.08)', 'border' => 'rgba(99,102,241,.25)', 'text' => '#6366f1'],
+        ];
+        function wuAlert(string $type, string $icon, string $message, ?array $action = null, bool $dismiss = true, string $id = ''): void
+        {
+            global $alertColors;
+            $c   = $alertColors[$type] ?? $alertColors['info'];
+            $eid = $id ?: ('wuPanelAlert_' . md5($message));
+            echo "<div id=\"{$eid}\" style=\"display:flex;align-items:flex-start;gap:10px;"
+                . "background:{$c['bg']};border:1px solid {$c['border']};border-radius:12px;"
+                . "padding:.75rem 1rem;font-size:.83rem;margin-bottom:.6rem;"
+                . "transition:opacity .3s;\">";
+            echo "<i class=\"bi {$icon}\" style=\"font-size:1rem;flex-shrink:0;margin-top:2px;color:{$c['text']};\"></i>";
+            echo '<span class="wu-alert-msg">' . $message;
+            if ($action) {
+                echo " <a href=\"{$action['url']}\" style=\"color:{$c['text']};font-weight:700;"
+                    . "text-decoration:underline;white-space:nowrap\">{$action['label']} &rarr;</a>";
+            }
+            echo '</span>';
+            if ($dismiss) {
+                echo "<button type=\"button\" class=\"wu-alert-dismiss\" aria-label=\"Fechar\""
+                    . " onclick=\"(function(el){el.style.opacity='0';"
+                    . "setTimeout(function(){el.style.display='none'},300)})(document.getElementById('{$eid}'))\">"
+                    . "&times;</button>";
+            }
+            echo '</div>';
+        }
+        ?>
+
+        <?php /* ── NÍVEL 1: Crítico — bloqueia distribuição ── */ ?>
+
+        <?php if (!$email_verified): ?>
+        <?php wuAlert(
+                'danger',
+                'bi-envelope-exclamation-fill',
+                '<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta e receber notificações de pagamentos.',
+                ['label' => 'Verificar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/user/profile#perfil'],
+                true,
+                'banner-email'
+            ); ?>
+        <?php endif; ?>
+
+        <?php if ($plan && !$plan_paid): ?>
+        <?php wuAlert(
+                'warning',
+                'bi-clock-history',
+                '<strong>Pagamento pendente — ' . htmlspecialchars($plan['name_plan']) . '.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados até confirmação.',
+                ['label' => 'Finalizar pagamento', 'url' => APP_URL . '/' . APP_URL_PANEL . '/payment/pay'],
+                true,
+                'banner-plan-pending'
+            ); ?>
+        <?php elseif (!$plan): ?>
+        <?php wuAlert(
+                'danger',
+                'bi-credit-card-fill',
+                '<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir a tua música para +150 plataformas.',
+                ['label' => 'Ver planos', 'url' => APP_URL . '/' . APP_URL_PANEL . '/all-plans'],
+                false,
+                'banner-plan'
+            ); ?>
+        <?php endif; ?>
+
+        <?php /* ── NÍVEL 2: Importante — perfil incompleto ── */ ?>
+
+        <?php if ($plan_paid && !$has_artist): ?>
+        <?php wuAlert(
+                'info',
+                'bi-person-plus-fill',
+                '<strong>Cria o teu perfil de artista.</strong> Tens plano activo mas ainda não criaste um perfil. Precisas de um para poder lançar música.',
+                ['label' => 'Criar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/add-artist'],
+                true,
+                'banner-artist'
+            ); ?>
+        <?php endif; ?>
+
+        <?php /* ── NÍVEL 3: Informativo — conta bancária ── */ ?>
+
+        <?php if ($plan_paid && $has_artist && !$bank_account): ?>
+        <?php wuAlert(
+                'info',
+                'bi-bank',
+                '<strong>Conta bancária não registada.</strong> Para poder sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.',
+                ['label' => 'Registar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/withdraw'],
+                true,
+                'banner-bank'
+            ); ?>
+        <?php endif; ?>
+
+        <?php /* ── NÍVEL 3: Conta bancária rejeitada ── */ ?>
+
+        <?php
+        $rejected_account = null;
+        if ($plan_paid) {
+            $rej_stmt = getDB()->prepare("SELECT type_account, reject_reason FROM _account WHERE id_users = ? AND status_account = 'rejected' LIMIT 1");
+            $rej_stmt->execute([$id_users]);
+            $rejected_account = $rej_stmt->fetch();
+        }
+        ?>
+        <?php if ($rejected_account): ?>
+        <?php
+            $rej_msg = '<strong>Conta ' . htmlspecialchars($rejected_account['type_account']) . ' rejeitada.</strong>';
+            if ($rejected_account['reject_reason']) {
+                $rej_msg .= ' Motivo: <em>' . htmlspecialchars($rejected_account['reject_reason']) . '</em>.';
+            }
+            $rej_msg .= ' Actualiza os dados e submete novamente.';
+            wuAlert(
+                'danger',
+                'bi-x-circle-fill',
+                $rej_msg,
+                ['label' => 'Corrigir agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/withdraw'],
+                true,
+                'banner-account-rejected'
+            );
+            ?>
+        <?php endif; ?>
         <!-- Page Header -->
         <div class="page-header">
             <div class="row align-items-center mb-4">
@@ -894,120 +875,13 @@ $banks = ['Banco Angolano de Investimentos (BAI)', 'Banco de Fomento Angola (BFA
         </div>
     </div>
 
-    <!-- Bottom Nav -->
-    <nav class="bottom-nav d-lg-none">
-        <ul class="nav justify-content-around">
-            <li class="nav-item"><a class="nav-link" href="../painel" aria-label="Dashboard"><i
-                        class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../launch/releases"><i
-                        class="bi bi-disc"></i><span>Lançamentos</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../analytics/statistics"><i
-                        class="bi bi-bar-chart"></i><span>Estatísticas</span></a></li>
-            <li class="nav-item"><a class="nav-link active" href="../finances/overview"><i
-                        class="bi bi-currency-dollar"></i><span>Finanças</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../artists/artists-list"><i
-                        class="bi bi-person"></i><span>Artistas</span></a></li>
-        </ul>
-    </nav>
-
-    <!-- ════ MODAL — Logout ════ -->
-    <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-
-                <div class="modal-header border-0 pb-0">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-                            style="width:44px;height:44px;background:rgba(220,53,69,.12)">
-                            <i class="bi bi-box-arrow-right fs-5 text-danger"></i>
-                        </div>
-                        <div>
-                            <h5 class="modal-title text-dark mb-0" id="logoutwasomupfyLabel">Terminar sessão</h5>
-                            <small class="text-muted">@<?php echo $user_name; ?></small>
-                        </div>
-                    </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-                </div>
-
-                <div class="modal-body pt-2">
-                    <!-- Informação da sessão actual -->
-                    <div class="rounded-3 p-3 mb-3" style="background:rgba(0,0,0,.04)">
-                        <div class="row g-2" style="font-size:.82rem">
-                            <div class="col-6 d-flex gap-2 align-items-start">
-                                <i class="bi bi-clock text-muted mt-1 flex-shrink-0"></i>
-                                <div>
-                                    <div class="text-muted">Duração da sessão</div>
-                                    <div class="fw-semibold text-dark"><?php echo $session_duration_str; ?></div>
-                                </div>
-                            </div>
-                            <div class="col-6 d-flex gap-2 align-items-start">
-                                <i class="bi bi-calendar3 text-muted mt-1 flex-shrink-0"></i>
-                                <div>
-                                    <div class="text-muted">Último acesso</div>
-                                    <div class="fw-semibold text-dark"><?php echo $last_login_str; ?></div>
-                                </div>
-                            </div>
-                            <div class="col-6 d-flex gap-2 align-items-start">
-                                <i class="bi bi-globe text-muted mt-1 flex-shrink-0"></i>
-                                <div>
-                                    <div class="text-muted">Localização</div>
-                                    <div class="fw-semibold text-dark"><?php echo htmlspecialchars($sess_location); ?>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-6 d-flex gap-2 align-items-start">
-                                <i class="bi bi-browser-chrome text-muted mt-1 flex-shrink-0"></i>
-                                <div>
-                                    <div class="text-muted">Navegador</div>
-                                    <div class="fw-semibold text-dark"><?php echo htmlspecialchars($browser); ?></div>
-                                </div>
-                            </div>
-                            <div class="col-6 d-flex gap-2 align-items-start">
-                                <i class="bi bi-hdd-network text-muted mt-1 flex-shrink-0"></i>
-                                <div>
-                                    <div class="text-muted">IP</div>
-                                    <div class="fw-semibold text-dark"><?php echo htmlspecialchars($sess_ip); ?></div>
-                                </div>
-                            </div>
-                            <div class="col-6 d-flex gap-2 align-items-start">
-                                <i class="bi bi-person-badge text-muted mt-1 flex-shrink-0"></i>
-                                <div>
-                                    <div class="text-muted">Membro desde</div>
-                                    <div class="fw-semibold text-dark"><?php echo $member_since; ?></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <p class="text-dark text-center mb-0" style="font-size:.9rem">
-                        Tens a certeza que queres terminar a sessão?<br>
-                        <span class="text-muted" style="font-size:.8rem">Terás de iniciar sessão novamente para aceder
-                            ao painel.</span>
-                    </p>
-                </div>
-
-                <div class="modal-footer border-0 pt-0 gap-2">
-                    <button type="button" class="btn btn-outline-secondary flex-fill" data-bs-dismiss="modal">
-                        <i class="bi bi-arrow-left me-1"></i>Não, continuar
-                    </button>
-                    <button class="btn btn-danger flex-fill"
-                        onclick="window.location='<?php echo rtrim(APP_URL, '/'); ?>/logout'">
-                        <i class="bi bi-box-arrow-right me-1"></i>Terminar
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- ════ MODAL — Logout  FIM ════ -->
-
     <!-- ── Scripts ────────────────────────────────────────── -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <script src="../../js/theme.wp.js"></script>
-    <script src="../../js/wp.tools.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/theme.wp.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
     <script>
     // ── Config ─────────────────────────────────────────────
     toastr.options = {

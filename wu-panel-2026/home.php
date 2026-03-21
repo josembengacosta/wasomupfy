@@ -343,13 +343,13 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
     <link rel="apple-touch-icon" href="../assets/img/icones/wasomupfy_fiv_512.png" />
     <link rel="apple-touch-startup-image" href="../assets/img/screenshots/splash.png" />
     <link rel="manifest" href="manifest.json" />
-    <title>Painel Administrador — Wasom Upfy</title>
+    <title>Painel Administrador — <?php echo APP_NAME; ?></title>
     <link rel="shortcut icon" href="../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon" />
-    <link rel="stylesheet" href="../css/libs/plugins.css" />
-    <link rel="stylesheet" href="../css/libs/scrollue.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/libs/plugins.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/libs/scrollue.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="../css/lastest-style.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/lastest-style.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -682,7 +682,8 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                             Pagamentos</a>
                                     <?php endif; ?>
                                     <?php if (hasPermission($admin_id, 'employees.edit')): ?>
-                                        <a class="dropdown-item" href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees">Novo
+                                        <a class="dropdown-item"
+                                            href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees">Novo
                                             funcionário</a>
                                     <?php endif; ?>
                                     <?php if (hasPermission($admin_id, 'settings.view')): ?>
@@ -692,7 +693,8 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                     <?php endif; ?>
                                     <?php if (hasPermission($admin_id, 'audit.view')): ?>
                                         <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item" href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/audit">Log de
+                                        <a class="dropdown-item" href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/audit">Log
+                                            de
                                             Auditoria</a>
                                     <?php endif; ?>
                                 </div>
@@ -719,13 +721,15 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                         </h5>
                                         <p class="mb-2">Total de usuários da <strong>Wasom Upfy</strong></p>
                                         <div class="mb-0">
-                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users" class="card-link">Ver usuários
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users"
+                                                class="card-link">Ver usuários
                                                 <i class="bi bi-arrow-right"></i></a>
                                         </div>
                                     </div>
                                     <div class="d-inline-block ms-3">
                                         <div class="stat">
-                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users" title="Ver usuários"><i
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users"
+                                                title="Ver usuários"><i
                                                     class="align-middle bi bi-people card-icon"></i></a>
                                         </div>
                                     </div>
@@ -747,13 +751,15 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                             </h5>
                                             <p class="mb-2">Total de funcionários da <strong>Wasom Upfy</strong></p>
                                             <div class="mb-0">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees" class="card-link">Ver
+                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees"
+                                                    class="card-link">Ver
                                                     funcionários <i class="bi bi-arrow-right"></i></a>
                                             </div>
                                         </div>
                                         <div class="d-inline-block ms-3">
                                             <div class="stat">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees" title="Ver funcionários"><i
+                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees"
+                                                    title="Ver funcionários"><i
                                                         class="align-middle bi bi-people card-icon"></i></a>
                                             </div>
                                         </div>
@@ -778,13 +784,15 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                             <p class="mb-2">Todos os lançamentos dos usuários da <strong>Wasom Upfy</strong>
                                             </p>
                                             <div class="mb-0">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/releases" class="card-link">Ver
+                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/releases"
+                                                    class="card-link">Ver
                                                     lançamentos <i class="bi bi-arrow-right"></i></a>
                                             </div>
                                         </div>
                                         <div class="d-inline-block ms-3">
                                             <div class="stat">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/releases" title="Ver lançamentos"><i
+                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/releases"
+                                                    title="Ver lançamentos"><i
                                                         class="align-middle bi-rocket-takeoff card-icon"></i></a>
                                             </div>
                                         </div>
@@ -808,14 +816,15 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                             </h5>
                                             <p class="mb-2">Todos os visitantes globais da <strong>Wasom Upfy</strong></p>
                                             <div class="mb-0">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/visitors" class="card-link">Ver os
+                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/visitors"
+                                                    class="card-link">Ver os
                                                     visitantes <i class="bi bi-arrow-right"></i></a>
                                             </div>
                                         </div>
                                         <div class="d-inline-block ms-3">
                                             <div class="stat">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/visitors" title="Ver visitantes"><i
-                                                        class="align-middle bi-eye card-icon"></i></a>
+                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/visitors"
+                                                    title="Ver visitantes"><i class="align-middle bi-eye card-icon"></i></a>
                                             </div>
                                         </div>
                                     </div>
@@ -835,13 +844,15 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                             </h5>
                                             <p class="mb-2">Todos os usuários online na <strong>Wasom Upfy</strong></p>
                                             <div class="mb-0">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/visitors" class="card-link">Ver
+                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/visitors"
+                                                    class="card-link">Ver
                                                     actividade <i class="bi bi-arrow-right"></i></a>
                                             </div>
                                         </div>
                                         <div class="d-inline-block ms-3">
                                             <div class="stat">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/visitors" title="Usuários online"><i
+                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/visitors"
+                                                    title="Usuários online"><i
                                                         class="align-middle bi-person-workspace card-icon"></i></a>
                                             </div>
                                         </div>
@@ -993,13 +1004,14 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                             <p class="mb-2">Utilizadores com conta bancária registada na <strong>Wasom
                                                     Upfy</strong></p>
                                             <div class="mb-0">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users" class="card-link">Ver contas <i
-                                                        class="bi bi-arrow-right"></i></a>
+                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users"
+                                                    class="card-link">Ver contas <i class="bi bi-arrow-right"></i></a>
                                             </div>
                                         </div>
                                         <div class="d-inline-block ms-3">
                                             <div class="stat">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users" title="Contas bancárias"><i
+                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users"
+                                                    title="Contas bancárias"><i
                                                         class="align-middle bi-bank card-icon"></i></a>
                                             </div>
                                         </div>
@@ -1024,13 +1036,15 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                             <p class="mb-2">Colaboradores registados pelos artistas da <strong>Wasom
                                                     Upfy</strong></p>
                                             <div class="mb-0">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users" class="card-link">Ver
+                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users"
+                                                    class="card-link">Ver
                                                     colaboradores <i class="bi bi-arrow-right"></i></a>
                                             </div>
                                         </div>
                                         <div class="d-inline-block ms-3">
                                             <div class="stat">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users" title="Colaboradores"><i
+                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users"
+                                                    title="Colaboradores"><i
                                                         class="align-middle bi-people-fill card-icon"></i></a>
                                             </div>
                                         </div>
@@ -1055,13 +1069,15 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                             <p class="mb-2">Total histórico de pagamentos aprovados na <strong>Wasom
                                                     Upfy</strong></p>
                                             <div class="mb-0">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/finances" class="card-link">Ver
+                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/finances"
+                                                    class="card-link">Ver
                                                     finanças <i class="bi bi-arrow-right"></i></a>
                                             </div>
                                         </div>
                                         <div class="d-inline-block ms-3">
                                             <div class="stat">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/finances" title="Receita acumulada"><i
+                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/finances"
+                                                    title="Receita acumulada"><i
                                                         class="align-middle bi-graph-up-arrow card-icon"></i></a>
                                             </div>
                                         </div>
@@ -1091,14 +1107,15 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                                 <p class="mb-2">Todos os pedidos de suporte da <strong>Wasom Upfy</strong> estão
                                                     disponíveis aqui.</p>
                                                 <div class="mb-0">
-                                                    <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/support" class="card-link">Ver pedidos
+                                                    <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/support"
+                                                        class="card-link">Ver pedidos
                                                         de suporte <i class="bi bi-arrow-right"></i></a>
                                                 </div>
                                             </div>
                                             <div class="d-inline-block ms-3">
                                                 <div class="stat">
-                                                    <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/support" title="Suporte"><i
-                                                            class="align-middle bi-headset card-icon"></i></a>
+                                                    <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/support"
+                                                        title="Suporte"><i class="align-middle bi-headset card-icon"></i></a>
                                                 </div>
                                             </div>
                                         </div>
@@ -1270,8 +1287,8 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                         <?php endforeach; ?>
                                     <?php endif; ?>
                                 </div>
-                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/audit" class="card-link mt-3">Ver toda actividade <i
-                                        class="bi bi-arrow-right"></i></a>
+                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/audit" class="card-link mt-3">Ver toda
+                                    actividade <i class="bi bi-arrow-right"></i></a>
                             </div>
                         </div>
                     <?php endif; ?>
@@ -1285,7 +1302,8 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                             <div class="card stats-card-primary flex-fill">
                                 <div class="section-card-header">
                                     <h5 class="card-title mb-0">Novos Clientes</h5>
-                                    <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users" class="card-link" style="font-size:.8rem">
+                                    <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users" class="card-link"
+                                        style="font-size:.8rem">
                                         Ver todos <i class="bi bi-arrow-right"></i>
                                     </a>
                                 </div>
@@ -1356,8 +1374,8 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                         </div>
                                     <?php endforeach; ?>
                                 <?php endif; ?>
-                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users" class="card-link mt-3">Ver utilizadores <i
-                                        class="bi bi-arrow-right"></i></a>
+                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users" class="card-link mt-3">Ver
+                                    utilizadores <i class="bi bi-arrow-right"></i></a>
                             </div>
                         </div>
                 </div>
@@ -1431,8 +1449,8 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                     <small class="timeline-date">2026</small>
                                 </div>
                             </div>
-                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/settings" class="card-link">Ver histórico completo <i
-                                    class="bi bi-arrow-right"></i></a>
+                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/settings" class="card-link">Ver histórico
+                                completo <i class="bi bi-arrow-right"></i></a>
                         </div>
                     </div>
                 </div>
@@ -1595,7 +1613,8 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                 <i class="bi bi-headset me-2" style="color:#FF0089"></i>
                                 Pedidos de Suporte nas Últimas 24h
                             </h5>
-                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/support" class="card-link" style="font-size:.8rem">
+                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/support" class="card-link"
+                                style="font-size:.8rem">
                                 Ver todos <i class="bi bi-arrow-right"></i>
                             </a>
                         </div>
@@ -1727,8 +1746,8 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="../js/lastest.js"></script>
-    <script src="../js/lastest.min.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/lastest.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/lastest.min.js"></script>
 
     <script>
         // ── Mapa — centrado em Angola ──────────────

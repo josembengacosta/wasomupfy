@@ -11,7 +11,10 @@ requireLogin();
 $db       = getDB();
 $id_users = (int)$_SESSION['id_users'];
 $user     = getUserById($id_users);
-if (!$user) { redirect('authentic/logout'); }
+if (!$user) {
+    session_destroy();
+    redirect(APP_URL  . '/' . 'login', ['error' => 'csrf']);
+}
 
 $first_name       = htmlspecialchars($user['first_name'] ?? '');
 $last_name        = htmlspecialchars($user['second_name'] ?? '');
@@ -32,7 +35,8 @@ try {
     ");
     $q->execute([$id_users]);
     $active_plan = $q->fetch(PDO::FETCH_ASSOC) ?: null;
-} catch (PDOException $e) {}
+} catch (PDOException $e) {
+}
 
 // Fallback: plan_selected no _users
 if (!$active_plan && !empty($user['plan_selected'])) {
@@ -53,7 +57,8 @@ if (!$active_plan && !empty($user['plan_selected'])) {
                 'releases_limit' => $row['max_releases'],
             ]);
         }
-    } catch (PDOException $e) {}
+    } catch (PDOException $e) {
+    }
 }
 
 // ── Todos os planos ───────────────────────────
@@ -69,7 +74,8 @@ try {
     ");
     $q3->execute();
     $all_plans = $q3->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {}
+} catch (PDOException $e) {
+}
 
 // ── Features por plano ────────────────────────
 $features_by_plan = [];
@@ -83,7 +89,8 @@ try {
     foreach ($q4->fetchAll(PDO::FETCH_ASSOC) as $f) {
         $features_by_plan[$f['id_plan']][] = $f;
     }
-} catch (PDOException $e) {}
+} catch (PDOException $e) {
+}
 
 // ── Ícone por slug ────────────────────────────
 $plan_icons = [
@@ -114,212 +121,212 @@ $plan_colors = [
     <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
-    <link rel="stylesheet" href="../../css/dashboard-style.css" />
-    <link rel="stylesheet" href="../../css/lastest-style.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/dashboard-style.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/lastest-style.css" />
     <style>
-    /* ══ Header ══ */
-    .services-header {
-        background: linear-gradient(135deg, #FF0089 0%, #c8006e 55%, #7b0044 100%);
-        border-radius: 20px;
-        padding: 2.2rem 2.5rem;
-        margin-bottom: 2rem;
-        color: #fff;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .services-header::after {
-        content: '\F541';
-        font-family: 'bootstrap-icons';
-        position: absolute;
-        right: -20px;
-        bottom: -24px;
-        font-size: 9rem;
-        opacity: .07;
-        color: #fff;
-        transform: rotate(15deg);
-    }
-
-    .services-header .header-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        background: rgba(255, 255, 255, .18);
-        border: 1px solid rgba(255, 255, 255, .3);
-        border-radius: 999px;
-        padding: 4px 14px;
-        font-size: .78rem;
-        font-weight: 700;
-        backdrop-filter: blur(4px);
-        margin-bottom: .8rem;
-    }
-
-    /* ══ Plan cards ══ */
-    .plan-card {
-        border-radius: 18px;
-        border: 2px solid var(--border-color, rgba(0, 0, 0, .08));
-        transition: transform .2s, box-shadow .2s;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .plan-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 32px rgba(255, 0, 137, .15);
-    }
-
-    .plan-card.active-plan {
-        border-color: #FF0089;
-        box-shadow: 0 0 0 3px rgba(255, 0, 137, .15), 0 8px 24px rgba(255, 0, 137, .12);
-    }
-
-    .plan-card.featured-plan {
-        border-color: #FF0089;
-    }
-
-    .plan-card-header {
-        padding: 1.4rem 1.4rem .8rem;
-        border-radius: 16px 16px 0 0;
-        position: relative;
-    }
-
-    .plan-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.4rem;
-        margin-bottom: .7rem;
-    }
-
-    .plan-name {
-        font-size: 1.1rem;
-        font-weight: 800;
-        margin: 0;
-    }
-
-    .plan-badge-top {
-        position: absolute;
-        top: 14px;
-        right: 14px;
-        font-size: .68rem;
-        font-weight: 700;
-        border-radius: 999px;
-        padding: 3px 10px;
-    }
-
-    .plan-price {
-        font-size: 1.8rem;
-        font-weight: 900;
-        line-height: 1;
-        color: #FF0089;
-        margin: .5rem 0 .2rem;
-    }
-
-    .plan-price small {
-        font-size: .8rem;
-        font-weight: 500;
-        color: var(--text-muted, #6c757d);
-    }
-
-    .plan-price-annual {
-        font-size: .75rem;
-        color: var(--text-muted, #6c757d);
-        margin-bottom: .8rem;
-    }
-
-    .plan-features-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        flex: 1;
-    }
-
-    .plan-features-list li {
-        display: flex;
-        align-items: flex-start;
-        gap: 8px;
-        padding: 5px 0;
-        font-size: .82rem;
-        border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .05));
-    }
-
-    .plan-features-list li:last-child {
-        border-bottom: none;
-    }
-
-    .plan-features-list li.not-included {
-        opacity: .45;
-        text-decoration: line-through;
-    }
-
-    .plan-features-list li .feat-icon {
-        font-size: .85rem;
-        flex-shrink: 0;
-        margin-top: 1px;
-    }
-
-    /* ══ Current plan info card ══ */
-    .current-plan-card {
-        border-radius: 18px;
-        padding: 1.5rem;
-        border: 2px solid #FF0089;
-        background: linear-gradient(135deg, rgba(255, 0, 137, .04), transparent);
-    }
-
-    .current-plan-stat {
-        background: var(--metric-bg, rgba(0, 0, 0, .03));
-        border-radius: 12px;
-        padding: .85rem 1rem;
-        text-align: center;
-    }
-
-    .current-plan-stat .stat-val {
-        font-size: 1.3rem;
-        font-weight: 800;
-        color: #FF0089;
-    }
-
-    .current-plan-stat .stat-lbl {
-        font-size: .7rem;
-        color: var(--text-muted, #6c757d);
-        margin-top: 2px;
-    }
-
-    /* ══ Section header ══ */
-    .section-title {
-        font-size: 1.05rem;
-        font-weight: 800;
-        color: #FF0089;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 1.2rem;
-    }
-
-    /* ══ CTA contact ══ */
-    .contact-info-bar {
-        background: var(--metric-bg, rgba(0, 0, 0, .03));
-        border-radius: 14px;
-        padding: 1rem 1.4rem;
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        flex-wrap: wrap;
-    }
-
-    @media(max-width: 768px) {
+        /* ══ Header ══ */
         .services-header {
-            padding: 1.5rem;
+            background: linear-gradient(135deg, #FF0089 0%, #c8006e 55%, #7b0044 100%);
+            border-radius: 20px;
+            padding: 2.2rem 2.5rem;
+            margin-bottom: 2rem;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .services-header::after {
+            content: '\F541';
+            font-family: 'bootstrap-icons';
+            position: absolute;
+            right: -20px;
+            bottom: -24px;
+            font-size: 9rem;
+            opacity: .07;
+            color: #fff;
+            transform: rotate(15deg);
+        }
+
+        .services-header .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, .18);
+            border: 1px solid rgba(255, 255, 255, .3);
+            border-radius: 999px;
+            padding: 4px 14px;
+            font-size: .78rem;
+            font-weight: 700;
+            backdrop-filter: blur(4px);
+            margin-bottom: .8rem;
+        }
+
+        /* ══ Plan cards ══ */
+        .plan-card {
+            border-radius: 18px;
+            border: 2px solid var(--border-color, rgba(0, 0, 0, .08));
+            transition: transform .2s, box-shadow .2s;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(255, 0, 137, .15);
+        }
+
+        .plan-card.active-plan {
+            border-color: #FF0089;
+            box-shadow: 0 0 0 3px rgba(255, 0, 137, .15), 0 8px 24px rgba(255, 0, 137, .12);
+        }
+
+        .plan-card.featured-plan {
+            border-color: #FF0089;
+        }
+
+        .plan-card-header {
+            padding: 1.4rem 1.4rem .8rem;
+            border-radius: 16px 16px 0 0;
+            position: relative;
+        }
+
+        .plan-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            margin-bottom: .7rem;
+        }
+
+        .plan-name {
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .plan-badge-top {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            font-size: .68rem;
+            font-weight: 700;
+            border-radius: 999px;
+            padding: 3px 10px;
         }
 
         .plan-price {
-            font-size: 1.4rem;
+            font-size: 1.8rem;
+            font-weight: 900;
+            line-height: 1;
+            color: #FF0089;
+            margin: .5rem 0 .2rem;
         }
-    }
+
+        .plan-price small {
+            font-size: .8rem;
+            font-weight: 500;
+            color: var(--text-muted, #6c757d);
+        }
+
+        .plan-price-annual {
+            font-size: .75rem;
+            color: var(--text-muted, #6c757d);
+            margin-bottom: .8rem;
+        }
+
+        .plan-features-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex: 1;
+        }
+
+        .plan-features-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 5px 0;
+            font-size: .82rem;
+            border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .05));
+        }
+
+        .plan-features-list li:last-child {
+            border-bottom: none;
+        }
+
+        .plan-features-list li.not-included {
+            opacity: .45;
+            text-decoration: line-through;
+        }
+
+        .plan-features-list li .feat-icon {
+            font-size: .85rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        /* ══ Current plan info card ══ */
+        .current-plan-card {
+            border-radius: 18px;
+            padding: 1.5rem;
+            border: 2px solid #FF0089;
+            background: linear-gradient(135deg, rgba(255, 0, 137, .04), transparent);
+        }
+
+        .current-plan-stat {
+            background: var(--metric-bg, rgba(0, 0, 0, .03));
+            border-radius: 12px;
+            padding: .85rem 1rem;
+            text-align: center;
+        }
+
+        .current-plan-stat .stat-val {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #FF0089;
+        }
+
+        .current-plan-stat .stat-lbl {
+            font-size: .7rem;
+            color: var(--text-muted, #6c757d);
+            margin-top: 2px;
+        }
+
+        /* ══ Section header ══ */
+        .section-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #FF0089;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 1.2rem;
+        }
+
+        /* ══ CTA contact ══ */
+        .contact-info-bar {
+            background: var(--metric-bg, rgba(0, 0, 0, .03));
+            border-radius: 14px;
+            padding: 1rem 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        @media(max-width: 768px) {
+            .services-header {
+                padding: 1.5rem;
+            }
+
+            .plan-price {
+                font-size: 1.4rem;
+            }
+        }
     </style>
 </head>
 
@@ -355,9 +362,9 @@ $plan_colors = [
                 <span class="text-light" style="
               font-weight: bold;
               box-sizing: border-box;
-              text-transform: capitalize;
+              text-transform: uppercase;
               font-family: Arial, sans-serif;
-            ">WASOM UPFY</span>
+            "><?php echo APP_NAME; ?></span>
             </a>
 
             <!-- Desktop Menu -->
@@ -483,9 +490,9 @@ $plan_colors = [
                 <span class="text-light" style="
               font-weight: bold;
               box-sizing: border-box;
-              text-transform: capitalize;
+              text-transform: uppercase;
               font-family: Arial, sans-serif;
-            ">WASOM UPFY</span>
+            "><?php echo APP_NAME; ?></span>
             </h5>
             <button type="button" class="btn-close text-white" data-bs-dismiss="offcanvas" aria-label="Close">
                 <i class="bi bi-x-lg"></i>
@@ -565,11 +572,11 @@ $plan_colors = [
         <div class="services-header">
             <div class="header-badge">
                 <?php if ($active_plan): ?>
-                <i class="bi bi-star-fill"></i>
-                Plano <?php echo htmlspecialchars($active_plan['name_plan']); ?> activo
+                    <i class="bi bi-star-fill"></i>
+                    Plano <?php echo htmlspecialchars($active_plan['name_plan']); ?> activo
                 <?php else: ?>
-                <i class="bi bi-star"></i>
-                Sem plano activo
+                    <i class="bi bi-star"></i>
+                    Sem plano activo
                 <?php endif; ?>
             </div>
             <h1 class="fw-bold mb-1"><i class="bi bi-layers-fill me-2"></i>Conta e Serviços</h1>
@@ -582,108 +589,108 @@ $plan_colors = [
         <div class="section-title"><i class="bi bi-shield-check"></i>O teu plano actual</div>
 
         <?php if ($active_plan): ?>
-        <?php
-    $slug        = $active_plan['slug_plan'];
-    $plan_color  = $plan_colors[$slug]  ?? '#FF0089';
-    $plan_icon   = $plan_icons[$slug]   ?? 'bi-star-fill';
-    $is_sub      = $active_plan['type_plan'] === 'subscription';
-    $expires_fmt = !empty($active_plan['expires_at'])
-                    ? date('d/m/Y', strtotime($active_plan['expires_at']))
-                    : ($is_sub ? '—' : 'Sem expiração');
-    $started_fmt = !empty($active_plan['started_at'])
-                    ? date('d/m/Y', strtotime($active_plan['started_at']))
-                    : '—';
-    $releases_used  = (int)($active_plan['releases_used'] ?? 0);
-    $releases_limit = $active_plan['releases_limit'];
-    ?>
-        <div class="current-plan-card mb-4">
-            <div class="d-flex align-items-center gap-3 mb-3">
-                <div class="plan-icon"
-                    style="background:<?php echo $plan_color; ?>22; color:<?php echo $plan_color; ?>">
-                    <i class="bi <?php echo $plan_icon; ?>"></i>
-                </div>
-                <div>
-                    <h4 class="fw-bold mb-0"><?php echo htmlspecialchars($active_plan['name_plan']); ?>
-                        <?php if ($active_plan['badge_text']): ?>
-                        <span class="badge ms-2" style="background:<?php echo $plan_color; ?>;font-size:.65rem">
-                            <?php echo htmlspecialchars($active_plan['badge_text']); ?>
+            <?php
+            $slug        = $active_plan['slug_plan'];
+            $plan_color  = $plan_colors[$slug]  ?? '#FF0089';
+            $plan_icon   = $plan_icons[$slug]   ?? 'bi-star-fill';
+            $is_sub      = $active_plan['type_plan'] === 'subscription';
+            $expires_fmt = !empty($active_plan['expires_at'])
+                ? date('d/m/Y', strtotime($active_plan['expires_at']))
+                : ($is_sub ? '—' : 'Sem expiração');
+            $started_fmt = !empty($active_plan['started_at'])
+                ? date('d/m/Y', strtotime($active_plan['started_at']))
+                : '—';
+            $releases_used  = (int)($active_plan['releases_used'] ?? 0);
+            $releases_limit = $active_plan['releases_limit'];
+            ?>
+            <div class="current-plan-card mb-4">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="plan-icon"
+                        style="background:<?php echo $plan_color; ?>22; color:<?php echo $plan_color; ?>">
+                        <i class="bi <?php echo $plan_icon; ?>"></i>
+                    </div>
+                    <div>
+                        <h4 class="fw-bold mb-0"><?php echo htmlspecialchars($active_plan['name_plan']); ?>
+                            <?php if ($active_plan['badge_text']): ?>
+                                <span class="badge ms-2" style="background:<?php echo $plan_color; ?>;font-size:.65rem">
+                                    <?php echo htmlspecialchars($active_plan['badge_text']); ?>
+                                </span>
+                            <?php endif; ?>
+                        </h4>
+                        <span class="badge bg-success">Activo</span>
+                        <span class="badge ms-1" style="background:rgba(0,0,0,.12);color:#FF0089">
+                            <?php echo $is_sub ? 'Subscrição anual' : 'Por lançamento'; ?>
                         </span>
-                        <?php endif; ?>
-                    </h4>
-                    <span class="badge bg-success">Activo</span>
-                    <span class="badge ms-1" style="background:rgba(0,0,0,.12);color:#FF0089">
-                        <?php echo $is_sub ? 'Subscrição anual' : 'Por lançamento'; ?>
-                    </span>
-                </div>
-                <div class="ms-auto text-end">
-                    <div style="font-size:1.4rem;font-weight:900;color:#FF0089">
-                        <?php echo number_format($active_plan['price_plan'], 0, ',', '.'); ?> AOA
                     </div>
-                    <div style="font-size:.72rem;color:var(--text-muted,#6c757d)">
-                        <?php echo $is_sub ? 'por ano' : 'por lançamento'; ?>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row g-2 mb-3">
-                <div class="col-6 col-md-3">
-                    <div class="current-plan-stat">
-                        <div class="stat-val"><?php echo $active_plan['royalty_rate']; ?>%</div>
-                        <div class="stat-lbl">Royalties</div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="current-plan-stat">
-                        <div class="stat-val"><?php echo $active_plan['max_artists'] ?? '∞'; ?></div>
-                        <div class="stat-lbl">Artistas</div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="current-plan-stat">
-                        <div class="stat-val"><?php echo $started_fmt; ?></div>
-                        <div class="stat-lbl">Activado em</div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="current-plan-stat">
-                        <div class="stat-val" style="font-size:1rem">
-                            <?php echo $is_sub ? $expires_fmt : ($releases_limit ? "$releases_used / $releases_limit" : '∞'); ?>
+                    <div class="ms-auto text-end">
+                        <div style="font-size:1.4rem;font-weight:900;color:#FF0089">
+                            <?php echo number_format($active_plan['price_plan'], 0, ',', '.'); ?> AOA
                         </div>
-                        <div class="stat-lbl"><?php echo $is_sub ? 'Validade' : 'Lançamentos usados'; ?></div>
+                        <div style="font-size:.72rem;color:var(--text-muted,#6c757d)">
+                            <?php echo $is_sub ? 'por ano' : 'por lançamento'; ?>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <?php if (!$is_sub && $releases_limit): ?>
-            <div class="mb-3">
-                <div class="d-flex justify-content-between mb-1" style="font-size:.78rem">
-                    <span>Lançamentos utilizados</span>
-                    <strong><?php echo $releases_used; ?> / <?php echo $releases_limit; ?></strong>
-                </div>
-                <div class="progress" style="height:6px;border-radius:999px">
-                    <div class="progress-bar" role="progressbar"
-                        style="width:<?php echo min(100, round($releases_used / $releases_limit * 100)); ?>%;background:#FF0089;border-radius:999px">
+                <div class="row g-2 mb-3">
+                    <div class="col-6 col-md-3">
+                        <div class="current-plan-stat">
+                            <div class="stat-val"><?php echo $active_plan['royalty_rate']; ?>%</div>
+                            <div class="stat-lbl">Royalties</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="current-plan-stat">
+                            <div class="stat-val"><?php echo $active_plan['max_artists'] ?? '∞'; ?></div>
+                            <div class="stat-lbl">Artistas</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="current-plan-stat">
+                            <div class="stat-val"><?php echo $started_fmt; ?></div>
+                            <div class="stat-lbl">Activado em</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="current-plan-stat">
+                            <div class="stat-val" style="font-size:1rem">
+                                <?php echo $is_sub ? $expires_fmt : ($releases_limit ? "$releases_used / $releases_limit" : '∞'); ?>
+                            </div>
+                            <div class="stat-lbl"><?php echo $is_sub ? 'Validade' : 'Lançamentos usados'; ?></div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <?php endif; ?>
 
-            <div class="d-flex flex-wrap gap-2 mt-2">
-                <a href="#all-plans" class="btn btn-sm"
-                    style="background:linear-gradient(135deg,#FF0089,#c8006e);color:#fff;border:none;border-radius:9px;font-weight:600">
-                    <i class="bi bi-arrow-up-circle me-1"></i>Alterar plano
-                </a>
-                <a href="../page/support" class="btn btn-sm btn-outline-secondary" style="border-radius:9px">
-                    <i class="bi bi-headset me-1"></i>Contactar suporte
-                </a>
+                <?php if (!$is_sub && $releases_limit): ?>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1" style="font-size:.78rem">
+                            <span>Lançamentos utilizados</span>
+                            <strong><?php echo $releases_used; ?> / <?php echo $releases_limit; ?></strong>
+                        </div>
+                        <div class="progress" style="height:6px;border-radius:999px">
+                            <div class="progress-bar" role="progressbar"
+                                style="width:<?php echo min(100, round($releases_used / $releases_limit * 100)); ?>%;background:#FF0089;border-radius:999px">
+                            </div>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
+                <div class="d-flex flex-wrap gap-2 mt-2">
+                    <a href="#all-plans" class="btn btn-sm"
+                        style="background:linear-gradient(135deg,#FF0089,#c8006e);color:#fff;border:none;border-radius:9px;font-weight:600">
+                        <i class="bi bi-arrow-up-circle me-1"></i>Alterar plano
+                    </a>
+                    <a href="../page/support" class="btn btn-sm btn-outline-secondary" style="border-radius:9px">
+                        <i class="bi bi-headset me-1"></i>Contactar suporte
+                    </a>
+                </div>
             </div>
-        </div>
         <?php else: ?>
-        <div class="alert" style="border-radius:14px;border:2px dashed #FF0089;background:rgba(255,0,137,.04)"
-            role="alert">
-            <i class="bi bi-info-circle me-2" style="color:#FF0089"></i>
-            Ainda não tens um plano activo. Escolhe um plano abaixo para começar a distribuir a tua música.
-        </div>
+            <div class="alert" style="border-radius:14px;border:2px dashed #FF0089;background:rgba(255,0,137,.04)"
+                role="alert">
+                <i class="bi bi-info-circle me-2" style="color:#FF0089"></i>
+                Ainda não tens um plano activo. Escolhe um plano abaixo para começar a distribuir a tua música.
+            </div>
         <?php endif; ?>
 
         <!-- ══ TODOS OS PLANOS ══ -->
@@ -692,82 +699,82 @@ $plan_colors = [
         </div>
 
         <?php if (!empty($all_plans)): ?>
-        <div class="row g-3 mb-4">
-            <?php foreach ($all_plans as $plan):
-            $is_active_p = $active_plan && $active_plan['id_plan'] == $plan['id_plan'];
-            $pslug   = $plan['slug_plan'];
-            $pcolor  = $plan_colors[$pslug]  ?? '#FF0089';
-            $picon   = $plan_icons[$pslug]   ?? 'bi-star';
-            $is_sub_p = $plan['type_plan'] === 'subscription';
-            $feats   = $features_by_plan[$plan['id_plan']] ?? [];
-        ?>
-            <div class="col-sm-6 col-lg-3">
-                <div
-                    class="plan-card <?php echo $is_active_p ? 'active-plan' : ''; ?> <?php echo $plan['is_featured'] && !$is_active_p ? 'featured-plan' : ''; ?>">
-                    <div class="plan-card-header">
-                        <?php if ($is_active_p): ?>
-                        <span class="plan-badge-top badge bg-success">Activo</span>
-                        <?php elseif ($plan['is_featured']): ?>
-                        <span class="plan-badge-top badge" style="background:#FF0089">Recomendado</span>
-                        <?php elseif ($plan['badge_text']): ?>
-                        <span
-                            class="plan-badge-top badge bg-secondary"><?php echo htmlspecialchars($plan['badge_text']); ?></span>
-                        <?php endif; ?>
+            <div class="row g-3 mb-4">
+                <?php foreach ($all_plans as $plan):
+                    $is_active_p = $active_plan && $active_plan['id_plan'] == $plan['id_plan'];
+                    $pslug   = $plan['slug_plan'];
+                    $pcolor  = $plan_colors[$pslug]  ?? '#FF0089';
+                    $picon   = $plan_icons[$pslug]   ?? 'bi-star';
+                    $is_sub_p = $plan['type_plan'] === 'subscription';
+                    $feats   = $features_by_plan[$plan['id_plan']] ?? [];
+                ?>
+                    <div class="col-sm-6 col-lg-3">
+                        <div
+                            class="plan-card <?php echo $is_active_p ? 'active-plan' : ''; ?> <?php echo $plan['is_featured'] && !$is_active_p ? 'featured-plan' : ''; ?>">
+                            <div class="plan-card-header">
+                                <?php if ($is_active_p): ?>
+                                    <span class="plan-badge-top badge bg-success">Activo</span>
+                                <?php elseif ($plan['is_featured']): ?>
+                                    <span class="plan-badge-top badge" style="background:#FF0089">Recomendado</span>
+                                <?php elseif ($plan['badge_text']): ?>
+                                    <span
+                                        class="plan-badge-top badge bg-secondary"><?php echo htmlspecialchars($plan['badge_text']); ?></span>
+                                <?php endif; ?>
 
-                        <div class="plan-icon" style="background:<?php echo $pcolor; ?>18;color:<?php echo $pcolor; ?>">
-                            <i class="bi <?php echo $picon; ?>"></i>
-                        </div>
-                        <p class="plan-name"><?php echo htmlspecialchars($plan['name_plan']); ?></p>
-                        <div class="plan-price">
-                            <?php echo number_format($plan['price_plan'], 0, ',', '.'); ?> <small>AOA</small>
-                        </div>
-                        <div class="plan-price-annual">
-                            <?php if ($is_sub_p): ?>
-                            por ano
-                            <?php elseif ($plan['price_annual'] && $plan['annual_qty']): ?>
-                            ou <?php echo number_format($plan['price_annual'], 0, ',', '.'); ?> AOA (pacote
-                            <?php echo $plan['annual_qty']; ?>x)
-                            <?php else: ?>
-                            por lançamento
-                            <?php endif; ?>
+                                <div class="plan-icon" style="background:<?php echo $pcolor; ?>18;color:<?php echo $pcolor; ?>">
+                                    <i class="bi <?php echo $picon; ?>"></i>
+                                </div>
+                                <p class="plan-name"><?php echo htmlspecialchars($plan['name_plan']); ?></p>
+                                <div class="plan-price">
+                                    <?php echo number_format($plan['price_plan'], 0, ',', '.'); ?> <small>AOA</small>
+                                </div>
+                                <div class="plan-price-annual">
+                                    <?php if ($is_sub_p): ?>
+                                        por ano
+                                    <?php elseif ($plan['price_annual'] && $plan['annual_qty']): ?>
+                                        ou <?php echo number_format($plan['price_annual'], 0, ',', '.'); ?> AOA (pacote
+                                        <?php echo $plan['annual_qty']; ?>x)
+                                    <?php else: ?>
+                                        por lançamento
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+
+                            <div class="px-3 pb-2" style="flex:1">
+                                <ul class="plan-features-list">
+                                    <?php foreach ($feats as $f): ?>
+                                        <li class="<?php echo $f['is_included'] ? '' : 'not-included'; ?>">
+                                            <i
+                                                class="feat-icon bi <?php echo $f['is_included'] ? 'bi-check-circle-fill text-success' : 'bi-x-circle-fill text-danger'; ?>"></i>
+                                            <?php echo htmlspecialchars($f['feature_text']); ?>
+                                        </li>
+                                    <?php endforeach; ?>
+                                    <?php if (empty($feats)): ?>
+                                        <li><i class="feat-icon bi bi-check-circle-fill text-success"></i> Distribuição em 157+
+                                            lojas</li>
+                                        <li><i class="feat-icon bi bi-check-circle-fill text-success"></i>
+                                            <?php echo $plan['royalty_rate']; ?>% dos royalties</li>
+                                    <?php endif; ?>
+                                </ul>
+                            </div>
+
+                            <div class="p-3 pt-2">
+                                <?php if ($is_active_p): ?>
+                                    <button class="btn w-100 btn-sm" disabled
+                                        style="background:linear-gradient(135deg,#FF0089,#c8006e);color:#fff;border:none;border-radius:9px;font-weight:700;opacity:.7">
+                                        <i class="bi bi-check-lg me-1"></i>Plano actual
+                                    </button>
+                                <?php else: ?>
+                                    <a href="../page/support?plano=<?php echo urlencode($plan['slug_plan']); ?>"
+                                        class="btn w-100 btn-sm btn-outline-secondary" style="border-radius:9px;font-weight:600">
+                                        <i class="bi bi-headset me-1"></i>Contactar para activar
+                                    </a>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="px-3 pb-2" style="flex:1">
-                        <ul class="plan-features-list">
-                            <?php foreach ($feats as $f): ?>
-                            <li class="<?php echo $f['is_included'] ? '' : 'not-included'; ?>">
-                                <i
-                                    class="feat-icon bi <?php echo $f['is_included'] ? 'bi-check-circle-fill text-success' : 'bi-x-circle-fill text-danger'; ?>"></i>
-                                <?php echo htmlspecialchars($f['feature_text']); ?>
-                            </li>
-                            <?php endforeach; ?>
-                            <?php if (empty($feats)): ?>
-                            <li><i class="feat-icon bi bi-check-circle-fill text-success"></i> Distribuição em 157+
-                                lojas</li>
-                            <li><i class="feat-icon bi bi-check-circle-fill text-success"></i>
-                                <?php echo $plan['royalty_rate']; ?>% dos royalties</li>
-                            <?php endif; ?>
-                        </ul>
-                    </div>
-
-                    <div class="p-3 pt-2">
-                        <?php if ($is_active_p): ?>
-                        <button class="btn w-100 btn-sm" disabled
-                            style="background:linear-gradient(135deg,#FF0089,#c8006e);color:#fff;border:none;border-radius:9px;font-weight:700;opacity:.7">
-                            <i class="bi bi-check-lg me-1"></i>Plano actual
-                        </button>
-                        <?php else: ?>
-                        <a href="../page/support?plano=<?php echo urlencode($plan['slug_plan']); ?>"
-                            class="btn w-100 btn-sm btn-outline-secondary" style="border-radius:9px;font-weight:600">
-                            <i class="bi bi-headset me-1"></i>Contactar para activar
-                        </a>
-                        <?php endif; ?>
-                    </div>
-                </div>
+                <?php endforeach; ?>
             </div>
-            <?php endforeach; ?>
-        </div>
         <?php endif; ?>
 
         <!-- ══ NOTA / CTA ══ -->
@@ -788,68 +795,33 @@ $plan_colors = [
 
     </main>
 
-    <!-- Bottom Nav Mobile -->
-    <nav class="bottom-nav d-lg-none">
-        <ul class="nav justify-content-around">
-            <li class="nav-item"><a class="nav-link" href="../painel"><i
-                        class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../launch/releases"><i
-                        class="bi bi-disc"></i><span>Lançamentos</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../analytics/statistics"><i
-                        class="bi bi-bar-chart"></i><span>Stats</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../finances/overview"><i
-                        class="bi bi-currency-dollar"></i><span>Finanças</span></a></li>
-            <li class="nav-item"><a class="nav-link active" href="available-services"><i
-                        class="bi bi-star"></i><span>Serviços</span></a></li>
-        </ul>
-    </nav>
-
-    <!-- Modal Logout -->
-    <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-dark">Terminar sessão</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body text-center text-dark">
-                    <p>Tens a certeza de que desejas terminar sessão, <strong><?php echo $first_name; ?></strong>?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Não, continuar</button>
-                    <a href="../logout" class="btn btn-danger">Sim, terminar sessão</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../../js/theme.wp.js"></script>
-    <script src="../../js/wp.tools.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/theme.wp.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
     <script>
-    // Tema toggle navbar
-    const themeToggle = document.getElementById('themeToggle');
-    const themeIcon = document.getElementById('themeIcon');
-    (function() {
-        const saved = localStorage.getItem('theme') || 'dark';
-        if (saved === 'dark') {
-            document.body.classList.add('dark-mode');
-            themeIcon.className = 'bi bi-moon';
-        } else {
-            document.body.classList.add('light-mode');
-            themeIcon.className = 'bi bi-sun';
+        // Tema toggle navbar
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        (function() {
+            const saved = localStorage.getItem('theme') || 'dark';
+            if (saved === 'dark') {
+                document.body.classList.add('dark-mode');
+                themeIcon.className = 'bi bi-moon';
+            } else {
+                document.body.classList.add('light-mode');
+                themeIcon.className = 'bi bi-sun';
+            }
+        })();
+        if (themeToggle) {
+            themeToggle.addEventListener('click', function() {
+                const isDark = document.body.classList.contains('dark-mode');
+                const next = isDark ? 'light' : 'dark';
+                document.body.classList.toggle('dark-mode', next === 'dark');
+                document.body.classList.toggle('light-mode', next === 'light');
+                themeIcon.className = next === 'dark' ? 'bi bi-moon' : 'bi bi-sun';
+                localStorage.setItem('theme', next);
+            });
         }
-    })();
-    if (themeToggle) {
-        themeToggle.addEventListener('click', function() {
-            const isDark = document.body.classList.contains('dark-mode');
-            const next = isDark ? 'light' : 'dark';
-            document.body.classList.toggle('dark-mode', next === 'dark');
-            document.body.classList.toggle('light-mode', next === 'light');
-            themeIcon.className = next === 'dark' ? 'bi bi-moon' : 'bi bi-sun';
-            localStorage.setItem('theme', next);
-        });
-    }
     </script>
 </body>
 

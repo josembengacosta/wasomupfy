@@ -8,11 +8,11 @@ startSecureSession();
 
 // ── Verificar sessão de colaborador ──────────
 if (empty($_SESSION['collab_id']) || empty($_SESSION['collab_id_users'])) {
-    header('Location: ' . rtrim(APP_URL, '/') . '/dashboard/account/collab-login');
+    header('Location: ' . rtrim(APP_URL, '/') . '/' . APP_URL_PANEL . '/account/collab-login');
     exit;
 }
 if (!empty($_SESSION['collab_must_change'])) {
-    header('Location: ' . rtrim(APP_URL, '/') . '/dashboard/account/collab-login');
+    header('Location: ' . rtrim(APP_URL, '/') . '/' . APP_URL_PANEL . '/account/collab-login');
     exit;
 }
 
@@ -27,7 +27,7 @@ $cs->execute([$id_collab, $id_users]);
 $collab = $cs->fetch();
 if (!$collab) {
     session_destroy();
-    header('Location: ' . rtrim(APP_URL, '/') . '/dashboard/account/collab-login?error=access');
+    header('Location: ' . rtrim(APP_URL, '/') . '/' . APP_URL_PANEL . '/account/collab-login?error=access');
     exit;
 }
 
@@ -38,7 +38,7 @@ $db->prepare("UPDATE _collaborators SET last_seen_at = NOW() WHERE id_collab = ?
 $owner = getUserById($id_users);
 if (!$owner) {
     session_destroy();
-    header('Location: ' . rtrim(APP_URL, '/') . '/dashboard/account/collab-login');
+    header('Location: ' . rtrim(APP_URL, '/') . '/' . APP_URL_PANEL . '/account/collab-login');
     exit;
 }
 
@@ -159,7 +159,7 @@ $cover_base  = $base_url . '/assets/comprovantes/uploads/covers/';
 $photo_base  = $base_url . '/assets/comprovantes/uploads/artists/';
 ?>
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-ao">
 
 <head>
     <meta charset="utf-8" />
@@ -748,17 +748,20 @@ $photo_base  = $base_url . '/assets/comprovantes/uploads/artists/';
 
     <!-- Bottom nav -->
     <nav class="bottom-nav-collab">
-        <a href="<?php echo $base_url; ?>/dashboard/collab/overview"><i class="bi bi-speedometer2"></i>Dashboard</a>
+        <a href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/overview"><i
+                class="bi bi-speedometer2"></i>Dashboard</a>
         <?php if ($can_view_releases): ?>
-            <a href="<?php echo $base_url; ?>/dashboard/collab/releases"><i class="bi bi-disc"></i>Releases</a>
+            <a href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/releases"><i class="bi bi-disc"></i>Releases</a>
         <?php endif; ?>
-        <a href="<?php echo $base_url; ?>/dashboard/collab/artists" class="active"><i
+        <a href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/artists" class="active"><i
                 class="bi bi-people"></i>Artistas</a>
         <?php if ($can_view_stats): ?>
-            <a href="<?php echo $base_url; ?>/dashboard/collab/statistics"><i class="bi bi-bar-chart"></i>Stats</a>
+            <a href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/statistics"><i
+                    class="bi bi-bar-chart"></i>Stats</a>
         <?php endif; ?>
         <?php if ($can_view_finances): ?>
-            <a href="<?php echo $base_url; ?>/dashboard/collab/finances"><i class="bi bi-currency-dollar"></i>Finanças</a>
+            <a href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/finances"><i
+                    class="bi bi-currency-dollar"></i>Finanças</a>
         <?php endif; ?>
     </nav>
 
@@ -985,7 +988,7 @@ $photo_base  = $base_url . '/assets/comprovantes/uploads/artists/';
 
         // ── Ping ──────────────────────────────────────
         setInterval(() => {
-            fetch('<?php echo $base_url; ?>/dashboard/collab/ping', {
+            fetch('<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/ping', {
                 method: 'POST'
             }).catch(() => {});
         }, 120000);

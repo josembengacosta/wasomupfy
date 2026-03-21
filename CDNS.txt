@@ -49,7 +49,7 @@ Outros detalhes importantes:
 Preciso retificar todos os componentes de descrição og: para cada página específica, e cada titulo de cada página, e cada palavra chave de cada página.
 
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-ao">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

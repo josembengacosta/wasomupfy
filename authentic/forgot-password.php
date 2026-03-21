@@ -27,7 +27,7 @@ $notice = isset($_GET['notice']) ? ($notices[$_GET['notice']] ?? '') : '';
 $error  = isset($_GET['error'])  ? ($errors[$_GET['error']]  ?? 'Erro desconhecido. Tenta novamente.') : '';
 ?>
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-ao">
 
 <head>
     <meta charset="utf-8" />
@@ -36,7 +36,7 @@ $error  = isset($_GET['error'])  ? ($errors[$_GET['error']]  ?? 'Erro desconheci
     <meta name="robots" content="noindex, nofollow" />
     <meta name="author" content="José Mbenga da Costa" />
     <meta name="theme-color" content="#FF0089" />
-    <title>Recuperar senha — Wasom Upfy</title>
+    <title>Recuperar senha — <?php echo APP_NAME; ?></title>
     <link rel="shortcut icon" href="assets/img/icones/wasomupfy_fiv.png" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
@@ -44,69 +44,69 @@ $error  = isset($_GET['error'])  ? ($errors[$_GET['error']]  ?? 'Erro desconheci
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/josembengacosta/wasomupfy@main/css/light.css" />
     <link rel="stylesheet" href="css/login.css" />
     <style>
-    :root {
-        --wasom-primary: #ff0089;
-        --wasom-secondary: #e04385;
-        --wasom-dark: #cc0070;
-    }
+        :root {
+            --wasom-primary: #ff0089;
+            --wasom-secondary: #e04385;
+            --wasom-dark: #cc0070;
+        }
 
-    .card {
-        border-radius: 15px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, .1);
-        background: rgba(255, 255, 255, .95);
-        margin: auto;
-    }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, .1);
+            background: rgba(255, 255, 255, .95);
+            margin: auto;
+        }
 
-    .btn-wasomupfy {
-        background: linear-gradient(45deg, #ff0089, #ff0089);
-        color: #fff;
-        border: none;
-        border-radius: 10px;
-        padding: 10px 7px;
-        font-size: 1.05rem;
-        transition: all .3s ease;
-    }
+        .btn-wasomupfy {
+            background: linear-gradient(45deg, #ff0089, #ff0089);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 7px;
+            font-size: 1.05rem;
+            transition: all .3s ease;
+        }
 
-    .btn-wasomupfy:hover {
-        background: linear-gradient(45deg, #e04385, #cc0070);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 10px rgba(172, 19, 19, .2);
-        color: white;
-    }
+        .btn-wasomupfy:hover {
+            background: linear-gradient(45deg, #e04385, #cc0070);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(172, 19, 19, .2);
+            color: white;
+        }
 
-    .preloader {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-        transition: opacity .5s ease;
-    }
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity .5s ease;
+        }
 
-    .loaded .preloader {
-        opacity: 0;
-        pointer-events: none;
-    }
+        .loaded .preloader {
+            opacity: 0;
+            pointer-events: none;
+        }
 
-    .spinner-border {
-        border-bottom-color: #ff0089;
-        border-top-color: #ff0089;
-        border-left-color: #ff0089;
-    }
+        .spinner-border {
+            border-bottom-color: #ff0089;
+            border-top-color: #ff0089;
+            border-left-color: #ff0089;
+        }
 
-    .form-control:focus {
-        border-color: var(--wasom-primary);
-        box-shadow: 0 0 0 0.25rem rgba(255, 0, 137, .15);
-    }
+        .form-control:focus {
+            border-color: var(--wasom-primary);
+            box-shadow: 0 0 0 0.25rem rgba(255, 0, 137, .15);
+        }
 
-    .text-wasom {
-        color: var(--wasom-primary) !important;
-    }
+        .text-wasom {
+            color: var(--wasom-primary) !important;
+        }
     </style>
 </head>
 
@@ -142,26 +142,26 @@ $error  = isset($_GET['error'])  ? ($errors[$_GET['error']]  ?? 'Erro desconheci
 
                                 <!-- ── Alerts de notice (success) ── -->
                                 <?php if ($notice): ?>
-                                <div style="padding: 1rem;"
-                                    class="alert alert-success alert-dismissible fade show d-flex align-items-center mb-3"
-                                    role="alert">
-                                    <i class="bi bi-check-circle-fill me-2 flex-shrink-0"></i>
-                                    <div><?php echo htmlspecialchars($notice); ?></div>
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                        aria-label="Fechar"></button>
-                                </div>
+                                    <div style="padding: 1rem;"
+                                        class="alert alert-success alert-dismissible fade show d-flex align-items-center mb-3"
+                                        role="alert">
+                                        <i class="bi bi-check-circle-fill me-2 flex-shrink-0"></i>
+                                        <div><?php echo htmlspecialchars($notice); ?></div>
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Fechar"></button>
+                                    </div>
                                 <?php endif; ?>
 
                                 <!-- ── Alerts de erro ── -->
                                 <?php if ($error): ?>
-                                <div style="padding: 1rem;"
-                                    class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-3"
-                                    role="alert">
-                                    <i class="bi bi-exclamation-triangle-fill me-2 flex-shrink-0"></i>
-                                    <div><?php echo htmlspecialchars($error); ?></div>
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                        aria-label="Fechar"></button>
-                                </div>
+                                    <div style="padding: 1rem;"
+                                        class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-3"
+                                        role="alert">
+                                        <i class="bi bi-exclamation-triangle-fill me-2 flex-shrink-0"></i>
+                                        <div><?php echo htmlspecialchars($error); ?></div>
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Fechar"></button>
+                                    </div>
                                 <?php endif; ?>
 
                                 <form method="POST" action="forgot-password-process" class="needs-validation"
@@ -228,30 +228,30 @@ $error  = isset($_GET['error'])  ? ($errors[$_GET['error']]  ?? 'Erro desconheci
     <script src="https://cdn.jsdelivr.net/gh/josembengacosta/wasomupfy@main/js/app.js"></script>
     <script src="js/validacao.js"></script>
     <script>
-    // ── Preloader ────────────────────────────────────────
-    window.addEventListener('load', () => {
-        requestAnimationFrame(() => document.body.classList.add('loaded'));
-    });
+        // ── Preloader ────────────────────────────────────────
+        window.addEventListener('load', () => {
+            requestAnimationFrame(() => document.body.classList.add('loaded'));
+        });
 
-    // ── Validação em tempo real ───────────────────────────
-    document.getElementById('email').addEventListener('input', function() {
-        const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value);
-        this.classList.toggle('is-valid', valid);
-        this.classList.toggle('is-invalid', !valid && this.value.length > 0);
-    });
+        // ── Validação em tempo real ───────────────────────────
+        document.getElementById('email').addEventListener('input', function() {
+            const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value);
+            this.classList.toggle('is-valid', valid);
+            this.classList.toggle('is-invalid', !valid && this.value.length > 0);
+        });
 
-    // ── Loading state no submit ───────────────────────────
-    document.getElementById('forgot-form').addEventListener('submit', function(e) {
-        const email = document.getElementById('email').value.trim();
-        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            e.preventDefault();
-            document.getElementById('email').classList.add('is-invalid');
-            return;
-        }
-        document.getElementById('btn-text').classList.add('d-none');
-        document.getElementById('btn-loading').classList.remove('d-none');
-        document.getElementById('btn-submit').disabled = true;
-    });
+        // ── Loading state no submit ───────────────────────────
+        document.getElementById('forgot-form').addEventListener('submit', function(e) {
+            const email = document.getElementById('email').value.trim();
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                e.preventDefault();
+                document.getElementById('email').classList.add('is-invalid');
+                return;
+            }
+            document.getElementById('btn-text').classList.add('d-none');
+            document.getElementById('btn-loading').classList.remove('d-none');
+            document.getElementById('btn-submit').disabled = true;
+        });
     </script>
 </body>
 

@@ -36,7 +36,7 @@ $notice = isset($_GET['notice']) ? ($notices[$_GET['notice']] ?? '') : '';
 $error  = isset($_GET['error'])  ? ($errors[$_GET['error']]  ?? 'Erro desconhecido.') : '';
 ?>
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-ao">
 
 <head>
     <meta charset="utf-8" />
@@ -44,13 +44,13 @@ $error  = isset($_GET['error'])  ? ($errors[$_GET['error']]  ?? 'Erro desconheci
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="robots" content="noindex, nofollow" />
     <meta name="theme-color" content="#FF0089" />
-    <title>Nova senha — Wasom Upfy</title>
+    <title>Nova senha — <?php echo APP_NAME; ?></title>
     <link rel="shortcut icon" href="assets/img/icones/wasomupfy_fiv.png" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/josembengacosta/wasomupfy@main/css/light.css" />
-    <link rel="stylesheet" href="../css/login.css" />
-    <link rel="stylesheet" href="../css/loanding.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/login.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/loanding.css" />
     <style>
         :root {
             --wasom-primary: #ff0089;

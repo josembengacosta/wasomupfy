@@ -658,7 +658,7 @@ $feedback = match ($msg_type) {
         <div class="auth-left">
             <div class="brand-logo">
                 <img src="../assets/img/brand/wasomupfy.png" alt="Wasom Upfy" />
-                <span class="brand-name">Wasom Upfy</span>
+                <span class="brand-name"><?php echo APP_NAME; ?></span>
                 <span class="brand-badge">Admin</span>
             </div>
             <div class="left-illus">

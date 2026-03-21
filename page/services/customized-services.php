@@ -55,11 +55,11 @@ $whatsNum    = preg_replace('/[^0-9]/', '', cfg('whatsapp_number', '244922030116
     <meta property="og:image:alt" content="<?php echo $siteName; ?>" />
 
     <script>
-    window.addEventListener("load", function() {
-        setTimeout(function() {
-            document.querySelector("body").classList.add("loaded");
-        }, 200);
-    });
+        window.addEventListener("load", function() {
+            setTimeout(function() {
+                document.querySelector("body").classList.add("loaded");
+            }, 200);
+        });
     </script>
 
     <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv1.png" type="image/x-icon" />
@@ -67,10 +67,10 @@ $whatsNum    = preg_replace('/[^0-9]/', '', cfg('whatsapp_number', '244922030116
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="../../css/theme.min.css" />
-    <link rel="stylesheet" href="../../js/libs/scrollcue/scrollCue.css" />
-    <link rel="stylesheet" href="../../css/framework.css" />
-    <link rel="stylesheet" href="../../css/main.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/theme.min.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/js/libs/scrollcue/scrollCue.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/framework.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/main.css" />
 </head>
 
 <body data-base-path="../..">
@@ -118,26 +118,26 @@ $whatsNum    = preg_replace('/[^0-9]/', '', cfg('whatsapp_number', '244922030116
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-md" aria-labelledby="navbarDropdown">
                                     <?php
-                  $navIcons = ['single'=>'fa-music','album'=>'fa-compact-disc','artist'=>'fa-microphone-lines','label'=>'fa-tags'];
-                  foreach ($plans as $p):
-                    $nSlug = $p['slug_plan'];
-                    $nIcon = $navIcons[$nSlug] ?? 'fa-music';
-                    $nPrc  = number_format($p['price_plan'], 0, ',', '.');
-                    $nPer  = $p['type_plan'] === 'subscription' ? '/ano' : '';
-                  ?>
-                                    <a title="<?php echo htmlspecialchars($p['name_plan']); ?>"
-                                        class="dropdown-item mb-3 text-body" href="../../plan/<?php echo $nSlug; ?>">
-                                        <div class="d-flex align-items-center">
-                                            <i class="fa-solid <?php echo $nIcon; ?> text-wasomupfy fs-3"
-                                                style="width: 35px"></i>
-                                            <div class="ms-3 lh-1">
-                                                <h5 class="mb-1"><?php echo htmlspecialchars($p['name_plan']); ?></h5>
-                                                <p class="mb-0 fs-6">Nosso plano
-                                                    <?php echo htmlspecialchars($p['name_plan']); ?> —
-                                                    <?php echo $nPrc; ?> Kz<?php echo $nPer; ?></p>
+                                    $navIcons = ['single' => 'fa-music', 'album' => 'fa-compact-disc', 'artist' => 'fa-microphone-lines', 'label' => 'fa-tags'];
+                                    foreach ($plans as $p):
+                                        $nSlug = $p['slug_plan'];
+                                        $nIcon = $navIcons[$nSlug] ?? 'fa-music';
+                                        $nPrc  = number_format($p['price_plan'], 0, ',', '.');
+                                        $nPer  = $p['type_plan'] === 'subscription' ? '/ano' : '';
+                                    ?>
+                                        <a title="<?php echo htmlspecialchars($p['name_plan']); ?>"
+                                            class="dropdown-item mb-3 text-body" href="../../plan/<?php echo $nSlug; ?>">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fa-solid <?php echo $nIcon; ?> text-wasomupfy fs-3"
+                                                    style="width: 35px"></i>
+                                                <div class="ms-3 lh-1">
+                                                    <h5 class="mb-1"><?php echo htmlspecialchars($p['name_plan']); ?></h5>
+                                                    <p class="mb-0 fs-6">Nosso plano
+                                                        <?php echo htmlspecialchars($p['name_plan']); ?> —
+                                                        <?php echo $nPrc; ?> Kz<?php echo $nPer; ?></p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </a>
+                                        </a>
                                     <?php endforeach; ?>
                                     <a title="Todos os planos" class="dropdown-item mb-3 text-body"
                                         href="../../plan/all-plans">
@@ -239,18 +239,18 @@ $whatsNum    = preg_replace('/[^0-9]/', '', cfg('whatsapp_number', '244922030116
                                     </li>
                                     <li>
                                         <?php if (cfg('support_email')): ?>
-                                        <a title="E-mail" class="dropdown-item"
-                                            href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>">
-                                            <?php echo htmlspecialchars(cfg('support_email')); ?>
-                                        </a>
+                                            <a title="E-mail" class="dropdown-item"
+                                                href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>">
+                                                <?php echo htmlspecialchars(cfg('support_email')); ?>
+                                            </a>
                                         <?php endif; ?>
                                     </li>
                                     <li>
                                         <?php if ($whatsNum): ?>
-                                        <a title="WhatsApp" class="dropdown-item"
-                                            href="https://api.whatsapp.com/send/?phone=<?php echo $whatsNum; ?>&text&type=phone_number&app_absent=0">
-                                            WhatsApp
-                                        </a>
+                                            <a title="WhatsApp" class="dropdown-item"
+                                                href="https://api.whatsapp.com/send/?phone=<?php echo $whatsNum; ?>&text&type=phone_number&app_absent=0">
+                                                WhatsApp
+                                            </a>
                                         <?php endif; ?>
                                     </li>
                                 </ul>
@@ -262,9 +262,9 @@ $whatsNum    = preg_replace('/[^0-9]/', '', cfg('whatsapp_number', '244922030116
                                 Entrar <i data-feather="log-in"></i>
                             </a>
                             <?php if ($canRegister): ?>
-                            <a title="Sign-up" href="/wasomupfy/register" class="btn btn-wasomupfy">Inscreva-se</a>
+                                <a title="Sign-up" href="/wasomupfy/register" class="btn btn-wasomupfy">Inscreva-se</a>
                             <?php else: ?>
-                            <span class="btn btn-secondary disabled">Inscrições fechadas</span>
+                                <span class="btn btn-secondary disabled">Inscrições fechadas</span>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -543,11 +543,11 @@ $whatsNum    = preg_replace('/[^0-9]/', '', cfg('whatsapp_number', '244922030116
                                 <i class="fa-solid fa-crown me-2"></i> Solicitar Consultoria VIP
                             </a>
                             <?php if ($whatsNum): ?>
-                            <a href="https://api.whatsapp.com/send/?phone=<?php echo $whatsNum; ?>&text=Ol%C3%A1%2C+quero+saber+mais+sobre+os+Servi%C3%A7os+Personalizados+Wasom+Upfy&type=phone_number&app_absent=0"
-                                target="_blank" rel="noopener noreferrer"
-                                class="btn btn-outline-success btn-lg px-5 py-3 rounded-pill fw-bold">
-                                <i class="fa-brands fa-whatsapp me-2"></i> WhatsApp Direto
-                            </a>
+                                <a href="https://api.whatsapp.com/send/?phone=<?php echo $whatsNum; ?>&text=Ol%C3%A1%2C+quero+saber+mais+sobre+os+Servi%C3%A7os+Personalizados+Wasom+Upfy&type=phone_number&app_absent=0"
+                                    target="_blank" rel="noopener noreferrer"
+                                    class="btn btn-outline-success btn-lg px-5 py-3 rounded-pill fw-bold">
+                                    <i class="fa-brands fa-whatsapp me-2"></i> WhatsApp Direto
+                                </a>
                             <?php endif; ?>
                         </div>
                         <p class="text-muted small mt-4">
@@ -599,44 +599,44 @@ $whatsNum    = preg_replace('/[^0-9]/', '', cfg('whatsapp_number', '244922030116
                         </p>
                         <div class="d-flex gap-3" role="list" aria-label="Redes sociais">
                             <?php if (cfg('instagram_url')): ?>
-                            <a href="<?php echo htmlspecialchars(cfg('instagram_url')); ?>" target="_blank"
-                                rel="external noopener noreferrer"
-                                aria-label="Instagram da <?php echo $siteName; ?> (abre em nova janela)"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                <i class="fa-brands fa-instagram"></i><span class="visually-hidden">Instagram</span>
-                            </a>
+                                <a href="<?php echo htmlspecialchars(cfg('instagram_url')); ?>" target="_blank"
+                                    rel="external noopener noreferrer"
+                                    aria-label="Instagram da <?php echo $siteName; ?> (abre em nova janela)"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                    <i class="fa-brands fa-instagram"></i><span class="visually-hidden">Instagram</span>
+                                </a>
                             <?php endif; ?>
                             <?php if (cfg('facebook_url')): ?>
-                            <a href="<?php echo htmlspecialchars(cfg('facebook_url')); ?>" target="_blank"
-                                rel="external noopener noreferrer"
-                                aria-label="Facebook da <?php echo $siteName; ?> (abre em nova janela)"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                <i class="fa-brands fa-facebook-f"></i><span class="visually-hidden">Facebook</span>
-                            </a>
+                                <a href="<?php echo htmlspecialchars(cfg('facebook_url')); ?>" target="_blank"
+                                    rel="external noopener noreferrer"
+                                    aria-label="Facebook da <?php echo $siteName; ?> (abre em nova janela)"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                    <i class="fa-brands fa-facebook-f"></i><span class="visually-hidden">Facebook</span>
+                                </a>
                             <?php endif; ?>
                             <?php if (cfg('youtube_url')): ?>
-                            <a href="<?php echo htmlspecialchars(cfg('youtube_url')); ?>" target="_blank"
-                                rel="external noopener noreferrer"
-                                aria-label="YouTube da <?php echo $siteName; ?> (abre em nova janela)"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                <i class="fa-brands fa-youtube"></i><span class="visually-hidden">YouTube</span>
-                            </a>
+                                <a href="<?php echo htmlspecialchars(cfg('youtube_url')); ?>" target="_blank"
+                                    rel="external noopener noreferrer"
+                                    aria-label="YouTube da <?php echo $siteName; ?> (abre em nova janela)"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                    <i class="fa-brands fa-youtube"></i><span class="visually-hidden">YouTube</span>
+                                </a>
                             <?php endif; ?>
                             <?php if (cfg('linkedin_url')): ?>
-                            <a href="<?php echo htmlspecialchars(cfg('linkedin_url')); ?>" target="_blank"
-                                rel="external noopener noreferrer"
-                                aria-label="LinkedIn da <?php echo $siteName; ?> (abre em nova janela)"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                <i class="fa-brands fa-linkedin-in"></i><span class="visually-hidden">LinkedIn</span>
-                            </a>
+                                <a href="<?php echo htmlspecialchars(cfg('linkedin_url')); ?>" target="_blank"
+                                    rel="external noopener noreferrer"
+                                    aria-label="LinkedIn da <?php echo $siteName; ?> (abre em nova janela)"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                    <i class="fa-brands fa-linkedin-in"></i><span class="visually-hidden">LinkedIn</span>
+                                </a>
                             <?php endif; ?>
                             <?php if ($whatsNum): ?>
-                            <a href="https://wa.me/<?php echo $whatsNum; ?>" target="_blank"
-                                rel="external noopener noreferrer"
-                                aria-label="WhatsApp da <?php echo $siteName; ?> (abre em nova janela)"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                <i class="fa-brands fa-whatsapp"></i><span class="visually-hidden">WhatsApp</span>
-                            </a>
+                                <a href="https://wa.me/<?php echo $whatsNum; ?>" target="_blank"
+                                    rel="external noopener noreferrer"
+                                    aria-label="WhatsApp da <?php echo $siteName; ?> (abre em nova janela)"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                    <i class="fa-brands fa-whatsapp"></i><span class="visually-hidden">WhatsApp</span>
+                                </a>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -669,8 +669,8 @@ $whatsNum    = preg_replace('/[^0-9]/', '', cfg('whatsapp_number', '244922030116
                                     class="text-reset text-decoration-none hover-white">Contacta-nos</a></li>
                             <li class="mb-2">
                                 <?php if ($whatsNum): ?>
-                                <a href="https://wa.me/<?php echo $whatsNum; ?>"
-                                    class="text-reset text-decoration-none hover-white">WhatsApp</a>
+                                    <a href="https://wa.me/<?php echo $whatsNum; ?>"
+                                        class="text-reset text-decoration-none hover-white">WhatsApp</a>
                                 <?php endif; ?>
                             </li>
                         </ul>
@@ -682,20 +682,20 @@ $whatsNum    = preg_replace('/[^0-9]/', '', cfg('whatsapp_number', '244922030116
                         <ul class="list-unstyled mb-0 text-muted small">
                             <li class="mb-3 d-flex"><span>Angola - Luanda</span></li>
                             <?php if (cfg('support_email')): ?>
-                            <li class="mb-3 d-flex">
-                                <a href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
-                                    class="text-reset text-decoration-none">
-                                    <?php echo htmlspecialchars(cfg('support_email')); ?>
-                                </a>
-                            </li>
+                                <li class="mb-3 d-flex">
+                                    <a href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
+                                        class="text-reset text-decoration-none">
+                                        <?php echo htmlspecialchars(cfg('support_email')); ?>
+                                    </a>
+                                </li>
                             <?php endif; ?>
                             <?php if (cfg('info_email')): ?>
-                            <li class="mb-3 d-flex">
-                                <a href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
-                                    class="text-reset text-decoration-none">
-                                    <?php echo htmlspecialchars(cfg('info_email')); ?>
-                                </a>
-                            </li>
+                                <li class="mb-3 d-flex">
+                                    <a href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
+                                        class="text-reset text-decoration-none">
+                                        <?php echo htmlspecialchars(cfg('info_email')); ?>
+                                    </a>
+                                </li>
                             <?php endif; ?>
                             <li class="d-flex"><span>Seg - Sex: 08h às 17h</span></li>
                         </ul>
@@ -863,10 +863,10 @@ $whatsNum    = preg_replace('/[^0-9]/', '', cfg('whatsapp_number', '244922030116
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/headhesive@1.2.4/dist/headhesive.min.js"></script>
-    <script src="../../js/theme.min.js"></script>
-    <script src="../../js/vendors/color-modes.js"></script>
-    <script src="../../js/libs/scrollcue/scrollCue.min.js"></script>
-    <script src="../../js/vendors/scrollcue.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/theme.min.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/vendors/color-modes.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/libs/scrollcue/scrollCue.min.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/vendors/scrollcue.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/svg-injector@1.1.3/dist/svg-injector.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.29.0/dist/feather.min.js"></script>
@@ -880,120 +880,120 @@ $whatsNum    = preg_replace('/[^0-9]/', '', cfg('whatsapp_number', '244922030116
     <script src="customized-services.js"></script>
 
     <script>
-    feather.replace({
-        width: "1em",
-        height: "1em"
-    });
+        feather.replace({
+            width: "1em",
+            height: "1em"
+        });
 
-    function openPortfolioLightbox() {
-        var firstItem = document.querySelector(".portfolio-item");
-        if (firstItem) {
-            firstItem.click();
+        function openPortfolioLightbox() {
+            var firstItem = document.querySelector(".portfolio-item");
+            if (firstItem) {
+                firstItem.click();
+            }
+            return false;
         }
-        return false;
-    }
     </script>
 
     <!-- Modal Feedback JS -->
     <script>
-    (function() {
-        'use strict';
-        var form = document.getElementById('formFeedback');
-        var alertEl = document.getElementById('feedbackAlert');
-        var successEl = document.getElementById('feedbackSuccess');
-        var submitBtn = document.getElementById('feedbackSubmitBtn');
-        var btnText = document.getElementById('feedbackBtnText');
-        var btnLoading = document.getElementById('feedbackBtnLoading');
-        var csrfInput = document.getElementById('feedbackCsrf');
-        var charCount = document.getElementById('feedbackCharCount');
-        var textarea = document.getElementById('feedbackMessage');
-        var modal = document.getElementById('modalFeedback');
+        (function() {
+            'use strict';
+            var form = document.getElementById('formFeedback');
+            var alertEl = document.getElementById('feedbackAlert');
+            var successEl = document.getElementById('feedbackSuccess');
+            var submitBtn = document.getElementById('feedbackSubmitBtn');
+            var btnText = document.getElementById('feedbackBtnText');
+            var btnLoading = document.getElementById('feedbackBtnLoading');
+            var csrfInput = document.getElementById('feedbackCsrf');
+            var charCount = document.getElementById('feedbackCharCount');
+            var textarea = document.getElementById('feedbackMessage');
+            var modal = document.getElementById('modalFeedback');
 
-        if (!form) return;
+            if (!form) return;
 
-        if (textarea && charCount) {
-            textarea.addEventListener('input', function() {
-                charCount.textContent = this.value.length;
-                charCount.classList.toggle('text-danger', this.value.length > 1800);
-            });
-        }
-
-        if (modal) {
-            modal.addEventListener('hidden.bs.modal', function() {
-                form.reset();
-                form.classList.remove('d-none');
-                alertEl.className = 'alert d-none';
-                successEl.classList.add('d-none');
-                if (charCount) {
-                    charCount.textContent = '0';
-                    charCount.classList.remove('text-danger');
-                }
-                submitBtn.disabled = false;
-                btnText.classList.remove('d-none');
-                btnLoading.classList.add('d-none');
-            });
-        }
-
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            var name = document.getElementById('feedbackName').value.trim();
-            var subject = document.getElementById('feedbackSubject').value;
-            var message = textarea.value.trim();
-
-            if (name.length < 2) {
-                alertEl.className = 'alert alert-warning mb-3';
-                alertEl.textContent = 'Insere o teu nome.';
-                return;
-            }
-            if (message.length < 10) {
-                alertEl.className = 'alert alert-warning mb-3';
-                alertEl.textContent = 'A mensagem deve ter pelo menos 10 caracteres.';
-                return;
-            }
-
-            submitBtn.disabled = true;
-            btnText.classList.add('d-none');
-            btnLoading.classList.remove('d-none');
-            alertEl.className = 'alert d-none';
-
-            fetch('../../ajax/feedback.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        csrf: csrfInput.value,
-                        name: name,
-                        subject: subject,
-                        message: message,
-                        page: window.location.pathname
-                    })
-                })
-                .then(function(r) {
-                    return r.json();
-                })
-                .then(function(data) {
-                    submitBtn.disabled = false;
-                    btnText.classList.remove('d-none');
-                    btnLoading.classList.add('d-none');
-                    if (data.success) {
-                        if (data.new_csrf) csrfInput.value = data.new_csrf;
-                        form.classList.add('d-none');
-                        successEl.classList.remove('d-none');
-                    } else {
-                        alertEl.className = 'alert alert-danger mb-3';
-                        alertEl.textContent = data.message || 'Ocorreu um erro. Tenta novamente.';
-                    }
-                })
-                .catch(function() {
-                    submitBtn.disabled = false;
-                    btnText.classList.remove('d-none');
-                    btnLoading.classList.add('d-none');
-                    alertEl.className = 'alert alert-danger mb-3';
-                    alertEl.textContent = 'Erro de ligação. Tenta novamente.';
+            if (textarea && charCount) {
+                textarea.addEventListener('input', function() {
+                    charCount.textContent = this.value.length;
+                    charCount.classList.toggle('text-danger', this.value.length > 1800);
                 });
-        });
-    })();
+            }
+
+            if (modal) {
+                modal.addEventListener('hidden.bs.modal', function() {
+                    form.reset();
+                    form.classList.remove('d-none');
+                    alertEl.className = 'alert d-none';
+                    successEl.classList.add('d-none');
+                    if (charCount) {
+                        charCount.textContent = '0';
+                        charCount.classList.remove('text-danger');
+                    }
+                    submitBtn.disabled = false;
+                    btnText.classList.remove('d-none');
+                    btnLoading.classList.add('d-none');
+                });
+            }
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                var name = document.getElementById('feedbackName').value.trim();
+                var subject = document.getElementById('feedbackSubject').value;
+                var message = textarea.value.trim();
+
+                if (name.length < 2) {
+                    alertEl.className = 'alert alert-warning mb-3';
+                    alertEl.textContent = 'Insere o teu nome.';
+                    return;
+                }
+                if (message.length < 10) {
+                    alertEl.className = 'alert alert-warning mb-3';
+                    alertEl.textContent = 'A mensagem deve ter pelo menos 10 caracteres.';
+                    return;
+                }
+
+                submitBtn.disabled = true;
+                btnText.classList.add('d-none');
+                btnLoading.classList.remove('d-none');
+                alertEl.className = 'alert d-none';
+
+                fetch('../../ajax/feedback.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            csrf: csrfInput.value,
+                            name: name,
+                            subject: subject,
+                            message: message,
+                            page: window.location.pathname
+                        })
+                    })
+                    .then(function(r) {
+                        return r.json();
+                    })
+                    .then(function(data) {
+                        submitBtn.disabled = false;
+                        btnText.classList.remove('d-none');
+                        btnLoading.classList.add('d-none');
+                        if (data.success) {
+                            if (data.new_csrf) csrfInput.value = data.new_csrf;
+                            form.classList.add('d-none');
+                            successEl.classList.remove('d-none');
+                        } else {
+                            alertEl.className = 'alert alert-danger mb-3';
+                            alertEl.textContent = data.message || 'Ocorreu um erro. Tenta novamente.';
+                        }
+                    })
+                    .catch(function() {
+                        submitBtn.disabled = false;
+                        btnText.classList.remove('d-none');
+                        btnLoading.classList.add('d-none');
+                        alertEl.className = 'alert alert-danger mb-3';
+                        alertEl.textContent = 'Erro de ligação. Tenta novamente.';
+                    });
+            });
+        })();
     </script>
 
 </body>

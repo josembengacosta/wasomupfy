@@ -19,7 +19,7 @@ $whatsNum  = preg_replace('/[^0-9]/', '', cfg('whatsapp_number', '244922030116')
 $csrf_page = getSiteCsrf();
 ?>
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-ao">
 
 <head>
     <meta charset="utf-8" />
@@ -49,22 +49,22 @@ $csrf_page = getSiteCsrf();
     <title><?php echo $siteName; ?> | Central de Ajuda</title>
 
     <script>
-    window.addEventListener("load", function() {
-        setTimeout(function() {
-            document.querySelector("body").classList.add("loaded");
-        }, 200);
-    });
+        window.addEventListener("load", function() {
+            setTimeout(function() {
+                document.querySelector("body").classList.add("loaded");
+            }, 200);
+        });
     </script>
 
     <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv1.png" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link rel="stylesheet" href="../../css/theme.min.css" />
-    <link rel="stylesheet" href="../../js/libs/scrollcue/scrollCue.css" />
-    <link rel="stylesheet" href="../../css/framework.css" />
-    <link rel="stylesheet" href="../../css/main.css" />
-    <link rel="stylesheet" href="../../css/tutorial.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/theme.min.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/js/libs/scrollcue/scrollCue.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/framework.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/main.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/tutorial.css" />
 </head>
 
 <body data-base-path="../..">
@@ -120,19 +120,19 @@ $csrf_page = getSiteCsrf();
                                         $nPrc  = number_format($p['price_plan'], 0, ',', '.');
                                         $nPer  = $p['type_plan'] === 'subscription' ? '/ano' : '';
                                     ?>
-                                    <a title="<?php echo htmlspecialchars($p['name_plan']); ?>"
-                                        class="dropdown-item mb-3 text-body" href="../../plan/<?php echo $nSlug; ?>">
-                                        <div class="d-flex align-items-center">
-                                            <i class="fa-solid <?php echo $nIcon; ?> text-wasomupfy fs-3"
-                                                style="width:35px"></i>
-                                            <div class="ms-3 lh-1">
-                                                <h5 class="mb-1"><?php echo htmlspecialchars($p['name_plan']); ?></h5>
-                                                <p class="mb-0 fs-6">Nosso plano
-                                                    <?php echo htmlspecialchars($p['name_plan']); ?> —
-                                                    <?php echo $nPrc; ?> Kz<?php echo $nPer; ?></p>
+                                        <a title="<?php echo htmlspecialchars($p['name_plan']); ?>"
+                                            class="dropdown-item mb-3 text-body" href="../../plan/<?php echo $nSlug; ?>">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fa-solid <?php echo $nIcon; ?> text-wasomupfy fs-3"
+                                                    style="width:35px"></i>
+                                                <div class="ms-3 lh-1">
+                                                    <h5 class="mb-1"><?php echo htmlspecialchars($p['name_plan']); ?></h5>
+                                                    <p class="mb-0 fs-6">Nosso plano
+                                                        <?php echo htmlspecialchars($p['name_plan']); ?> —
+                                                        <?php echo $nPrc; ?> Kz<?php echo $nPer; ?></p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </a>
+                                        </a>
                                     <?php endforeach; ?>
                                     <a title="Todos os planos" class="dropdown-item mb-3 text-body"
                                         href="../../plan/all-plans">
@@ -233,13 +233,13 @@ $csrf_page = getSiteCsrf();
                                     <li><a title="Caixa de mensagem" class="dropdown-item" href="../../contact">Caixa de
                                             mensagem</a></li>
                                     <?php if (cfg('support_email')): ?>
-                                    <li><a title="E-mail" class="dropdown-item"
-                                            href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"><?php echo htmlspecialchars(cfg('support_email')); ?></a>
-                                    </li>
+                                        <li><a title="E-mail" class="dropdown-item"
+                                                href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"><?php echo htmlspecialchars(cfg('support_email')); ?></a>
+                                        </li>
                                     <?php endif; ?>
                                     <?php if ($whatsNum): ?>
-                                    <li><a title="WhatsApp" class="dropdown-item"
-                                            href="https://wa.me/<?php echo $whatsNum; ?>">WhatsApp</a></li>
+                                        <li><a title="WhatsApp" class="dropdown-item"
+                                                href="https://wa.me/<?php echo $whatsNum; ?>">WhatsApp</a></li>
                                     <?php endif; ?>
                                 </ul>
                             </li>
@@ -249,7 +249,7 @@ $csrf_page = getSiteCsrf();
                                 Entrar <i data-feather="log-in"></i>
                             </a>
                             <?php if ($canRegister): ?>
-                            <a title="Sign-up" href="/wasomupfy/register" class="btn btn-wasomupfy">Inscreva-se</a>
+                                <a title="Sign-up" href="/wasomupfy/register" class="btn btn-wasomupfy">Inscreva-se</a>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -446,14 +446,14 @@ $csrf_page = getSiteCsrf();
                                     <h6 class="fw-bold mb-2">Precisa de ajuda urgente?</h6>
                                     <p class="small text-muted mb-2">A nossa equipa responde em até 2h</p>
                                     <?php if ($whatsNum): ?>
-                                    <a href="https://wa.me/<?php echo $whatsNum; ?>" target="_blank"
-                                        rel="noopener noreferrer" class="btn btn-sm btn-wasomupfy w-100">
-                                        <i class="fa-brands fa-whatsapp me-2"></i> Chat Ao Vivo
-                                    </a>
+                                        <a href="https://wa.me/<?php echo $whatsNum; ?>" target="_blank"
+                                            rel="noopener noreferrer" class="btn btn-sm btn-wasomupfy w-100">
+                                            <i class="fa-brands fa-whatsapp me-2"></i> Chat Ao Vivo
+                                        </a>
                                     <?php else: ?>
-                                    <a href="../../contact" class="btn btn-sm btn-wasomupfy w-100">
-                                        <i class="fa-regular fa-message me-2"></i> Contacta-nos
-                                    </a>
+                                        <a href="../../contact" class="btn btn-sm btn-wasomupfy w-100">
+                                            <i class="fa-regular fa-message me-2"></i> Contacta-nos
+                                        </a>
                                     <?php endif; ?>
                                 </div>
                                 <div class="p-3 bg-wasomupfy bg-opacity-10 rounded-3 mt-2">
@@ -1342,12 +1342,12 @@ $csrf_page = getSiteCsrf();
                                         <p class="small text-muted mb-3">Resposta em até 2h</p>
                                         <span class="badge bg-success text-white mb-3">Online agora</span>
                                         <?php if ($whatsNum): ?>
-                                        <a href="https://wa.me/<?php echo $whatsNum; ?>" target="_blank"
-                                            rel="noopener noreferrer"
-                                            class="btn btn-sm btn-outline-wasomupfy w-100">Iniciar Chat</a>
+                                            <a href="https://wa.me/<?php echo $whatsNum; ?>" target="_blank"
+                                                rel="noopener noreferrer"
+                                                class="btn btn-sm btn-outline-wasomupfy w-100">Iniciar Chat</a>
                                         <?php else: ?>
-                                        <a href="../../contact" class="btn btn-sm btn-outline-wasomupfy w-100">Iniciar
-                                            Chat</a>
+                                            <a href="../../contact" class="btn btn-sm btn-outline-wasomupfy w-100">Iniciar
+                                                Chat</a>
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -1359,8 +1359,8 @@ $csrf_page = getSiteCsrf();
                                         <h5 class="fw-bold">Email</h5>
                                         <p class="small text-muted mb-3">Resposta em até 24h</p>
                                         <?php if (cfg('support_email')): ?>
-                                        <a href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
-                                            class="small text-wasomupfy d-block mb-2"><?php echo htmlspecialchars(cfg('support_email')); ?></a>
+                                            <a href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
+                                                class="small text-wasomupfy d-block mb-2"><?php echo htmlspecialchars(cfg('support_email')); ?></a>
                                         <?php endif; ?>
                                         <a href="../../contact"
                                             class="btn btn-sm btn-outline-wasomupfy w-100 mt-1">Enviar Email</a>
@@ -1374,10 +1374,10 @@ $csrf_page = getSiteCsrf();
                                         <h5 class="fw-bold">WhatsApp</h5>
                                         <p class="small text-muted mb-3">Suporte rápido</p>
                                         <?php if ($whatsNum): ?>
-                                        <a href="https://wa.me/<?php echo $whatsNum; ?>" target="_blank"
-                                            rel="noopener noreferrer" class="btn btn-sm btn-success w-100">
-                                            <i class="fa-brands fa-whatsapp me-2"></i>+<?php echo $whatsNum; ?>
-                                        </a>
+                                            <a href="https://wa.me/<?php echo $whatsNum; ?>" target="_blank"
+                                                rel="noopener noreferrer" class="btn btn-sm btn-success w-100">
+                                                <i class="fa-brands fa-whatsapp me-2"></i>+<?php echo $whatsNum; ?>
+                                            </a>
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -1441,34 +1441,34 @@ $csrf_page = getSiteCsrf();
                             digital, marketing e gestão de carreira num só lugar.</p>
                         <div class="d-flex gap-3" role="list" aria-label="Redes sociais">
                             <?php if (cfg('instagram_url')): ?>
-                            <a href="<?php echo htmlspecialchars(cfg('instagram_url')); ?>" target="_blank"
-                                rel="external noopener noreferrer" aria-label="Instagram"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem"><i
-                                    class="fa-brands fa-instagram"></i></a>
+                                <a href="<?php echo htmlspecialchars(cfg('instagram_url')); ?>" target="_blank"
+                                    rel="external noopener noreferrer" aria-label="Instagram"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem"><i
+                                        class="fa-brands fa-instagram"></i></a>
                             <?php endif; ?>
                             <?php if (cfg('facebook_url')): ?>
-                            <a href="<?php echo htmlspecialchars(cfg('facebook_url')); ?>" target="_blank"
-                                rel="external noopener noreferrer" aria-label="Facebook"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem"><i
-                                    class="fa-brands fa-facebook-f"></i></a>
+                                <a href="<?php echo htmlspecialchars(cfg('facebook_url')); ?>" target="_blank"
+                                    rel="external noopener noreferrer" aria-label="Facebook"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem"><i
+                                        class="fa-brands fa-facebook-f"></i></a>
                             <?php endif; ?>
                             <?php if (cfg('youtube_url')): ?>
-                            <a href="<?php echo htmlspecialchars(cfg('youtube_url')); ?>" target="_blank"
-                                rel="external noopener noreferrer" aria-label="YouTube"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem"><i
-                                    class="fa-brands fa-youtube"></i></a>
+                                <a href="<?php echo htmlspecialchars(cfg('youtube_url')); ?>" target="_blank"
+                                    rel="external noopener noreferrer" aria-label="YouTube"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem"><i
+                                        class="fa-brands fa-youtube"></i></a>
                             <?php endif; ?>
                             <?php if (cfg('linkedin_url')): ?>
-                            <a href="<?php echo htmlspecialchars(cfg('linkedin_url')); ?>" target="_blank"
-                                rel="external noopener noreferrer" aria-label="LinkedIn"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem"><i
-                                    class="fa-brands fa-linkedin-in"></i></a>
+                                <a href="<?php echo htmlspecialchars(cfg('linkedin_url')); ?>" target="_blank"
+                                    rel="external noopener noreferrer" aria-label="LinkedIn"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem"><i
+                                        class="fa-brands fa-linkedin-in"></i></a>
                             <?php endif; ?>
                             <?php if ($whatsNum): ?>
-                            <a href="https://wa.me/<?php echo $whatsNum; ?>" target="_blank"
-                                rel="external noopener noreferrer" aria-label="WhatsApp"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem"><i
-                                    class="fa-brands fa-whatsapp"></i></a>
+                                <a href="https://wa.me/<?php echo $whatsNum; ?>" target="_blank"
+                                    rel="external noopener noreferrer" aria-label="WhatsApp"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem"><i
+                                        class="fa-brands fa-whatsapp"></i></a>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -1496,8 +1496,8 @@ $csrf_page = getSiteCsrf();
                             <li class="mb-2"><a href="../../contact"
                                     class="text-reset text-decoration-none hover-white">Contacta-nos</a></li>
                             <?php if ($whatsNum): ?>
-                            <li class="mb-2"><a href="https://wa.me/<?php echo $whatsNum; ?>"
-                                    class="text-reset text-decoration-none hover-white">WhatsApp</a></li>
+                                <li class="mb-2"><a href="https://wa.me/<?php echo $whatsNum; ?>"
+                                        class="text-reset text-decoration-none hover-white">WhatsApp</a></li>
                             <?php endif; ?>
                         </ul>
                     </div>
@@ -1509,15 +1509,15 @@ $csrf_page = getSiteCsrf();
                                     <?php echo htmlspecialchars(cfg('company_city', 'Luanda')); ?></span>
                             </li>
                             <?php if (cfg('info_email')): ?>
-                            <li class="mb-3 d-flex"><a href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
-                                    class="text-reset text-decoration-none"><?php echo htmlspecialchars(cfg('info_email')); ?></a>
-                            </li>
+                                <li class="mb-3 d-flex"><a href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
+                                        class="text-reset text-decoration-none"><?php echo htmlspecialchars(cfg('info_email')); ?></a>
+                                </li>
                             <?php endif; ?>
                             <?php if (cfg('support_email')): ?>
-                            <li class="mb-3 d-flex"><a
-                                    href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
-                                    class="text-reset text-decoration-none"><?php echo htmlspecialchars(cfg('support_email')); ?></a>
-                            </li>
+                                <li class="mb-3 d-flex"><a
+                                        href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
+                                        class="text-reset text-decoration-none"><?php echo htmlspecialchars(cfg('support_email')); ?></a>
+                                </li>
                             <?php endif; ?>
                             <li class="d-flex"><span>Seg — Sex: 08h às 17h</span></li>
                         </ul>
@@ -1633,10 +1633,10 @@ $csrf_page = getSiteCsrf();
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/headhesive@1.2.4/dist/headhesive.min.js"></script>
-    <script src="../../js/theme.min.js"></script>
-    <script src="../../js/vendors/color-modes.js"></script>
-    <script src="../../js/libs/scrollcue/scrollCue.min.js"></script>
-    <script src="../../js/vendors/scrollcue.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/theme.min.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/vendors/color-modes.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/libs/scrollcue/scrollCue.min.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/vendors/scrollcue.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.29.0/dist/feather.min.js"></script>
     <script src="https://unpkg.com/in-view@0.6.1/dist/in-view.min.js"></script>
@@ -1645,93 +1645,93 @@ $csrf_page = getSiteCsrf();
     <script src="https://cdn.jsdelivr.net/npm/jarallax@2.2.0/dist/jarallax.min.js"></script>
     <!-- help.js substitui tutorial.js nesta página -->
     <script src="js/help.js"></script>
-    <script src="../../js/cookies.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/cookies.js"></script>
 
     <script>
-    feather.replace({
-        width: "1em",
-        height: "1em"
-    });
+        feather.replace({
+            width: "1em",
+            height: "1em"
+        });
     </script>
 
     <!-- GTM -->
     <script>
-    !(function(e, t, a, n, g) {
-        (e[n] = e[n] || []), e[n].push({
-            "gtm.start": new Date().getTime(),
-            event: "gtm.js"
-        });
-        var m = t.getElementsByTagName(a)[0],
-            r = t.createElement(a);
-        (r.async = !0), (r.src = "https://www.googletagmanager.com/gtm.js?id=GTM-MF4DZVH"), m.parentNode
-            .insertBefore(r, m);
-    })(window, document, "script", "dataLayer");
+        !(function(e, t, a, n, g) {
+            (e[n] = e[n] || []), e[n].push({
+                "gtm.start": new Date().getTime(),
+                event: "gtm.js"
+            });
+            var m = t.getElementsByTagName(a)[0],
+                r = t.createElement(a);
+            (r.async = !0), (r.src = "https://www.googletagmanager.com/gtm.js?id=GTM-MF4DZVH"), m.parentNode
+                .insertBefore(r, m);
+        })(window, document, "script", "dataLayer");
     </script>
 
     <!-- Modal Feedback AJAX -->
     <script>
-    (function() {
-        function syncAllCsrf(token) {
-            if (!token) return;
-            document.querySelectorAll('[name="csrf_token"]').forEach(function(el) {
-                el.value = token;
-            });
-        }
-        var fModal = document.getElementById('formFeedback');
-        if (!fModal) return;
-        fModal.addEventListener('submit', function(e) {
-            e.preventDefault();
-            if (!fModal.checkValidity()) {
-                fModal.classList.add('was-validated');
-                return;
-            }
-            var btn = document.getElementById('btn-feedback-modal');
-            var msgBox = document.getElementById('feedback-modal-msg');
-            var base = document.body.dataset.basePath || '../..';
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>A enviar…';
-            fetch(base + '/ajax/feedback.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        csrf: fModal.querySelector('[name="csrf_token"]').value,
-                        name: fModal.querySelector('[name="name_fb"]').value.trim(),
-                        subject: fModal.querySelector('[name="subject_fb"]').value.trim(),
-                        message: fModal.querySelector('[name="message_fb"]').value.trim(),
-                        page: window.location.pathname
-                    })
-                })
-                .then(function(r) {
-                    return r.json();
-                })
-                .then(function(data) {
-                    msgBox.className = 'alert ' + (data.success ? 'alert-success' : 'alert-danger');
-                    msgBox.textContent = data.message || (data.success ? 'Obrigado pelo feedback!' :
-                        'Erro ao enviar.');
-                    msgBox.classList.remove('d-none');
-                    if (data.new_csrf) syncAllCsrf(data.new_csrf);
-                    if (data.success) {
-                        fModal.reset();
-                        setTimeout(function() {
-                            var m = bootstrap.Modal.getInstance(document.getElementById(
-                                'modalFeedback'));
-                            if (m) m.hide();
-                        }, 2500);
-                    }
-                })
-                .catch(function() {
-                    msgBox.className = 'alert alert-danger';
-                    msgBox.textContent = 'Erro de ligação. Tenta novamente.';
-                    msgBox.classList.remove('d-none');
-                })
-                .finally(function() {
-                    btn.disabled = false;
-                    btn.innerHTML = 'Enviar Feedback <i class="fa-solid fa-paper-plane ms-2"></i>';
+        (function() {
+            function syncAllCsrf(token) {
+                if (!token) return;
+                document.querySelectorAll('[name="csrf_token"]').forEach(function(el) {
+                    el.value = token;
                 });
-        });
-    })();
+            }
+            var fModal = document.getElementById('formFeedback');
+            if (!fModal) return;
+            fModal.addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (!fModal.checkValidity()) {
+                    fModal.classList.add('was-validated');
+                    return;
+                }
+                var btn = document.getElementById('btn-feedback-modal');
+                var msgBox = document.getElementById('feedback-modal-msg');
+                var base = document.body.dataset.basePath || '../..';
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>A enviar…';
+                fetch(base + '/ajax/feedback.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            csrf: fModal.querySelector('[name="csrf_token"]').value,
+                            name: fModal.querySelector('[name="name_fb"]').value.trim(),
+                            subject: fModal.querySelector('[name="subject_fb"]').value.trim(),
+                            message: fModal.querySelector('[name="message_fb"]').value.trim(),
+                            page: window.location.pathname
+                        })
+                    })
+                    .then(function(r) {
+                        return r.json();
+                    })
+                    .then(function(data) {
+                        msgBox.className = 'alert ' + (data.success ? 'alert-success' : 'alert-danger');
+                        msgBox.textContent = data.message || (data.success ? 'Obrigado pelo feedback!' :
+                            'Erro ao enviar.');
+                        msgBox.classList.remove('d-none');
+                        if (data.new_csrf) syncAllCsrf(data.new_csrf);
+                        if (data.success) {
+                            fModal.reset();
+                            setTimeout(function() {
+                                var m = bootstrap.Modal.getInstance(document.getElementById(
+                                    'modalFeedback'));
+                                if (m) m.hide();
+                            }, 2500);
+                        }
+                    })
+                    .catch(function() {
+                        msgBox.className = 'alert alert-danger';
+                        msgBox.textContent = 'Erro de ligação. Tenta novamente.';
+                        msgBox.classList.remove('d-none');
+                    })
+                    .finally(function() {
+                        btn.disabled = false;
+                        btn.innerHTML = 'Enviar Feedback <i class="fa-solid fa-paper-plane ms-2"></i>';
+                    });
+            });
+        })();
     </script>
 
 </body>

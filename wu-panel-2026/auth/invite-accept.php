@@ -787,7 +787,7 @@ if ($inv_email) {
         <!-- Marca -->
         <div class="inv-brand">
             <div class="inv-brand-logo">WU</div>
-            <span class="inv-brand-name">Wasom Upfy</span>
+            <span class="inv-brand-name"><?php echo APP_NAME; ?></span>
         </div>
 
         <!-- Card -->

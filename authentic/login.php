@@ -35,7 +35,7 @@ if (isset($_GET['remaining']) && (int)$_GET['remaining'] > 0) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-ao">
 
 <head>
     <meta charset="utf-8" />

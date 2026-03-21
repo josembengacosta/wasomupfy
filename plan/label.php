@@ -10,7 +10,9 @@ trackVisitor('/plan/label', 'Plano Label — Wasom Upfy');
 
 $plans       = getPlans();
 $plansBySlug = [];
-foreach ($plans as $p) { $plansBySlug[$p['slug_plan']] = $p; }
+foreach ($plans as $p) {
+    $plansBySlug[$p['slug_plan']] = $p;
+}
 $plan        = $plansBySlug['label'] ?? null;
 $platform    = getPlatform();
 
@@ -19,13 +21,16 @@ $royalty     = (int)$platform['royalty_percentage'];
 $fee         = 100 - $royalty;
 $storesCount = (int)$platform['stores_count'];
 
-if (!$plan) { header('Location: all-plans'); exit; }
+if (!$plan) {
+    header('Location: all-plans');
+    exit;
+}
 
 $price  = number_format($plan['price_plan'], 0, ',', '.');
 $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/label';
 ?>
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-ao">
 
 <head>
     <meta charset="utf-8" />
@@ -58,82 +63,82 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/label';
     <title><?php echo htmlspecialchars(cfg('site_name', 'Wasom Upfy')); ?> | Plano Label</title>
     <!-- O processo de carregamento do site em Javascript fim -->
     <script>
-    window.addEventListener("load", function() {
-        setTimeout(function() {
-            document.querySelector("body").classList.add("loaded")
-        }, 200)
-    })
+        window.addEventListener("load", function() {
+            setTimeout(function() {
+                document.querySelector("body").classList.add("loaded")
+            }, 200)
+        })
     </script>
     <!-- O processo de carregamento do site em Javascript fim -->
     <link rel="shortcut icon" href="../assets/img/icones/wasomupfy_fiv1.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link rel="stylesheet" href="../css/theme.min.css" />
-    <link rel="stylesheet" href="../js/libs/scrollcue/scrollCue.css" />
-    <link rel="stylesheet" href="../css/framework.css">
-    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/theme.min.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/js/libs/scrollcue/scrollCue.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/framework.css">
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/main.css">
 
     <!-- Schema Markup -->
     <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "<?php echo cfg('site_name', 'Wasom Upfy'); ?>",
-        "url": "https://www.wasomupfy.com",
-        "logo": "https://www.wasomupfy.com/logo.png",
-        "sameAs": [
-            <?php
-            $sameAs = array_filter([
-                cfg('facebook_url'),
-                cfg('instagram_url'),
-                cfg('youtube_url'),
-                cfg('tiktok_url'),
-            ]);
-            echo '"' . implode('","', $sameAs) . '"';
-            ?>
-        ],
-        "contactPoint": {
-            "@type": "ContactPoint",
-            "email": "<?php echo cfg('support_email', 'suporte@wasomupfy.com'); ?>",
-            "contactType": "customer service",
-            "hoursAvailable": {
-                "@type": "OpeningHoursSpecification",
-                "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-                "opens": "08:00",
-                "closes": "17:00"
+        {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "<?php echo cfg('site_name', 'Wasom Upfy'); ?>",
+            "url": "https://www.wasomupfy.com",
+            "logo": "https://www.wasomupfy.com/logo.png",
+            "sameAs": [
+                <?php
+                $sameAs = array_filter([
+                    cfg('facebook_url'),
+                    cfg('instagram_url'),
+                    cfg('youtube_url'),
+                    cfg('tiktok_url'),
+                ]);
+                echo '"' . implode('","', $sameAs) . '"';
+                ?>
+            ],
+            "contactPoint": {
+                "@type": "ContactPoint",
+                "email": "<?php echo cfg('support_email', 'suporte@wasomupfy.com'); ?>",
+                "contactType": "customer service",
+                "hoursAvailable": {
+                    "@type": "OpeningHoursSpecification",
+                    "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+                    "opens": "08:00",
+                    "closes": "17:00"
+                }
             }
         }
-    }
     </script>
 
     <!-- Offer Schema por plano -->
     <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "ItemList",
-        "name": "Planos <?php echo cfg('site_name', 'Wasom Upfy'); ?>",
-        "itemListElement": [
-            <?php
-            $schemaItems = [];
-            foreach ($plans as $i => $p) {
-                $schemaItems[] = json_encode([
-                    "@type"    => "ListItem",
-                    "position" => $i + 1,
-                    "item"     => [
-                        "@type"       => "Offer",
-                        "name"        => $p['name_plan'],
-                        "description" => $p['description_plan'],
-                        "price"       => number_format($p['price_plan'], 2, '.', ''),
-                        "priceCurrency" => "AOA",
-                        "url"         => "https://wasomupfy.com/plan/label" . $p['slug_plan'],
-                    ]
-                ], JSON_UNESCAPED_UNICODE);
-            }
-            echo implode(",\n            ", $schemaItems);
-            ?>
-        ]
-    }
+        {
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            "name": "Planos <?php echo cfg('site_name', 'Wasom Upfy'); ?>",
+            "itemListElement": [
+                <?php
+                $schemaItems = [];
+                foreach ($plans as $i => $p) {
+                    $schemaItems[] = json_encode([
+                        "@type"    => "ListItem",
+                        "position" => $i + 1,
+                        "item"     => [
+                            "@type"       => "Offer",
+                            "name"        => $p['name_plan'],
+                            "description" => $p['description_plan'],
+                            "price"       => number_format($p['price_plan'], 2, '.', ''),
+                            "priceCurrency" => "AOA",
+                            "url"         => "https://wasomupfy.com/plan/label" . $p['slug_plan'],
+                        ]
+                    ], JSON_UNESCAPED_UNICODE);
+                }
+                echo implode(",\n            ", $schemaItems);
+                ?>
+            ]
+        }
     </script>
 </head>
 
@@ -181,26 +186,26 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/label';
                                 <div class="dropdown-menu dropdown-menu-md" aria-labelledby="navbarDropdown">
                                     <?php foreach ($plans as $p):
                                         $nSlug   = $p['slug_plan'];
-                                        $iconMap  = ['single'=>'fa-music','album'=>'fa-compact-disc','artist'=>'fa-microphone-lines','label'=>'fa-tags'];
+                                        $iconMap  = ['single' => 'fa-music', 'album' => 'fa-compact-disc', 'artist' => 'fa-microphone-lines', 'label' => 'fa-tags'];
                                         $nIcon   = $iconMap[$nSlug] ?? 'fa-music';
                                         $nPrc    = number_format($p['price_plan'], 0, ',', '.');
-                                        $nPer    = $p['type_plan']==='subscription' ? '/ano' : '';
+                                        $nPer    = $p['type_plan'] === 'subscription' ? '/ano' : '';
                                         $nActive = ($nSlug === 'label') ? ' active' : '';
                                     ?>
-                                    <a title="<?php echo htmlspecialchars($p['name_plan']); ?>"
-                                        class="dropdown-item mb-3 text-body<?php echo $nActive; ?>"
-                                        href="<?php echo $nSlug; ?>">
-                                        <div class="d-flex align-items-center">
-                                            <i class="fa-solid <?php echo $nIcon; ?> text-wasomupfy fs-3"
-                                                style="width: 35px;"></i>
-                                            <div class="ms-3 lh-1">
-                                                <h5 class="mb-1"><?php echo htmlspecialchars($p['name_plan']); ?></h5>
-                                                <p class="mb-0 fs-6">Nosso plano
-                                                    <?php echo htmlspecialchars($p['name_plan']); ?> —
-                                                    <?php echo $nPrc; ?> Kz<?php echo $nPer; ?></p>
+                                        <a title="<?php echo htmlspecialchars($p['name_plan']); ?>"
+                                            class="dropdown-item mb-3 text-body<?php echo $nActive; ?>"
+                                            href="<?php echo $nSlug; ?>">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fa-solid <?php echo $nIcon; ?> text-wasomupfy fs-3"
+                                                    style="width: 35px;"></i>
+                                                <div class="ms-3 lh-1">
+                                                    <h5 class="mb-1"><?php echo htmlspecialchars($p['name_plan']); ?></h5>
+                                                    <p class="mb-0 fs-6">Nosso plano
+                                                        <?php echo htmlspecialchars($p['name_plan']); ?> —
+                                                        <?php echo $nPrc; ?> Kz<?php echo $nPer; ?></p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </a>
+                                        </a>
                                     <?php endforeach; ?>
 
                                     <a title="Todos os planos" class="dropdown-item mb-3 text-body" href="all-plans">
@@ -590,11 +595,11 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/label';
                                         </div>
                                         <div class="col-md-4 text-md-end">
                                             <?php if ($canRegister): ?><a href="/wasomupfy/register?plan=label"
-                                                class="btn btn-wasomupfy btn-lg px-5">
-                                                Solicitar Demonstração <i class="bi bi-arrow-right ms-2"></i>
-                                            </a><?php else: ?><span
-                                                class="btn btn-secondary btn-lg px-5 disabled">Inscrições
-                                                Fechadas</span><?php endif; ?>
+                                                    class="btn btn-wasomupfy btn-lg px-5">
+                                                    Solicitar Demonstração <i class="bi bi-arrow-right ms-2"></i>
+                                                </a><?php else: ?><span
+                                                    class="btn btn-secondary btn-lg px-5 disabled">Inscrições
+                                                    Fechadas</span><?php endif; ?>
                                         </div>
                                     </div>
                                 </div>
@@ -834,17 +839,18 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/label';
                                 <h4 class="h5 mb-3">Plano Single</h4>
                                 <div class="price-display mb-3">
                                     <span
-                                        class="price-amount h3 fw-bold"><?php echo isset($plansBySlug['single']) ? number_format($plansBySlug['single']['price_plan'],0,',','.') : '—'; ?></span>
+                                        class="price-amount h3 fw-bold"><?php echo isset($plansBySlug['single']) ? number_format($plansBySlug['single']['price_plan'], 0, ',', '.') : '—'; ?></span>
                                     <span
-                                        class="price-period text-muted"><?php echo isset($plansBySlug['single']) ? ($plansBySlug['single']['type_plan']==='subscription' ? 'Kz/ano' : 'Kz/single') : ''; ?></span>
+                                        class="price-period text-muted"><?php echo isset($plansBySlug['single']) ? ($plansBySlug['single']['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/single') : ''; ?></span>
                                 </div>
                                 <ul class="list-unstyled mb-4">
                                     <?php if (isset($plansBySlug['single']['features'])): foreach (array_slice($plansBySlug['single']['features'], 0, 3) as $f): ?>
-                                    <li class="d-flex align-items-start mb-2">
-                                        <i class="bi bi-check-lg text-success mt-1 me-2"></i>
-                                        <span><?php echo htmlspecialchars($f['feature_text']); ?></span>
-                                    </li>
-                                    <?php endforeach; endif; ?>
+                                            <li class="d-flex align-items-start mb-2">
+                                                <i class="bi bi-check-lg text-success mt-1 me-2"></i>
+                                                <span><?php echo htmlspecialchars($f['feature_text']); ?></span>
+                                            </li>
+                                    <?php endforeach;
+                                    endif; ?>
                                 </ul>
                                 <a href="single" class="btn btn-outline-primary w-100">Ver Plano Single</a>
                             </div>
@@ -857,17 +863,18 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/label';
                                 <h4 class="h5 mb-3">Plano Álbum</h4>
                                 <div class="price-display mb-3">
                                     <span
-                                        class="price-amount h3 fw-bold"><?php echo isset($plansBySlug['album']) ? number_format($plansBySlug['album']['price_plan'],0,',','.') : '—'; ?></span>
+                                        class="price-amount h3 fw-bold"><?php echo isset($plansBySlug['album']) ? number_format($plansBySlug['album']['price_plan'], 0, ',', '.') : '—'; ?></span>
                                     <span
-                                        class="price-period text-muted"><?php echo isset($plansBySlug['album']) ? ($plansBySlug['album']['type_plan']==='subscription' ? 'Kz/ano' : 'Kz/album') : ''; ?></span>
+                                        class="price-period text-muted"><?php echo isset($plansBySlug['album']) ? ($plansBySlug['album']['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/album') : ''; ?></span>
                                 </div>
                                 <ul class="list-unstyled mb-4">
                                     <?php if (isset($plansBySlug['album']['features'])): foreach (array_slice($plansBySlug['album']['features'], 0, 3) as $f): ?>
-                                    <li class="d-flex align-items-start mb-2">
-                                        <i class="bi bi-check-lg text-success mt-1 me-2"></i>
-                                        <span><?php echo htmlspecialchars($f['feature_text']); ?></span>
-                                    </li>
-                                    <?php endforeach; endif; ?>
+                                            <li class="d-flex align-items-start mb-2">
+                                                <i class="bi bi-check-lg text-success mt-1 me-2"></i>
+                                                <span><?php echo htmlspecialchars($f['feature_text']); ?></span>
+                                            </li>
+                                    <?php endforeach;
+                                    endif; ?>
                                 </ul>
                                 <a href="album" class="btn btn-outline-primary w-100">Ver Plano Álbum</a>
                             </div>
@@ -883,17 +890,18 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/label';
                                 <h4 class="h5 mb-3">Plano Artista</h4>
                                 <div class="price-display mb-3">
                                     <span
-                                        class="price-amount h3 fw-bold"><?php echo isset($plansBySlug['artist']) ? number_format($plansBySlug['artist']['price_plan'],0,',','.') : '—'; ?></span>
+                                        class="price-amount h3 fw-bold"><?php echo isset($plansBySlug['artist']) ? number_format($plansBySlug['artist']['price_plan'], 0, ',', '.') : '—'; ?></span>
                                     <span
-                                        class="price-period text-muted"><?php echo isset($plansBySlug['artist']) ? ($plansBySlug['artist']['type_plan']==='subscription' ? 'Kz/ano' : 'Kz/artist') : ''; ?></span>
+                                        class="price-period text-muted"><?php echo isset($plansBySlug['artist']) ? ($plansBySlug['artist']['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/artist') : ''; ?></span>
                                 </div>
                                 <ul class="list-unstyled mb-4">
                                     <?php if (isset($plansBySlug['artist']['features'])): foreach (array_slice($plansBySlug['artist']['features'], 0, 3) as $f): ?>
-                                    <li class="d-flex align-items-start mb-2">
-                                        <i class="bi bi-check-lg text-success mt-1 me-2"></i>
-                                        <span><?php echo htmlspecialchars($f['feature_text']); ?></span>
-                                    </li>
-                                    <?php endforeach; endif; ?>
+                                            <li class="d-flex align-items-start mb-2">
+                                                <i class="bi bi-check-lg text-success mt-1 me-2"></i>
+                                                <span><?php echo htmlspecialchars($f['feature_text']); ?></span>
+                                            </li>
+                                    <?php endforeach;
+                                    endif; ?>
                                 </ul>
                                 <a href="artist" class="btn btn-wasomupfy w-100">Ver Plano Artista</a>
                             </div>
@@ -912,10 +920,10 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/label';
                         </p>
                         <div class="d-flex flex-wrap justify-content-center gap-3">
                             <?php if ($canRegister): ?><a href="/wasomupfy/register?plan=label"
-                                class="btn btn-wasomupfy btn-lg px-5 text-wasom fw-semibold">
-                                Solicitar Demonstração <i class="bi bi-arrow-right ms-2"></i>
-                            </a><?php else: ?><span class="btn btn-secondary btn-lg px-5 disabled">Inscrições
-                                Fechadas</span><?php endif; ?>
+                                    class="btn btn-wasomupfy btn-lg px-5 text-wasom fw-semibold">
+                                    Solicitar Demonstração <i class="bi bi-arrow-right ms-2"></i>
+                                </a><?php else: ?><span class="btn btn-secondary btn-lg px-5 disabled">Inscrições
+                                    Fechadas</span><?php endif; ?>
                             <a href="../contact" class="btn btn-outline-secondary btn-lg px-5">
                                 Falar com Vendas Empresariais
                             </a>
@@ -974,49 +982,49 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/label';
                         </p>
                         <div class="d-flex gap-3" role="list" aria-label="Redes sociais">
                             <?php if (cfg('instagram_url')): ?>
-                            <a href="<?php echo htmlspecialchars(cfg('instagram_url')); ?>" target="_blank"
-                                rel="external noopener noreferrer"
-                                aria-label="Instagram da Wasom Upfy (abre em nova janela)"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                <i class="fa-brands fa-instagram"></i>
-                                <span class="visually-hidden">Instagram</span>
-                            </a>
+                                <a href="<?php echo htmlspecialchars(cfg('instagram_url')); ?>" target="_blank"
+                                    rel="external noopener noreferrer"
+                                    aria-label="Instagram da Wasom Upfy (abre em nova janela)"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                    <i class="fa-brands fa-instagram"></i>
+                                    <span class="visually-hidden">Instagram</span>
+                                </a>
                             <?php endif; ?>
                             <?php if (cfg('facebook_url')): ?>
-                            <a href="<?php echo htmlspecialchars(cfg('facebook_url')); ?>" target="_blank"
-                                rel="external noopener noreferrer"
-                                aria-label="Facebook da Wasom Upfy (abre em nova janela)"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                <i class="fa-brands fa-facebook-f"></i>
-                                <span class="visually-hidden">Facebook</span>
-                            </a>
+                                <a href="<?php echo htmlspecialchars(cfg('facebook_url')); ?>" target="_blank"
+                                    rel="external noopener noreferrer"
+                                    aria-label="Facebook da Wasom Upfy (abre em nova janela)"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                    <i class="fa-brands fa-facebook-f"></i>
+                                    <span class="visually-hidden">Facebook</span>
+                                </a>
                             <?php endif; ?>
                             <?php if (cfg('youtube_url')): ?>
-                            <a href="<?php echo htmlspecialchars(cfg('youtube_url')); ?>" target="_blank"
-                                rel="external noopener noreferrer"
-                                aria-label="YouTube da Wasom Upfy (abre em nova janela)"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                <i class="fa-brands fa-youtube"></i>
-                                <span class="visually-hidden">YouTube</span>
-                            </a>
+                                <a href="<?php echo htmlspecialchars(cfg('youtube_url')); ?>" target="_blank"
+                                    rel="external noopener noreferrer"
+                                    aria-label="YouTube da Wasom Upfy (abre em nova janela)"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                    <i class="fa-brands fa-youtube"></i>
+                                    <span class="visually-hidden">YouTube</span>
+                                </a>
                             <?php endif; ?>
                             <?php if (cfg('linkedin_url')): ?>
-                            <a href="<?php echo htmlspecialchars(cfg('linkedin_url')); ?>" target="_blank"
-                                rel="external noopener noreferrer"
-                                aria-label="LinkedIn da Wasom Upfy (abre em nova janela)"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                <i class="fa-brands fa-linkedin-in"></i>
-                                <span class="visually-hidden">LinkedIn</span>
-                            </a>
+                                <a href="<?php echo htmlspecialchars(cfg('linkedin_url')); ?>" target="_blank"
+                                    rel="external noopener noreferrer"
+                                    aria-label="LinkedIn da Wasom Upfy (abre em nova janela)"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                    <i class="fa-brands fa-linkedin-in"></i>
+                                    <span class="visually-hidden">LinkedIn</span>
+                                </a>
                             <?php endif; ?>
                             <?php if (cfg('whatsapp_number')): ?>
-                            <a href="https://wa.me/<?php echo preg_replace('/[^0-9]/', '', cfg('whatsapp_number')); ?>"
-                                target="_blank" rel="external noopener noreferrer"
-                                aria-label="WhatsApp da Wasom Upfy (abre em nova janela)"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                <i class="fa-brands fa-whatsapp"></i>
-                                <span class="visually-hidden">WhatsApp</span>
-                            </a>
+                                <a href="https://wa.me/<?php echo preg_replace('/[^0-9]/', '', cfg('whatsapp_number')); ?>"
+                                    target="_blank" rel="external noopener noreferrer"
+                                    aria-label="WhatsApp da Wasom Upfy (abre em nova janela)"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                    <i class="fa-brands fa-whatsapp"></i>
+                                    <span class="visually-hidden">WhatsApp</span>
+                                </a>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -1081,19 +1089,19 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/label';
                             </li>
                             <li class="mb-3 d-flex">
                                 <?php if (cfg('support_email')): ?>
-                                <a href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
-                                    class="text-reset text-decoration-none">
-                                    <?php echo htmlspecialchars(cfg('support_email')); ?>
-                                </a>
+                                    <a href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
+                                        class="text-reset text-decoration-none">
+                                        <?php echo htmlspecialchars(cfg('support_email')); ?>
+                                    </a>
                                 <?php endif; ?>
                             </li>
                             <?php if (cfg('info_email')): ?>
-                            <li class="mb-3 d-flex">
-                                <a href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
-                                    class="text-reset text-decoration-none">
-                                    <?php echo htmlspecialchars(cfg('info_email')); ?>
-                                </a>
-                            </li>
+                                <li class="mb-3 d-flex">
+                                    <a href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
+                                        class="text-reset text-decoration-none">
+                                        <?php echo htmlspecialchars(cfg('info_email')); ?>
+                                    </a>
+                                </li>
                             <?php endif; ?>
                             <li class="d-flex">
                                 <span>Seg - Sex: 08h às 17h</span>
@@ -1281,11 +1289,11 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/label';
     <!-- Headhesive (Sticky header) -->
     <script src="https://cdn.jsdelivr.net/npm/headhesive@1.2.4/dist/headhesive.min.js"></script>
     <!-- Theme JS -->
-    <script src="../js/theme.min.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/theme.min.js"></script>
     <!-- Color modes -->
-    <script src="../js/vendors/color-modes.js"></script>
-    <script src="../js/libs/scrollcue/scrollCue.min.js"></script>
-    <script src="../js/vendors/scrollcue.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/vendors/color-modes.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/libs/scrollcue/scrollCue.min.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/vendors/scrollcue.js"></script>
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/svg-injector@1.1.3/dist/svg-injector.min.js"></script>
@@ -1300,205 +1308,205 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/label';
     <!-- Jarallax (Efeitos parallax) -->
     <script src="https://cdn.jsdelivr.net/npm/jarallax@2.2.0/dist/jarallax.min.js"></script>
     <script>
-    feather.replace({
-        width: "1em",
-        height: "1em"
-    })
+        feather.replace({
+            width: "1em",
+            height: "1em"
+        })
     </script>
     <script>
-    // Smooth scroll para âncoras
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            const href = this.getAttribute('href');
-            if (href === '#') return;
+        // Smooth scroll para âncoras
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href === '#') return;
 
-            e.preventDefault();
-            const targetElement = document.querySelector(href);
-            if (targetElement) {
-                window.scrollTo({
-                    top: targetElement.offsetTop - 80,
-                    behavior: 'smooth'
+                e.preventDefault();
+                const targetElement = document.querySelector(href);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Animation on scroll
+        const animateOnScroll = () => {
+            const elements = document.querySelectorAll('[data-cue]');
+            elements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+
+                if (elementTop < window.innerHeight - elementVisible) {
+                    element.classList.add('animated');
+                }
+            });
+        };
+
+        window.addEventListener('scroll', animateOnScroll);
+        animateOnScroll();
+
+        // Add plan parameter to register links
+        document.querySelectorAll('a[href*="register"]').forEach(link => {
+            if (!link.getAttribute('href').includes('plan=')) {
+                link.setAttribute('href', link.getAttribute('href') + '?plan=label');
+            }
+        });
+
+        // FAQ accordion
+        const faqItems = document.querySelectorAll('.accordion-button');
+        faqItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const target = document.querySelector(this.getAttribute('data-bs-target'));
+                const isExpanded = this.getAttribute('aria-expanded') === 'true';
+
+                if (!isExpanded) {
+                    target.classList.add('expanding');
+                    setTimeout(() => {
+                        target.classList.remove('expanding');
+                    }, 300);
+                }
+            });
+        });
+    </script>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ── Determina o path base do ajax (funciona em qualquer subpasta) ──
+            // ex: /plan/single → base = /plan/../ajax = /ajax
+            // Usa o atributo data-base-path no body, ou deriva do pathname
+            function getAjaxBase() {
+                var base = document.body.dataset.basePath;
+                if (base) return base.replace(/\/$/, '');
+                // heurística: se estamos em /plan/* → ../ajax, senão /ajax
+                var parts = window.location.pathname.split('/').filter(Boolean);
+                // Remove o ficheiro (último segmento com extensão)
+                if (parts.length && parts[parts.length - 1].indexOf('.') !== -1) parts.pop();
+                // Se temos /plan/pagina → dois níveis, então ../../ajax etc.
+                // Mais simples: usar path relativo hardcoded por profundidade
+                return '../ajax'; // funciona para /plan/*, /page/*
+            }
+
+            var AJAX_URL = getAjaxBase() + '/feedback.php';
+
+            var form = document.getElementById('formFeedback');
+            var alertEl = document.getElementById('feedbackAlert');
+            var successEl = document.getElementById('feedbackSuccess');
+            var submitBtn = document.getElementById('feedbackSubmitBtn');
+            var btnText = document.getElementById('feedbackBtnText');
+            var btnLoading = document.getElementById('feedbackBtnLoading');
+            var csrfInput = document.getElementById('feedbackCsrf');
+            var charCount = document.getElementById('feedbackCharCount');
+            var textarea = document.getElementById('feedbackMessage');
+            var modal = document.getElementById('modalFeedback');
+
+            if (!form) return; // modal não está na página
+
+            // ── Contador de caracteres ────────────────────────────────────────
+            if (textarea && charCount) {
+                textarea.addEventListener('input', function() {
+                    charCount.textContent = this.value.length;
+                    charCount.classList.toggle('text-danger', this.value.length > 1800);
                 });
             }
-        });
-    });
 
-    // Animation on scroll
-    const animateOnScroll = () => {
-        const elements = document.querySelectorAll('[data-cue]');
-        elements.forEach(element => {
-            const elementTop = element.getBoundingClientRect().top;
-            const elementVisible = 150;
-
-            if (elementTop < window.innerHeight - elementVisible) {
-                element.classList.add('animated');
-            }
-        });
-    };
-
-    window.addEventListener('scroll', animateOnScroll);
-    animateOnScroll();
-
-    // Add plan parameter to register links
-    document.querySelectorAll('a[href*="register"]').forEach(link => {
-        if (!link.getAttribute('href').includes('plan=')) {
-            link.setAttribute('href', link.getAttribute('href') + '?plan=label');
-        }
-    });
-
-    // FAQ accordion
-    const faqItems = document.querySelectorAll('.accordion-button');
-    faqItems.forEach(item => {
-        item.addEventListener('click', function() {
-            const target = document.querySelector(this.getAttribute('data-bs-target'));
-            const isExpanded = this.getAttribute('aria-expanded') === 'true';
-
-            if (!isExpanded) {
-                target.classList.add('expanding');
-                setTimeout(() => {
-                    target.classList.remove('expanding');
-                }, 300);
-            }
-        });
-    });
-    </script>
-
-    <script>
-    (function() {
-        'use strict';
-
-        // ── Determina o path base do ajax (funciona em qualquer subpasta) ──
-        // ex: /plan/single → base = /plan/../ajax = /ajax
-        // Usa o atributo data-base-path no body, ou deriva do pathname
-        function getAjaxBase() {
-            var base = document.body.dataset.basePath;
-            if (base) return base.replace(/\/$/, '');
-            // heurística: se estamos em /plan/* → ../ajax, senão /ajax
-            var parts = window.location.pathname.split('/').filter(Boolean);
-            // Remove o ficheiro (último segmento com extensão)
-            if (parts.length && parts[parts.length - 1].indexOf('.') !== -1) parts.pop();
-            // Se temos /plan/pagina → dois níveis, então ../../ajax etc.
-            // Mais simples: usar path relativo hardcoded por profundidade
-            return '../ajax'; // funciona para /plan/*, /page/*
-        }
-
-        var AJAX_URL = getAjaxBase() + '/feedback.php';
-
-        var form = document.getElementById('formFeedback');
-        var alertEl = document.getElementById('feedbackAlert');
-        var successEl = document.getElementById('feedbackSuccess');
-        var submitBtn = document.getElementById('feedbackSubmitBtn');
-        var btnText = document.getElementById('feedbackBtnText');
-        var btnLoading = document.getElementById('feedbackBtnLoading');
-        var csrfInput = document.getElementById('feedbackCsrf');
-        var charCount = document.getElementById('feedbackCharCount');
-        var textarea = document.getElementById('feedbackMessage');
-        var modal = document.getElementById('modalFeedback');
-
-        if (!form) return; // modal não está na página
-
-        // ── Contador de caracteres ────────────────────────────────────────
-        if (textarea && charCount) {
-            textarea.addEventListener('input', function() {
-                charCount.textContent = this.value.length;
-                charCount.classList.toggle('text-danger', this.value.length > 1800);
-            });
-        }
-
-        // ── Reset do modal ao fechar ──────────────────────────────────────
-        if (modal) {
-            modal.addEventListener('hidden.bs.modal', function() {
-                resetFeedbackModal();
-            });
-        }
-
-        function resetFeedbackModal() {
-            form.reset();
-            form.classList.remove('d-none');
-            if (alertEl) {
-                alertEl.className = 'alert d-none';
-                alertEl.textContent = '';
-            }
-            if (successEl) {
-                successEl.classList.add('d-none');
-            }
-            if (charCount) {
-                charCount.textContent = '0';
-                charCount.classList.remove('text-danger');
-            }
-            setLoading(false);
-        }
-
-        function setLoading(loading) {
-            submitBtn.disabled = loading;
-            btnText.classList.toggle('d-none', loading);
-            btnLoading.classList.toggle('d-none', !loading);
-        }
-
-        function showAlert(type, message) {
-            alertEl.className = 'alert alert-' + type + ' mb-3';
-            alertEl.textContent = message;
-        }
-
-        // ── Submit ────────────────────────────────────────────────────────
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            var name = document.getElementById('feedbackName').value.trim();
-            var subject = document.getElementById('feedbackSubject').value;
-            var message = textarea.value.trim();
-            var csrf = csrfInput.value;
-
-            // Validação mínima client-side
-            if (name.length < 2) {
-                showAlert('warning', 'Por favor, insere o teu nome.');
-                document.getElementById('feedbackName').focus();
-                return;
-            }
-            if (message.length < 10) {
-                showAlert('warning', 'A mensagem deve ter pelo menos 10 caracteres.');
-                textarea.focus();
-                return;
+            // ── Reset do modal ao fechar ──────────────────────────────────────
+            if (modal) {
+                modal.addEventListener('hidden.bs.modal', function() {
+                    resetFeedbackModal();
+                });
             }
 
-            setLoading(true);
-            if (alertEl) alertEl.className = 'alert d-none';
+            function resetFeedbackModal() {
+                form.reset();
+                form.classList.remove('d-none');
+                if (alertEl) {
+                    alertEl.className = 'alert d-none';
+                    alertEl.textContent = '';
+                }
+                if (successEl) {
+                    successEl.classList.add('d-none');
+                }
+                if (charCount) {
+                    charCount.textContent = '0';
+                    charCount.classList.remove('text-danger');
+                }
+                setLoading(false);
+            }
 
-            fetch(AJAX_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        csrf: csrf,
-                        name: name,
-                        subject: subject,
-                        message: message,
-                        page: window.location.pathname,
+            function setLoading(loading) {
+                submitBtn.disabled = loading;
+                btnText.classList.toggle('d-none', loading);
+                btnLoading.classList.toggle('d-none', !loading);
+            }
+
+            function showAlert(type, message) {
+                alertEl.className = 'alert alert-' + type + ' mb-3';
+                alertEl.textContent = message;
+            }
+
+            // ── Submit ────────────────────────────────────────────────────────
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                var name = document.getElementById('feedbackName').value.trim();
+                var subject = document.getElementById('feedbackSubject').value;
+                var message = textarea.value.trim();
+                var csrf = csrfInput.value;
+
+                // Validação mínima client-side
+                if (name.length < 2) {
+                    showAlert('warning', 'Por favor, insere o teu nome.');
+                    document.getElementById('feedbackName').focus();
+                    return;
+                }
+                if (message.length < 10) {
+                    showAlert('warning', 'A mensagem deve ter pelo menos 10 caracteres.');
+                    textarea.focus();
+                    return;
+                }
+
+                setLoading(true);
+                if (alertEl) alertEl.className = 'alert d-none';
+
+                fetch(AJAX_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            csrf: csrf,
+                            name: name,
+                            subject: subject,
+                            message: message,
+                            page: window.location.pathname,
+                        })
                     })
-                })
-                .then(function(res) {
-                    return res.json();
-                })
-                .then(function(data) {
-                    setLoading(false);
-                    if (data.success) {
-                        // Actualiza CSRF para próxima submissão
-                        if (data.new_csrf) csrfInput.value = data.new_csrf;
-                        // Esconde form, mostra sucesso
-                        form.classList.add('d-none');
-                        successEl.classList.remove('d-none');
-                    } else {
-                        showAlert('danger', data.message || 'Ocorreu um erro. Tenta novamente.');
-                    }
-                })
-                .catch(function() {
-                    setLoading(false);
-                    showAlert('danger', 'Erro de ligação. Verifica a tua internet e tenta novamente.');
-                });
-        });
+                    .then(function(res) {
+                        return res.json();
+                    })
+                    .then(function(data) {
+                        setLoading(false);
+                        if (data.success) {
+                            // Actualiza CSRF para próxima submissão
+                            if (data.new_csrf) csrfInput.value = data.new_csrf;
+                            // Esconde form, mostra sucesso
+                            form.classList.add('d-none');
+                            successEl.classList.remove('d-none');
+                        } else {
+                            showAlert('danger', data.message || 'Ocorreu um erro. Tenta novamente.');
+                        }
+                    })
+                    .catch(function() {
+                        setLoading(false);
+                        showAlert('danger', 'Erro de ligação. Verifica a tua internet e tenta novamente.');
+                    });
+            });
 
-    })();
+        })();
     </script>
 </body>
 

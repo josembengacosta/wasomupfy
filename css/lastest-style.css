@@ -568,7 +568,7 @@ select.form-select {
 }
 
 .dark-mode .form-label { color: var(--text-light); }
-.dark-mode .form-text  { color: var(--text-muted-dark); }
+.dark-mode .form-text  { color: var(--text-muted); }
 
 .dark-mode ::placeholder { color: var(--text-muted-dark) !important; opacity: 1; }
 

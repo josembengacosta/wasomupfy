@@ -115,18 +115,18 @@ if ($proof) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-ao">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex, nofollow" />
-    <title>Pagamento — <?php echo $plan_name; ?> — Wasom Upfy</title>
-    <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon" />
+    <title>Pagamento — <?php echo $plan_name; ?> — <?php echo APP_NAME; ?></title>
+    <link rel="shortcut icon" href="<?php echo APP_URL  ?>/assets/img/icones/wasomupfy_fiv.png" type="image/x-icon" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
-    <link rel="stylesheet" href="../../css/dashboard-style.css">
-    <link rel="stylesheet" href="../../css/lastest-style.css">
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/dashboard-style.css">
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/lastest-style.css">
     <style>
     :root {
         --pink: #FF0089;
@@ -682,8 +682,8 @@ if ($proof) {
         <span class="brand text-light" style="
               font-weight: bold;
               box-sizing: border-box;
-              text-transform: capitalize;
-              font-family: Arial, sans-serif;">WASOM UPFY</span>
+              text-transform: uppercase;
+              font-family: Arial, sans-serif;"><?php echo APP_NAME; ?></span>
         <a class="back-link cursor-pointer" style="cursor:pointer" onclick="window.history.back()"><i
                 class="bi bi-arrow-left me-1"></i>Voltar ao
             Painel</a>
@@ -1052,7 +1052,8 @@ if ($proof) {
                     </div>
                 </div>
 
-                <a href="/wasomupfy/dashboard/painel" class="btn-outline-pay d-block" style="text-align:center">
+                <a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/painel" class="btn-outline-pay d-block"
+                    style="text-align:center">
                     <i class="bi bi-house me-2"></i>Voltar ao Painel
                 </a>
 
@@ -1070,8 +1071,8 @@ if ($proof) {
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../../js/theme.wp.js"></script>
-    <script src="../../js/wp.tools.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/theme.wp.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
 
     <script>
     // ══════════════════════════════════════════════
@@ -1079,6 +1080,7 @@ if ($proof) {
     // ══════════════════════════════════════════════
     const EXPIRES_AT = <?php echo $expires_ts; ?> * 1000; // ms
     const TOTAL_SECS = 3600; // 60 min
+    const BASE_URL = '<?php echo rtrim(APP_URL, '/' . APP_URL_PANEL); ?>';
     const INTENT_ID = <?php echo $intent_id; ?>;
     const CSRF = '<?php echo $_SESSION['csrf_token']; ?>';
     let currentStep = <?php echo $initial_step; ?>;
@@ -1268,7 +1270,7 @@ if ($proof) {
                 if (data.ok) {
                     // Sempre aprovado automaticamente — vai directo para step 4 (estado aprovado)
                     // Recarrega a página para mostrar o estado correcto vindo da BD
-                    window.location.href = '/wasomupfy/dashboard/painel?plan=&approved=1#step4';
+                    window.location.href = BASE_URL + '/painel?plan=&approved=1#step4';
                 } else {
                     err.style.display = 'block';
                     err.textContent = data.message || 'Erro ao enviar. Tenta novamente.';

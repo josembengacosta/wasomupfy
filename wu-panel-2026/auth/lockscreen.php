@@ -559,7 +559,7 @@ $feedback = match ($msg_type) {
         <!-- Logo -->
         <div class="lock-brand fade-up delay-1">
             <img src="../assets/img/brand/wasomupfy_brand.png" alt="Wasom Upfy" />
-            <span class="lock-brand-name">Wasom Upfy</span>
+            <span class="lock-brand-name"><?php echo APP_NAME; ?></span>
         </div>
 
         <!-- Avatar + info -->

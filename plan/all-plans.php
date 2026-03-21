@@ -81,7 +81,7 @@ $royalty = (int)$platform['royalty_percentage'];
 $storesCount = (int)$platform['stores_count'];
 ?>
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-ao">
 
 <head>
     <meta charset="utf-8" />
@@ -127,10 +127,10 @@ $storesCount = (int)$platform['stores_count'];
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link rel="stylesheet" href="../css/theme.min.css" />
-    <link rel="stylesheet" href="../js/libs/scrollcue/scrollCue.css" />
-    <link rel="stylesheet" href="../css/framework.css">
-    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/theme.min.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/js/libs/scrollcue/scrollCue.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/framework.css">
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/main.css">
 
     <!-- Schema Markup -->
     <script type="application/ld+json">
@@ -1014,10 +1014,10 @@ $storesCount = (int)$platform['stores_count'];
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/headhesive@1.2.4/dist/headhesive.min.js"></script>
-    <script src="../js/theme.min.js"></script>
-    <script src="../js/vendors/color-modes.js"></script>
-    <script src="../js/libs/scrollcue/scrollCue.min.js"></script>
-    <script src="../js/vendors/scrollcue.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/theme.min.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/vendors/color-modes.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/libs/scrollcue/scrollCue.min.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/vendors/scrollcue.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/svg-injector@1.1.3/dist/svg-injector.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.29.0/dist/feather.min.js"></script>

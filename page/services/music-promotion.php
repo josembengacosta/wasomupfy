@@ -30,10 +30,10 @@ $csrf        = getSiteCsrf();
 
     <!-- SEO dinâmico -->
     <?php
-  $seoTitle = 'Promoção de Música — ' . $siteName;
-  $seoDesc  = 'Não basta lançar — é preciso ser ouvido. Campanhas de tráfego pago, pitching para playlists editoriais e estratégias de lançamento personalizadas para artistas e labels independentes.';
-  $seoImg   = $siteUrl . '/assets/img/og_wasomupfy.jpeg';
-  ?>
+    $seoTitle = 'Promoção de Música — ' . $siteName;
+    $seoDesc  = 'Não basta lançar — é preciso ser ouvido. Campanhas de tráfego pago, pitching para playlists editoriais e estratégias de lançamento personalizadas para artistas e labels independentes.';
+    $seoImg   = $siteUrl . '/assets/img/og_wasomupfy.jpeg';
+    ?>
     <title><?php echo htmlspecialchars($seoTitle); ?></title>
     <meta name="description" content="<?php echo htmlspecialchars($seoDesc); ?>" />
     <meta name="keywords"
@@ -60,131 +60,131 @@ $csrf        = getSiteCsrf();
 
     <!-- Preloader -->
     <script>
-    window.addEventListener('load', function() {
-        setTimeout(function() {
-            document.querySelector('body').classList.add('loaded');
-        }, 200);
-    });
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.querySelector('body').classList.add('loaded');
+            }, 200);
+        });
     </script>
 
     <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv1.png" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link rel="stylesheet" href="../../css/theme.min.css" />
-    <link rel="stylesheet" href="../../js/libs/scrollcue/scrollCue.css" />
-    <link rel="stylesheet" href="../../css/framework.css" />
-    <link rel="stylesheet" href="../../css/main.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/theme.min.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/js/libs/scrollcue/scrollCue.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/framework.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/main.css" />
 
     <style>
-    /* ── Contador de estatísticas ───────────────────────────── */
-    .stat-ring {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        background: conic-gradient(var(--bs-pink, #FF009D) var(--pct, 75%), rgba(255, 255, 255, .08) 0);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-    }
-
-    .stat-ring::before {
-        content: '';
-        position: absolute;
-        inset: 8px;
-        background: var(--bs-body-bg);
-        border-radius: 50%;
-    }
-
-    .stat-ring span {
-        position: relative;
-        z-index: 1;
-    }
-
-    /* ── Ferramentas cards ─────────────────────────────────── */
-    .tool-card {
-        transition: transform .25s ease, box-shadow .25s ease;
-        cursor: default;
-    }
-
-    .tool-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 1rem 2.5rem rgba(255, 0, 141, .18) !important;
-    }
-
-    .tool-icon {
-        width: 68px;
-        height: 68px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.6rem;
-        background: rgba(255, 0, 141, .10);
-        color: #FF009D;
-        transition: background .25s;
-    }
-
-    .tool-card:hover .tool-icon {
-        background: rgba(255, 0, 141, .22);
-    }
-
-    /* ── Pacotes ───────────────────────────────────────────── */
-    .package-card {
-        transition: transform .25s ease, box-shadow .25s ease;
-    }
-
-    .package-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, .20) !important;
-    }
-
-    .package-card.featured {
-        border: 2px solid #FF009D !important;
-    }
-
-    /* ── Processo steps ────────────────────────────────────── */
-    .step-line {
-        position: absolute;
-        top: 50px;
-        left: calc(50% + 55px);
-        width: calc(100% - 110px);
-        height: 2px;
-        background: linear-gradient(90deg, #FF009D 0%, rgba(255, 0, 141, .15) 100%);
-    }
-
-    @media (max-width: 767px) {
-        .step-line {
-            display: none;
+        /* ── Contador de estatísticas ───────────────────────────── */
+        .stat-ring {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: conic-gradient(var(--bs-pink, #FF009D) var(--pct, 75%), rgba(255, 255, 255, .08) 0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
         }
-    }
 
-    /* ── FAQ Accordion ─────────────────────────────────────── */
-    .faq-accordion .accordion-button:not(.collapsed) {
-        color: #FF009D;
-        background: rgba(255, 0, 141, .06);
-        box-shadow: none;
-    }
+        .stat-ring::before {
+            content: '';
+            position: absolute;
+            inset: 8px;
+            background: var(--bs-body-bg);
+            border-radius: 50%;
+        }
 
-    .faq-accordion .accordion-button::after {
-        filter: none;
-    }
+        .stat-ring span {
+            position: relative;
+            z-index: 1;
+        }
 
-    /* ── CTA final ─────────────────────────────────────────── */
-    .cta-section {
-        background: linear-gradient(135deg, #FF009D 0%, #c2006e 100%);
-        position: relative;
-        overflow: hidden;
-    }
+        /* ── Ferramentas cards ─────────────────────────────────── */
+        .tool-card {
+            transition: transform .25s ease, box-shadow .25s ease;
+            cursor: default;
+        }
 
-    .cta-section::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: url('../../assets/img/theme/pattern.png') center/cover;
-        opacity: .07;
-    }
+        .tool-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 1rem 2.5rem rgba(255, 0, 141, .18) !important;
+        }
+
+        .tool-icon {
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            background: rgba(255, 0, 141, .10);
+            color: #FF009D;
+            transition: background .25s;
+        }
+
+        .tool-card:hover .tool-icon {
+            background: rgba(255, 0, 141, .22);
+        }
+
+        /* ── Pacotes ───────────────────────────────────────────── */
+        .package-card {
+            transition: transform .25s ease, box-shadow .25s ease;
+        }
+
+        .package-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, .20) !important;
+        }
+
+        .package-card.featured {
+            border: 2px solid #FF009D !important;
+        }
+
+        /* ── Processo steps ────────────────────────────────────── */
+        .step-line {
+            position: absolute;
+            top: 50px;
+            left: calc(50% + 55px);
+            width: calc(100% - 110px);
+            height: 2px;
+            background: linear-gradient(90deg, #FF009D 0%, rgba(255, 0, 141, .15) 100%);
+        }
+
+        @media (max-width: 767px) {
+            .step-line {
+                display: none;
+            }
+        }
+
+        /* ── FAQ Accordion ─────────────────────────────────────── */
+        .faq-accordion .accordion-button:not(.collapsed) {
+            color: #FF009D;
+            background: rgba(255, 0, 141, .06);
+            box-shadow: none;
+        }
+
+        .faq-accordion .accordion-button::after {
+            filter: none;
+        }
+
+        /* ── CTA final ─────────────────────────────────────────── */
+        .cta-section {
+            background: linear-gradient(135deg, #FF009D 0%, #c2006e 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url('../../assets/img/theme/pattern.png') center/cover;
+            opacity: .07;
+        }
     </style>
 </head>
 
@@ -236,27 +236,27 @@ $csrf        = getSiteCsrf();
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-md" aria-labelledby="navbarDropdown">
                                     <?php
-                  $navIcons = ['single' => 'fa-music', 'album' => 'fa-compact-disc', 'artist' => 'fa-microphone-lines', 'label' => 'fa-tags'];
-                  foreach ($plans as $p):
-                    $nSlug = $p['slug_plan'];
-                    $nIcon = $navIcons[$nSlug] ?? 'fa-music';
-                    $nPrc  = number_format($p['price_plan'], 0, ',', '.');
-                    $nPer  = $p['type_plan'] === 'subscription' ? '/ano' : '';
-                  ?>
-                                    <a title="<?php echo htmlspecialchars($p['name_plan']); ?>"
-                                        class="dropdown-item mb-3 text-body" href="../../plan/<?php echo $nSlug; ?>">
-                                        <div class="d-flex align-items-center">
-                                            <i class="fa-solid <?php echo $nIcon; ?> text-wasomupfy fs-3"
-                                                style="width:35px"></i>
-                                            <div class="ms-3 lh-1">
-                                                <h5 class="mb-1"><?php echo htmlspecialchars($p['name_plan']); ?></h5>
-                                                <p class="mb-0 fs-6">
-                                                    Nosso plano <?php echo htmlspecialchars($p['name_plan']); ?>
-                                                    — <?php echo $nPrc; ?> Kz<?php echo $nPer; ?>
-                                                </p>
+                                    $navIcons = ['single' => 'fa-music', 'album' => 'fa-compact-disc', 'artist' => 'fa-microphone-lines', 'label' => 'fa-tags'];
+                                    foreach ($plans as $p):
+                                        $nSlug = $p['slug_plan'];
+                                        $nIcon = $navIcons[$nSlug] ?? 'fa-music';
+                                        $nPrc  = number_format($p['price_plan'], 0, ',', '.');
+                                        $nPer  = $p['type_plan'] === 'subscription' ? '/ano' : '';
+                                    ?>
+                                        <a title="<?php echo htmlspecialchars($p['name_plan']); ?>"
+                                            class="dropdown-item mb-3 text-body" href="../../plan/<?php echo $nSlug; ?>">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fa-solid <?php echo $nIcon; ?> text-wasomupfy fs-3"
+                                                    style="width:35px"></i>
+                                                <div class="ms-3 lh-1">
+                                                    <h5 class="mb-1"><?php echo htmlspecialchars($p['name_plan']); ?></h5>
+                                                    <p class="mb-0 fs-6">
+                                                        Nosso plano <?php echo htmlspecialchars($p['name_plan']); ?>
+                                                        — <?php echo $nPrc; ?> Kz<?php echo $nPer; ?>
+                                                    </p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </a>
+                                        </a>
                                     <?php endforeach; ?>
                                     <a title="Todos os planos" class="dropdown-item mb-3 text-body"
                                         href="../../plan/all-plans">
@@ -359,14 +359,14 @@ $csrf        = getSiteCsrf();
                                     <li><a title="Caixa de mensagem" class="dropdown-item" href="../../contact">Caixa de
                                             mensagem</a></li>
                                     <?php if (cfg('support_email')): ?>
-                                    <li><a title="E-mail" class="dropdown-item"
-                                            href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>">
-                                            <?php echo htmlspecialchars(cfg('support_email')); ?></a></li>
+                                        <li><a title="E-mail" class="dropdown-item"
+                                                href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>">
+                                                <?php echo htmlspecialchars(cfg('support_email')); ?></a></li>
                                     <?php endif; ?>
                                     <?php if ($whatsNum): ?>
-                                    <li><a title="WhatsApp" class="dropdown-item"
-                                            href="https://api.whatsapp.com/send/?phone=<?php echo $whatsNum; ?>&text&type=phone_number&app_absent=0">
-                                            WhatsApp</a></li>
+                                        <li><a title="WhatsApp" class="dropdown-item"
+                                                href="https://api.whatsapp.com/send/?phone=<?php echo $whatsNum; ?>&text&type=phone_number&app_absent=0">
+                                                WhatsApp</a></li>
                                     <?php endif; ?>
                                 </ul>
                             </li>
@@ -377,9 +377,9 @@ $csrf        = getSiteCsrf();
                                 Entrar <i data-feather="log-in"></i>
                             </a>
                             <?php if ($canRegister): ?>
-                            <a title="Sign-up" href="/wasomupfy/register" class="btn btn-wasomupfy">Inscreva-se</a>
+                                <a title="Sign-up" href="/wasomupfy/register" class="btn btn-wasomupfy">Inscreva-se</a>
                             <?php else: ?>
-                            <span class="btn btn-secondary disabled">Inscrições fechadas</span>
+                                <span class="btn btn-secondary disabled">Inscrições fechadas</span>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -440,19 +440,19 @@ $csrf        = getSiteCsrf();
             <div class="container">
                 <div class="row g-4 text-white text-center justify-content-center">
                     <?php
-          $stats = [
-            ['val' => '60K',  'lbl' => 'Músicas lançadas por dia',   'sub' => 'em todo o mundo'],
-            ['val' => '+450%', 'lbl' => 'Crescimento médio de alcance', 'sub' => 'nas nossas campanhas'],
-            ['val' => '100+', 'lbl' => 'Lojas e plataformas',        'sub' => 'onde chegamos'],
-            ['val' => '90%',  'lbl' => 'Royalties para o artista',   'sub' => $siteName],
-          ];
-          foreach ($stats as $s):
-          ?>
-                    <div class="col-6 col-md-3" data-cue="fadeIn">
-                        <div class="fw-bold fs-1 mb-1"><?php echo $s['val']; ?></div>
-                        <div class="fw-semibold"><?php echo $s['lbl']; ?></div>
-                        <div class="small opacity-75"><?php echo $s['sub']; ?></div>
-                    </div>
+                    $stats = [
+                        ['val' => '60K',  'lbl' => 'Músicas lançadas por dia',   'sub' => 'em todo o mundo'],
+                        ['val' => '+450%', 'lbl' => 'Crescimento médio de alcance', 'sub' => 'nas nossas campanhas'],
+                        ['val' => '100+', 'lbl' => 'Lojas e plataformas',        'sub' => 'onde chegamos'],
+                        ['val' => '90%',  'lbl' => 'Royalties para o artista',   'sub' => $siteName],
+                    ];
+                    foreach ($stats as $s):
+                    ?>
+                        <div class="col-6 col-md-3" data-cue="fadeIn">
+                            <div class="fw-bold fs-1 mb-1"><?php echo $s['val']; ?></div>
+                            <div class="fw-semibold"><?php echo $s['lbl']; ?></div>
+                            <div class="small opacity-75"><?php echo $s['sub']; ?></div>
+                        </div>
                     <?php endforeach; ?>
                 </div>
             </div>
@@ -545,28 +545,28 @@ $csrf        = getSiteCsrf();
 
                 <div class="row g-4">
                     <?php
-          $tools = [
-            ['icon' => 'fa-brands fa-spotify',   'title' => 'Pitching Spotify',   'desc' => 'Submissão estratégica para playlists algorítmicas, editoriais e de curadores independentes.',          'delay' => ''],
-            ['icon' => 'fa-brands fa-youtube',   'title' => 'YouTube Ads',         'desc' => 'Campanhas TrueView para maximizar visualizações do teu clipe e crescimento de canal.',                  'delay' => '100'],
-            ['icon' => 'fa-brands fa-instagram', 'title' => 'Meta Ads',            'desc' => 'Anúncios segmentados no Instagram e Facebook Stories, Reels e Feed para o teu público-alvo.',          'delay' => '200'],
-            ['icon' => 'fa-brands fa-tiktok',    'title' => 'TikTok Strategy',     'desc' => 'Criação de trends, desafios virais e estratégias de crescimento orgânico na plataforma.',              'delay' => '300'],
-            ['icon' => 'fa-solid fa-pen-nib',    'title' => 'Press Kit (EPK)',      'desc' => 'Criação de biografia artística, one-sheet e material profissional para imprensa e eventos.',           'delay' => ''],
-            ['icon' => 'fa-solid fa-chart-line', 'title' => 'Analytics & Relatório', 'desc' => 'Relatórios detalhados de performance com dados de streams, alcance e retorno sobre investimento.',     'delay' => '100'],
-            ['icon' => 'fa-solid fa-newspaper',  'title' => 'Pitching Editorial',  'desc' => 'Envio da tua música para blogs especializados, webrádios e portais de música africana.',               'delay' => '200'],
-            ['icon' => 'fa-solid fa-envelope',   'title' => 'Email Marketing',     'desc' => 'Campanhas de email para a tua base de fãs com newsletter profissional e automações.',                  'delay' => '300'],
-          ];
-          foreach ($tools as $t):
-          ?>
-                    <div class="col-lg-3 col-md-6" data-cue="zoomIn"
-                        <?php if ($t['delay']) echo 'data-delay="' . $t['delay'] . '"'; ?>>
-                        <div class="card tool-card h-100 border-0 shadow-sm p-4">
-                            <div class="tool-icon mb-3">
-                                <i class="<?php echo $t['icon']; ?>"></i>
+                    $tools = [
+                        ['icon' => 'fa-brands fa-spotify',   'title' => 'Pitching Spotify',   'desc' => 'Submissão estratégica para playlists algorítmicas, editoriais e de curadores independentes.',          'delay' => ''],
+                        ['icon' => 'fa-brands fa-youtube',   'title' => 'YouTube Ads',         'desc' => 'Campanhas TrueView para maximizar visualizações do teu clipe e crescimento de canal.',                  'delay' => '100'],
+                        ['icon' => 'fa-brands fa-instagram', 'title' => 'Meta Ads',            'desc' => 'Anúncios segmentados no Instagram e Facebook Stories, Reels e Feed para o teu público-alvo.',          'delay' => '200'],
+                        ['icon' => 'fa-brands fa-tiktok',    'title' => 'TikTok Strategy',     'desc' => 'Criação de trends, desafios virais e estratégias de crescimento orgânico na plataforma.',              'delay' => '300'],
+                        ['icon' => 'fa-solid fa-pen-nib',    'title' => 'Press Kit (EPK)',      'desc' => 'Criação de biografia artística, one-sheet e material profissional para imprensa e eventos.',           'delay' => ''],
+                        ['icon' => 'fa-solid fa-chart-line', 'title' => 'Analytics & Relatório', 'desc' => 'Relatórios detalhados de performance com dados de streams, alcance e retorno sobre investimento.',     'delay' => '100'],
+                        ['icon' => 'fa-solid fa-newspaper',  'title' => 'Pitching Editorial',  'desc' => 'Envio da tua música para blogs especializados, webrádios e portais de música africana.',               'delay' => '200'],
+                        ['icon' => 'fa-solid fa-envelope',   'title' => 'Email Marketing',     'desc' => 'Campanhas de email para a tua base de fãs com newsletter profissional e automações.',                  'delay' => '300'],
+                    ];
+                    foreach ($tools as $t):
+                    ?>
+                        <div class="col-lg-3 col-md-6" data-cue="zoomIn"
+                            <?php if ($t['delay']) echo 'data-delay="' . $t['delay'] . '"'; ?>>
+                            <div class="card tool-card h-100 border-0 shadow-sm p-4">
+                                <div class="tool-icon mb-3">
+                                    <i class="<?php echo $t['icon']; ?>"></i>
+                                </div>
+                                <h5 class="fw-bold mb-2"><?php echo $t['title']; ?></h5>
+                                <p class="small text-muted mb-0"><?php echo $t['desc']; ?></p>
                             </div>
-                            <h5 class="fw-bold mb-2"><?php echo $t['title']; ?></h5>
-                            <p class="small text-muted mb-0"><?php echo $t['desc']; ?></p>
                         </div>
-                    </div>
                     <?php endforeach; ?>
                 </div>
             </div>
@@ -583,28 +583,28 @@ $csrf        = getSiteCsrf();
 
                 <div class="row g-4 justify-content-center">
                     <?php
-          $steps = [
-            ['num' => '01', 'icon' => 'fa-solid fa-comments',      'title' => 'Consulta Inicial',    'desc' => 'Analisamos a tua música, estilo e objectivos de carreira numa reunião gratuita.'],
-            ['num' => '02', 'icon' => 'fa-solid fa-map',            'title' => 'Estratégia Customizada', 'desc' => 'Criamos um plano de promoção personalizado para o teu lançamento e orçamento.'],
-            ['num' => '03', 'icon' => 'fa-solid fa-rocket',         'title' => 'Execução da Campanha', 'desc' => 'Activamos os canais escolhidos — ads, pitching, redes sociais — com monitorização diária.'],
-            ['num' => '04', 'icon' => 'fa-solid fa-chart-bar',      'title' => 'Resultados & Análise', 'desc' => 'Recebes relatórios detalhados e optimizações contínuas ao longo da campanha.'],
-          ];
-          foreach ($steps as $i => $s):
-          ?>
-                    <div class="col-md-6 col-lg-3" data-cue="fadeIn" data-delay="<?php echo $i * 100; ?>">
-                        <div class="text-center px-3 position-relative">
-                            <?php if ($i < count($steps) - 1): ?>
-                            <div class="step-line d-none d-lg-block"></div>
-                            <?php endif; ?>
-                            <div class="icon-shape icon-xl bg-wasomupfy text-white rounded-circle shadow mx-auto mb-4">
-                                <i class="<?php echo $s['icon']; ?> fs-3"></i>
+                    $steps = [
+                        ['num' => '01', 'icon' => 'fa-solid fa-comments',      'title' => 'Consulta Inicial',    'desc' => 'Analisamos a tua música, estilo e objectivos de carreira numa reunião gratuita.'],
+                        ['num' => '02', 'icon' => 'fa-solid fa-map',            'title' => 'Estratégia Customizada', 'desc' => 'Criamos um plano de promoção personalizado para o teu lançamento e orçamento.'],
+                        ['num' => '03', 'icon' => 'fa-solid fa-rocket',         'title' => 'Execução da Campanha', 'desc' => 'Activamos os canais escolhidos — ads, pitching, redes sociais — com monitorização diária.'],
+                        ['num' => '04', 'icon' => 'fa-solid fa-chart-bar',      'title' => 'Resultados & Análise', 'desc' => 'Recebes relatórios detalhados e optimizações contínuas ao longo da campanha.'],
+                    ];
+                    foreach ($steps as $i => $s):
+                    ?>
+                        <div class="col-md-6 col-lg-3" data-cue="fadeIn" data-delay="<?php echo $i * 100; ?>">
+                            <div class="text-center px-3 position-relative">
+                                <?php if ($i < count($steps) - 1): ?>
+                                    <div class="step-line d-none d-lg-block"></div>
+                                <?php endif; ?>
+                                <div class="icon-shape icon-xl bg-wasomupfy text-white rounded-circle shadow mx-auto mb-4">
+                                    <i class="<?php echo $s['icon']; ?> fs-3"></i>
+                                </div>
+                                <div class="badge bg-wasomupfy bg-opacity-10 text-wasomupfy mb-2"><?php echo $s['num']; ?>
+                                </div>
+                                <h5 class="fw-bold mb-2"><?php echo $s['title']; ?></h5>
+                                <p class="text-muted small mb-0"><?php echo $s['desc']; ?></p>
                             </div>
-                            <div class="badge bg-wasomupfy bg-opacity-10 text-wasomupfy mb-2"><?php echo $s['num']; ?>
-                            </div>
-                            <h5 class="fw-bold mb-2"><?php echo $s['title']; ?></h5>
-                            <p class="text-muted small mb-0"><?php echo $s['desc']; ?></p>
                         </div>
-                    </div>
                     <?php endforeach; ?>
                 </div>
             </div>
@@ -637,13 +637,13 @@ $csrf        = getSiteCsrf();
                                 <hr class="opacity-10 my-4" />
                                 <ul class="list-unstyled mb-4">
                                     <?php
-                  $f1 = ['Pitching para Curadores de Playlists', 'Otimização de Perfil Spotify', 'Estratégia de Hashtags', 'Relatório Básico de Performance'];
-                  foreach ($f1 as $f):
-                  ?>
-                                    <li class="mb-3 d-flex align-items-center">
-                                        <i class="fa-solid fa-check text-wasomupfy me-2 flex-shrink-0"></i>
-                                        <span><?php echo $f; ?></span>
-                                    </li>
+                                    $f1 = ['Pitching para Curadores de Playlists', 'Otimização de Perfil Spotify', 'Estratégia de Hashtags', 'Relatório Básico de Performance'];
+                                    foreach ($f1 as $f):
+                                    ?>
+                                        <li class="mb-3 d-flex align-items-center">
+                                            <i class="fa-solid fa-check text-wasomupfy me-2 flex-shrink-0"></i>
+                                            <span><?php echo $f; ?></span>
+                                        </li>
                                     <?php endforeach; ?>
                                 </ul>
                                 <a href="contact?consultant=initial"
@@ -671,13 +671,13 @@ $csrf        = getSiteCsrf();
                                 <hr class="opacity-10 my-4" />
                                 <ul class="list-unstyled mb-4">
                                     <?php
-                  $f2 = ['<strong>Gestão de Ads (Meta + Google)</strong>', 'Pitching Editorial & Blogs', 'Criação de Criativos (Vídeo/Reels)', 'Estratégia TikTok & Reels', 'Relatório Avançado Semanal'];
-                  foreach ($f2 as $f):
-                  ?>
-                                    <li class="mb-3 d-flex align-items-center">
-                                        <i class="fa-solid fa-check text-wasomupfy me-2 flex-shrink-0"></i>
-                                        <span><?php echo $f; ?></span>
-                                    </li>
+                                    $f2 = ['<strong>Gestão de Ads (Meta + Google)</strong>', 'Pitching Editorial & Blogs', 'Criação de Criativos (Vídeo/Reels)', 'Estratégia TikTok & Reels', 'Relatório Avançado Semanal'];
+                                    foreach ($f2 as $f):
+                                    ?>
+                                        <li class="mb-3 d-flex align-items-center">
+                                            <i class="fa-solid fa-check text-wasomupfy me-2 flex-shrink-0"></i>
+                                            <span><?php echo $f; ?></span>
+                                        </li>
                                     <?php endforeach; ?>
                                 </ul>
                                 <a href="contact?consultant=talk" class="btn btn-wasomupfy w-100 py-3 fw-bold shadow">
@@ -699,13 +699,13 @@ $csrf        = getSiteCsrf();
                                 <hr class="opacity-10 my-4" />
                                 <ul class="list-unstyled mb-4">
                                     <?php
-                  $f3 = ['Planeamento Trimestral de Releases', 'Gestão de Branding & Identidade', 'Consultoria de Carreira Dedicada', 'Relatório Executivo Mensal', 'Acesso Prioritário à Equipa'];
-                  foreach ($f3 as $f):
-                  ?>
-                                    <li class="mb-3 d-flex align-items-center">
-                                        <i class="fa-solid fa-check text-wasomupfy me-2 flex-shrink-0"></i>
-                                        <span><?php echo $f; ?></span>
-                                    </li>
+                                    $f3 = ['Planeamento Trimestral de Releases', 'Gestão de Branding & Identidade', 'Consultoria de Carreira Dedicada', 'Relatório Executivo Mensal', 'Acesso Prioritário à Equipa'];
+                                    foreach ($f3 as $f):
+                                    ?>
+                                        <li class="mb-3 d-flex align-items-center">
+                                            <i class="fa-solid fa-check text-wasomupfy me-2 flex-shrink-0"></i>
+                                            <span><?php echo $f; ?></span>
+                                        </li>
                                     <?php endforeach; ?>
                                 </ul>
                                 <a href="contact?meeting=schedule" class="btn btn-outline-wasomupfy w-100 py-3 fw-bold">
@@ -732,53 +732,53 @@ $csrf        = getSiteCsrf();
 
                         <div class="accordion faq-accordion" id="faqPromo">
                             <?php
-              $faqs = [
-                [
-                  'q' => 'A promoção garante que a minha música entra em playlists?',
-                  'a' => 'Fazemos o pitching estratégico para curadores e playlists editoriais, mas a decisão final é do curador. O que garantimos é que a tua música chega às pessoas certas, com o melhor material de apresentação possível.'
-                ],
-                [
-                  'q' => 'Preciso ter a distribuição feita pela Wasom Upfy para aceder à promoção?',
-                  'a' => 'Não necessariamente. Aceitamos artistas que distribuíram a sua música através de outras plataformas, desde que a música já esteja disponível nas lojas digitais.'
-                ],
-                [
-                  'q' => 'Quanto tempo demora uma campanha?',
-                  'a' => 'O mínimo recomendado é 4 semanas. Campanhas de lançamento geralmente começam 2 semanas antes do lançamento e estendem-se por mais 2 semanas após o release para maximizar o algoritmo.'
-                ],
-                [
-                  'q' => 'Qual é o orçamento mínimo para campanhas de ads?',
-                  'a' => 'Para campanhas Meta Ads e Google Ads, recomendamos um orçamento mínimo de 150 USD (ou equivalente em Kz) para obter dados estatisticamente relevantes. O nosso valor de gestão é cobrado separadamente.'
-                ],
-                [
-                  'q' => 'Trabalham com artistas de todos os géneros musicais?',
-                  'a' => 'Sim. Trabalhamos com Afropop, Semba, Kizomba, Kuduro, Hip-Hop, Afrobeat, R&B e outros géneros. A estratégia é sempre adaptada ao estilo e ao público-alvo do artista.'
-                ],
-                [
-                  'q' => 'Como acompanho os resultados da campanha?',
-                  'a' => 'Enviamos relatórios semanais (planos Profissional e Empresarial) ou mensais (plano Inicial) com dados de streams, alcance, engagement, crescimento de seguidores e ROI das campanhas pagas.'
-                ],
-              ];
-              foreach ($faqs as $i => $faq):
-                $faqId = 'faq' . $i;
-              ?>
-                            <div class="accordion-item border-0 shadow-sm mb-3 rounded-3 overflow-hidden"
-                                data-cue="fadeIn">
-                                <h2 class="accordion-header">
-                                    <button
-                                        class="accordion-button <?php echo $i > 0 ? 'collapsed' : ''; ?> fw-semibold rounded-3"
-                                        type="button" data-bs-toggle="collapse" data-bs-target="#<?php echo $faqId; ?>"
-                                        aria-expanded="<?php echo $i === 0 ? 'true' : 'false'; ?>">
-                                        <?php echo htmlspecialchars($faq['q']); ?>
-                                    </button>
-                                </h2>
-                                <div id="<?php echo $faqId; ?>"
-                                    class="accordion-collapse collapse <?php echo $i === 0 ? 'show' : ''; ?>"
-                                    data-bs-parent="#faqPromo">
-                                    <div class="accordion-body text-muted">
-                                        <?php echo htmlspecialchars($faq['a']); ?>
+                            $faqs = [
+                                [
+                                    'q' => 'A promoção garante que a minha música entra em playlists?',
+                                    'a' => 'Fazemos o pitching estratégico para curadores e playlists editoriais, mas a decisão final é do curador. O que garantimos é que a tua música chega às pessoas certas, com o melhor material de apresentação possível.'
+                                ],
+                                [
+                                    'q' => 'Preciso ter a distribuição feita pela Wasom Upfy para aceder à promoção?',
+                                    'a' => 'Não necessariamente. Aceitamos artistas que distribuíram a sua música através de outras plataformas, desde que a música já esteja disponível nas lojas digitais.'
+                                ],
+                                [
+                                    'q' => 'Quanto tempo demora uma campanha?',
+                                    'a' => 'O mínimo recomendado é 4 semanas. Campanhas de lançamento geralmente começam 2 semanas antes do lançamento e estendem-se por mais 2 semanas após o release para maximizar o algoritmo.'
+                                ],
+                                [
+                                    'q' => 'Qual é o orçamento mínimo para campanhas de ads?',
+                                    'a' => 'Para campanhas Meta Ads e Google Ads, recomendamos um orçamento mínimo de 150 USD (ou equivalente em Kz) para obter dados estatisticamente relevantes. O nosso valor de gestão é cobrado separadamente.'
+                                ],
+                                [
+                                    'q' => 'Trabalham com artistas de todos os géneros musicais?',
+                                    'a' => 'Sim. Trabalhamos com Afropop, Semba, Kizomba, Kuduro, Hip-Hop, Afrobeat, R&B e outros géneros. A estratégia é sempre adaptada ao estilo e ao público-alvo do artista.'
+                                ],
+                                [
+                                    'q' => 'Como acompanho os resultados da campanha?',
+                                    'a' => 'Enviamos relatórios semanais (planos Profissional e Empresarial) ou mensais (plano Inicial) com dados de streams, alcance, engagement, crescimento de seguidores e ROI das campanhas pagas.'
+                                ],
+                            ];
+                            foreach ($faqs as $i => $faq):
+                                $faqId = 'faq' . $i;
+                            ?>
+                                <div class="accordion-item border-0 shadow-sm mb-3 rounded-3 overflow-hidden"
+                                    data-cue="fadeIn">
+                                    <h2 class="accordion-header">
+                                        <button
+                                            class="accordion-button <?php echo $i > 0 ? 'collapsed' : ''; ?> fw-semibold rounded-3"
+                                            type="button" data-bs-toggle="collapse" data-bs-target="#<?php echo $faqId; ?>"
+                                            aria-expanded="<?php echo $i === 0 ? 'true' : 'false'; ?>">
+                                            <?php echo htmlspecialchars($faq['q']); ?>
+                                        </button>
+                                    </h2>
+                                    <div id="<?php echo $faqId; ?>"
+                                        class="accordion-collapse collapse <?php echo $i === 0 ? 'show' : ''; ?>"
+                                        data-bs-parent="#faqPromo">
+                                        <div class="accordion-body text-muted">
+                                            <?php echo htmlspecialchars($faq['a']); ?>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
                             <?php endforeach; ?>
                         </div>
                     </div>
@@ -805,11 +805,11 @@ $csrf        = getSiteCsrf();
                                 <i class="fa-regular fa-comments me-2"></i> Análise Gratuita
                             </a>
                             <?php if ($whatsNum): ?>
-                            <a href="https://wa.me/<?php echo $whatsNum; ?>?text=Olá!%20Tenho%20interesse%20nos%20serviços%20de%20promoção%20musical%20da%20<?php echo rawurlencode($siteName); ?>"
-                                target="_blank" rel="noopener noreferrer"
-                                class="btn btn-outline-light btn-lg px-5 py-3 fw-bold">
-                                <i class="fa-brands fa-whatsapp me-2"></i> WhatsApp
-                            </a>
+                                <a href="https://wa.me/<?php echo $whatsNum; ?>?text=Olá!%20Tenho%20interesse%20nos%20serviços%20de%20promoção%20musical%20da%20<?php echo rawurlencode($siteName); ?>"
+                                    target="_blank" rel="noopener noreferrer"
+                                    class="btn btn-outline-light btn-lg px-5 py-3 fw-bold">
+                                    <i class="fa-brands fa-whatsapp me-2"></i> WhatsApp
+                                </a>
                             <?php endif; ?>
                         </div>
                         <p class="small mt-4 opacity-75">
@@ -865,39 +865,39 @@ $csrf        = getSiteCsrf();
                         </p>
                         <div class="d-flex gap-3 flex-wrap" role="list" aria-label="Redes sociais">
                             <?php if (cfg('instagram_url')): ?>
-                            <a href="<?php echo htmlspecialchars(cfg('instagram_url')); ?>" target="_blank"
-                                rel="external noopener noreferrer" aria-label="Instagram"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                <i class="fa-brands fa-instagram"></i>
-                            </a>
+                                <a href="<?php echo htmlspecialchars(cfg('instagram_url')); ?>" target="_blank"
+                                    rel="external noopener noreferrer" aria-label="Instagram"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                    <i class="fa-brands fa-instagram"></i>
+                                </a>
                             <?php endif; ?>
                             <?php if (cfg('facebook_url')): ?>
-                            <a href="<?php echo htmlspecialchars(cfg('facebook_url')); ?>" target="_blank"
-                                rel="external noopener noreferrer" aria-label="Facebook"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                <i class="fa-brands fa-facebook-f"></i>
-                            </a>
+                                <a href="<?php echo htmlspecialchars(cfg('facebook_url')); ?>" target="_blank"
+                                    rel="external noopener noreferrer" aria-label="Facebook"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                    <i class="fa-brands fa-facebook-f"></i>
+                                </a>
                             <?php endif; ?>
                             <?php if (cfg('youtube_url')): ?>
-                            <a href="<?php echo htmlspecialchars(cfg('youtube_url')); ?>" target="_blank"
-                                rel="external noopener noreferrer" aria-label="YouTube"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                <i class="fa-brands fa-youtube"></i>
-                            </a>
+                                <a href="<?php echo htmlspecialchars(cfg('youtube_url')); ?>" target="_blank"
+                                    rel="external noopener noreferrer" aria-label="YouTube"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                    <i class="fa-brands fa-youtube"></i>
+                                </a>
                             <?php endif; ?>
                             <?php if (cfg('linkedin_url')): ?>
-                            <a href="<?php echo htmlspecialchars(cfg('linkedin_url')); ?>" target="_blank"
-                                rel="external noopener noreferrer" aria-label="LinkedIn"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                <i class="fa-brands fa-linkedin-in"></i>
-                            </a>
+                                <a href="<?php echo htmlspecialchars(cfg('linkedin_url')); ?>" target="_blank"
+                                    rel="external noopener noreferrer" aria-label="LinkedIn"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                    <i class="fa-brands fa-linkedin-in"></i>
+                                </a>
                             <?php endif; ?>
                             <?php if ($whatsNum): ?>
-                            <a href="https://wa.me/<?php echo $whatsNum; ?>" target="_blank"
-                                rel="external noopener noreferrer" aria-label="WhatsApp"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                <i class="fa-brands fa-whatsapp"></i>
-                            </a>
+                                <a href="https://wa.me/<?php echo $whatsNum; ?>" target="_blank"
+                                    rel="external noopener noreferrer" aria-label="WhatsApp"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                    <i class="fa-brands fa-whatsapp"></i>
+                                </a>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -931,10 +931,10 @@ $csrf        = getSiteCsrf();
                             <li class="mb-2"><a href="../../contact"
                                     class="text-reset text-decoration-none hover-white">Contacta-nos</a></li>
                             <?php if ($whatsNum): ?>
-                            <li class="mb-2">
-                                <a href="https://wa.me/<?php echo $whatsNum; ?>"
-                                    class="text-reset text-decoration-none hover-white">WhatsApp</a>
-                            </li>
+                                <li class="mb-2">
+                                    <a href="https://wa.me/<?php echo $whatsNum; ?>"
+                                        class="text-reset text-decoration-none hover-white">WhatsApp</a>
+                                </li>
                             <?php endif; ?>
                         </ul>
                     </div>
@@ -948,18 +948,18 @@ $csrf        = getSiteCsrf();
                                 — <?php echo htmlspecialchars(cfg('company_city', 'Luanda')); ?>
                             </li>
                             <?php if (cfg('info_email')): ?>
-                            <li class="mb-3">
-                                <a href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
-                                    class="text-reset text-decoration-none">
-                                    <?php echo htmlspecialchars(cfg('info_email')); ?></a>
-                            </li>
+                                <li class="mb-3">
+                                    <a href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
+                                        class="text-reset text-decoration-none">
+                                        <?php echo htmlspecialchars(cfg('info_email')); ?></a>
+                                </li>
                             <?php endif; ?>
                             <?php if (cfg('support_email')): ?>
-                            <li class="mb-3">
-                                <a href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
-                                    class="text-reset text-decoration-none">
-                                    <?php echo htmlspecialchars(cfg('support_email')); ?></a>
-                            </li>
+                                <li class="mb-3">
+                                    <a href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
+                                        class="text-reset text-decoration-none">
+                                        <?php echo htmlspecialchars(cfg('support_email')); ?></a>
+                                </li>
                             <?php endif; ?>
                             <li>Seg — Sex: 08h às 17h</li>
                         </ul>
@@ -1128,10 +1128,10 @@ $csrf        = getSiteCsrf();
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/headhesive@1.2.4/dist/headhesive.min.js"></script>
-    <script src="../../js/theme.min.js"></script>
-    <script src="../../js/vendors/color-modes.js"></script>
-    <script src="../../js/libs/scrollcue/scrollCue.min.js"></script>
-    <script src="../../js/vendors/scrollcue.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/theme.min.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/vendors/color-modes.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/libs/scrollcue/scrollCue.min.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/vendors/scrollcue.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/svg-injector@1.1.3/dist/svg-injector.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.29.0/dist/feather.min.js"></script>
@@ -1139,127 +1139,127 @@ $csrf        = getSiteCsrf();
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/imagesloaded/5.0.0/imagesloaded.pkgd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jarallax/2.1.4/jarallax.min.js"></script>
-    <script src="../../js/sw-register.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/sw-register.js"></script>
 
     <script>
-    (function() {
-        'use strict';
+        (function() {
+            'use strict';
 
-        /* ── Feather Icons ─────────────────────────────── */
-        if (typeof feather !== 'undefined') feather.replace();
+            /* ── Feather Icons ─────────────────────────────── */
+            if (typeof feather !== 'undefined') feather.replace();
 
-        /* ── Smooth scroll para #pacotes ───────────────── */
-        document.querySelectorAll('.smooth-scroll').forEach(function(el) {
-            el.addEventListener('click', function(e) {
-                var target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    e.preventDefault();
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-
-        /* ── AJAX helper ───────────────────────────────── */
-        function ajaxPost(url, data, msgEl, btnEl, defaultLabel, onSuccess) {
-            if (btnEl) {
-                btnEl.disabled = true;
-                btnEl.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>A enviar…';
-            }
-            fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: JSON.stringify(data)
-                })
-                .then(function(r) {
-                    return r.json();
-                })
-                .then(function(res) {
-                    if (!msgEl) return;
-                    msgEl.className = 'alert ' + (res.success ? 'alert-success' : 'alert-danger');
-                    msgEl.textContent = res.message || (res.success ? 'Enviado com sucesso!' :
-                        'Ocorreu um erro.');
-                    msgEl.classList.remove('d-none');
-                    if (res.success && onSuccess) onSuccess();
-                    setTimeout(function() {
-                        msgEl.classList.add('d-none');
-                    }, 7000);
-                })
-                .catch(function() {
-                    if (!msgEl) return;
-                    msgEl.className = 'alert alert-danger';
-                    msgEl.textContent = 'Erro de ligação. Tente novamente.';
-                    msgEl.classList.remove('d-none');
-                })
-                .finally(function() {
-                    if (btnEl) {
-                        btnEl.disabled = false;
-                        btnEl.innerHTML = defaultLabel;
+            /* ── Smooth scroll para #pacotes ───────────────── */
+            document.querySelectorAll('.smooth-scroll').forEach(function(el) {
+                el.addEventListener('click', function(e) {
+                    var target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        e.preventDefault();
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
                     }
                 });
-        }
-
-        /* ── Modal Feedback ────────────────────────────── */
-        var fModal = document.getElementById('formFeedback');
-        if (fModal) {
-            fModal.addEventListener('submit', function(e) {
-                e.preventDefault();
-                if (!fModal.checkValidity()) {
-                    fModal.classList.add('was-validated');
-                    return;
-                }
-                ajaxPost(
-                    '/ajax/feedback.php', {
-                        csrf: fModal.querySelector('[name="csrf_token"]').value,
-                        name: fModal.querySelector('[name="name_fb"]').value.trim(),
-                        subject: fModal.querySelector('[name="subject_fb"]').value.trim(),
-                        message: fModal.querySelector('[name="message_fb"]').value.trim(),
-                        page: window.location.pathname
-                    },
-                    document.getElementById('feedback-modal-msg'),
-                    document.getElementById('btn-feedback-modal'),
-                    'Enviar Feedback <i class="fa-solid fa-paper-plane ms-2"></i>',
-                    function() {
-                        fModal.reset();
-                        setTimeout(function() {
-                            var m = bootstrap.Modal.getInstance(document.getElementById(
-                                'modalFeedback'));
-                            if (m) m.hide();
-                        }, 2500);
-                    }
-                );
             });
-        }
 
-        /* ── Cookie Consent ────────────────────────────── */
-        var cookieAlert = document.getElementById('cookie-alert');
-        if (cookieAlert && !localStorage.getItem('wu_cookies')) {
-            cookieAlert.classList.add('show');
-        }
-        var btnAccept = document.getElementById('accept-cookies');
-        var btnReject = document.getElementById('reject-cookies');
-        var btnClose = document.getElementById('cookie-alert-close');
+            /* ── AJAX helper ───────────────────────────────── */
+            function ajaxPost(url, data, msgEl, btnEl, defaultLabel, onSuccess) {
+                if (btnEl) {
+                    btnEl.disabled = true;
+                    btnEl.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>A enviar…';
+                }
+                fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify(data)
+                    })
+                    .then(function(r) {
+                        return r.json();
+                    })
+                    .then(function(res) {
+                        if (!msgEl) return;
+                        msgEl.className = 'alert ' + (res.success ? 'alert-success' : 'alert-danger');
+                        msgEl.textContent = res.message || (res.success ? 'Enviado com sucesso!' :
+                            'Ocorreu um erro.');
+                        msgEl.classList.remove('d-none');
+                        if (res.success && onSuccess) onSuccess();
+                        setTimeout(function() {
+                            msgEl.classList.add('d-none');
+                        }, 7000);
+                    })
+                    .catch(function() {
+                        if (!msgEl) return;
+                        msgEl.className = 'alert alert-danger';
+                        msgEl.textContent = 'Erro de ligação. Tente novamente.';
+                        msgEl.classList.remove('d-none');
+                    })
+                    .finally(function() {
+                        if (btnEl) {
+                            btnEl.disabled = false;
+                            btnEl.innerHTML = defaultLabel;
+                        }
+                    });
+            }
 
-        function closeCookieAlert(val) {
-            if (val) localStorage.setItem('wu_cookies', val);
-            if (cookieAlert) cookieAlert.classList.remove('show');
-        }
-        if (btnAccept) btnAccept.addEventListener('click', function() {
-            closeCookieAlert('accepted');
-        });
-        if (btnReject) btnReject.addEventListener('click', function() {
-            closeCookieAlert('rejected');
-        });
-        if (btnClose) btnClose.addEventListener('click', function() {
-            closeCookieAlert('');
-        });
+            /* ── Modal Feedback ────────────────────────────── */
+            var fModal = document.getElementById('formFeedback');
+            if (fModal) {
+                fModal.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    if (!fModal.checkValidity()) {
+                        fModal.classList.add('was-validated');
+                        return;
+                    }
+                    ajaxPost(
+                        '/ajax/feedback.php', {
+                            csrf: fModal.querySelector('[name="csrf_token"]').value,
+                            name: fModal.querySelector('[name="name_fb"]').value.trim(),
+                            subject: fModal.querySelector('[name="subject_fb"]').value.trim(),
+                            message: fModal.querySelector('[name="message_fb"]').value.trim(),
+                            page: window.location.pathname
+                        },
+                        document.getElementById('feedback-modal-msg'),
+                        document.getElementById('btn-feedback-modal'),
+                        'Enviar Feedback <i class="fa-solid fa-paper-plane ms-2"></i>',
+                        function() {
+                            fModal.reset();
+                            setTimeout(function() {
+                                var m = bootstrap.Modal.getInstance(document.getElementById(
+                                    'modalFeedback'));
+                                if (m) m.hide();
+                            }, 2500);
+                        }
+                    );
+                });
+            }
 
-    })();
+            /* ── Cookie Consent ────────────────────────────── */
+            var cookieAlert = document.getElementById('cookie-alert');
+            if (cookieAlert && !localStorage.getItem('wu_cookies')) {
+                cookieAlert.classList.add('show');
+            }
+            var btnAccept = document.getElementById('accept-cookies');
+            var btnReject = document.getElementById('reject-cookies');
+            var btnClose = document.getElementById('cookie-alert-close');
+
+            function closeCookieAlert(val) {
+                if (val) localStorage.setItem('wu_cookies', val);
+                if (cookieAlert) cookieAlert.classList.remove('show');
+            }
+            if (btnAccept) btnAccept.addEventListener('click', function() {
+                closeCookieAlert('accepted');
+            });
+            if (btnReject) btnReject.addEventListener('click', function() {
+                closeCookieAlert('rejected');
+            });
+            if (btnClose) btnClose.addEventListener('click', function() {
+                closeCookieAlert('');
+            });
+
+        })();
     </script>
 
 </body>

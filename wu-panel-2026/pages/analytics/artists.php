@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-ao">
 
 <head>
   <meta charset="utf-8" />
@@ -13,12 +13,12 @@
   <link rel="apple-touch-icon" href="../../../assets/img/icones/wasomupfy_fiv_512.png" />
   <link rel="apple-touch-startup-image" href="../../../assets/img/screenshots/splash.png" />
   <link rel="manifest" href="../../manifest.json" />
-  <title>Desempenho por Artista — Wasom Upfy</title>
+  <title>Desempenho por Artista — <?php echo APP_NAME; ?></title>
   <link rel="shortcut icon" href="../../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon" />
-  <link rel="stylesheet" href="../../../css/libs/plugins.css" />
-  <link rel="stylesheet" href="../../../css/libs/scrollue.css" />
+  <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/libs/plugins.css" />
+  <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/libs/scrollue.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
-  <link rel="stylesheet" href="../../../css/lastest-style.css" />
+  <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/lastest-style.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
   <!-- Google Fonts - Poppins -->
@@ -359,7 +359,7 @@
         <div class="d-flex align-items-center">
           <img src="../../../assets/img/brand/wasomupfy_brand.png" alt="Logo Wasom Upfy" class="rounded-circle me-2"
             style="height: 40px" />
-          <span class="brand-text">Wasom Upfy</span>
+          <span class="brand-text"><?php echo APP_NAME; ?></span>
         </div>
         <i class="bi bi-chevron-left toggle-icon" id="sidebarCollapse" title="Colapsar/Expandir Menu"
           aria-label="Colapsar/Expandir Menu"></i>
@@ -1391,7 +1391,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <!-- jQuery -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="../../../js/lastest.js"></script>
+  <script src="<?php echo APP_URL  ?>/js/lastest.js"></script>
   <!-- DataTables -->
   <script src="https://cdn.datatables.net/v/bs5/dt-1.13.6/datatables.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>

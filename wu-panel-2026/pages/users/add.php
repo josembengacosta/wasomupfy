@@ -13,12 +13,12 @@
     <link rel="apple-touch-icon" href="../../../assets/img/icones/wasomupfy_fiv_512.png">
     <link rel="apple-touch-startup-image" href="../../../assets/img/screenshots/splash.png">
     <link rel="manifest" href="manifest.json">
-    <title>Adicionar Usuário — Wasom Upfy</title>
+    <title>Adicionar Usuário — <?php echo APP_NAME; ?></title>
     <link rel="shortcut icon" href="../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
-    <link rel="stylesheet" href="../../../css/libs/plugins.css">
-    <link rel="stylesheet" href="../../../css/libs/scrollue.css">
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/libs/plugins.css">
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/libs/scrollue.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
-    <link rel="stylesheet" href="../css/lastest-style.css">
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/lastest-style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <!-- Google Fonts - Poppins -->
@@ -37,7 +37,7 @@
                 <div class="d-flex align-items-center">
                     <img src="../../../assets/img/brand/wasomupfy_brand.png" alt="Logo Wasom Upfy"
                         class="rounded-circle me-2" style="height: 40px;">
-                    <span class="brand-text">Wasom Upfy</span>
+                    <span class="brand-text"><?php echo APP_NAME; ?></span>
                 </div>
                 <i class="bi bi-chevron-left toggle-icon" id="sidebarCollapse" title="Colapsar/Expandir Menu"
                     aria-label="Colapsar/Expandir Menu"></i>
@@ -399,9 +399,9 @@
                                     onclick="logout_wasomupfy()">Sim, terminar</button>
                             </div>
                             <script type="text/javascript">
-                            function logout_wasomupfy() {
-                                window.location = 'logout';
-                            }
+                                function logout_wasomupfy() {
+                                    window.location = 'logout';
+                                }
                             </script>
                         </div>
                     </div>
@@ -709,223 +709,223 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../../../js/lastest.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/lastest.js"></script>
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Elementos do formulário
-        const form = document.getElementById('create-user-form');
-        const accountInput = document.getElementById('account');
-        const nameInput = document.getElementById('name');
-        const usernameInput = document.getElementById('username');
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
-        const rolesSelect = document.getElementById('roles');
-        const statusSelect = document.getElementById('status');
-        const countrySelect = document.getElementById('country');
-        const cityInput = document.getElementById('city');
-        const avatarInput = document.getElementById('avatar');
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elementos do formulário
+            const form = document.getElementById('create-user-form');
+            const accountInput = document.getElementById('account');
+            const nameInput = document.getElementById('name');
+            const usernameInput = document.getElementById('username');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const rolesSelect = document.getElementById('roles');
+            const statusSelect = document.getElementById('status');
+            const countrySelect = document.getElementById('country');
+            const cityInput = document.getElementById('city');
+            const avatarInput = document.getElementById('avatar');
 
-        // Elementos de pré-visualização
-        const previewName = document.getElementById('preview-name');
-        const previewAccount = document.getElementById('preview-account');
-        const previewUsername = document.getElementById('preview-username');
-        const previewEmail = document.getElementById('preview-email');
-        const previewLocation = document.getElementById('preview-location');
-        const previewRoles = document.getElementById('preview-roles');
-        const previewStatus = document.getElementById('preview-status');
-        const previewAvatar = document.getElementById('avatar-preview');
-        const previewPasswordInfo = document.getElementById('preview-password-info');
+            // Elementos de pré-visualização
+            const previewName = document.getElementById('preview-name');
+            const previewAccount = document.getElementById('preview-account');
+            const previewUsername = document.getElementById('preview-username');
+            const previewEmail = document.getElementById('preview-email');
+            const previewLocation = document.getElementById('preview-location');
+            const previewRoles = document.getElementById('preview-roles');
+            const previewStatus = document.getElementById('preview-status');
+            const previewAvatar = document.getElementById('avatar-preview');
+            const previewPasswordInfo = document.getElementById('preview-password-info');
 
-        // Elementos de força da senha
-        const passwordStrengthBar = document.getElementById('password-strength-bar');
-        const passwordStrengthText = document.getElementById('password-strength-text');
+            // Elementos de força da senha
+            const passwordStrengthBar = document.getElementById('password-strength-bar');
+            const passwordStrengthText = document.getElementById('password-strength-text');
 
-        // Botões de senha
-        const generatePasswordBtn = document.getElementById('generate-password');
-        const copyPasswordBtn = document.getElementById('copy-password');
+            // Botões de senha
+            const generatePasswordBtn = document.getElementById('generate-password');
+            const copyPasswordBtn = document.getElementById('copy-password');
 
-        // Gerar senha forte
-        function generateStrongPassword() {
-            const length = 12; // Senha com 12 caracteres (pode ajustar)
-            const charset =
-                "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]\:;?><,./-=";
-            let password = "";
+            // Gerar senha forte
+            function generateStrongPassword() {
+                const length = 12; // Senha com 12 caracteres (pode ajustar)
+                const charset =
+                    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]\:;?><,./-=";
+                let password = "";
 
-            // Garante que a senha tenha pelo menos um caractere de cada tipo
-            password += getRandomChar("abcdefghijklmnopqrstuvwxyz"); // minúscula
-            password += getRandomChar("ABCDEFGHIJKLMNOPQRSTUVWXYZ"); // maiúscula
-            password += getRandomChar("0123456789"); // número
-            password += getRandomChar("!@#$%^&*()_+~`|}{[]\:;?><,./-="); // especial
+                // Garante que a senha tenha pelo menos um caractere de cada tipo
+                password += getRandomChar("abcdefghijklmnopqrstuvwxyz"); // minúscula
+                password += getRandomChar("ABCDEFGHIJKLMNOPQRSTUVWXYZ"); // maiúscula
+                password += getRandomChar("0123456789"); // número
+                password += getRandomChar("!@#$%^&*()_+~`|}{[]\:;?><,./-="); // especial
 
-            // Completa o resto da senha
-            for (let i = 4; i < length; i++) {
-                password += charset.charAt(Math.floor(Math.random() * charset.length));
+                // Completa o resto da senha
+                for (let i = 4; i < length; i++) {
+                    password += charset.charAt(Math.floor(Math.random() * charset.length));
+                }
+
+                // Embaralha a senha
+                password = password.split('').sort(() => 0.5 - Math.random()).join('');
+
+                return password;
             }
 
-            // Embaralha a senha
-            password = password.split('').sort(() => 0.5 - Math.random()).join('');
-
-            return password;
-        }
-
-        function getRandomChar(charSet) {
-            return charSet.charAt(Math.floor(Math.random() * charSet.length));
-        }
-
-        // Avaliar força da senha
-        function evaluatePasswordStrength(password) {
-            let strength = 0;
-
-            // Comprimento
-            if (password.length > 10) strength += 2;
-            else if (password.length > 7) strength += 1;
-
-            // Tipos de caracteres
-            if (/[a-z]/.test(password)) strength += 1; // minúsculas
-            if (/[A-Z]/.test(password)) strength += 1; // maiúsculas
-            if (/[0-9]/.test(password)) strength += 1; // números
-            if (/[^a-zA-Z0-9]/.test(password)) strength += 2; // especiais
-
-            // Ajusta para escala de 0-5
-            strength = Math.min(strength, 5);
-
-            return strength;
-        }
-
-        // Atualizar visualização da força da senha
-        function updatePasswordStrength(password) {
-            const strength = evaluatePasswordStrength(password);
-            const strengthText = ["Muito fraca", "Fraca", "Moderada", "Forte", "Muito forte", "Excelente"];
-            const strengthColors = ["#dc3545", "#fd7e14", "#ffc107", "#28a745", "#20c997", "#198754"];
-
-            passwordStrengthBar.style.width = `${strength * 20}%`;
-            passwordStrengthBar.style.backgroundColor = strengthColors[strength];
-            passwordStrengthText.textContent = strengthText[strength];
-            passwordStrengthText.className =
-                `alert alert-${strength < 2 ? 'danger' : strength < 4 ? 'warning' : 'success'}`;
-        }
-
-        // Atualizar pré-visualização
-        function updatePreview() {
-            // Informações básicas
-            previewName.textContent = nameInput.value || "Nome do Usuário";
-            previewAccount.textContent = accountInput.value ? `@${accountInput.value}` : "@conta";
-            previewUsername.textContent = usernameInput.value || "username";
-            previewEmail.textContent = emailInput.value || "email@exemplo.com";
-
-            // Localização
-            const country = countrySelect.options[countrySelect.selectedIndex]?.text || "";
-            const city = cityInput.value || "";
-            previewLocation.textContent = country + (city ? `, ${city}` : "");
-
-            // Funções
-            previewRoles.innerHTML = "";
-            const selectedRoles = Array.from(rolesSelect.selectedOptions).map(opt => opt.value);
-
-            if (selectedRoles.length === 0) {
-                previewRoles.innerHTML =
-                    '<span class="badge bg-secondary badge-role">Nenhuma função selecionada</span>';
-            } else {
-                selectedRoles.forEach(role => {
-                    const badge = document.createElement('span');
-                    badge.className = 'badge bg-primary badge-role';
-                    badge.textContent = role === 'admin' ? 'Administrador' :
-                        role === 'distributor' ? 'Distribuidor' :
-                        role === 'analyst' ? 'Analista' : 'Financeiro';
-                    previewRoles.appendChild(badge);
-                });
+            function getRandomChar(charSet) {
+                return charSet.charAt(Math.floor(Math.random() * charSet.length));
             }
 
-            // Status
-            previewStatus.innerHTML = "";
-            const status = statusSelect.value;
-            const statusBadge = document.createElement('span');
+            // Avaliar força da senha
+            function evaluatePasswordStrength(password) {
+                let strength = 0;
 
-            statusBadge.className = `status-badge ${status === 'active' ? 'status-active' :
+                // Comprimento
+                if (password.length > 10) strength += 2;
+                else if (password.length > 7) strength += 1;
+
+                // Tipos de caracteres
+                if (/[a-z]/.test(password)) strength += 1; // minúsculas
+                if (/[A-Z]/.test(password)) strength += 1; // maiúsculas
+                if (/[0-9]/.test(password)) strength += 1; // números
+                if (/[^a-zA-Z0-9]/.test(password)) strength += 2; // especiais
+
+                // Ajusta para escala de 0-5
+                strength = Math.min(strength, 5);
+
+                return strength;
+            }
+
+            // Atualizar visualização da força da senha
+            function updatePasswordStrength(password) {
+                const strength = evaluatePasswordStrength(password);
+                const strengthText = ["Muito fraca", "Fraca", "Moderada", "Forte", "Muito forte", "Excelente"];
+                const strengthColors = ["#dc3545", "#fd7e14", "#ffc107", "#28a745", "#20c997", "#198754"];
+
+                passwordStrengthBar.style.width = `${strength * 20}%`;
+                passwordStrengthBar.style.backgroundColor = strengthColors[strength];
+                passwordStrengthText.textContent = strengthText[strength];
+                passwordStrengthText.className =
+                    `alert alert-${strength < 2 ? 'danger' : strength < 4 ? 'warning' : 'success'}`;
+            }
+
+            // Atualizar pré-visualização
+            function updatePreview() {
+                // Informações básicas
+                previewName.textContent = nameInput.value || "Nome do Usuário";
+                previewAccount.textContent = accountInput.value ? `@${accountInput.value}` : "@conta";
+                previewUsername.textContent = usernameInput.value || "username";
+                previewEmail.textContent = emailInput.value || "email@exemplo.com";
+
+                // Localização
+                const country = countrySelect.options[countrySelect.selectedIndex]?.text || "";
+                const city = cityInput.value || "";
+                previewLocation.textContent = country + (city ? `, ${city}` : "");
+
+                // Funções
+                previewRoles.innerHTML = "";
+                const selectedRoles = Array.from(rolesSelect.selectedOptions).map(opt => opt.value);
+
+                if (selectedRoles.length === 0) {
+                    previewRoles.innerHTML =
+                        '<span class="badge bg-secondary badge-role">Nenhuma função selecionada</span>';
+                } else {
+                    selectedRoles.forEach(role => {
+                        const badge = document.createElement('span');
+                        badge.className = 'badge bg-primary badge-role';
+                        badge.textContent = role === 'admin' ? 'Administrador' :
+                            role === 'distributor' ? 'Distribuidor' :
+                            role === 'analyst' ? 'Analista' : 'Financeiro';
+                        previewRoles.appendChild(badge);
+                    });
+                }
+
+                // Status
+                previewStatus.innerHTML = "";
+                const status = statusSelect.value;
+                const statusBadge = document.createElement('span');
+
+                statusBadge.className = `status-badge ${status === 'active' ? 'status-active' :
                     status === 'review' ? 'status-review' : 'status-suspended'
                     }`;
 
-            statusBadge.textContent = status === 'active' ? 'Ativo' :
-                status === 'review' ? 'Em Revisão' : 'Suspenso';
+                statusBadge.textContent = status === 'active' ? 'Ativo' :
+                    status === 'review' ? 'Em Revisão' : 'Suspenso';
 
-            previewStatus.appendChild(statusBadge);
-        }
-
-        // Event listeners para atualização em tempo real
-        [accountInput, nameInput, usernameInput, emailInput, countrySelect, cityInput, rolesSelect,
-            statusSelect
-        ].forEach(element => {
-            element.addEventListener('input', updatePreview);
-            element.addEventListener('change', updatePreview);
-        });
-
-        // Avatar preview
-        avatarInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    previewAvatar.innerHTML = '';
-                    const img = document.createElement('img');
-                    img.src = event.target.result;
-                    img.style.width = '100%';
-                    img.style.height = '100%';
-                    img.style.borderRadius = '50%';
-                    img.style.objectFit = 'cover';
-                    previewAvatar.appendChild(img);
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        // Gerar senha
-        generatePasswordBtn.addEventListener('click', function() {
-            const password = generateStrongPassword();
-            passwordInput.value = password;
-            updatePasswordStrength(password);
-            previewPasswordInfo.textContent = `Senha gerada: ${password}`;
-        });
-
-        // Copiar senha
-        copyPasswordBtn.addEventListener('click', function() {
-            if (passwordInput.value) {
-                navigator.clipboard.writeText(passwordInput.value).then(() => {
-                    const originalText = copyPasswordBtn.innerHTML;
-                    copyPasswordBtn.innerHTML = '<i class="bi bi-check me-1"></i> Copiado!';
-                    setTimeout(() => {
-                        copyPasswordBtn.innerHTML = originalText;
-                    }, 2000);
-                });
-            }
-        });
-
-        // Validar senha ao digitar (caso o campo não seja readonly)
-        passwordInput.addEventListener('input', function() {
-            updatePasswordStrength(this.value);
-        });
-
-        // Enviar formulário
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            // Validações adicionais podem ser adicionadas aqui
-            if (!passwordInput.value) {
-                alert('Por favor, gere uma senha antes de criar a conta.');
-                return;
+                previewStatus.appendChild(statusBadge);
             }
 
-            // Simular envio (substituir por AJAX/API real)
-            alert('Conta criada com sucesso!\n\nSenha do usuário: ' + passwordInput.value);
+            // Event listeners para atualização em tempo real
+            [accountInput, nameInput, usernameInput, emailInput, countrySelect, cityInput, rolesSelect,
+                statusSelect
+            ].forEach(element => {
+                element.addEventListener('input', updatePreview);
+                element.addEventListener('change', updatePreview);
+            });
 
-            // Resetar formulário (opcional)
-            // form.reset();
-            // updatePreview();
+            // Avatar preview
+            avatarInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        previewAvatar.innerHTML = '';
+                        const img = document.createElement('img');
+                        img.src = event.target.result;
+                        img.style.width = '100%';
+                        img.style.height = '100%';
+                        img.style.borderRadius = '50%';
+                        img.style.objectFit = 'cover';
+                        previewAvatar.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Gerar senha
+            generatePasswordBtn.addEventListener('click', function() {
+                const password = generateStrongPassword();
+                passwordInput.value = password;
+                updatePasswordStrength(password);
+                previewPasswordInfo.textContent = `Senha gerada: ${password}`;
+            });
+
+            // Copiar senha
+            copyPasswordBtn.addEventListener('click', function() {
+                if (passwordInput.value) {
+                    navigator.clipboard.writeText(passwordInput.value).then(() => {
+                        const originalText = copyPasswordBtn.innerHTML;
+                        copyPasswordBtn.innerHTML = '<i class="bi bi-check me-1"></i> Copiado!';
+                        setTimeout(() => {
+                            copyPasswordBtn.innerHTML = originalText;
+                        }, 2000);
+                    });
+                }
+            });
+
+            // Validar senha ao digitar (caso o campo não seja readonly)
+            passwordInput.addEventListener('input', function() {
+                updatePasswordStrength(this.value);
+            });
+
+            // Enviar formulário
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                // Validações adicionais podem ser adicionadas aqui
+                if (!passwordInput.value) {
+                    alert('Por favor, gere uma senha antes de criar a conta.');
+                    return;
+                }
+
+                // Simular envio (substituir por AJAX/API real)
+                alert('Conta criada com sucesso!\n\nSenha do usuário: ' + passwordInput.value);
+
+                // Resetar formulário (opcional)
+                // form.reset();
+                // updatePreview();
+            });
+
+            // Gerar senha inicial
+            generatePasswordBtn.click();
+            updatePreview();
         });
-
-        // Gerar senha inicial
-        generatePasswordBtn.click();
-        updatePreview();
-    });
     </script>
 </body>
 

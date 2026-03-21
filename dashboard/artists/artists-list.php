@@ -4,20 +4,28 @@
 // Arquivo: dashboard/artists/artists-list.php
 // ══════════════════════════════════════════════
 require_once __DIR__ . '/../../authentic/include/functions.php';
+require_once __DIR__ . '/../include/platform.php';
 startSecureSession();
 checkRememberMe();
 requireLogin();
+$platform = checkDashboardStatus();
+$user     = checkUserAccess((int)$_SESSION['id_users']);
 
-$user = getUserById((int)$_SESSION['id_users']);
-if (!$user) {
-    session_destroy();
-    redirect('/login');
-}
+$id_users       = (int)$user['id_users'];
+$first_name     = htmlspecialchars($user['first_name']);
+$user_name      = htmlspecialchars($user['user_name'] ?? '');
+$email_verified = (bool)$user['email_verified'];
+$plan_selected  = $user['plan_selected'];
+$onboard_done   = (bool)($user['onboarding_done'] ?? false);
+$user_photo     = $user['photo_user'] ?? null;
+$name_artist_band = htmlspecialchars($user['name_artist_band'] ?? 'Cria Perfil Artístico');
+$notif_count    = getUnreadNotifCount($id_users);
+$db             = getDB();
 
-$id_users   = (int)$user['id_users'];
-$first_name = htmlspecialchars($user['first_name']);
-$user_name  = htmlspecialchars($user['user_name'] ?? '');
-$db         = getDB();
+// ── Saldo ─────────────────────────────────────
+$w = $db->prepare('SELECT balance_aoa FROM _wallet WHERE id_users = ?');
+$w->execute([$id_users]);
+$balance = $w->fetch() ?: ['balance_aoa' => 0];
 
 // ── Plano ─────────────────────────────────────
 $plan_id     = (int)$user['plan_selected'];
@@ -30,6 +38,71 @@ if ($plan_id) {
     if ($plan) $max_artists = (int)($plan['max_artists'] ?? 1);
 }
 $plan_name = $plan ? htmlspecialchars($plan['name_plan']) : 'Sem plano';
+
+// ── Plano ─────────────────────────────────────
+$plan      = null;
+$plan_paid = ($user['status_user'] === 'active' && !empty($user['plan_activated_at']));
+if ($plan_selected) {
+    $ps = $db->prepare('SELECT * FROM _plans WHERE id_plan = ?');
+    $ps->execute([$plan_selected]);
+    $plan = $ps->fetch();
+}
+
+// Adicionar verificação de expiração do plano
+$plan_expired = false;
+if ($plan_paid && !empty($user['plan_expires_at'])) {
+    $plan_expired = strtotime($user['plan_expires_at']) < time();
+}
+
+// ── Artistas ──────────────────────────────────
+$as = $db->prepare('SELECT COUNT(*) AS total FROM _artist WHERE id_users = ?');
+$as->execute([$id_users]);
+$has_artist = (int)($as->fetch()['total'] ?? 0) > 0;
+
+// ── Conta bancária ────────────────────────────
+$ba = $db->prepare("SELECT id_account FROM _account WHERE id_users = ? AND status_account = 'verified' LIMIT 1");
+$ba->execute([$id_users]);
+$bank_account = $ba->fetch();
+
+// ── Conta rejeitada ───────────────────────────
+$rejected_account = null;
+if ($plan_paid) {
+    $rj = $db->prepare("SELECT type_account, reject_reason FROM _account WHERE id_users = ? AND status_account = 'rejected' LIMIT 1");
+    $rj->execute([$id_users]);
+    $rejected_account = $rj->fetch();
+}
+
+// ── Sessão info (modal logout) ────────────────
+$ls = $db->prepare('SELECT last_login_at, last_login_ip FROM _users_security WHERE id_users = ?');
+$ls->execute([$id_users]);
+$sec = $ls->fetch();
+
+$sess_stmt = $db->prepare("
+    SELECT ip_address, user_agent, country, city, creat_session, last_activity
+    FROM _users_sessions WHERE id_users = ? AND is_active = 1
+    ORDER BY last_activity DESC LIMIT 1
+");
+$sess_stmt->execute([$id_users]);
+$current_session  = $sess_stmt->fetch();
+$session_duration_str = '—';
+if ($current_session && $current_session['creat_session']) {
+    $secs = time() - strtotime($current_session['creat_session']);
+    if ($secs < 60)     $session_duration_str = $secs . 's';
+    elseif ($secs < 3600)  $session_duration_str = floor($secs / 60) . 'min';
+    elseif ($secs < 86400) $session_duration_str = floor($secs / 3600) . 'h ' . floor(($secs % 3600) / 60) . 'min';
+    else                   $session_duration_str = floor($secs / 86400) . 'd ' . floor(($secs % 86400) / 3600) . 'h';
+}
+$member_since   = $user['creat_user'] ? date('d/m/Y', strtotime($user['creat_user'])) : '—';
+$last_login_str = ($sec && $sec['last_login_at']) ? date('d/m/Y H:i', strtotime($sec['last_login_at'])) : '—';
+$ua_raw   = $current_session['user_agent'] ?? '';
+$browser  = 'Desconhecido';
+if (str_contains($ua_raw, 'Edg'))     $browser = 'Microsoft Edge';
+elseif (str_contains($ua_raw, 'Chrome'))  $browser = 'Google Chrome';
+elseif (str_contains($ua_raw, 'Firefox')) $browser = 'Mozilla Firefox';
+elseif (str_contains($ua_raw, 'Safari'))  $browser = 'Safari';
+elseif (str_contains($ua_raw, 'Opera'))   $browser = 'Opera';
+$sess_location = trim(($current_session['city'] ?? '') . ', ' . ($current_session['country'] ?? ''), ', ') ?: 'Desconhecida';
+$sess_ip       = $current_session['ip_address'] ?? ($sec['last_login_ip'] ?? '—');
 
 // ── Artistas com contagem de álbuns ──────────
 $art_stmt = $db->prepare("
@@ -91,20 +164,11 @@ $artists_json       = json_encode($artists,         JSON_HEX_TAG | JSON_HEX_APOS
 $albums_json        = json_encode($albums_by_artist, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
 ?>
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-ao">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="robots" content="noindex, nofollow" />
-    <meta name="theme-color" content="#FF0089" />
-    <title>Artistas — Wasom Upfy</title>
-    <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
-    <link rel="stylesheet" href="../../css/dashboard-style.css" />
-    <link rel="stylesheet" href="../../css/lastest-style.css" />
+    <?php require_once __DIR__ . '/../include/head.php'; ?>
+    <title>Artistas — <?php echo APP_NAME; ?></title>
     <style>
         :root {
             --wasom: #FF0089;
@@ -559,200 +623,131 @@ $albums_json        = json_encode($albums_by_artist, JSON_HEX_TAG | JSON_HEX_APO
 
 <body>
 
-    <!-- Tela de Carregamento -->
-    <!-- <div class="loading-screen" id="loadingScreen">
-        <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg" class="loading-logo">
-            <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2"/>
-            <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
-        </svg>
-        <div class="spinner"></div>
-    </div> -->
-
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <!-- Menu Button (Left) -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu"
-                aria-controls="offcanvasMenu">
-                <span class="navbar-toggler-icon"><i class="bi bi-list text-white fs-1"></i></span>
-            </button>
-
-            <!-- Logo (Center on Mobile, Left on Desktop) -->
-            <a class="navbar-brand" href="../painel">
-                <!-- SVG Logo Wasom Upfy -->
-                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
-                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
-                        fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
-                </svg> -->
-                <span class="text-light" style="
-              font-weight: bold;
-              box-sizing: border-box;
-              text-transform: capitalize;
-              font-family: Arial, sans-serif;
-            ">WASOM UPFY</span>
-            </a>
-
-            <!-- Desktop Menu -->
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav m-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="../painel"><i class="bi bi-speedometer2"></i> Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../launch/releases"><i class="bi bi-disc"></i> Lançamentos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../analytics/statistics"><i class="bi bi-bar-chart"></i>
-                            Estatísticas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../finances/overview"><i class="bi bi-currency-dollar"></i>
-                            Finanças</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../artists/artists-list"><i class="bi bi-person"></i> Artistas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../artists/youtube/ucy"><i class="bi bi-youtube"></i> Unificação de
-                            canal
-                            YouTube</a>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- User Icon (Right) -->
-            <div class="user-menu d-flex align-items-center">
-                <!-- Theme Toggle Button -->
-                <a class="theme-toggle text-white me-2" id="themeToggle">
-                    <i class="bi bi-sun" id="themeIcon"></i>
-                </a>
-                <a href="../page/notifications" class="text-white me-2" aria-label="Notificações">
-                    <i class="bi bi-bell fs-4"></i>
-                    <span class="badge bg-danger">9</span>
-                </a>
-                <a href="#" class="text-white" data-bs-toggle="dropdown">
-                    <i class="bi bi-person-circle fs-4"></i>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li>
-                        <a class="dropdown-item" href="../user/profile"><i class="bi bi-person me-2"></i>
-                            <strong><?php echo $first_name; ?></strong></a>
-                        <div class="text-white-50">
-                            &nbsp; &nbsp; &nbsp; &nbsp; (Conta <?php echo str_pad($id_users, 6, "0", STR_PAD_LEFT); ?>)
-                        </div>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../user/profile"><i class="bi bi-person me-2"></i> Meu Perfil</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../account/manage-account"><i class="bi bi-tools me-2"></i>
-                            Gestão de
-                            Conta</a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../page/settings"><i class="bi bi-gear me-2"></i>
-                            Configurações</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../page/notifications"><i class="bi bi-bell me-2"></i>
-                            Notificações</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../services/available-services"><i class="bi bi-star me-2"></i>
-                            Conta e
-                            serviços disponíveis</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="#?logout-wasomupfy" data-bs-toggle="modal"
-                            data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right me-2"></i>
-                            Desconectar-se</a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../page/about"><i class="bi bi-info-circle me-2"></i> Sobre</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../page/support"><i class="bi bi-headset me-2"></i> Enviar pedido
-                            de
-                            suporte</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../page/faq"><i class="bi bi-chat-left-text me-2"></i> Perguntas
-                            frequentes</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../page/help"><i class="bi bi-question-circle me-2"></i>
-                            Ajuda</a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li>
-                        <span class="dropdown-item-text" id="versionDropdown"></span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Offcanvas Menu for Mobile -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasMenuLabel">
-                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
-                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
-                        fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
-                </svg> -->
-                <span class="text-light" style="
-              font-weight: bold;
-              box-sizing: border-box;
-              text-transform: capitalize;
-              font-family: Arial, sans-serif;
-            ">WASOM UPFY</span>
-            </h5>
-            <button type="button" class="btn-close text-white" data-bs-dismiss="offcanvas" aria-label="Close">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-        <div class="offcanvas-body">
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link" href="../painel"><i class="bi bi-speedometer2"></i> Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../launch/releases"><i class="bi bi-disc"></i> Lançamentos</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="../analytics/statistics"><i class="bi bi-bar-chart"></i>
-                        Estatísticas</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../finances/overview"><i class="bi bi-currency-dollar"></i> Finanças</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../artists/artists-list"><i class="bi bi-person"></i> Artistas</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../artists/youtube/ucy"><i class="bi bi-youtube"></i> Unificação de canal
-                        YouTube</a>
-                </li>
-            </ul>
-            <div class="version-info">Versão 2.1 (2026)</div>
-        </div>
-    </div>
+    <!-- ═══ NAVBAR ═══ -->
+    <?php require_once __DIR__ . '/../include/sidebar.php'; ?>
 
     <!-- Main Content -->
     <div class="container my-4">
+
+        <?php /* ══════════════════════════════════════
+         BANNERS — mesmo sistema do painel
+         renderDashboardAlerts já correu acima no topo.
+         Abaixo: alertas contextuais desta página.
+        ══════════════════════════════════════ */ ?>
+
+        <?php renderDashboardAlerts($user, $platform); ?>
+
+        <?php
+        // Cor map para helpers inline — idêntico ao renderDashboardAlerts()
+        $alertColors = [
+            'danger'  => ['bg' => 'rgba(239,68,68,.08)',  'border' => 'rgba(239,68,68,.25)',  'text' => '#ef4444'],
+            'warning' => ['bg' => 'rgba(234,179,8,.08)',  'border' => 'rgba(234,179,8,.25)',  'text' => '#eab308'],
+            'info'    => ['bg' => 'rgba(99,102,241,.08)', 'border' => 'rgba(99,102,241,.25)', 'text' => '#6366f1'],
+        ];
+        function wuAlert(string $type, string $icon, string $message, ?array $action = null, bool $dismiss = true, string $id = ''): void
+        {
+            global $alertColors;
+            $c   = $alertColors[$type] ?? $alertColors['info'];
+            $eid = $id ?: ('wuPanelAlert_' . md5($message));
+            echo "<div id=\"{$eid}\" style=\"display:flex;align-items:flex-start;gap:10px;"
+                . "background:{$c['bg']};border:1px solid {$c['border']};border-radius:12px;"
+                . "padding:.75rem 1rem;font-size:.83rem;margin-bottom:.6rem;"
+                . "transition:opacity .3s;\">";
+            echo "<i class=\"bi {$icon}\" style=\"font-size:1rem;flex-shrink:0;margin-top:2px;color:{$c['text']};\"></i>";
+            echo '<span class="wu-alert-msg">' . $message;
+            if ($action) {
+                echo " <a href=\"{$action['url']}\" style=\"color:{$c['text']};font-weight:700;"
+                    . "text-decoration:underline;white-space:nowrap\">{$action['label']} &rarr;</a>";
+            }
+            echo '</span>';
+            if ($dismiss) {
+                echo "<button type=\"button\" class=\"wu-alert-dismiss\" aria-label=\"Fechar\""
+                    . " onclick=\"(function(el){el.style.opacity='0';"
+                    . "setTimeout(function(){el.style.display='none'},300)})(document.getElementById('{$eid}'))\">"
+                    . "&times;</button>";
+            }
+            echo '</div>';
+        }
+        ?>
+
+        <?php if (!$email_verified): ?>
+            <?php wuAlert(
+                'danger',
+                'bi-envelope-exclamation-fill',
+                '<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta.',
+                ['label' => 'Verificar agora', 'url' => '../account/manage-account'],
+                true,
+                'banner-email'
+            ); ?>
+        <?php endif; ?>
+
+        <?php if ($plan_expired): ?>
+            <?php wuAlert(
+                'danger',
+                'bi-exclamation-triangle-fill',
+                '<strong>Plano expirado!</strong> O teu plano ' . htmlspecialchars($plan['name_plan'] ?? '') . ' expirou. Renova para continuar a distribuir.',
+                ['label' => 'Ver planos', 'url' => '../all-plans'],
+                false,
+                'banner-plan-expired'
+            ); ?>
+        <?php elseif ($plan && !$plan_paid): ?>
+            <?php wuAlert(
+                'warning',
+                'bi-clock-history',
+                '<strong>Pagamento pendente — ' . htmlspecialchars($plan['name_plan']) . '.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados.',
+                ['label' => 'Finalizar pagamento', 'url' => '../payment/pay'],
+                true,
+                'banner-plan-pending'
+            ); ?>
+        <?php elseif (!$plan): ?>
+            <?php wuAlert(
+                'danger',
+                'bi-credit-card-fill',
+                '<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir para +150 plataformas.',
+                ['label' => 'Ver planos', 'url' => '../all-plans'],
+                false,
+                'banner-plan'
+            ); ?>
+        <?php endif; ?>
+
+        <?php if ($plan_paid && !$has_artist): ?>
+            <?php wuAlert(
+                'info',
+                'bi-person-plus-fill',
+                '<strong>Cria o teu perfil de artista.</strong> Tens plano activo mas ainda não criaste um perfil. Precisas de um para poder lançar música.',
+                ['label' => 'Criar agora', 'url' => '../artists/add-artist'],
+                true,
+                'banner-artist'
+            ); ?>
+        <?php endif; ?>
+
+        <?php if ($plan_paid && $has_artist && !$bank_account): ?>
+            <?php wuAlert(
+                'info',
+                'bi-bank',
+                '<strong>Conta bancária não registada.</strong> Para sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.',
+                ['label' => 'Registar agora', 'url' => '../finances/withdraw'],
+                true,
+                'banner-bank'
+            ); ?>
+        <?php endif; ?>
+
+        <?php if ($rejected_account): ?>
+            <?php
+            $rej_msg = '<strong>Conta ' . htmlspecialchars($rejected_account['type_account']) . ' rejeitada.</strong>';
+            if ($rejected_account['reject_reason']) $rej_msg .= ' Motivo: <em>' . htmlspecialchars($rejected_account['reject_reason']) . '</em>.';
+            $rej_msg .= ' Actualiza os dados e submete novamente.';
+            wuAlert(
+                'danger',
+                'bi-x-circle-fill',
+                $rej_msg,
+                ['label' => 'Corrigir agora', 'url' => '../finances/withdraw'],
+                true,
+                'banner-account-rejected'
+            );
+            ?>
+        <?php endif; ?>
+
         <!-- Header de Artistas -->
         <div class="page-header">
             <div class="row align-items-center mb-4">
@@ -1064,21 +1059,6 @@ $albums_json        = json_encode($albums_by_artist, JSON_HEX_TAG | JSON_HEX_APO
         <?php endif; ?>
     </div><!-- /container -->
 
-    <!-- Bottom nav mobile -->
-    <nav class="bottom-nav d-lg-none">
-        <ul class="nav justify-content-around">
-            <li class="nav-item"><a class="nav-link" href="../painel"><i
-                        class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../launch/releases"><i
-                        class="bi bi-disc"></i><span>Lançamentos</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../analytics/statistics"><i
-                        class="bi bi-bar-chart"></i><span>Estatísticas</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../finances/overview"><i
-                        class="bi bi-currency-dollar"></i><span>Finanças</span></a></li>
-            <li class="nav-item"><a class="nav-link active" href="artists-list"><i
-                        class="bi bi-person"></i><span>Artistas</span></a></li>
-        </ul>
-    </nav>
 
     <!-- ════════════════════════════════════
      OFFCANVAS — Detalhe do Artista
@@ -1139,55 +1119,9 @@ $albums_json        = json_encode($albums_by_artist, JSON_HEX_TAG | JSON_HEX_APO
                         style="background:var(--wasom);color:#fff">
                         <i class="bi bi-pencil me-1"></i>Editar
                     </a>
-                    <a href="../launch/creat-release" class="btn btn-sm btn-outline-secondary flex-fill fw-semibold">
+                    <a href="creat-release" class="btn btn-sm btn-outline-secondary flex-fill fw-semibold">
                         <i class="bi bi-plus-circle me-1"></i>Lançamento
                     </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ════ MODAL — Logout ════ -->
-    <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header border-0">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="rounded-circle d-flex align-items-center justify-content-center"
-                            style="width:44px;height:44px;background:rgba(220,53,69,.1)">
-                            <i class="bi bi-box-arrow-right fs-5 text-danger"></i>
-                        </div>
-                        <div>
-                            <h5 class="modal-title mb-0">Terminar sessão</h5>
-                            <small class="text-muted">@<?php echo $user_name; ?></small>
-                        </div>
-                    </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body py-2">
-                    <div class="rounded-3 p-3" style="background:rgba(0,0,0,.04);font-size:.82rem">
-                        <div class="row g-2">
-                            <div class="col-6 d-flex gap-2"><i class="bi bi-clock text-muted mt-1"></i>
-                                <div>
-                                    <div class="text-muted">Duração</div>
-                                    <div class="fw-semibold"><?php echo $dur; ?></div>
-                                </div>
-                            </div>
-                            <div class="col-6 d-flex gap-2"><i class="bi bi-calendar3 text-muted mt-1"></i>
-                                <div>
-                                    <div class="text-muted">Último acesso</div>
-                                    <div class="fw-semibold"><?php echo $last_login_str; ?></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="text-center mt-3 mb-0 small">Tens a certeza?</p>
-                </div>
-                <div class="modal-footer border-0 gap-2">
-                    <button type="button" class="btn btn-outline-secondary flex-fill"
-                        data-bs-dismiss="modal">Continuar</button>
-                    <button class="btn btn-danger flex-fill" onclick="window.location='/wasomupfy/logout'"><i
-                            class="bi bi-box-arrow-right me-1"></i>Terminar</button>
                 </div>
             </div>
         </div>
@@ -1197,8 +1131,8 @@ $albums_json        = json_encode($albums_by_artist, JSON_HEX_TAG | JSON_HEX_APO
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <script src="../../js/theme.wp.js"></script>
-    <script src="../../js/wp.tools.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/theme.wp.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
 
     <script>
         // ── PHP data ──────────────────────────────────
@@ -1206,7 +1140,7 @@ $albums_json        = json_encode($albums_by_artist, JSON_HEX_TAG | JSON_HEX_APO
         const ALBUMS_MAP = <?php echo $albums_json; ?>;
         const PHOTO_BASE = '<?php echo $photo_base; ?>';
         const COVER_BASE = '<?php echo $cover_base; ?>';
-        const BASE_URL = '<?php echo rtrim(APP_URL, '/'); ?>';
+        const BASE_URL = '<?php echo rtrim(APP_URL, '/' . APP_URL_PANEL); ?>';
 
         toastr.options = {
             progressBar: true,
@@ -1433,7 +1367,7 @@ $albums_json        = json_encode($albums_by_artist, JSON_HEX_TAG | JSON_HEX_APO
             // Albums list (max 5 in panel)
             const albumsEl = document.getElementById('det-albums');
             const seeAllEl = document.getElementById('det-see-all');
-            seeAllEl.href = `${BASE_URL}/dashboard/launch/releases?artist=${id}`;
+            seeAllEl.href = `${BASE_URL}/releases?artist=${id}`;
 
             if (albums.length === 0) {
                 albumsEl.innerHTML = `<p class="text-muted small">Nenhum lançamento ainda.</p>`;

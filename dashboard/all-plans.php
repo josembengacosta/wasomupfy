@@ -4,8 +4,105 @@
 // Arquivo: dashboard/all-plans.php
 // ══════════════════════════════════════════════════════
 require_once __DIR__ . '/../authentic/include/functions.php';
+require_once __DIR__ . '/include/platform.php';
 startSecureSession();
 checkRememberMe();
+requireLogin();
+$platform = checkDashboardStatus();
+$user     = checkUserAccess((int)$_SESSION['id_users']);
+
+$id_users       = (int)$user['id_users'];
+$first_name     = htmlspecialchars($user['first_name']);
+$user_name      = htmlspecialchars($user['user_name'] ?? '');
+$email_verified = (bool)$user['email_verified'];
+$plan_selected  = $user['plan_selected'];
+$onboard_done   = (bool)($user['onboarding_done'] ?? false);
+$user_photo     = $user['photo_user'] ?? null;
+$name_artist_band = htmlspecialchars($user['name_artist_band'] ?? 'Cria Perfil Artístico');
+$notif_count    = getUnreadNotifCount($id_users);
+$db             = getDB();
+
+// ── Saldo ─────────────────────────────────────
+$w = $db->prepare('SELECT balance_aoa FROM _wallet WHERE id_users = ?');
+$w->execute([$id_users]);
+$balance = $w->fetch() ?: ['balance_aoa' => 0];
+
+// ── Plano ─────────────────────────────────────
+$plan_id     = (int)$user['plan_selected'];
+$plan        = null;
+$max_artists = 1;
+if ($plan_id) {
+    $ps = $db->prepare('SELECT * FROM _plans WHERE id_plan = ?');
+    $ps->execute([$plan_id]);
+    $plan = $ps->fetch();
+    if ($plan) $max_artists = (int)($plan['max_artists'] ?? 1);
+}
+$plan_name = $plan ? htmlspecialchars($plan['name_plan']) : 'Sem plano';
+
+// ── Plano ─────────────────────────────────────
+$plan      = null;
+$plan_paid = ($user['status_user'] === 'active' && !empty($user['plan_activated_at']));
+if ($plan_selected) {
+    $ps = $db->prepare('SELECT * FROM _plans WHERE id_plan = ?');
+    $ps->execute([$plan_selected]);
+    $plan = $ps->fetch();
+}
+
+// Adicionar verificação de expiração do plano
+$plan_expired = false;
+if ($plan_paid && !empty($user['plan_expires_at'])) {
+    $plan_expired = strtotime($user['plan_expires_at']) < time();
+}
+
+// ── Artistas ──────────────────────────────────
+$as = $db->prepare('SELECT COUNT(*) AS total FROM _artist WHERE id_users = ?');
+$as->execute([$id_users]);
+$has_artist = (int)($as->fetch()['total'] ?? 0) > 0;
+
+// ── Conta bancária ────────────────────────────
+$ba = $db->prepare("SELECT id_account FROM _account WHERE id_users = ? AND status_account = 'verified' LIMIT 1");
+$ba->execute([$id_users]);
+$bank_account = $ba->fetch();
+
+// ── Conta rejeitada ───────────────────────────
+$rejected_account = null;
+if ($plan_paid) {
+    $rj = $db->prepare("SELECT type_account, reject_reason FROM _account WHERE id_users = ? AND status_account = 'rejected' LIMIT 1");
+    $rj->execute([$id_users]);
+    $rejected_account = $rj->fetch();
+}
+
+// ── Sessão info (modal logout) ────────────────
+$ls = $db->prepare('SELECT last_login_at, last_login_ip FROM _users_security WHERE id_users = ?');
+$ls->execute([$id_users]);
+$sec = $ls->fetch();
+
+$sess_stmt = $db->prepare("
+    SELECT ip_address, user_agent, country, city, creat_session, last_activity
+    FROM _users_sessions WHERE id_users = ? AND is_active = 1
+    ORDER BY last_activity DESC LIMIT 1
+");
+$sess_stmt->execute([$id_users]);
+$current_session  = $sess_stmt->fetch();
+$session_duration_str = '—';
+if ($current_session && $current_session['creat_session']) {
+    $secs = time() - strtotime($current_session['creat_session']);
+    if ($secs < 60)     $session_duration_str = $secs . 's';
+    elseif ($secs < 3600)  $session_duration_str = floor($secs / 60) . 'min';
+    elseif ($secs < 86400) $session_duration_str = floor($secs / 3600) . 'h ' . floor(($secs % 3600) / 60) . 'min';
+    else                   $session_duration_str = floor($secs / 86400) . 'd ' . floor(($secs % 86400) / 3600) . 'h';
+}
+$member_since   = $user['creat_user'] ? date('d/m/Y', strtotime($user['creat_user'])) : '—';
+$last_login_str = ($sec && $sec['last_login_at']) ? date('d/m/Y H:i', strtotime($sec['last_login_at'])) : '—';
+$ua_raw   = $current_session['user_agent'] ?? '';
+$browser  = 'Desconhecido';
+if (str_contains($ua_raw, 'Edg'))     $browser = 'Microsoft Edge';
+elseif (str_contains($ua_raw, 'Chrome'))  $browser = 'Google Chrome';
+elseif (str_contains($ua_raw, 'Firefox')) $browser = 'Mozilla Firefox';
+elseif (str_contains($ua_raw, 'Safari'))  $browser = 'Safari';
+elseif (str_contains($ua_raw, 'Opera'))   $browser = 'Opera';
+$sess_location = trim(($current_session['city'] ?? '') . ', ' . ($current_session['country'] ?? ''), ', ') ?: 'Desconhecida';
+$sess_ip       = $current_session['ip_address'] ?? ($sec['last_login_ip'] ?? '—');
 
 $logged_in    = isLoggedIn();
 $id_users     = $logged_in ? (int)$_SESSION['id_users'] : 0;
@@ -25,26 +122,11 @@ $plan_meta = [
 ];
 ?>
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-ao">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="robots" content="noindex, nofollow" />
-    <meta name="author" content="José Mbenga da Costa" />
-    <meta name="theme-color" content="#FF0089" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="#FF0089" />
-    <link rel="apple-touch-icon" href="../assets/img/icones/wasomupfy_fiv_512.png" />
-    <link rel="apple-touch-startup-image" href="../assets/img/screenshots/splash.png" />
-    <link rel="manifest" href="manifest.json" />
-    <title>Planos — Wasom Upfy</title>
-    <link rel="shortcut icon" href="../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
-    <link rel="stylesheet" href="../css/dashboard-style.css" />
-    <link rel="stylesheet" href="../css/lastest-style.css" />
+    <?php require_once __DIR__ . '/include/head.php'; ?>
+    <title>Planos — <?php echo APP_NAME; ?></title>
     <style>
     /* Espaçamento extra para o badge no topo dos featured cards */
     .pt-6 {
@@ -86,17 +168,19 @@ $plan_meta = [
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
-            <a class="navbar-brand" href="<?php echo $logged_in ? '../dashboard/painel' : '../home'; ?>">
+            <a class="navbar-brand"
+                href="<?php echo $logged_in ? APP_URL . '/' . APP_URL_PANEL . '/painel' : APP_URL . '/' . 'home'; ?>">
                 <span class="text-light"
-                    style="font-weight:bold;font-family:Arial,sans-serif;text-transform:capitalize">WASOM UPFY</span>
+                    style="font-weight:bold;font-family:Arial,sans-serif;text-transform:capitalize"><?php echo APP_NAME; ?></span>
             </a>
             <div class="ms-auto d-flex align-items-center gap-2">
                 <?php if ($logged_in): ?>
-                <a href="/wasomupfy/dashboard/painel" class="back-link"><i class="bi bi-arrow-left me-1"></i>Voltar ao
+                <a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/painel" class="back-link"><i
+                        class="bi bi-arrow-left me-1"></i>Voltar ao
                     Painel</a>
                 <?php else: ?>
-                <a href="../login" class="btn btn-sm btn-outline-secondary">Entrar</a>
-                <a href="../register" class="btn btn-sm btn-wasomupfy">Criar Conta</a>
+                <a href="<?php echo APP_URL ?>/login" class="btn btn-sm btn-outline-secondary">Entrar</a>
+                <a href="<?php echo APP_URL ?>/register" class="btn btn-sm btn-wasomupfy">Criar Conta</a>
                 <?php endif; ?>
             </div>
         </div>
@@ -474,14 +558,16 @@ $plan_meta = [
 
     <footer class="py-4 text-center  small border-top">
         <div class="container">
-            Tens dúvidas? <a href="../contact" class="text-wasom">Fala connosco</a> &nbsp;·&nbsp;
+            Tens dúvidas? <a
+                href="<?php echo $logged_in ? APP_URL . '/' . APP_URL_PANEL . '/help' : APP_URL . '/' . 'contact'; ?>"
+                class="text-wasom">Consulta-nos</a> &nbsp;·&nbsp;
             &copy; <?php echo date('Y'); ?> Wasom Upfy
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../js/theme.wp.js"></script>
-    <script src="../js/wp.tools.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/theme.wp.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
     <script>
     const t = document.getElementById('billingToggle');
     if (t) {

@@ -4,18 +4,105 @@
 // Arquivo: dashboard/analytics/compare.php
 // ══════════════════════════════════════════════════════
 require_once __DIR__ . '/../../authentic/include/functions.php';
+require_once __DIR__ . '/../include/platform.php';
 startSecureSession();
 checkRememberMe();
 requireLogin();
+$platform = checkDashboardStatus();
+$user     = checkUserAccess((int)$_SESSION['id_users']);
 
-$db       = getDB();
-$id_users = (int)$_SESSION['id_users'];
-$user     = getUserById($id_users);
-if (!$user) { redirect('authentic/logout'); }
+$id_users       = (int)$user['id_users'];
+$first_name     = htmlspecialchars($user['first_name']);
+$user_name      = htmlspecialchars($user['user_name'] ?? '');
+$email_verified = (bool)$user['email_verified'];
+$plan_selected  = $user['plan_selected'];
+$onboard_done   = (bool)($user['onboarding_done'] ?? false);
+$user_photo     = $user['photo_user'] ?? null;
+$name_artist_band = htmlspecialchars($user['name_artist_band'] ?? 'Cria Perfil Artístico');
+$notif_count    = getUnreadNotifCount($id_users);
+$db             = getDB();
 
-$first_name       = htmlspecialchars($user['first_name']);
-$user_artist_name = htmlspecialchars($user['name_artist_band'] ?? $user['first_name']);
+// ── Saldo ─────────────────────────────────────
+$w = $db->prepare('SELECT balance_aoa FROM _wallet WHERE id_users = ?');
+$w->execute([$id_users]);
+$balance = $w->fetch() ?: ['balance_aoa' => 0];
 
+// ── Plano ─────────────────────────────────────
+$plan_id     = (int)$user['plan_selected'];
+$plan        = null;
+$max_artists = 1;
+if ($plan_id) {
+    $ps = $db->prepare('SELECT * FROM _plans WHERE id_plan = ?');
+    $ps->execute([$plan_id]);
+    $plan = $ps->fetch();
+    if ($plan) $max_artists = (int)($plan['max_artists'] ?? 1);
+}
+$plan_name = $plan ? htmlspecialchars($plan['name_plan']) : 'Sem plano';
+
+// ── Plano ─────────────────────────────────────
+$plan      = null;
+$plan_paid = ($user['status_user'] === 'active' && !empty($user['plan_activated_at']));
+if ($plan_selected) {
+    $ps = $db->prepare('SELECT * FROM _plans WHERE id_plan = ?');
+    $ps->execute([$plan_selected]);
+    $plan = $ps->fetch();
+}
+
+// Adicionar verificação de expiração do plano
+$plan_expired = false;
+if ($plan_paid && !empty($user['plan_expires_at'])) {
+    $plan_expired = strtotime($user['plan_expires_at']) < time();
+}
+
+// ── Artistas ──────────────────────────────────
+$as = $db->prepare('SELECT COUNT(*) AS total FROM _artist WHERE id_users = ?');
+$as->execute([$id_users]);
+$has_artist = (int)($as->fetch()['total'] ?? 0) > 0;
+
+// ── Conta bancária ────────────────────────────
+$ba = $db->prepare("SELECT id_account FROM _account WHERE id_users = ? AND status_account = 'verified' LIMIT 1");
+$ba->execute([$id_users]);
+$bank_account = $ba->fetch();
+
+// ── Conta rejeitada ───────────────────────────
+$rejected_account = null;
+if ($plan_paid) {
+    $rj = $db->prepare("SELECT type_account, reject_reason FROM _account WHERE id_users = ? AND status_account = 'rejected' LIMIT 1");
+    $rj->execute([$id_users]);
+    $rejected_account = $rj->fetch();
+}
+
+// ── Sessão info (modal logout) ────────────────
+$ls = $db->prepare('SELECT last_login_at, last_login_ip FROM _users_security WHERE id_users = ?');
+$ls->execute([$id_users]);
+$sec = $ls->fetch();
+
+$sess_stmt = $db->prepare("
+    SELECT ip_address, user_agent, country, city, creat_session, last_activity
+    FROM _users_sessions WHERE id_users = ? AND is_active = 1
+    ORDER BY last_activity DESC LIMIT 1
+");
+$sess_stmt->execute([$id_users]);
+$current_session  = $sess_stmt->fetch();
+$session_duration_str = '—';
+if ($current_session && $current_session['creat_session']) {
+    $secs = time() - strtotime($current_session['creat_session']);
+    if ($secs < 60)     $session_duration_str = $secs . 's';
+    elseif ($secs < 3600)  $session_duration_str = floor($secs / 60) . 'min';
+    elseif ($secs < 86400) $session_duration_str = floor($secs / 3600) . 'h ' . floor(($secs % 3600) / 60) . 'min';
+    else                   $session_duration_str = floor($secs / 86400) . 'd ' . floor(($secs % 86400) / 3600) . 'h';
+}
+$member_since   = $user['creat_user'] ? date('d/m/Y', strtotime($user['creat_user'])) : '—';
+$last_login_str = ($sec && $sec['last_login_at']) ? date('d/m/Y H:i', strtotime($sec['last_login_at'])) : '—';
+$ua_raw   = $current_session['user_agent'] ?? '';
+$browser  = 'Desconhecido';
+if (str_contains($ua_raw, 'Edg'))     $browser = 'Microsoft Edge';
+elseif (str_contains($ua_raw, 'Chrome'))  $browser = 'Google Chrome';
+elseif (str_contains($ua_raw, 'Firefox')) $browser = 'Mozilla Firefox';
+elseif (str_contains($ua_raw, 'Safari'))  $browser = 'Safari';
+elseif (str_contains($ua_raw, 'Opera'))   $browser = 'Opera';
+$sess_location = trim(($current_session['city'] ?? '') . ', ' . ($current_session['country'] ?? ''), ', ') ?: 'Desconhecida';
+$sess_ip       = $current_session['ip_address'] ?? ($sec['last_login_ip'] ?? '—');
 // ── Anos disponíveis ──────────────────────────
 $years_q = $db->prepare("
     SELECT DISTINCT s.year_stream
@@ -53,7 +140,8 @@ $filter_store = isset($_GET['store']) ? (int)$_GET['store'] : 0;
 $has_data = !empty($_GET['ya_start']) || !empty($_GET['yb_start']);
 
 // ── Helper: query de streams para um período ──
-function queryPeriodStreams(PDO $db, int $id_users, int $y_start, int $m_start, int $y_end, int $m_end, int $store = 0): array {
+function queryPeriodStreams(PDO $db, int $id_users, int $y_start, int $m_start, int $y_end, int $m_end, int $store = 0): array
+{
     $store_clause = $store ? "AND s.id_store = :store" : "";
     $sql = "
         SELECT
@@ -78,8 +166,12 @@ function queryPeriodStreams(PDO $db, int $id_users, int $y_start, int $m_start, 
     $stmt = $db->prepare($sql);
     $params = [
         ':id_users' => $id_users,
-        ':y_start'  => $y_start,  ':y_start2' => $y_start, ':m_start' => $m_start,
-        ':y_end'    => $y_end,    ':y_end2'   => $y_end,   ':m_end'   => $m_end,
+        ':y_start'  => $y_start,
+        ':y_start2' => $y_start,
+        ':m_start' => $m_start,
+        ':y_end'    => $y_end,
+        ':y_end2'   => $y_end,
+        ':m_end'   => $m_end,
     ];
     if ($store) $params[':store'] = $store;
     $stmt->execute($params);
@@ -87,7 +179,8 @@ function queryPeriodStreams(PDO $db, int $id_users, int $y_start, int $m_start, 
 }
 
 // ── Helper: query top artistas por período ────
-function queryPeriodArtists(PDO $db, int $id_users, int $y_start, int $m_start, int $y_end, int $m_end, int $store = 0): array {
+function queryPeriodArtists(PDO $db, int $id_users, int $y_start, int $m_start, int $y_end, int $m_end, int $store = 0): array
+{
     $store_clause = $store ? "AND s.id_store = :store" : "";
     $sql = "
         SELECT
@@ -111,8 +204,12 @@ function queryPeriodArtists(PDO $db, int $id_users, int $y_start, int $m_start, 
     $params = [
         ':id_users'  => $id_users,
         ':id_users2' => $id_users,
-        ':y_start'   => $y_start, ':y_start2' => $y_start, ':m_start' => $m_start,
-        ':y_end'     => $y_end,   ':y_end2'   => $y_end,   ':m_end'   => $m_end,
+        ':y_start'   => $y_start,
+        ':y_start2' => $y_start,
+        ':m_start' => $m_start,
+        ':y_end'     => $y_end,
+        ':y_end2'   => $y_end,
+        ':m_end'   => $m_end,
     ];
     if ($store) $params[':store'] = $store;
     $stmt->execute($params);
@@ -138,7 +235,8 @@ $total_a_downloads = array_sum(array_column($rows_a, 'downloads'));
 $total_b_downloads = array_sum(array_column($rows_b, 'downloads'));
 
 // ── Variação percentual ───────────────────────
-function pct_change(float $old, float $new): ?float {
+function pct_change(float $old, float $new): ?float
+{
     if ($old == 0) return null;
     return round(($new - $old) / $old * 100, 1);
 }
@@ -150,14 +248,14 @@ $pct_downloads = pct_change($total_a_downloads, $total_b_downloads);
 $plat_a = [];
 foreach ($rows_a as $r) {
     $k = $r['slug_store'];
-    if (!isset($plat_a[$k])) $plat_a[$k] = ['name'=>$r['name_store'],'slug'=>$k,'streams'=>0,'revenue'=>0];
+    if (!isset($plat_a[$k])) $plat_a[$k] = ['name' => $r['name_store'], 'slug' => $k, 'streams' => 0, 'revenue' => 0];
     $plat_a[$k]['streams'] += $r['streams'];
     $plat_a[$k]['revenue'] += $r['revenue'];
 }
 $plat_b = [];
 foreach ($rows_b as $r) {
     $k = $r['slug_store'];
-    if (!isset($plat_b[$k])) $plat_b[$k] = ['name'=>$r['name_store'],'slug'=>$k,'streams'=>0,'revenue'=>0];
+    if (!isset($plat_b[$k])) $plat_b[$k] = ['name' => $r['name_store'], 'slug' => $k, 'streams' => 0, 'revenue' => 0];
     $plat_b[$k]['streams'] += $r['streams'];
     $plat_b[$k]['revenue'] += $r['revenue'];
 }
@@ -165,20 +263,26 @@ $all_slugs = array_unique(array_merge(array_keys($plat_a), array_keys($plat_b)))
 
 // ── Dados para gráfico mensal ─────────────────
 // Construir lista de labels por mês para cada período
-function build_month_labels(int $y_start, int $m_start, int $y_end, int $m_end): array {
+function build_month_labels(int $y_start, int $m_start, int $y_end, int $m_end): array
+{
     $labels = [];
-    $pt_months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-    $y = $y_start; $m = $m_start;
+    $pt_months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+    $y = $y_start;
+    $m = $m_start;
     while ($y < $y_end || ($y === $y_end && $m <= $m_end)) {
         $labels[] = $pt_months[$m - 1] . '/' . substr($y, 2);
         $m++;
-        if ($m > 12) { $m = 1; $y++; }
+        if ($m > 12) {
+            $m = 1;
+            $y++;
+        }
         if (count($labels) > 36) break; // segurança
     }
     return $labels;
 }
 
-function build_monthly_totals(array $rows, int $y_start, int $m_start, int $y_end, int $m_end): array {
+function build_monthly_totals(array $rows, int $y_start, int $m_start, int $y_end, int $m_end): array
+{
     // índice por year+month
     $map = [];
     foreach ($rows as $r) {
@@ -187,12 +291,16 @@ function build_monthly_totals(array $rows, int $y_start, int $m_start, int $y_en
         $map[$key] += $r['streams'];
     }
     $result = [];
-    $y = $y_start; $m = $m_start;
+    $y = $y_start;
+    $m = $m_start;
     while ($y < $y_end || ($y === $y_end && $m <= $m_end)) {
         $key = $y . '-' . str_pad($m, 2, '0', STR_PAD_LEFT);
         $result[] = (int)($map[$key] ?? 0);
         $m++;
-        if ($m > 12) { $m = 1; $y++; }
+        if ($m > 12) {
+            $m = 1;
+            $y++;
+        }
         if (count($result) > 36) break;
     }
     return $result;
@@ -209,46 +317,40 @@ $chart_labels_a = $labels_a + array_fill(0, $max_len, '');
 $chart_data_a   = $totals_a + array_fill(0, $max_len, null);
 $chart_data_b   = $totals_b + array_fill(0, $max_len, null);
 
-$months_pt = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+$months_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
 $store_colors = [
-    'spotify'       => ['border'=>'#1db954','bg'=>'rgba(29,185,84,0.4)'],
-    'apple-music'   => ['border'=>'#fc3c44','bg'=>'rgba(252,60,68,0.4)'],
-    'amazon-music'  => ['border'=>'#00a8e0','bg'=>'rgba(0,168,224,0.4)'],
-    'deezer'        => ['border'=>'#ff0089','bg'=>'rgba(255,0,137,0.4)'],
-    'tidal'         => ['border'=>'#00ffff','bg'=>'rgba(0,255,255,0.3)'],
-    'youtube-music' => ['border'=>'#ff0000','bg'=>'rgba(255,0,0,0.4)'],
-    'boomplay'      => ['border'=>'#f5a623','bg'=>'rgba(245,166,35,0.4)'],
-    'tiktok'        => ['border'=>'#69c9d0','bg'=>'rgba(105,201,208,0.4)'],
-    'default'       => ['border'=>'#888',   'bg'=>'rgba(136,136,136,0.3)'],
+    'spotify'       => ['border' => '#1db954', 'bg' => 'rgba(29,185,84,0.4)'],
+    'apple-music'   => ['border' => '#fc3c44', 'bg' => 'rgba(252,60,68,0.4)'],
+    'amazon-music'  => ['border' => '#00a8e0', 'bg' => 'rgba(0,168,224,0.4)'],
+    'deezer'        => ['border' => '#ff0089', 'bg' => 'rgba(255,0,137,0.4)'],
+    'tidal'         => ['border' => '#00ffff', 'bg' => 'rgba(0,255,255,0.3)'],
+    'youtube-music' => ['border' => '#ff0000', 'bg' => 'rgba(255,0,0,0.4)'],
+    'boomplay'      => ['border' => '#f5a623', 'bg' => 'rgba(245,166,35,0.4)'],
+    'tiktok'        => ['border' => '#69c9d0', 'bg' => 'rgba(105,201,208,0.4)'],
+    'default'       => ['border' => '#888',   'bg' => 'rgba(136,136,136,0.3)'],
 ];
 $store_icons = [
-    'spotify'=>'bi-spotify','apple-music'=>'bi-apple','amazon-music'=>'bi-music-note-beamed',
-    'deezer'=>'bi-music-player','tidal'=>'bi-water','youtube-music'=>'bi-youtube',
-    'boomplay'=>'bi-soundwave','tiktok'=>'bi-tiktok','default'=>'bi-music-note-beamed',
+    'spotify' => 'bi-spotify',
+    'apple-music' => 'bi-apple',
+    'amazon-music' => 'bi-music-note-beamed',
+    'deezer' => 'bi-music-player',
+    'tidal' => 'bi-water',
+    'youtube-music' => 'bi-youtube',
+    'boomplay' => 'bi-soundwave',
+    'tiktok' => 'bi-tiktok',
+    'default' => 'bi-music-note-beamed',
 ];
 
 $base_url  = rtrim(APP_URL, '/');
 $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
 ?>
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-ao">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="robots" content="noindex, nofollow" />
-    <meta name="theme-color" content="#FF0089" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <link rel="apple-touch-icon" href="../../assets/img/icones/wasomupfy_fiv_512.png" />
-    <link rel="manifest" href="../manifest.json" />
+    <?php require_once __DIR__ . '/../include/head.php'; ?>
     <title>Comparar Períodos — <?php echo APP_NAME; ?></title>
-    <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
-    <link rel="stylesheet" href="../../css/dashboard-style.css" />
-    <link rel="stylesheet" href="../../css/lastest-style.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
     /* ══ Layout ══ */
@@ -485,100 +587,141 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
 </head>
 
 <body>
-
     <!-- ═══ NAVBAR ═══ -->
-    <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
-                <span class="navbar-toggler-icon"><i class="bi bi-list text-white fs-1"></i></span>
-            </button>
-            <a class="navbar-brand" href="../painel">
-                <span class="text-light" style="font-weight:bold;font-family:Arial,sans-serif">WASOM UPFY</span>
-            </a>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav m-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="../painel"><i class="bi bi-speedometer2"></i>
-                            Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../launch/releases"><i class="bi bi-disc"></i>
-                            Lançamentos</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="statistics"><i class="bi bi-bar-chart"></i>
-                            Estatísticas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../finances/overview"><i
-                                class="bi bi-currency-dollar"></i> Finanças</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../artists/artists-list"><i class="bi bi-person"></i>
-                            Artistas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../artists/youtube/ucy"><i class="bi bi-youtube"></i>
-                            YouTube</a></li>
-                </ul>
-            </div>
-            <div class="user-menu d-flex align-items-center">
-                <a class="theme-toggle text-white me-2" id="themeToggle"><i class="bi bi-sun" id="themeIcon"></i></a>
-                <a href="../page/notifications" class="text-white me-2"><i class="bi bi-bell fs-4"></i></a>
-                <a href="#" class="text-white" data-bs-toggle="dropdown"><i class="bi bi-person-circle fs-4"></i></a>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="../user/profile">
-                            <i class="bi bi-person me-2"></i><strong><?php echo $user_artist_name; ?></strong></a>
-                        <div class="px-3 pb-1 text-muted" style="font-size:.72rem">Conta
-                            <?php echo str_pad($id_users, 6, '0', STR_PAD_LEFT); ?></div>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li><a class="dropdown-item" href="../user/profile"><i class="bi bi-person me-2"></i> Meu Perfil</a>
-                    </li>
-                    <li><a class="dropdown-item" href="../account/manage-account"><i class="bi bi-tools me-2"></i>
-                            Gestão de Conta</a></li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li><a class="dropdown-item" href="../page/settings"><i class="bi bi-gear me-2"></i>
-                            Configurações</a></li>
-                    <li><a class="dropdown-item" href="../page/notifications"><i class="bi bi-bell me-2"></i>
-                            Notificações</a></li>
-                    <li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal"
-                            data-bs-target="#logoutwasomupfy">
-                            <i class="bi bi-box-arrow-right me-2"></i> Desconectar-se</a></li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li><a class="dropdown-item" href="../page/support"><i class="bi bi-headset me-2"></i> Suporte</a>
-                    </li>
-                    <li><a class="dropdown-item" href="../page/faq"><i class="bi bi-chat-left-text me-2"></i> FAQ</a>
-                    </li>
-                    <li><span class="dropdown-item-text" id="versionDropdown"></span></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Offcanvas Mobile -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title text-light" style="font-weight:bold;font-family:Arial,sans-serif">WASOM UPFY</h5>
-            <button type="button" class="btn-close text-white" data-bs-dismiss="offcanvas"><i
-                    class="bi bi-x-lg"></i></button>
-        </div>
-        <div class="offcanvas-body">
-            <ul class="nav flex-column">
-                <li class="nav-item"><a class="nav-link" href="../painel"><i class="bi bi-speedometer2"></i>
-                        Dashboard</a></li>
-                <li class="nav-item"><a class="nav-link" href="../launch/releases"><i class="bi bi-disc"></i>
-                        Lançamentos</a></li>
-                <li class="nav-item"><a class="nav-link active" href="statistics"><i class="bi bi-bar-chart"></i>
-                        Estatísticas</a></li>
-                <li class="nav-item"><a class="nav-link" href="../finances/overview"><i
-                            class="bi bi-currency-dollar"></i> Finanças</a></li>
-                <li class="nav-item"><a class="nav-link" href="../artists/artists-list"><i class="bi bi-person"></i>
-                        Artistas</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link text-danger" href="#" data-bs-toggle="modal"
-                        data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right"></i> Desconectar-se</a></li>
-            </ul>
-        </div>
-    </div>
-
+    <?php require_once __DIR__ . '/../include/sidebar.php'; ?>
     <!-- ═══ MAIN ═══ -->
     <div class="container my-4">
+        <?php /* ============================================
+    BANNERS DE NOTIFICACAO DO PAINEL
+    Estilo: inline CSS consistente com renderDashboardAlerts().
+    Bootstrap alert nativo removido — um único sistema visual.
+    Lógica de prioridade:
+      Nível 1 (danger)  — bloqueia distribuição
+      Nível 2 (warning) — importante, requer atenção
+      Nível 3 (info)    — informativo / acção opcional
+    ============================================ */ ?>
 
+        <?php renderDashboardAlerts($user, $platform); ?>
+
+        <?php
+        // Cor map para helpers inline — idêntico ao renderDashboardAlerts()
+        $alertColors = [
+            'danger'  => ['bg' => 'rgba(239,68,68,.08)',  'border' => 'rgba(239,68,68,.25)',  'text' => '#ef4444'],
+            'warning' => ['bg' => 'rgba(234,179,8,.08)',  'border' => 'rgba(234,179,8,.25)',  'text' => '#eab308'],
+            'info'    => ['bg' => 'rgba(99,102,241,.08)', 'border' => 'rgba(99,102,241,.25)', 'text' => '#6366f1'],
+        ];
+        function wuAlert(string $type, string $icon, string $message, ?array $action = null, bool $dismiss = true, string $id = ''): void
+        {
+            global $alertColors;
+            $c   = $alertColors[$type] ?? $alertColors['info'];
+            $eid = $id ?: ('wuPanelAlert_' . md5($message));
+            echo "<div id=\"{$eid}\" style=\"display:flex;align-items:flex-start;gap:10px;"
+                . "background:{$c['bg']};border:1px solid {$c['border']};border-radius:12px;"
+                . "padding:.75rem 1rem;font-size:.83rem;margin-bottom:.6rem;"
+                . "transition:opacity .3s;\">";
+            echo "<i class=\"bi {$icon}\" style=\"font-size:1rem;flex-shrink:0;margin-top:2px;color:{$c['text']};\"></i>";
+            echo '<span class="wu-alert-msg">' . $message;
+            if ($action) {
+                echo " <a href=\"{$action['url']}\" style=\"color:{$c['text']};font-weight:700;"
+                    . "text-decoration:underline;white-space:nowrap\">{$action['label']} &rarr;</a>";
+            }
+            echo '</span>';
+            if ($dismiss) {
+                echo "<button type=\"button\" class=\"wu-alert-dismiss\" aria-label=\"Fechar\""
+                    . " onclick=\"(function(el){el.style.opacity='0';"
+                    . "setTimeout(function(){el.style.display='none'},300)})(document.getElementById('{$eid}'))\">"
+                    . "&times;</button>";
+            }
+            echo '</div>';
+        }
+        ?>
+
+        <?php /* ── NÍVEL 1: Crítico — bloqueia distribuição ── */ ?>
+
+        <?php if (!$email_verified): ?>
+        <?php wuAlert(
+                'danger',
+                'bi-envelope-exclamation-fill',
+                '<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta e receber notificações de pagamentos.',
+                ['label' => 'Verificar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/user/profile#perfil'],
+                true,
+                'banner-email'
+            ); ?>
+        <?php endif; ?>
+
+        <?php if ($plan && !$plan_paid): ?>
+        <?php wuAlert(
+                'warning',
+                'bi-clock-history',
+                '<strong>Pagamento pendente — ' . htmlspecialchars($plan['name_plan']) . '.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados até confirmação.',
+                ['label' => 'Finalizar pagamento', 'url' => APP_URL . '/' . APP_URL_PANEL . '/payment/pay'],
+                true,
+                'banner-plan-pending'
+            ); ?>
+        <?php elseif (!$plan): ?>
+        <?php wuAlert(
+                'danger',
+                'bi-credit-card-fill',
+                '<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir a tua música para +150 plataformas.',
+                ['label' => 'Ver planos', 'url' => APP_URL . '/' . APP_URL_PANEL . '/all-plans'],
+                false,
+                'banner-plan'
+            ); ?>
+        <?php endif; ?>
+
+        <?php /* ── NÍVEL 2: Importante — perfil incompleto ── */ ?>
+
+        <?php if ($plan_paid && !$has_artist): ?>
+        <?php wuAlert(
+                'info',
+                'bi-person-plus-fill',
+                '<strong>Cria o teu perfil de artista.</strong> Tens plano activo mas ainda não criaste um perfil. Precisas de um para poder lançar música.',
+                ['label' => 'Criar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/add-artist'],
+                true,
+                'banner-artist'
+            ); ?>
+        <?php endif; ?>
+
+        <?php /* ── NÍVEL 3: Informativo — conta bancária ── */ ?>
+
+        <?php if ($plan_paid && $has_artist && !$bank_account): ?>
+        <?php wuAlert(
+                'info',
+                'bi-bank',
+                '<strong>Conta bancária não registada.</strong> Para poder sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.',
+                ['label' => 'Registar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/withdraw'],
+                true,
+                'banner-bank'
+            ); ?>
+        <?php endif; ?>
+
+        <?php /* ── NÍVEL 3: Conta bancária rejeitada ── */ ?>
+
+        <?php
+        $rejected_account = null;
+        if ($plan_paid) {
+            $rej_stmt = getDB()->prepare("SELECT type_account, reject_reason FROM _account WHERE id_users = ? AND status_account = 'rejected' LIMIT 1");
+            $rej_stmt->execute([$id_users]);
+            $rejected_account = $rej_stmt->fetch();
+        }
+        ?>
+        <?php if ($rejected_account): ?>
+        <?php
+            $rej_msg = '<strong>Conta ' . htmlspecialchars($rejected_account['type_account']) . ' rejeitada.</strong>';
+            if ($rejected_account['reject_reason']) {
+                $rej_msg .= ' Motivo: <em>' . htmlspecialchars($rejected_account['reject_reason']) . '</em>.';
+            }
+            $rej_msg .= ' Actualiza os dados e submete novamente.';
+            wuAlert(
+                'danger',
+                'bi-x-circle-fill',
+                $rej_msg,
+                ['label' => 'Corrigir agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/withdraw'],
+                true,
+                'banner-account-rejected'
+            );
+            ?>
+        <?php endif; ?>
         <!-- Cabeçalho -->
         <div class="comparison-header">
             <div class="row align-items-center">
@@ -631,8 +774,8 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
                                 <label class="form-label small text-muted">Mês início</label>
                                 <select name="ma_start" id="ma_start" class="form-select form-select-sm">
                                     <?php foreach ($months_pt as $mi => $mn): ?>
-                                    <option value="<?php echo $mi+1; ?>"
-                                        <?php echo ($mi+1) == $ma_start ? 'selected' : ''; ?>><?php echo $mn; ?>
+                                    <option value="<?php echo $mi + 1; ?>"
+                                        <?php echo ($mi + 1) == $ma_start ? 'selected' : ''; ?>><?php echo $mn; ?>
                                     </option>
                                     <?php endforeach; ?>
                                 </select>
@@ -650,8 +793,9 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
                                 <label class="form-label small text-muted">Mês fim</label>
                                 <select name="ma_end" id="ma_end" class="form-select form-select-sm">
                                     <?php foreach ($months_pt as $mi => $mn): ?>
-                                    <option value="<?php echo $mi+1; ?>"
-                                        <?php echo ($mi+1) == $ma_end ? 'selected' : ''; ?>><?php echo $mn; ?></option>
+                                    <option value="<?php echo $mi + 1; ?>"
+                                        <?php echo ($mi + 1) == $ma_end ? 'selected' : ''; ?>><?php echo $mn; ?>
+                                    </option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -684,8 +828,8 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
                                 <label class="form-label small text-muted">Mês início</label>
                                 <select name="mb_start" id="mb_start" class="form-select form-select-sm">
                                     <?php foreach ($months_pt as $mi => $mn): ?>
-                                    <option value="<?php echo $mi+1; ?>"
-                                        <?php echo ($mi+1) == $mb_start ? 'selected' : ''; ?>><?php echo $mn; ?>
+                                    <option value="<?php echo $mi + 1; ?>"
+                                        <?php echo ($mi + 1) == $mb_start ? 'selected' : ''; ?>><?php echo $mn; ?>
                                     </option>
                                     <?php endforeach; ?>
                                 </select>
@@ -703,8 +847,9 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
                                 <label class="form-label small text-muted">Mês fim</label>
                                 <select name="mb_end" id="mb_end" class="form-select form-select-sm">
                                     <?php foreach ($months_pt as $mi => $mn): ?>
-                                    <option value="<?php echo $mi+1; ?>"
-                                        <?php echo ($mi+1) == $mb_end ? 'selected' : ''; ?>><?php echo $mn; ?></option>
+                                    <option value="<?php echo $mi + 1; ?>"
+                                        <?php echo ($mi + 1) == $mb_end ? 'selected' : ''; ?>><?php echo $mn; ?>
+                                    </option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -757,8 +902,8 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
                 <div class="col-md-5">
                     <div class="small text-muted text-uppercase fw-bold" style="letter-spacing:.5px">Período A</div>
                     <div class="total-streams-a"><?php echo number_format((int)$total_a_streams); ?></div>
-                    <div class="small text-muted"><?php echo $months_pt[$ma_start-1].'/'.$ya_start; ?> →
-                        <?php echo $months_pt[$ma_end-1].'/'.$ya_end; ?></div>
+                    <div class="small text-muted"><?php echo $months_pt[$ma_start - 1] . '/' . $ya_start; ?> →
+                        <?php echo $months_pt[$ma_end - 1] . '/' . $ya_end; ?></div>
                 </div>
                 <div class="col-md-2">
                     <div class="vs-divider">VS</div>
@@ -777,8 +922,8 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
                 <div class="col-md-5">
                     <div class="small text-muted text-uppercase fw-bold" style="letter-spacing:.5px">Período B</div>
                     <div class="total-streams-b"><?php echo number_format((int)$total_b_streams); ?></div>
-                    <div class="small text-muted"><?php echo $months_pt[$mb_start-1].'/'.$yb_start; ?> →
-                        <?php echo $months_pt[$mb_end-1].'/'.$yb_end; ?></div>
+                    <div class="small text-muted"><?php echo $months_pt[$mb_start - 1] . '/' . $yb_start; ?> →
+                        <?php echo $months_pt[$mb_end - 1] . '/' . $yb_end; ?></div>
                 </div>
             </div>
         </div>
@@ -841,12 +986,12 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
                 <div class="period-card text-center">
                     <div class="metric-label">Média mensal de streams</div>
                     <?php
-                $months_a_count = count($totals_a) ?: 1;
-                $months_b_count = count($totals_b) ?: 1;
-                $avg_a = round($total_a_streams / $months_a_count);
-                $avg_b = round($total_b_streams / $months_b_count);
-                $pct_avg = pct_change($avg_a, $avg_b);
-                ?>
+                        $months_a_count = count($totals_a) ?: 1;
+                        $months_b_count = count($totals_b) ?: 1;
+                        $avg_a = round($total_a_streams / $months_a_count);
+                        $avg_b = round($total_b_streams / $months_b_count);
+                        $pct_avg = pct_change($avg_a, $avg_b);
+                        ?>
                     <div class="d-flex justify-content-center align-items-baseline gap-3 mt-2">
                         <div>
                             <div style="font-size:.7rem;color:#ff0089">A</div>
@@ -893,16 +1038,16 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
                     </thead>
                     <tbody>
                         <?php foreach ($all_slugs as $slug):
-                    $pa = $plat_a[$slug] ?? ['name'=>$slug,'streams'=>0];
-                    $pb = $plat_b[$slug] ?? ['name'=>$slug,'streams'=>0];
-                    $name = $pa['name'] !== $slug ? $pa['name'] : ($pb['name'] !== $slug ? $pb['name'] : $slug);
-                    $pct  = pct_change($pa['streams'], $pb['streams']);
-                    $colors = $store_colors[$slug] ?? $store_colors['default'];
-                    $icon   = $store_icons[$slug]  ?? $store_icons['default'];
-                    $max_bar = max($pa['streams'], $pb['streams'], 1);
-                    $pct_bar_a = round($pa['streams'] / $max_bar * 100);
-                    $pct_bar_b = round($pb['streams'] / $max_bar * 100);
-                ?>
+                                    $pa = $plat_a[$slug] ?? ['name' => $slug, 'streams' => 0];
+                                    $pb = $plat_b[$slug] ?? ['name' => $slug, 'streams' => 0];
+                                    $name = $pa['name'] !== $slug ? $pa['name'] : ($pb['name'] !== $slug ? $pb['name'] : $slug);
+                                    $pct  = pct_change($pa['streams'], $pb['streams']);
+                                    $colors = $store_colors[$slug] ?? $store_colors['default'];
+                                    $icon   = $store_icons[$slug]  ?? $store_icons['default'];
+                                    $max_bar = max($pa['streams'], $pb['streams'], 1);
+                                    $pct_bar_a = round($pa['streams'] / $max_bar * 100);
+                                    $pct_bar_b = round($pb['streams'] / $max_bar * 100);
+                                ?>
                         <tr>
                             <td>
                                 <div class="d-flex align-items-center gap-2">
@@ -956,7 +1101,7 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
                     <?php else: ?>
                     <?php foreach ($artists_a as $i => $art): ?>
                     <div class="artist-rank-row">
-                        <span class="fw-bold" style="min-width:20px;color:#ff0089"><?php echo $i+1; ?></span>
+                        <span class="fw-bold" style="min-width:20px;color:#ff0089"><?php echo $i + 1; ?></span>
                         <?php if ($art['photo_artist']): ?>
                         <img class="artist-photo-sm"
                             src="<?php echo htmlspecialchars($photo_url . $art['photo_artist']); ?>"
@@ -980,7 +1125,7 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
                     <?php else: ?>
                     <?php foreach ($artists_b as $i => $art): ?>
                     <div class="artist-rank-row">
-                        <span class="fw-bold" style="min-width:20px;color:#00d084"><?php echo $i+1; ?></span>
+                        <span class="fw-bold" style="min-width:20px;color:#00d084"><?php echo $i + 1; ?></span>
                         <?php if ($art['photo_artist']): ?>
                         <img class="artist-photo-sm"
                             src="<?php echo htmlspecialchars($photo_url . $art['photo_artist']); ?>"
@@ -998,49 +1143,17 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
         </div>
         <?php endif; ?>
 
-        <?php endif; // fim $has_data ?>
+        <?php endif; // fim $has_data 
+        ?>
     </div><!-- /container -->
 
-    <!-- Bottom Nav Mobile -->
-    <nav class="bottom-nav d-lg-none">
-        <ul class="nav justify-content-around">
-            <li class="nav-item"><a class="nav-link" href="../painel"><i
-                        class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../launch/releases"><i
-                        class="bi bi-disc"></i><span>Lançamentos</span></a></li>
-            <li class="nav-item"><a class="nav-link active" href="statistics"><i
-                        class="bi bi-bar-chart"></i><span>Estatísticas</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../finances/overview"><i
-                        class="bi bi-currency-dollar"></i><span>Finanças</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../artists/artists-list"><i
-                        class="bi bi-person"></i><span>Artistas</span></a></li>
-        </ul>
-    </nav>
 
-    <!-- Modal Logout -->
-    <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-dark">Terminar sessão</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body text-center text-dark">
-                    <p>Tens a certeza de que desejas terminar sessão, <strong><?php echo $first_name; ?></strong>?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Não, continuar</button>
-                    <a href="../logout" class="btn btn-danger">Sim, terminar sessão</a>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- ═══ JS ═══ -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../../js/theme.wp.js"></script>
-    <script src="../../js/wp.tools.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/theme.wp.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
     <script>
     // ── Seleção rápida ────────────────────────────
     function setQuick(type) {
@@ -1136,7 +1249,7 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
         data: {
             labels: chartLabels,
             datasets: [{
-                    label: 'Período A (<?php echo $months_pt[$ma_start-1].'/'.$ya_start; ?> → <?php echo $months_pt[$ma_end-1].'/'.$ya_end; ?>)',
+                    label: 'Período A (<?php echo $months_pt[$ma_start - 1] . '/' . $ya_start; ?> → <?php echo $months_pt[$ma_end - 1] . '/' . $ya_end; ?>)',
                     data: dataA.slice(0, maxLen),
                     borderColor: '#ff0089',
                     backgroundColor: 'rgba(255,0,137,0.08)',
@@ -1145,7 +1258,7 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
                     spanGaps: true
                 },
                 {
-                    label: 'Período B (<?php echo $months_pt[$mb_start-1].'/'.$yb_start; ?> → <?php echo $months_pt[$mb_end-1].'/'.$yb_end; ?>)',
+                    label: 'Período B (<?php echo $months_pt[$mb_start - 1] . '/' . $yb_start; ?> → <?php echo $months_pt[$mb_end - 1] . '/' . $yb_end; ?>)',
                     data: dataB.slice(0, maxLen),
                     borderColor: '#00d084',
                     backgroundColor: 'rgba(0,208,132,0.08)',

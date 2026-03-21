@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-ao">
 
 <head>
   <meta charset="UTF-8" />
@@ -21,16 +21,16 @@
   <meta property="og:image:width" content="300" />
   <meta property="og:image:height" content="300" />
   <meta property="og:image:alt" content="Slogan Wasom Upfy" />
-  <title>404 - Página Não Encontrada | Wasom Upfy</title>
+  <title>404 - Página Não Encontrada | <?php echo APP_NAME; ?></title>
   <link rel="shortcut icon" href="../../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon" />
-  <link rel="stylesheet" href="../../../css/libs/plugins.css" />
-  <link rel="stylesheet" href="../../../css/libs/scrollue.css" />
+  <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/libs/plugins.css" />
+  <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/libs/scrollue.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
   <link href="
 https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css
 " rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
-  <link rel="stylesheet" href="../../../css/dashboard-style.css" />
+  <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/dashboard-style.css" />
 
   <style>
     body {

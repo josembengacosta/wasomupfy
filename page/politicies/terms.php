@@ -18,7 +18,7 @@ $whatsNum  = preg_replace('/[^0-9]/', '', cfg('whatsapp_number', '244922030116')
 $csrf_page = getSiteCsrf();
 ?>
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-ao">
 
 <head>
     <meta charset="utf-8" />
@@ -44,306 +44,306 @@ $csrf_page = getSiteCsrf();
     <meta property="og:image:alt" content="<?php echo $siteName; ?>" />
     <title><?php echo $siteName; ?> | Termos de Uso e de Condições</title>
     <script>
-    window.addEventListener("load", function() {
-        setTimeout(function() {
-            document.querySelector("body").classList.add("loaded");
-        }, 200);
-    });
+        window.addEventListener("load", function() {
+            setTimeout(function() {
+                document.querySelector("body").classList.add("loaded");
+            }, 200);
+        });
     </script>
     <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv1.png" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link rel="stylesheet" href="../../css/theme.min.css" />
-    <link rel="stylesheet" href="../../js/libs/scrollcue/scrollCue.css" />
-    <link rel="stylesheet" href="../../css/framework.css" />
-    <link rel="stylesheet" href="../../css/main.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/theme.min.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/js/libs/scrollcue/scrollCue.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/framework.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/main.css" />
     <style>
-    #reading-progress {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 0%;
-        height: 3px;
-        background: linear-gradient(90deg, #ff009d, #ff6b35);
-        z-index: 9999;
-        transition: width .1s linear
-    }
+        #reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: linear-gradient(90deg, #ff009d, #ff6b35);
+            z-index: 9999;
+            transition: width .1s linear
+        }
 
-    .terms-badges a {
-        font-size: .8rem;
-        font-weight: 600;
-        text-decoration: none;
-        transition: transform .2s, opacity .2s
-    }
+        .terms-badges a {
+            font-size: .8rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform .2s, opacity .2s
+        }
 
-    .terms-badges a:hover {
-        transform: scale(1.06);
-        opacity: .85
-    }
-
-    .terms-layout {
-        display: flex;
-        gap: 2rem;
-        align-items: flex-start
-    }
-
-    .terms-index {
-        position: sticky;
-        top: 90px;
-        width: 240px;
-        flex-shrink: 0;
-        background: var(--bs-body-bg, #fff);
-        border-radius: 12px;
-        box-shadow: 0 2px 14px rgba(0, 0, 0, .08);
-        padding: 1.25rem 1rem;
-        max-height: calc(100vh - 110px);
-        overflow-y: auto;
-        scrollbar-width: thin
-    }
-
-    .terms-index h3 {
-        font-size: 1rem;
-        font-weight: 700;
-        color: #ff009d;
-        margin-bottom: 1rem;
-        padding-bottom: .5rem;
-        border-bottom: 2px solid rgba(255, 0, 157, .15)
-    }
-
-    .terms-index ul {
-        list-style: none;
-        padding: 0;
-        margin: 0
-    }
-
-    .terms-index li {
-        margin-bottom: .3rem
-    }
-
-    .terms-index a {
-        display: flex;
-        align-items: flex-start;
-        gap: .4rem;
-        font-size: .82rem;
-        color: var(--bs-body-color, #444);
-        text-decoration: none;
-        line-height: 1.4;
-        padding: .3rem .4rem;
-        border-radius: 6px;
-        transition: background .15s, color .15s
-    }
-
-    .terms-index a:hover,
-    .terms-index a.active {
-        background: rgba(255, 0, 157, .08);
-        color: #ff009d
-    }
-
-    .terms-index .num {
-        flex-shrink: 0;
-        font-weight: 700;
-        color: #ff009d;
-        min-width: 22px
-    }
-
-    .terms-index .idx-divider {
-        margin: .6rem 0;
-        border-color: rgba(255, 0, 157, .12)
-    }
-
-    .terms-content {
-        flex: 1;
-        min-width: 0
-    }
-
-    .term-section {
-        background: var(--bs-body-bg, #fff);
-        border-radius: 14px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, .07);
-        padding: 1.75rem 2rem;
-        margin-bottom: 1.5rem;
-        scroll-margin-top: 90px;
-        border-left: 4px solid transparent;
-        transition: border-color .3s
-    }
-
-    .term-section:hover {
-        border-left-color: rgba(255, 0, 157, .35)
-    }
-
-    .term-section:target,
-    .term-section.active-section {
-        border-left-color: #ff009d
-    }
-
-    .term-section h2 {
-        display: flex;
-        align-items: center;
-        gap: .75rem;
-        font-size: 1.3rem;
-        font-weight: 700;
-        color: #ff009d;
-        margin-bottom: 1rem;
-        padding-bottom: .6rem;
-        border-bottom: 1px solid rgba(255, 0, 157, .12)
-    }
-
-    .sec-num {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-width: 34px;
-        height: 34px;
-        background: linear-gradient(135deg, #ff009d, #ff6b35);
-        color: #fff;
-        font-weight: 700;
-        font-size: .85rem;
-        border-radius: 8px;
-        flex-shrink: 0
-    }
-
-    .term-section h3 {
-        font-size: 1rem;
-        font-weight: 700;
-        margin-top: 1.25rem;
-        margin-bottom: .5rem
-    }
-
-    .term-section p {
-        line-height: 1.75
-    }
-
-    .term-section ul {
-        padding-left: 1.2rem
-    }
-
-    .term-section ul li {
-        margin-bottom: .45rem;
-        line-height: 1.7
-    }
-
-    .term-box {
-        border-radius: 10px;
-        padding: 1rem 1.25rem;
-        margin: 1rem 0;
-        font-size: .93rem;
-        line-height: 1.65
-    }
-
-    .term-box strong {
-        display: block;
-        margin-bottom: .35rem
-    }
-
-    .term-box.danger {
-        background: rgba(220, 53, 69, .08);
-        border-left: 4px solid #dc3545
-    }
-
-    .term-box.warning {
-        background: rgba(255, 193, 7, .1);
-        border-left: 4px solid #ffc107
-    }
-
-    .term-box.success {
-        background: rgba(25, 135, 84, .08);
-        border-left: 4px solid #198754
-    }
-
-    .term-box.info {
-        background: rgba(13, 202, 240, .08);
-        border-left: 4px solid #0dcaf0
-    }
-
-    .term-box.pink {
-        background: rgba(255, 0, 157, .07);
-        border-left: 4px solid #ff009d
-    }
-
-    .plan-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 1rem 0;
-        font-size: .9rem;
-        border-radius: 10px;
-        overflow: hidden;
-        box-shadow: 0 1px 8px rgba(0, 0, 0, .07)
-    }
-
-    .plan-table thead tr {
-        background: linear-gradient(90deg, #ff009d, #ff6b35);
-        color: #fff
-    }
-
-    .plan-table th {
-        padding: .75rem 1rem;
-        font-weight: 600
-    }
-
-    .plan-table td {
-        padding: .65rem 1rem;
-        border-bottom: 1px solid rgba(0, 0, 0, .06)
-    }
-
-    .plan-table tbody tr:hover {
-        background: rgba(255, 0, 157, .04)
-    }
-
-    .plan-table tbody tr:last-child td {
-        border-bottom: none
-    }
-
-    .action-buttons {
-        display: flex;
-        justify-content: center;
-        gap: .75rem;
-        flex-wrap: wrap;
-        margin-bottom: 2rem
-    }
-
-    .action-buttons .btn {
-        border-radius: 50px;
-        font-size: .88rem;
-        padding: .5rem 1.4rem
-    }
-
-    .policy-cards .card {
-        border-radius: 12px;
-        transition: transform .2s, box-shadow .2s;
-        text-decoration: none
-    }
-
-    .policy-cards .card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 24px rgba(255, 0, 157, .15) !important
-    }
-
-    [data-bs-theme="dark"] .term-section,
-    [data-bs-theme="dark"] .terms-index {
-        background: var(--bs-body-bg);
-        box-shadow: 0 2px 14px rgba(0, 0, 0, .25)
-    }
-
-    @media(max-width:991.98px) {
-        .terms-index {
-            display: none !important
+        .terms-badges a:hover {
+            transform: scale(1.06);
+            opacity: .85
         }
 
         .terms-layout {
-            display: block
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start
+        }
+
+        .terms-index {
+            position: sticky;
+            top: 90px;
+            width: 240px;
+            flex-shrink: 0;
+            background: var(--bs-body-bg, #fff);
+            border-radius: 12px;
+            box-shadow: 0 2px 14px rgba(0, 0, 0, .08);
+            padding: 1.25rem 1rem;
+            max-height: calc(100vh - 110px);
+            overflow-y: auto;
+            scrollbar-width: thin
+        }
+
+        .terms-index h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #ff009d;
+            margin-bottom: 1rem;
+            padding-bottom: .5rem;
+            border-bottom: 2px solid rgba(255, 0, 157, .15)
+        }
+
+        .terms-index ul {
+            list-style: none;
+            padding: 0;
+            margin: 0
+        }
+
+        .terms-index li {
+            margin-bottom: .3rem
+        }
+
+        .terms-index a {
+            display: flex;
+            align-items: flex-start;
+            gap: .4rem;
+            font-size: .82rem;
+            color: var(--bs-body-color, #444);
+            text-decoration: none;
+            line-height: 1.4;
+            padding: .3rem .4rem;
+            border-radius: 6px;
+            transition: background .15s, color .15s
+        }
+
+        .terms-index a:hover,
+        .terms-index a.active {
+            background: rgba(255, 0, 157, .08);
+            color: #ff009d
+        }
+
+        .terms-index .num {
+            flex-shrink: 0;
+            font-weight: 700;
+            color: #ff009d;
+            min-width: 22px
+        }
+
+        .terms-index .idx-divider {
+            margin: .6rem 0;
+            border-color: rgba(255, 0, 157, .12)
+        }
+
+        .terms-content {
+            flex: 1;
+            min-width: 0
         }
 
         .term-section {
-            padding: 1.25rem
+            background: var(--bs-body-bg, #fff);
+            border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, .07);
+            padding: 1.75rem 2rem;
+            margin-bottom: 1.5rem;
+            scroll-margin-top: 90px;
+            border-left: 4px solid transparent;
+            transition: border-color .3s
         }
-    }
 
-    @media(max-width:575.98px) {
-        .term-section h2 {
-            font-size: 1.1rem
+        .term-section:hover {
+            border-left-color: rgba(255, 0, 157, .35)
         }
-    }
+
+        .term-section:target,
+        .term-section.active-section {
+            border-left-color: #ff009d
+        }
+
+        .term-section h2 {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #ff009d;
+            margin-bottom: 1rem;
+            padding-bottom: .6rem;
+            border-bottom: 1px solid rgba(255, 0, 157, .12)
+        }
+
+        .sec-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 34px;
+            height: 34px;
+            background: linear-gradient(135deg, #ff009d, #ff6b35);
+            color: #fff;
+            font-weight: 700;
+            font-size: .85rem;
+            border-radius: 8px;
+            flex-shrink: 0
+        }
+
+        .term-section h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-top: 1.25rem;
+            margin-bottom: .5rem
+        }
+
+        .term-section p {
+            line-height: 1.75
+        }
+
+        .term-section ul {
+            padding-left: 1.2rem
+        }
+
+        .term-section ul li {
+            margin-bottom: .45rem;
+            line-height: 1.7
+        }
+
+        .term-box {
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+            font-size: .93rem;
+            line-height: 1.65
+        }
+
+        .term-box strong {
+            display: block;
+            margin-bottom: .35rem
+        }
+
+        .term-box.danger {
+            background: rgba(220, 53, 69, .08);
+            border-left: 4px solid #dc3545
+        }
+
+        .term-box.warning {
+            background: rgba(255, 193, 7, .1);
+            border-left: 4px solid #ffc107
+        }
+
+        .term-box.success {
+            background: rgba(25, 135, 84, .08);
+            border-left: 4px solid #198754
+        }
+
+        .term-box.info {
+            background: rgba(13, 202, 240, .08);
+            border-left: 4px solid #0dcaf0
+        }
+
+        .term-box.pink {
+            background: rgba(255, 0, 157, .07);
+            border-left: 4px solid #ff009d
+        }
+
+        .plan-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: .9rem;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 8px rgba(0, 0, 0, .07)
+        }
+
+        .plan-table thead tr {
+            background: linear-gradient(90deg, #ff009d, #ff6b35);
+            color: #fff
+        }
+
+        .plan-table th {
+            padding: .75rem 1rem;
+            font-weight: 600
+        }
+
+        .plan-table td {
+            padding: .65rem 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, .06)
+        }
+
+        .plan-table tbody tr:hover {
+            background: rgba(255, 0, 157, .04)
+        }
+
+        .plan-table tbody tr:last-child td {
+            border-bottom: none
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: .75rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem
+        }
+
+        .action-buttons .btn {
+            border-radius: 50px;
+            font-size: .88rem;
+            padding: .5rem 1.4rem
+        }
+
+        .policy-cards .card {
+            border-radius: 12px;
+            transition: transform .2s, box-shadow .2s;
+            text-decoration: none
+        }
+
+        .policy-cards .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(255, 0, 157, .15) !important
+        }
+
+        [data-bs-theme="dark"] .term-section,
+        [data-bs-theme="dark"] .terms-index {
+            background: var(--bs-body-bg);
+            box-shadow: 0 2px 14px rgba(0, 0, 0, .25)
+        }
+
+        @media(max-width:991.98px) {
+            .terms-index {
+                display: none !important
+            }
+
+            .terms-layout {
+                display: block
+            }
+
+            .term-section {
+                padding: 1.25rem
+            }
+        }
+
+        @media(max-width:575.98px) {
+            .term-section h2 {
+                font-size: 1.1rem
+            }
+        }
     </style>
 </head>
 
@@ -383,23 +383,25 @@ $csrf_page = getSiteCsrf();
                                         data-feather="chevron-down"></i></a>
                                 <div class="dropdown-menu dropdown-menu-md">
                                     <?php
-                                    $navIcons=['single'=>'fa-music','album'=>'fa-compact-disc','artist'=>'fa-microphone-lines','label'=>'fa-tags'];
-                                    foreach($plans as $p):
-                                        $nSlug=$p['slug_plan']; $nIcon=$navIcons[$nSlug]??'fa-music';
-                                        $nPrc=number_format($p['price_plan'],0,',','.'); $nPer=$p['type_plan']==='subscription'?'/ano':'';
+                                    $navIcons = ['single' => 'fa-music', 'album' => 'fa-compact-disc', 'artist' => 'fa-microphone-lines', 'label' => 'fa-tags'];
+                                    foreach ($plans as $p):
+                                        $nSlug = $p['slug_plan'];
+                                        $nIcon = $navIcons[$nSlug] ?? 'fa-music';
+                                        $nPrc = number_format($p['price_plan'], 0, ',', '.');
+                                        $nPer = $p['type_plan'] === 'subscription' ? '/ano' : '';
                                     ?>
-                                    <a class="dropdown-item mb-3 text-body" href="../../plan/<?php echo $nSlug; ?>">
-                                        <div class="d-flex align-items-center">
-                                            <i class="fa-solid <?php echo $nIcon; ?> text-wasomupfy fs-3"
-                                                style="width:35px"></i>
-                                            <div class="ms-3 lh-1">
-                                                <h5 class="mb-1"><?php echo htmlspecialchars($p['name_plan']); ?></h5>
-                                                <p class="mb-0 fs-6">Plano
-                                                    <?php echo htmlspecialchars($p['name_plan']); ?> —
-                                                    <?php echo $nPrc; ?> Kz<?php echo $nPer; ?></p>
+                                        <a class="dropdown-item mb-3 text-body" href="../../plan/<?php echo $nSlug; ?>">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fa-solid <?php echo $nIcon; ?> text-wasomupfy fs-3"
+                                                    style="width:35px"></i>
+                                                <div class="ms-3 lh-1">
+                                                    <h5 class="mb-1"><?php echo htmlspecialchars($p['name_plan']); ?></h5>
+                                                    <p class="mb-0 fs-6">Plano
+                                                        <?php echo htmlspecialchars($p['name_plan']); ?> —
+                                                        <?php echo $nPrc; ?> Kz<?php echo $nPer; ?></p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </a>
+                                        </a>
                                     <?php endforeach; ?>
                                     <a class="dropdown-item mb-3 text-body" href="../../plan/all-plans">
                                         <div class="d-flex align-items-center">
@@ -454,7 +456,7 @@ $csrf_page = getSiteCsrf();
                                                     target="_blank" rel="external noopener noreferrer">Atendimento</a>
                                                 <a class="dropdown-item" href="../../contact">Contacta-nos</a>
                                                 <a class="dropdown-item"
-                                                    href="<?php echo htmlspecialchars(cfg('whatsapp_channel_url','https://whatsapp.com/channel/0029VaCEDqo59PwWpU0nGa04')); ?>"
+                                                    href="<?php echo htmlspecialchars(cfg('whatsapp_channel_url', 'https://whatsapp.com/channel/0029VaCEDqo59PwWpU0nGa04')); ?>"
                                                     target="_blank" rel="external noopener noreferrer">Canal
                                                     WhatsApp</a>
                                             </div>
@@ -486,11 +488,11 @@ $csrf_page = getSiteCsrf();
                                     <i data-feather="chevron-down"></i></a>
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item" href="../../contact">Caixa de mensagem</a></li>
-                                    <?php if(cfg('support_email')): ?><li><a class="dropdown-item"
-                                            href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"><?php echo htmlspecialchars(cfg('support_email')); ?></a>
-                                    </li><?php endif; ?>
-                                    <?php if($whatsNum): ?><li><a class="dropdown-item"
-                                            href="https://wa.me/<?php echo $whatsNum; ?>">WhatsApp</a></li>
+                                    <?php if (cfg('support_email')): ?><li><a class="dropdown-item"
+                                                href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"><?php echo htmlspecialchars(cfg('support_email')); ?></a>
+                                        </li><?php endif; ?>
+                                    <?php if ($whatsNum): ?><li><a class="dropdown-item"
+                                                href="https://wa.me/<?php echo $whatsNum; ?>">WhatsApp</a></li>
                                     <?php endif; ?>
                                 </ul>
                             </li>
@@ -498,8 +500,8 @@ $csrf_page = getSiteCsrf();
                         <div class="mt-3 mt-lg-0 d-flex align-items-center">
                             <a href="/wasomupfy/login" class="btn btn-secondary mx-2">Entrar <i
                                     data-feather="log-in"></i></a>
-                            <?php if($canRegister): ?><a href="/wasomupfy/register"
-                                class="btn btn-wasomupfy">Inscreva-se</a><?php endif; ?>
+                            <?php if ($canRegister): ?><a href="/wasomupfy/register"
+                                    class="btn btn-wasomupfy">Inscreva-se</a><?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -736,53 +738,54 @@ $csrf_page = getSiteCsrf();
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php if(!empty($plans)): foreach($plans as $pl):
-                                        $pI=['single'=>'fa-music','album'=>'fa-compact-disc','artist'=>'fa-microphone-lines','label'=>'fa-tags'];
-                                        $pIc=$pI[$pl['slug_plan']]??'fa-music';
-                                        $pPrc=number_format($pl['price_plan'],0,',','.');
-                                        $pType=$pl['type_plan']==='subscription'?'Subscrição':'Por lançamento';
-                                    ?>
-                                        <tr>
-                                            <td><i
-                                                    class="fa-solid <?php echo $pIc; ?> text-wasomupfy me-2"></i><strong><?php echo htmlspecialchars($pl['name_plan']); ?></strong>
-                                            </td>
-                                            <td><strong><?php echo $pPrc; ?> AOA</strong></td>
-                                            <td><?php echo $pType; ?></td>
-                                            <td><?php echo htmlspecialchars($pl['description_plan'] ?? '—'); ?></td>
-                                        </tr>
-                                        <?php endforeach; else: ?>
-                                        <tr>
-                                            <td><i
-                                                    class="fa-solid fa-music text-wasomupfy me-2"></i><strong>Single</strong>
-                                            </td>
-                                            <td><strong>2.000 AOA</strong></td>
-                                            <td>Por lançamento</td>
-                                            <td>1 faixa por lançamento</td>
-                                        </tr>
-                                        <tr>
-                                            <td><i
-                                                    class="fa-solid fa-compact-disc text-wasomupfy me-2"></i><strong>Álbum</strong>
-                                            </td>
-                                            <td><strong>5.000 AOA</strong></td>
-                                            <td>Por lançamento</td>
-                                            <td>Até 20 faixas por lançamento</td>
-                                        </tr>
-                                        <tr>
-                                            <td><i
-                                                    class="fa-solid fa-microphone-lines text-wasomupfy me-2"></i><strong>Artist</strong>
-                                            </td>
-                                            <td><strong>11.400 AOA</strong></td>
-                                            <td>Subscrição (2 anos)</td>
-                                            <td>Lançamentos ilimitados, 1 artista</td>
-                                        </tr>
-                                        <tr>
-                                            <td><i
-                                                    class="fa-solid fa-tags text-wasomupfy me-2"></i><strong>Label</strong>
-                                            </td>
-                                            <td><strong>70.000 AOA</strong></td>
-                                            <td>Subscrição (2 anos)</td>
-                                            <td>Lançamentos ilimitados, artistas ilimitados</td>
-                                        </tr>
+                                        <?php if (!empty($plans)): foreach ($plans as $pl):
+                                                $pI = ['single' => 'fa-music', 'album' => 'fa-compact-disc', 'artist' => 'fa-microphone-lines', 'label' => 'fa-tags'];
+                                                $pIc = $pI[$pl['slug_plan']] ?? 'fa-music';
+                                                $pPrc = number_format($pl['price_plan'], 0, ',', '.');
+                                                $pType = $pl['type_plan'] === 'subscription' ? 'Subscrição' : 'Por lançamento';
+                                        ?>
+                                                <tr>
+                                                    <td><i
+                                                            class="fa-solid <?php echo $pIc; ?> text-wasomupfy me-2"></i><strong><?php echo htmlspecialchars($pl['name_plan']); ?></strong>
+                                                    </td>
+                                                    <td><strong><?php echo $pPrc; ?> AOA</strong></td>
+                                                    <td><?php echo $pType; ?></td>
+                                                    <td><?php echo htmlspecialchars($pl['description_plan'] ?? '—'); ?></td>
+                                                </tr>
+                                            <?php endforeach;
+                                        else: ?>
+                                            <tr>
+                                                <td><i
+                                                        class="fa-solid fa-music text-wasomupfy me-2"></i><strong>Single</strong>
+                                                </td>
+                                                <td><strong>2.000 AOA</strong></td>
+                                                <td>Por lançamento</td>
+                                                <td>1 faixa por lançamento</td>
+                                            </tr>
+                                            <tr>
+                                                <td><i
+                                                        class="fa-solid fa-compact-disc text-wasomupfy me-2"></i><strong>Álbum</strong>
+                                                </td>
+                                                <td><strong>5.000 AOA</strong></td>
+                                                <td>Por lançamento</td>
+                                                <td>Até 20 faixas por lançamento</td>
+                                            </tr>
+                                            <tr>
+                                                <td><i
+                                                        class="fa-solid fa-microphone-lines text-wasomupfy me-2"></i><strong>Artist</strong>
+                                                </td>
+                                                <td><strong>11.400 AOA</strong></td>
+                                                <td>Subscrição (2 anos)</td>
+                                                <td>Lançamentos ilimitados, 1 artista</td>
+                                            </tr>
+                                            <tr>
+                                                <td><i
+                                                        class="fa-solid fa-tags text-wasomupfy me-2"></i><strong>Label</strong>
+                                                </td>
+                                                <td><strong>70.000 AOA</strong></td>
+                                                <td>Subscrição (2 anos)</td>
+                                                <td>Lançamentos ilimitados, artistas ilimitados</td>
+                                            </tr>
                                         <?php endif; ?>
                                     </tbody>
                                 </table>
@@ -1253,21 +1256,21 @@ $csrf_page = getSiteCsrf();
                                 <li><strong>FAQ:</strong> <a href="../support/faq"
                                         class="text-wasomupfy fw-bold">Perguntas Frequentes</a> — para questões comuns
                                     sobre a plataforma;</li>
-                                <?php if(cfg('support_email')): ?><li><strong>E-mail de suporte:</strong> <a
-                                        href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
-                                        class="text-wasomupfy"><?php echo htmlspecialchars(cfg('support_email')); ?></a>;
-                                </li><?php endif; ?>
-                                <?php if(cfg('info_email')): ?><li><strong>E-mail geral:</strong> <a
-                                        href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
-                                        class="text-wasomupfy"><?php echo htmlspecialchars(cfg('info_email')); ?></a>;
-                                </li><?php endif; ?>
-                                <?php if($whatsNum): ?><li><strong>WhatsApp:</strong> <a
-                                        href="https://wa.me/<?php echo $whatsNum; ?>" class="text-wasomupfy"
-                                        target="_blank" rel="noopener noreferrer">+<?php echo $whatsNum; ?></a>;</li>
+                                <?php if (cfg('support_email')): ?><li><strong>E-mail de suporte:</strong> <a
+                                            href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
+                                            class="text-wasomupfy"><?php echo htmlspecialchars(cfg('support_email')); ?></a>;
+                                    </li><?php endif; ?>
+                                <?php if (cfg('info_email')): ?><li><strong>E-mail geral:</strong> <a
+                                            href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
+                                            class="text-wasomupfy"><?php echo htmlspecialchars(cfg('info_email')); ?></a>;
+                                    </li><?php endif; ?>
+                                <?php if ($whatsNum): ?><li><strong>WhatsApp:</strong> <a
+                                            href="https://wa.me/<?php echo $whatsNum; ?>" class="text-wasomupfy"
+                                            target="_blank" rel="noopener noreferrer">+<?php echo $whatsNum; ?></a>;</li>
                                 <?php endif; ?>
                                 <li><strong>Localização:</strong>
-                                    <?php echo htmlspecialchars(cfg('company_city','Luanda')); ?>,
-                                    <?php echo htmlspecialchars(cfg('company_country','Angola')); ?>;</li>
+                                    <?php echo htmlspecialchars(cfg('company_city', 'Luanda')); ?>,
+                                    <?php echo htmlspecialchars(cfg('company_country', 'Angola')); ?>;</li>
                                 <li><strong>Horário de atendimento:</strong> Segunda a Sexta, das 08h às 17h (WAT).</li>
                             </ul>
                             <div class="term-box success" style="margin-top:1.5rem">
@@ -1347,30 +1350,30 @@ $csrf_page = getSiteCsrf();
                         <p class="lead text-muted small mb-4">Levamos a música angolana para o mundo. Distribuição
                             digital, marketing e gestão de carreira num só lugar.</p>
                         <div class="d-flex gap-3" role="list" aria-label="Redes sociais">
-                            <?php if(cfg('instagram_url')): ?><a
-                                href="<?php echo htmlspecialchars(cfg('instagram_url')); ?>" target="_blank"
-                                rel="external noopener noreferrer" aria-label="Instagram"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2"><i
-                                    class="fa-brands fa-instagram"></i></a><?php endif; ?>
-                            <?php if(cfg('facebook_url')): ?><a
-                                href="<?php echo htmlspecialchars(cfg('facebook_url')); ?>" target="_blank"
-                                rel="external noopener noreferrer" aria-label="Facebook"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2"><i
-                                    class="fa-brands fa-facebook-f"></i></a><?php endif; ?>
-                            <?php if(cfg('youtube_url')): ?><a
-                                href="<?php echo htmlspecialchars(cfg('youtube_url')); ?>" target="_blank"
-                                rel="external noopener noreferrer" aria-label="YouTube"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2"><i
-                                    class="fa-brands fa-youtube"></i></a><?php endif; ?>
-                            <?php if(cfg('linkedin_url')): ?><a
-                                href="<?php echo htmlspecialchars(cfg('linkedin_url')); ?>" target="_blank"
-                                rel="external noopener noreferrer" aria-label="LinkedIn"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2"><i
-                                    class="fa-brands fa-linkedin-in"></i></a><?php endif; ?>
-                            <?php if($whatsNum): ?><a href="https://wa.me/<?php echo $whatsNum; ?>" target="_blank"
-                                rel="external noopener noreferrer" aria-label="WhatsApp"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2"><i
-                                    class="fa-brands fa-whatsapp"></i></a><?php endif; ?>
+                            <?php if (cfg('instagram_url')): ?><a
+                                    href="<?php echo htmlspecialchars(cfg('instagram_url')); ?>" target="_blank"
+                                    rel="external noopener noreferrer" aria-label="Instagram"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2"><i
+                                        class="fa-brands fa-instagram"></i></a><?php endif; ?>
+                            <?php if (cfg('facebook_url')): ?><a
+                                    href="<?php echo htmlspecialchars(cfg('facebook_url')); ?>" target="_blank"
+                                    rel="external noopener noreferrer" aria-label="Facebook"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2"><i
+                                        class="fa-brands fa-facebook-f"></i></a><?php endif; ?>
+                            <?php if (cfg('youtube_url')): ?><a
+                                    href="<?php echo htmlspecialchars(cfg('youtube_url')); ?>" target="_blank"
+                                    rel="external noopener noreferrer" aria-label="YouTube"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2"><i
+                                        class="fa-brands fa-youtube"></i></a><?php endif; ?>
+                            <?php if (cfg('linkedin_url')): ?><a
+                                    href="<?php echo htmlspecialchars(cfg('linkedin_url')); ?>" target="_blank"
+                                    rel="external noopener noreferrer" aria-label="LinkedIn"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2"><i
+                                        class="fa-brands fa-linkedin-in"></i></a><?php endif; ?>
+                            <?php if ($whatsNum): ?><a href="https://wa.me/<?php echo $whatsNum; ?>" target="_blank"
+                                    rel="external noopener noreferrer" aria-label="WhatsApp"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2"><i
+                                        class="fa-brands fa-whatsapp"></i></a><?php endif; ?>
                         </div>
                     </div>
                     <div class="col-lg-3 col-6">
@@ -1396,23 +1399,23 @@ $csrf_page = getSiteCsrf();
                                     class="text-reset text-decoration-none hover-white">Ajuda</a></li>
                             <li class="mb-2"><a href="../../contact"
                                     class="text-reset text-decoration-none hover-white">Contacta-nos</a></li>
-                            <?php if($whatsNum): ?><li class="mb-2"><a href="https://wa.me/<?php echo $whatsNum; ?>"
-                                    class="text-reset text-decoration-none hover-white">WhatsApp</a></li><?php endif; ?>
+                            <?php if ($whatsNum): ?><li class="mb-2"><a href="https://wa.me/<?php echo $whatsNum; ?>"
+                                        class="text-reset text-decoration-none hover-white">WhatsApp</a></li><?php endif; ?>
                         </ul>
                     </div>
                     <div class="col-lg-3 col-12">
                         <h3 class="fw-bold mb-3">Contacto</h3>
                         <ul class="list-unstyled mb-0 text-muted small">
-                            <li class="mb-3"><span><?php echo htmlspecialchars(cfg('company_country','Angola')); ?> —
-                                    <?php echo htmlspecialchars(cfg('company_city','Luanda')); ?></span></li>
-                            <?php if(cfg('info_email')): ?><li class="mb-3"><a
-                                    href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
-                                    class="text-reset text-decoration-none"><?php echo htmlspecialchars(cfg('info_email')); ?></a>
-                            </li><?php endif; ?>
-                            <?php if(cfg('support_email')): ?><li class="mb-3"><a
-                                    href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
-                                    class="text-reset text-decoration-none"><?php echo htmlspecialchars(cfg('support_email')); ?></a>
-                            </li><?php endif; ?>
+                            <li class="mb-3"><span><?php echo htmlspecialchars(cfg('company_country', 'Angola')); ?> —
+                                    <?php echo htmlspecialchars(cfg('company_city', 'Luanda')); ?></span></li>
+                            <?php if (cfg('info_email')): ?><li class="mb-3"><a
+                                        href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
+                                        class="text-reset text-decoration-none"><?php echo htmlspecialchars(cfg('info_email')); ?></a>
+                                </li><?php endif; ?>
+                            <?php if (cfg('support_email')): ?><li class="mb-3"><a
+                                        href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
+                                        class="text-reset text-decoration-none"><?php echo htmlspecialchars(cfg('support_email')); ?></a>
+                                </li><?php endif; ?>
                             <li><span>Seg — Sex: 08h às 17h</span></li>
                         </ul>
                     </div>
@@ -1508,138 +1511,138 @@ $csrf_page = getSiteCsrf();
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/headhesive@1.2.4/dist/headhesive.min.js"></script>
-    <script src="../../js/theme.min.js"></script>
-    <script src="../../js/vendors/color-modes.js"></script>
-    <script src="../../js/libs/scrollcue/scrollCue.min.js"></script>
-    <script src="../../js/vendors/scrollcue.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/theme.min.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/vendors/color-modes.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/libs/scrollcue/scrollCue.min.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/vendors/scrollcue.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.29.0/dist/feather.min.js"></script>
     <script src="https://unpkg.com/in-view@0.6.1/dist/in-view.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/imagesloaded/5.0.0/imagesloaded.pkgd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jarallax@2.2.0/dist/jarallax.min.js"></script>
-    <script src="../../js/cookies.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/cookies.js"></script>
     <script>
-    feather.replace({
-        width: "1em",
-        height: "1em"
-    });
+        feather.replace({
+            width: "1em",
+            height: "1em"
+        });
     </script>
     <script>
-    !(function(e, t, a, n, g) {
-        (e[n] = e[n] || []), e[n].push({
-            "gtm.start": new Date().getTime(),
-            event: "gtm.js"
-        });
-        var m = t.getElementsByTagName(a)[0],
-            r = t.createElement(a);
-        (r.async = !0), (r.src = "https://www.googletagmanager.com/gtm.js?id=GTM-MF4DZVH"), m.parentNode
-            .insertBefore(r, m);
-    })(window, document, "script", "dataLayer");
+        !(function(e, t, a, n, g) {
+            (e[n] = e[n] || []), e[n].push({
+                "gtm.start": new Date().getTime(),
+                event: "gtm.js"
+            });
+            var m = t.getElementsByTagName(a)[0],
+                r = t.createElement(a);
+            (r.async = !0), (r.src = "https://www.googletagmanager.com/gtm.js?id=GTM-MF4DZVH"), m.parentNode
+                .insertBefore(r, m);
+        })(window, document, "script", "dataLayer");
     </script>
     <script>
-    (function() {
-        // Barra de progresso
-        var bar = document.getElementById('reading-progress');
-        window.addEventListener('scroll', function() {
-            var st = document.documentElement.scrollTop || document.body.scrollTop,
-                sh = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            if (bar) bar.style.width = (sh > 0 ? (st / sh) * 100 : 0) + '%';
-        }, {
-            passive: true
-        });
-        // Scroll spy
-        var sections = document.querySelectorAll('.term-section[id]'),
-            links = document.querySelectorAll('.terms-index a[href^="#"]');
+        (function() {
+            // Barra de progresso
+            var bar = document.getElementById('reading-progress');
+            window.addEventListener('scroll', function() {
+                var st = document.documentElement.scrollTop || document.body.scrollTop,
+                    sh = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                if (bar) bar.style.width = (sh > 0 ? (st / sh) * 100 : 0) + '%';
+            }, {
+                passive: true
+            });
+            // Scroll spy
+            var sections = document.querySelectorAll('.term-section[id]'),
+                links = document.querySelectorAll('.terms-index a[href^="#"]');
 
-        function spy() {
-            var sy = window.pageYOffset + 120,
-                cur = '';
-            sections.forEach(function(s) {
-                if (s.offsetTop <= sy) cur = s.id;
+            function spy() {
+                var sy = window.pageYOffset + 120,
+                    cur = '';
+                sections.forEach(function(s) {
+                    if (s.offsetTop <= sy) cur = s.id;
+                });
+                links.forEach(function(a) {
+                    a.classList.toggle('active', a.getAttribute('href') === '#' + cur);
+                });
+            }
+            window.addEventListener('scroll', spy, {
+                passive: true
             });
-            links.forEach(function(a) {
-                a.classList.toggle('active', a.getAttribute('href') === '#' + cur);
+            spy();
+            // Smooth scroll
+            document.querySelectorAll('.terms-index a[href^="#"], .smooth-scroll').forEach(function(a) {
+                a.addEventListener('click', function(e) {
+                    var t = document.querySelector(this.getAttribute('href'));
+                    if (t) {
+                        e.preventDefault();
+                        window.scrollTo({
+                            top: t.offsetTop - 90,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
             });
-        }
-        window.addEventListener('scroll', spy, {
-            passive: true
-        });
-        spy();
-        // Smooth scroll
-        document.querySelectorAll('.terms-index a[href^="#"], .smooth-scroll').forEach(function(a) {
-            a.addEventListener('click', function(e) {
-                var t = document.querySelector(this.getAttribute('href'));
-                if (t) {
+            // Feedback AJAX
+            function syncCsrf(token) {
+                if (!token) return;
+                document.querySelectorAll('[name="csrf_token"]').forEach(function(el) {
+                    el.value = token;
+                });
+            }
+            var fm = document.getElementById('formFeedback');
+            if (fm) {
+                fm.addEventListener('submit', function(e) {
                     e.preventDefault();
-                    window.scrollTo({
-                        top: t.offsetTop - 90,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-        // Feedback AJAX
-        function syncCsrf(token) {
-            if (!token) return;
-            document.querySelectorAll('[name="csrf_token"]').forEach(function(el) {
-                el.value = token;
-            });
-        }
-        var fm = document.getElementById('formFeedback');
-        if (fm) {
-            fm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                if (!fm.checkValidity()) {
-                    fm.classList.add('was-validated');
-                    return;
-                }
-                var btn = document.getElementById('btn-feedback-modal'),
-                    msg = document.getElementById('feedback-modal-msg'),
-                    base = document.body.dataset.basePath || '../..';
-                btn.disabled = true;
-                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>A enviar…';
-                fetch(base + '/ajax/feedback.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            csrf: fm.querySelector('[name="csrf_token"]').value,
-                            name: fm.querySelector('[name="name_fb"]').value.trim(),
-                            subject: fm.querySelector('[name="subject_fb"]').value.trim(),
-                            message: fm.querySelector('[name="message_fb"]').value.trim(),
-                            page: window.location.pathname
+                    if (!fm.checkValidity()) {
+                        fm.classList.add('was-validated');
+                        return;
+                    }
+                    var btn = document.getElementById('btn-feedback-modal'),
+                        msg = document.getElementById('feedback-modal-msg'),
+                        base = document.body.dataset.basePath || '../..';
+                    btn.disabled = true;
+                    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>A enviar…';
+                    fetch(base + '/ajax/feedback.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                csrf: fm.querySelector('[name="csrf_token"]').value,
+                                name: fm.querySelector('[name="name_fb"]').value.trim(),
+                                subject: fm.querySelector('[name="subject_fb"]').value.trim(),
+                                message: fm.querySelector('[name="message_fb"]').value.trim(),
+                                page: window.location.pathname
+                            })
                         })
-                    })
-                    .then(function(r) {
-                        return r.json();
-                    }).then(function(d) {
-                        msg.className = 'alert ' + (d.success ? 'alert-success' : 'alert-danger');
-                        msg.textContent = d.message || (d.success ? 'Obrigado!' : 'Erro.');
-                        msg.classList.remove('d-none');
-                        if (d.new_csrf) syncCsrf(d.new_csrf);
-                        if (d.success) {
-                            fm.reset();
-                            setTimeout(function() {
-                                var m = bootstrap.Modal.getInstance(document.getElementById(
-                                    'modalFeedback'));
-                                if (m) m.hide();
-                            }, 2500);
-                        }
-                    })
-                    .catch(function() {
-                        msg.className = 'alert alert-danger';
-                        msg.textContent = 'Erro de ligação. Tenta novamente.';
-                        msg.classList.remove('d-none');
-                    })
-                    .finally(function() {
-                        btn.disabled = false;
-                        btn.innerHTML = 'Enviar Feedback <i class="fa-solid fa-paper-plane ms-2"></i>';
-                    });
-            });
-        }
-    })();
+                        .then(function(r) {
+                            return r.json();
+                        }).then(function(d) {
+                            msg.className = 'alert ' + (d.success ? 'alert-success' : 'alert-danger');
+                            msg.textContent = d.message || (d.success ? 'Obrigado!' : 'Erro.');
+                            msg.classList.remove('d-none');
+                            if (d.new_csrf) syncCsrf(d.new_csrf);
+                            if (d.success) {
+                                fm.reset();
+                                setTimeout(function() {
+                                    var m = bootstrap.Modal.getInstance(document.getElementById(
+                                        'modalFeedback'));
+                                    if (m) m.hide();
+                                }, 2500);
+                            }
+                        })
+                        .catch(function() {
+                            msg.className = 'alert alert-danger';
+                            msg.textContent = 'Erro de ligação. Tenta novamente.';
+                            msg.classList.remove('d-none');
+                        })
+                        .finally(function() {
+                            btn.disabled = false;
+                            btn.innerHTML = 'Enviar Feedback <i class="fa-solid fa-paper-plane ms-2"></i>';
+                        });
+                });
+            }
+        })();
     </script>
 </body>
 

@@ -171,24 +171,8 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
 <html lang="pt-ao">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="robots" content="noindex, nofollow" />
-    <meta name="author" content="José Mbenga da Costa" />
-    <meta name="theme-color" content="#FF0089" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="csrf-token" content="<?php echo $_SESSION['csrf_token']; ?>">
-    <link rel="apple-touch-icon" href="../../assets/img/icones/wasomupfy_fiv_512.png" />
-    <link rel="apple-touch-startup-image" href="../../assets/img/screenshots/splash.png" />
-    <link rel="manifest" href="../manifest.json" />
-    <title>Lançamentos — Wasom Upfy</title>
-    <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
-    <link href=" https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
-    <link rel="stylesheet" href="../../css/dashboard-style.css" />
+    <?php require_once __DIR__ . '/../include/head.php'; ?>
+    <title>Lançamentos — <?php echo APP_NAME; ?></title>
     <!-- Select2 Bootstrap 5 Theme (opcional, para melhor integração) -->
     <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"
         rel="stylesheet" />
@@ -196,10 +180,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
         rel="stylesheet" />
     <!-- SweetAlert2 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
-    <!-- Toastr -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
-    <link rel="stylesheet" href="../../css/lastest-style.css" />
-    <link rel="stylesheet" href="../../css/release-style.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/release-style.css" />
     <style>
     /* ── Cards de lançamento ─── */
     .release-card {
@@ -377,215 +358,20 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
 </head>
 
 <body>
-    <!-- Tela de Carregamento -->
-    <!-- <div class="loading-screen" id="loadingScreen">
-        <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg" class="loading-logo">
-            <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2"/>
-            <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
-        </svg>
-        <div class="spinner"></div>
-    </div> -->
-
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu"
-                aria-controls="offcanvasMenu">
-                <span class="navbar-toggler-icon"><i class="bi bi-list text-white fs-1"></i></span>
-            </button>
-            <a class="navbar-brand" href="../painel">
-                <span class="text-light"
-                    style="font-weight:bold;text-transform:capitalize;font-family:Arial,sans-serif">WASOM UPFY</span>
-            </a>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav m-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="../painel"><i class="bi bi-speedometer2"></i>
-                            Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../launch/releases"><i class="bi bi-disc"></i>
-                            Lançamentos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../analytics/statistics"><i
-                                class="bi bi-bar-chart"></i> Estatísticas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../finances/overview"><i
-                                class="bi bi-currency-dollar"></i> Finanças</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../artists/artists-list"><i class="bi bi-person"></i>
-                            Artistas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../artists/youtube/ucy"><i class="bi bi-youtube"></i>
-                            Unificação de canal YouTube</a></li>
-                </ul>
-            </div>
-            <div class="user-menu d-flex align-items-center">
-                <a class="theme-toggle text-white me-2" id="themeToggle"><i class="bi bi-sun" id="themeIcon"></i></a>
-
-                <!-- Badge de notificações -->
-                <a href="../page/notifications" class="text-white me-2 position-relative" aria-label="Notificações">
-                    <i class="bi bi-bell fs-4"></i>
-                    <?php if ($notif_count > 0): ?>
-                    <span id="navNotifBadge" class="position-absolute translate-middle badge rounded-pill" style="top:2px;left:calc(100% - 4px);background:#FF0089;font-size:.6rem;
-                                 min-width:18px;height:18px;padding:0 5px;line-height:18px;
-                                 box-shadow:0 0 0 2px #1a1a2e;">
-                        <?php echo $notif_count > 99 ? '99+' : $notif_count; ?>
-                    </span>
-                    <?php else: ?>
-                    <span id="navNotifBadge" class="position-absolute translate-middle badge rounded-pill" style="top:2px;left:calc(100% - 4px);background:#FF0089;font-size:.6rem;
-                                 min-width:18px;height:18px;padding:0 5px;line-height:18px;
-                                 box-shadow:0 0 0 2px #1a1a2e;display:none;">0</span>
-                    <?php endif; ?>
-                </a>
-
-                <!-- Foto + dropdown -->
-                <?php if ($user_photo): ?>
-                <img src="../../assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
-                    width="35" height="35" class="rounded-circle flex-shrink-0 me-1"
-                    style="object-fit:cover;border:2px solid #FF4D4D;cursor:pointer" data-bs-toggle="dropdown"
-                    alt="Foto conta"
-                    onerror="this.onerror=null;this.src='../../assets/img/avatar/avatar_wasomupfy.png'">
-                <?php else: ?>
-                <img src="../../assets/img/avatar/avatar_wasomupfy.png" width="35" height="35"
-                    class="rounded-circle flex-shrink-0 me-1" style="object-fit:cover;cursor:pointer"
-                    data-bs-toggle="dropdown" alt="Avatar">
-                <?php endif; ?>
-
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li>
-                        <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="../account/manage-account">
-                            <?php if ($user_photo): ?>
-                            <img src="../../assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
-                                width="38" height="38" class="rounded-circle flex-shrink-0"
-                                style="object-fit:cover;border:2px solid #FF4D4D" alt="Foto conta"
-                                onerror="this.onerror=null;this.src='../../assets/img/avatar/avatar_wasomupfy.png'">
-                            <?php else: ?>
-                            <img src="../../assets/img/avatar/avatar_wasomupfy.png" width="38" height="38"
-                                class="rounded-circle flex-shrink-0" style="object-fit:cover" alt="Avatar">
-                            <?php endif; ?>
-                            <div class="overflow-hidden">
-                                <div class="fw-bold text-truncate" style="max-width:160px">
-                                    <?php echo $name_artist_band; ?></div>
-                                <div class="text-white-50" style="font-size:.72rem">Conta
-                                    <?php echo str_pad($id_users, 6, '0', STR_PAD_LEFT); ?></div>
-                            </div>
-                        </a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li>
-                        <a class="dropdown-item d-flex align-items-center gap-2" href="../user/profile">
-                            <?php if ($user_photo): ?>
-                            <img src="../../assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
-                                width="28" height="28" class="rounded-circle flex-shrink-0" style="object-fit:cover"
-                                alt="Foto perfil"
-                                onerror="this.onerror=null;this.src='../../assets/img/avatar/avatar_wasomupfy.png'">
-                            <?php else: ?>
-                            <img src="../../assets/img/avatar/avatar_wasomupfy.png" width="28" height="28"
-                                class="rounded-circle flex-shrink-0" style="object-fit:cover" alt="Perfil">
-                            <?php endif; ?>
-                            Meu Perfil
-                        </a>
-                    </li>
-                    <li><a class="dropdown-item" href="../account/manage-account"><i class="bi bi-tools me-2"></i>
-                            Gestão de Conta</a></li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li><a class="dropdown-item" href="../page/settings"><i class="bi bi-gear me-2"></i>
-                            Configurações</a></li>
-                    <li><a class="dropdown-item" href="../page/notifications"><i class="bi bi-bell me-2"></i>
-                            Notificações</a></li>
-                    <li><a class="dropdown-item" href="../services/available-services"><i class="bi bi-star me-2"></i>
-                            Conta e serviços disponíveis</a></li>
-                    <li><a class="dropdown-item" href="#?logout-wasomupfy" data-bs-toggle="modal"
-                            data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right me-2"></i>
-                            Desconectar-se</a></li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li><a class="dropdown-item" href="../page/about"><i class="bi bi-info-circle me-2"></i> Sobre</a>
-                    </li>
-                    <li><a class="dropdown-item" href="../page/support"><i class="bi bi-headset me-2"></i> Enviar pedido
-                            de suporte</a></li>
-                    <li><a class="dropdown-item" href="../page/faq"><i class="bi bi-chat-left-text me-2"></i> Perguntas
-                            frequentes</a></li>
-                    <li><a class="dropdown-item" href="../page/help"><i class="bi bi-question-circle me-2"></i>
-                            Ajuda</a></li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li><span class="dropdown-item-text" id="versionDropdown"></span></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Offcanvas Menu -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasMenuLabel">
-                <span class="text-light"
-                    style="font-weight:bold;text-transform:capitalize;font-family:Arial,sans-serif">WASOM UPFY</span>
-            </h5>
-            <button type="button" class="btn-close text-white" data-bs-dismiss="offcanvas" aria-label="Close">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-        <div class="offcanvas-body">
-            <ul class="nav flex-column">
-                <li class="nav-item"><a class="nav-link" href="../painel"><i class="bi bi-speedometer2"></i>
-                        Dashboard</a></li>
-                <li class="nav-item"><a class="nav-link active" href="../launch/releases"><i class="bi bi-disc"></i>
-                        Lançamentos</a></li>
-                <li class="nav-item"><a class="nav-link" href="../analytics/statistics"><i class="bi bi-bar-chart"></i>
-                        Estatísticas</a></li>
-                <li class="nav-item"><a class="nav-link" href="../finances/overview"><i
-                            class="bi bi-currency-dollar"></i> Finanças</a></li>
-                <li class="nav-item"><a class="nav-link" href="../artists/artists-list"><i class="bi bi-person"></i>
-                        Artistas</a></li>
-                <li class="nav-item"><a class="nav-link" href="../artists/youtube/ucy"><i class="bi bi-youtube"></i>
-                        Unificação de canal YouTube</a></li>
-                <li class="nav-item"><a class="nav-link" href="../user/profile"><i class="bi bi-person-circle"></i> Meu
-                        Perfil</a></li>
-                <li class="nav-item"><a class="nav-link" href="../page/settings"><i class="bi bi-gear"></i>
-                        Configurações</a></li>
-                <li class="nav-item"><a class="nav-link" href="../page/notifications"><i class="bi bi-bell"></i>
-                        Notificações</a></li>
-                <li class="nav-item"><a class="nav-link" href="../page/about"><i class="bi bi-info-circle"></i>
-                        Sobre</a></li>
-                <li class="nav-item"><a class="nav-link" href="../services/available-services"><i
-                            class="bi bi-star"></i> Conta e serviços disponíveis</a></li>
-                <li class="nav-item"><a class="nav-link" href="../page/help"><i class="bi bi-question-circle"></i>
-                        Ajuda</a></li>
-                <li class="nav-item"><a class="nav-link" href="#?logout-wasomupfy" data-bs-toggle="modal"
-                        data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right"></i> Desconectar-se</a></li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- Toast para Notificações de Status -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="connectionToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <strong class="me-auto">Conexão</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Fechar"></button>
-            </div>
-            <div class="toast-body">
-                Você está offline. Alguns dados podem estar desatualizados.
-                <div class="mt-2">
-                    <button class="btn btn-pink btn-sm" onclick="tryReconnect()">
-                        Tentar Reconectar
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
+    <!-- ═══ NAVBAR ═══ -->
+    <?php require_once __DIR__ . '/../include/sidebar.php'; ?>
     <!-- Main Content -->
     <div class="container my-4">
 
-        <?php /* ══════════════════════════════════════
-         BANNERS — mesmo sistema do painel
-         renderDashboardAlerts já correu acima no topo.
-         Abaixo: alertas contextuais desta página.
-        ══════════════════════════════════════ */ ?>
+        <?php /* ============================================
+    BANNERS DE NOTIFICACAO DO PAINEL
+    Estilo: inline CSS consistente com renderDashboardAlerts().
+    Bootstrap alert nativo removido — um único sistema visual.
+    Lógica de prioridade:
+      Nível 1 (danger)  — bloqueia distribuição
+      Nível 2 (warning) — importante, requer atenção
+      Nível 3 (info)    — informativo / acção opcional
+    ============================================ */ ?>
 
         <?php renderDashboardAlerts($user, $platform); ?>
 
@@ -622,32 +408,25 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
         }
         ?>
 
+        <?php /* ── NÍVEL 1: Crítico — bloqueia distribuição ── */ ?>
+
         <?php if (!$email_verified): ?>
         <?php wuAlert(
                 'danger',
                 'bi-envelope-exclamation-fill',
-                '<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta.',
-                ['label' => 'Verificar agora', 'url' => '../account/manage-account'],
+                '<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta e receber notificações de pagamentos.',
+                ['label' => 'Verificar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/user/profile#perfil'],
                 true,
                 'banner-email'
             ); ?>
         <?php endif; ?>
 
-        <?php if ($plan_expired): ?>
-        <?php wuAlert(
-                'danger',
-                'bi-exclamation-triangle-fill',
-                '<strong>Plano expirado!</strong> O teu plano ' . htmlspecialchars($plan['name_plan'] ?? '') . ' expirou. Renova para continuar a distribuir.',
-                ['label' => 'Ver planos', 'url' => '../all-plans'],
-                false,
-                'banner-plan-expired'
-            ); ?>
-        <?php elseif ($plan && !$plan_paid): ?>
+        <?php if ($plan && !$plan_paid): ?>
         <?php wuAlert(
                 'warning',
                 'bi-clock-history',
-                '<strong>Pagamento pendente — ' . htmlspecialchars($plan['name_plan']) . '.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados.',
-                ['label' => 'Finalizar pagamento', 'url' => '../payment/pay'],
+                '<strong>Pagamento pendente — ' . htmlspecialchars($plan['name_plan']) . '.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados até confirmação.',
+                ['label' => 'Finalizar pagamento', 'url' => APP_URL . '/' . APP_URL_PANEL . '/payment/pay'],
                 true,
                 'banner-plan-pending'
             ); ?>
@@ -655,45 +434,61 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
         <?php wuAlert(
                 'danger',
                 'bi-credit-card-fill',
-                '<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir para +150 plataformas.',
-                ['label' => 'Ver planos', 'url' => '../all-plans'],
+                '<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir a tua música para +150 plataformas.',
+                ['label' => 'Ver planos', 'url' => APP_URL . '/' . APP_URL_PANEL . '/all-plans'],
                 false,
                 'banner-plan'
             ); ?>
         <?php endif; ?>
+
+        <?php /* ── NÍVEL 2: Importante — perfil incompleto ── */ ?>
 
         <?php if ($plan_paid && !$has_artist): ?>
         <?php wuAlert(
                 'info',
                 'bi-person-plus-fill',
                 '<strong>Cria o teu perfil de artista.</strong> Tens plano activo mas ainda não criaste um perfil. Precisas de um para poder lançar música.',
-                ['label' => 'Criar agora', 'url' => '../artists/add-artist'],
+                ['label' => 'Criar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/add-artist'],
                 true,
                 'banner-artist'
             ); ?>
         <?php endif; ?>
 
+        <?php /* ── NÍVEL 3: Informativo — conta bancária ── */ ?>
+
         <?php if ($plan_paid && $has_artist && !$bank_account): ?>
         <?php wuAlert(
                 'info',
                 'bi-bank',
-                '<strong>Conta bancária não registada.</strong> Para sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.',
-                ['label' => 'Registar agora', 'url' => '../finances/withdraw'],
+                '<strong>Conta bancária não registada.</strong> Para poder sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.',
+                ['label' => 'Registar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/withdraw'],
                 true,
                 'banner-bank'
             ); ?>
         <?php endif; ?>
 
+        <?php /* ── NÍVEL 3: Conta bancária rejeitada ── */ ?>
+
+        <?php
+        $rejected_account = null;
+        if ($plan_paid) {
+            $rej_stmt = getDB()->prepare("SELECT type_account, reject_reason FROM _account WHERE id_users = ? AND status_account = 'rejected' LIMIT 1");
+            $rej_stmt->execute([$id_users]);
+            $rejected_account = $rej_stmt->fetch();
+        }
+        ?>
         <?php if ($rejected_account): ?>
         <?php
             $rej_msg = '<strong>Conta ' . htmlspecialchars($rejected_account['type_account']) . ' rejeitada.</strong>';
-            if ($rejected_account['reject_reason']) $rej_msg .= ' Motivo: <em>' . htmlspecialchars($rejected_account['reject_reason']) . '</em>.';
+            if ($rejected_account['reject_reason']) {
+                $rej_msg .= ' Motivo: <em>' . htmlspecialchars($rejected_account['reject_reason']) . '</em>.';
+            }
             $rej_msg .= ' Actualiza os dados e submete novamente.';
             wuAlert(
                 'danger',
                 'bi-x-circle-fill',
                 $rej_msg,
-                ['label' => 'Corrigir agora', 'url' => '../finances/withdraw'],
+                ['label' => 'Corrigir agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/withdraw'],
                 true,
                 'banner-account-rejected'
             );
@@ -804,22 +599,6 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
         </nav>
 
     </div><!-- /container -->
-
-    <!-- Bottom nav mobile -->
-    <nav class="bottom-nav d-lg-none">
-        <ul class="nav justify-content-around">
-            <li class="nav-item"><a class="nav-link" href="../painel"><i
-                        class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
-            <li class="nav-item"><a class="nav-link active" href="../launch/releases"><i
-                        class="bi bi-disc"></i><span>Lançamentos</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../analytics/statistics"><i
-                        class="bi bi-bar-chart"></i><span>Estatísticas</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../finances/overview"><i
-                        class="bi bi-currency-dollar"></i><span>Finanças</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../artists/artists-list"><i
-                        class="bi bi-person"></i><span>Artistas</span></a></li>
-        </ul>
-    </nav>
 
     <!-- ══════════════════════════════════════════
      MODAL — Detalhes do Lançamento
@@ -1204,99 +983,13 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
         </div>
     </div>
 
-    <!-- ════ MODAL — Logout ════ -->
-    <!-- ════ MODAL — Logout ════ -->
-    <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header border-0 pb-0">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-                            style="width:44px;height:44px;background:rgba(220,53,69,.12)">
-                            <i class="bi bi-box-arrow-right fs-5 text-danger"></i>
-                        </div>
-                        <div>
-                            <h5 class="modal-title text-dark mb-0" id="logoutwasomupfyLabel">Terminar sessão</h5>
-                            <small class="text-muted">@<?php echo $user_name; ?></small>
-                        </div>
-                    </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-                </div>
-                <div class="modal-body pt-2">
-                    <div class="rounded-3 p-3 mb-3" style="background:rgba(0,0,0,.04)">
-                        <div class="row g-2" style="font-size:.82rem">
-                            <div class="col-6 d-flex gap-2 align-items-start">
-                                <i class="bi bi-clock text-muted mt-1 flex-shrink-0"></i>
-                                <div>
-                                    <div class="text-muted">Duração da sessão</div>
-                                    <div class="fw-semibold text-dark"><?php echo $session_duration_str; ?></div>
-                                </div>
-                            </div>
-                            <div class="col-6 d-flex gap-2 align-items-start">
-                                <i class="bi bi-calendar3 text-muted mt-1 flex-shrink-0"></i>
-                                <div>
-                                    <div class="text-muted">Último acesso</div>
-                                    <div class="fw-semibold text-dark"><?php echo $last_login_str; ?></div>
-                                </div>
-                            </div>
-                            <div class="col-6 d-flex gap-2 align-items-start">
-                                <i class="bi bi-globe text-muted mt-1 flex-shrink-0"></i>
-                                <div>
-                                    <div class="text-muted">Localização</div>
-                                    <div class="fw-semibold text-dark"><?php echo htmlspecialchars($sess_location); ?>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-6 d-flex gap-2 align-items-start">
-                                <i class="bi bi-browser-chrome text-muted mt-1 flex-shrink-0"></i>
-                                <div>
-                                    <div class="text-muted">Navegador</div>
-                                    <div class="fw-semibold text-dark"><?php echo htmlspecialchars($browser); ?></div>
-                                </div>
-                            </div>
-                            <div class="col-6 d-flex gap-2 align-items-start">
-                                <i class="bi bi-hdd-network text-muted mt-1 flex-shrink-0"></i>
-                                <div>
-                                    <div class="text-muted">IP</div>
-                                    <div class="fw-semibold text-dark"><?php echo htmlspecialchars($sess_ip); ?></div>
-                                </div>
-                            </div>
-                            <div class="col-6 d-flex gap-2 align-items-start">
-                                <i class="bi bi-person-badge text-muted mt-1 flex-shrink-0"></i>
-                                <div>
-                                    <div class="text-muted">Membro desde</div>
-                                    <div class="fw-semibold text-dark"><?php echo $member_since; ?></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="text-dark text-center mb-0" style="font-size:.9rem">
-                        Tens a certeza que queres terminar a sessão?<br>
-                        <span class="text-muted" style="font-size:.8rem">Terás de iniciar sessão novamente para aceder
-                            ao painel.</span>
-                    </p>
-                </div>
-                <div class="modal-footer border-0 pt-0 gap-2">
-                    <button type="button" class="btn btn-outline-secondary flex-fill" data-bs-dismiss="modal">
-                        <i class="bi bi-arrow-left me-1"></i>Não, continuar
-                    </button>
-                    <button class="btn btn-danger flex-fill"
-                        onclick="window.location='<?php echo rtrim(APP_URL, '/'); ?>/dashboard/logout'">
-                        <i class="bi bi-box-arrow-right me-1"></i>Terminar
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- ════ MODAL — Logout FIM ════ -->
-
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <script src="../../js/theme.wp.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/theme.wp.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
 
     <script>
     // ════════════════════════════════════════════════
@@ -1454,7 +1147,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
         // Botão Editar (para todos exceto 'deleting')
         if (alb.status_album !== 'deleting') {
             actionBtns += `
-            <a href="${BASE_URL}/dashboard/launch/edit-release?id=${alb.id_album}" 
+            <a href="${BASE_URL}/dashboard/edit-release?id=${alb.id_album}" 
                class="btn btn-outline-secondary btn-sm" title="Editar">
                 <i class="bi bi-pencil"></i>
             </a>`;
@@ -1518,7 +1211,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
             <i class="bi bi-disc"></i>
             <h5 class="text-muted">Nenhum lançamento encontrado</h5>
             <p class="text-reset small">Altera os filtros ou cria um novo lançamento.</p>
-            <a href="${BASE_URL}/dashboard/launch/creat-release" class="btn btn-sm mt-2" style="background:#FF0089;color:#fff">
+            <a href="${BASE_URL}/dashboard/creat-release" class="btn btn-sm mt-2" style="background:#FF0089;color:#fff">
               <i class="bi bi-plus me-1"></i>Novo lançamento
             </a>
           </div>
@@ -1614,7 +1307,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
         if (!alb) return;
 
         const coverUrl = cover_url(alb.img_cover);
-        document.getElementById('m-cover').src = coverUrl || '../../assets/img/placeholder-album.png';
+        document.getElementById('m-cover').src = coverUrl || '../assets/img/placeholder-album.png';
         document.getElementById('m-title').textContent = alb.title_album;
         document.getElementById('m-artist').textContent = alb.stage_name || alb.real_name || '—';
         document.getElementById('m-type').textContent = TYPE_LABEL[alb.type_album] || alb.type_album || '—';
@@ -1729,7 +1422,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
         btnReview.classList.add('d-none');
 
         if (alb.status_album === 'rejected') {
-            btnEdit.href = `${BASE_URL}/dashboard/launch/edit-release?id=${alb.id_album}`;
+            btnEdit.href = `${BASE_URL}/dashboard/edit-release?id=${alb.id_album}`;
             btnEdit.innerHTML = '<i class="bi bi-pencil me-1"></i>Editar';
             btnEdit.classList.remove('d-none');
             btnReview.classList.remove('d-none');
@@ -1738,11 +1431,11 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
                 openReview(albumId);
             };
         } else if (alb.status_album === 'draft') {
-            btnEdit.href = `${BASE_URL}/dashboard/launch/creat-release?draft=${alb.id_album}`;
+            btnEdit.href = `${BASE_URL}/dashboard/creat-release?draft=${alb.id_album}`;
             btnEdit.innerHTML = '<i class="bi bi-play-fill me-1"></i>Continuar rascunho';
             btnEdit.classList.remove('d-none');
         } else if (alb.status_album !== 'pending') {
-            btnEdit.href = `${BASE_URL}/dashboard/launch/edit-release?id=${alb.id_album}`;
+            btnEdit.href = `${BASE_URL}/dashboard/edit-release?id=${alb.id_album}`;
             btnEdit.innerHTML = '<i class="bi bi-pencil me-1"></i>Editar';
             btnEdit.classList.remove('d-none');
         }
@@ -1798,7 +1491,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
         document.getElementById('rev-btn-load').classList.remove('d-none');
         this.disabled = true;
 
-        fetch(BASE_URL + '/dashboard/launch/releases_process', {
+        fetch(BASE_URL + '/dashboard/releases_process', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
@@ -1877,7 +1570,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
                 <span class="badge bg-secondary">Local</span>
             </div>
             <div class="d-flex gap-2 flex-shrink-0">
-                <a href="${BASE_URL}/dashboard/launch/creat-release?local_draft=${d.id}" 
+                <a href="${BASE_URL}/dashboard/creat-release?local_draft=${d.id}" 
                    class="btn btn-sm btn-outline-primary">
                     <i class="bi bi-play-fill"></i> Continuar
                 </a>
@@ -1893,7 +1586,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
         const container = document.getElementById('bd-drafts-list');
 
         try {
-            const res = await fetch(BASE_URL + '/dashboard/launch/get_drafts.php', {
+            const res = await fetch(BASE_URL + '/dashboard/get_drafts.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
@@ -1920,7 +1613,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
                         <span class="badge bg-wasom">Na Nuvem</span>
                     </div>
                     <div class="d-flex gap-2 flex-shrink-0">
-                        <a href="${BASE_URL}/dashboard/launch/creat-release?draft=${d.id_album}" 
+                        <a href="${BASE_URL}/dashboard/creat-release?draft=${d.id_album}" 
                            class="btn btn-sm" style="background:#FF0089;color:#fff">
                             <i class="bi bi-play-fill me-1"></i>Continuar
                         </a>
@@ -1971,7 +1664,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
             document.getElementById('deleteAlbumCover').src = itemData.cover;
             document.getElementById('deleteAlbumCover').style.display = 'block';
         } else {
-            document.getElementById('deleteAlbumCover').src = '../../assets/img/placeholder-album.png';
+            document.getElementById('deleteAlbumCover').src = '../assets/img/placeholder-album.png';
         }
 
         // Reset do modal
@@ -2102,11 +1795,11 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
             formData.append('password', password);
             formData.append('csrf_token', CSRF);
 
-            console.log('A enviar pedido para:', BASE_URL + '/dashboard/launch/creat_release_process');
+            console.log('A enviar pedido para:', BASE_URL + '/dashboard/creat_release_process');
             console.log('Action:', itemType === 'draft' ? 'delete_draft_request' :
                 'delete_release_request');
 
-            response = await fetch(BASE_URL + '/dashboard/launch/creat_release_process', {
+            response = await fetch(BASE_URL + '/dashboard/creat_release_process', {
                 method: 'POST',
                 body: formData
             });
@@ -2198,7 +1891,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
         if (coverUrl) {
             document.getElementById('statusAlbumCover').src = coverUrl;
         } else {
-            document.getElementById('statusAlbumCover').src = '../../assets/img/placeholder-album.png';
+            document.getElementById('statusAlbumCover').src = '../assets/img/placeholder-album.png';
         }
 
         // Guardar ID
@@ -2289,7 +1982,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
             formData.append('id_album', albumId);
             formData.append('csrf_token', CSRF);
 
-            const response = await fetch(BASE_URL + '/dashboard/launch/creat_release_process', {
+            const response = await fetch(BASE_URL + '/dashboard/creat_release_process', {
                 method: 'POST',
                 body: formData
             });

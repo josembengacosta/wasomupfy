@@ -12,7 +12,8 @@ $db       = getDB();
 $id_users = (int)$_SESSION['id_users'];
 $user     = getUserById($id_users);
 if (!$user) {
-  redirect('authentic/logout');
+    session_destroy();
+    redirect(APP_URL  . '/' . 'login', ['error' => 'csrf']);
 }
 
 $first_name       = htmlspecialchars($user['first_name'] ?? '');
@@ -25,7 +26,7 @@ $email_user       = htmlspecialchars($user['email_user'] ?? '');
 // Tabela correcta: _plans (não _plan)
 $plan = null;
 try {
-  $plan_q = $db->prepare("
+    $plan_q = $db->prepare("
         SELECT p.name_plan, p.slug_plan, up.status_plan, up.started_at, up.expires_at
         FROM _user_plan up
         JOIN _plans p ON p.id_plan = up.id_plan
@@ -33,79 +34,79 @@ try {
         ORDER BY up.started_at DESC
         LIMIT 1
     ");
-  $plan_q->execute([$id_users]);
-  $plan = $plan_q->fetch(PDO::FETCH_ASSOC) ?: null;
+    $plan_q->execute([$id_users]);
+    $plan = $plan_q->fetch(PDO::FETCH_ASSOC) ?: null;
 } catch (PDOException $e) { /* seguro */
 }
 
 // Fallback: plan_selected é INT (FK para _plans), busca o nome
 if (!$plan && !empty($user['plan_selected'])) {
-  try {
-    $p_q = $db->prepare("SELECT name_plan, slug_plan FROM _plans WHERE id_plan = ?");
-    $p_q->execute([$user['plan_selected']]);
-    $p_row = $p_q->fetch(PDO::FETCH_ASSOC);
-    if ($p_row) {
-      $plan = [
-        'name_plan'   => $p_row['name_plan'],
-        'slug_plan'   => $p_row['slug_plan'],
-        'status_plan' => 'active',
-        'started_at'  => $user['plan_activated_at'] ?? null,
-        'expires_at'  => $user['plan_expires_at']   ?? null,
-      ];
+    try {
+        $p_q = $db->prepare("SELECT name_plan, slug_plan FROM _plans WHERE id_plan = ?");
+        $p_q->execute([$user['plan_selected']]);
+        $p_row = $p_q->fetch(PDO::FETCH_ASSOC);
+        if ($p_row) {
+            $plan = [
+                'name_plan'   => $p_row['name_plan'],
+                'slug_plan'   => $p_row['slug_plan'],
+                'status_plan' => 'active',
+                'started_at'  => $user['plan_activated_at'] ?? null,
+                'expires_at'  => $user['plan_expires_at']   ?? null,
+            ];
+        }
+    } catch (PDOException $e) { /* seguro */
     }
-  } catch (PDOException $e) { /* seguro */
-  }
 }
 
 // ── Artistas (integrações) ────────────────────
 try {
-  $artists_q = $db->prepare("
+    $artists_q = $db->prepare("
         SELECT id_artist, stage_name, youtube_url, spotify_url, instagram_url
         FROM _artist
         WHERE id_users = ? AND status_artist = 'active'
         ORDER BY stage_name ASC
         LIMIT 5
     ");
-  $artists_q->execute([$id_users]);
-  $artists = $artists_q->fetchAll(PDO::FETCH_ASSOC);
+    $artists_q->execute([$id_users]);
+    $artists = $artists_q->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-  $artists = [];
+    $artists = [];
 }
 
 // ── Carregar ou criar _user_settings ─────────
 try {
-  $settings_q = $db->prepare("SELECT * FROM _user_settings WHERE id_users = ?");
-  $settings_q->execute([$id_users]);
-  $settings = $settings_q->fetch(PDO::FETCH_ASSOC);
-  if (!$settings) {
-    $db->prepare("INSERT INTO _user_settings (id_users) VALUES (?) ON DUPLICATE KEY UPDATE id_users = id_users")
-      ->execute([$id_users]);
+    $settings_q = $db->prepare("SELECT * FROM _user_settings WHERE id_users = ?");
     $settings_q->execute([$id_users]);
     $settings = $settings_q->fetch(PDO::FETCH_ASSOC);
-  }
+    if (!$settings) {
+        $db->prepare("INSERT INTO _user_settings (id_users) VALUES (?) ON DUPLICATE KEY UPDATE id_users = id_users")
+            ->execute([$id_users]);
+        $settings_q->execute([$id_users]);
+        $settings = $settings_q->fetch(PDO::FETCH_ASSOC);
+    }
 } catch (PDOException $e) {
-  $settings = [];
+    $settings = [];
 }
 
 $s = array_merge([
-  'notif_email'      => 1,
-  'notif_push'       => 0,
-  'notif_streams'    => 0,
-  'notif_weekly'      => 0,
-  'theme'            => 'dark',
-  'ui_density'   => 'compact',
-  'widget_streams'   => 1,
-  'widget_financial'  => 1,
-  'widget_releases'  => 0,
-  'widget_artists'    => 1,
-  'widget_activity'  => 0,
-  'private_stats'    => 1,
-  'accept_cookies'    => 0,
-  'share_data'       => 0,
-  'two_factor'        => 0,
-  'language'         => 'pt-ao',
-  'currency'    => 'AOA',
-  'date_format'      => 'dd/mm/yyyy',
+    'notif_email'      => 1,
+    'notif_push'       => 0,
+    'notif_streams'    => 0,
+    'notif_weekly'      => 0,
+    'theme'            => 'dark',
+    'ui_density'   => 'compact',
+    'widget_streams'   => 1,
+    'widget_financial'  => 1,
+    'widget_releases'  => 0,
+    'widget_artists'    => 1,
+    'widget_activity'  => 0,
+    'private_stats'    => 1,
+    'accept_cookies'    => 0,
+    'share_data'       => 0,
+    'two_factor'        => 0,
+    'language'         => 'pt-ao',
+    'currency'    => 'AOA',
+    'date_format'      => 'dd/mm/yyyy',
 ], $settings ?: []);
 
 // ── Flash message ─────────────────────────────
@@ -115,40 +116,40 @@ unset($_SESSION['settings_flash']);
 // ── Membro desde — coluna correcta: creat_user ─
 $member_since = '—';
 if (!empty($user['creat_user'])) {
-  try {
-    $d = new DateTime($user['creat_user']);
-    $months_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-    $member_since = $d->format('d') . ' ' . $months_pt[(int)$d->format('m') - 1] . ' ' . $d->format('Y');
-  } catch (Exception $e) {
-    $member_since = '—';
-  }
+    try {
+        $d = new DateTime($user['creat_user']);
+        $months_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+        $member_since = $d->format('d') . ' ' . $months_pt[(int)$d->format('m') - 1] . ' ' . $d->format('Y');
+    } catch (Exception $e) {
+        $member_since = '—';
+    }
 }
 
 // ── Actividade recente — tabela: _user_activity_log ─
 try {
-  $act_q = $db->prepare("
+    $act_q = $db->prepare("
         SELECT description, creat_activity, activity_type
         FROM _user_activity_log
         WHERE id_users = ?
         ORDER BY creat_activity DESC
         LIMIT 5
     ");
-  $act_q->execute([$id_users]);
-  $recent_activity = $act_q->fetchAll(PDO::FETCH_ASSOC);
+    $act_q->execute([$id_users]);
+    $recent_activity = $act_q->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-  $recent_activity = [];
+    $recent_activity = [];
 }
 
 // ── Status da conta — coluna correcta: status_user ─
 $status_user = $user['status_user'] ?? 'active';
 $status_map  = [
-  'active'       => ['label' => 'Activo',      'class' => 'bg-success'],
-  'inactive'     => ['label' => 'Inactivo',     'class' => 'bg-secondary'],
-  'blocked'      => ['label' => 'Bloqueado',    'class' => 'bg-danger'],
-  'processing'   => ['label' => 'Em análise',   'class' => 'bg-warning text-dark'],
-  'suspended'    => ['label' => 'Suspenso',     'class' => 'bg-warning text-dark'],
-  'fraud'        => ['label' => 'Fraude',       'class' => 'bg-danger'],
-  'pending_plan' => ['label' => 'Sem plano',    'class' => 'bg-secondary'],
+    'active'       => ['label' => 'Activo',      'class' => 'bg-success'],
+    'inactive'     => ['label' => 'Inactivo',     'class' => 'bg-secondary'],
+    'blocked'      => ['label' => 'Bloqueado',    'class' => 'bg-danger'],
+    'processing'   => ['label' => 'Em análise',   'class' => 'bg-warning text-dark'],
+    'suspended'    => ['label' => 'Suspenso',     'class' => 'bg-warning text-dark'],
+    'fraud'        => ['label' => 'Fraude',       'class' => 'bg-danger'],
+    'pending_plan' => ['label' => 'Sem plano',    'class' => 'bg-secondary'],
 ];
 $status_info = $status_map[$status_user] ?? ['label' => ucfirst($status_user), 'class' => 'bg-secondary'];
 ?>
@@ -167,315 +168,315 @@ $status_info = $status_map[$status_user] ?? ['label' => ucfirst($status_user), '
     <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
-    <link rel="stylesheet" href="../../css/dashboard-style.css" />
-    <link rel="stylesheet" href="../../css/lastest-style.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/dashboard-style.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/lastest-style.css" />
     <style>
-    .settings-header {
-        background: linear-gradient(135deg, #FF0089 0%, #c8006e 60%, #7b0044 100%);
-        border-radius: 20px;
-        padding: 2.2rem 2.5rem;
-        margin-bottom: 2rem;
-        color: #fff;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .settings-header::after {
-        content: '\F3E5';
-        font-family: 'bootstrap-icons';
-        position: absolute;
-        right: -20px;
-        bottom: -24px;
-        font-size: 9rem;
-        opacity: .08;
-        color: #fff;
-        transform: rotate(30deg);
-    }
-
-    .settings-card {
-        border-radius: 16px;
-        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
-        background: var(--card-bg, #fff);
-        transition: box-shadow .2s;
-        margin-bottom: 1.6rem;
-    }
-
-    .settings-card:hover {
-        box-shadow: 0 6px 24px rgba(255, 0, 137, .1);
-    }
-
-    .settings-card .card-header {
-        background: transparent;
-        border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .07));
-        padding: 1rem 1.4rem;
-        border-radius: 16px 16px 0 0;
-    }
-
-    .settings-card .card-header h5 {
-        margin: 0;
-        font-weight: 700;
-        font-size: .95rem;
-    }
-
-    .settings-card .card-body {
-        padding: 1.4rem;
-    }
-
-    .settings-section h2 {
-        font-size: 1.1rem;
-        font-weight: 800;
-        color: #FF0089;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 1rem;
-    }
-
-    .form-check-input:checked {
-        background-color: #FF0089;
-        border-color: #FF0089;
-    }
-
-    .form-check-input:focus {
-        border-color: #FF0089;
-        box-shadow: 0 0 0 .2rem rgba(255, 0, 137, .2);
-    }
-
-    .form-select:focus,
-    .form-control:focus {
-        border-color: #FF0089;
-        box-shadow: 0 0 0 .2rem rgba(255, 0, 137, .2);
-    }
-
-    .btn-settings {
-        background: linear-gradient(135deg, #FF0089, #c8006e);
-        border: none;
-        color: #fff;
-        padding: .45rem 1.2rem;
-        border-radius: 9px;
-        font-weight: 600;
-        font-size: .85rem;
-        transition: all .2s;
-    }
-
-    .btn-settings:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 14px rgba(255, 0, 137, .35);
-        color: #fff;
-    }
-
-    .btn-settings-outline {
-        background: transparent;
-        border: 1.5px solid #FF0089;
-        color: #FF0089;
-        padding: .45rem 1.2rem;
-        border-radius: 9px;
-        font-weight: 600;
-        font-size: .85rem;
-        transition: all .2s;
-    }
-
-    .btn-settings-outline:hover {
-        background: #FF0089;
-        color: #fff;
-    }
-
-    /* ── Tema cards ── */
-    .theme-option {
-        border: 2px solid var(--border-color, rgba(0, 0, 0, .1));
-        border-radius: 12px;
-        padding: 14px 12px;
-        cursor: pointer;
-        text-align: center;
-        transition: all .2s;
-        user-select: none;
-        display: block;
-    }
-
-    .theme-option:hover {
-        border-color: #FF0089;
-    }
-
-    .theme-option.active {
-        border-color: #FF0089;
-        background: rgba(255, 0, 137, .06);
-    }
-
-    .theme-option .theme-icon {
-        font-size: 1.6rem;
-        margin-bottom: 6px;
-    }
-
-    .theme-option .theme-label {
-        font-size: .78rem;
-        font-weight: 700;
-    }
-
-    .theme-option input[type="radio"] {
-        display: none;
-    }
-
-    /* ── Info grid ── */
-    .info-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: .75rem;
-    }
-
-    .info-item {
-        background: var(--metric-bg, rgba(0, 0, 0, .025));
-        padding: .85rem 1rem;
-        border-radius: 10px;
-    }
-
-    .info-item strong {
-        color: #FF0089;
-        display: block;
-        font-size: .7rem;
-        text-transform: uppercase;
-        letter-spacing: .5px;
-        margin-bottom: 3px;
-    }
-
-    .info-item p {
-        margin: 0;
-        font-size: .88rem;
-        font-weight: 500;
-    }
-
-    /* ── Integrações ── */
-    .integration-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 10px 14px;
-        border-radius: 12px;
-        background: var(--metric-bg, rgba(0, 0, 0, .025));
-        margin-bottom: 8px;
-    }
-
-    .integration-row:last-child {
-        margin-bottom: 0;
-    }
-
-    /* ── Zona de Perigo ── */
-    .danger-zone {
-        border: 2px solid rgba(220, 53, 69, .3);
-        border-radius: 14px;
-        padding: 1.4rem;
-        background: rgba(220, 53, 69, .025);
-    }
-
-    .danger-zone h6 {
-        color: #dc3545;
-        font-weight: 700;
-        margin-bottom: 1rem;
-    }
-
-    .danger-item {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 16px;
-        padding: 12px 0;
-        border-bottom: 1px solid rgba(220, 53, 69, .1);
-    }
-
-    .danger-item:last-child {
-        border-bottom: none;
-        padding-bottom: 0;
-    }
-
-    .danger-item-info .title {
-        font-weight: 700;
-        font-size: .88rem;
-    }
-
-    .danger-item-info .desc {
-        font-size: .75rem;
-        color: var(--text-muted, #6c757d);
-        margin-top: 2px;
-    }
-
-    /* ── Sidebar nav ── */
-    .quick-nav .list-group-item {
-        border: none;
-        padding: .6rem 1rem;
-        font-size: .85rem;
-        font-weight: 500;
-        color: var(--text-muted, #6c757d);
-        border-radius: 8px !important;
-        transition: all .15s;
-    }
-
-    .quick-nav .list-group-item:hover,
-    .quick-nav .list-group-item.active-link {
-        background: rgba(255, 0, 137, .07);
-        color: #FF0089;
-    }
-
-    .account-status-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 7px 0;
-        border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .06));
-        font-size: .84rem;
-    }
-
-    .account-status-row:last-child {
-        border-bottom: none;
-        padding-bottom: 0;
-    }
-
-    /* ── Toasts ── */
-    .toast-pink {
-        background: linear-gradient(135deg, #FF0089, #c8006e);
-        color: #fff;
-    }
-
-    .toast-green {
-        background: linear-gradient(135deg, #10b981, #34d399);
-        color: #fff;
-    }
-
-    .toast-red {
-        background: linear-gradient(135deg, #ef4444, #f87171);
-        color: #fff;
-    }
-
-    /* ── Activity ── */
-    .activity-row {
-        display: flex;
-        gap: 10px;
-        align-items: flex-start;
-        padding: 8px 0;
-        border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .06));
-        font-size: .78rem;
-    }
-
-    .activity-row:last-child {
-        border-bottom: none;
-    }
-
-    .activity-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: #FF0089;
-        flex-shrink: 0;
-        margin-top: 4px;
-    }
-
-    @media(max-width:768px) {
         .settings-header {
-            padding: 1.5rem;
+            background: linear-gradient(135deg, #FF0089 0%, #c8006e 60%, #7b0044 100%);
+            border-radius: 20px;
+            padding: 2.2rem 2.5rem;
+            margin-bottom: 2rem;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
         }
 
-        .info-grid {
-            grid-template-columns: 1fr;
+        .settings-header::after {
+            content: '\F3E5';
+            font-family: 'bootstrap-icons';
+            position: absolute;
+            right: -20px;
+            bottom: -24px;
+            font-size: 9rem;
+            opacity: .08;
+            color: #fff;
+            transform: rotate(30deg);
         }
-    }
+
+        .settings-card {
+            border-radius: 16px;
+            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
+            background: var(--card-bg, #fff);
+            transition: box-shadow .2s;
+            margin-bottom: 1.6rem;
+        }
+
+        .settings-card:hover {
+            box-shadow: 0 6px 24px rgba(255, 0, 137, .1);
+        }
+
+        .settings-card .card-header {
+            background: transparent;
+            border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .07));
+            padding: 1rem 1.4rem;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .settings-card .card-header h5 {
+            margin: 0;
+            font-weight: 700;
+            font-size: .95rem;
+        }
+
+        .settings-card .card-body {
+            padding: 1.4rem;
+        }
+
+        .settings-section h2 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #FF0089;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .form-check-input:checked {
+            background-color: #FF0089;
+            border-color: #FF0089;
+        }
+
+        .form-check-input:focus {
+            border-color: #FF0089;
+            box-shadow: 0 0 0 .2rem rgba(255, 0, 137, .2);
+        }
+
+        .form-select:focus,
+        .form-control:focus {
+            border-color: #FF0089;
+            box-shadow: 0 0 0 .2rem rgba(255, 0, 137, .2);
+        }
+
+        .btn-settings {
+            background: linear-gradient(135deg, #FF0089, #c8006e);
+            border: none;
+            color: #fff;
+            padding: .45rem 1.2rem;
+            border-radius: 9px;
+            font-weight: 600;
+            font-size: .85rem;
+            transition: all .2s;
+        }
+
+        .btn-settings:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(255, 0, 137, .35);
+            color: #fff;
+        }
+
+        .btn-settings-outline {
+            background: transparent;
+            border: 1.5px solid #FF0089;
+            color: #FF0089;
+            padding: .45rem 1.2rem;
+            border-radius: 9px;
+            font-weight: 600;
+            font-size: .85rem;
+            transition: all .2s;
+        }
+
+        .btn-settings-outline:hover {
+            background: #FF0089;
+            color: #fff;
+        }
+
+        /* ── Tema cards ── */
+        .theme-option {
+            border: 2px solid var(--border-color, rgba(0, 0, 0, .1));
+            border-radius: 12px;
+            padding: 14px 12px;
+            cursor: pointer;
+            text-align: center;
+            transition: all .2s;
+            user-select: none;
+            display: block;
+        }
+
+        .theme-option:hover {
+            border-color: #FF0089;
+        }
+
+        .theme-option.active {
+            border-color: #FF0089;
+            background: rgba(255, 0, 137, .06);
+        }
+
+        .theme-option .theme-icon {
+            font-size: 1.6rem;
+            margin-bottom: 6px;
+        }
+
+        .theme-option .theme-label {
+            font-size: .78rem;
+            font-weight: 700;
+        }
+
+        .theme-option input[type="radio"] {
+            display: none;
+        }
+
+        /* ── Info grid ── */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: .75rem;
+        }
+
+        .info-item {
+            background: var(--metric-bg, rgba(0, 0, 0, .025));
+            padding: .85rem 1rem;
+            border-radius: 10px;
+        }
+
+        .info-item strong {
+            color: #FF0089;
+            display: block;
+            font-size: .7rem;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            margin-bottom: 3px;
+        }
+
+        .info-item p {
+            margin: 0;
+            font-size: .88rem;
+            font-weight: 500;
+        }
+
+        /* ── Integrações ── */
+        .integration-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            border-radius: 12px;
+            background: var(--metric-bg, rgba(0, 0, 0, .025));
+            margin-bottom: 8px;
+        }
+
+        .integration-row:last-child {
+            margin-bottom: 0;
+        }
+
+        /* ── Zona de Perigo ── */
+        .danger-zone {
+            border: 2px solid rgba(220, 53, 69, .3);
+            border-radius: 14px;
+            padding: 1.4rem;
+            background: rgba(220, 53, 69, .025);
+        }
+
+        .danger-zone h6 {
+            color: #dc3545;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .danger-item {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(220, 53, 69, .1);
+        }
+
+        .danger-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .danger-item-info .title {
+            font-weight: 700;
+            font-size: .88rem;
+        }
+
+        .danger-item-info .desc {
+            font-size: .75rem;
+            color: var(--text-muted, #6c757d);
+            margin-top: 2px;
+        }
+
+        /* ── Sidebar nav ── */
+        .quick-nav .list-group-item {
+            border: none;
+            padding: .6rem 1rem;
+            font-size: .85rem;
+            font-weight: 500;
+            color: var(--text-muted, #6c757d);
+            border-radius: 8px !important;
+            transition: all .15s;
+        }
+
+        .quick-nav .list-group-item:hover,
+        .quick-nav .list-group-item.active-link {
+            background: rgba(255, 0, 137, .07);
+            color: #FF0089;
+        }
+
+        .account-status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 7px 0;
+            border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .06));
+            font-size: .84rem;
+        }
+
+        .account-status-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        /* ── Toasts ── */
+        .toast-pink {
+            background: linear-gradient(135deg, #FF0089, #c8006e);
+            color: #fff;
+        }
+
+        .toast-green {
+            background: linear-gradient(135deg, #10b981, #34d399);
+            color: #fff;
+        }
+
+        .toast-red {
+            background: linear-gradient(135deg, #ef4444, #f87171);
+            color: #fff;
+        }
+
+        /* ── Activity ── */
+        .activity-row {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .06));
+            font-size: .78rem;
+        }
+
+        .activity-row:last-child {
+            border-bottom: none;
+        }
+
+        .activity-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #FF0089;
+            flex-shrink: 0;
+            margin-top: 4px;
+        }
+
+        @media(max-width:768px) {
+            .settings-header {
+                padding: 1.5rem;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 
@@ -510,9 +511,9 @@ $status_info = $status_map[$status_user] ?? ['label' => ucfirst($status_user), '
                 <span class="text-light" style="
               font-weight: bold;
               box-sizing: border-box;
-              text-transform: capitalize;
+              text-transform: uppercase;
               font-family: Arial, sans-serif;
-            ">WASOM UPFY</span>
+            "><?php echo APP_NAME; ?></span>
             </a>
 
             <!-- Desktop Menu -->
@@ -638,9 +639,9 @@ $status_info = $status_map[$status_user] ?? ['label' => ucfirst($status_user), '
                 <span class="text-light" style="
               font-weight: bold;
               box-sizing: border-box;
-              text-transform: capitalize;
+              text-transform: uppercase;
               font-family: Arial, sans-serif;
-            ">WASOM UPFY</span>
+            "><?php echo APP_NAME; ?></span>
             </h5>
             <button type="button" class="btn-close text-white" data-bs-dismiss="offcanvas" aria-label="Close">
                 <i class="bi bi-x-lg"></i>
@@ -718,13 +719,13 @@ $status_info = $status_map[$status_user] ?? ['label' => ucfirst($status_user), '
     <main class="container my-4">
 
         <?php if ($flash): ?>
-        <div class="alert alert-<?php echo $flash['type'] === 'success' ? 'success' : 'danger'; ?> alert-dismissible fade show mb-3"
-            role="alert" style="border-radius:12px">
-            <i
-                class="bi bi-<?php echo $flash['type'] === 'success' ? 'check-circle' : 'exclamation-triangle'; ?> me-2"></i>
-            <?php echo htmlspecialchars($flash['msg']); ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+            <div class="alert alert-<?php echo $flash['type'] === 'success' ? 'success' : 'danger'; ?> alert-dismissible fade show mb-3"
+                role="alert" style="border-radius:12px">
+                <i
+                    class="bi bi-<?php echo $flash['type'] === 'success' ? 'check-circle' : 'exclamation-triangle'; ?> me-2"></i>
+                <?php echo htmlspecialchars($flash['msg']); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
         <?php endif; ?>
 
         <!-- Header -->
@@ -772,10 +773,10 @@ $status_info = $status_map[$status_user] ?? ['label' => ucfirst($status_user), '
                                     <strong>Plano</strong>
                                     <p>
                                         <?php if ($plan): ?>
-                                        <span
-                                            class="badge bg-success"><?php echo htmlspecialchars($plan['name_plan']); ?></span>
+                                            <span
+                                                class="badge bg-success"><?php echo htmlspecialchars($plan['name_plan']); ?></span>
                                         <?php else: ?>
-                                        <span class="badge bg-secondary">Sem plano activo</span>
+                                            <span class="badge bg-secondary">Sem plano activo</span>
                                         <?php endif; ?>
                                     </p>
                                 </div>
@@ -874,24 +875,24 @@ $status_info = $status_map[$status_user] ?? ['label' => ucfirst($status_user), '
                                     <label class="form-label fw-bold mb-3">Tema</label>
                                     <div class="row g-2">
                                         <?php
-                    $themes = [
-                      'dark'   => ['icon' => 'bi-moon-stars-fill', 'label' => 'Escuro',  'desc' => 'Fundo escuro'],
-                      'light'  => ['icon' => 'bi-sun-fill',        'label' => 'Claro',   'desc' => 'Fundo claro'],
-                      'system' => ['icon' => 'bi-laptop',          'label' => 'Sistema', 'desc' => 'Igual ao SO'],
-                    ];
-                    foreach ($themes as $val => $t): ?>
-                                        <div class="col-4">
-                                            <label
-                                                class="theme-option <?php echo $s['theme'] === $val ? 'active' : ''; ?>"
-                                                id="themeCard_<?php echo $val; ?>"
-                                                onclick="selectTheme('<?php echo $val; ?>')">
-                                                <div class="theme-icon"><i class="bi <?php echo $t['icon']; ?>"></i>
-                                                </div>
-                                                <div class="theme-label"><?php echo $t['label']; ?></div>
-                                                <div style="font-size:.68rem;color:var(--text-muted,#6c757d)">
-                                                    <?php echo $t['desc']; ?></div>
-                                            </label>
-                                        </div>
+                                        $themes = [
+                                            'dark'   => ['icon' => 'bi-moon-stars-fill', 'label' => 'Escuro',  'desc' => 'Fundo escuro'],
+                                            'light'  => ['icon' => 'bi-sun-fill',        'label' => 'Claro',   'desc' => 'Fundo claro'],
+                                            'system' => ['icon' => 'bi-laptop',          'label' => 'Sistema', 'desc' => 'Igual ao SO'],
+                                        ];
+                                        foreach ($themes as $val => $t): ?>
+                                            <div class="col-4">
+                                                <label
+                                                    class="theme-option <?php echo $s['theme'] === $val ? 'active' : ''; ?>"
+                                                    id="themeCard_<?php echo $val; ?>"
+                                                    onclick="selectTheme('<?php echo $val; ?>')">
+                                                    <div class="theme-icon"><i class="bi <?php echo $t['icon']; ?>"></i>
+                                                    </div>
+                                                    <div class="theme-label"><?php echo $t['label']; ?></div>
+                                                    <div style="font-size:.68rem;color:var(--text-muted,#6c757d)">
+                                                        <?php echo $t['desc']; ?></div>
+                                                </label>
+                                            </div>
                                         <?php endforeach; ?>
                                     </div>
                                 </div>
@@ -934,22 +935,22 @@ $status_info = $status_map[$status_user] ?? ['label' => ucfirst($status_user), '
                                 <p class="small text-muted mb-3">Escolhe quais secções aparecem no teu painel principal.
                                 </p>
                                 <?php
-                $widgets = [
-                  'widget_streams'   => ['label' => 'Gráfico de Streams',    'desc' => 'Evolução mensal dos streams'],
-                  'widget_financial' => ['label' => 'Resumo Financeiro',      'desc' => 'Balanço de royalties e carteira'],
-                  'widget_releases'  => ['label' => 'Lançamentos Recentes',   'desc' => 'Últimos álbuns/singles submetidos'],
-                  'widget_artists'   => ['label' => 'Top Artistas',           'desc' => 'Artistas com mais streams'],
-                  'widget_activity'  => ['label' => 'Feed de Actividades',    'desc' => 'Últimas acções na plataforma'],
-                ];
-                foreach ($widgets as $key => $w): ?>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" id="<?php echo $key; ?>"
-                                        name="<?php echo $key; ?>" value="1" <?php echo $s[$key] ? 'checked' : ''; ?>>
-                                    <label class="form-check-label" for="<?php echo $key; ?>">
-                                        <?php echo $w['label']; ?>
-                                        <small class="d-block text-muted"><?php echo $w['desc']; ?></small>
-                                    </label>
-                                </div>
+                                $widgets = [
+                                    'widget_streams'   => ['label' => 'Gráfico de Streams',    'desc' => 'Evolução mensal dos streams'],
+                                    'widget_financial' => ['label' => 'Resumo Financeiro',      'desc' => 'Balanço de royalties e carteira'],
+                                    'widget_releases'  => ['label' => 'Lançamentos Recentes',   'desc' => 'Últimos álbuns/singles submetidos'],
+                                    'widget_artists'   => ['label' => 'Top Artistas',           'desc' => 'Artistas com mais streams'],
+                                    'widget_activity'  => ['label' => 'Feed de Actividades',    'desc' => 'Últimas acções na plataforma'],
+                                ];
+                                foreach ($widgets as $key => $w): ?>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="<?php echo $key; ?>"
+                                            name="<?php echo $key; ?>" value="1" <?php echo $s[$key] ? 'checked' : ''; ?>>
+                                        <label class="form-check-label" for="<?php echo $key; ?>">
+                                            <?php echo $w['label']; ?>
+                                            <small class="d-block text-muted"><?php echo $w['desc']; ?></small>
+                                        </label>
+                                    </div>
                                 <?php endforeach; ?>
                                 <div class="mt-3">
                                     <button type="submit" class="btn btn-settings"><i
@@ -1085,93 +1086,93 @@ $status_info = $status_map[$status_user] ?? ['label' => ucfirst($status_user), '
                         </div>
                         <div class="card-body">
                             <?php if (!empty($artists)):
-                foreach ($artists as $art): ?>
+                                foreach ($artists as $art): ?>
 
-                            <?php if (!empty($art['youtube_url'])): ?>
-                            <div class="integration-row">
-                                <div class="d-flex align-items-center gap-3">
-                                    <i class="bi bi-youtube text-danger fs-4"></i>
-                                    <div>
-                                        <div class="fw-semibold small">YouTube</div>
-                                        <div class="text-muted" style="font-size:.72rem">
-                                            <?php echo htmlspecialchars($art['stage_name']); ?></div>
-                                    </div>
-                                </div>
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="badge bg-success">Conectado</span>
-                                    <a href="<?php echo htmlspecialchars($art['youtube_url']); ?>" target="_blank"
-                                        class="btn btn-sm btn-outline-secondary"
-                                        style="border-radius:8px;font-size:.72rem">
-                                        <i class="bi bi-box-arrow-up-right"></i>
-                                    </a>
-                                </div>
-                            </div>
-                            <?php endif; ?>
+                                    <?php if (!empty($art['youtube_url'])): ?>
+                                        <div class="integration-row">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <i class="bi bi-youtube text-danger fs-4"></i>
+                                                <div>
+                                                    <div class="fw-semibold small">YouTube</div>
+                                                    <div class="text-muted" style="font-size:.72rem">
+                                                        <?php echo htmlspecialchars($art['stage_name']); ?></div>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span class="badge bg-success">Conectado</span>
+                                                <a href="<?php echo htmlspecialchars($art['youtube_url']); ?>" target="_blank"
+                                                    class="btn btn-sm btn-outline-secondary"
+                                                    style="border-radius:8px;font-size:.72rem">
+                                                    <i class="bi bi-box-arrow-up-right"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
 
-                            <?php if (!empty($art['spotify_url'])): ?>
-                            <div class="integration-row">
-                                <div class="d-flex align-items-center gap-3">
-                                    <i class="bi bi-spotify text-success fs-4"></i>
-                                    <div>
-                                        <div class="fw-semibold small">Spotify for Artists</div>
-                                        <div class="text-muted" style="font-size:.72rem">
-                                            <?php echo htmlspecialchars($art['stage_name']); ?></div>
-                                    </div>
-                                </div>
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="badge bg-success">Conectado</span>
-                                    <a href="<?php echo htmlspecialchars($art['spotify_url']); ?>" target="_blank"
-                                        class="btn btn-sm btn-outline-secondary"
-                                        style="border-radius:8px;font-size:.72rem">
-                                        <i class="bi bi-box-arrow-up-right"></i>
-                                    </a>
-                                </div>
-                            </div>
-                            <?php endif; ?>
+                                    <?php if (!empty($art['spotify_url'])): ?>
+                                        <div class="integration-row">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <i class="bi bi-spotify text-success fs-4"></i>
+                                                <div>
+                                                    <div class="fw-semibold small">Spotify for Artists</div>
+                                                    <div class="text-muted" style="font-size:.72rem">
+                                                        <?php echo htmlspecialchars($art['stage_name']); ?></div>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span class="badge bg-success">Conectado</span>
+                                                <a href="<?php echo htmlspecialchars($art['spotify_url']); ?>" target="_blank"
+                                                    class="btn btn-sm btn-outline-secondary"
+                                                    style="border-radius:8px;font-size:.72rem">
+                                                    <i class="bi bi-box-arrow-up-right"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
 
-                            <?php if (!empty($art['instagram_url'])): ?>
-                            <div class="integration-row">
-                                <div class="d-flex align-items-center gap-3">
-                                    <i class="bi bi-instagram fs-4" style="color:#e1306c"></i>
-                                    <div>
-                                        <div class="fw-semibold small">Instagram</div>
-                                        <div class="text-muted" style="font-size:.72rem">
-                                            <?php echo htmlspecialchars($art['stage_name']); ?></div>
-                                    </div>
-                                </div>
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="badge bg-success">Conectado</span>
-                                    <a href="<?php echo htmlspecialchars($art['instagram_url']); ?>" target="_blank"
-                                        class="btn btn-sm btn-outline-secondary"
-                                        style="border-radius:8px;font-size:.72rem">
-                                        <i class="bi bi-box-arrow-up-right"></i>
-                                    </a>
-                                </div>
-                            </div>
-                            <?php endif; ?>
+                                    <?php if (!empty($art['instagram_url'])): ?>
+                                        <div class="integration-row">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <i class="bi bi-instagram fs-4" style="color:#e1306c"></i>
+                                                <div>
+                                                    <div class="fw-semibold small">Instagram</div>
+                                                    <div class="text-muted" style="font-size:.72rem">
+                                                        <?php echo htmlspecialchars($art['stage_name']); ?></div>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span class="badge bg-success">Conectado</span>
+                                                <a href="<?php echo htmlspecialchars($art['instagram_url']); ?>" target="_blank"
+                                                    class="btn btn-sm btn-outline-secondary"
+                                                    style="border-radius:8px;font-size:.72rem">
+                                                    <i class="bi bi-box-arrow-up-right"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
 
-                            <?php endforeach;
-              else: ?>
-                            <p class="small text-muted">Nenhum artista com integrações configuradas.</p>
+                                <?php endforeach;
+                            else: ?>
+                                <p class="small text-muted">Nenhum artista com integrações configuradas.</p>
                             <?php endif; ?>
 
                             <!-- Em breve -->
                             <?php foreach (
-                [
-                  ['bi-apple', '#555', 'Apple Music for Artists'],
-                  ['bi-tiktok', '#69c9d0', 'TikTok for Artists'],
-                ] as [$icon, $color, $name]
-              ): ?>
-                            <div class="integration-row" style="opacity:.5">
-                                <div class="d-flex align-items-center gap-3">
-                                    <i class="bi <?php echo $icon; ?> fs-4" style="color:<?php echo $color; ?>"></i>
-                                    <div>
-                                        <div class="fw-semibold small"><?php echo $name; ?></div>
-                                        <div class="text-muted" style="font-size:.72rem">Em breve</div>
+                                [
+                                    ['bi-apple', '#555', 'Apple Music for Artists'],
+                                    ['bi-tiktok', '#69c9d0', 'TikTok for Artists'],
+                                ] as [$icon, $color, $name]
+                            ): ?>
+                                <div class="integration-row" style="opacity:.5">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <i class="bi <?php echo $icon; ?> fs-4" style="color:<?php echo $color; ?>"></i>
+                                        <div>
+                                            <div class="fw-semibold small"><?php echo $name; ?></div>
+                                            <div class="text-muted" style="font-size:.72rem">Em breve</div>
+                                        </div>
                                     </div>
+                                    <span class="badge bg-secondary">Em breve</span>
                                 </div>
-                                <span class="badge bg-secondary">Em breve</span>
-                            </div>
                             <?php endforeach; ?>
 
                             <div class="d-flex gap-2 mt-3">
@@ -1285,21 +1286,21 @@ $status_info = $status_map[$status_user] ?? ['label' => ucfirst($status_user), '
                     <div class="card-body p-2">
                         <div class="list-group quick-nav">
                             <?php
-              $nav = [
-                '#profile'       => ['bi-person-circle',        'Perfil'],
-                '#notifications' => ['bi-bell',                 'Notificações'],
-                '#appearance'    => ['bi-palette',              'Aparência'],
-                '#dashboard'     => ['bi-speedometer2',         'Dashboard'],
-                '#privacy'       => ['bi-shield-lock',          'Privacidade'],
-                '#language'      => ['bi-globe',                'Idioma e Região'],
-                '#integrations'  => ['bi-link-45deg',           'Integrações'],
-                '#danger'        => ['bi-exclamation-triangle', 'Zona de Perigo'],
-              ];
-              foreach ($nav as $href => [$icon, $label]): ?>
-                            <a href="<?php echo $href; ?>" class="list-group-item list-group-item-action"
-                                style="<?php echo $href === '#danger' ? 'color:#dc3545!important' : ''; ?>">
-                                <i class="bi <?php echo $icon; ?> me-2" style="color:#FF0089"></i><?php echo $label; ?>
-                            </a>
+                            $nav = [
+                                '#profile'       => ['bi-person-circle',        'Perfil'],
+                                '#notifications' => ['bi-bell',                 'Notificações'],
+                                '#appearance'    => ['bi-palette',              'Aparência'],
+                                '#dashboard'     => ['bi-speedometer2',         'Dashboard'],
+                                '#privacy'       => ['bi-shield-lock',          'Privacidade'],
+                                '#language'      => ['bi-globe',                'Idioma e Região'],
+                                '#integrations'  => ['bi-link-45deg',           'Integrações'],
+                                '#danger'        => ['bi-exclamation-triangle', 'Zona de Perigo'],
+                            ];
+                            foreach ($nav as $href => [$icon, $label]): ?>
+                                <a href="<?php echo $href; ?>" class="list-group-item list-group-item-action"
+                                    style="<?php echo $href === '#danger' ? 'color:#dc3545!important' : ''; ?>">
+                                    <i class="bi <?php echo $icon; ?> me-2" style="color:#FF0089"></i><?php echo $label; ?>
+                                </a>
                             <?php endforeach; ?>
                         </div>
                     </div>
@@ -1314,10 +1315,10 @@ $status_info = $status_map[$status_user] ?? ['label' => ucfirst($status_user), '
                         <div class="account-status-row">
                             <span class="text-muted small">Plano</span>
                             <?php if ($plan): ?>
-                            <strong class="small"
-                                style="color:#FF0089"><?php echo htmlspecialchars($plan['name_plan']); ?></strong>
+                                <strong class="small"
+                                    style="color:#FF0089"><?php echo htmlspecialchars($plan['name_plan']); ?></strong>
                             <?php else: ?>
-                            <span class="badge bg-secondary">Sem plano</span>
+                                <span class="badge bg-secondary">Sem plano</span>
                             <?php endif; ?>
                         </div>
                         <div class="account-status-row">
@@ -1326,10 +1327,10 @@ $status_info = $status_map[$status_user] ?? ['label' => ucfirst($status_user), '
                                 class="badge <?php echo $status_info['class']; ?>"><?php echo $status_info['label']; ?></span>
                         </div>
                         <?php if ($plan && !empty($plan['expires_at'])): ?>
-                        <div class="account-status-row">
-                            <span class="text-muted small">Validade</span>
-                            <span class="small"><?php echo date('d/m/Y', strtotime($plan['expires_at'])); ?></span>
-                        </div>
+                            <div class="account-status-row">
+                                <span class="text-muted small">Validade</span>
+                                <span class="small"><?php echo date('d/m/Y', strtotime($plan['expires_at'])); ?></span>
+                            </div>
                         <?php endif; ?>
                         <div class="account-status-row">
                             <span class="text-muted small">Membro desde</span>
@@ -1352,20 +1353,20 @@ $status_info = $status_map[$status_user] ?? ['label' => ucfirst($status_user), '
                     </div>
                     <div class="card-body py-2">
                         <?php if (!empty($recent_activity)):
-              foreach ($recent_activity as $act): ?>
-                        <div class="activity-row">
-                            <div class="activity-dot"></div>
-                            <div>
-                                <div style="font-size:.78rem"><?php echo htmlspecialchars($act['description'] ?? ''); ?>
+                            foreach ($recent_activity as $act): ?>
+                                <div class="activity-row">
+                                    <div class="activity-dot"></div>
+                                    <div>
+                                        <div style="font-size:.78rem"><?php echo htmlspecialchars($act['description'] ?? ''); ?>
+                                        </div>
+                                        <div style="font-size:.68rem;color:var(--text-muted,#6c757d)">
+                                            <?php echo !empty($act['creat_activity']) ? date('d/m/Y H:i', strtotime($act['creat_activity'])) : '—'; ?>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div style="font-size:.68rem;color:var(--text-muted,#6c757d)">
-                                    <?php echo !empty($act['creat_activity']) ? date('d/m/Y H:i', strtotime($act['creat_activity'])) : '—'; ?>
-                                </div>
-                            </div>
-                        </div>
-                        <?php endforeach;
-            else: ?>
-                        <p class="small text-muted mb-0">Sem actividade registada.</p>
+                            <?php endforeach;
+                        else: ?>
+                            <p class="small text-muted mb-0">Sem actividade registada.</p>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -1378,20 +1379,20 @@ $status_info = $status_map[$status_user] ?? ['label' => ucfirst($status_user), '
                     <div class="card-body p-2">
                         <ul class="nav flex-column">
                             <?php foreach (
-                [
-                  ['help',                    'bi-question-circle', 'Ajuda'],
-                  ['support',                 'bi-headset',         'Suporte'],
-                  ['faq',                     'bi-chat-left-text',  'Perguntas Frequentes'],
-                  ['politicies/terms',        'bi-file-text',       'Termos de Uso'],
-                  ['politicies/privacy',      'bi-shield',          'Política de Privacidade'],
-                ] as [$href, $icon, $label]
-              ): ?>
-                            <li class="nav-item">
-                                <a class="nav-link py-2" href="<?php echo $href; ?>" style="font-size:.84rem">
-                                    <i class="bi <?php echo $icon; ?> me-2"
-                                        style="color:#FF0089"></i><?php echo $label; ?>
-                                </a>
-                            </li>
+                                [
+                                    ['help',                    'bi-question-circle', 'Ajuda'],
+                                    ['support',                 'bi-headset',         'Suporte'],
+                                    ['faq',                     'bi-chat-left-text',  'Perguntas Frequentes'],
+                                    ['politicies/terms',        'bi-file-text',       'Termos de Uso'],
+                                    ['politicies/privacy',      'bi-shield',          'Política de Privacidade'],
+                                ] as [$href, $icon, $label]
+                            ): ?>
+                                <li class="nav-item">
+                                    <a class="nav-link py-2" href="<?php echo $href; ?>" style="font-size:.84rem">
+                                        <i class="bi <?php echo $icon; ?> me-2"
+                                            style="color:#FF0089"></i><?php echo $label; ?>
+                                    </a>
+                                </li>
                             <?php endforeach; ?>
                         </ul>
                     </div>
@@ -1456,114 +1457,114 @@ $status_info = $status_map[$status_user] ?? ['label' => ucfirst($status_user), '
     <!-- ═══ JS ═══ -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../../js/wp.tools.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
     <script>
-    // ── Toast helper ──────────────────────────────
-    function showToast(msg, type = 'pink') {
-        const el = document.getElementById('mainToast');
-        el.className = `toast align-items-center border-0 toast-${type}`;
-        document.getElementById('mainToastBody').textContent = msg;
-        bootstrap.Toast.getOrCreateInstance(el, {
-            delay: 3500
-        }).show();
-    }
+        // ── Toast helper ──────────────────────────────
+        function showToast(msg, type = 'pink') {
+            const el = document.getElementById('mainToast');
+            el.className = `toast align-items-center border-0 toast-${type}`;
+            document.getElementById('mainToastBody').textContent = msg;
+            bootstrap.Toast.getOrCreateInstance(el, {
+                delay: 3500
+            }).show();
+        }
 
-    // ══════════════════════════════════════════════════════
-    // TEMA — alinhado com o teu sistema theme.wp.js
-    // O teu sistema usa: body.classList.add('dark-mode')
-    //                    body.classList.add('light-mode')
-    //                    localStorage.setItem('theme', val)
-    // ══════════════════════════════════════════════════════
-    function selectTheme(val) {
-        // 1. Actualiza o campo hidden do formulário
-        document.getElementById('hiddenTheme').value = val;
+        // ══════════════════════════════════════════════════════
+        // TEMA — alinhado com o teu sistema theme.wp.js
+        // O teu sistema usa: body.classList.add('dark-mode')
+        //                    body.classList.add('light-mode')
+        //                    localStorage.setItem('theme', val)
+        // ══════════════════════════════════════════════════════
+        function selectTheme(val) {
+            // 1. Actualiza o campo hidden do formulário
+            document.getElementById('hiddenTheme').value = val;
 
-        // 2. Actualiza os cards visuais
-        document.querySelectorAll('.theme-option').forEach(el => el.classList.remove('active'));
-        const card = document.getElementById('themeCard_' + val);
-        if (card) card.classList.add('active');
+            // 2. Actualiza os cards visuais
+            document.querySelectorAll('.theme-option').forEach(el => el.classList.remove('active'));
+            const card = document.getElementById('themeCard_' + val);
+            if (card) card.classList.add('active');
 
-        // 3. Aplica o tema no body (igual ao theme.wp.js)
-        const body = document.body;
-        if (val === 'dark') {
-            body.classList.add('dark-mode');
-            body.classList.remove('light-mode');
-            document.getElementById('themeIcon').className = 'bi bi-moon';
-        } else if (val === 'light') {
-            body.classList.add('light-mode');
-            body.classList.remove('dark-mode');
-            document.getElementById('themeIcon').className = 'bi bi-sun';
-        } else {
-            // system: respeita a preferência do SO
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (prefersDark) {
+            // 3. Aplica o tema no body (igual ao theme.wp.js)
+            const body = document.body;
+            if (val === 'dark') {
                 body.classList.add('dark-mode');
                 body.classList.remove('light-mode');
                 document.getElementById('themeIcon').className = 'bi bi-moon';
-            } else {
+            } else if (val === 'light') {
                 body.classList.add('light-mode');
                 body.classList.remove('dark-mode');
                 document.getElementById('themeIcon').className = 'bi bi-sun';
-            }
-        }
-
-        // 4. Guarda no localStorage (para o toggle da navbar também ler)
-        localStorage.setItem('theme', val);
-    }
-
-    // Ao carregar: sincroniza os cards com o tema guardado
-    (function() {
-        const saved = localStorage.getItem('theme') || '<?php echo htmlspecialchars($s["theme"]); ?>';
-        selectTheme(saved);
-    })();
-
-    // Toggle da navbar também actualiza o card seleccionado
-    const themeToggle = document.getElementById('themeToggle');
-    if (themeToggle) {
-        themeToggle.addEventListener('click', function() {
-            const isDark = document.body.classList.contains('dark-mode');
-            selectTheme(isDark ? 'light' : 'dark');
-        });
-    }
-
-    // ── Push notification test ────────────────────
-    function testPushNotification() {
-        if (!('Notification' in window)) {
-            showToast('Notificações não suportadas neste navegador.', 'red');
-            return;
-        }
-        Notification.requestPermission().then(p => {
-            if (p === 'granted') {
-                new Notification('Wasom Upfy', {
-                    body: 'Notificação de teste enviada com sucesso!',
-                    icon: '../../assets/img/icones/wasomupfy_fiv.png'
-                });
-                showToast('Notificação de teste enviada!');
             } else {
-                showToast('Permissão negada pelo navegador.', 'red');
+                // system: respeita a preferência do SO
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (prefersDark) {
+                    body.classList.add('dark-mode');
+                    body.classList.remove('light-mode');
+                    document.getElementById('themeIcon').className = 'bi bi-moon';
+                } else {
+                    body.classList.add('light-mode');
+                    body.classList.remove('dark-mode');
+                    document.getElementById('themeIcon').className = 'bi bi-sun';
+                }
             }
-        });
-    }
 
-    // ── Quick nav scroll spy ──────────────────────
-    const sections = document.querySelectorAll('section[id]');
-    window.addEventListener('scroll', () => {
-        let cur = '';
-        sections.forEach(s => {
-            if (window.scrollY >= s.offsetTop - 120) cur = s.id;
-        });
-        document.querySelectorAll('.quick-nav a').forEach(a => {
-            a.classList.toggle('active-link', a.getAttribute('href') === '#' + cur);
-        });
-    }, {
-        passive: true
-    });
+            // 4. Guarda no localStorage (para o toggle da navbar também ler)
+            localStorage.setItem('theme', val);
+        }
 
-    // ── Flash toast auto ──────────────────────────
-    <?php if ($flash): ?>
-    showToast(<?php echo json_encode($flash['msg']); ?>,
-        '<?php echo $flash['type'] === 'success' ? 'green' : 'red'; ?>');
-    <?php endif; ?>
+        // Ao carregar: sincroniza os cards com o tema guardado
+        (function() {
+            const saved = localStorage.getItem('theme') || '<?php echo htmlspecialchars($s["theme"]); ?>';
+            selectTheme(saved);
+        })();
+
+        // Toggle da navbar também actualiza o card seleccionado
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', function() {
+                const isDark = document.body.classList.contains('dark-mode');
+                selectTheme(isDark ? 'light' : 'dark');
+            });
+        }
+
+        // ── Push notification test ────────────────────
+        function testPushNotification() {
+            if (!('Notification' in window)) {
+                showToast('Notificações não suportadas neste navegador.', 'red');
+                return;
+            }
+            Notification.requestPermission().then(p => {
+                if (p === 'granted') {
+                    new Notification('Wasom Upfy', {
+                        body: 'Notificação de teste enviada com sucesso!',
+                        icon: '../../assets/img/icones/wasomupfy_fiv.png'
+                    });
+                    showToast('Notificação de teste enviada!');
+                } else {
+                    showToast('Permissão negada pelo navegador.', 'red');
+                }
+            });
+        }
+
+        // ── Quick nav scroll spy ──────────────────────
+        const sections = document.querySelectorAll('section[id]');
+        window.addEventListener('scroll', () => {
+            let cur = '';
+            sections.forEach(s => {
+                if (window.scrollY >= s.offsetTop - 120) cur = s.id;
+            });
+            document.querySelectorAll('.quick-nav a').forEach(a => {
+                a.classList.toggle('active-link', a.getAttribute('href') === '#' + cur);
+            });
+        }, {
+            passive: true
+        });
+
+        // ── Flash toast auto ──────────────────────────
+        <?php if ($flash): ?>
+            showToast(<?php echo json_encode($flash['msg']); ?>,
+                '<?php echo $flash['type'] === 'success' ? 'green' : 'red'; ?>');
+        <?php endif; ?>
     </script>
 </body>
 

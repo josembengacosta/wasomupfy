@@ -7,25 +7,26 @@ require_once __DIR__ . '/../../authentic/include/functions.php';
 startSecureSession();
 
 if (empty($_SESSION['collab_id']) || empty($_SESSION['collab_id_users'])) {
-    header('Location: ' . rtrim(APP_URL, '/') . '/dashboard/account/collab-login');
+    header('Location: ' . rtrim(APP_URL, '/') . '/' . APP_URL_PANEL . '/account/collab-login');
     exit;
 }
 if (!empty($_SESSION['collab_must_change'])) {
-    header('Location: ' . rtrim(APP_URL, '/') . '/dashboard/account/collab-login');
+    header('Location: ' . rtrim(APP_URL, '/') . '/' . APP_URL_PANEL . '/account/collab-login');
     exit;
 }
 
-$db        = getDB();
+$db = getDB();
 $id_collab = (int)$_SESSION['collab_id'];
-$id_users  = (int)$_SESSION['collab_id_users'];
-$role      = $_SESSION['collab_role'] ?? 'support';
+$id_users = (int)$_SESSION['collab_id_users'];
+$role = $_SESSION['collab_role'] ?? 'support';
 
-$cs = $db->prepare("SELECT * FROM _collaborators WHERE id_collab = ? AND id_users = ? AND status_collab = 'active' LIMIT 1");
+$cs = $db->prepare("SELECT * FROM _collaborators WHERE id_collab = ? AND id_users = ? AND status_collab = 'active' LIMIT
+1");
 $cs->execute([$id_collab, $id_users]);
 $collab = $cs->fetch();
 if (!$collab) {
     session_destroy();
-    header('Location: ' . rtrim(APP_URL, '/') . '/dashboard/account/collab-login?error=access');
+    header('Location: ' . rtrim(APP_URL, '/') . '/' . APP_URL_PANEL . '/account/collab-login?error=access');
     exit;
 }
 
@@ -34,12 +35,12 @@ $db->prepare("UPDATE _collaborators SET last_seen_at = NOW() WHERE id_collab = ?
 $owner = getUserById($id_users);
 if (!$owner) {
     session_destroy();
-    header('Location: ' . rtrim(APP_URL, '/') . '/dashboard/account/collab-login');
+    header('Location: ' . rtrim(APP_URL, '/') . '/' . APP_URL_PANEL . '/account/collab-login');
     exit;
 }
 
 $owner_artist_name = htmlspecialchars($owner['name_artist_band'] ?? $owner['first_name']);
-$owner_name        = htmlspecialchars(trim($owner['first_name'] . ' ' . ($owner['second_name'] ?? '')));
+$owner_name = htmlspecialchars(trim($owner['first_name'] . ' ' . ($owner['second_name'] ?? '')));
 $plan = null;
 if ($owner['plan_selected']) {
     $ps = $db->prepare("SELECT * FROM _plans WHERE id_plan = ?");
@@ -50,12 +51,12 @@ $plan_name = $plan ? htmlspecialchars($plan['name_plan']) : 'Sem plano';
 
 // ── Permissões ────────────────────────────────
 $can_view_releases = in_array($role, ['admin', 'editor', 'support']);
-$can_view_artists  = in_array($role, ['admin', 'editor']);
+$can_view_artists = in_array($role, ['admin', 'editor']);
 $can_view_finances = in_array($role, ['admin', 'analyst']);
-$can_view_stats    = in_array($role, ['admin', 'analyst', 'editor']);
+$can_view_stats = in_array($role, ['admin', 'analyst', 'editor']);
 
 if (!$can_view_finances) {
-    header('Location: ' . rtrim(APP_URL, '/') . '/dashboard/collab/overview?error=noaccess');
+    header('Location: ' . rtrim(APP_URL, '/') . '/' . APP_URL_PANEL . '/collab/overview?error=noaccess');
     exit;
 }
 
@@ -65,13 +66,13 @@ $wq->execute([$id_users]);
 $wallet = $wq->fetch() ?: ['balance_aoa' => 0, 'balance_usd' => 0, 'total_earned' => 0, 'total_withdrawn' => 0];
 
 // ── Filtro período ────────────────────────────
-$filter_year  = (int)($_GET['year']  ?? date('Y'));
+$filter_year = (int)($_GET['year'] ?? date('Y'));
 $filter_month = (int)($_GET['month'] ?? 0);
-$page         = max(1, (int)($_GET['page'] ?? 1));
-$per_page     = 15;
+$page = max(1, (int)($_GET['page'] ?? 1));
+$per_page = 15;
 
 // ── Royalties ─────────────────────────────────
-$roy_where  = ['r.id_users = ?'];
+$roy_where = ['r.id_users = ?'];
 $roy_params = [$id_users];
 if ($filter_year) {
     $roy_where[] = 'r.year_royalty = ?';
@@ -84,14 +85,14 @@ if ($filter_month) {
 $roy_sql = implode(' AND ', $roy_where);
 
 $roy_stats_q = $db->prepare("
-    SELECT
-        COUNT(*)                                                 AS total,
-        SUM(CASE WHEN status_royalty='paid'       THEN 1 ELSE 0 END) AS paid,
-        SUM(CASE WHEN status_royalty='pending'    THEN 1 ELSE 0 END) AS pending,
-        SUM(CASE WHEN status_royalty='processing' THEN 1 ELSE 0 END) AS processing,
-        SUM(net_royalty)                                         AS total_net_usd,
-        SUM(net_royalty_aoa)                                     AS total_net_aoa
-    FROM _royalty r WHERE $roy_sql
+SELECT
+COUNT(*) AS total,
+SUM(CASE WHEN status_royalty='paid' THEN 1 ELSE 0 END) AS paid,
+SUM(CASE WHEN status_royalty='pending' THEN 1 ELSE 0 END) AS pending,
+SUM(CASE WHEN status_royalty='processing' THEN 1 ELSE 0 END) AS processing,
+SUM(net_royalty) AS total_net_usd,
+SUM(net_royalty_aoa) AS total_net_aoa
+FROM _royalty r WHERE $roy_sql
 ");
 $roy_stats_q->execute($roy_params);
 $roy_stats = $roy_stats_q->fetch();
@@ -103,37 +104,37 @@ $roy_pages = max(1, ceil($roy_total / $per_page));
 $roy_offset = ($page - 1) * $per_page;
 
 $royalties_q = $db->prepare("
-    SELECT r.*, t.title_track, t.name_author, a.title_album
-    FROM _royalty r
-    JOIN _track t ON t.id_track = r.id_track
-    JOIN _album a ON a.id_album = t.id_album
-    WHERE $roy_sql
-    ORDER BY r.year_royalty DESC, r.month_royalty DESC, r.creat_royalty DESC
-    LIMIT $per_page OFFSET $roy_offset
+SELECT r.*, t.title_track, t.name_author, a.title_album
+FROM _royalty r
+JOIN _track t ON t.id_track = r.id_track
+JOIN _album a ON a.id_album = t.id_album
+WHERE $roy_sql
+ORDER BY r.year_royalty DESC, r.month_royalty DESC, r.creat_royalty DESC
+LIMIT $per_page OFFSET $roy_offset
 ");
 $royalties_q->execute($roy_params);
 $royalties = $royalties_q->fetchAll(PDO::FETCH_ASSOC);
 
 // ── Transações recentes ────────────────────────
 $trans_q = $db->prepare("
-    SELECT id_transaction, type_transaction, amount, currency,
-           balance_before, balance_after, description, creat_transaction
-    FROM _transaction
-    WHERE id_users = ?
-    ORDER BY creat_transaction DESC
-    LIMIT 10
+SELECT id_transaction, type_transaction, amount, currency,
+balance_before, balance_after, description, creat_transaction
+FROM _transaction
+WHERE id_users = ?
+ORDER BY creat_transaction DESC
+LIMIT 10
 ");
 $trans_q->execute([$id_users]);
 $transactions = $trans_q->fetchAll(PDO::FETCH_ASSOC);
 
 // ── Levantamentos recentes ─────────────────────
 $with_q = $db->prepare("
-    SELECT w.*, ac.type_account, ac.full_name_account
-    FROM _withdrawal w
-    LEFT JOIN _account ac ON ac.id_account = w.id_account
-    WHERE w.id_users = ?
-    ORDER BY w.creat_withdrawal DESC
-    LIMIT 8
+SELECT w.*, ac.type_account, ac.full_name_account
+FROM _withdrawal w
+LEFT JOIN _account ac ON ac.id_account = w.id_account
+WHERE w.id_users = ?
+ORDER BY w.creat_withdrawal DESC
+LIMIT 8
 ");
 $with_q->execute([$id_users]);
 $withdrawals = $with_q->fetchAll(PDO::FETCH_ASSOC);
@@ -146,42 +147,43 @@ if (empty($available_years)) $available_years = [date('Y')];
 
 // ── Helpers ───────────────────────────────────
 $role_meta = [
-    'admin'   => ['label' => 'Administrador', 'color' => '#dc3545', 'bg' => 'rgba(220,53,69,.1)',  'icon' => 'bi-shield-fill'],
-    'editor'  => ['label' => 'Editor',       'color' => '#FF0089', 'bg' => 'rgba(255,0,137,.1)', 'icon' => 'bi-pencil-fill'],
-    'analyst' => ['label' => 'Analista',     'color' => '#0d6efd', 'bg' => 'rgba(13,110,253,.1)', 'icon' => 'bi-bar-chart-fill'],
-    'support' => ['label' => 'Suporte',      'color' => '#198754', 'bg' => 'rgba(25,135,84,.1)', 'icon' => 'bi-headset'],
+    'admin' => ['label' => 'Administrador', 'color' => '#dc3545', 'bg' => 'rgba(220,53,69,.1)', 'icon' => 'bi-shield-fill'],
+    'editor' => ['label' => 'Editor', 'color' => '#FF0089', 'bg' => 'rgba(255,0,137,.1)', 'icon' => 'bi-pencil-fill'],
+    'analyst' => ['label' => 'Analista', 'color' => '#0d6efd', 'bg' => 'rgba(13,110,253,.1)', 'icon' =>
+    'bi-bar-chart-fill'],
+    'support' => ['label' => 'Suporte', 'color' => '#198754', 'bg' => 'rgba(25,135,84,.1)', 'icon' => 'bi-headset'],
 ];
 $rm = $role_meta[$role] ?? $role_meta['support'];
 $role_label = $rm['label'];
 
 $royalty_status_meta = [
-    'pending'    => ['label' => 'Pendente',    'color' => '#856404', 'bg' => 'rgba(255,193,7,.12)'],
+    'pending' => ['label' => 'Pendente', 'color' => '#856404', 'bg' => 'rgba(255,193,7,.12)'],
     'processing' => ['label' => 'A processar', 'color' => '#0d6efd', 'bg' => 'rgba(13,110,253,.1)'],
-    'paid'       => ['label' => 'Pago',        'color' => '#198754', 'bg' => 'rgba(25,135,84,.1)'],
-    'cancelled'  => ['label' => 'Cancelado',   'color' => '#dc3545', 'bg' => 'rgba(220,53,69,.1)'],
+    'paid' => ['label' => 'Pago', 'color' => '#198754', 'bg' => 'rgba(25,135,84,.1)'],
+    'cancelled' => ['label' => 'Cancelado', 'color' => '#dc3545', 'bg' => 'rgba(220,53,69,.1)'],
 ];
 $withdrawal_status_meta = [
-    'pending'    => ['label' => 'Pendente',    'color' => '#856404', 'bg' => 'rgba(255,193,7,.12)'],
+    'pending' => ['label' => 'Pendente', 'color' => '#856404', 'bg' => 'rgba(255,193,7,.12)'],
     'processing' => ['label' => 'A processar', 'color' => '#0d6efd', 'bg' => 'rgba(13,110,253,.1)'],
-    'approved'   => ['label' => 'Aprovado',    'color' => '#198754', 'bg' => 'rgba(25,135,84,.1)'],
-    'rejected'   => ['label' => 'Recusado',    'color' => '#dc3545', 'bg' => 'rgba(220,53,69,.1)'],
-    'cancelled'  => ['label' => 'Cancelado',   'color' => '#6c757d', 'bg' => 'rgba(108,117,125,.1)'],
+    'approved' => ['label' => 'Aprovado', 'color' => '#198754', 'bg' => 'rgba(25,135,84,.1)'],
+    'rejected' => ['label' => 'Recusado', 'color' => '#dc3545', 'bg' => 'rgba(220,53,69,.1)'],
+    'cancelled' => ['label' => 'Cancelado', 'color' => '#6c757d', 'bg' => 'rgba(108,117,125,.1)'],
 ];
 $trans_type_meta = [
-    'royalty_credit' => ['label' => 'Royalty',        'icon' => 'bi-arrow-down-circle', 'color' => '#198754'],
-    'withdrawal'     => ['label' => 'Levantamento',   'icon' => 'bi-arrow-up-circle',  'color' => '#dc3545'],
-    'plan_payment'   => ['label' => 'Pagamento plano', 'icon' => 'bi-credit-card',       'color' => '#0d6efd'],
-    'refund'         => ['label' => 'Reembolso',      'icon' => 'bi-arrow-counterclockwise', 'color' => '#198754'],
-    'adjustment'     => ['label' => 'Ajuste',         'icon' => 'bi-sliders',           'color' => '#6c757d'],
-    'fee'            => ['label' => 'Taxa',            'icon' => 'bi-dash-circle',       'color' => '#dc3545'],
+    'royalty_credit' => ['label' => 'Royalty', 'icon' => 'bi-arrow-down-circle', 'color' => '#198754'],
+    'withdrawal' => ['label' => 'Levantamento', 'icon' => 'bi-arrow-up-circle', 'color' => '#dc3545'],
+    'plan_payment' => ['label' => 'Pagamento plano', 'icon' => 'bi-credit-card', 'color' => '#0d6efd'],
+    'refund' => ['label' => 'Reembolso', 'icon' => 'bi-arrow-counterclockwise', 'color' => '#198754'],
+    'adjustment' => ['label' => 'Ajuste', 'icon' => 'bi-sliders', 'color' => '#6c757d'],
+    'fee' => ['label' => 'Taxa', 'icon' => 'bi-dash-circle', 'color' => '#dc3545'],
 ];
 $months_pt = ['', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
-$logout_url = rtrim(APP_URL, '/') . '/dashboard/collab/logout';
-$base_url   = rtrim(APP_URL, '/');
+$logout_url = rtrim(APP_URL, '/') . '/' . APP_URL_PANEL . '/collab/logout';
+$base_url = rtrim(APP_URL, '/');
 ?>
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-ao">
 
 <head>
     <meta charset="utf-8" />
@@ -362,7 +364,7 @@ $base_url   = rtrim(APP_URL, '/');
     <!-- NAVBAR -->
     <nav class="collab-nav">
         <button class="theme-btn d-md-none" id="btn-sidebar-toggle"><i class="bi bi-list"></i></button>
-        <a class="nav-brand" href="<?php echo $base_url; ?>/dashboard/collab/overview">
+        <a class="nav-brand" href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/overview">
             <?php echo APP_NAME; ?><span>For Colaboradores</span>
         </a>
         <div class="nav-spacer"></div>
@@ -395,7 +397,7 @@ $base_url   = rtrim(APP_URL, '/');
                 </li>
                 <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#myProfileModal"><i
                             class="bi bi-person me-2"></i>O meu perfil</a></li>
-                <li><a class="dropdown-item" href="<?php echo $base_url; ?>/dashboard/collab/overview"><i
+                <li><a class="dropdown-item" href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/overview"><i
                             class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
                 <li>
                     <hr class="dropdown-divider" />
@@ -418,22 +420,22 @@ $base_url   = rtrim(APP_URL, '/');
             <div style="font-size:.72rem;color:rgba(255,255,255,.75);margin-top:2px"><?php echo $plan_name; ?></div>
         </div>
         <div class="sidebar-section">Menu</div>
-        <a href="<?php echo $base_url; ?>/dashboard/collab/overview" class="sidebar-link"><i
+        <a href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/overview" class="sidebar-link"><i
                 class="bi bi-speedometer2"></i>Dashboard</a>
         <?php if ($can_view_releases): ?>
-            <a href="<?php echo $base_url; ?>/dashboard/collab/releases" class="sidebar-link"><i
+            <a href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/releases" class="sidebar-link"><i
                     class="bi bi-disc"></i>Lançamentos</a>
         <?php endif; ?>
         <?php if ($can_view_artists): ?>
-            <a href="<?php echo $base_url; ?>/dashboard/collab/artists" class="sidebar-link"><i
+            <a href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/artists" class="sidebar-link"><i
                     class="bi bi-people"></i>Artistas</a>
         <?php endif; ?>
         <div class="sidebar-section">Finanças</div>
-        <a href="<?php echo $base_url; ?>/dashboard/collab/finances" class="sidebar-link active"><i
+        <a href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/finances" class="sidebar-link active"><i
                 class="bi bi-currency-dollar"></i>Visão geral</a>
         <?php if ($can_view_stats): ?>
             <div class="sidebar-section">Análise</div>
-            <a href="<?php echo $base_url; ?>/dashboard/collab/statistics" class="sidebar-link"><i
+            <a href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/statistics" class="sidebar-link"><i
                     class="bi bi-bar-chart"></i>Estatísticas</a>
         <?php endif; ?>
         <div class="sidebar-section">Conta</div>
@@ -705,12 +707,13 @@ $base_url   = rtrim(APP_URL, '/');
 
     <!-- Bottom nav -->
     <nav class="bottom-nav-collab">
-        <a href="<?php echo $base_url; ?>/dashboard/collab/overview"><i class="bi bi-speedometer2"></i>Dashboard</a>
-        <?php if ($can_view_releases): ?><a href="<?php echo $base_url; ?>/dashboard/collab/releases"><i
+        <a href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/overview"><i
+                class="bi bi-speedometer2"></i>Dashboard</a>
+        <?php if ($can_view_releases): ?><a href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/releases"><i
                     class="bi bi-disc"></i>Releases</a><?php endif; ?>
-        <?php if ($can_view_stats): ?><a href="<?php echo $base_url; ?>/dashboard/collab/statistics"><i
+        <?php if ($can_view_stats): ?><a href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/statistics"><i
                     class="bi bi-bar-chart"></i>Stats</a><?php endif; ?>
-        <a href="<?php echo $base_url; ?>/dashboard/collab/finances" class="active"><i
+        <a href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/finances" class="active"><i
                 class="bi bi-currency-dollar"></i>Finanças</a>
     </nav>
 

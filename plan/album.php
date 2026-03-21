@@ -30,7 +30,7 @@ $price  = number_format($plan['price_plan'], 0, ',', '.');
 $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/album';
 ?>
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-ao">
 
 <head>
     <meta charset="utf-8" />
@@ -59,21 +59,21 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/album';
     <title> Wasom Upfy | Plano Álbum</title>
     <!-- O processo de carregamento do site em Javascript fim -->
     <script>
-    window.addEventListener("load", function() {
-        setTimeout(function() {
-            document.querySelector("body").classList.add("loaded")
-        }, 200)
-    })
+        window.addEventListener("load", function() {
+            setTimeout(function() {
+                document.querySelector("body").classList.add("loaded")
+            }, 200)
+        })
     </script>
     <!-- O processo de carregamento do site em Javascript fim -->
     <link rel="shortcut icon" href="../assets/img/icones/wasomupfy_fiv1.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link rel="stylesheet" href="../css/theme.min.css" />
-    <link rel="stylesheet" href="../js/libs/scrollcue/scrollCue.css" />
-    <link rel="stylesheet" href="../css/framework.css">
-    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/theme.min.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/js/libs/scrollcue/scrollCue.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/framework.css">
+    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/main.css">
 
 </head>
 
@@ -127,20 +127,20 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/album';
                                         $nPer    = $p['type_plan'] === 'subscription' ? '/ano' : '';
                                         $nActive = ($nSlug === 'album') ? ' active' : '';
                                     ?>
-                                    <a title="<?php echo htmlspecialchars($p['name_plan']); ?>"
-                                        class="dropdown-item mb-3 text-body<?php echo $nActive; ?>"
-                                        href="<?php echo $nSlug; ?>">
-                                        <div class="d-flex align-items-center">
-                                            <i class="fa-solid <?php echo $nIcon; ?> text-wasomupfy fs-3"
-                                                style="width: 35px;"></i>
-                                            <div class="ms-3 lh-1">
-                                                <h5 class="mb-1"><?php echo htmlspecialchars($p['name_plan']); ?></h5>
-                                                <p class="mb-0 fs-6">Nosso plano
-                                                    <?php echo htmlspecialchars($p['name_plan']); ?> —
-                                                    <?php echo $nPrc; ?> Kz<?php echo $nPer; ?></p>
+                                        <a title="<?php echo htmlspecialchars($p['name_plan']); ?>"
+                                            class="dropdown-item mb-3 text-body<?php echo $nActive; ?>"
+                                            href="<?php echo $nSlug; ?>">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fa-solid <?php echo $nIcon; ?> text-wasomupfy fs-3"
+                                                    style="width: 35px;"></i>
+                                                <div class="ms-3 lh-1">
+                                                    <h5 class="mb-1"><?php echo htmlspecialchars($p['name_plan']); ?></h5>
+                                                    <p class="mb-0 fs-6">Nosso plano
+                                                        <?php echo htmlspecialchars($p['name_plan']); ?> —
+                                                        <?php echo $nPrc; ?> Kz<?php echo $nPer; ?></p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </a>
+                                        </a>
                                     <?php endforeach; ?>
 
                                     <a title="Todos os planos" class="dropdown-item mb-3 text-body" href="all-plans">
@@ -527,11 +527,11 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/album';
                                         </div>
                                         <div class="col-md-4 text-md-end">
                                             <?php if ($canRegister): ?><a href="/wasomupfy/register?plan=album"
-                                                class="btn btn-wasomupfy btn-lg px-5">
-                                                Começar Agora <i class="bi bi-arrow-right ms-2"></i>
-                                            </a><?php else: ?><span
-                                                class="btn btn-secondary btn-lg px-5 disabled">Inscrições
-                                                Fechadas</span><?php endif; ?>
+                                                    class="btn btn-wasomupfy btn-lg px-5">
+                                                    Começar Agora <i class="bi bi-arrow-right ms-2"></i>
+                                                </a><?php else: ?><span
+                                                    class="btn btn-secondary btn-lg px-5 disabled">Inscrições
+                                                    Fechadas</span><?php endif; ?>
                                         </div>
                                     </div>
                                 </div>
@@ -762,10 +762,10 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/album';
                                 </div>
                                 <ul class="list-unstyled mb-4">
                                     <?php if (isset($plansBySlug['single']['features'])): foreach (array_slice($plansBySlug['single']['features'], 0, 3) as $f): ?>
-                                    <li class="d-flex align-items-start mb-2">
-                                        <i class="bi bi-check-lg text-success mt-1 me-2"></i>
-                                        <span><?php echo htmlspecialchars($f['feature_text']); ?></span>
-                                    </li>
+                                            <li class="d-flex align-items-start mb-2">
+                                                <i class="bi bi-check-lg text-success mt-1 me-2"></i>
+                                                <span><?php echo htmlspecialchars($f['feature_text']); ?></span>
+                                            </li>
                                     <?php endforeach;
                                     endif; ?>
                                 </ul>
@@ -789,10 +789,10 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/album';
                                 </div>
                                 <ul class="list-unstyled mb-4">
                                     <?php if (isset($plansBySlug['artist']['features'])): foreach (array_slice($plansBySlug['artist']['features'], 0, 3) as $f): ?>
-                                    <li class="d-flex align-items-start mb-2">
-                                        <i class="bi bi-check-lg text-success mt-1 me-2"></i>
-                                        <span><?php echo htmlspecialchars($f['feature_text']); ?></span>
-                                    </li>
+                                            <li class="d-flex align-items-start mb-2">
+                                                <i class="bi bi-check-lg text-success mt-1 me-2"></i>
+                                                <span><?php echo htmlspecialchars($f['feature_text']); ?></span>
+                                            </li>
                                     <?php endforeach;
                                     endif; ?>
                                 </ul>
@@ -813,10 +813,10 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/album';
                                 </div>
                                 <ul class="list-unstyled mb-4">
                                     <?php if (isset($plansBySlug['label']['features'])): foreach (array_slice($plansBySlug['label']['features'], 0, 3) as $f): ?>
-                                    <li class="d-flex align-items-start mb-2">
-                                        <i class="bi bi-check-lg text-success mt-1 me-2"></i>
-                                        <span><?php echo htmlspecialchars($f['feature_text']); ?></span>
-                                    </li>
+                                            <li class="d-flex align-items-start mb-2">
+                                                <i class="bi bi-check-lg text-success mt-1 me-2"></i>
+                                                <span><?php echo htmlspecialchars($f['feature_text']); ?></span>
+                                            </li>
                                     <?php endforeach;
                                     endif; ?>
                                 </ul>
@@ -837,10 +837,10 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/album';
                             personalizado</p>
                         <div class="d-flex flex-wrap justify-content-center gap-3">
                             <?php if ($canRegister): ?><a href="/wasomupfy/register?plan=album"
-                                class="btn btn-wasomupfy btn-lg px-5 text-wasom fw-semibold">
-                                Lançar Meu Álbum <i class="bi bi-arrow-right ms-2"></i>
-                            </a><?php else: ?><span class="btn btn-secondary btn-lg px-5 disabled">Inscrições
-                                Fechadas</span><?php endif; ?>
+                                    class="btn btn-wasomupfy btn-lg px-5 text-wasom fw-semibold">
+                                    Lançar Meu Álbum <i class="bi bi-arrow-right ms-2"></i>
+                                </a><?php else: ?><span class="btn btn-secondary btn-lg px-5 disabled">Inscrições
+                                    Fechadas</span><?php endif; ?>
                             <a href="../contact" class="btn btn-outline-secondary btn-lg px-5">
                                 Falar com Suporte
                             </a>
@@ -898,49 +898,49 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/album';
                         </p>
                         <div class="d-flex gap-3" role="list" aria-label="Redes sociais">
                             <?php if (cfg('instagram_url')): ?>
-                            <a href="<?php echo htmlspecialchars(cfg('instagram_url')); ?>" target="_blank"
-                                rel="external noopener noreferrer"
-                                aria-label="Instagram da Wasom Upfy (abre em nova janela)"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                <i class="fa-brands fa-instagram"></i>
-                                <span class="visually-hidden">Instagram</span>
-                            </a>
+                                <a href="<?php echo htmlspecialchars(cfg('instagram_url')); ?>" target="_blank"
+                                    rel="external noopener noreferrer"
+                                    aria-label="Instagram da Wasom Upfy (abre em nova janela)"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                    <i class="fa-brands fa-instagram"></i>
+                                    <span class="visually-hidden">Instagram</span>
+                                </a>
                             <?php endif; ?>
                             <?php if (cfg('facebook_url')): ?>
-                            <a href="<?php echo htmlspecialchars(cfg('facebook_url')); ?>" target="_blank"
-                                rel="external noopener noreferrer"
-                                aria-label="Facebook da Wasom Upfy (abre em nova janela)"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                <i class="fa-brands fa-facebook-f"></i>
-                                <span class="visually-hidden">Facebook</span>
-                            </a>
+                                <a href="<?php echo htmlspecialchars(cfg('facebook_url')); ?>" target="_blank"
+                                    rel="external noopener noreferrer"
+                                    aria-label="Facebook da Wasom Upfy (abre em nova janela)"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                    <i class="fa-brands fa-facebook-f"></i>
+                                    <span class="visually-hidden">Facebook</span>
+                                </a>
                             <?php endif; ?>
                             <?php if (cfg('youtube_url')): ?>
-                            <a href="<?php echo htmlspecialchars(cfg('youtube_url')); ?>" target="_blank"
-                                rel="external noopener noreferrer"
-                                aria-label="YouTube da Wasom Upfy (abre em nova janela)"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                <i class="fa-brands fa-youtube"></i>
-                                <span class="visually-hidden">YouTube</span>
-                            </a>
+                                <a href="<?php echo htmlspecialchars(cfg('youtube_url')); ?>" target="_blank"
+                                    rel="external noopener noreferrer"
+                                    aria-label="YouTube da Wasom Upfy (abre em nova janela)"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                    <i class="fa-brands fa-youtube"></i>
+                                    <span class="visually-hidden">YouTube</span>
+                                </a>
                             <?php endif; ?>
                             <?php if (cfg('linkedin_url')): ?>
-                            <a href="<?php echo htmlspecialchars(cfg('linkedin_url')); ?>" target="_blank"
-                                rel="external noopener noreferrer"
-                                aria-label="LinkedIn da Wasom Upfy (abre em nova janela)"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                <i class="fa-brands fa-linkedin-in"></i>
-                                <span class="visually-hidden">LinkedIn</span>
-                            </a>
+                                <a href="<?php echo htmlspecialchars(cfg('linkedin_url')); ?>" target="_blank"
+                                    rel="external noopener noreferrer"
+                                    aria-label="LinkedIn da Wasom Upfy (abre em nova janela)"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                    <i class="fa-brands fa-linkedin-in"></i>
+                                    <span class="visually-hidden">LinkedIn</span>
+                                </a>
                             <?php endif; ?>
                             <?php if (cfg('whatsapp_number')): ?>
-                            <a href="https://wa.me/<?php echo preg_replace('/[^0-9]/', '', cfg('whatsapp_number')); ?>"
-                                target="_blank" rel="external noopener noreferrer"
-                                aria-label="WhatsApp da Wasom Upfy (abre em nova janela)"
-                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                <i class="fa-brands fa-whatsapp"></i>
-                                <span class="visually-hidden">WhatsApp</span>
-                            </a>
+                                <a href="https://wa.me/<?php echo preg_replace('/[^0-9]/', '', cfg('whatsapp_number')); ?>"
+                                    target="_blank" rel="external noopener noreferrer"
+                                    aria-label="WhatsApp da Wasom Upfy (abre em nova janela)"
+                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                    <i class="fa-brands fa-whatsapp"></i>
+                                    <span class="visually-hidden">WhatsApp</span>
+                                </a>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -1004,19 +1004,19 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/album';
                             </li>
                             <li class="mb-3 d-flex">
                                 <?php if (cfg('support_email')): ?>
-                                <a href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
-                                    class="text-reset text-decoration-none">
-                                    <?php echo htmlspecialchars(cfg('support_email')); ?>
-                                </a>
+                                    <a href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
+                                        class="text-reset text-decoration-none">
+                                        <?php echo htmlspecialchars(cfg('support_email')); ?>
+                                    </a>
                                 <?php endif; ?>
                             </li>
                             <?php if (cfg('info_email')): ?>
-                            <li class="mb-3 d-flex">
-                                <a href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
-                                    class="text-reset text-decoration-none">
-                                    <?php echo htmlspecialchars(cfg('info_email')); ?>
-                                </a>
-                            </li>
+                                <li class="mb-3 d-flex">
+                                    <a href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
+                                        class="text-reset text-decoration-none">
+                                        <?php echo htmlspecialchars(cfg('info_email')); ?>
+                                    </a>
+                                </li>
                             <?php endif; ?>
                             <li class="d-flex">
                                 <span>Seg - Sex: 08h às 17h</span>
@@ -1159,11 +1159,11 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/album';
     <!-- Headhesive (Sticky header) -->
     <script src="https://cdn.jsdelivr.net/npm/headhesive@1.2.4/dist/headhesive.min.js"></script>
     <!-- Theme JS -->
-    <script src="../js/theme.min.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/theme.min.js"></script>
     <!-- Color modes -->
-    <script src="../js/vendors/color-modes.js"></script>
-    <script src="../js/libs/scrollcue/scrollCue.min.js"></script>
-    <script src="../js/vendors/scrollcue.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/vendors/color-modes.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/libs/scrollcue/scrollCue.min.js"></script>
+    <script src="<?php echo APP_URL  ?>/js/vendors/scrollcue.js"></script>
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/svg-injector@1.1.3/dist/svg-injector.min.js"></script>
@@ -1178,67 +1178,67 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/album';
     <!-- Jarallax (Efeitos parallax) -->
     <script src="https://cdn.jsdelivr.net/npm/jarallax@2.2.0/dist/jarallax.min.js"></script>
     <script>
-    feather.replace({
-        width: "1em",
-        height: "1em"
-    })
+        feather.replace({
+            width: "1em",
+            height: "1em"
+        })
     </script>
     <script>
-    // Smooth scroll para âncoras
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            const href = this.getAttribute('href');
-            if (href === '#') return;
+        // Smooth scroll para âncoras
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href === '#') return;
 
-            e.preventDefault();
-            const targetElement = document.querySelector(href);
-            if (targetElement) {
-                window.scrollTo({
-                    top: targetElement.offsetTop - 80,
-                    behavior: 'smooth'
-                });
+                e.preventDefault();
+                const targetElement = document.querySelector(href);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Animation on scroll
+        const animateOnScroll = () => {
+            const elements = document.querySelectorAll('[data-cue]');
+            elements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+
+                if (elementTop < window.innerHeight - elementVisible) {
+                    element.classList.add('animated');
+                }
+            });
+        };
+
+        window.addEventListener('scroll', animateOnScroll);
+        animateOnScroll();
+
+        // Add plan parameter to register links
+        document.querySelectorAll('a[href*="register"]').forEach(link => {
+            if (!link.getAttribute('href').includes('plan=')) {
+                link.setAttribute('href', link.getAttribute('href') + '?plan=album');
             }
         });
-    });
 
-    // Animation on scroll
-    const animateOnScroll = () => {
-        const elements = document.querySelectorAll('[data-cue]');
-        elements.forEach(element => {
-            const elementTop = element.getBoundingClientRect().top;
-            const elementVisible = 150;
+        // FAQ accordion
+        const faqItems = document.querySelectorAll('.accordion-button');
+        faqItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const target = document.querySelector(this.getAttribute('data-bs-target'));
+                const isExpanded = this.getAttribute('aria-expanded') === 'true';
 
-            if (elementTop < window.innerHeight - elementVisible) {
-                element.classList.add('animated');
-            }
+                if (!isExpanded) {
+                    target.classList.add('expanding');
+                    setTimeout(() => {
+                        target.classList.remove('expanding');
+                    }, 300);
+                }
+            });
         });
-    };
-
-    window.addEventListener('scroll', animateOnScroll);
-    animateOnScroll();
-
-    // Add plan parameter to register links
-    document.querySelectorAll('a[href*="register"]').forEach(link => {
-        if (!link.getAttribute('href').includes('plan=')) {
-            link.setAttribute('href', link.getAttribute('href') + '?plan=album');
-        }
-    });
-
-    // FAQ accordion
-    const faqItems = document.querySelectorAll('.accordion-button');
-    faqItems.forEach(item => {
-        item.addEventListener('click', function() {
-            const target = document.querySelector(this.getAttribute('data-bs-target'));
-            const isExpanded = this.getAttribute('aria-expanded') === 'true';
-
-            if (!isExpanded) {
-                target.classList.add('expanding');
-                setTimeout(() => {
-                    target.classList.remove('expanding');
-                }, 300);
-            }
-        });
-    });
     </script>
 </body>
 

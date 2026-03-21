@@ -117,17 +117,17 @@ function checkDashboardStatus(string $current_page = ''): array
     $st = $p['status'] ?? 'active';
 
     if ($st === 'maintenance') {
-        header('Location: http://localhost/wasomupfy/dashboard/status/maintenance');
+        header('Location: ' . APP_URL . '/' . APP_URL_PANEL . '/status/maintenance');
         exit;
     }
 
     if ($st === 'blocked') {
-        header('Location: http://localhost/wasomupfy/dashboard/status/503');
+        header('Location: ' . APP_URL . '/' . APP_URL_PANEL . '/status/503');
         exit;
     }
 
     if ($st === 'unauthorized') {
-        header('Location: http://localhost/wasomupfy/dashboard/status/403');
+        header('Location: ' . APP_URL . '/' . APP_URL_PANEL . '/status/403');
         exit;
     }
 
@@ -259,20 +259,20 @@ function checkUserAccess(int $id_users): array
     if (!$user) {
         // Utilizador genuinamente não encontrado — sessão inválida
         session_destroy();
-        header('Location: http://localhost/wasomupfy/dashboard/status/unauthorized');
+        header('Location: ' . APP_URL . '/' . APP_URL_PANEL . '/status/unauthorized');
         exit;
     }
 
     $st = $user['status_user'] ?? 'active';
 
     if ($st === 'suspended' || $st === 'banned') {
-        header('Location: http://localhost/wasomupfy/dashboard/status/403');
+        header('Location: ' . APP_URL . '/' . APP_URL_PANEL . '/status/403');
         exit;
     }
 
     if ($st === 'inactive') {
         session_destroy();
-        header('Location: http://localhost/wasomupfy/dashboard/status/unauthorized');
+        header('Location: ' . APP_URL . '/' . APP_URL_PANEL . '/status/unauthorized');
         exit;
     }
 
@@ -312,7 +312,7 @@ function getDashboardAlerts(array $user, array $platform): array
             'type'    => 'danger',
             'icon'    => 'bi-exclamation-triangle-fill',
             'message' => 'O teu plano expirou. Renova agora para continuar a distribuir música.',
-            'action'  => ['label' => 'Renovar Plano', 'url' => 'http://localhost/wasomupfy/dashboard/finances/overview'],
+            'action'  => ['label' => 'Renovar Plano', 'url' => APP_URL . '/' . APP_URL_PANEL . '/overview'],
             'dismiss' => false,
         ];
     }
@@ -329,7 +329,7 @@ function getDashboardAlerts(array $user, array $platform): array
             'type'    => 'warning',
             'icon'    => 'bi-clock-fill',
             'message' => "O teu plano expira em {$dias} " . ($dias === 1 ? 'dia' : 'dias') . '. Renova para não interromper os teus lançamentos.',
-            'action'  => ['label' => 'Renovar', 'url' => 'http://localhost/wasomupfy/dashboard/finances/overview'],
+            'action'  => ['label' => 'Renovar', 'url' => APP_URL . '/' . APP_URL_PANEL . '/overview'],
             'dismiss' => true,
         ];
     }
@@ -343,7 +343,7 @@ function getDashboardAlerts(array $user, array $platform): array
             'type'    => 'info',
             'icon'    => 'bi-star-fill',
             'message' => 'Ainda não tens um plano activo. Escolhe um plano para começar a distribuir.',
-            'action'  => ['label' => 'Ver Planos', 'url' => 'http://localhost/wasomupfy/dashboard/finances/overview'],
+            'action'  => ['label' => 'Ver Planos', 'url' => APP_URL . '/' . APP_URL_PANEL . '/overview'],
             'dismiss' => false,
         ];
     }
@@ -368,7 +368,7 @@ function getDashboardAlerts(array $user, array $platform): array
                     'type'    => 'warning',
                     'icon'    => 'bi-bank',
                     'message' => 'Tens saldo disponível mas não tens uma conta bancária verificada para levantamentos.',
-                    'action'  => ['label' => 'Adicionar Conta', 'url' => 'http://localhost/wasomupfy/dashboard/account/manage-account'],
+                    'action'  => ['label' => 'Adicionar Conta', 'url' => APP_URL . '/' . APP_URL_PANEL . '/account/manage-account'],
                     'dismiss' => true,
                 ];
             }
@@ -383,7 +383,7 @@ function getDashboardAlerts(array $user, array $platform): array
             'type'    => 'info',
             'icon'    => 'bi-person-check-fill',
             'message' => 'Completa o teu perfil para desbloquear todas as funcionalidades.',
-            'action'  => ['label' => 'Completar Perfil', 'url' => 'http://localhost/wasomupfy/dashboard/user/profile'],
+            'action'  => ['label' => 'Completar Perfil', 'url' => APP_URL . '/' . APP_URL_PANEL . '/user/profile'],
             'dismiss' => true,
         ];
     }
@@ -394,7 +394,7 @@ function getDashboardAlerts(array $user, array $platform): array
             'type'    => 'danger',
             'icon'    => 'bi-shield-exclamation',
             'message' => 'A tua conta tem um índice de confiança baixo. Contacta o suporte para mais informações.',
-            'action'  => ['label' => 'Contactar Suporte', 'url' => 'http://localhost/wasomupfy/dashboard/page/support'],
+            'action'  => ['label' => 'Contactar Suporte', 'url' => APP_URL . '/' . APP_URL_PANEL . '/page/support'],
             'dismiss' => false,
         ];
     }

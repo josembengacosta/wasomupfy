@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-ao">
 
 <head>
   <meta charset="utf-8" />
@@ -12,7 +12,7 @@
   <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-  <link rel="stylesheet" href="../../css/login.css" />
+  <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/login.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/josembengacosta/wasomupfy@main/css/light.css" />
   <style>
     .card {
@@ -1090,7 +1090,7 @@
   <!-- jQuery -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="../../js/validacao.js"></script>
+  <script src="<?php echo APP_URL  ?>/js/validacao.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/josembengacosta/wasomupfy@main/js/app.js"></script>
 
   <script>
@@ -1199,7 +1199,7 @@
           $(element).removeClass("is-invalid").addClass("is-valid");
         },
       });
-      $("#email").on("input", function () {
+      $("#email").on("input", function() {
         if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value)) {
           $(this).addClass("is-valid").removeClass("is-invalid");
         } else {
