@@ -4,16 +4,109 @@
 // Arquivo: dashboard/page/help.php
 // ══════════════════════════════════════════════════════
 require_once __DIR__ . '/../../authentic/include/functions.php';
+require_once __DIR__ . '/../include/platform.php';
 startSecureSession();
 checkRememberMe();
 requireLogin();
+$platform = checkDashboardStatus();
+$user     = checkUserAccess((int)$_SESSION['id_users']);
 
-$id_users   = (int)$_SESSION['id_users'];
-$user       = getUserById($id_users);
-if (!$user) {
-    session_destroy();
-    redirect(APP_URL  . '/' . 'login', ['error' => 'csrf']);
+$id_users       = (int)$user['id_users'];
+$first_name     = htmlspecialchars($user['first_name']);
+$user_name      = htmlspecialchars($user['user_name'] ?? '');
+$email_verified = (bool)$user['email_verified'];
+$plan_selected  = $user['plan_selected'];
+$onboard_done   = (bool)($user['onboarding_done'] ?? false);
+$user_photo     = $user['photo_user'] ?? null;
+$name_artist_band = htmlspecialchars($user['name_artist_band'] ?? 'Cria Perfil Artístico');
+$notif_count    = getUnreadNotifCount($id_users);
+$db             = getDB();
+
+// ── Saldo ─────────────────────────────────────
+$w = $db->prepare('SELECT balance_aoa FROM _wallet WHERE id_users = ?');
+$w->execute([$id_users]);
+$balance = $w->fetch() ?: ['balance_aoa' => 0];
+
+// ── Plano ─────────────────────────────────────
+$plan_id     = (int)$user['plan_selected'];
+$plan        = null;
+$max_artists = 1;
+if ($plan_id) {
+    $ps = $db->prepare('SELECT * FROM _plans WHERE id_plan = ?');
+    $ps->execute([$plan_id]);
+    $plan = $ps->fetch();
+    if ($plan) $max_artists = (int)($plan['max_artists'] ?? 1);
 }
+$plan_name = $plan ? htmlspecialchars($plan['name_plan']) : 'Sem plano';
+
+// ── Plano ─────────────────────────────────────
+$plan      = null;
+$plan_paid = ($user['status_user'] === 'active' && !empty($user['plan_activated_at']));
+if ($plan_selected) {
+    $ps = $db->prepare('SELECT * FROM _plans WHERE id_plan = ?');
+    $ps->execute([$plan_selected]);
+    $plan = $ps->fetch();
+}
+
+// Adicionar verificação de expiração do plano
+$plan_expired = false;
+if ($plan_paid && !empty($user['plan_expires_at'])) {
+    $plan_expired = strtotime($user['plan_expires_at']) < time();
+}
+
+// ── Artistas ──────────────────────────────────
+$as = $db->prepare('SELECT COUNT(*) AS total FROM _artist WHERE id_users = ?');
+$as->execute([$id_users]);
+$has_artist = (int)($as->fetch()['total'] ?? 0) > 0;
+
+// ── Conta bancária ────────────────────────────
+$ba = $db->prepare("SELECT id_account FROM _account WHERE id_users = ? AND status_account = 'verified' LIMIT 1");
+$ba->execute([$id_users]);
+$bank_account = $ba->fetch();
+
+// ── Conta rejeitada ───────────────────────────
+$rejected_account = null;
+if ($plan_paid) {
+    $rj = $db->prepare("SELECT type_account, reject_reason FROM _account WHERE id_users = ? AND status_account = 'rejected' LIMIT 1");
+    $rj->execute([$id_users]);
+    $rejected_account = $rj->fetch();
+}
+
+// ── Sessão info (modal logout) ────────────────
+$ls = $db->prepare('SELECT last_login_at, last_login_ip FROM _users_security WHERE id_users = ?');
+$ls->execute([$id_users]);
+$sec = $ls->fetch();
+
+$sess_stmt = $db->prepare("
+    SELECT ip_address, user_agent, country, city, creat_session, last_activity
+    FROM _users_sessions WHERE id_users = ? AND is_active = 1
+    ORDER BY last_activity DESC LIMIT 1
+");
+$sess_stmt->execute([$id_users]);
+$current_session  = $sess_stmt->fetch();
+$session_duration_str = '—';
+if ($current_session && $current_session['creat_session']) {
+    $secs = time() - strtotime($current_session['creat_session']);
+    if ($secs < 60)     $session_duration_str = $secs . 's';
+    elseif ($secs < 3600)  $session_duration_str = floor($secs / 60) . 'min';
+    elseif ($secs < 86400) $session_duration_str = floor($secs / 3600) . 'h ' . floor(($secs % 3600) / 60) . 'min';
+    else                   $session_duration_str = floor($secs / 86400) . 'd ' . floor(($secs % 86400) / 3600) . 'h';
+}
+$member_since   = $user['creat_user'] ? date('d/m/Y', strtotime($user['creat_user'])) : '—';
+$last_login_str = ($sec && $sec['last_login_at']) ? date('d/m/Y H:i', strtotime($sec['last_login_at'])) : '—';
+$ua_raw   = $current_session['user_agent'] ?? '';
+$browser  = 'Desconhecido';
+if (str_contains($ua_raw, 'Edg'))     $browser = 'Microsoft Edge';
+elseif (str_contains($ua_raw, 'Chrome'))  $browser = 'Google Chrome';
+elseif (str_contains($ua_raw, 'Firefox')) $browser = 'Mozilla Firefox';
+elseif (str_contains($ua_raw, 'Safari'))  $browser = 'Safari';
+elseif (str_contains($ua_raw, 'Opera'))   $browser = 'Opera';
+$sess_location = trim(($current_session['city'] ?? '') . ', ' . ($current_session['country'] ?? ''), ', ') ?: 'Desconhecida';
+$sess_ip       = $current_session['ip_address'] ?? ($sec['last_login_ip'] ?? '—');
+
+$first_name       = htmlspecialchars($user['first_name']);
+$user_artist_name = htmlspecialchars($user['name_artist_band'] ?? $user['first_name']);
+
 
 $first_name = htmlspecialchars($user['first_name'] ?? '');
 $full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['second_name'] ?? '')));
@@ -22,641 +115,621 @@ $full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['
 <html lang="pt-ao">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="robots" content="noindex, nofollow" />
-    <meta name="theme-color" content="#FF0089" />
-    <link rel="apple-touch-icon" href="../../assets/img/icones/wasomupfy_fiv_512.png" />
-    <link rel="manifest" href="../manifest.json" />
+    <?php require_once __DIR__ . '/../include/head.php'; ?>
     <title>Ajuda — <?php echo APP_NAME; ?></title>
-    <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
-    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/dashboard-style.css" />
-    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/lastest-style.css" />
     <style>
-        /* ══ Help header ══ */
+    /* ══ Help header ══ */
+    .help-header {
+        background: linear-gradient(135deg, #FF0089 0%, #FF4D4D 100%);
+        border-radius: 24px;
+        padding: 3rem 2rem;
+        margin-bottom: 2rem;
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+    }
+
+    .help-header::before {
+        content: '\F431';
+        font-family: 'bootstrap-icons';
+        position: absolute;
+        left: -20px;
+        bottom: -20px;
+        font-size: 12rem;
+        opacity: .08;
+        transform: rotate(-15deg);
+    }
+
+    .help-header::after {
+        content: '\F44F';
+        font-family: 'bootstrap-icons';
+        position: absolute;
+        right: -20px;
+        top: -20px;
+        font-size: 10rem;
+        opacity: .08;
+        transform: rotate(15deg);
+    }
+
+    .help-header h1 {
+        font-size: 2.8rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        position: relative;
+        z-index: 2;
+    }
+
+    .help-header p {
+        font-size: 1.1rem;
+        max-width: 680px;
+        margin: 0 auto;
+        opacity: .92;
+        position: relative;
+        z-index: 2;
+    }
+
+    /* ══ Search box ══ */
+    .search-box {
+        max-width: 580px;
+        margin: 1.8rem auto 0;
+        position: relative;
+        z-index: 2;
+    }
+
+    .search-box .input-group {
+        background: #fff;
+        border-radius: 50px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, .18);
+    }
+
+    .search-box input {
+        border: none;
+        padding: .9rem 1.4rem;
+        font-size: .95rem;
+    }
+
+    .search-box input:focus {
+        box-shadow: none;
+        outline: none;
+    }
+
+    .search-box .search-btn {
+        background: #fff;
+        border: none;
+        padding: 0 1.8rem;
+        color: #FF0089;
+        font-weight: 700;
+        transition: all .2s;
+    }
+
+    .search-box .search-btn:hover {
+        background: #FF0089;
+        color: #fff;
+    }
+
+    /* ══ Category cards ══ */
+    .help-category-card {
+        background: var(--card-bg, #fff);
+        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
+        border-radius: 18px;
+        padding: 2rem 1.4rem;
+        text-align: center;
+        height: 100%;
+        transition: all .25s;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+
+    .help-category-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 16px 36px rgba(255, 0, 137, .14);
+        border-color: #FF0089;
+        color: inherit;
+    }
+
+    .help-category-icon {
+        width: 72px;
+        height: 72px;
+        background: linear-gradient(135deg, rgba(255, 0, 137, .1), rgba(255, 77, 77, .1));
+        border-radius: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.3rem;
+    }
+
+    .help-category-icon i {
+        font-size: 2.5rem;
+        color: #FF0089;
+    }
+
+    .help-category-card h3 {
+        font-size: 1.15rem;
+        font-weight: 700;
+        margin-bottom: .4rem;
+    }
+
+    .help-category-card p {
+        color: var(--text-muted, #6c757d);
+        font-size: .88rem;
+        margin-bottom: .8rem;
+    }
+
+    .help-category-card .badge {
+        background: #FF0089;
+        font-weight: 500;
+        padding: .35rem .85rem;
+    }
+
+    /* ══ FAQ items ══ */
+    .faq-item {
+        background: var(--card-bg, #fff);
+        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
+        border-radius: 14px;
+        padding: 1.4rem;
+        margin-bottom: .8rem;
+        border-left: 4px solid transparent;
+        transition: all .2s;
+    }
+
+    .faq-item:hover {
+        box-shadow: 0 6px 20px rgba(255, 0, 137, .1);
+        border-left-color: #FF0089;
+    }
+
+    .faq-question {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .faq-question h5 {
+        margin: 0;
+        font-weight: 600;
+        font-size: .95rem;
+    }
+
+    .faq-question .faq-icon {
+        font-size: 1.1rem;
+        color: #FF0089;
+        transition: transform .3s;
+        flex-shrink: 0;
+    }
+
+    .faq-question[aria-expanded="true"] .faq-icon {
+        transform: rotate(180deg);
+    }
+
+    .faq-answer {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border-color, rgba(0, 0, 0, .08));
+        color: var(--text-muted, #6c757d);
+        font-size: .88rem;
+    }
+
+    /* ══ Tutorial cards ══ */
+    .tutorial-card {
+        background: var(--card-bg, #fff);
+        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
+        border-radius: 14px;
+        overflow: hidden;
+        height: 100%;
+        transition: all .25s;
+    }
+
+    .tutorial-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px rgba(255, 0, 137, .13);
+    }
+
+    .tutorial-thumb {
+        position: relative;
+        padding-top: 56.25%;
+        background: linear-gradient(135deg, #FF0089, #FF4D4D);
+    }
+
+    .tutorial-thumb-inner {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .play-btn {
+        width: 52px;
+        height: 52px;
+        background: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #FF0089;
+        font-size: 1.5rem;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, .25);
+        transition: all .2s;
+    }
+
+    .tutorial-card:hover .play-btn {
+        background: #FF0089;
+        color: #fff;
+        transform: scale(1.1);
+    }
+
+    .tutorial-icon-bg {
+        font-size: 5rem;
+        opacity: .12;
+        color: #fff;
+        position: absolute;
+        right: 10px;
+        bottom: -10px;
+    }
+
+    .tutorial-body {
+        padding: 1.3rem;
+    }
+
+    .tutorial-body h5 {
+        font-weight: 700;
+        font-size: .95rem;
+        margin-bottom: .35rem;
+    }
+
+    .tutorial-body p {
+        color: var(--text-muted, #6c757d);
+        font-size: .82rem;
+        margin-bottom: .8rem;
+    }
+
+    .tutorial-meta {
+        display: flex;
+        gap: 1rem;
+        font-size: .76rem;
+        color: var(--text-muted, #6c757d);
+    }
+
+    .tutorial-meta i {
+        color: #FF0089;
+        margin-right: 3px;
+    }
+
+    /* ══ Support option cards ══ */
+    .support-option {
+        background: var(--card-bg, #fff);
+        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
+        border-radius: 18px;
+        padding: 2rem 1.5rem;
+        text-align: center;
+        height: 100%;
+        transition: all .25s;
+    }
+
+    .support-option:hover {
+        border-color: #FF0089;
+        transform: translateY(-4px);
+        box-shadow: 0 10px 28px rgba(255, 0, 137, .1);
+    }
+
+    .support-option>i {
+        font-size: 2.8rem;
+        color: #FF0089;
+        display: block;
+        margin-bottom: .9rem;
+    }
+
+    .support-option h4 {
+        font-weight: 700;
+        font-size: 1.05rem;
+        margin-bottom: .4rem;
+    }
+
+    .support-option p {
+        color: var(--text-muted, #6c757d);
+        font-size: .86rem;
+        margin-bottom: 1.2rem;
+    }
+
+    /* ══ Buttons ══ */
+    .btn-help {
+        background: linear-gradient(135deg, #FF0089, #FF4D4D);
+        border: none;
+        color: #fff;
+        padding: .5rem 1.8rem;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all .2s;
+    }
+
+    .btn-help:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(255, 0, 137, .3);
+        color: #fff;
+    }
+
+    .btn-help-outline {
+        background: transparent;
+        border: 2px solid #FF0089;
+        color: #FF0089;
+        padding: .5rem 1.8rem;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all .2s;
+    }
+
+    .btn-help-outline:hover {
+        background: #FF0089;
+        color: #fff;
+    }
+
+    /* ══ Contact info ══ */
+    .contact-info {
+        background: var(--metric-bg, rgba(0, 0, 0, .03));
+        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
+        border-radius: 16px;
+        padding: 1.5rem;
+    }
+
+    .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: .9rem;
+    }
+
+    .contact-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .contact-item-icon {
+        width: 38px;
+        height: 38px;
+        background: var(--card-bg, #fff);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #FF0089;
+        flex-shrink: 0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, .07);
+    }
+
+    .contact-item strong {
+        display: block;
+        font-size: .85rem;
+    }
+
+    .contact-item span {
+        color: var(--text-muted, #6c757d);
+        font-size: .8rem;
+    }
+
+    /* ══ Quick links ══ */
+    .quick-link {
+        background: var(--card-bg, #fff);
+        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
+        border-radius: 11px;
+        padding: .9rem 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        text-decoration: none;
+        color: inherit;
+        transition: all .2s;
+        margin-bottom: .6rem;
+    }
+
+    .quick-link:last-child {
+        margin-bottom: 0;
+    }
+
+    .quick-link i {
+        font-size: 1.8rem;
+        color: #FF0089;
+        transition: color .2s;
+        flex-shrink: 0;
+    }
+
+    .quick-link:hover {
+        background: #FF0089;
+        color: #fff;
+        transform: translateX(4px);
+        border-color: #FF0089;
+    }
+
+    .quick-link:hover i {
+        color: #fff;
+    }
+
+    .quick-link:hover small {
+        color: rgba(255, 255, 255, .8);
+    }
+
+    .quick-link h6 {
+        margin: 0;
+        font-weight: 600;
+        font-size: .87rem;
+    }
+
+    .quick-link small {
+        color: var(--text-muted, #6c757d);
+        font-size: .76rem;
+    }
+
+    /* ══ Section title ══ */
+    .sec-title {
+        font-size: 1.25rem;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 1.3rem;
+    }
+
+    .sec-title i {
+        color: #FF0089;
+    }
+
+    @media(max-width:768px) {
         .help-header {
-            background: linear-gradient(135deg, #FF0089 0%, #FF4D4D 100%);
-            border-radius: 24px;
-            padding: 3rem 2rem;
-            margin-bottom: 2rem;
-            color: #fff;
-            position: relative;
-            overflow: hidden;
-            text-align: center;
-        }
-
-        .help-header::before {
-            content: '\F431';
-            font-family: 'bootstrap-icons';
-            position: absolute;
-            left: -20px;
-            bottom: -20px;
-            font-size: 12rem;
-            opacity: .08;
-            transform: rotate(-15deg);
-        }
-
-        .help-header::after {
-            content: '\F44F';
-            font-family: 'bootstrap-icons';
-            position: absolute;
-            right: -20px;
-            top: -20px;
-            font-size: 10rem;
-            opacity: .08;
-            transform: rotate(15deg);
+            padding: 2rem 1rem;
         }
 
         .help-header h1 {
-            font-size: 2.8rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-            position: relative;
-            z-index: 2;
+            font-size: 2rem;
         }
-
-        .help-header p {
-            font-size: 1.1rem;
-            max-width: 680px;
-            margin: 0 auto;
-            opacity: .92;
-            position: relative;
-            z-index: 2;
-        }
-
-        /* ══ Search box ══ */
-        .search-box {
-            max-width: 580px;
-            margin: 1.8rem auto 0;
-            position: relative;
-            z-index: 2;
-        }
-
-        .search-box .input-group {
-            background: #fff;
-            border-radius: 50px;
-            overflow: hidden;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, .18);
-        }
-
-        .search-box input {
-            border: none;
-            padding: .9rem 1.4rem;
-            font-size: .95rem;
-        }
-
-        .search-box input:focus {
-            box-shadow: none;
-            outline: none;
-        }
-
-        .search-box .search-btn {
-            background: #fff;
-            border: none;
-            padding: 0 1.8rem;
-            color: #FF0089;
-            font-weight: 700;
-            transition: all .2s;
-        }
-
-        .search-box .search-btn:hover {
-            background: #FF0089;
-            color: #fff;
-        }
-
-        /* ══ Category cards ══ */
-        .help-category-card {
-            background: var(--card-bg, #fff);
-            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
-            border-radius: 18px;
-            padding: 2rem 1.4rem;
-            text-align: center;
-            height: 100%;
-            transition: all .25s;
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-
-        .help-category-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 16px 36px rgba(255, 0, 137, .14);
-            border-color: #FF0089;
-            color: inherit;
-        }
-
-        .help-category-icon {
-            width: 72px;
-            height: 72px;
-            background: linear-gradient(135deg, rgba(255, 0, 137, .1), rgba(255, 77, 77, .1));
-            border-radius: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.3rem;
-        }
-
-        .help-category-icon i {
-            font-size: 2.5rem;
-            color: #FF0089;
-        }
-
-        .help-category-card h3 {
-            font-size: 1.15rem;
-            font-weight: 700;
-            margin-bottom: .4rem;
-        }
-
-        .help-category-card p {
-            color: var(--text-muted, #6c757d);
-            font-size: .88rem;
-            margin-bottom: .8rem;
-        }
-
-        .help-category-card .badge {
-            background: #FF0089;
-            font-weight: 500;
-            padding: .35rem .85rem;
-        }
-
-        /* ══ FAQ items ══ */
-        .faq-item {
-            background: var(--card-bg, #fff);
-            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
-            border-radius: 14px;
-            padding: 1.4rem;
-            margin-bottom: .8rem;
-            border-left: 4px solid transparent;
-            transition: all .2s;
-        }
-
-        .faq-item:hover {
-            box-shadow: 0 6px 20px rgba(255, 0, 137, .1);
-            border-left-color: #FF0089;
-        }
-
-        .faq-question {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .faq-question h5 {
-            margin: 0;
-            font-weight: 600;
-            font-size: .95rem;
-        }
-
-        .faq-question .faq-icon {
-            font-size: 1.1rem;
-            color: #FF0089;
-            transition: transform .3s;
-            flex-shrink: 0;
-        }
-
-        .faq-question[aria-expanded="true"] .faq-icon {
-            transform: rotate(180deg);
-        }
-
-        .faq-answer {
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border-color, rgba(0, 0, 0, .08));
-            color: var(--text-muted, #6c757d);
-            font-size: .88rem;
-        }
-
-        /* ══ Tutorial cards ══ */
-        .tutorial-card {
-            background: var(--card-bg, #fff);
-            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
-            border-radius: 14px;
-            overflow: hidden;
-            height: 100%;
-            transition: all .25s;
-        }
-
-        .tutorial-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 28px rgba(255, 0, 137, .13);
-        }
-
-        .tutorial-thumb {
-            position: relative;
-            padding-top: 56.25%;
-            background: linear-gradient(135deg, #FF0089, #FF4D4D);
-        }
-
-        .tutorial-thumb-inner {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .play-btn {
-            width: 52px;
-            height: 52px;
-            background: #fff;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #FF0089;
-            font-size: 1.5rem;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, .25);
-            transition: all .2s;
-        }
-
-        .tutorial-card:hover .play-btn {
-            background: #FF0089;
-            color: #fff;
-            transform: scale(1.1);
-        }
-
-        .tutorial-icon-bg {
-            font-size: 5rem;
-            opacity: .12;
-            color: #fff;
-            position: absolute;
-            right: 10px;
-            bottom: -10px;
-        }
-
-        .tutorial-body {
-            padding: 1.3rem;
-        }
-
-        .tutorial-body h5 {
-            font-weight: 700;
-            font-size: .95rem;
-            margin-bottom: .35rem;
-        }
-
-        .tutorial-body p {
-            color: var(--text-muted, #6c757d);
-            font-size: .82rem;
-            margin-bottom: .8rem;
-        }
-
-        .tutorial-meta {
-            display: flex;
-            gap: 1rem;
-            font-size: .76rem;
-            color: var(--text-muted, #6c757d);
-        }
-
-        .tutorial-meta i {
-            color: #FF0089;
-            margin-right: 3px;
-        }
-
-        /* ══ Support option cards ══ */
-        .support-option {
-            background: var(--card-bg, #fff);
-            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
-            border-radius: 18px;
-            padding: 2rem 1.5rem;
-            text-align: center;
-            height: 100%;
-            transition: all .25s;
-        }
-
-        .support-option:hover {
-            border-color: #FF0089;
-            transform: translateY(-4px);
-            box-shadow: 0 10px 28px rgba(255, 0, 137, .1);
-        }
-
-        .support-option>i {
-            font-size: 2.8rem;
-            color: #FF0089;
-            display: block;
-            margin-bottom: .9rem;
-        }
-
-        .support-option h4 {
-            font-weight: 700;
-            font-size: 1.05rem;
-            margin-bottom: .4rem;
-        }
-
-        .support-option p {
-            color: var(--text-muted, #6c757d);
-            font-size: .86rem;
-            margin-bottom: 1.2rem;
-        }
-
-        /* ══ Buttons ══ */
-        .btn-help {
-            background: linear-gradient(135deg, #FF0089, #FF4D4D);
-            border: none;
-            color: #fff;
-            padding: .5rem 1.8rem;
-            border-radius: 50px;
-            font-weight: 600;
-            transition: all .2s;
-        }
-
-        .btn-help:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 18px rgba(255, 0, 137, .3);
-            color: #fff;
-        }
-
-        .btn-help-outline {
-            background: transparent;
-            border: 2px solid #FF0089;
-            color: #FF0089;
-            padding: .5rem 1.8rem;
-            border-radius: 50px;
-            font-weight: 600;
-            transition: all .2s;
-        }
-
-        .btn-help-outline:hover {
-            background: #FF0089;
-            color: #fff;
-        }
-
-        /* ══ Contact info ══ */
-        .contact-info {
-            background: var(--metric-bg, rgba(0, 0, 0, .03));
-            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
-            border-radius: 16px;
-            padding: 1.5rem;
-        }
-
-        .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin-bottom: .9rem;
-        }
-
-        .contact-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .contact-item-icon {
-            width: 38px;
-            height: 38px;
-            background: var(--card-bg, #fff);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #FF0089;
-            flex-shrink: 0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, .07);
-        }
-
-        .contact-item strong {
-            display: block;
-            font-size: .85rem;
-        }
-
-        .contact-item span {
-            color: var(--text-muted, #6c757d);
-            font-size: .8rem;
-        }
-
-        /* ══ Quick links ══ */
-        .quick-link {
-            background: var(--card-bg, #fff);
-            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
-            border-radius: 11px;
-            padding: .9rem 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            text-decoration: none;
-            color: inherit;
-            transition: all .2s;
-            margin-bottom: .6rem;
-        }
-
-        .quick-link:last-child {
-            margin-bottom: 0;
-        }
-
-        .quick-link i {
-            font-size: 1.8rem;
-            color: #FF0089;
-            transition: color .2s;
-            flex-shrink: 0;
-        }
-
-        .quick-link:hover {
-            background: #FF0089;
-            color: #fff;
-            transform: translateX(4px);
-            border-color: #FF0089;
-        }
-
-        .quick-link:hover i {
-            color: #fff;
-        }
-
-        .quick-link:hover small {
-            color: rgba(255, 255, 255, .8);
-        }
-
-        .quick-link h6 {
-            margin: 0;
-            font-weight: 600;
-            font-size: .87rem;
-        }
-
-        .quick-link small {
-            color: var(--text-muted, #6c757d);
-            font-size: .76rem;
-        }
-
-        /* ══ Section title ══ */
-        .sec-title {
-            font-size: 1.25rem;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 1.3rem;
-        }
-
-        .sec-title i {
-            color: #FF0089;
-        }
-
-        @media(max-width:768px) {
-            .help-header {
-                padding: 2rem 1rem;
-            }
-
-            .help-header h1 {
-                font-size: 2rem;
-            }
-        }
+    }
     </style>
 </head>
 
 <body>
-
     <!-- ═══ NAVBAR ═══ -->
-    <nav class="navbar navbar-expand-lg" aria-label="Menu principal">
-        <div class="container-fluid">
-            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu"
-                aria-controls="offcanvasMenu">
-                <span class="navbar-toggler-icon"><i class="bi bi-list text-white fs-1"></i></span>
-            </button>
-            <a class="navbar-brand" href="../painel">
-                <span class="text-light" style="font-weight:bold;font-family:Arial,sans-serif"><?php echo APP_NAME; ?></span>
-            </a>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav m-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="../painel"><i class="bi bi-speedometer2"></i>
-                            Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../launch/releases"><i class="bi bi-disc"></i>
-                            Lançamentos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../analytics/statistics"><i
-                                class="bi bi-bar-chart"></i> Estatísticas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../finances/overview"><i
-                                class="bi bi-currency-dollar"></i> Finanças</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../artists/artists-list"><i class="bi bi-person"></i>
-                            Artistas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../artists/youtube/ucy"><i class="bi bi-youtube"></i>
-                            Unificação de canal YouTube</a></li>
-                </ul>
-            </div>
-            <div class="user-menu d-flex align-items-center">
-                <!-- theme.wp.js controla o tema — sem JS inline aqui -->
-                <a class="theme-toggle text-white me-2" id="themeToggle" style="cursor:pointer">
-                    <i class="bi bi-sun" id="themeIcon"></i>
-                </a>
-                <a href="notifications" class="text-white me-2" aria-label="Notificações">
-                    <i class="bi bi-bell fs-4"></i>
-                </a>
-                <div class="dropdown">
-                    <a href="#" class="text-white" data-bs-toggle="dropdown">
-                        <i class="bi bi-person-circle fs-4"></i>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li>
-                            <span class="dropdown-item-text">
-                                <strong><?php echo $first_name; ?></strong><br>
-                                <small class="text-muted">Conta
-                                    <?php echo str_pad($id_users, 6, '0', STR_PAD_LEFT); ?></small>
-                            </span>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item" href="../user/profile"><i class="bi bi-person me-2"></i> Meu
-                                Perfil</a></li>
-                        <li><a class="dropdown-item" href="../account/manage-account"><i class="bi bi-tools me-2"></i>
-                                Gestão de Conta</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item" href="settings"><i class="bi bi-gear me-2"></i> Configurações</a>
-                        </li>
-                        <li><a class="dropdown-item" href="notifications"><i class="bi bi-bell me-2"></i>
-                                Notificações</a></li>
-                        <li><a class="dropdown-item" href="../services/available-services"><i
-                                    class="bi bi-star me-2"></i> Conta e serviços disponíveis</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item" href="about"><i class="bi bi-info-circle me-2"></i> Sobre</a></li>
-                        <li><a class="dropdown-item" href="support"><i class="bi bi-headset me-2"></i> Suporte</a></li>
-                        <li><a class="dropdown-item" href="faq"><i class="bi bi-chat-left-text me-2"></i> FAQ</a></li>
-                        <li><a class="dropdown-item active" href="help"><i class="bi bi-question-circle me-2"></i>
-                                Ajuda</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li>
-                            <a class="dropdown-item text-danger" href="#" data-bs-toggle="modal"
-                                data-bs-target="#logoutwasomupfy">
-                                <i class="bi bi-box-arrow-right me-2"></i> Desconectar-se
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Offcanvas Mobile -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title text-light" id="offcanvasMenuLabel"
-                style="font-weight:bold;font-family:Arial,sans-serif">WASOM UPFY</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
-        </div>
-        <div class="offcanvas-body">
-            <ul class="nav flex-column">
-                <li class="nav-item"><a class="nav-link" href="../painel"><i class="bi bi-speedometer2"></i>
-                        Dashboard</a></li>
-                <li class="nav-item"><a class="nav-link" href="../launch/releases"><i class="bi bi-disc"></i>
-                        Lançamentos</a></li>
-                <li class="nav-item"><a class="nav-link" href="../analytics/statistics"><i class="bi bi-bar-chart"></i>
-                        Estatísticas</a></li>
-                <li class="nav-item"><a class="nav-link" href="../finances/overview"><i
-                            class="bi bi-currency-dollar"></i> Finanças</a></li>
-                <li class="nav-item"><a class="nav-link" href="../artists/artists-list"><i class="bi bi-person"></i>
-                        Artistas</a></li>
-                <li class="nav-item"><a class="nav-link" href="../artists/youtube/ucy"><i class="bi bi-youtube"></i>
-                        YouTube</a></li>
-                <li class="nav-item d-lg-none">
-                    <hr />
-                </li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../user/profile"><i
-                            class="bi bi-person-circle"></i> Meu Perfil</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="settings"><i class="bi bi-gear"></i>
-                        Configurações</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="notifications"><i class="bi bi-bell"></i>
-                        Notificações</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link active" href="help"><i
-                            class="bi bi-question-circle"></i> Ajuda</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="about"><i class="bi bi-info-circle"></i>
-                        Sobre</a></li>
-                <li class="nav-item d-lg-none">
-                    <a class="nav-link text-danger" href="#" data-bs-toggle="modal" data-bs-target="#logoutwasomupfy">
-                        <i class="bi bi-box-arrow-right"></i> Desconectar-se
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- Toast Offline -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="connectionToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <strong class="me-auto">Conexão</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
-            </div>
-            <div class="toast-body" id="toastBody">
-                Estás offline. Alguns dados podem estar desactualizados.
-            </div>
-        </div>
-    </div>
-
+    <?php require_once __DIR__ . '/../include/sidebar.php'; ?>
     <!-- ═══ MAIN ═══ -->
-    <main class="container my-4">
+    <div class="container my-4">
+        <?php /* ============================================
+    BANNERS DE NOTIFICACAO DO PAINEL
+    Estilo: inline CSS consistente com renderDashboardAlerts().
+    Bootstrap alert nativo removido — um único sistema visual.
+    Lógica de prioridade:
+      Nível 1 (danger)  — bloqueia distribuição
+      Nível 2 (warning) — importante, requer atenção
+      Nível 3 (info)    — informativo / acção opcional
+    ============================================ */ ?>
+
+        <?php renderDashboardAlerts($user, $platform); ?>
+
+        <?php
+        // Cor map para helpers inline — idêntico ao renderDashboardAlerts()
+        $alertColors = [
+            'danger'  => ['bg' => 'rgba(239,68,68,.08)',  'border' => 'rgba(239,68,68,.25)',  'text' => '#ef4444'],
+            'warning' => ['bg' => 'rgba(234,179,8,.08)',  'border' => 'rgba(234,179,8,.25)',  'text' => '#eab308'],
+            'info'    => ['bg' => 'rgba(99,102,241,.08)', 'border' => 'rgba(99,102,241,.25)', 'text' => '#6366f1'],
+        ];
+        function wuAlert(string $type, string $icon, string $message, ?array $action = null, bool $dismiss = true, string $id = ''): void
+        {
+            global $alertColors;
+            $c   = $alertColors[$type] ?? $alertColors['info'];
+            $eid = $id ?: ('wuPanelAlert_' . md5($message));
+            echo "<div id=\"{$eid}\" style=\"display:flex;align-items:flex-start;gap:10px;"
+                . "background:{$c['bg']};border:1px solid {$c['border']};border-radius:12px;"
+                . "padding:.75rem 1rem;font-size:.83rem;margin-bottom:.6rem;"
+                . "transition:opacity .3s;\">";
+            echo "<i class=\"bi {$icon}\" style=\"font-size:1rem;flex-shrink:0;margin-top:2px;color:{$c['text']};\"></i>";
+            echo '<span class="wu-alert-msg">' . $message;
+            if ($action) {
+                echo " <a href=\"{$action['url']}\" style=\"color:{$c['text']};font-weight:700;"
+                    . "text-decoration:underline;white-space:nowrap\">{$action['label']} &rarr;</a>";
+            }
+            echo '</span>';
+            if ($dismiss) {
+                echo "<button type=\"button\" class=\"wu-alert-dismiss\" aria-label=\"Fechar\""
+                    . " onclick=\"(function(el){el.style.opacity='0';"
+                    . "setTimeout(function(){el.style.display='none'},300)})(document.getElementById('{$eid}'))\">"
+                    . "&times;</button>";
+            }
+            echo '</div>';
+        }
+        ?>
+
+        <?php /* ── NÍVEL 1: Crítico — bloqueia distribuição ── */ ?>
+
+        <?php if (!$email_verified): ?>
+        <?php wuAlert(
+                'danger',
+                'bi-envelope-exclamation-fill',
+                '<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta e receber notificações de pagamentos.',
+                ['label' => 'Verificar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/user/profile#perfil'],
+                true,
+                'banner-email'
+            ); ?>
+        <?php endif; ?>
+
+        <?php if ($plan && !$plan_paid): ?>
+        <?php wuAlert(
+                'warning',
+                'bi-clock-history',
+                '<strong>Pagamento pendente — ' . htmlspecialchars($plan['name_plan']) . '.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados até confirmação.',
+                ['label' => 'Finalizar pagamento', 'url' => APP_URL . '/' . APP_URL_PANEL . '/payment/pay'],
+                true,
+                'banner-plan-pending'
+            ); ?>
+        <?php elseif (!$plan): ?>
+        <?php wuAlert(
+                'danger',
+                'bi-credit-card-fill',
+                '<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir a tua música para +150 plataformas.',
+                ['label' => 'Ver planos', 'url' => APP_URL . '/' . APP_URL_PANEL . '/all-plans'],
+                false,
+                'banner-plan'
+            ); ?>
+        <?php endif; ?>
+
+        <?php /* ── NÍVEL 2: Importante — perfil incompleto ── */ ?>
+
+        <?php if ($plan_paid && !$has_artist): ?>
+        <?php wuAlert(
+                'info',
+                'bi-person-plus-fill',
+                '<strong>Cria o teu perfil de artista.</strong> Tens plano activo mas ainda não criaste um perfil. Precisas de um para poder lançar música.',
+                ['label' => 'Criar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/add-artist'],
+                true,
+                'banner-artist'
+            ); ?>
+        <?php endif; ?>
+
+        <?php /* ── NÍVEL 3: Informativo — conta bancária ── */ ?>
+
+        <?php if ($plan_paid && $has_artist && !$bank_account): ?>
+        <?php wuAlert(
+                'info',
+                'bi-bank',
+                '<strong>Conta bancária não registada.</strong> Para poder sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.',
+                ['label' => 'Registar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/withdraw'],
+                true,
+                'banner-bank'
+            ); ?>
+        <?php endif; ?>
+
+        <?php /* ── NÍVEL 3: Conta bancária rejeitada ── */ ?>
+
+        <?php
+        $rejected_account = null;
+        if ($plan_paid) {
+            $rej_stmt = getDB()->prepare("SELECT type_account, reject_reason FROM _account WHERE id_users = ? AND status_account = 'rejected' LIMIT 1");
+            $rej_stmt->execute([$id_users]);
+            $rejected_account = $rej_stmt->fetch();
+        }
+        ?>
+        <?php if ($rejected_account): ?>
+        <?php
+            $rej_msg = '<strong>Conta ' . htmlspecialchars($rejected_account['type_account']) . ' rejeitada.</strong>';
+            if ($rejected_account['reject_reason']) {
+                $rej_msg .= ' Motivo: <em>' . htmlspecialchars($rejected_account['reject_reason']) . '</em>.';
+            }
+            $rej_msg .= ' Actualiza os dados e submete novamente.';
+            wuAlert(
+                'danger',
+                'bi-x-circle-fill',
+                $rej_msg,
+                ['label' => 'Corrigir agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/withdraw'],
+                true,
+                'banner-account-rejected'
+            );
+            ?>
+        <?php endif; ?>
 
         <!-- HEADER -->
         <div class="help-header">
             <h1><i class="bi bi-question-circle-fill me-2"></i>Central de Ajuda</h1>
             <p>
                 Encontra respostas para as tuas dúvidas, tutoriais passo a passo e suporte especializado
-                para aproveitares ao máximo a plataforma Wasom Upfy.
+                para aproveitares ao máximo a plataforma <?php echo APP_NAME ?>.
             </p>
             <div class="search-box">
                 <div class="input-group">
@@ -786,7 +859,7 @@ $full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['
                     </div>
                     <div id="faq4" class="collapse">
                         <div class="faq-answer">
-                            <p>Política de royalties Wasom Upfy:</p>
+                            <p>Política de royalties <?php echo APP_NAME ?>:</p>
                             <ul class="mb-2">
                                 <li><strong>90% de royalties</strong> para todos os planos</li>
                                 <li>Pagamentos mensais até ao dia 15</li>
@@ -830,7 +903,9 @@ $full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['
                                 <li><strong>Upgrade:</strong> disponível imediatamente</li>
                                 <li><strong>Downgrade:</strong> disponível no final do ciclo actual</li>
                                 <li>Contacta o <a href="support">suporte</a> para alterações</li>
-                                <li>Consulta <a href="../services/available-services">Conta e serviços</a></li>
+                                <li>Consulta <a
+                                        href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/services/available-services">Conta
+                                        e serviços</a></li>
                             </ul>
                         </div>
                     </div>
@@ -875,28 +950,28 @@ $full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['
                 ],
             ];
             foreach ($tutorials as $t): ?>
-                <div class="col-md-4 mb-3">
-                    <div class="tutorial-card">
-                        <div class="tutorial-thumb">
-                            <div class="tutorial-thumb-inner">
-                                <i class="bi <?php echo $t['icon']; ?> tutorial-icon-bg"></i>
-                                <div class="play-btn"><i class="bi bi-play-fill"></i></div>
-                            </div>
-                        </div>
-                        <div class="tutorial-body">
-                            <h5><?php echo $t['title']; ?></h5>
-                            <p><?php echo $t['desc']; ?></p>
-                            <div class="tutorial-meta">
-                                <span><i class="bi bi-clock"></i><?php echo $t['dur']; ?></span>
-                                <span><i class="bi bi-eye"></i><?php echo $t['views']; ?> visualizações</span>
-                            </div>
-                            <button class="btn btn-help-outline btn-sm w-100 mt-2 tutorial-btn"
-                                data-slug="<?php echo $t['slug']; ?>">
-                                Assistir Tutorial
-                            </button>
+            <div class="col-md-4 mb-3">
+                <div class="tutorial-card">
+                    <div class="tutorial-thumb">
+                        <div class="tutorial-thumb-inner">
+                            <i class="bi <?php echo $t['icon']; ?> tutorial-icon-bg"></i>
+                            <div class="play-btn"><i class="bi bi-play-fill"></i></div>
                         </div>
                     </div>
+                    <div class="tutorial-body">
+                        <h5><?php echo $t['title']; ?></h5>
+                        <p><?php echo $t['desc']; ?></p>
+                        <div class="tutorial-meta">
+                            <span><i class="bi bi-clock"></i><?php echo $t['dur']; ?></span>
+                            <span><i class="bi bi-eye"></i><?php echo $t['views']; ?> visualizações</span>
+                        </div>
+                        <button class="btn btn-help-outline btn-sm w-100 mt-2 tutorial-btn"
+                            data-slug="<?php echo $t['slug']; ?>">
+                            Assistir Tutorial
+                        </button>
+                    </div>
                 </div>
+            </div>
             <?php endforeach; ?>
         </div>
 
@@ -983,7 +1058,8 @@ $full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['
                             <h6>Perguntas Frequentes (FAQ)</h6><small>Respostas para as dúvidas mais comuns</small>
                         </div>
                     </a>
-                    <a href="../services/available-services" class="quick-link">
+                    <a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/services/available-services"
+                        class="quick-link">
                         <i class="bi bi-star"></i>
                         <div>
                             <h6>Planos e Serviços</h6><small>Compara todos os planos disponíveis</small>
@@ -998,7 +1074,7 @@ $full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['
                     <a href="about" class="quick-link">
                         <i class="bi bi-info-circle"></i>
                         <div>
-                            <h6>Sobre o Wasom Upfy</h6><small>Conhece a nossa história e missão</small>
+                            <h6>Sobre o <?php echo APP_NAME ?></h6><small>Conhece a nossa história e missão</small>
                         </div>
                     </a>
                 </div>
@@ -1008,45 +1084,10 @@ $full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['
         <div class="text-center mb-4">
             <small class="text-muted">
                 <i class="bi bi-info-circle me-1"></i>
-                Central de Ajuda v2.0 — <?php echo APP_NAME; ?>
+                Central de Ajuda V<?php echo APP_VERSION ?> — <?php echo APP_NAME; ?>
             </small>
         </div>
 
-    </main>
-
-    <!-- Bottom Nav Mobile -->
-    <nav class="bottom-nav d-lg-none">
-        <ul class="nav justify-content-around">
-            <li class="nav-item"><a class="nav-link" href="../painel"><i
-                        class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../launch/releases"><i
-                        class="bi bi-disc"></i><span>Lançamentos</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../analytics/statistics"><i
-                        class="bi bi-bar-chart"></i><span>Stats</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../finances/overview"><i
-                        class="bi bi-currency-dollar"></i><span>Finanças</span></a></li>
-            <li class="nav-item"><a class="nav-link active" href="help"><i
-                        class="bi bi-question-circle"></i><span>Ajuda</span></a></li>
-        </ul>
-    </nav>
-
-    <!-- Modal Logout -->
-    <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-dark">Terminar sessão</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body text-center text-dark">
-                    <p>Tens a certeza de que desejas terminar sessão, <strong><?php echo $first_name; ?></strong>?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Não, continuar</button>
-                    <a href="../logout" class="btn btn-danger">Sim, terminar sessão</a>
-                </div>
-            </div>
-        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -1054,63 +1095,48 @@ $full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['
     <script src="<?php echo APP_URL  ?>/js/theme.wp.js"></script>
     <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
 
-            // ── Pesquisa ────────────────────────────────────────
-            function doSearch() {
-                var term = document.getElementById('helpSearch').value.trim();
-                if (term) window.location.href = 'faq?search=' + encodeURIComponent(term);
-            }
+        // ── Pesquisa ────────────────────────────────────────
+        function doSearch() {
+            var term = document.getElementById('helpSearch').value.trim();
+            if (term) window.location.href = 'faq?search=' + encodeURIComponent(term);
+        }
 
-            var searchBtn = document.getElementById('searchBtn');
-            var searchInput = document.getElementById('helpSearch');
+        var searchBtn = document.getElementById('searchBtn');
+        var searchInput = document.getElementById('helpSearch');
 
-            if (searchBtn) searchBtn.addEventListener('click', doSearch);
-            if (searchInput) searchInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') doSearch();
+        if (searchBtn) searchBtn.addEventListener('click', doSearch);
+        if (searchInput) searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') doSearch();
+        });
+
+        // ── Tutoriais ───────────────────────────────────────
+        document.querySelectorAll('.tutorial-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var slug = this.dataset.slug;
+                // Redireccionamento futuro: window.location.href = '../tutorials/' + slug;
+                // Por agora abre um modal ou alerta temporário
+                alert('Tutorial "' + slug + '" em breve disponível!');
             });
+        });
 
-            // ── Tutoriais ───────────────────────────────────────
-            document.querySelectorAll('.tutorial-btn').forEach(function(btn) {
-                btn.addEventListener('click', function() {
-                    var slug = this.dataset.slug;
-                    // Redireccionamento futuro: window.location.href = '../tutorials/' + slug;
-                    // Por agora abre um modal ou alerta temporário
-                    alert('Tutorial "' + slug + '" em breve disponível!');
-                });
+        // ── FAQ arrow sync ──────────────────────────────────
+        // O Bootstrap gere o collapse, mas o chevron precisa de ser rotacionado
+        // via CSS (.faq-question[aria-expanded="true"] .faq-icon) — já está no CSS.
+        // Forçar o aria-expanded no parent quando o collapse abre/fecha:
+        document.querySelectorAll('.faq-item .collapse').forEach(function(collapseEl) {
+            collapseEl.addEventListener('show.bs.collapse', function() {
+                var btn = this.closest('.faq-item').querySelector('.faq-question');
+                if (btn) btn.setAttribute('aria-expanded', 'true');
             });
-
-            // ── FAQ arrow sync ──────────────────────────────────
-            // O Bootstrap gere o collapse, mas o chevron precisa de ser rotacionado
-            // via CSS (.faq-question[aria-expanded="true"] .faq-icon) — já está no CSS.
-            // Forçar o aria-expanded no parent quando o collapse abre/fecha:
-            document.querySelectorAll('.faq-item .collapse').forEach(function(collapseEl) {
-                collapseEl.addEventListener('show.bs.collapse', function() {
-                    var btn = this.closest('.faq-item').querySelector('.faq-question');
-                    if (btn) btn.setAttribute('aria-expanded', 'true');
-                });
-                collapseEl.addEventListener('hide.bs.collapse', function() {
-                    var btn = this.closest('.faq-item').querySelector('.faq-question');
-                    if (btn) btn.setAttribute('aria-expanded', 'false');
-                });
+            collapseEl.addEventListener('hide.bs.collapse', function() {
+                var btn = this.closest('.faq-item').querySelector('.faq-question');
+                if (btn) btn.setAttribute('aria-expanded', 'false');
             });
+        });
 
-            // ── Conexão offline ─────────────────────────────────
-            function checkConnection() {
-                if (!navigator.onLine) {
-                    var toast = bootstrap.Toast.getOrCreateInstance(document.getElementById('connectionToast'));
-                    toast.show();
-                }
-            }
-            checkConnection();
-            window.addEventListener('offline', checkConnection);
-            window.addEventListener('online', function() {
-                var toastEl = document.getElementById('connectionToast');
-                var toast = bootstrap.Toast.getInstance(toastEl);
-                if (toast) toast.hide();
-            });
-
-        }); // fim DOMContentLoaded
+    }); // fim DOMContentLoaded
     </script>
 </body>
 

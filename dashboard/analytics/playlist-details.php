@@ -662,7 +662,7 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
                 <div class="empty-section">
                     <div class="icon"><i class="bi bi-music-note"></i></div>
                     <div class="small fw-semibold mb-1">Nenhuma faixa activa encontrada.</div>
-                    <div class="small">As faixas aparecem aqui após aprovação pela equipa Wasom Upfy.</div>
+                    <div class="small">As faixas aparecem aqui após aprovação pela equipa <?php echo APP_NAME ?>.</div>
                     <a href="../launch/releases" class="btn btn-sm btn-pink mt-3">Ver lançamentos</a>
                 </div>
                 <?php else: ?>

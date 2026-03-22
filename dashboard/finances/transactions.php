@@ -791,7 +791,7 @@ $role_colors = [
                         </div>
                         <div class="row g-3 mb-3">
                             <div class="col-md-8">
-                                <label class="form-label fw-semibold small">E-mail da conta Wasom Upfy <span
+                                <label class="form-label fw-semibold small">E-mail da conta <?php echo APP_NAME ?> <span
                                         class="text-muted">(opcional)</span></label>
                                 <input type="email" name="email_collab" class="form-control" maxlength="255"
                                     placeholder="conta@exemplo.com" />

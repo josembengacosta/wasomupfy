@@ -54,7 +54,7 @@ $can_view_finances = in_array($role, ['admin', 'analyst']);
 $can_view_stats    = in_array($role, ['admin', 'analyst', 'editor']);
 
 if (!$can_view_stats) {
-    header('Location: ' . rtrim(APP_URL, '/') . '/dashboard/collab/overview?error=noaccess');
+    header('Location: ' . rtrim(APP_URL, '/') . APP_URL_PANEL . '/collab/overview?error=noaccess');
     exit;
 }
 
@@ -203,7 +203,7 @@ $rm = $role_meta[$role] ?? $role_meta['support'];
 $role_label = $rm['label'];
 
 $months_pt = ['', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-$logout_url = rtrim(APP_URL, '/') . '/dashboard/collab/logout';
+$logout_url = rtrim(APP_URL, '/') . APP_URL_PANEL . '/collab/logout';
 $base_url   = rtrim(APP_URL, '/');
 $cover_base = $base_url . '/assets/comprovantes/uploads/covers/';
 
@@ -230,115 +230,115 @@ function fmt_streams(int $n): string
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <link rel="stylesheet" href="css/collab.css" />
     <style>
-        /* Barra de plataforma */
-        .store-bar {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 0;
-            border-bottom: 1px solid var(--border);
-        }
+    /* Barra de plataforma */
+    .store-bar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border);
+    }
 
-        .store-bar:last-child {
-            border-bottom: none;
-        }
+    .store-bar:last-child {
+        border-bottom: none;
+    }
 
-        .store-logo {
-            width: 28px;
-            height: 28px;
-            border-radius: 8px;
-            object-fit: contain;
-            background: rgba(255, 0, 137, .05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: .7rem;
-            font-weight: 700;
-            color: var(--wasom);
-            flex-shrink: 0;
-        }
+    .store-logo {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        object-fit: contain;
+        background: rgba(255, 0, 137, .05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .7rem;
+        font-weight: 700;
+        color: var(--wasom);
+        flex-shrink: 0;
+    }
 
-        .store-progress {
-            flex: 1;
-            height: 6px;
-            background: var(--border);
-            border-radius: 10px;
-            overflow: hidden;
-        }
+    .store-progress {
+        flex: 1;
+        height: 6px;
+        background: var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+    }
 
-        .store-progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #FF0089, #FF4D4D);
-            border-radius: 10px;
-            transition: width .5s ease;
-        }
+    .store-progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #FF0089, #FF4D4D);
+        border-radius: 10px;
+        transition: width .5s ease;
+    }
 
-        /* Top faixas */
-        .track-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 0;
-            border-bottom: 1px solid var(--border);
-        }
+    /* Top faixas */
+    .track-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border);
+    }
 
-        .track-row:last-child {
-            border-bottom: none;
-        }
+    .track-row:last-child {
+        border-bottom: none;
+    }
 
-        .track-rank {
-            width: 24px;
-            font-size: .75rem;
-            font-weight: 800;
-            color: var(--muted);
-            flex-shrink: 0;
-            text-align: center;
-        }
+    .track-rank {
+        width: 24px;
+        font-size: .75rem;
+        font-weight: 800;
+        color: var(--muted);
+        flex-shrink: 0;
+        text-align: center;
+    }
 
-        .track-rank.top3 {
-            color: var(--wasom);
-        }
+    .track-rank.top3 {
+        color: var(--wasom);
+    }
 
-        .track-cover {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            object-fit: cover;
-            background: rgba(255, 0, 137, .07);
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: .8rem;
-            overflow: hidden;
-        }
+    .track-cover {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        object-fit: cover;
+        background: rgba(255, 0, 137, .07);
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .8rem;
+        overflow: hidden;
+    }
 
-        .track-cover img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+    .track-cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 
-        /* Top países */
-        .country-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 7px 0;
-            border-bottom: 1px solid var(--border);
-        }
+    /* Top países */
+    .country-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 7px 0;
+        border-bottom: 1px solid var(--border);
+    }
 
-        .country-row:last-child {
-            border-bottom: none;
-        }
+    .country-row:last-child {
+        border-bottom: none;
+    }
 
-        .country-flag {
-            width: 28px;
-            height: 20px;
-            border-radius: 3px;
-            object-fit: cover;
-            flex-shrink: 0;
-        }
+    .country-flag {
+        width: 28px;
+        height: 20px;
+        border-radius: 3px;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
     </style>
 </head>
 
@@ -347,7 +347,7 @@ function fmt_streams(int $n): string
     <!-- NAVBAR -->
     <nav class="collab-nav">
         <button class="theme-btn d-md-none" id="btn-sidebar-toggle"><i class="bi bi-list"></i></button>
-        <a class="nav-brand" href="<?php echo $base_url; ?>/dashboard/collab/overview">
+        <a class="nav-brand" href="<?php echo $base_url; ?>/<?php echo APP_URL_PANEL ?>/collab/overview">
             <?php echo APP_NAME; ?><span>For Colaboradores</span>
         </a>
         <div class="nav-spacer"></div>
@@ -360,9 +360,9 @@ function fmt_streams(int $n): string
             <button class="nav-avatar dropdown-toggle" style="background:none;border:none;cursor:pointer"
                 data-bs-toggle="dropdown">
                 <?php if ($collab['photo_collab']): ?><img
-                        src="<?php echo htmlspecialchars($collab['photo_collab']); ?>" alt=""
-                        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" /><span
-                        style="display:none"><i class="bi bi-person"></i></span>
+                    src="<?php echo htmlspecialchars($collab['photo_collab']); ?>" alt=""
+                    onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" /><span
+                    style="display:none"><i class="bi bi-person"></i></span>
                 <?php else: ?><span><i class="bi bi-person"></i></span><?php endif; ?>
             </button>
             <ul class="dropdown-menu dropdown-menu-end" style="font-size:.84rem;min-width:200px">
@@ -381,7 +381,8 @@ function fmt_streams(int $n): string
                 </li>
                 <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#myProfileModal"><i
                             class="bi bi-person me-2"></i>O meu perfil</a></li>
-                <li><a class="dropdown-item" href="<?php echo $base_url; ?>/dashboard/collab/overview"><i
+                <li><a class="dropdown-item"
+                        href="<?php echo $base_url; ?>/<?php echo APP_URL_PANEL ?>/collab/overview"><i
                             class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
                 <li>
                     <hr class="dropdown-divider" />
@@ -404,23 +405,23 @@ function fmt_streams(int $n): string
             <div style="font-size:.72rem;color:rgba(255,255,255,.75);margin-top:2px"><?php echo $plan_name; ?></div>
         </div>
         <div class="sidebar-section">Menu</div>
-        <a href="<?php echo $base_url; ?>/dashboard/collab/overview" class="sidebar-link"><i
+        <a href="<?php echo $base_url; ?>/<?php echo APP_URL_PANEL ?>/collab/overview" class="sidebar-link"><i
                 class="bi bi-speedometer2"></i>Dashboard</a>
         <?php if ($can_view_releases): ?>
-            <a href="<?php echo $base_url; ?>/dashboard/collab/releases" class="sidebar-link"><i
-                    class="bi bi-disc"></i>Lançamentos</a>
+        <a href="<?php echo $base_url; ?>/<?php echo APP_URL_PANEL ?>/collab/releases" class="sidebar-link"><i
+                class="bi bi-disc"></i>Lançamentos</a>
         <?php endif; ?>
         <?php if ($can_view_artists): ?>
-            <a href="<?php echo $base_url; ?>/dashboard/collab/artists" class="sidebar-link"><i
-                    class="bi bi-people"></i>Artistas</a>
+        <a href="<?php echo $base_url; ?>/<?php echo APP_URL_PANEL ?>/collab/artists" class="sidebar-link"><i
+                class="bi bi-people"></i>Artistas</a>
         <?php endif; ?>
         <?php if ($can_view_finances): ?>
-            <div class="sidebar-section">Finanças</div>
-            <a href="<?php echo $base_url; ?>/dashboard/collab/finances" class="sidebar-link"><i
-                    class="bi bi-currency-dollar"></i>Visão geral</a>
+        <div class="sidebar-section">Finanças</div>
+        <a href="<?php echo $base_url; ?>/<?php echo APP_URL_PANEL ?>/collab/finances" class="sidebar-link"><i
+                class="bi bi-currency-dollar"></i>Visão geral</a>
         <?php endif; ?>
         <div class="sidebar-section">Análise</div>
-        <a href="<?php echo $base_url; ?>/dashboard/collab/statistics" class="sidebar-link active"><i
+        <a href="<?php echo $base_url; ?>/<?php echo APP_URL_PANEL ?>/collab/statistics" class="sidebar-link active"><i
                 class="bi bi-bar-chart"></i>Estatísticas</a>
         <div class="sidebar-section">Conta</div>
         <a href="#" class="sidebar-link" data-bs-toggle="modal" data-bs-target="#myProfileModal"><i
@@ -450,20 +451,20 @@ function fmt_streams(int $n): string
                 <select name="year" class="form-select form-select-sm" style="width:auto;border-color:var(--border)"
                     onchange="this.form.submit()">
                     <?php foreach ($available_years as $y): ?>
-                        <option value="<?php echo $y; ?>" <?php echo $y == $year ? 'selected' : ''; ?>><?php echo $y; ?>
-                        </option>
+                    <option value="<?php echo $y; ?>" <?php echo $y == $year ? 'selected' : ''; ?>><?php echo $y; ?>
+                    </option>
                     <?php endforeach; ?>
                 </select>
                 <select name="month" class="form-select form-select-sm" style="width:auto;border-color:var(--border)"
                     onchange="this.form.submit()">
                     <option value="0" <?php echo $month === 0 ? 'selected' : ''; ?>>Ano todo</option>
                     <?php for ($m = 1; $m <= 12; $m++): ?>
-                        <option value="<?php echo $m; ?>" <?php echo $m === $month ? 'selected' : ''; ?>>
-                            <?php echo $months_pt[$m]; ?></option>
+                    <option value="<?php echo $m; ?>" <?php echo $m === $month ? 'selected' : ''; ?>>
+                        <?php echo $months_pt[$m]; ?></option>
                     <?php endfor; ?>
                 </select>
                 <?php if ($month > 0): ?>
-                    <a href="?year=<?php echo $year; ?>" class="btn btn-sm btn-outline-danger"><i class="bi bi-x"></i></a>
+                <a href="?year=<?php echo $year; ?>" class="btn btn-sm btn-outline-danger"><i class="bi bi-x"></i></a>
                 <?php endif; ?>
             </form>
             <span class="text-muted small ms-auto">
@@ -520,40 +521,40 @@ function fmt_streams(int $n): string
                 <div class="dash-card h-100">
                     <div class="card-title"><i class="bi bi-music-note-list"></i>Top 10 faixas</div>
                     <?php if (empty($top_tracks)): ?>
-                        <div class="empty-state">
-                            <div class="icon">🎵</div>
-                            <div class="small">Sem dados neste período</div>
-                        </div>
-                        <?php else:
+                    <div class="empty-state">
+                        <div class="icon">🎵</div>
+                        <div class="small">Sem dados neste período</div>
+                    </div>
+                    <?php else:
                         $max_s = max(1, (int)$top_tracks[0]['total_streams']);
                         foreach ($top_tracks as $i => $tr):
                             $pct = min(100, round($tr['total_streams'] / $max_s * 100));
                         ?>
-                            <div class="track-row">
-                                <div class="track-rank <?php echo $i < 3 ? 'top3' : ''; ?>"><?php echo $i + 1; ?></div>
-                                <div class="track-cover">
-                                    <?php if ($tr['img_cover']): ?>
-                                        <img src="<?php echo htmlspecialchars($cover_base . $tr['img_cover']); ?>"
-                                            onerror="this.parentElement.textContent='🎵'" alt="" />
-                                        <?php else: ?>🎵<?php endif; ?>
-                                </div>
-                                <div style="flex:1;min-width:0">
-                                    <div class="fw-semibold text-truncate" style="font-size:.82rem">
-                                        <?php echo htmlspecialchars($tr['title_track']); ?></div>
-                                    <div class="text-muted text-truncate" style="font-size:.7rem">
-                                        <?php echo htmlspecialchars($tr['name_author'] ?? $tr['title_album']); ?></div>
-                                    <div style="height:3px;background:var(--border);border-radius:4px;margin-top:4px">
-                                        <div
-                                            style="width:<?php echo $pct; ?>%;height:100%;background:linear-gradient(90deg,#FF0089,#FF4D4D);border-radius:4px">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div style="text-align:right;flex-shrink:0">
-                                    <div class="fw-bold" style="font-size:.82rem;color:var(--wasom)">
-                                        <?php echo fmt_streams((int)$tr['total_streams']); ?></div>
-                                    <div class="text-muted" style="font-size:.65rem">streams</div>
+                    <div class="track-row">
+                        <div class="track-rank <?php echo $i < 3 ? 'top3' : ''; ?>"><?php echo $i + 1; ?></div>
+                        <div class="track-cover">
+                            <?php if ($tr['img_cover']): ?>
+                            <img src="<?php echo htmlspecialchars($cover_base . $tr['img_cover']); ?>"
+                                onerror="this.parentElement.textContent='🎵'" alt="" />
+                            <?php else: ?>🎵<?php endif; ?>
+                        </div>
+                        <div style="flex:1;min-width:0">
+                            <div class="fw-semibold text-truncate" style="font-size:.82rem">
+                                <?php echo htmlspecialchars($tr['title_track']); ?></div>
+                            <div class="text-muted text-truncate" style="font-size:.7rem">
+                                <?php echo htmlspecialchars($tr['name_author'] ?? $tr['title_album']); ?></div>
+                            <div style="height:3px;background:var(--border);border-radius:4px;margin-top:4px">
+                                <div
+                                    style="width:<?php echo $pct; ?>%;height:100%;background:linear-gradient(90deg,#FF0089,#FF4D4D);border-radius:4px">
                                 </div>
                             </div>
+                        </div>
+                        <div style="text-align:right;flex-shrink:0">
+                            <div class="fw-bold" style="font-size:.82rem;color:var(--wasom)">
+                                <?php echo fmt_streams((int)$tr['total_streams']); ?></div>
+                            <div class="text-muted" style="font-size:.65rem">streams</div>
+                        </div>
+                    </div>
                     <?php endforeach;
                     endif; ?>
                 </div>
@@ -565,34 +566,34 @@ function fmt_streams(int $n): string
                 <div class="dash-card">
                     <div class="card-title"><i class="bi bi-grid-3x3-gap"></i>Por plataforma</div>
                     <?php if (empty($by_store)): ?>
-                        <div class="empty-state">
-                            <div class="icon">🏪</div>
-                            <div class="small">Sem dados</div>
-                        </div>
-                        <?php else:
+                    <div class="empty-state">
+                        <div class="icon">🏪</div>
+                        <div class="small">Sem dados</div>
+                    </div>
+                    <?php else:
                         $max_st = max(1, (int)$by_store[0]['total_streams']);
                         foreach ($by_store as $st):
                             $pct = min(100, round($st['total_streams'] / $max_st * 100));
                         ?>
-                            <div class="store-bar">
-                                <div class="store-logo">
-                                    <?php if ($st['logo_store']): ?>
-                                        <img src="<?php echo htmlspecialchars($base_url . '/' . $st['logo_store']); ?>"
-                                            style="width:28px;height:28px;border-radius:6px;object-fit:contain"
-                                            onerror="this.style.display='none'" alt="" />
-                                        <?php else: ?><?php echo mb_substr($st['name_store'], 0, 2); ?><?php endif; ?>
-                                </div>
-                                <div style="flex:1;min-width:0">
-                                    <div style="font-size:.78rem;font-weight:600;margin-bottom:3px">
-                                        <?php echo htmlspecialchars($st['name_store']); ?></div>
-                                    <div class="store-progress">
-                                        <div class="store-progress-fill" style="width:<?php echo $pct; ?>%"></div>
-                                    </div>
-                                </div>
-                                <div style="text-align:right;flex-shrink:0;font-size:.78rem">
-                                    <div class="fw-bold"><?php echo fmt_streams((int)$st['total_streams']); ?></div>
-                                </div>
+                    <div class="store-bar">
+                        <div class="store-logo">
+                            <?php if ($st['logo_store']): ?>
+                            <img src="<?php echo htmlspecialchars($base_url . '/' . $st['logo_store']); ?>"
+                                style="width:28px;height:28px;border-radius:6px;object-fit:contain"
+                                onerror="this.style.display='none'" alt="" />
+                            <?php else: ?>/<?php echo mb_substr($st['name_store'], 0, 2); ?><?php endif; ?>
+                        </div>
+                        <div style="flex:1;min-width:0">
+                            <div style="font-size:.78rem;font-weight:600;margin-bottom:3px">
+                                <?php echo htmlspecialchars($st['name_store']); ?></div>
+                            <div class="store-progress">
+                                <div class="store-progress-fill" style="width:<?php echo $pct; ?>%"></div>
                             </div>
+                        </div>
+                        <div style="text-align:right;flex-shrink:0;font-size:.78rem">
+                            <div class="fw-bold"><?php echo fmt_streams((int)$st['total_streams']); ?></div>
+                        </div>
+                    </div>
                     <?php endforeach;
                     endif; ?>
                 </div>
@@ -601,30 +602,30 @@ function fmt_streams(int $n): string
                 <div class="dash-card">
                     <div class="card-title"><i class="bi bi-globe"></i>Top países</div>
                     <?php if (empty($top_countries)): ?>
-                        <div class="empty-state">
-                            <div class="icon">🌍</div>
-                            <div class="small">Sem dados</div>
-                        </div>
-                        <?php else:
+                    <div class="empty-state">
+                        <div class="icon">🌍</div>
+                        <div class="small">Sem dados</div>
+                    </div>
+                    <?php else:
                         $max_c = max(1, (int)$top_countries[0]['total_streams']);
                         foreach ($top_countries as $cc):
                             $pct = min(100, round($cc['total_streams'] / $max_c * 100));
                         ?>
-                            <div class="country-row">
-                                <img src="https://flagcdn.com/w40/<?php echo strtolower($cc['country_code']); ?>.png"
-                                    class="country-flag" onerror="this.style.display='none'"
-                                    alt="<?php echo $cc['country_code']; ?>" />
-                                <div style="flex:1;min-width:0">
-                                    <div style="font-size:.78rem;font-weight:600;margin-bottom:3px">
-                                        <?php echo htmlspecialchars($cc['country_name'] ?: $cc['country_code']); ?></div>
-                                    <div class="store-progress">
-                                        <div class="store-progress-fill" style="width:<?php echo $pct; ?>%"></div>
-                                    </div>
-                                </div>
-                                <div style="text-align:right;flex-shrink:0;font-size:.78rem">
-                                    <div class="fw-bold"><?php echo fmt_streams((int)$cc['total_streams']); ?></div>
-                                </div>
+                    <div class="country-row">
+                        <img src="https://flagcdn.com/w40/<?php echo strtolower($cc['country_code']); ?>.png"
+                            class="country-flag" onerror="this.style.display='none'"
+                            alt="<?php echo $cc['country_code']; ?>" />
+                        <div style="flex:1;min-width:0">
+                            <div style="font-size:.78rem;font-weight:600;margin-bottom:3px">
+                                <?php echo htmlspecialchars($cc['country_name'] ?: $cc['country_code']); ?></div>
+                            <div class="store-progress">
+                                <div class="store-progress-fill" style="width:<?php echo $pct; ?>%"></div>
                             </div>
+                        </div>
+                        <div style="text-align:right;flex-shrink:0;font-size:.78rem">
+                            <div class="fw-bold"><?php echo fmt_streams((int)$cc['total_streams']); ?></div>
+                        </div>
+                    </div>
                     <?php endforeach;
                     endif; ?>
                 </div>
@@ -635,15 +636,18 @@ function fmt_streams(int $n): string
 
     <!-- Bottom nav -->
     <nav class="bottom-nav-collab">
-        <a href="<?php echo $base_url; ?>/dashboard/collab/overview"><i class="bi bi-speedometer2"></i>Dashboard</a>
-        <?php if ($can_view_releases): ?><a href="<?php echo $base_url; ?>/dashboard/collab/releases"><i
-                    class="bi bi-disc"></i>Releases</a><?php endif; ?>
-        <?php if ($can_view_artists): ?><a href="<?php echo $base_url; ?>/dashboard/collab/artists"><i
-                    class="bi bi-people"></i>Artistas</a><?php endif; ?>
-        <a href="<?php echo $base_url; ?>/dashboard/collab/statistics" class="active"><i
+        <a href="<?php echo $base_url; ?>/<?php echo APP_URL_PANEL ?>/collab/overview"><i
+                class="bi bi-speedometer2"></i>Dashboard</a>
+        <?php if ($can_view_releases): ?><a
+            href="<?php echo $base_url; ?>/<?php echo APP_URL_PANEL ?>/collab/releases"><i
+                class="bi bi-disc"></i>Releases</a><?php endif; ?>
+        <?php if ($can_view_artists): ?><a href="<?php echo $base_url; ?>/<?php echo APP_URL_PANEL ?>/collab/artists"><i
+                class="bi bi-people"></i>Artistas</a><?php endif; ?>
+        <a href="<?php echo $base_url; ?>/<?php echo APP_URL_PANEL ?>/collab/statistics" class="active"><i
                 class="bi bi-bar-chart"></i>Stats</a>
-        <?php if ($can_view_finances): ?><a href="<?php echo $base_url; ?>/dashboard/collab/finances"><i
-                    class="bi bi-currency-dollar"></i>Finanças</a><?php endif; ?>
+        <?php if ($can_view_finances): ?><a
+            href="<?php echo $base_url; ?>/<?php echo APP_URL_PANEL ?>/collab/finances"><i
+                class="bi bi-currency-dollar"></i>Finanças</a><?php endif; ?>
     </nav>
 
     <!-- Modal O meu perfil -->
@@ -658,13 +662,13 @@ function fmt_streams(int $n): string
                 <div class="modal-body pt-0">
                     <div class="text-center mb-3">
                         <?php if ($collab['photo_collab']): ?>
-                            <img src="<?php echo htmlspecialchars($collab['photo_collab']); ?>"
-                                style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid var(--wasom)"
-                                onerror="this.style.display='none'" alt="" />
+                        <img src="<?php echo htmlspecialchars($collab['photo_collab']); ?>"
+                            style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid var(--wasom)"
+                            onerror="this.style.display='none'" alt="" />
                         <?php else: ?>
-                            <div
-                                style="width:72px;height:72px;border-radius:50%;background:rgba(255,0,137,.1);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto">
-                                🎤</div>
+                        <div
+                            style="width:72px;height:72px;border-radius:50%;background:rgba(255,0,137,.1);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto">
+                            🎤</div>
                         <?php endif; ?>
                         <h5 class="fw-bold mt-2 mb-0">
                             <?php echo htmlspecialchars($collab['first_name'] . ' ' . ($collab['second_name'] ?? '')); ?>
@@ -681,19 +685,19 @@ function fmt_streams(int $n): string
                                 ['Último login', $collab['last_login_at'] ? date('d/m/Y H:i', strtotime($collab['last_login_at'])) : '—', 'bi-clock'],
                             ] as [$label, $val, $ico]
                         ): ?>
-                            <div class="d-flex gap-2 py-2 border-bottom align-items-center">
-                                <i class="bi <?php echo $ico; ?> text-muted" style="width:16px"></i>
-                                <span class="text-muted" style="width:100px;flex-shrink:0"><?php echo $label; ?></span>
-                                <span class="fw-semibold text-truncate"><?php echo htmlspecialchars($val); ?></span>
-                            </div>
+                        <div class="d-flex gap-2 py-2 border-bottom align-items-center">
+                            <i class="bi <?php echo $ico; ?> text-muted" style="width:16px"></i>
+                            <span class="text-muted" style="width:100px;flex-shrink:0"><?php echo $label; ?></span>
+                            <span class="fw-semibold text-truncate"><?php echo htmlspecialchars($val); ?></span>
+                        </div>
                         <?php endforeach; ?>
                     </div>
                     <?php if ($collab['notes']): ?>
-                        <div class="mt-3 p-3"
-                            style="background:rgba(255,0,137,.04);border-radius:10px;border:1px solid rgba(255,0,137,.1)">
-                            <div class="text-muted" style="font-size:.7rem;margin-bottom:4px">NOTAS DO ADMINISTRADOR</div>
-                            <div style="font-size:.82rem"><?php echo htmlspecialchars($collab['notes']); ?></div>
-                        </div>
+                    <div class="mt-3 p-3"
+                        style="background:rgba(255,0,137,.04);border-radius:10px;border:1px solid rgba(255,0,137,.1)">
+                        <div class="text-muted" style="font-size:.7rem;margin-bottom:4px">NOTAS DO ADMINISTRADOR</div>
+                        <div style="font-size:.82rem"><?php echo htmlspecialchars($collab['notes']); ?></div>
+                    </div>
                     <?php endif; ?>
                 </div>
                 <div class="modal-footer border-0 pt-0">
@@ -729,92 +733,92 @@ function fmt_streams(int $n): string
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
-        const CHART_DATA = <?php echo json_encode(array_map(fn($r) => [
+    const CHART_DATA = <?php echo json_encode(array_map(fn($r) => [
                                 'label'   => $r['label'],
                                 'streams' => $r['streams'],
                                 'revenue' => round($r['revenue'], 2),
                             ], $monthly_chart)); ?>;
 
-        // ── Gráfico ───────────────────────────────────
-        const isDark = localStorage.getItem('wu_theme') === 'dark';
-        const gridColor = isDark ? 'rgba(255,255,255,.06)' : 'rgba(0,0,0,.06)';
-        const textColor = isDark ? '#9999bb' : '#6c757d';
+    // ── Gráfico ───────────────────────────────────
+    const isDark = localStorage.getItem('wu_theme') === 'dark';
+    const gridColor = isDark ? 'rgba(255,255,255,.06)' : 'rgba(0,0,0,.06)';
+    const textColor = isDark ? '#9999bb' : '#6c757d';
 
-        new Chart(document.getElementById('streamsChart'), {
-            type: 'bar',
-            data: {
-                labels: CHART_DATA.map(r => r.label),
-                datasets: [{
-                    label: 'Streams',
-                    data: CHART_DATA.map(r => r.streams),
-                    backgroundColor: 'rgba(255,0,137,.15)',
-                    borderColor: '#FF0089',
-                    borderWidth: 2,
-                    borderRadius: 6,
-                    borderSkipped: false,
-                }]
+    new Chart(document.getElementById('streamsChart'), {
+        type: 'bar',
+        data: {
+            labels: CHART_DATA.map(r => r.label),
+            datasets: [{
+                label: 'Streams',
+                data: CHART_DATA.map(r => r.streams),
+                backgroundColor: 'rgba(255,0,137,.15)',
+                borderColor: '#FF0089',
+                borderWidth: 2,
+                borderRadius: 6,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
+            scales: {
+                x: {
+                    grid: {
+                        color: gridColor
+                    },
+                    ticks: {
+                        color: textColor,
+                        font: {
+                            size: 10
+                        }
                     }
                 },
-                scales: {
-                    x: {
-                        grid: {
-                            color: gridColor
-                        },
-                        ticks: {
-                            color: textColor,
-                            font: {
-                                size: 10
-                            }
-                        }
+                y: {
+                    grid: {
+                        color: gridColor
                     },
-                    y: {
-                        grid: {
-                            color: gridColor
+                    ticks: {
+                        color: textColor,
+                        font: {
+                            size: 10
                         },
-                        ticks: {
-                            color: textColor,
-                            font: {
-                                size: 10
-                            },
-                            callback: v => v >= 1000000 ? (v / 1000000).toFixed(1) + 'M' : v >= 1000 ? (v / 1000)
-                                .toFixed(0) + 'K' : v
-                        }
+                        callback: v => v >= 1000000 ? (v / 1000000).toFixed(1) + 'M' : v >= 1000 ? (v / 1000)
+                            .toFixed(0) + 'K' : v
                     }
                 }
             }
-        });
-
-        // ── Sidebar / Theme ───────────────────────────
-        function closeSidebar() {
-            document.getElementById('collabSidebar').classList.remove('open');
-            document.getElementById('sidebarOverlay').classList.remove('show');
         }
-        document.getElementById('btn-sidebar-toggle')?.addEventListener('click', () => {
-            const sb = document.getElementById('collabSidebar');
-            const ov = document.getElementById('sidebarOverlay');
-            sb.classList.toggle('open');
-            ov.classList.toggle('show', sb.classList.contains('open'));
-        });
-        const html = document.documentElement;
-        const saved = localStorage.getItem('wu_theme') || 'light';
-        html.setAttribute('data-theme', saved);
-        document.getElementById('themeIcon').className = saved === 'dark' ? 'bi bi-moon' : 'bi bi-sun';
-        document.getElementById('themeToggle').addEventListener('click', () => {
-            const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-            html.setAttribute('data-theme', next);
-            localStorage.setItem('wu_theme', next);
-            document.getElementById('themeIcon').className = next === 'dark' ? 'bi bi-moon' : 'bi bi-sun';
-        });
-        setInterval(() => fetch('<?php echo $base_url; ?>/dashboard/collab/ping', {
-            method: 'POST'
-        }).catch(() => {}), 120000);
+    });
+
+    // ── Sidebar / Theme ───────────────────────────
+    function closeSidebar() {
+        document.getElementById('collabSidebar').classList.remove('open');
+        document.getElementById('sidebarOverlay').classList.remove('show');
+    }
+    document.getElementById('btn-sidebar-toggle')?.addEventListener('click', () => {
+        const sb = document.getElementById('collabSidebar');
+        const ov = document.getElementById('sidebarOverlay');
+        sb.classList.toggle('open');
+        ov.classList.toggle('show', sb.classList.contains('open'));
+    });
+    const html = document.documentElement;
+    const saved = localStorage.getItem('wu_theme') || 'light';
+    html.setAttribute('data-theme', saved);
+    document.getElementById('themeIcon').className = saved === 'dark' ? 'bi bi-moon' : 'bi bi-sun';
+    document.getElementById('themeToggle').addEventListener('click', () => {
+        const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        localStorage.setItem('wu_theme', next);
+        document.getElementById('themeIcon').className = next === 'dark' ? 'bi bi-moon' : 'bi bi-sun';
+    });
+    setInterval(() => fetch('<?php echo $base_url; ?>/<?php echo APP_URL_PANEL ?>/collab/ping', {
+        method: 'POST'
+    }).catch(() => {}), 120000);
     </script>
 </body>
 

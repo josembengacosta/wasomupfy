@@ -364,7 +364,7 @@ $base_url = rtrim(APP_URL, '/');
     <!-- NAVBAR -->
     <nav class="collab-nav">
         <button class="theme-btn d-md-none" id="btn-sidebar-toggle"><i class="bi bi-list"></i></button>
-        <a class="nav-brand" href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/overview">
+        <a class="nav-brand" href="<?php echo $base_url; ?>/<?php echo  APP_URL_PANEL ?>/collab/overview">
             <?php echo APP_NAME; ?><span>For Colaboradores</span>
         </a>
         <div class="nav-spacer"></div>
@@ -397,7 +397,7 @@ $base_url = rtrim(APP_URL, '/');
                 </li>
                 <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#myProfileModal"><i
                             class="bi bi-person me-2"></i>O meu perfil</a></li>
-                <li><a class="dropdown-item" href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/overview"><i
+                <li><a class="dropdown-item" href="<?php echo $base_url; ?>/<?php echo  APP_URL_PANEL ?>/collab/overview"><i
                             class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
                 <li>
                     <hr class="dropdown-divider" />
@@ -420,22 +420,22 @@ $base_url = rtrim(APP_URL, '/');
             <div style="font-size:.72rem;color:rgba(255,255,255,.75);margin-top:2px"><?php echo $plan_name; ?></div>
         </div>
         <div class="sidebar-section">Menu</div>
-        <a href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/overview" class="sidebar-link"><i
+        <a href="<?php echo $base_url; ?>/<?php echo  APP_URL_PANEL ?>/collab/overview" class="sidebar-link"><i
                 class="bi bi-speedometer2"></i>Dashboard</a>
         <?php if ($can_view_releases): ?>
-            <a href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/releases" class="sidebar-link"><i
+            <a href="<?php echo $base_url; ?>/<?php echo  APP_URL_PANEL ?>/collab/releases" class="sidebar-link"><i
                     class="bi bi-disc"></i>Lançamentos</a>
         <?php endif; ?>
         <?php if ($can_view_artists): ?>
-            <a href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/artists" class="sidebar-link"><i
+            <a href="<?php echo $base_url; ?>/<?php echo  APP_URL_PANEL ?>/collab/artists" class="sidebar-link"><i
                     class="bi bi-people"></i>Artistas</a>
         <?php endif; ?>
         <div class="sidebar-section">Finanças</div>
-        <a href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/finances" class="sidebar-link active"><i
+        <a href="<?php echo $base_url; ?>/<?php echo  APP_URL_PANEL ?>/collab/finances" class="sidebar-link active"><i
                 class="bi bi-currency-dollar"></i>Visão geral</a>
         <?php if ($can_view_stats): ?>
             <div class="sidebar-section">Análise</div>
-            <a href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/statistics" class="sidebar-link"><i
+            <a href="<?php echo $base_url; ?>/<?php echo  APP_URL_PANEL ?>/collab/statistics" class="sidebar-link"><i
                     class="bi bi-bar-chart"></i>Estatísticas</a>
         <?php endif; ?>
         <div class="sidebar-section">Conta</div>
@@ -707,13 +707,13 @@ $base_url = rtrim(APP_URL, '/');
 
     <!-- Bottom nav -->
     <nav class="bottom-nav-collab">
-        <a href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/overview"><i
+        <a href="<?php echo $base_url; ?>/<?php echo  APP_URL_PANEL ?>/collab/overview"><i
                 class="bi bi-speedometer2"></i>Dashboard</a>
-        <?php if ($can_view_releases): ?><a href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/releases"><i
+        <?php if ($can_view_releases): ?><a href="<?php echo $base_url; ?>/<?php echo  APP_URL_PANEL ?>/collab/releases"><i
                     class="bi bi-disc"></i>Releases</a><?php endif; ?>
-        <?php if ($can_view_stats): ?><a href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/statistics"><i
+        <?php if ($can_view_stats): ?><a href="<?php echo $base_url; ?>/<?php echo  APP_URL_PANEL ?>/collab/statistics"><i
                     class="bi bi-bar-chart"></i>Stats</a><?php endif; ?>
-        <a href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/finances" class="active"><i
+        <a href="<?php echo $base_url; ?>/<?php echo  APP_URL_PANEL ?>/collab/finances" class="active"><i
                 class="bi bi-currency-dollar"></i>Finanças</a>
     </nav>
 

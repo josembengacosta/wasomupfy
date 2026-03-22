@@ -4,17 +4,109 @@
 // Arquivo: dashboard/page/support.php
 // ══════════════════════════════════════════════════════
 require_once __DIR__ . '/../../authentic/include/functions.php';
+require_once __DIR__ . '/../include/platform.php';
 startSecureSession();
 checkRememberMe();
 requireLogin();
+$platform = checkDashboardStatus();
+$user     = checkUserAccess((int)$_SESSION['id_users']);
 
-$db       = getDB();
-$id_users = (int)$_SESSION['id_users'];
-$user     = getUserById($id_users);
-if (!$user) {
-    session_destroy();
-    redirect(APP_URL  . '/' . 'login', ['error' => 'csrf']);
+$id_users       = (int)$user['id_users'];
+$first_name     = htmlspecialchars($user['first_name']);
+$user_name      = htmlspecialchars($user['user_name'] ?? '');
+$email_verified = (bool)$user['email_verified'];
+$plan_selected  = $user['plan_selected'];
+$onboard_done   = (bool)($user['onboarding_done'] ?? false);
+$user_photo     = $user['photo_user'] ?? null;
+$name_artist_band = htmlspecialchars($user['name_artist_band'] ?? 'Cria Perfil Artístico');
+$notif_count    = getUnreadNotifCount($id_users);
+$db             = getDB();
+
+// ── Saldo ─────────────────────────────────────
+$w = $db->prepare('SELECT balance_aoa FROM _wallet WHERE id_users = ?');
+$w->execute([$id_users]);
+$balance = $w->fetch() ?: ['balance_aoa' => 0];
+
+// ── Plano ─────────────────────────────────────
+$plan_id     = (int)$user['plan_selected'];
+$plan        = null;
+$max_artists = 1;
+if ($plan_id) {
+    $ps = $db->prepare('SELECT * FROM _plans WHERE id_plan = ?');
+    $ps->execute([$plan_id]);
+    $plan = $ps->fetch();
+    if ($plan) $max_artists = (int)($plan['max_artists'] ?? 1);
 }
+$plan_name = $plan ? htmlspecialchars($plan['name_plan']) : 'Sem plano';
+
+// ── Plano ─────────────────────────────────────
+$plan      = null;
+$plan_paid = ($user['status_user'] === 'active' && !empty($user['plan_activated_at']));
+if ($plan_selected) {
+    $ps = $db->prepare('SELECT * FROM _plans WHERE id_plan = ?');
+    $ps->execute([$plan_selected]);
+    $plan = $ps->fetch();
+}
+
+// Adicionar verificação de expiração do plano
+$plan_expired = false;
+if ($plan_paid && !empty($user['plan_expires_at'])) {
+    $plan_expired = strtotime($user['plan_expires_at']) < time();
+}
+
+// ── Artistas ──────────────────────────────────
+$as = $db->prepare('SELECT COUNT(*) AS total FROM _artist WHERE id_users = ?');
+$as->execute([$id_users]);
+$has_artist = (int)($as->fetch()['total'] ?? 0) > 0;
+
+// ── Conta bancária ────────────────────────────
+$ba = $db->prepare("SELECT id_account FROM _account WHERE id_users = ? AND status_account = 'verified' LIMIT 1");
+$ba->execute([$id_users]);
+$bank_account = $ba->fetch();
+
+// ── Conta rejeitada ───────────────────────────
+$rejected_account = null;
+if ($plan_paid) {
+    $rj = $db->prepare("SELECT type_account, reject_reason FROM _account WHERE id_users = ? AND status_account = 'rejected' LIMIT 1");
+    $rj->execute([$id_users]);
+    $rejected_account = $rj->fetch();
+}
+
+// ── Sessão info (modal logout) ────────────────
+$ls = $db->prepare('SELECT last_login_at, last_login_ip FROM _users_security WHERE id_users = ?');
+$ls->execute([$id_users]);
+$sec = $ls->fetch();
+
+$sess_stmt = $db->prepare("
+    SELECT ip_address, user_agent, country, city, creat_session, last_activity
+    FROM _users_sessions WHERE id_users = ? AND is_active = 1
+    ORDER BY last_activity DESC LIMIT 1
+");
+$sess_stmt->execute([$id_users]);
+$current_session  = $sess_stmt->fetch();
+$session_duration_str = '—';
+if ($current_session && $current_session['creat_session']) {
+    $secs = time() - strtotime($current_session['creat_session']);
+    if ($secs < 60)     $session_duration_str = $secs . 's';
+    elseif ($secs < 3600)  $session_duration_str = floor($secs / 60) . 'min';
+    elseif ($secs < 86400) $session_duration_str = floor($secs / 3600) . 'h ' . floor(($secs % 3600) / 60) . 'min';
+    else                   $session_duration_str = floor($secs / 86400) . 'd ' . floor(($secs % 86400) / 3600) . 'h';
+}
+$member_since   = $user['creat_user'] ? date('d/m/Y', strtotime($user['creat_user'])) : '—';
+$last_login_str = ($sec && $sec['last_login_at']) ? date('d/m/Y H:i', strtotime($sec['last_login_at'])) : '—';
+$ua_raw   = $current_session['user_agent'] ?? '';
+$browser  = 'Desconhecido';
+if (str_contains($ua_raw, 'Edg'))     $browser = 'Microsoft Edge';
+elseif (str_contains($ua_raw, 'Chrome'))  $browser = 'Google Chrome';
+elseif (str_contains($ua_raw, 'Firefox')) $browser = 'Mozilla Firefox';
+elseif (str_contains($ua_raw, 'Safari'))  $browser = 'Safari';
+elseif (str_contains($ua_raw, 'Opera'))   $browser = 'Opera';
+$sess_location = trim(($current_session['city'] ?? '') . ', ' . ($current_session['country'] ?? ''), ', ') ?: 'Desconhecida';
+$sess_ip       = $current_session['ip_address'] ?? ($sec['last_login_ip'] ?? '—');
+
+$first_name       = htmlspecialchars($user['first_name']);
+$user_artist_name = htmlspecialchars($user['name_artist_band'] ?? $user['first_name']);
+
 
 $first_name = htmlspecialchars($user['first_name'] ?? '');
 $full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['second_name'] ?? '')));
@@ -56,457 +148,394 @@ $priority_cfg = [
 <html lang="pt-ao">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="robots" content="noindex, nofollow" />
-    <meta name="theme-color" content="#FF0089" />
-    <link rel="apple-touch-icon" href="../../assets/img/icones/wasomupfy_fiv_512.png" />
-    <link rel="manifest" href="../manifest.json" />
+    <?php require_once __DIR__ . '/../include/head.php'; ?>
     <title>Suporte — <?php echo APP_NAME; ?></title>
-    <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
-    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/dashboard-style.css" />
-    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/lastest-style.css" />
     <style>
+    .support-hero {
+        background: linear-gradient(135deg, #FF0089 0%, #c8006e 55%, #7b0044 100%);
+        border-radius: 20px;
+        padding: 2.2rem 2.5rem;
+        margin-bottom: 2rem;
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .support-hero::after {
+        content: '\F348';
+        font-family: 'bootstrap-icons';
+        position: absolute;
+        right: -20px;
+        bottom: -28px;
+        font-size: 9rem;
+        opacity: .07;
+    }
+
+    .support-hero .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255, 255, 255, .18);
+        border: 1px solid rgba(255, 255, 255, .3);
+        border-radius: 999px;
+        padding: 4px 14px;
+        font-size: .78rem;
+        font-weight: 700;
+        backdrop-filter: blur(4px);
+        margin-bottom: .8rem;
+    }
+
+    .form-card {
+        background: var(--card-bg, #fff);
+        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
+        border-radius: 18px;
+        padding: 1.8rem;
+    }
+
+    .form-card .form-control,
+    .form-card .form-select {
+        border-radius: 10px;
+        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .12));
+        background: var(--input-bg, #f8f9fa);
+        padding: .6rem .95rem;
+        transition: border-color .2s, box-shadow .2s;
+    }
+
+    .form-card .form-control:focus,
+    .form-card .form-select:focus {
+        border-color: #FF0089;
+        box-shadow: 0 0 0 .2rem rgba(255, 0, 137, .15);
+        background: var(--card-bg, #fff);
+    }
+
+    .form-card textarea.form-control {
+        min-height: 130px;
+        resize: vertical;
+    }
+
+    .form-card .form-label {
+        font-weight: 600;
+        font-size: .88rem;
+        margin-bottom: .4rem;
+    }
+
+    .form-progress-bar {
+        height: 5px;
+        background: var(--border-color, rgba(0, 0, 0, .08));
+        border-radius: 999px;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-progress-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #FF0089, #c8006e);
+        border-radius: 999px;
+        transition: width .3s ease;
+    }
+
+    .urgency-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+
+    .urgency-option {
+        border: 2px solid var(--border-color, rgba(0, 0, 0, .1));
+        border-radius: 10px;
+        padding: 10px 6px;
+        text-align: center;
+        cursor: pointer;
+        transition: all .15s;
+        user-select: none;
+        font-size: .78rem;
+        font-weight: 600;
+    }
+
+    .urgency-option:hover {
+        border-color: #FF0089;
+    }
+
+    .urgency-option input[type=radio] {
+        display: none;
+    }
+
+    .urgency-option.sel-low {
+        border-color: #198754;
+        background: rgba(25, 135, 84, .07);
+        color: #198754;
+    }
+
+    .urgency-option.sel-medium {
+        border-color: #ffc107;
+        background: rgba(255, 193, 7, .08);
+        color: #856404;
+    }
+
+    .urgency-option.sel-high {
+        border-color: #dc3545;
+        background: rgba(220, 53, 69, .07);
+        color: #dc3545;
+    }
+
+    .btn-support {
+        background: linear-gradient(135deg, #FF0089, #c8006e);
+        border: none;
+        color: #fff;
+        border-radius: 12px;
+        font-weight: 700;
+        padding: .75rem 2rem;
+        width: 100%;
+        transition: all .2s;
+        font-size: .95rem;
+    }
+
+    .btn-support:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(255, 0, 137, .4);
+        color: #fff;
+    }
+
+    .btn-support:disabled {
+        opacity: .65;
+    }
+
+    .file-drop {
+        border: 2px dashed var(--border-color, rgba(0, 0, 0, .15));
+        border-radius: 12px;
+        padding: 1.2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: border-color .2s, background .2s;
+    }
+
+    .file-drop:hover,
+    .file-drop.drag-over {
+        border-color: #FF0089;
+        background: rgba(255, 0, 137, .03);
+    }
+
+    .file-drop input[type=file] {
+        display: none;
+    }
+
+    .file-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--metric-bg, rgba(0, 0, 0, .03));
+        border-radius: 8px;
+        padding: 5px 10px;
+        font-size: .78rem;
+        margin-top: 5px;
+    }
+
+    .result-banner {
+        border-radius: 12px;
+        padding: .85rem 1.1rem;
+        font-size: .86rem;
+        display: none;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .result-banner.show {
+        display: flex;
+    }
+
+    .result-banner.ok {
+        background: rgba(25, 135, 84, .1);
+        border: 1.5px solid #198754;
+        color: #0a5c36;
+    }
+
+    .result-banner.err {
+        background: rgba(220, 53, 69, .08);
+        border: 1.5px solid #dc3545;
+        color: #842029;
+    }
+
+    .ticket-row {
+        padding: 11px 0;
+        border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .07));
+        font-size: .83rem;
+    }
+
+    .ticket-row:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .sec-title {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #FF0089;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 1.2rem;
+    }
+
+    @media(max-width:768px) {
         .support-hero {
-            background: linear-gradient(135deg, #FF0089 0%, #c8006e 55%, #7b0044 100%);
-            border-radius: 20px;
-            padding: 2.2rem 2.5rem;
-            margin-bottom: 2rem;
-            color: #fff;
-            position: relative;
-            overflow: hidden;
+            padding: 1.5rem;
         }
-
-        .support-hero::after {
-            content: '\F348';
-            font-family: 'bootstrap-icons';
-            position: absolute;
-            right: -20px;
-            bottom: -28px;
-            font-size: 9rem;
-            opacity: .07;
-        }
-
-        .support-hero .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(255, 255, 255, .18);
-            border: 1px solid rgba(255, 255, 255, .3);
-            border-radius: 999px;
-            padding: 4px 14px;
-            font-size: .78rem;
-            font-weight: 700;
-            backdrop-filter: blur(4px);
-            margin-bottom: .8rem;
-        }
-
-        .form-card {
-            background: var(--card-bg, #fff);
-            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
-            border-radius: 18px;
-            padding: 1.8rem;
-        }
-
-        .form-card .form-control,
-        .form-card .form-select {
-            border-radius: 10px;
-            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .12));
-            background: var(--input-bg, #f8f9fa);
-            padding: .6rem .95rem;
-            transition: border-color .2s, box-shadow .2s;
-        }
-
-        .form-card .form-control:focus,
-        .form-card .form-select:focus {
-            border-color: #FF0089;
-            box-shadow: 0 0 0 .2rem rgba(255, 0, 137, .15);
-            background: var(--card-bg, #fff);
-        }
-
-        .form-card textarea.form-control {
-            min-height: 130px;
-            resize: vertical;
-        }
-
-        .form-card .form-label {
-            font-weight: 600;
-            font-size: .88rem;
-            margin-bottom: .4rem;
-        }
-
-        .form-progress-bar {
-            height: 5px;
-            background: var(--border-color, rgba(0, 0, 0, .08));
-            border-radius: 999px;
-            overflow: hidden;
-            margin-bottom: 1.5rem;
-        }
-
-        .form-progress-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #FF0089, #c8006e);
-            border-radius: 999px;
-            transition: width .3s ease;
-        }
-
-        .urgency-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-        }
-
-        .urgency-option {
-            border: 2px solid var(--border-color, rgba(0, 0, 0, .1));
-            border-radius: 10px;
-            padding: 10px 6px;
-            text-align: center;
-            cursor: pointer;
-            transition: all .15s;
-            user-select: none;
-            font-size: .78rem;
-            font-weight: 600;
-        }
-
-        .urgency-option:hover {
-            border-color: #FF0089;
-        }
-
-        .urgency-option input[type=radio] {
-            display: none;
-        }
-
-        .urgency-option.sel-low {
-            border-color: #198754;
-            background: rgba(25, 135, 84, .07);
-            color: #198754;
-        }
-
-        .urgency-option.sel-medium {
-            border-color: #ffc107;
-            background: rgba(255, 193, 7, .08);
-            color: #856404;
-        }
-
-        .urgency-option.sel-high {
-            border-color: #dc3545;
-            background: rgba(220, 53, 69, .07);
-            color: #dc3545;
-        }
-
-        .btn-support {
-            background: linear-gradient(135deg, #FF0089, #c8006e);
-            border: none;
-            color: #fff;
-            border-radius: 12px;
-            font-weight: 700;
-            padding: .75rem 2rem;
-            width: 100%;
-            transition: all .2s;
-            font-size: .95rem;
-        }
-
-        .btn-support:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(255, 0, 137, .4);
-            color: #fff;
-        }
-
-        .btn-support:disabled {
-            opacity: .65;
-        }
-
-        .file-drop {
-            border: 2px dashed var(--border-color, rgba(0, 0, 0, .15));
-            border-radius: 12px;
-            padding: 1.2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: border-color .2s, background .2s;
-        }
-
-        .file-drop:hover,
-        .file-drop.drag-over {
-            border-color: #FF0089;
-            background: rgba(255, 0, 137, .03);
-        }
-
-        .file-drop input[type=file] {
-            display: none;
-        }
-
-        .file-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--metric-bg, rgba(0, 0, 0, .03));
-            border-radius: 8px;
-            padding: 5px 10px;
-            font-size: .78rem;
-            margin-top: 5px;
-        }
-
-        .result-banner {
-            border-radius: 12px;
-            padding: .85rem 1.1rem;
-            font-size: .86rem;
-            display: none;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .result-banner.show {
-            display: flex;
-        }
-
-        .result-banner.ok {
-            background: rgba(25, 135, 84, .1);
-            border: 1.5px solid #198754;
-            color: #0a5c36;
-        }
-
-        .result-banner.err {
-            background: rgba(220, 53, 69, .08);
-            border: 1.5px solid #dc3545;
-            color: #842029;
-        }
-
-        .ticket-row {
-            padding: 11px 0;
-            border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .07));
-            font-size: .83rem;
-        }
-
-        .ticket-row:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-
-        .sec-title {
-            font-size: 1.05rem;
-            font-weight: 800;
-            color: #FF0089;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 1.2rem;
-        }
-
-        @media(max-width:768px) {
-            .support-hero {
-                padding: 1.5rem;
-            }
-        }
+    }
     </style>
 </head>
 
 <body>
 
-    <!-- Tela de Carregamento -->
-    <!-- <div class="loading-screen" id="loadingScreen">
-        <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg" class="loading-logo">
-            <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2"/>
-            <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
-        </svg>
-        <div class="spinner"></div>
-    </div> -->
+    <!-- ═══ NAVBAR ═══ -->
+    <?php require_once __DIR__ . '/../include/sidebar.php'; ?>
+    <!-- ═══ MAIN ═══ -->
+    <div class="container my-4">
+        <?php /* ============================================
+    BANNERS DE NOTIFICACAO DO PAINEL
+    Estilo: inline CSS consistente com renderDashboardAlerts().
+    Bootstrap alert nativo removido — um único sistema visual.
+    Lógica de prioridade:
+      Nível 1 (danger)  — bloqueia distribuição
+      Nível 2 (warning) — importante, requer atenção
+      Nível 3 (info)    — informativo / acção opcional
+    ============================================ */ ?>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <!-- Menu Button (Left) -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu"
-                aria-controls="offcanvasMenu">
-                <span class="navbar-toggler-icon"><i class="bi bi-list text-white fs-1"></i></span>
-            </button>
+        <?php renderDashboardAlerts($user, $platform); ?>
 
-            <!-- Logo (Center on Mobile, Left on Desktop) -->
-            <a class="navbar-brand" href="../painel">
-                <!-- SVG Logo Wasom Upfy -->
-                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
-                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
-                        fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
-                </svg> -->
-                <span class="text-light"
-                    style="font-weight: bold; box-sizing: border-box; text-transform: uppercase; font-family:Arial, sans-serif">WASOM
-                    UPFY</span>
-            </a>
+        <?php
+        // Cor map para helpers inline — idêntico ao renderDashboardAlerts()
+        $alertColors = [
+            'danger'  => ['bg' => 'rgba(239,68,68,.08)',  'border' => 'rgba(239,68,68,.25)',  'text' => '#ef4444'],
+            'warning' => ['bg' => 'rgba(234,179,8,.08)',  'border' => 'rgba(234,179,8,.25)',  'text' => '#eab308'],
+            'info'    => ['bg' => 'rgba(99,102,241,.08)', 'border' => 'rgba(99,102,241,.25)', 'text' => '#6366f1'],
+        ];
+        function wuAlert(string $type, string $icon, string $message, ?array $action = null, bool $dismiss = true, string $id = ''): void
+        {
+            global $alertColors;
+            $c   = $alertColors[$type] ?? $alertColors['info'];
+            $eid = $id ?: ('wuPanelAlert_' . md5($message));
+            echo "<div id=\"{$eid}\" style=\"display:flex;align-items:flex-start;gap:10px;"
+                . "background:{$c['bg']};border:1px solid {$c['border']};border-radius:12px;"
+                . "padding:.75rem 1rem;font-size:.83rem;margin-bottom:.6rem;"
+                . "transition:opacity .3s;\">";
+            echo "<i class=\"bi {$icon}\" style=\"font-size:1rem;flex-shrink:0;margin-top:2px;color:{$c['text']};\"></i>";
+            echo '<span class="wu-alert-msg">' . $message;
+            if ($action) {
+                echo " <a href=\"{$action['url']}\" style=\"color:{$c['text']};font-weight:700;"
+                    . "text-decoration:underline;white-space:nowrap\">{$action['label']} &rarr;</a>";
+            }
+            echo '</span>';
+            if ($dismiss) {
+                echo "<button type=\"button\" class=\"wu-alert-dismiss\" aria-label=\"Fechar\""
+                    . " onclick=\"(function(el){el.style.opacity='0';"
+                    . "setTimeout(function(){el.style.display='none'},300)})(document.getElementById('{$eid}'))\">"
+                    . "&times;</button>";
+            }
+            echo '</div>';
+        }
+        ?>
 
+        <?php /* ── NÍVEL 1: Crítico — bloqueia distribuição ── */ ?>
 
-            <!-- Desktop Menu -->
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav m-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="../painel"><i class="bi bi-speedometer2"></i>
-                            Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../launch/releases"><i class="bi bi-disc"></i>
-                            Lançamentos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../analytics/statistics"><i
-                                class="bi bi-bar-chart"></i>
-                            Estatísticas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../finances/overview"><i
-                                class="bi bi-currency-dollar"></i>
-                            Finanças</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../artists/artists-list"><i class="bi bi-person"></i>
-                            Artistas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../artists/youtube/ucy"><i class="bi bi-youtube"></i>
-                            Unificação de canal YouTube</a></li>
-                </ul>
-            </div>
+        <?php if (!$email_verified): ?>
+        <?php wuAlert(
+                'danger',
+                'bi-envelope-exclamation-fill',
+                '<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta e receber notificações de pagamentos.',
+                ['label' => 'Verificar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/user/profile#perfil'],
+                true,
+                'banner-email'
+            ); ?>
+        <?php endif; ?>
 
-            <!-- User Icon (Right) -->
-            <div class="user-menu d-flex align-items-center">
-                <!-- Theme Toggle Button -->
-                <a class="theme-toggle text-white me-2" id="themeToggle">
-                    <i class="bi bi-sun" id="themeIcon"></i>
-                </a>
-                <a href="../notifications" class="text-white me-2" aria-label="Notificações">
-                    <i class="bi bi-bell fs-4"></i>
-                    <span class="badge bg-danger">9</span>
-                </a>
-                <a href="#" class="text-white" data-bs-toggle="dropdown">
-                    <i class="bi bi-person-circle fs-4"></i>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="../user/profile"><i class="bi bi-person me-2"></i>
-                            <strong>Eleven
-                                Records</strong></a>
-                        <div class="text-white-50"> &nbsp; &nbsp; &nbsp; &nbsp;
-                            (Conta <?php echo str_pad($id_users, 6, "0", STR_PAD_LEFT); ?>)</div>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item" href="../user/profile"><i class="bi bi-person me-2"></i> Meu
-                            Perfil</a>
-                    </li>
-                    <li><a class="dropdown-item" href="../account/manage-account"><i class="bi bi-tools me-2"></i>
-                            Gestão de Conta</a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item" href="../page/settings"><i class="bi bi-gear me-2"></i>
-                            Configurações</a></li>
-                    <li><a class="dropdown-item" href="../page/notifications"><i class="bi bi-bell me-2"></i>
-                            Notificações</a></li>
-                    <li><a class="dropdown-item" href="../services/available-services"><i class="bi bi-star me-2"></i>
-                            Conta e serviços disponíveis</a></li>
-                    <li><a class="dropdown-item" href="#?logout-wasomupfy" data-bs-toggle="modal"
-                            data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right me-2"></i>
-                            Desconectar-se</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item" href="../page/about"><i class="bi bi-info-circle me-2"></i>
-                            Sobre</a>
-                    </li>
-                    <li><a class="dropdown-item" href="../page/support"><i class="bi bi-headset me-2"></i> Enviar
-                            pedido de suporte</a></li>
-                    <li><a class="dropdown-item" href="../page/faq"><i class="bi bi-chat-left-text me-2"></i>
-                            Perguntas frequentes</a></li>
-                    <li><a class="dropdown-item" href="../page/help"><i class="bi bi-question-circle me-2"></i>
-                            Ajuda</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><span class="dropdown-item-text" id="versionDropdown"></span></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+        <?php if ($plan && !$plan_paid): ?>
+        <?php wuAlert(
+                'warning',
+                'bi-clock-history',
+                '<strong>Pagamento pendente — ' . htmlspecialchars($plan['name_plan']) . '.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados até confirmação.',
+                ['label' => 'Finalizar pagamento', 'url' => APP_URL . '/' . APP_URL_PANEL . '/payment/pay'],
+                true,
+                'banner-plan-pending'
+            ); ?>
+        <?php elseif (!$plan): ?>
+        <?php wuAlert(
+                'danger',
+                'bi-credit-card-fill',
+                '<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir a tua música para +150 plataformas.',
+                ['label' => 'Ver planos', 'url' => APP_URL . '/' . APP_URL_PANEL . '/all-plans'],
+                false,
+                'banner-plan'
+            ); ?>
+        <?php endif; ?>
 
+        <?php /* ── NÍVEL 2: Importante — perfil incompleto ── */ ?>
 
-    <!-- Offcanvas Menu par Mobile e Desktop -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasMenuLabel">
-                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
-                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
-                        fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
-                </svg> -->
-                <span class="text-light"
-                    style="font-weight: bold; box-sizing: border-box; text-transform: uppercase; font-family:Arial, sans-serif">WASOM
-                    UPFY</span>
-            </h5>
-            <button type="button" class="btn-close text-white" data-bs-dismiss="offcanvas" aria-label="Close">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-        <div class="offcanvas-body">
-            <ul class="nav flex-column">
-                <li class="nav-item"><a class="nav-link" href="../painel"><i class="bi bi-speedometer2"></i>
-                        Dashboard</a></li>
-                <li class="nav-item"><a class="nav-link" href="../launch/releases"><i class="bi bi-disc"></i>
-                        Lançamentos</a></li>
-                <li class="nav-item"><a class="nav-link" href="../analytics/statistics"><i class="bi bi-bar-chart"></i>
-                        Estatísticas</a></li>
-                <li class="nav-item"><a class="nav-link" href="../finances/overview"><i
-                            class="bi bi-currency-dollar"></i> Finanças</a></li>
-                <li class="nav-item"><a class="nav-link" href="../artists/artists-list"><i class="bi bi-person"></i>
-                        Artistas</a></li>
-                <li class="nav-item"><a class="nav-link" href="../artists/youtube/ucy"><i class="bi bi-youtube"></i>
-                        Unificação
-                        de
-                        canal YouTube</a></li>
-                <!-- Links secundários exibidos apenas em mobile -->
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../user/profile"><i
-                            class="bi bi-person-circle"></i> Meu Perfil</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link active" href="../page/settings"><i
-                            class="bi bi-gear"></i> Configurações</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/notifications"><i
-                            class="bi bi-bell"></i> Notificações</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/about"><i
-                            class="bi bi-info-circle"></i> Sobre</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../services/available-services"><i
-                            class="bi bi-star"></i>
-                        Conta e serviços disponíveis</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="../page/help"><i
-                            class="bi bi-question-circle"></i> Ajuda</a></li>
-                <li class="nav-item d-lg-none"><a class="nav-link" href="#?logout-wasomupfy" data-bs-toggle="modal"
-                        data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right"></i> Desconectar-se</a></li>
-            </ul>
-        </div>
-    </div>
+        <?php if ($plan_paid && !$has_artist): ?>
+        <?php wuAlert(
+                'info',
+                'bi-person-plus-fill',
+                '<strong>Cria o teu perfil de artista.</strong> Tens plano activo mas ainda não criaste um perfil. Precisas de um para poder lançar música.',
+                ['label' => 'Criar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/add-artist'],
+                true,
+                'banner-artist'
+            ); ?>
+        <?php endif; ?>
 
-    <!-- Toast para Notificações de Status -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="connectionToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <strong class="me-auto">Conexão</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Fechar"></button>
-            </div>
-            <div class="toast-body">
-                Você está offline. Alguns dados podem estar desatualizados.
-                <div class="mt-2">
-                    <button class="btn btn-pink btn-sm" onclick="tryReconnect()">Tentar Reconectar</button>
-                </div>
-            </div>
-        </div>
-    </div>
+        <?php /* ── NÍVEL 3: Informativo — conta bancária ── */ ?>
 
+        <?php if ($plan_paid && $has_artist && !$bank_account): ?>
+        <?php wuAlert(
+                'info',
+                'bi-bank',
+                '<strong>Conta bancária não registada.</strong> Para poder sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.',
+                ['label' => 'Registar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/withdraw'],
+                true,
+                'banner-bank'
+            ); ?>
+        <?php endif; ?>
 
-    <!-- MAIN -->
-    <main class="container my-4">
+        <?php /* ── NÍVEL 3: Conta bancária rejeitada ── */ ?>
+
+        <?php
+        $rejected_account = null;
+        if ($plan_paid) {
+            $rej_stmt = getDB()->prepare("SELECT type_account, reject_reason FROM _account WHERE id_users = ? AND status_account = 'rejected' LIMIT 1");
+            $rej_stmt->execute([$id_users]);
+            $rejected_account = $rej_stmt->fetch();
+        }
+        ?>
+        <?php if ($rejected_account): ?>
+        <?php
+            $rej_msg = '<strong>Conta ' . htmlspecialchars($rejected_account['type_account']) . ' rejeitada.</strong>';
+            if ($rejected_account['reject_reason']) {
+                $rej_msg .= ' Motivo: <em>' . htmlspecialchars($rejected_account['reject_reason']) . '</em>.';
+            }
+            $rej_msg .= ' Actualiza os dados e submete novamente.';
+            wuAlert(
+                'danger',
+                'bi-x-circle-fill',
+                $rej_msg,
+                ['label' => 'Corrigir agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/withdraw'],
+                true,
+                'banner-account-rejected'
+            );
+            ?>
+        <?php endif; ?>
 
         <!-- HERO -->
         <div class="support-hero">
             <div class="hero-badge">
                 <i class="bi bi-headset"></i>
                 <?php if ($open_count + $progress_count > 0): ?>
-                    <?php echo $open_count + $progress_count; ?>
-                    ticket<?php echo ($open_count + $progress_count) > 1 ? 's' : ''; ?>
-                    activo<?php echo ($open_count + $progress_count) > 1 ? 's' : ''; ?>
+                <?php echo $open_count + $progress_count; ?>
+                ticket<?php echo ($open_count + $progress_count) > 1 ? 's' : ''; ?>
+                activo<?php echo ($open_count + $progress_count) > 1 ? 's' : ''; ?>
                 <?php else: ?>
-                    Nenhum ticket em aberto
+                Nenhum ticket em aberto
                 <?php endif; ?>
             </div>
-            <h1 class="fw-bold mb-1"><i class="bi bi-headset-vr me-2"></i>Suporte Wasom Upfy</h1>
+            <h1 class="fw-bold mb-1"><i class="bi bi-headset-vr me-2"></i>Suporte <?php echo APP_NAME ?></h1>
             <p class="lead mb-0" style="opacity:.85">
                 Descreve o teu problema e a nossa equipa responde em até 48 horas.
                 Antes, consulta o <a href="faq" class="text-white fw-semibold">FAQ</a> — talvez já tenhamos a resposta.
@@ -641,48 +670,48 @@ $priority_cfg = [
                         <h5 class="mb-0 fw-bold" style="font-size:.95rem">
                             <i class="bi bi-clock-history me-2" style="color:#FF0089"></i>Os teus tickets
                             <?php if (!empty($tickets)): ?>
-                                <span class="badge ms-1"
-                                    style="background:#FF0089;font-size:.65rem"><?php echo count($tickets); ?></span>
+                            <span class="badge ms-1"
+                                style="background:#FF0089;font-size:.65rem"><?php echo count($tickets); ?></span>
                             <?php endif; ?>
                         </h5>
                     </div>
                     <div class="card-body py-2 px-3">
                         <?php if (empty($tickets)): ?>
-                            <p class="text-muted small py-2 mb-0">Ainda não enviaste nenhum pedido.</p>
+                        <p class="text-muted small py-2 mb-0">Ainda não enviaste nenhum pedido.</p>
                         <?php else: ?>
-                            <?php foreach ($tickets as $t):
+                        <?php foreach ($tickets as $t):
                                 $st = $status_cfg[$t['status_ticket']] ?? ['label' => ucfirst($t['status_ticket']), 'class' => 'bg-secondary'];
                                 $pr = $priority_cfg[$t['priority']]   ?? ['label' => ucfirst($t['priority']), 'class' => 'text-muted'];
                                 $preview = preg_replace('/^\[.*?\]\n\n/', '', $t['body'] ?? '');
                                 $preview = mb_strimwidth($preview, 0, 65, '…');
                             ?>
-                                <div class="ticket-row">
-                                    <div class="d-flex align-items-center flex-wrap gap-1 mb-1">
-                                        <span style="font-size:.68rem;font-family:monospace;color:var(--text-muted,#6c757d)">
-                                            #<?php echo str_pad($t['id_ticket'], 5, '0', STR_PAD_LEFT); ?>
-                                        </span>
-                                        <span class="badge <?php echo $st['class']; ?>"
-                                            style="font-size:.65rem"><?php echo $st['label']; ?></span>
-                                        <span class="<?php echo $pr['class']; ?>" style="font-size:.7rem">·
-                                            <?php echo $pr['label']; ?></span>
-                                        <?php if ($t['reply_count'] > 0): ?>
-                                            <span class="text-muted" style="font-size:.68rem">
-                                                <i class="bi bi-chat-left me-1"></i><?php echo $t['reply_count']; ?>
-                                            </span>
-                                        <?php endif; ?>
-                                    </div>
-                                    <div class="fw-semibold"
-                                        style="font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
-                                        <?php echo htmlspecialchars($t['subject']); ?>
-                                    </div>
-                                    <div class="text-muted" style="font-size:.72rem"><?php echo htmlspecialchars($preview); ?>
-                                    </div>
-                                    <div style="font-size:.68rem;color:var(--text-muted,#6c757d);margin-top:2px">
-                                        <i
-                                            class="bi bi-calendar3 me-1"></i><?php echo date('d/m/Y H:i', strtotime($t['creat_ticket'])); ?>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
+                        <div class="ticket-row">
+                            <div class="d-flex align-items-center flex-wrap gap-1 mb-1">
+                                <span style="font-size:.68rem;font-family:monospace;color:var(--text-muted,#6c757d)">
+                                    #<?php echo str_pad($t['id_ticket'], 5, '0', STR_PAD_LEFT); ?>
+                                </span>
+                                <span class="badge <?php echo $st['class']; ?>"
+                                    style="font-size:.65rem"><?php echo $st['label']; ?></span>
+                                <span class="<?php echo $pr['class']; ?>" style="font-size:.7rem">·
+                                    <?php echo $pr['label']; ?></span>
+                                <?php if ($t['reply_count'] > 0): ?>
+                                <span class="text-muted" style="font-size:.68rem">
+                                    <i class="bi bi-chat-left me-1"></i><?php echo $t['reply_count']; ?>
+                                </span>
+                                <?php endif; ?>
+                            </div>
+                            <div class="fw-semibold"
+                                style="font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+                                <?php echo htmlspecialchars($t['subject']); ?>
+                            </div>
+                            <div class="text-muted" style="font-size:.72rem"><?php echo htmlspecialchars($preview); ?>
+                            </div>
+                            <div style="font-size:.68rem;color:var(--text-muted,#6c757d);margin-top:2px">
+                                <i
+                                    class="bi bi-calendar3 me-1"></i><?php echo date('d/m/Y H:i', strtotime($t['creat_ticket'])); ?>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -730,298 +759,267 @@ $priority_cfg = [
 
             </div>
         </div>
-    </main>
-
-    <!-- Bottom Nav Mobile -->
-    <nav class="bottom-nav d-lg-none">
-        <ul class="nav justify-content-around">
-            <li class="nav-item"><a class="nav-link" href="../painel"><i
-                        class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../launch/releases"><i
-                        class="bi bi-disc"></i><span>Lançamentos</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../analytics/statistics"><i
-                        class="bi bi-bar-chart"></i><span>Stats</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../finances/overview"><i
-                        class="bi bi-currency-dollar"></i><span>Finanças</span></a></li>
-            <li class="nav-item"><a class="nav-link active" href="support"><i
-                        class="bi bi-headset"></i><span>Suporte</span></a></li>
-        </ul>
-    </nav>
-
-    <!-- Modal Logout -->
-    <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-dark">Terminar sessão</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body text-center text-dark">
-                    <p>Tens a certeza de que desejas terminar sessão, <strong><?php echo $first_name; ?></strong>?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Não, continuar</button>
-                    <a href="../logout" class="btn btn-danger">Sim, terminar sessão</a>
-                </div>
-            </div>
-        </div>
     </div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- theme.wp.js já trata o tema — não declarar themeToggle/themeIcon aqui -->
     <script src="<?php echo APP_URL  ?>/js/theme.wp.js"></script>
     <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
     <script>
-        // ══════════════════════════════════════════════════════════════
-        // TODO o código da página fica DENTRO do DOMContentLoaded.
-        // Isto garante:
-        //   1. DOM já existe quando tentamos aceder aos elementos
-        //   2. Não há conflito com variáveis de theme.wp.js / wp.tools.js
-        //      porque usamos um scope isolado (função anónima)
-        // ══════════════════════════════════════════════════════════════
-        document.addEventListener('DOMContentLoaded', function() {
+    // ══════════════════════════════════════════════════════════════
+    // TODO o código da página fica DENTRO do DOMContentLoaded.
+    // Isto garante:
+    //   1. DOM já existe quando tentamos aceder aos elementos
+    //   2. Não há conflito com variáveis de theme.wp.js / wp.tools.js
+    //      porque usamos um scope isolado (função anónima)
+    // ══════════════════════════════════════════════════════════════
+    document.addEventListener('DOMContentLoaded', function() {
 
-            // ── Urgência ───────────────────────────────────────────
-            let selectedUrgency = '';
+        // ── Urgência ───────────────────────────────────────────
+        let selectedUrgency = '';
 
-            function setUrgency(val) {
-                selectedUrgency = val;
-                ['Low', 'Medium', 'High'].forEach(function(u) {
-                    var el = document.getElementById('urg' + u);
-                    if (el) el.className = 'urgency-option';
-                });
-                var active = document.getElementById('urg' + val.charAt(0).toUpperCase() + val.slice(1));
-                if (active) active.classList.add('sel-' + val);
-                var radio = document.querySelector('input[name="urgency"][value="' + val + '"]');
-                if (radio) radio.checked = true;
-                var err = document.getElementById('urgencyError');
-                if (err) err.style.display = 'none';
-                updateProgress();
-            }
-
-            // Clique nos cards de urgência
+        function setUrgency(val) {
+            selectedUrgency = val;
             ['Low', 'Medium', 'High'].forEach(function(u) {
-                var card = document.getElementById('urg' + u);
-                if (card) {
-                    card.addEventListener('click', function() {
-                        setUrgency(u.toLowerCase());
-                    });
-                }
+                var el = document.getElementById('urg' + u);
+                if (el) el.className = 'urgency-option';
+            });
+            var active = document.getElementById('urg' + val.charAt(0).toUpperCase() + val.slice(1));
+            if (active) active.classList.add('sel-' + val);
+            var radio = document.querySelector('input[name="urgency"][value="' + val + '"]');
+            if (radio) radio.checked = true;
+            var err = document.getElementById('urgencyError');
+            if (err) err.style.display = 'none';
+            updateProgress();
+        }
+
+        // Clique nos cards de urgência
+        ['Low', 'Medium', 'High'].forEach(function(u) {
+            var card = document.getElementById('urg' + u);
+            if (card) {
+                card.addEventListener('click', function() {
+                    setUrgency(u.toLowerCase());
+                });
+            }
+        });
+
+        // ── Contador de caracteres ──────────────────────────────
+        var descEl = document.getElementById('description');
+        var charCount = document.getElementById('charCount');
+        if (descEl && charCount) {
+            descEl.addEventListener('input', function() {
+                charCount.textContent = this.value.length;
+                updateProgress();
+            });
+        }
+
+        // ── Progresso ───────────────────────────────────────────
+        function updateProgress() {
+            var issueVal = document.getElementById('issueType') ? document.getElementById('issueType')
+                .value :
+                '';
+            var descVal = descEl ? descEl.value.trim() : '';
+            var fields = [
+                issueVal !== '',
+                selectedUrgency !== '',
+                descVal.length >= 10
+            ];
+            var pct = Math.round(fields.filter(Boolean).length / fields.length * 100);
+            var fill = document.getElementById('progressFill');
+            var pctEl = document.getElementById('progressPct');
+            if (fill) fill.style.width = pct + '%';
+            if (pctEl) pctEl.textContent = pct + '%';
+        }
+
+        var issueTypeEl = document.getElementById('issueType');
+        if (issueTypeEl) {
+            issueTypeEl.addEventListener('change', updateProgress);
+        }
+
+        // ── Upload de ficheiros ─────────────────────────────────
+        var selectedFiles = [];
+        var dropArea = document.getElementById('dropArea');
+        var fileInput = document.getElementById('fileInput');
+        var fileList = document.getElementById('fileList');
+        var MAX_FILES = 5;
+        var MAX_SIZE = 10 * 1024 * 1024;
+        var ALLOWED = ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'txt', 'zip', 'mp4', 'mov'];
+
+        // Clique na área de drop abre o file picker
+        if (dropArea && fileInput) {
+            dropArea.addEventListener('click', function(e) {
+                if (e.target !== fileInput) fileInput.click();
             });
 
-            // ── Contador de caracteres ──────────────────────────────
-            var descEl = document.getElementById('description');
-            var charCount = document.getElementById('charCount');
-            if (descEl && charCount) {
-                descEl.addEventListener('input', function() {
-                    charCount.textContent = this.value.length;
-                    updateProgress();
+            dropArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                dropArea.classList.add('drag-over');
+            });
+            dropArea.addEventListener('dragleave', function() {
+                dropArea.classList.remove('drag-over');
+            });
+            dropArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                dropArea.classList.remove('drag-over');
+                var dt = new DataTransfer();
+                Array.from(e.dataTransfer.files || []).forEach(function(f) {
+                    dt.items.add(f);
                 });
-            }
+                fileInput.files = dt.files;
+                processFiles();
+            });
 
-            // ── Progresso ───────────────────────────────────────────
-            function updateProgress() {
-                var issueVal = document.getElementById('issueType') ? document.getElementById('issueType').value :
-                    '';
-                var descVal = descEl ? descEl.value.trim() : '';
-                var fields = [
-                    issueVal !== '',
-                    selectedUrgency !== '',
-                    descVal.length >= 10
-                ];
-                var pct = Math.round(fields.filter(Boolean).length / fields.length * 100);
-                var fill = document.getElementById('progressFill');
-                var pctEl = document.getElementById('progressPct');
-                if (fill) fill.style.width = pct + '%';
-                if (pctEl) pctEl.textContent = pct + '%';
-            }
+            fileInput.addEventListener('change', processFiles);
+        }
 
-            var issueTypeEl = document.getElementById('issueType');
-            if (issueTypeEl) {
-                issueTypeEl.addEventListener('change', updateProgress);
-            }
+        function processFiles() {
+            Array.from(fileInput.files).forEach(function(f) {
+                if (selectedFiles.length >= MAX_FILES) return;
+                var ext = f.name.split('.').pop().toLowerCase();
+                if (!ALLOWED.includes(ext) || f.size > MAX_SIZE) return;
+                if (!selectedFiles.find(function(x) {
+                        return x.name === f.name && x.size === f.size;
+                    })) {
+                    selectedFiles.push(f);
+                }
+            });
+            renderFiles();
+        }
 
-            // ── Upload de ficheiros ─────────────────────────────────
-            var selectedFiles = [];
-            var dropArea = document.getElementById('dropArea');
-            var fileInput = document.getElementById('fileInput');
-            var fileList = document.getElementById('fileList');
-            var MAX_FILES = 5;
-            var MAX_SIZE = 10 * 1024 * 1024;
-            var ALLOWED = ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'txt', 'zip', 'mp4', 'mov'];
+        function renderFiles() {
+            if (!fileList) return;
+            fileList.innerHTML = '';
+            selectedFiles.forEach(function(f, i) {
+                var d = document.createElement('div');
+                d.className = 'file-item';
+                d.innerHTML = '<span><i class="bi bi-paperclip me-1"></i>' + f.name +
+                    ' <small class="text-muted">(' + (f.size / 1024).toFixed(0) +
+                    ' KB)</small></span>' +
+                    '<button type="button" class="btn btn-sm text-danger p-0 ms-2" data-idx="' + i +
+                    '">' +
+                    '<i class="bi bi-x-lg"></i></button>';
+                d.querySelector('button').addEventListener('click', function() {
+                    selectedFiles.splice(parseInt(this.dataset.idx), 1);
+                    renderFiles();
+                });
+                fileList.appendChild(d);
+            });
+        }
 
-            // Clique na área de drop abre o file picker
-            if (dropArea && fileInput) {
-                dropArea.addEventListener('click', function(e) {
-                    if (e.target !== fileInput) fileInput.click();
+        // ── Submit via fetch ────────────────────────────────────
+        var submitBtn = document.getElementById('submitBtn');
+        var banner = document.getElementById('resultBanner');
+
+        if (submitBtn) {
+            submitBtn.addEventListener('click', async function() {
+
+                var issueType = issueTypeEl ? issueTypeEl.value : '';
+                var description = descEl ? descEl.value.trim() : '';
+                var csrfToken = document.querySelector('[name="csrf_token"]');
+                csrfToken = csrfToken ? csrfToken.value : '';
+
+                // Validação
+                var valid = true;
+
+                if (!issueType) {
+                    if (issueTypeEl) issueTypeEl.classList.add('is-invalid');
+                    valid = false;
+                } else {
+                    if (issueTypeEl) issueTypeEl.classList.remove('is-invalid');
+                }
+
+                if (!selectedUrgency) {
+                    var urgErr = document.getElementById('urgencyError');
+                    if (urgErr) urgErr.style.display = 'block';
+                    valid = false;
+                }
+
+                if (description.length < 10) {
+                    if (descEl) descEl.classList.add('is-invalid');
+                    valid = false;
+                } else {
+                    if (descEl) descEl.classList.remove('is-invalid');
+                }
+
+                if (!valid) return;
+
+                // FormData
+                var fd = new FormData();
+                fd.append('csrf_token', csrfToken);
+                fd.append('issueType', issueType);
+                fd.append('urgency', selectedUrgency);
+                fd.append('description', description);
+                selectedFiles.forEach(function(f) {
+                    fd.append('attachment[]', f);
                 });
 
-                dropArea.addEventListener('dragover', function(e) {
-                    e.preventDefault();
-                    dropArea.classList.add('drag-over');
-                });
-                dropArea.addEventListener('dragleave', function() {
-                    dropArea.classList.remove('drag-over');
-                });
-                dropArea.addEventListener('drop', function(e) {
-                    e.preventDefault();
-                    dropArea.classList.remove('drag-over');
-                    var dt = new DataTransfer();
-                    Array.from(e.dataTransfer.files || []).forEach(function(f) {
-                        dt.items.add(f);
+                // UI loading
+                submitBtn.disabled = true;
+                submitBtn.innerHTML =
+                    '<span class="spinner-border spinner-border-sm me-2"></span>A enviar…';
+                if (banner) banner.className = 'result-banner mb-3';
+
+                try {
+                    var res = await fetch('../ajax/support_dashboard', {
+                        method: 'POST',
+                        body: fd,
+                        credentials: 'same-origin'
                     });
-                    fileInput.files = dt.files;
-                    processFiles();
-                });
+                    var data = await res.json();
 
-                fileInput.addEventListener('change', processFiles);
-            }
-
-            function processFiles() {
-                Array.from(fileInput.files).forEach(function(f) {
-                    if (selectedFiles.length >= MAX_FILES) return;
-                    var ext = f.name.split('.').pop().toLowerCase();
-                    if (!ALLOWED.includes(ext) || f.size > MAX_SIZE) return;
-                    if (!selectedFiles.find(function(x) {
-                            return x.name === f.name && x.size === f.size;
-                        })) {
-                        selectedFiles.push(f);
-                    }
-                });
-                renderFiles();
-            }
-
-            function renderFiles() {
-                if (!fileList) return;
-                fileList.innerHTML = '';
-                selectedFiles.forEach(function(f, i) {
-                    var d = document.createElement('div');
-                    d.className = 'file-item';
-                    d.innerHTML = '<span><i class="bi bi-paperclip me-1"></i>' + f.name +
-                        ' <small class="text-muted">(' + (f.size / 1024).toFixed(0) +
-                        ' KB)</small></span>' +
-                        '<button type="button" class="btn btn-sm text-danger p-0 ms-2" data-idx="' + i +
-                        '">' +
-                        '<i class="bi bi-x-lg"></i></button>';
-                    d.querySelector('button').addEventListener('click', function() {
-                        selectedFiles.splice(parseInt(this.dataset.idx), 1);
-                        renderFiles();
-                    });
-                    fileList.appendChild(d);
-                });
-            }
-
-            // ── Submit via fetch ────────────────────────────────────
-            var submitBtn = document.getElementById('submitBtn');
-            var banner = document.getElementById('resultBanner');
-
-            if (submitBtn) {
-                submitBtn.addEventListener('click', async function() {
-
-                    var issueType = issueTypeEl ? issueTypeEl.value : '';
-                    var description = descEl ? descEl.value.trim() : '';
-                    var csrfToken = document.querySelector('[name="csrf_token"]');
-                    csrfToken = csrfToken ? csrfToken.value : '';
-
-                    // Validação
-                    var valid = true;
-
-                    if (!issueType) {
-                        if (issueTypeEl) issueTypeEl.classList.add('is-invalid');
-                        valid = false;
-                    } else {
-                        if (issueTypeEl) issueTypeEl.classList.remove('is-invalid');
+                    if (banner) {
+                        banner.className = 'result-banner mb-3 show ' + (data.ok ? 'ok' :
+                            'err');
+                        banner.innerHTML = '<i class="bi bi-' + (data.ok ? 'check-circle-fill' :
+                                'exclamation-triangle-fill') +
+                            ' fs-5 flex-shrink-0"></i><span>' + data.message + '</span>';
                     }
 
-                    if (!selectedUrgency) {
-                        var urgErr = document.getElementById('urgencyError');
-                        if (urgErr) urgErr.style.display = 'block';
-                        valid = false;
-                    }
-
-                    if (description.length < 10) {
-                        if (descEl) descEl.classList.add('is-invalid');
-                        valid = false;
-                    } else {
-                        if (descEl) descEl.classList.remove('is-invalid');
-                    }
-
-                    if (!valid) return;
-
-                    // FormData
-                    var fd = new FormData();
-                    fd.append('csrf_token', csrfToken);
-                    fd.append('issueType', issueType);
-                    fd.append('urgency', selectedUrgency);
-                    fd.append('description', description);
-                    selectedFiles.forEach(function(f) {
-                        fd.append('attachment[]', f);
-                    });
-
-                    // UI loading
-                    submitBtn.disabled = true;
-                    submitBtn.innerHTML =
-                        '<span class="spinner-border spinner-border-sm me-2"></span>A enviar…';
-                    if (banner) banner.className = 'result-banner mb-3';
-
-                    try {
-                        var res = await fetch('../ajax/support_dashboard', {
-                            method: 'POST',
-                            body: fd,
-                            credentials: 'same-origin'
+                    if (data.ok) {
+                        // Limpar form
+                        if (issueTypeEl) {
+                            issueTypeEl.value = '';
+                            issueTypeEl.classList.remove('is-invalid');
+                        }
+                        if (descEl) {
+                            descEl.value = '';
+                            descEl.classList.remove('is-invalid');
+                        }
+                        if (charCount) charCount.textContent = '0';
+                        selectedUrgency = '';
+                        ['Low', 'Medium', 'High'].forEach(function(u) {
+                            var el = document.getElementById('urg' + u);
+                            if (el) el.className = 'urgency-option';
                         });
-                        var data = await res.json();
-
-                        if (banner) {
-                            banner.className = 'result-banner mb-3 show ' + (data.ok ? 'ok' : 'err');
-                            banner.innerHTML = '<i class="bi bi-' + (data.ok ? 'check-circle-fill' :
-                                    'exclamation-triangle-fill') +
-                                ' fs-5 flex-shrink-0"></i><span>' + data.message + '</span>';
-                        }
-
-                        if (data.ok) {
-                            // Limpar form
-                            if (issueTypeEl) {
-                                issueTypeEl.value = '';
-                                issueTypeEl.classList.remove('is-invalid');
-                            }
-                            if (descEl) {
-                                descEl.value = '';
-                                descEl.classList.remove('is-invalid');
-                            }
-                            if (charCount) charCount.textContent = '0';
-                            selectedUrgency = '';
-                            ['Low', 'Medium', 'High'].forEach(function(u) {
-                                var el = document.getElementById('urg' + u);
-                                if (el) el.className = 'urgency-option';
-                            });
-                            selectedFiles = [];
-                            renderFiles();
-                            updateProgress();
-                            if (banner) banner.scrollIntoView({
-                                behavior: 'smooth',
-                                block: 'nearest'
-                            });
-                            // Actualiza lista após 8s
-                            setTimeout(function() {
-                                location.reload();
-                            }, 8000);
-                        }
-                    } catch (err) {
-                        if (banner) {
-                            banner.className = 'result-banner mb-3 show err';
-                            banner.innerHTML =
-                                '<i class="bi bi-exclamation-triangle-fill fs-5 flex-shrink-0"></i>' +
-                                '<span>Erro de rede. Verifica a ligação e tenta novamente.</span>';
-                        }
-                    } finally {
-                        submitBtn.disabled = false;
-                        submitBtn.innerHTML = '<i class="bi bi-send me-2"></i>Enviar Pedido de Suporte';
+                        selectedFiles = [];
+                        renderFiles();
+                        updateProgress();
+                        if (banner) banner.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'nearest'
+                        });
+                        // Actualiza lista após 8s
+                        setTimeout(function() {
+                            location.reload();
+                        }, 8000);
                     }
-                });
-            }
+                } catch (err) {
+                    if (banner) {
+                        banner.className = 'result-banner mb-3 show err';
+                        banner.innerHTML =
+                            '<i class="bi bi-exclamation-triangle-fill fs-5 flex-shrink-0"></i>' +
+                            '<span>Erro de rede. Verifica a ligação e tenta novamente.</span>';
+                    }
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML =
+                        '<i class="bi bi-send me-2"></i>Enviar Pedido de Suporte';
+                }
+            });
+        }
 
-        }); // fim DOMContentLoaded
+    }); // fim DOMContentLoaded
     </script>
 </body>
 

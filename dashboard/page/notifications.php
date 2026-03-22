@@ -1147,15 +1147,18 @@ foreach ($all as $n) {
                 <div class="settings-card">
                     <h6><i class="bi bi-lightning-charge me-2"></i>Atalhos Rápidos</h6>
                     <div class="d-grid gap-2">
-                        <a href="../finances/overview" class="btn btn-sm btn-outline-secondary text-start"
+                        <a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/overview"
+                            class="btn btn-sm btn-outline-secondary text-start"
                             style="border-radius:9px;font-weight:600">
                             <i class="bi bi-currency-dollar me-2"></i>Verificar receitas
                         </a>
-                        <a href="../analytics/statistics" class="btn btn-sm btn-outline-secondary text-start"
+                        <a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/statistics"
+                            class="btn btn-sm btn-outline-secondary text-start"
                             style="border-radius:9px;font-weight:600">
                             <i class="bi bi-bar-chart me-2"></i>Ver estatísticas
                         </a>
-                        <a href="../launch/creat-release" class="btn btn-sm btn-outline-secondary text-start"
+                        <a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/creat-release"
+                            class="btn btn-sm btn-outline-secondary text-start"
                             style="border-radius:9px;font-weight:600">
                             <i class="bi bi-plus-circle me-2"></i>Novo lançamento
                         </a>
@@ -1224,9 +1227,7 @@ foreach ($all as $n) {
     // ════════════════════════════════════════════════════
     // VAPID PUBLIC KEY (configurar no servidor)
     // ════════════════════════════════════════════════════
-    const VAPID_PUBLIC_KEY = <?php
-                                    echo json_encode(defined('VAPID_PUBLIC_KEY') ? VAPID_PUBLIC_KEY : 'SUBSTITUI_PELA_TUA_VAPID_PUBLIC_KEY');
-                                    ?>;
+    const VAPID_PUBLIC_KEY = <?php echo json_encode(defined('VAPID_PUBLIC_KEY') ? VAPID_PUBLIC_KEY : ''); ?>;
 
     document.addEventListener('DOMContentLoaded', function() {
 
@@ -1612,7 +1613,7 @@ foreach ($all as $n) {
                     btnPush.addEventListener('click', async function() {
                         if (VAPID_PUBLIC_KEY === 'SUBSTITUI_PELA_TUA_VAPID_PUBLIC_KEY') {
                             pushStat.style.display = '';
-                            pushStat.textContent = '⚠️ VAPID key não configurada no servidor.';
+                            pushStat.textContent = 'VAPID key não configurada no servidor.';
                             return;
                         }
                         try {

@@ -53,7 +53,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action'])) {
                 'ok'      => true,
                 'message' => 'Registado! Serás avisado assim que a plataforma regressar.'
             ]);
-
         } catch (PDOException $e) {
             error_log('[maintenance notify] ' . $e->getMessage());
             echo json_encode([
@@ -107,7 +106,7 @@ try {
 
         // Se NÃO estiver em manutenção → redirecionar para o painel imediatamente
         if (!$is_maintenance) {
-            header('Location: ../dashboard/painel');
+            header('Location: ' . APP_URL . '/' . APP_URL_PANEL . '/painel');
             exit;
         }
 
@@ -138,7 +137,6 @@ try {
     foreach ($cq->fetchAll(PDO::FETCH_ASSOC) as $row) {
         $cfg[$row['config_key']] = $row['config_value'];
     }
-
 } catch (PDOException $e) {
     // BD indisponível → mostrar a página de manutenção na mesma
     error_log('[maintenance page] DB error: ' . $e->getMessage());
@@ -209,12 +207,9 @@ $state_map = [
     <meta name="robots" content="noindex, nofollow" />
     <meta name="theme-color" content="#FF0089" />
     <meta name="author" content="José Mbenga da Costa" />
-    <meta property="og:locale" content="pt_AO" />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="<?php echo $site_name; ?>" />
-    <title>Em Manutenção — <?php echo $site_name; ?></title>
-    <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon" />
-    <link rel="apple-touch-icon" href="../../assets/img/icones/wasomupfy_fiv_512.png" />
+    <title>Em Manutenção — <?php echo APP_NAME; ?></title>
+    <link rel="shortcut icon" href="<?php echo APP_URL ?>/assets/img/icones/wasomupfy_fiv.png" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="<?php echo APP_URL ?>/assets/img/icones/wasomupfy_fiv_512.png" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
     <style>
@@ -773,7 +768,7 @@ $state_map = [
     <div class="page-wrap">
 
         <!-- Logo -->
-        <a class="brand-logo" href="../dashboard/painel">
+        <a class="brand-logo" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/painel">
             <span class="brand-dot"></span>
             <?php echo strtoupper($site_name); ?>
         </a>
@@ -833,10 +828,10 @@ $state_map = [
             </div>
             <ul class="service-list">
                 <?php foreach ($services as $key => $state):
-            $label = $service_labels[$key] ?? ucfirst(str_replace('_', ' ', $key));
-            $state = array_key_exists($state, $state_map) ? $state : 'ok';
-            $s     = $state_map[$state];
-        ?>
+                    $label = $service_labels[$key] ?? ucfirst(str_replace('_', ' ', $key));
+                    $state = array_key_exists($state, $state_map) ? $state : 'ok';
+                    $s     = $state_map[$state];
+                ?>
                 <li>
                     <span class="s-dot <?php echo $s['dot']; ?>"></span>
                     <?php echo htmlspecialchars($label); ?>
@@ -870,7 +865,7 @@ $state_map = [
                 Manutenção concluída! A redirecionar para a plataforma…
             </div>
 
-            <a href="../../dashboard/painel" class="btn-back">
+            <a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/painel" class="btn-back">
                 <i class="bi bi-arrow-left"></i>
                 Tentar aceder à plataforma
             </a>
@@ -883,9 +878,9 @@ $state_map = [
                 &nbsp;·&nbsp; v<?php echo $platform_ver; ?>
             </p>
             <p>
-                <a href="../../dashboard/page/terms">Termos de Uso</a>
+                <a href="<?php echo APP_URL ?>/page/politicies/terms">Termos de Uso</a>
                 &nbsp;·&nbsp;
-                <a href="../../dashboard/page/privacy">Política de Privacidade</a>
+                <a href="<?php echo APP_URL ?>/page/politicies/privacy">Política de Privacidade</a>
                 &nbsp;·&nbsp;
                 <a href="mailto:<?php echo $support_email; ?>"><?php echo $support_email; ?></a>
             </p>
@@ -917,6 +912,7 @@ $state_map = [
         var elPct = document.getElementById('progPct');
         var elDone = document.getElementById('doneMsg');
         var timer = null;
+        const BASE_URL = <?php echo rtrim(APP_URL, '/' . APP_URL_PANEL); ?>;
 
         function pad(n) {
             return String(n).padStart(2, '0');
@@ -965,7 +961,7 @@ $state_map = [
             if (elDone) elDone.style.display = 'block';
             // Redirecionar após 3s — o servidor irá confirmar se a manutenção terminou
             setTimeout(function() {
-                window.location.href = '../dashboard/painel';
+                window.location.href = BASE_URL + '/painel';
             }, 3000);
         }
 

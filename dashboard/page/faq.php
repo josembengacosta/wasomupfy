@@ -4,500 +4,578 @@
 // Arquivo: dashboard/page/faq.php
 // ══════════════════════════════════════════════════════
 require_once __DIR__ . '/../../authentic/include/functions.php';
+require_once __DIR__ . '/../include/platform.php';
 startSecureSession();
 checkRememberMe();
 requireLogin();
+$platform = checkDashboardStatus();
+$user     = checkUserAccess((int)$_SESSION['id_users']);
 
-$id_users   = (int)$_SESSION['id_users'];
-$user       = getUserById($id_users);
-if (!$user) {
-    session_destroy();
-    redirect(APP_URL  . '/' . 'login', ['error' => 'csrf']);
+$id_users       = (int)$user['id_users'];
+$first_name     = htmlspecialchars($user['first_name']);
+$user_name      = htmlspecialchars($user['user_name'] ?? '');
+$email_verified = (bool)$user['email_verified'];
+$plan_selected  = $user['plan_selected'];
+$onboard_done   = (bool)($user['onboarding_done'] ?? false);
+$user_photo     = $user['photo_user'] ?? null;
+$name_artist_band = htmlspecialchars($user['name_artist_band'] ?? 'Cria Perfil Artístico');
+$notif_count    = getUnreadNotifCount($id_users);
+$db             = getDB();
+
+// ── Saldo ─────────────────────────────────────
+$w = $db->prepare('SELECT balance_aoa FROM _wallet WHERE id_users = ?');
+$w->execute([$id_users]);
+$balance = $w->fetch() ?: ['balance_aoa' => 0];
+
+// ── Plano ─────────────────────────────────────
+$plan_id     = (int)$user['plan_selected'];
+$plan        = null;
+$max_artists = 1;
+if ($plan_id) {
+    $ps = $db->prepare('SELECT * FROM _plans WHERE id_plan = ?');
+    $ps->execute([$plan_id]);
+    $plan = $ps->fetch();
+    if ($plan) $max_artists = (int)($plan['max_artists'] ?? 1);
+}
+$plan_name = $plan ? htmlspecialchars($plan['name_plan']) : 'Sem plano';
+
+// ── Plano ─────────────────────────────────────
+$plan      = null;
+$plan_paid = ($user['status_user'] === 'active' && !empty($user['plan_activated_at']));
+if ($plan_selected) {
+    $ps = $db->prepare('SELECT * FROM _plans WHERE id_plan = ?');
+    $ps->execute([$plan_selected]);
+    $plan = $ps->fetch();
 }
 
-$first_name = htmlspecialchars($user['first_name'] ?? '');
-$full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['second_name'] ?? '')));
+// Adicionar verificação de expiração do plano
+$plan_expired = false;
+if ($plan_paid && !empty($user['plan_expires_at'])) {
+    $plan_expired = strtotime($user['plan_expires_at']) < time();
+}
+
+// ── Artistas ──────────────────────────────────
+$as = $db->prepare('SELECT COUNT(*) AS total FROM _artist WHERE id_users = ?');
+$as->execute([$id_users]);
+$has_artist = (int)($as->fetch()['total'] ?? 0) > 0;
+
+// ── Conta bancária ────────────────────────────
+$ba = $db->prepare("SELECT id_account FROM _account WHERE id_users = ? AND status_account = 'verified' LIMIT 1");
+$ba->execute([$id_users]);
+$bank_account = $ba->fetch();
+
+// ── Conta rejeitada ───────────────────────────
+$rejected_account = null;
+if ($plan_paid) {
+    $rj = $db->prepare("SELECT type_account, reject_reason FROM _account WHERE id_users = ? AND status_account = 'rejected' LIMIT 1");
+    $rj->execute([$id_users]);
+    $rejected_account = $rj->fetch();
+}
+
+// ── Sessão info (modal logout) ────────────────
+$ls = $db->prepare('SELECT last_login_at, last_login_ip FROM _users_security WHERE id_users = ?');
+$ls->execute([$id_users]);
+$sec = $ls->fetch();
+
+$sess_stmt = $db->prepare("
+    SELECT ip_address, user_agent, country, city, creat_session, last_activity
+    FROM _users_sessions WHERE id_users = ? AND is_active = 1
+    ORDER BY last_activity DESC LIMIT 1
+");
+$sess_stmt->execute([$id_users]);
+$current_session  = $sess_stmt->fetch();
+$session_duration_str = '—';
+if ($current_session && $current_session['creat_session']) {
+    $secs = time() - strtotime($current_session['creat_session']);
+    if ($secs < 60)     $session_duration_str = $secs . 's';
+    elseif ($secs < 3600)  $session_duration_str = floor($secs / 60) . 'min';
+    elseif ($secs < 86400) $session_duration_str = floor($secs / 3600) . 'h ' . floor(($secs % 3600) / 60) . 'min';
+    else                   $session_duration_str = floor($secs / 86400) . 'd ' . floor(($secs % 86400) / 3600) . 'h';
+}
+$member_since   = $user['creat_user'] ? date('d/m/Y', strtotime($user['creat_user'])) : '—';
+$last_login_str = ($sec && $sec['last_login_at']) ? date('d/m/Y H:i', strtotime($sec['last_login_at'])) : '—';
+$ua_raw   = $current_session['user_agent'] ?? '';
+$browser  = 'Desconhecido';
+if (str_contains($ua_raw, 'Edg'))     $browser = 'Microsoft Edge';
+elseif (str_contains($ua_raw, 'Chrome'))  $browser = 'Google Chrome';
+elseif (str_contains($ua_raw, 'Firefox')) $browser = 'Mozilla Firefox';
+elseif (str_contains($ua_raw, 'Safari'))  $browser = 'Safari';
+elseif (str_contains($ua_raw, 'Opera'))   $browser = 'Opera';
+$sess_location = trim(($current_session['city'] ?? '') . ', ' . ($current_session['country'] ?? ''), ', ') ?: 'Desconhecida';
+$sess_ip       = $current_session['ip_address'] ?? ($sec['last_login_ip'] ?? '—');
+
+$first_name       = htmlspecialchars($user['first_name']);
+$user_artist_name = htmlspecialchars($user['name_artist_band'] ?? $user['first_name']);
+
 ?>
 <!DOCTYPE html>
 <html lang="pt-ao">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="robots" content="noindex, nofollow" />
-    <meta name="theme-color" content="#FF0089" />
-    <link rel="apple-touch-icon" href="../../assets/img/icones/wasomupfy_fiv_512.png" />
-    <link rel="manifest" href="../manifest.json" />
+    <?php require_once __DIR__ . '/../include/head.php'; ?>
     <title data-i18n="faq_title">Perguntas Frequentes — <?php echo APP_NAME; ?></title>
-    <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
-    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/dashboard-style.css" />
-    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/lastest-style.css" />
-
     <style>
-        /* ══ Progress bar de leitura ══ */
-        .read-progress {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            z-index: 9999;
-            background: var(--border-color, rgba(0, 0, 0, .08));
-        }
+    /* ══ Progress bar de leitura ══ */
+    .read-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        z-index: 9999;
+        background: var(--border-color, rgba(0, 0, 0, .08));
+    }
 
-        .read-progress-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #FF0089, #FF4D4D);
-            transition: width .1s linear;
-        }
+    .read-progress-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #FF0089, #FF4D4D);
+        transition: width .1s linear;
+    }
 
-        /* ══ Hero ══ */
-        .faq-hero {
-            background: linear-gradient(135deg, #FF0089 0%, #FF4D4D 100%);
-            border-radius: 22px;
-            padding: 2.8rem 2rem 2.2rem;
-            margin-bottom: 2rem;
-            color: #fff;
-            position: relative;
-            overflow: hidden;
-            text-align: center;
-        }
+    /* ══ Hero ══ */
+    .faq-hero {
+        background: linear-gradient(135deg, #FF0089 0%, #FF4D4D 100%);
+        border-radius: 22px;
+        padding: 2.8rem 2rem 2.2rem;
+        margin-bottom: 2rem;
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+    }
 
-        .faq-hero::before {
-            content: '\F44F';
-            font-family: 'bootstrap-icons';
-            position: absolute;
-            right: -20px;
-            bottom: -28px;
-            font-size: 11rem;
-            opacity: .07;
-        }
+    .faq-hero::before {
+        content: '\F44F';
+        font-family: 'bootstrap-icons';
+        position: absolute;
+        right: -20px;
+        bottom: -28px;
+        font-size: 11rem;
+        opacity: .07;
+    }
 
+    .faq-hero h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: .6rem;
+        position: relative;
+        z-index: 2;
+    }
+
+    .faq-hero p {
+        font-size: 1.05rem;
+        max-width: 660px;
+        margin: 0 auto .5rem;
+        opacity: .9;
+        position: relative;
+        z-index: 2;
+    }
+
+    .faq-hero .update-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255, 255, 255, .18);
+        border: 1px solid rgba(255, 255, 255, .3);
+        border-radius: 999px;
+        padding: 3px 14px;
+        font-size: .75rem;
+        font-weight: 600;
+        position: relative;
+        z-index: 2;
+        margin-bottom: .5rem;
+    }
+
+    /* ══ Search ══ */
+    .faq-search-wrap {
+        max-width: 580px;
+        margin: 1.5rem auto 0;
+        position: relative;
+        z-index: 2;
+    }
+
+    .faq-search-wrap .input-group {
+        background: #fff;
+        border-radius: 50px;
+        overflow: hidden;
+        box-shadow: 0 8px 22px rgba(0, 0, 0, .18);
+    }
+
+    .faq-search-wrap input {
+        border: none;
+        padding: .85rem 1.4rem;
+        font-size: .93rem;
+    }
+
+    .faq-search-wrap input:focus {
+        box-shadow: none;
+    }
+
+    .faq-search-wrap .search-icon-btn {
+        background: #fff;
+        border: none;
+        padding: 0 1.6rem;
+        color: #FF0089;
+        font-size: 1.1rem;
+    }
+
+    /* ══ Action buttons ══ */
+    .action-btns {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 1.5rem;
+    }
+
+    .action-btns a,
+    .action-btns button {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: .4rem 1.1rem;
+        border-radius: 999px;
+        font-size: .8rem;
+        font-weight: 600;
+        border: 1.5px solid rgba(255, 0, 137, .35);
+        color: #FF0089;
+        background: transparent;
+        text-decoration: none;
+        transition: all .2s;
+        cursor: pointer;
+    }
+
+    .action-btns a:hover,
+    .action-btns button:hover {
+        background: #FF0089;
+        color: #fff;
+        border-color: #FF0089;
+    }
+
+    /* ══ Category filter tabs ══ */
+    .cat-filter {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-bottom: 1.8rem;
+    }
+
+    .cat-btn {
+        padding: .38rem 1.1rem;
+        border-radius: 999px;
+        font-size: .78rem;
+        font-weight: 700;
+        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .12));
+        background: var(--card-bg, #fff);
+        color: var(--text-muted, #6c757d);
+        cursor: pointer;
+        transition: all .15s;
+        white-space: nowrap;
+    }
+
+    .cat-btn:hover {
+        border-color: #FF0089;
+        color: #FF0089;
+    }
+
+    .cat-btn.active {
+        background: #FF0089;
+        border-color: #FF0089;
+        color: #fff;
+    }
+
+    /* ══ Index nav (sidebar) ══ */
+    .nav-index {
+        background: var(--card-bg, #fff);
+        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
+        border-radius: 16px;
+        padding: 1.4rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .nav-index h3 {
+        font-size: .9rem;
+        font-weight: 800;
+        color: #FF0089;
+        margin-bottom: .9rem;
+    }
+
+    .nav-index ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .nav-index .index-item {
+        margin-bottom: .4rem;
+    }
+
+    .nav-index .index-item a {
+        font-size: .8rem;
+        color: var(--text-muted, #6c757d);
+        text-decoration: none;
+        display: flex;
+        align-items: flex-start;
+        gap: 6px;
+        line-height: 1.4;
+        transition: color .15s;
+    }
+
+    .nav-index .index-item a::before {
+        content: '›';
+        color: #FF0089;
+        flex-shrink: 0;
+    }
+
+    .nav-index .index-item a:hover {
+        color: #FF0089;
+    }
+
+    .nav-index .index-item.hidden {
+        display: none;
+    }
+
+    /* ══ FAQ items (custom accordion — preserva faq.js) ══ */
+    .faq-content {}
+
+    .faq-item {
+        background: var(--card-bg, #fff);
+        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
+        border-left: 4px solid transparent;
+        border-radius: 14px;
+        margin-bottom: .8rem;
+        overflow: hidden;
+        transition: border-color .2s, box-shadow .2s;
+        display: none;
+        /* controlado por JS / filtro */
+    }
+
+    .faq-item.visible {
+        display: block;
+    }
+
+    .faq-item:hover {
+        border-left-color: #FF0089;
+    }
+
+    .faq-item.active {
+        border-left-color: #FF0089;
+        box-shadow: 0 4px 16px rgba(255, 0, 137, .1);
+    }
+
+    .faq-item .question {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 1.1rem 1.3rem;
+        cursor: pointer;
+        user-select: none;
+        font-weight: 600;
+        font-size: .92rem;
+    }
+
+    .faq-item .question>i:first-child {
+        color: #FF0089;
+        font-size: 1.15rem;
+        flex-shrink: 0;
+    }
+
+    .faq-item .question span {
+        flex: 1;
+    }
+
+    .faq-item .question .toggle-icon {
+        color: var(--text-muted, #6c757d);
+        transition: transform .3s;
+        flex-shrink: 0;
+    }
+
+    .faq-item.active .question .toggle-icon {
+        transform: rotate(180deg);
+    }
+
+    .faq-item .answer {
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        padding: 0 1.3rem;
+        font-size: .87rem;
+        color: var(--text-muted, #6c757d);
+        line-height: 1.7;
+        transition: max-height .35s ease, opacity .3s ease, padding .3s ease;
+    }
+
+    .faq-item.active .answer {
+        padding: 0 1.3rem 1.2rem;
+    }
+
+    .faq-item .answer mark {
+        background: rgba(255, 0, 137, .18);
+        color: inherit;
+        border-radius: 3px;
+        padding: 0 2px;
+    }
+
+    /* ══ Category badge on item ══ */
+    .faq-cat-tag {
+        font-size: .65rem;
+        font-weight: 700;
+        padding: .2rem .6rem;
+        border-radius: 999px;
+        background: rgba(255, 0, 137, .1);
+        color: #FF0089;
+        flex-shrink: 0;
+    }
+
+    /* ══ No results ══ */
+    #noResults {
+        text-align: center;
+        padding: 2.5rem 1rem;
+        display: none;
+        color: var(--text-muted, #6c757d);
+    }
+
+    #noResults i {
+        font-size: 2.5rem;
+        color: #FF0089;
+        opacity: .4;
+        display: block;
+        margin-bottom: .8rem;
+    }
+
+    /* ══ Tips ══ */
+    .tips-section {
+        background: var(--card-bg, #fff);
+        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .tips-section h2 {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #FF0089;
+        margin-bottom: 1rem;
+    }
+
+    .tip-card {
+        background: var(--metric-bg, rgba(0, 0, 0, .03));
+        border-radius: 10px;
+        padding: .75rem 1rem;
+        font-size: .85rem;
+        margin-bottom: .6rem;
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+    }
+
+    .tip-card i {
+        color: #FF0089;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+    .tip-card:last-child {
+        margin-bottom: 0;
+    }
+
+    /* ══ Tutorial section ══ */
+    .tutorial-section {
+        background: linear-gradient(135deg, rgba(255, 0, 137, .07), rgba(255, 77, 77, .05));
+        border: 1.5px solid rgba(255, 0, 137, .2);
+        border-radius: 16px;
+        padding: 1.8rem;
+        text-align: center;
+        margin-top: .8rem;
+    }
+
+    .tutorial-section h2 {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #FF0089;
+        margin-bottom: 1rem;
+    }
+
+    .tutorial-btn {
+        background: #FF0089;
+        border: none;
+        color: #fff;
+        padding: .55rem 2rem;
+        border-radius: 999px;
+        font-weight: 700;
+        transition: all .2s;
+    }
+
+    .tutorial-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(255, 0, 137, .35);
+    }
+
+    /* ══ Back to top ══ */
+    #backToTop {
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: #FF0089;
+        color: #fff;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        box-shadow: 0 4px 14px rgba(255, 0, 137, .4);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .25s;
+        z-index: 1000;
+        cursor: pointer;
+    }
+
+    #backToTop.visible {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    /* ══ Support float btn ══ */
+    .support-btn {
+        position: fixed;
+        bottom: 80px;
+        left: 20px;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: #FF0089;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        box-shadow: 0 4px 14px rgba(255, 0, 137, .4);
+        text-decoration: none;
+        z-index: 1000;
+        transition: transform .2s;
+    }
+
+    .support-btn:hover {
+        transform: scale(1.1);
+        color: #fff;
+    }
+
+    @media(max-width:768px) {
         .faq-hero h1 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: .6rem;
-            position: relative;
-            z-index: 2;
+            font-size: 1.9rem;
         }
 
-        .faq-hero p {
-            font-size: 1.05rem;
-            max-width: 660px;
-            margin: 0 auto .5rem;
-            opacity: .9;
-            position: relative;
-            z-index: 2;
+        .faq-hero {
+            padding: 2rem 1rem 1.8rem;
         }
-
-        .faq-hero .update-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(255, 255, 255, .18);
-            border: 1px solid rgba(255, 255, 255, .3);
-            border-radius: 999px;
-            padding: 3px 14px;
-            font-size: .75rem;
-            font-weight: 600;
-            position: relative;
-            z-index: 2;
-            margin-bottom: .5rem;
-        }
-
-        /* ══ Search ══ */
-        .faq-search-wrap {
-            max-width: 580px;
-            margin: 1.5rem auto 0;
-            position: relative;
-            z-index: 2;
-        }
-
-        .faq-search-wrap .input-group {
-            background: #fff;
-            border-radius: 50px;
-            overflow: hidden;
-            box-shadow: 0 8px 22px rgba(0, 0, 0, .18);
-        }
-
-        .faq-search-wrap input {
-            border: none;
-            padding: .85rem 1.4rem;
-            font-size: .93rem;
-        }
-
-        .faq-search-wrap input:focus {
-            box-shadow: none;
-        }
-
-        .faq-search-wrap .search-icon-btn {
-            background: #fff;
-            border: none;
-            padding: 0 1.6rem;
-            color: #FF0089;
-            font-size: 1.1rem;
-        }
-
-        /* ══ Action buttons ══ */
-        .action-btns {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 1.5rem;
-        }
-
-        .action-btns a,
-        .action-btns button {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: .4rem 1.1rem;
-            border-radius: 999px;
-            font-size: .8rem;
-            font-weight: 600;
-            border: 1.5px solid rgba(255, 0, 137, .35);
-            color: #FF0089;
-            background: transparent;
-            text-decoration: none;
-            transition: all .2s;
-            cursor: pointer;
-        }
-
-        .action-btns a:hover,
-        .action-btns button:hover {
-            background: #FF0089;
-            color: #fff;
-            border-color: #FF0089;
-        }
-
-        /* ══ Category filter tabs ══ */
-        .cat-filter {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-bottom: 1.8rem;
-        }
-
-        .cat-btn {
-            padding: .38rem 1.1rem;
-            border-radius: 999px;
-            font-size: .78rem;
-            font-weight: 700;
-            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .12));
-            background: var(--card-bg, #fff);
-            color: var(--text-muted, #6c757d);
-            cursor: pointer;
-            transition: all .15s;
-            white-space: nowrap;
-        }
-
-        .cat-btn:hover {
-            border-color: #FF0089;
-            color: #FF0089;
-        }
-
-        .cat-btn.active {
-            background: #FF0089;
-            border-color: #FF0089;
-            color: #fff;
-        }
-
-        /* ══ Index nav (sidebar) ══ */
-        .nav-index {
-            background: var(--card-bg, #fff);
-            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
-            border-radius: 16px;
-            padding: 1.4rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .nav-index h3 {
-            font-size: .9rem;
-            font-weight: 800;
-            color: #FF0089;
-            margin-bottom: .9rem;
-        }
-
-        .nav-index ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .nav-index .index-item {
-            margin-bottom: .4rem;
-        }
-
-        .nav-index .index-item a {
-            font-size: .8rem;
-            color: var(--text-muted, #6c757d);
-            text-decoration: none;
-            display: flex;
-            align-items: flex-start;
-            gap: 6px;
-            line-height: 1.4;
-            transition: color .15s;
-        }
-
-        .nav-index .index-item a::before {
-            content: '›';
-            color: #FF0089;
-            flex-shrink: 0;
-        }
-
-        .nav-index .index-item a:hover {
-            color: #FF0089;
-        }
-
-        .nav-index .index-item.hidden {
-            display: none;
-        }
-
-        /* ══ FAQ items (custom accordion — preserva faq.js) ══ */
-        .faq-content {}
-
-        .faq-item {
-            background: var(--card-bg, #fff);
-            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
-            border-left: 4px solid transparent;
-            border-radius: 14px;
-            margin-bottom: .8rem;
-            overflow: hidden;
-            transition: border-color .2s, box-shadow .2s;
-            display: none;
-            /* controlado por JS / filtro */
-        }
-
-        .faq-item.visible {
-            display: block;
-        }
-
-        .faq-item:hover {
-            border-left-color: #FF0089;
-        }
-
-        .faq-item.active {
-            border-left-color: #FF0089;
-            box-shadow: 0 4px 16px rgba(255, 0, 137, .1);
-        }
-
-        .faq-item .question {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 1.1rem 1.3rem;
-            cursor: pointer;
-            user-select: none;
-            font-weight: 600;
-            font-size: .92rem;
-        }
-
-        .faq-item .question>i:first-child {
-            color: #FF0089;
-            font-size: 1.15rem;
-            flex-shrink: 0;
-        }
-
-        .faq-item .question span {
-            flex: 1;
-        }
-
-        .faq-item .question .toggle-icon {
-            color: var(--text-muted, #6c757d);
-            transition: transform .3s;
-            flex-shrink: 0;
-        }
-
-        .faq-item.active .question .toggle-icon {
-            transform: rotate(180deg);
-        }
-
-        .faq-item .answer {
-            max-height: 0;
-            overflow: hidden;
-            opacity: 0;
-            padding: 0 1.3rem;
-            font-size: .87rem;
-            color: var(--text-muted, #6c757d);
-            line-height: 1.7;
-            transition: max-height .35s ease, opacity .3s ease, padding .3s ease;
-        }
-
-        .faq-item.active .answer {
-            padding: 0 1.3rem 1.2rem;
-        }
-
-        .faq-item .answer mark {
-            background: rgba(255, 0, 137, .18);
-            color: inherit;
-            border-radius: 3px;
-            padding: 0 2px;
-        }
-
-        /* ══ Category badge on item ══ */
-        .faq-cat-tag {
-            font-size: .65rem;
-            font-weight: 700;
-            padding: .2rem .6rem;
-            border-radius: 999px;
-            background: rgba(255, 0, 137, .1);
-            color: #FF0089;
-            flex-shrink: 0;
-        }
-
-        /* ══ No results ══ */
-        #noResults {
-            text-align: center;
-            padding: 2.5rem 1rem;
-            display: none;
-            color: var(--text-muted, #6c757d);
-        }
-
-        #noResults i {
-            font-size: 2.5rem;
-            color: #FF0089;
-            opacity: .4;
-            display: block;
-            margin-bottom: .8rem;
-        }
-
-        /* ══ Tips ══ */
-        .tips-section {
-            background: var(--card-bg, #fff);
-            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin-top: 1.5rem;
-        }
-
-        .tips-section h2 {
-            font-size: 1.05rem;
-            font-weight: 800;
-            color: #FF0089;
-            margin-bottom: 1rem;
-        }
-
-        .tip-card {
-            background: var(--metric-bg, rgba(0, 0, 0, .03));
-            border-radius: 10px;
-            padding: .75rem 1rem;
-            font-size: .85rem;
-            margin-bottom: .6rem;
-            display: flex;
-            gap: 10px;
-            align-items: flex-start;
-        }
-
-        .tip-card i {
-            color: #FF0089;
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-
-        .tip-card:last-child {
-            margin-bottom: 0;
-        }
-
-        /* ══ Tutorial section ══ */
-        .tutorial-section {
-            background: linear-gradient(135deg, rgba(255, 0, 137, .07), rgba(255, 77, 77, .05));
-            border: 1.5px solid rgba(255, 0, 137, .2);
-            border-radius: 16px;
-            padding: 1.8rem;
-            text-align: center;
-            margin-top: .8rem;
-        }
-
-        .tutorial-section h2 {
-            font-size: 1.05rem;
-            font-weight: 800;
-            color: #FF0089;
-            margin-bottom: 1rem;
-        }
-
-        .tutorial-btn {
-            background: #FF0089;
-            border: none;
-            color: #fff;
-            padding: .55rem 2rem;
-            border-radius: 999px;
-            font-weight: 700;
-            transition: all .2s;
-        }
-
-        .tutorial-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(255, 0, 137, .35);
-        }
-
-        /* ══ Back to top ══ */
-        #backToTop {
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            background: #FF0089;
-            color: #fff;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-            box-shadow: 0 4px 14px rgba(255, 0, 137, .4);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity .25s;
-            z-index: 1000;
-            cursor: pointer;
-        }
-
-        #backToTop.visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        /* ══ Support float btn ══ */
-        .support-btn {
-            position: fixed;
-            bottom: 80px;
-            left: 20px;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: #FF0089;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            box-shadow: 0 4px 14px rgba(255, 0, 137, .4);
-            text-decoration: none;
-            z-index: 1000;
-            transition: transform .2s;
-        }
-
-        .support-btn:hover {
-            transform: scale(1.1);
-            color: #fff;
-        }
-
-        @media(max-width:768px) {
-            .faq-hero h1 {
-                font-size: 1.9rem;
-            }
-
-            .faq-hero {
-                padding: 2rem 1rem 1.8rem;
-            }
-        }
+    }
     </style>
 </head>
 
@@ -508,242 +586,141 @@ $full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['
         <div class="read-progress-fill" id="progressBar"></div>
     </div>
 
-    <!-- Tela de Carregamento -->
-    <!-- <div class="loading-screen" id="loadingScreen">
-        <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg" class="loading-logo">
-            <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2"/>
-            <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
-        </svg>
-        <div class="spinner"></div>
-    </div> -->
-
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <!-- Menu Button (Left) -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu"
-                aria-controls="offcanvasMenu">
-                <span class="navbar-toggler-icon"><i class="bi bi-list text-white fs-1"></i></span>
-            </button>
-
-            <!-- Logo (Center on Mobile, Left on Desktop) -->
-            <a class="navbar-brand" href="../painel">
-                <!-- SVG Logo Wasom Upfy -->
-                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
-                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
-                        fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
-                </svg> -->
-                <span class="text-light" style="
-              font-weight: bold;
-              box-sizing: border-box;
-              text-transform: uppercase;
-              font-family: Arial, sans-serif;
-            "><?php echo APP_NAME; ?></span>
-            </a>
-
-            <!-- Desktop Menu -->
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav m-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="../painel"><i class="bi bi-speedometer2"></i> Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../launch/releases"><i class="bi bi-disc"></i> Lançamentos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../analytics/statistics"><i class="bi bi-bar-chart"></i>
-                            Estatísticas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../finances/overview"><i class="bi bi-currency-dollar"></i>
-                            Finanças</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../artists/artists-list"><i class="bi bi-person"></i> Artistas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../artists/youtube/ucy"><i class="bi bi-youtube"></i> Unificação de
-                            canal
-                            YouTube</a>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- User Icon (Right) -->
-            <div class="user-menu d-flex align-items-center">
-                <!-- Theme Toggle Button -->
-                <a class="theme-toggle text-white me-2" id="themeToggle">
-                    <i class="bi bi-sun" id="themeIcon"></i>
-                </a>
-                <a href="../page/notifications" class="text-white me-2" aria-label="Notificações">
-                    <i class="bi bi-bell fs-4"></i>
-                    <span class="badge bg-danger">9</span>
-                </a>
-                <a href="#" class="text-white" data-bs-toggle="dropdown">
-                    <i class="bi bi-person-circle fs-4"></i>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li>
-                        <a class="dropdown-item" href="../user/profile"><i class="bi bi-person me-2"></i>
-                            <strong><?php echo $first_name; ?></strong></a>
-                        <div class="text-white-50">
-                            &nbsp; &nbsp; &nbsp; &nbsp; (Conta <?php echo str_pad($id_users, 6, "0", STR_PAD_LEFT); ?>)
-                        </div>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../user/profile"><i class="bi bi-person me-2"></i> Meu Perfil</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../account/manage-account"><i class="bi bi-tools me-2"></i>
-                            Gestão de
-                            Conta</a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../page/settings"><i class="bi bi-gear me-2"></i>
-                            Configurações</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../page/notifications"><i class="bi bi-bell me-2"></i>
-                            Notificações</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../services/available-services"><i class="bi bi-star me-2"></i>
-                            Conta e
-                            serviços disponíveis</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="#?logout-wasomupfy" data-bs-toggle="modal"
-                            data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right me-2"></i>
-                            Desconectar-se</a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../page/about"><i class="bi bi-info-circle me-2"></i> Sobre</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../page/support"><i class="bi bi-headset me-2"></i> Enviar pedido
-                            de
-                            suporte</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../page/faq"><i class="bi bi-chat-left-text me-2"></i> Perguntas
-                            frequentes</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../page/help"><i class="bi bi-question-circle me-2"></i>
-                            Ajuda</a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li>
-                        <span class="dropdown-item-text" id="versionDropdown"></span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Offcanvas Menu par Mobile e Desktop -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasMenuLabel">
-                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
-                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
-                        fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
-                </svg> -->
-                <span class="text-light" style="
-              font-weight: bold;
-              box-sizing: border-box;
-              text-transform: uppercase;
-              font-family: Arial, sans-serif;
-            "><?php echo APP_NAME; ?></span>
-            </h5>
-            <button type="button" class="btn-close text-white" data-bs-dismiss="offcanvas" aria-label="Close">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-        <div class="offcanvas-body">
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link" href="../painel"><i class="bi bi-speedometer2"></i> Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../launch/releases"><i class="bi bi-disc"></i> Lançamentos</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../analytics/statistics"><i class="bi bi-bar-chart"></i> Estatísticas</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../finances/overview"><i class="bi bi-currency-dollar"></i> Finanças</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../artists/artists-list"><i class="bi bi-person"></i> Artistas</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../artists/youtube/ucy"><i class="bi bi-youtube"></i> Unificação de canal
-                        YouTube</a>
-                </li>
-                <!-- Links secundários exibidos apenas em mobile -->
-                <li class="nav-item d-lg-none">
-                    <a class="nav-link" href="../user/profile"><i class="bi bi-person-circle"></i> Meu Perfil</a>
-                </li>
-                <li class="nav-item d-lg-none">
-                    <a class="nav-link active" href="../page/settings"><i class="bi bi-gear"></i> Configurações</a>
-                </li>
-                <li class="nav-item d-lg-none">
-                    <a class="nav-link" href="page/notifications"><i class="bi bi-bell"></i> Notificações</a>
-                </li>
-                <li class="nav-item d-lg-none">
-                    <a class="nav-link" href="../page/about"><i class="bi bi-info-circle"></i> Sobre</a>
-                </li>
-                <li class="nav-item d-lg-none">
-                    <a class="nav-link" href="../services/available-services"><i class="bi bi-star"></i> Conta e
-                        serviços
-                        disponíveis</a>
-                </li>
-                <li class="nav-item d-lg-none">
-                    <a class="nav-link" href="../page/help"><i class="bi bi-question-circle"></i> Ajuda</a>
-                </li>
-                <li class="nav-item d-lg-none">
-                    <a class="nav-link" href="#?logout-wasomupfy" data-bs-toggle="modal"
-                        data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right"></i> Desconectar-se</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- Toast para Notificações de Status -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="connectionToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <strong class="me-auto">Conexão</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Fechar"></button>
-            </div>
-            <div class="toast-body">
-                Você está offline. Alguns dados podem estar desatualizados.
-                <div class="mt-2">
-                    <button class="btn btn-pink btn-sm" onclick="tryReconnect()">
-                        Tentar Reconectar
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
+    <!-- ═══ NAVBAR ═══ -->
+    <?php require_once __DIR__ . '/../include/sidebar.php'; ?>
     <!-- ═══ MAIN ═══ -->
     <div class="container my-4">
+        <?php /* ============================================
+    BANNERS DE NOTIFICACAO DO PAINEL
+    Estilo: inline CSS consistente com renderDashboardAlerts().
+    Bootstrap alert nativo removido — um único sistema visual.
+    Lógica de prioridade:
+      Nível 1 (danger)  — bloqueia distribuição
+      Nível 2 (warning) — importante, requer atenção
+      Nível 3 (info)    — informativo / acção opcional
+    ============================================ */ ?>
+
+        <?php renderDashboardAlerts($user, $platform); ?>
+
+        <?php
+        // Cor map para helpers inline — idêntico ao renderDashboardAlerts()
+        $alertColors = [
+            'danger'  => ['bg' => 'rgba(239,68,68,.08)',  'border' => 'rgba(239,68,68,.25)',  'text' => '#ef4444'],
+            'warning' => ['bg' => 'rgba(234,179,8,.08)',  'border' => 'rgba(234,179,8,.25)',  'text' => '#eab308'],
+            'info'    => ['bg' => 'rgba(99,102,241,.08)', 'border' => 'rgba(99,102,241,.25)', 'text' => '#6366f1'],
+        ];
+        function wuAlert(string $type, string $icon, string $message, ?array $action = null, bool $dismiss = true, string $id = ''): void
+        {
+            global $alertColors;
+            $c   = $alertColors[$type] ?? $alertColors['info'];
+            $eid = $id ?: ('wuPanelAlert_' . md5($message));
+            echo "<div id=\"{$eid}\" style=\"display:flex;align-items:flex-start;gap:10px;"
+                . "background:{$c['bg']};border:1px solid {$c['border']};border-radius:12px;"
+                . "padding:.75rem 1rem;font-size:.83rem;margin-bottom:.6rem;"
+                . "transition:opacity .3s;\">";
+            echo "<i class=\"bi {$icon}\" style=\"font-size:1rem;flex-shrink:0;margin-top:2px;color:{$c['text']};\"></i>";
+            echo '<span class="wu-alert-msg">' . $message;
+            if ($action) {
+                echo " <a href=\"{$action['url']}\" style=\"color:{$c['text']};font-weight:700;"
+                    . "text-decoration:underline;white-space:nowrap\">{$action['label']} &rarr;</a>";
+            }
+            echo '</span>';
+            if ($dismiss) {
+                echo "<button type=\"button\" class=\"wu-alert-dismiss\" aria-label=\"Fechar\""
+                    . " onclick=\"(function(el){el.style.opacity='0';"
+                    . "setTimeout(function(){el.style.display='none'},300)})(document.getElementById('{$eid}'))\">"
+                    . "&times;</button>";
+            }
+            echo '</div>';
+        }
+        ?>
+
+        <?php /* ── NÍVEL 1: Crítico — bloqueia distribuição ── */ ?>
+
+        <?php if (!$email_verified): ?>
+        <?php wuAlert(
+                'danger',
+                'bi-envelope-exclamation-fill',
+                '<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta e receber notificações de pagamentos.',
+                ['label' => 'Verificar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/user/profile#perfil'],
+                true,
+                'banner-email'
+            ); ?>
+        <?php endif; ?>
+
+        <?php if ($plan && !$plan_paid): ?>
+        <?php wuAlert(
+                'warning',
+                'bi-clock-history',
+                '<strong>Pagamento pendente — ' . htmlspecialchars($plan['name_plan']) . '.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados até confirmação.',
+                ['label' => 'Finalizar pagamento', 'url' => APP_URL . '/' . APP_URL_PANEL . '/payment/pay'],
+                true,
+                'banner-plan-pending'
+            ); ?>
+        <?php elseif (!$plan): ?>
+        <?php wuAlert(
+                'danger',
+                'bi-credit-card-fill',
+                '<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir a tua música para +150 plataformas.',
+                ['label' => 'Ver planos', 'url' => APP_URL . '/' . APP_URL_PANEL . '/all-plans'],
+                false,
+                'banner-plan'
+            ); ?>
+        <?php endif; ?>
+
+        <?php /* ── NÍVEL 2: Importante — perfil incompleto ── */ ?>
+
+        <?php if ($plan_paid && !$has_artist): ?>
+        <?php wuAlert(
+                'info',
+                'bi-person-plus-fill',
+                '<strong>Cria o teu perfil de artista.</strong> Tens plano activo mas ainda não criaste um perfil. Precisas de um para poder lançar música.',
+                ['label' => 'Criar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/add-artist'],
+                true,
+                'banner-artist'
+            ); ?>
+        <?php endif; ?>
+
+        <?php /* ── NÍVEL 3: Informativo — conta bancária ── */ ?>
+
+        <?php if ($plan_paid && $has_artist && !$bank_account): ?>
+        <?php wuAlert(
+                'info',
+                'bi-bank',
+                '<strong>Conta bancária não registada.</strong> Para poder sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.',
+                ['label' => 'Registar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/withdraw'],
+                true,
+                'banner-bank'
+            ); ?>
+        <?php endif; ?>
+
+        <?php /* ── NÍVEL 3: Conta bancária rejeitada ── */ ?>
+
+        <?php
+        $rejected_account = null;
+        if ($plan_paid) {
+            $rej_stmt = getDB()->prepare("SELECT type_account, reject_reason FROM _account WHERE id_users = ? AND status_account = 'rejected' LIMIT 1");
+            $rej_stmt->execute([$id_users]);
+            $rejected_account = $rej_stmt->fetch();
+        }
+        ?>
+        <?php if ($rejected_account): ?>
+        <?php
+            $rej_msg = '<strong>Conta ' . htmlspecialchars($rejected_account['type_account']) . ' rejeitada.</strong>';
+            if ($rejected_account['reject_reason']) {
+                $rej_msg .= ' Motivo: <em>' . htmlspecialchars($rejected_account['reject_reason']) . '</em>.';
+            }
+            $rej_msg .= ' Actualiza os dados e submete novamente.';
+            wuAlert(
+                'danger',
+                'bi-x-circle-fill',
+                $rej_msg,
+                ['label' => 'Corrigir agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/withdraw'],
+                true,
+                'banner-account-rejected'
+            );
+            ?>
+        <?php endif; ?>
 
         <!-- HERO -->
         <div class="faq-hero">
@@ -751,7 +728,7 @@ $full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['
                     11 de Março de 2026</span></div>
             <h1 data-i18n="faq_title">Perguntas Frequentes</h1>
             <p data-i18n="faq_description">
-                Encontra respostas para as perguntas mais comuns sobre a plataforma Wasom Upfy.<br />
+                Encontra respostas para as perguntas mais comuns sobre a plataforma <?php echo APP_NAME ?>.<br />
                 Não encontraste o que procuravas? <a href="support" class="text-white fw-bold">Entra em contacto com o
                     suporte!</a>
             </p>
@@ -1052,7 +1029,8 @@ $full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['
                         <div class="answer" id="faq15-answer" data-i18n="faq15_answer">
                             O valor mínimo para levantamento é de <strong>1.000 AOA</strong>. Não há valor máximo por
                             pedido, mas existem limites mensais dependendo do teu plano. Consulta a página <a
-                                href="../services/available-services">Conta e serviços disponíveis</a> para ver os
+                                href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/services/available-services">Conta e
+                                serviços disponíveis</a> para ver os
                             limites do teu plano.
                         </div>
                     </div>
@@ -1065,7 +1043,8 @@ $full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['
                             <i class="bi bi-chevron-down toggle-icon"></i>
                         </div>
                         <div class="answer" id="faq16-answer" data-i18n="faq16_answer">
-                            A Wasom Upfy distribui <strong>90% dos royalties</strong> directamente ao artista. Os
+                            A <?php echo APP_NAME ?> distribui <strong>90% dos royalties</strong> directamente ao
+                            artista. Os
                             restantes 10% cobrem custos de distribuição e operação da plataforma. Os royalties são
                             calculados com base nos streams e downloads em cada plataforma, e actualizados mensalmente
                             nos relatórios de estatísticas.
@@ -1118,7 +1097,9 @@ $full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['
                             Sim. Dependendo do teu plano, podes criar múltiplos artistas na mesma conta. O plano
                             <strong>Label</strong> tem número ilimitado de artistas, enquanto os planos
                             <strong>Artist</strong> e <strong>Album</strong> têm limites. Consulta os detalhes do teu
-                            plano em <a href="../services/available-services">Conta e serviços</a>.
+                            plano em <a
+                                href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/services/available-services">Conta e
+                                serviços</a>.
                         </div>
                     </div>
 
@@ -1231,7 +1212,8 @@ $full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['
                             A unificação de canal permite ligar o teu canal YouTube à plataforma para sincronizar Art
                             Tracks automaticamente, acompanhar streams e receitas em tempo real, gerir vídeos musicais e
                             detectar conteúdo gerado por fãs. Disponível para todos os planos, sem custo adicional.
-                            Acede em <a href="../artists/youtube/ucy">Artistas → YouTube</a>.
+                            Acede em <a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/youtube/ucy">Artistas →
+                                YouTube</a>.
                         </div>
                     </div>
 
@@ -1277,11 +1259,14 @@ $full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['
                             <i class="bi bi-chevron-down toggle-icon"></i>
                         </div>
                         <div class="answer" id="faq29-answer" data-i18n="faq29_answer">
-                            A Wasom Upfy oferece quatro planos: <strong>Single</strong> (2.000 AOA por lançamento — 1
+                            A <?php echo APP_NAME ?> oferece quatro planos: <strong>Single</strong> (2.000 AOA por
+                            lançamento — 1
                             faixa), <strong>Album</strong> (5.000 AOA por lançamento — até 20 faixas),
                             <strong>Artist</strong> (11.400 AOA/mês — lançamentos ilimitados, 1 artista) e
                             <strong>Label</strong> (70.000 AOA/mês — lançamentos ilimitados, artistas ilimitados).
-                            Consulta <a href="../services/available-services">Conta e serviços</a> para detalhes.
+                            Consulta <a
+                                href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/services/available-services">Conta e
+                                serviços</a> para detalhes.
                         </div>
                     </div>
 
@@ -1296,7 +1281,9 @@ $full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['
                             Sim. <strong>Upgrade</strong> (plano superior): disponível imediatamente após pagamento.
                             <strong>Downgrade</strong> (plano inferior): entra em vigor no final do ciclo actual, para
                             não perder benefícios já pagos. Contacta o <a href="support">suporte</a> para iniciar a
-                            mudança ou acede a <a href="../services/available-services">Conta e serviços</a>.
+                            mudança ou acede a <a
+                                href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/services/available-services">Conta e
+                                serviços</a>.
                         </div>
                     </div>
 
@@ -1384,7 +1371,8 @@ $full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['
                         <div class="tip-card"><i class="bi bi-calendar-plus"></i> Submete lançamentos com pelo menos 2
                             semanas de antecedência para garantir disponibilidade na data desejada.</div>
                         <div class="tip-card"><i class="bi bi-shield-check"></i> Activa o 2FA em <a
-                                href="../user/profile">Segurança</a> para proteger a tua conta.</div>
+                                href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/user/profile#seguranca">Segurança</a>
+                            para proteger a tua conta.</div>
                     </div>
 
                     <!-- ════ Tutorial ════ -->
@@ -1432,21 +1420,6 @@ $full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['
         </div>
     </div>
 
-    <!-- Bottom Nav Mobile -->
-    <nav class="bottom-nav d-lg-none">
-        <ul class="nav justify-content-around">
-            <li class="nav-item"><a class="nav-link" href="../painel"><i
-                        class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../launch/releases"><i
-                        class="bi bi-disc"></i><span>Lançamentos</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../analytics/statistics"><i
-                        class="bi bi-bar-chart"></i><span>Stats</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../finances/overview"><i
-                        class="bi bi-currency-dollar"></i><span>Finanças</span></a></li>
-            <li class="nav-item"><a class="nav-link active" href="faq"><i
-                        class="bi bi-chat-left-text"></i><span>FAQ</span></a></li>
-        </ul>
-    </nav>
 
     <!-- Back to top -->
     <button id="backToTop" onclick="scrollToTop()" title="Voltar ao topo"><i class="bi bi-chevron-up"></i></button>
@@ -1459,37 +1432,18 @@ $full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" data-i18n="tutorial_modal_title">Tutorial Wasom Upfy</h5>
+                    <h5 class="modal-title" data-i18n="tutorial_modal_title">Tutorial <?php echo APP_NAME ?></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="ratio ratio-16x9">
-                        <iframe src="https://www.youtube.com/embed/your-video-id" title="Tutorial Wasom Upfy"
-                            frameborder="0" allowfullscreen></iframe>
+                        <iframe src="https://www.youtube.com/embed/your-video-id"
+                            title="Tutorial <?php echo APP_NAME ?>" frameborder="0" allowfullscreen></iframe>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                         data-i18n="close">Fechar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Logout -->
-    <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-dark">Terminar sessão</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body text-center text-dark">
-                    <p>Tens a certeza de que desejas terminar sessão, <strong><?php echo $first_name; ?></strong>?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Não, continuar</button>
-                    <a href="../logout" class="btn btn-danger">Sim, terminar sessão</a>
                 </div>
             </div>
         </div>

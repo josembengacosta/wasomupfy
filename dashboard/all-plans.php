@@ -171,7 +171,7 @@ $plan_meta = [
             <a class="navbar-brand"
                 href="<?php echo $logged_in ? APP_URL . '/' . APP_URL_PANEL . '/painel' : APP_URL . '/' . 'home'; ?>">
                 <span class="text-light"
-                    style="font-weight:bold;font-family:Arial,sans-serif;text-transform:capitalize"><?php echo APP_NAME; ?></span>
+                    style="font-weight:bold;font-family:Arial,sans-serif;text-transform:uppercase"><?php echo APP_NAME; ?></span>
             </a>
             <div class="ms-auto d-flex align-items-center gap-2">
                 <?php if ($logged_in): ?>
@@ -253,15 +253,15 @@ $plan_meta = [
                         $btn_label = '<i class="bi bi-check-circle me-1"></i>Plano Activo';
                         $btn_class = 'btn-success disabled';
                     } elseif ($is_pend) {
-                        $btn_href  = '../dashboard/payment/pay';
+                        $btn_href  = APP_URL . '/' . APP_URL_PANEL . '/payment/pay';
                         $btn_label = '<i class="bi bi-credit-card me-1"></i>Finalizar Pagamento';
                         $btn_class = 'btn-wasomupfy';
                     } elseif ($logged_in) {
-                        $btn_href  = '../dashboard/payment/pay?plan=' . $slug;
+                        $btn_href  = APP_URL . '/' . APP_URL_PANEL . '/payment/pay?plan=' . $slug;
                         $btn_label = 'Escolher ' . htmlspecialchars($plan['name_plan']);
                         $btn_class = $meta['btn'];
                     } else {
-                        $btn_href  = '../register?plan=' . $slug;
+                        $btn_href  = APP_URL . '/' . APP_URL_PANEL . 'plan=' . $slug;
                         $btn_label = 'Começar com ' . htmlspecialchars($plan['name_plan']);
                         $btn_class = $meta['btn'];
                     }
@@ -531,15 +531,15 @@ $plan_meta = [
                                     $l = 'Activo';
                                     $c = 'btn-success disabled';
                                 } elseif ($i_pn) {
-                                    $h = '../dashboard/payment/pay';
+                                    $h = APP_URL . '/' . APP_URL_PANEL . '/payment/pay';
                                     $l = 'Pagar agora';
                                     $c = 'btn-wasomupfy';
                                 } elseif ($logged_in) {
-                                    $h = '../dashboard/payment/pay?plan=' . $sl;
+                                    $h = APP_URL . '/' . APP_URL_PANEL . '/payment/pay?plan=' . $sl;
                                     $l = 'Escolher';
                                     $c = $m['btn'];
                                 } else {
-                                    $h = '../register?plan=' . $sl;
+                                    $h = APP_URL . '/' . APP_URL_PANEL . 'plan=' . $sl;
                                     $l = 'Começar';
                                     $c = $m['btn'];
                                 }
@@ -561,7 +561,7 @@ $plan_meta = [
             Tens dúvidas? <a
                 href="<?php echo $logged_in ? APP_URL . '/' . APP_URL_PANEL . '/help' : APP_URL . '/' . 'contact'; ?>"
                 class="text-wasom">Consulta-nos</a> &nbsp;·&nbsp;
-            &copy; <?php echo date('Y'); ?> Wasom Upfy
+            &copy; <?php echo date('Y'); ?> <?php echo APP_NAME; ?>
         </div>
     </footer>
 

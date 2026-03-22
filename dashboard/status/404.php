@@ -25,7 +25,7 @@ try {
 
 $version       = htmlspecialchars($platform['version']       ?? '2.0');
 $contact_email = htmlspecialchars($platform['contact_email'] ?? 'suporte@wasomupfy.com');
-$back_url      = $is_logged_in ? '../painel' : '../../';
+$back_url      = $is_logged_in ?  APP_URL . '/' . APP_URL_PANEL . '/painel' : APP_URL;
 $back_label    = $is_logged_in ? 'Ir para o Dashboard' : 'Ir para a Página Inicial';
 ?>
 <!DOCTYPE html>
@@ -37,8 +37,8 @@ $back_label    = $is_logged_in ? 'Ir para o Dashboard' : 'Ir para a Página Inic
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="robots" content="noindex, nofollow" />
     <meta name="theme-color" content="#FF0089" />
-    <title>404 — Página Não Encontrada · Wasom Upfy</title>
-    <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" />
+    <title>404 — Página Não Encontrada · <?php echo APP_NAME ?></title>
+    <link rel="shortcut icon" href="<?php echo APP_URL ?>/assets/img/icones/wasomupfy_fiv.png" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -577,7 +577,7 @@ $back_label    = $is_logged_in ? 'Ir para o Dashboard' : 'Ir para a Página Inic
                 incorrectamente. Verifica o URL ou usa uma das opções abaixo para
                 continuar.<br><br>
                 Se acreditas que isto é um erro, contacta o
-                <a href="../page/support">suporte</a>.
+                <a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/support">suporte</a>.
             </p>
 
             <div class="fade-in action-row">
@@ -596,16 +596,24 @@ $back_label    = $is_logged_in ? 'Ir para o Dashboard' : 'Ir para a Página Inic
 
             <div class="fade-in quick-links">
                 <?php if ($is_logged_in): ?>
-                <a class="quick-link" href="../painel"><i class="bi bi-speedometer2"></i> Dashboard</a>
-                <a class="quick-link" href="../launch/releases"><i class="bi bi-disc"></i> Lançamentos</a>
-                <a class="quick-link" href="../analytics/statistics"><i class="bi bi-bar-chart"></i> Estatísticas</a>
-                <a class="quick-link" href="../finances/overview"><i class="bi bi-currency-dollar"></i> Finanças</a>
-                <a class="quick-link" href="../page/support"><i class="bi bi-headset"></i> Suporte</a>
-                <a class="quick-link" href="../page/faq"><i class="bi bi-chat-left-text"></i> FAQ</a>
+                <a class="quick-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/painel"><i
+                        class="bi bi-speedometer2"></i> Dashboard</a>
+                <a class="quick-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/releases"><i
+                        class="bi bi-disc"></i> Lançamentos</a>
+                <a class="quick-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/statistics"><i
+                        class="bi bi-bar-chart"></i> Estatísticas</a>
+                <a class="quick-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/finances/overview"><i
+                        class="bi bi-currency-dollar"></i> Finanças</a>
+                <a class="quick-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/support"><i
+                        class="bi bi-headset"></i> Suporte</a>
+                <a class="quick-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/faq"><i
+                        class="bi bi-chat-left-text"></i> FAQ</a>
                 <?php else: ?>
-                <a class="quick-link" href="../../"><i class="bi bi-house"></i> Início</a>
-                <a class="quick-link" href="../../authentic/login"><i class="bi bi-box-arrow-in-right"></i> Entrar</a>
-                <a class="quick-link" href="../../authentic/register"><i class="bi bi-person-plus"></i> Registar</a>
+                <a class="quick-link" href="<?php echo APP_URL ?>"><i class="bi bi-house"></i> Início</a>
+                <a class="quick-link" href="<?php echo APP_URL ?>/login"><i class="bi bi-box-arrow-in-right"></i>
+                    Entrar</a>
+                <a class="quick-link" href="<?php echo APP_URL ?>/register"><i class="bi bi-person-plus"></i>
+                    Registar</a>
                 <a class="quick-link" href="mailto:<?php echo $contact_email; ?>"><i class="bi bi-envelope"></i>
                     Contacto</a>
                 <?php endif; ?>
@@ -616,10 +624,10 @@ $back_label    = $is_logged_in ? 'Ir para o Dashboard' : 'Ir para a Página Inic
 
     <!-- ═══ FOOTER ═══ -->
     <footer class="status-footer">
-        <span>© <?php echo date('Y'); ?> Wasom Upfy · Todos os direitos reservados</span>
+        <span>© <?php echo date('Y'); ?> <?php echo APP_NAME ?> · Todos os direitos reservados</span>
         <div class="footer-right">
-            <a href="../page/terms">Termos de Uso</a>
-            <a href="../page/privacy">Privacidade</a>
+            <a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/politicies/terms">Termos de Uso</a>
+            <a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/politicies/privacy">Privacidade</a>
             <a href="mailto:<?php echo $contact_email; ?>"><?php echo $contact_email; ?></a>
         </div>
     </footer>

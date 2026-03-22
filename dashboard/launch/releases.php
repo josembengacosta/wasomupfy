@@ -736,7 +736,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
                 <div class="modal-body pt-1">
                     <div class="alert alert-warning small d-flex gap-2">
                         <i class="bi bi-info-circle-fill flex-shrink-0 mt-1"></i>
-                        <div>A equipa da Wasom Upfy irá rever o lançamento novamente. Indica o motivo da solicitação
+                        <div>A equipa da <?php echo APP_NAME ?> irá rever o lançamento novamente. Indica o motivo da solicitação
                             para acelerar o processo.</div>
                     </div>
                     <div id="rev-reject-display" class="alert alert-danger small d-none">

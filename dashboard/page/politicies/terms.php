@@ -4,433 +4,504 @@
 // Arquivo: dashboard/page/terms.php
 // ══════════════════════════════════════════════════════
 require_once __DIR__ . '/../../../authentic/include/functions.php';
+require_once __DIR__ . '/../../include/platform.php';
 startSecureSession();
 checkRememberMe();
 requireLogin();
+$platform = checkDashboardStatus();
+$user     = checkUserAccess((int)$_SESSION['id_users']);
 
-$id_users   = (int)$_SESSION['id_users'];
-$user       = getUserById($id_users);
-if (!$user) {
-    session_destroy();
-    redirect(APP_URL  . '/' . 'login', ['error' => 'csrf']);
+$id_users       = (int)$user['id_users'];
+$first_name     = htmlspecialchars($user['first_name']);
+$user_name      = htmlspecialchars($user['user_name'] ?? '');
+$email_verified = (bool)$user['email_verified'];
+$plan_selected  = $user['plan_selected'];
+$onboard_done   = (bool)($user['onboarding_done'] ?? false);
+$user_photo     = $user['photo_user'] ?? null;
+$name_artist_band = htmlspecialchars($user['name_artist_band'] ?? 'Cria Perfil Artístico');
+$notif_count    = getUnreadNotifCount($id_users);
+$db             = getDB();
+
+// ── Saldo ─────────────────────────────────────
+$w = $db->prepare('SELECT balance_aoa FROM _wallet WHERE id_users = ?');
+$w->execute([$id_users]);
+$balance = $w->fetch() ?: ['balance_aoa' => 0];
+
+// ── Plano ─────────────────────────────────────
+$plan_id     = (int)$user['plan_selected'];
+$plan        = null;
+$max_artists = 1;
+if ($plan_id) {
+    $ps = $db->prepare('SELECT * FROM _plans WHERE id_plan = ?');
+    $ps->execute([$plan_id]);
+    $plan = $ps->fetch();
+    if ($plan) $max_artists = (int)($plan['max_artists'] ?? 1);
+}
+$plan_name = $plan ? htmlspecialchars($plan['name_plan']) : 'Sem plano';
+
+// ── Plano ─────────────────────────────────────
+$plan      = null;
+$plan_paid = ($user['status_user'] === 'active' && !empty($user['plan_activated_at']));
+if ($plan_selected) {
+    $ps = $db->prepare('SELECT * FROM _plans WHERE id_plan = ?');
+    $ps->execute([$plan_selected]);
+    $plan = $ps->fetch();
 }
 
-$first_name = htmlspecialchars($user['first_name'] ?? '');
-$full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['second_name'] ?? '')));
+// Adicionar verificação de expiração do plano
+$plan_expired = false;
+if ($plan_paid && !empty($user['plan_expires_at'])) {
+    $plan_expired = strtotime($user['plan_expires_at']) < time();
+}
 
-// Data de vigência dos termos
-define('TERMS_VERSION', '2.0');
-define('TERMS_DATE',    '11 de Março de 2026');
+// ── Artistas ──────────────────────────────────
+$as = $db->prepare('SELECT COUNT(*) AS total FROM _artist WHERE id_users = ?');
+$as->execute([$id_users]);
+$has_artist = (int)($as->fetch()['total'] ?? 0) > 0;
+
+// ── Conta bancária ────────────────────────────
+$ba = $db->prepare("SELECT id_account FROM _account WHERE id_users = ? AND status_account = 'verified' LIMIT 1");
+$ba->execute([$id_users]);
+$bank_account = $ba->fetch();
+
+// ── Conta rejeitada ───────────────────────────
+$rejected_account = null;
+if ($plan_paid) {
+    $rj = $db->prepare("SELECT type_account, reject_reason FROM _account WHERE id_users = ? AND status_account = 'rejected' LIMIT 1");
+    $rj->execute([$id_users]);
+    $rejected_account = $rj->fetch();
+}
+
+// ── Sessão info (modal logout) ────────────────
+$ls = $db->prepare('SELECT last_login_at, last_login_ip FROM _users_security WHERE id_users = ?');
+$ls->execute([$id_users]);
+$sec = $ls->fetch();
+
+$sess_stmt = $db->prepare("
+    SELECT ip_address, user_agent, country, city, creat_session, last_activity
+    FROM _users_sessions WHERE id_users = ? AND is_active = 1
+    ORDER BY last_activity DESC LIMIT 1
+");
+$sess_stmt->execute([$id_users]);
+$current_session  = $sess_stmt->fetch();
+$session_duration_str = '—';
+if ($current_session && $current_session['creat_session']) {
+    $secs = time() - strtotime($current_session['creat_session']);
+    if ($secs < 60)     $session_duration_str = $secs . 's';
+    elseif ($secs < 3600)  $session_duration_str = floor($secs / 60) . 'min';
+    elseif ($secs < 86400) $session_duration_str = floor($secs / 3600) . 'h ' . floor(($secs % 3600) / 60) . 'min';
+    else                   $session_duration_str = floor($secs / 86400) . 'd ' . floor(($secs % 86400) / 3600) . 'h';
+}
+$member_since   = $user['creat_user'] ? date('d/m/Y', strtotime($user['creat_user'])) : '—';
+$last_login_str = ($sec && $sec['last_login_at']) ? date('d/m/Y H:i', strtotime($sec['last_login_at'])) : '—';
+$ua_raw   = $current_session['user_agent'] ?? '';
+$browser  = 'Desconhecido';
+if (str_contains($ua_raw, 'Edg'))     $browser = 'Microsoft Edge';
+elseif (str_contains($ua_raw, 'Chrome'))  $browser = 'Google Chrome';
+elseif (str_contains($ua_raw, 'Firefox')) $browser = 'Mozilla Firefox';
+elseif (str_contains($ua_raw, 'Safari'))  $browser = 'Safari';
+elseif (str_contains($ua_raw, 'Opera'))   $browser = 'Opera';
+$sess_location = trim(($current_session['city'] ?? '') . ', ' . ($current_session['country'] ?? ''), ', ') ?: 'Desconhecida';
+$sess_ip       = $current_session['ip_address'] ?? ($sec['last_login_ip'] ?? '—');
 ?>
 <!DOCTYPE html>
 <html lang="pt-ao">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="robots" content="noindex, nofollow" />
-    <meta name="theme-color" content="#FF0089" />
-    <link rel="apple-touch-icon" href="../../../assets/img/icones/wasomupfy_fiv_512.png" />
-    <link rel="manifest" href="../manifest.json" />
+    <?php require_once __DIR__ . '/../../include/head.php'; ?>
     <title>Termos de Uso e Condições — <?php echo APP_NAME; ?></title>
-    <link rel="shortcut icon" href="../../../assets/img/icones/wasomupfy_fiv.png" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
-    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/dashboard-style.css" />
-    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/lastest-style.css" />
     <style>
-        /* ══ Progress bar de leitura ══ */
-        .read-progress {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            z-index: 9999;
-            background: rgba(0, 0, 0, .08);
-        }
+    /* ══ Progress bar de leitura ══ */
+    .read-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        z-index: 9999;
+        background: rgba(0, 0, 0, .08);
+    }
 
-        .read-progress-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #FF0089, #FF4D4D);
-            transition: width .1s linear;
-        }
+    .read-progress-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #FF0089, #FF4D4D);
+        transition: width .1s linear;
+    }
 
-        /* ══ Hero ══ */
-        .terms-hero {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
-            border-radius: 22px;
-            padding: 3rem 2.4rem 2.4rem;
-            margin-bottom: 2rem;
-            color: #fff;
-            position: relative;
-            overflow: hidden;
-        }
+    /* ══ Hero ══ */
+    .terms-hero {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+        border-radius: 22px;
+        padding: 3rem 2.4rem 2.4rem;
+        margin-bottom: 2rem;
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+    }
 
-        .terms-hero::before {
-            content: '\F4BC';
-            font-family: 'bootstrap-icons';
-            position: absolute;
-            right: -20px;
-            bottom: -30px;
-            font-size: 11rem;
-            opacity: .06;
-        }
+    .terms-hero::before {
+        content: '\F4BC';
+        font-family: 'bootstrap-icons';
+        position: absolute;
+        right: -20px;
+        bottom: -30px;
+        font-size: 11rem;
+        opacity: .06;
+    }
 
-        .terms-hero .version-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(255, 0, 137, .25);
-            border: 1px solid rgba(255, 0, 137, .4);
-            border-radius: 999px;
-            padding: 4px 14px;
-            font-size: .75rem;
-            font-weight: 700;
-            margin-bottom: .8rem;
-        }
+    .terms-hero .version-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255, 0, 137, .25);
+        border: 1px solid rgba(255, 0, 137, .4);
+        border-radius: 999px;
+        padding: 4px 14px;
+        font-size: .75rem;
+        font-weight: 700;
+        margin-bottom: .8rem;
+    }
 
-        .terms-hero h1 {
-            font-size: 2.2rem;
-            font-weight: 900;
-            margin-bottom: .4rem;
-        }
+    .terms-hero h1 {
+        font-size: 2.2rem;
+        font-weight: 900;
+        margin-bottom: .4rem;
+    }
 
-        .terms-hero p {
-            opacity: .8;
-            font-size: .92rem;
-            max-width: 640px;
-            margin-bottom: 0;
-        }
+    .terms-hero p {
+        opacity: .8;
+        font-size: .92rem;
+        max-width: 640px;
+        margin-bottom: 0;
+    }
 
-        .terms-hero .hero-meta {
-            display: flex;
-            gap: 1.5rem;
-            flex-wrap: wrap;
-            margin-top: 1.2rem;
-        }
+    .terms-hero .hero-meta {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        margin-top: 1.2rem;
+    }
 
-        .terms-hero .hero-meta span {
-            font-size: .78rem;
-            opacity: .7;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+    .terms-hero .hero-meta span {
+        font-size: .78rem;
+        opacity: .7;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
 
-        /* ══ Action buttons ══ */
-        .action-btns {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 2rem;
-        }
+    /* ══ Action buttons ══ */
+    .action-btns {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 2rem;
+    }
 
-        .action-btns a,
-        .action-btns button {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: .42rem 1.2rem;
-            border-radius: 999px;
-            font-size: .8rem;
-            font-weight: 700;
-            border: 1.5px solid rgba(255, 0, 137, .35);
-            color: #FF0089;
-            background: transparent;
-            text-decoration: none;
-            transition: all .2s;
-            cursor: pointer;
-        }
+    .action-btns a,
+    .action-btns button {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: .42rem 1.2rem;
+        border-radius: 999px;
+        font-size: .8rem;
+        font-weight: 700;
+        border: 1.5px solid rgba(255, 0, 137, .35);
+        color: #FF0089;
+        background: transparent;
+        text-decoration: none;
+        transition: all .2s;
+        cursor: pointer;
+    }
 
-        .action-btns a:hover,
-        .action-btns button:hover {
-            background: #FF0089;
-            color: #fff;
-            border-color: #FF0089;
-        }
+    .action-btns a:hover,
+    .action-btns button:hover {
+        background: #FF0089;
+        color: #fff;
+        border-color: #FF0089;
+    }
 
-        /* ══ Layout ══ */
+    /* ══ Layout ══ */
+    .terms-layout {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        gap: 2rem;
+        align-items: start;
+    }
+
+    @media(max-width:991px) {
         .terms-layout {
-            display: grid;
-            grid-template-columns: 260px 1fr;
-            gap: 2rem;
-            align-items: start;
+            grid-template-columns: 1fr;
         }
+    }
 
-        @media(max-width:991px) {
-            .terms-layout {
-                grid-template-columns: 1fr;
-            }
-        }
+    /* ══ Index sidebar ══ */
+    .terms-index {
+        background: var(--card-bg, #fff);
+        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
+        border-radius: 18px;
+        padding: 1.5rem;
+        position: sticky;
+        top: 80px;
+    }
 
-        /* ══ Index sidebar ══ */
-        .terms-index {
-            background: var(--card-bg, #fff);
-            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
-            border-radius: 18px;
-            padding: 1.5rem;
-            position: sticky;
-            top: 80px;
-        }
+    .terms-index h3 {
+        font-size: .9rem;
+        font-weight: 900;
+        color: #FF0089;
+        margin-bottom: 1rem;
+    }
 
-        .terms-index h3 {
-            font-size: .9rem;
-            font-weight: 900;
-            color: #FF0089;
-            margin-bottom: 1rem;
-        }
+    .terms-index ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
 
-        .terms-index ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
+    .terms-index li {
+        margin-bottom: .35rem;
+    }
 
-        .terms-index li {
-            margin-bottom: .35rem;
-        }
+    .terms-index a {
+        font-size: .78rem;
+        color: var(--text-muted, #6c757d);
+        text-decoration: none;
+        display: flex;
+        align-items: flex-start;
+        gap: 6px;
+        line-height: 1.4;
+        padding: .25rem .4rem;
+        border-radius: 7px;
+        transition: all .15s;
+    }
 
-        .terms-index a {
-            font-size: .78rem;
-            color: var(--text-muted, #6c757d);
-            text-decoration: none;
-            display: flex;
-            align-items: flex-start;
-            gap: 6px;
-            line-height: 1.4;
-            padding: .25rem .4rem;
-            border-radius: 7px;
-            transition: all .15s;
-        }
+    .terms-index a .num {
+        color: #FF0089;
+        font-weight: 800;
+        flex-shrink: 0;
+        min-width: 18px;
+    }
 
-        .terms-index a .num {
-            color: #FF0089;
-            font-weight: 800;
-            flex-shrink: 0;
-            min-width: 18px;
-        }
+    .terms-index a:hover,
+    .terms-index a.active {
+        color: #FF0089;
+        background: rgba(255, 0, 137, .07);
+    }
 
-        .terms-index a:hover,
-        .terms-index a.active {
-            color: #FF0089;
-            background: rgba(255, 0, 137, .07);
-        }
+    /* ══ Terms content ══ */
+    .terms-content {
+        background: var(--card-bg, #fff);
+        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
+        border-radius: 18px;
+        padding: 2.5rem;
+    }
 
-        /* ══ Terms content ══ */
+    @media(max-width:576px) {
         .terms-content {
-            background: var(--card-bg, #fff);
-            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
-            border-radius: 18px;
-            padding: 2.5rem;
+            padding: 1.4rem;
+        }
+    }
+
+    .term-section {
+        margin-bottom: 2.5rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .06));
+    }
+
+    .term-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .term-section h2 {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: #FF0089;
+        margin-bottom: 1rem;
+        padding-bottom: .5rem;
+        border-bottom: 2px solid rgba(255, 0, 137, .12);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .term-section h2 .sec-num {
+        background: rgba(255, 0, 137, .1);
+        color: #FF0089;
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .82rem;
+        font-weight: 900;
+        flex-shrink: 0;
+    }
+
+    .term-section h3 {
+        font-size: .9rem;
+        font-weight: 800;
+        margin: 1.2rem 0 .6rem;
+        color: var(--heading-color, #222);
+    }
+
+    .term-section p {
+        font-size: .87rem;
+        line-height: 1.8;
+        margin-bottom: .8rem;
+        color: var(--text-body, #444);
+    }
+
+    .term-section ul {
+        padding-left: 0;
+        list-style: none;
+        margin-bottom: .8rem;
+    }
+
+    .term-section ul li {
+        font-size: .87rem;
+        line-height: 1.7;
+        padding: .3rem 0 .3rem 1.3rem;
+        position: relative;
+        color: var(--text-body, #444);
+    }
+
+    .term-section ul li::before {
+        content: '›';
+        position: absolute;
+        left: 0;
+        color: #FF0089;
+        font-weight: 900;
+    }
+
+    /* ══ Highlight boxes ══ */
+    .term-box {
+        border-radius: 12px;
+        padding: 1rem 1.2rem;
+        margin: 1rem 0;
+        font-size: .84rem;
+        line-height: 1.7;
+    }
+
+    .term-box.warning {
+        background: rgba(255, 193, 7, .1);
+        border-left: 4px solid #ffc107;
+        color: var(--text-body, #444);
+    }
+
+    .term-box.danger {
+        background: rgba(220, 53, 69, .08);
+        border-left: 4px solid #dc3545;
+        color: var(--text-body, #444);
+    }
+
+    .term-box.info {
+        background: rgba(13, 110, 253, .08);
+        border-left: 4px solid #0d6efd;
+        color: var(--text-body, #444);
+    }
+
+    .term-box.success {
+        background: rgba(25, 135, 84, .08);
+        border-left: 4px solid #198754;
+        color: var(--text-body, #444);
+    }
+
+    .term-box strong {
+        display: block;
+        margin-bottom: .3rem;
+    }
+
+    /* ══ Planos tabela ══ */
+    .plan-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1rem 0;
+        font-size: .82rem;
+    }
+
+    .plan-table th {
+        background: rgba(255, 0, 137, .08);
+        color: #FF0089;
+        padding: .65rem 1rem;
+        text-align: left;
+        font-weight: 800;
+        border-bottom: 2px solid rgba(255, 0, 137, .2);
+    }
+
+    .plan-table td {
+        padding: .6rem 1rem;
+        border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .07));
+    }
+
+    .plan-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .plan-table tr:hover td {
+        background: rgba(255, 0, 137, .03);
+    }
+
+    /* ══ Back to top ══ */
+    #backToTop {
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: #FF0089;
+        color: #fff;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        box-shadow: 0 4px 14px rgba(255, 0, 137, .4);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .25s;
+        z-index: 1000;
+        cursor: pointer;
+    }
+
+    #backToTop.visible {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    /* ══ Print ══ */
+    @media print {
+
+        .navbar,
+        .offcanvas,
+        .bottom-nav,
+        .action-btns,
+        .terms-index,
+        #backToTop,
+        .read-progress,
+        nav {
+            display: none !important;
         }
 
-        @media(max-width:576px) {
-            .terms-content {
-                padding: 1.4rem;
-            }
+        .terms-layout {
+            grid-template-columns: 1fr !important;
         }
 
-        .term-section {
-            margin-bottom: 2.5rem;
-            padding-bottom: 2rem;
-            border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .06));
-        }
-
-        .term-section:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
+        .terms-content {
+            border: none !important;
+            padding: 0 !important;
         }
 
         .term-section h2 {
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: #FF0089;
-            margin-bottom: 1rem;
-            padding-bottom: .5rem;
-            border-bottom: 2px solid rgba(255, 0, 137, .12);
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            color: #000 !important;
         }
-
-        .term-section h2 .sec-num {
-            background: rgba(255, 0, 137, .1);
-            color: #FF0089;
-            width: 28px;
-            height: 28px;
-            border-radius: 8px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: .82rem;
-            font-weight: 900;
-            flex-shrink: 0;
-        }
-
-        .term-section h3 {
-            font-size: .9rem;
-            font-weight: 800;
-            margin: 1.2rem 0 .6rem;
-            color: var(--heading-color, #222);
-        }
-
-        .term-section p {
-            font-size: .87rem;
-            line-height: 1.8;
-            margin-bottom: .8rem;
-            color: var(--text-body, #444);
-        }
-
-        .term-section ul {
-            padding-left: 0;
-            list-style: none;
-            margin-bottom: .8rem;
-        }
-
-        .term-section ul li {
-            font-size: .87rem;
-            line-height: 1.7;
-            padding: .3rem 0 .3rem 1.3rem;
-            position: relative;
-            color: var(--text-body, #444);
-        }
-
-        .term-section ul li::before {
-            content: '›';
-            position: absolute;
-            left: 0;
-            color: #FF0089;
-            font-weight: 900;
-        }
-
-        /* ══ Highlight boxes ══ */
-        .term-box {
-            border-radius: 12px;
-            padding: 1rem 1.2rem;
-            margin: 1rem 0;
-            font-size: .84rem;
-            line-height: 1.7;
-        }
-
-        .term-box.warning {
-            background: rgba(255, 193, 7, .1);
-            border-left: 4px solid #ffc107;
-            color: var(--text-body, #444);
-        }
-
-        .term-box.danger {
-            background: rgba(220, 53, 69, .08);
-            border-left: 4px solid #dc3545;
-            color: var(--text-body, #444);
-        }
-
-        .term-box.info {
-            background: rgba(13, 110, 253, .08);
-            border-left: 4px solid #0d6efd;
-            color: var(--text-body, #444);
-        }
-
-        .term-box.success {
-            background: rgba(25, 135, 84, .08);
-            border-left: 4px solid #198754;
-            color: var(--text-body, #444);
-        }
-
-        .term-box strong {
-            display: block;
-            margin-bottom: .3rem;
-        }
-
-        /* ══ Planos tabela ══ */
-        .plan-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1rem 0;
-            font-size: .82rem;
-        }
-
-        .plan-table th {
-            background: rgba(255, 0, 137, .08);
-            color: #FF0089;
-            padding: .65rem 1rem;
-            text-align: left;
-            font-weight: 800;
-            border-bottom: 2px solid rgba(255, 0, 137, .2);
-        }
-
-        .plan-table td {
-            padding: .6rem 1rem;
-            border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .07));
-        }
-
-        .plan-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .plan-table tr:hover td {
-            background: rgba(255, 0, 137, .03);
-        }
-
-        /* ══ Back to top ══ */
-        #backToTop {
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            background: #FF0089;
-            color: #fff;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-            box-shadow: 0 4px 14px rgba(255, 0, 137, .4);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity .25s;
-            z-index: 1000;
-            cursor: pointer;
-        }
-
-        #backToTop.visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        /* ══ Print ══ */
-        @media print {
-
-            .navbar,
-            .offcanvas,
-            .bottom-nav,
-            .action-btns,
-            .terms-index,
-            #backToTop,
-            .read-progress,
-            nav {
-                display: none !important;
-            }
-
-            .terms-layout {
-                grid-template-columns: 1fr !important;
-            }
-
-            .terms-content {
-                border: none !important;
-                padding: 0 !important;
-            }
-
-            .term-section h2 {
-                color: #000 !important;
-            }
-        }
+    }
     </style>
 </head>
 
@@ -441,247 +512,141 @@ define('TERMS_DATE',    '11 de Março de 2026');
         <div class="read-progress-fill" id="progressBar"></div>
     </div>
 
-    <!-- Tela de Carregamento -->
-    <!-- <div class="loading-screen" id="loadingScreen">
-        <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg" class="loading-logo">
-            <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2"/>
-            <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
-        </svg>
-        <div class="spinner"></div>
-    </div> -->
-
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <!-- Menu Button (Left) -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu"
-                aria-controls="offcanvasMenu">
-                <span class="navbar-toggler-icon"><i class="bi bi-list text-white fs-1"></i></span>
-            </button>
-
-            <!-- Logo (Center on Mobile, Left on Desktop) -->
-            <a class="navbar-brand" href="../../painel">
-                <!-- SVG Logo Wasom Upfy -->
-                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
-                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
-                        fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
-                </svg> -->
-                <span class="text-light" style="
-              font-weight: bold;
-              box-sizing: border-box;
-              text-transform: uppercase;
-              font-family: Arial, sans-serif;
-            "><?php echo APP_NAME; ?></span>
-            </a>
-
-            <!-- Desktop Menu -->
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav m-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="../../painel"><i class="bi bi-speedometer2"></i> Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../../launch/releases"><i class="bi bi-disc"></i> Lançamentos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../../analytics/statistics"><i class="bi bi-bar-chart"></i>
-                            Estatísticas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../../finances/overview"><i class="bi bi-currency-dollar"></i>
-                            Finanças</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../../artists/artists-list"><i class="bi bi-person"></i> Artistas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../../artists/youtube/ucy"><i class="bi bi-youtube"></i> Unificação de
-                            canal
-                            YouTube</a>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- User Icon (Right) -->
-            <div class="user-menu d-flex align-items-center">
-                <!-- Theme Toggle Button -->
-                <a class="theme-toggle text-white me-2" id="themeToggle">
-                    <i class="bi bi-sun" id="themeIcon"></i>
-                </a>
-                <a href="../notifications" class="text-white me-2" aria-label="Notificações">
-                    <i class="bi bi-bell fs-4"></i>
-                    <span class="badge bg-danger">9</span>
-                </a>
-                <a href="#" class="text-white" data-bs-toggle="dropdown">
-                    <i class="bi bi-person-circle fs-4"></i>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li>
-                        <a class="dropdown-item" href="../../user/profile"><i class="bi bi-person me-2"></i>
-                            <strong><?php echo $first_name; ?></strong></a>
-                        <div class="text-white-50">
-                            &nbsp; &nbsp; &nbsp; &nbsp; (Conta <?php echo str_pad($id_users, 6, "0", STR_PAD_LEFT); ?>)
-                        </div>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../../user/profile"><i class="bi bi-person me-2"></i> Meu
-                            Perfil</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../../account/manage-account"><i class="bi bi-tools me-2"></i>
-                            Gestão de
-                            Conta</a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../../page/settings"><i class="bi bi-gear me-2"></i>
-                            Configurações</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../../page/notifications"><i class="bi bi-bell me-2"></i>
-                            Notificações</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../../services/available-services"><i
-                                class="bi bi-star me-2"></i> Conta
-                            e serviços disponíveis</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="#?logout-wasomupfy" data-bs-toggle="modal"
-                            data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right me-2"></i>
-                            Desconectar-se</a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../../page/about"><i class="bi bi-info-circle me-2"></i>
-                            Sobre</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../../page/support"><i class="bi bi-headset me-2"></i> Enviar
-                            pedido de
-                            suporte</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../../page/faq"><i class="bi bi-chat-left-text me-2"></i>
-                            Perguntas
-                            frequentes</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../../page/help"><i class="bi bi-question-circle me-2"></i>
-                            Ajuda</a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li>
-                        <span class="dropdown-item-text" id="versionDropdown"></span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Offcanvas Menu par Mobile e Desktop -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasMenuLabel">
-                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
-                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
-                        fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
-                </svg> -->
-                <span class="text-light" style="
-              font-weight: bold;
-              box-sizing: border-box;
-              text-transform: uppercase;
-              font-family: Arial, sans-serif;
-            "><?php echo APP_NAME; ?></span>
-            </h5>
-            <button type="button" class="btn-close text-white" data-bs-dismiss="offcanvas" aria-label="Close">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-        <div class="offcanvas-body">
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link" href="../../painel"><i class="bi bi-speedometer2"></i> Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../../launch/releases"><i class="bi bi-disc"></i> Lançamentos</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../../analytics/statistics"><i class="bi bi-bar-chart"></i>
-                        Estatísticas</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../../finances/overview"><i class="bi bi-currency-dollar"></i>
-                        Finanças</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../../artists/artists-list"><i class="bi bi-person"></i> Artistas</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../../artists/youtube/ucy"><i class="bi bi-youtube"></i> Unificação de
-                        canal
-                        YouTube</a>
-                </li>
-                <!-- Links secundários exibidos apenas em mobile -->
-                <li class="nav-item d-lg-none">
-                    <a class="nav-link" href="../../user/profile"><i class="bi bi-person-circle"></i> Meu Perfil</a>
-                </li>
-                <li class="nav-item d-lg-none">
-                    <a class="nav-link active" href="../../page/settings"><i class="bi bi-gear"></i> Configurações</a>
-                </li>
-                <li class="nav-item d-lg-none">
-                    <a class="nav-link" href="../../page/notifications"><i class="bi bi-bell"></i> Notificações</a>
-                </li>
-                <li class="nav-item d-lg-none">
-                    <a class="nav-link" href="../../page/about"><i class="bi bi-info-circle"></i> Sobre</a>
-                </li>
-                <li class="nav-item d-lg-none">
-                    <a class="nav-link" href="../../services/available-services"><i class="bi bi-star"></i> Conta e
-                        serviços
-                        disponíveis</a>
-                </li>
-                <li class="nav-item d-lg-none">
-                    <a class="nav-link" href="../../page/help"><i class="bi bi-question-circle"></i> Ajuda</a>
-                </li>
-                <li class="nav-item d-lg-none">
-                    <a class="nav-link" href="#?logout-wasomupfy" data-bs-toggle="modal"
-                        data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right"></i> Desconectar-se</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- Toast para Notificações de Status -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="connectionToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <strong class="me-auto">Conexão</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Fechar"></button>
-            </div>
-            <div class="toast-body">
-                Você está offline. Alguns dados podem estar desatualizados.
-                <div class="mt-2">
-                    <button class="btn btn-pink btn-sm" onclick="tryReconnect()">
-                        Tentar Reconectar
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <!-- ═══ NAVBAR ═══ -->
+    <?php require_once __DIR__ . '/../../include/sidebar.php'; ?>
     <!-- ═══ MAIN ═══ -->
     <div class="container my-4">
+        <?php /* ============================================
+    BANNERS DE NOTIFICACAO DO PAINEL
+    Estilo: inline CSS consistente com renderDashboardAlerts().
+    Bootstrap alert nativo removido — um único sistema visual.
+    Lógica de prioridade:
+      Nível 1 (danger)  — bloqueia distribuição
+      Nível 2 (warning) — importante, requer atenção
+      Nível 3 (info)    — informativo / acção opcional
+    ============================================ */ ?>
+
+        <?php renderDashboardAlerts($user, $platform); ?>
+
+        <?php
+        // Cor map para helpers inline — idêntico ao renderDashboardAlerts()
+        $alertColors = [
+            'danger'  => ['bg' => 'rgba(239,68,68,.08)',  'border' => 'rgba(239,68,68,.25)',  'text' => '#ef4444'],
+            'warning' => ['bg' => 'rgba(234,179,8,.08)',  'border' => 'rgba(234,179,8,.25)',  'text' => '#eab308'],
+            'info'    => ['bg' => 'rgba(99,102,241,.08)', 'border' => 'rgba(99,102,241,.25)', 'text' => '#6366f1'],
+        ];
+        function wuAlert(string $type, string $icon, string $message, ?array $action = null, bool $dismiss = true, string $id = ''): void
+        {
+            global $alertColors;
+            $c   = $alertColors[$type] ?? $alertColors['info'];
+            $eid = $id ?: ('wuPanelAlert_' . md5($message));
+            echo "<div id=\"{$eid}\" style=\"display:flex;align-items:flex-start;gap:10px;"
+                . "background:{$c['bg']};border:1px solid {$c['border']};border-radius:12px;"
+                . "padding:.75rem 1rem;font-size:.83rem;margin-bottom:.6rem;"
+                . "transition:opacity .3s;\">";
+            echo "<i class=\"bi {$icon}\" style=\"font-size:1rem;flex-shrink:0;margin-top:2px;color:{$c['text']};\"></i>";
+            echo '<span class="wu-alert-msg">' . $message;
+            if ($action) {
+                echo " <a href=\"{$action['url']}\" style=\"color:{$c['text']};font-weight:700;"
+                    . "text-decoration:underline;white-space:nowrap\">{$action['label']} &rarr;</a>";
+            }
+            echo '</span>';
+            if ($dismiss) {
+                echo "<button type=\"button\" class=\"wu-alert-dismiss\" aria-label=\"Fechar\""
+                    . " onclick=\"(function(el){el.style.opacity='0';"
+                    . "setTimeout(function(){el.style.display='none'},300)})(document.getElementById('{$eid}'))\">"
+                    . "&times;</button>";
+            }
+            echo '</div>';
+        }
+        ?>
+
+        <?php /* ── NÍVEL 1: Crítico — bloqueia distribuição ── */ ?>
+
+        <?php if (!$email_verified): ?>
+        <?php wuAlert(
+                'danger',
+                'bi-envelope-exclamation-fill',
+                '<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta e receber notificações de pagamentos.',
+                ['label' => 'Verificar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/user/profile#perfil'],
+                true,
+                'banner-email'
+            ); ?>
+        <?php endif; ?>
+
+        <?php if ($plan && !$plan_paid): ?>
+        <?php wuAlert(
+                'warning',
+                'bi-clock-history',
+                '<strong>Pagamento pendente — ' . htmlspecialchars($plan['name_plan']) . '.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados até confirmação.',
+                ['label' => 'Finalizar pagamento', 'url' => APP_URL . '/' . APP_URL_PANEL . '/payment/pay'],
+                true,
+                'banner-plan-pending'
+            ); ?>
+        <?php elseif (!$plan): ?>
+        <?php wuAlert(
+                'danger',
+                'bi-credit-card-fill',
+                '<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir a tua música para +150 plataformas.',
+                ['label' => 'Ver planos', 'url' => APP_URL . '/' . APP_URL_PANEL . '/all-plans'],
+                false,
+                'banner-plan'
+            ); ?>
+        <?php endif; ?>
+
+        <?php /* ── NÍVEL 2: Importante — perfil incompleto ── */ ?>
+
+        <?php if ($plan_paid && !$has_artist): ?>
+        <?php wuAlert(
+                'info',
+                'bi-person-plus-fill',
+                '<strong>Cria o teu perfil de artista.</strong> Tens plano activo mas ainda não criaste um perfil. Precisas de um para poder lançar música.',
+                ['label' => 'Criar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/add-artist'],
+                true,
+                'banner-artist'
+            ); ?>
+        <?php endif; ?>
+
+        <?php /* ── NÍVEL 3: Informativo — conta bancária ── */ ?>
+
+        <?php if ($plan_paid && $has_artist && !$bank_account): ?>
+        <?php wuAlert(
+                'info',
+                'bi-bank',
+                '<strong>Conta bancária não registada.</strong> Para poder sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.',
+                ['label' => 'Registar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/withdraw'],
+                true,
+                'banner-bank'
+            ); ?>
+        <?php endif; ?>
+
+        <?php /* ── NÍVEL 3: Conta bancária rejeitada ── */ ?>
+
+        <?php
+        $rejected_account = null;
+        if ($plan_paid) {
+            $rej_stmt = getDB()->prepare("SELECT type_account, reject_reason FROM _account WHERE id_users = ? AND status_account = 'rejected' LIMIT 1");
+            $rej_stmt->execute([$id_users]);
+            $rejected_account = $rej_stmt->fetch();
+        }
+        ?>
+        <?php if ($rejected_account): ?>
+        <?php
+            $rej_msg = '<strong>Conta ' . htmlspecialchars($rejected_account['type_account']) . ' rejeitada.</strong>';
+            if ($rejected_account['reject_reason']) {
+                $rej_msg .= ' Motivo: <em>' . htmlspecialchars($rejected_account['reject_reason']) . '</em>.';
+            }
+            $rej_msg .= ' Actualiza os dados e submete novamente.';
+            wuAlert(
+                'danger',
+                'bi-x-circle-fill',
+                $rej_msg,
+                ['label' => 'Corrigir agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/withdraw'],
+                true,
+                'banner-account-rejected'
+            );
+            ?>
+        <?php endif; ?>
 
         <!-- HERO -->
         <div class="terms-hero">
@@ -691,7 +656,7 @@ define('TERMS_DATE',    '11 de Março de 2026');
             </div>
             <h1><i class="bi bi-file-text-fill me-3" style="color:#FF0089"></i>Termos de Uso e Condições</h1>
             <p>
-                Ao criar uma conta e aceder à plataforma Wasom Upfy, confirmaste que leste, compreendeste e
+                Ao criar uma conta e aceder à plataforma <?php echo APP_NAME ?>, confirmaste que leste, compreendeste e
                 concordaste na íntegra com os presentes Termos de Uso. A utilização contínua da plataforma implica
                 a aceitação de todas as condições aqui estabelecidas.
             </p>
@@ -747,7 +712,8 @@ define('TERMS_DATE',    '11 de Março de 2026');
                 <div class="term-section" id="s1">
                     <h2><span class="sec-num">1</span>Identificação e Descrição dos Serviços</h2>
                     <p>
-                        A <strong>Wasom Upfy</strong> é uma plataforma digital de distribuição musical e gestão de
+                        A <strong><?php echo APP_NAME ?></strong> é uma plataforma digital de distribuição musical e
+                        gestão de
                         direitos
                         autorais, desenvolvida e operada em Angola. A plataforma permite a artistas, produtores
                         musicais,
@@ -776,7 +742,7 @@ define('TERMS_DATE',    '11 de Março de 2026');
                 <div class="term-section" id="s2">
                     <h2><span class="sec-num">2</span>Aceitação dos Termos e Elegibilidade</h2>
                     <p>
-                        Ao criar uma conta na plataforma Wasom Upfy, o utilizador declara expressamente que:
+                        Ao criar uma conta na plataforma <?php echo APP_NAME ?>, o utilizador declara expressamente que:
                     </p>
                     <ul>
                         <li>Leu, compreendeu e aceita na íntegra os presentes Termos de Uso;</li>
@@ -790,7 +756,10 @@ define('TERMS_DATE',    '11 de Março de 2026');
                     <div class="term-box warning">
                         <strong><i class="bi bi-exclamation-triangle-fill me-2"></i>Atenção</strong>
                         Se não concordar com qualquer parte destes Termos, deverá cessar imediatamente o uso da
-                        plataforma e contactar o <a href="support">suporte</a> para encerrar a sua conta.
+                        plataforma e contactar o <a
+                            href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/support">suporte</a> para encerrar a
+                        sua
+                        conta.
                     </div>
                 </div>
 
@@ -798,7 +767,8 @@ define('TERMS_DATE',    '11 de Março de 2026');
                 <div class="term-section" id="s3">
                     <h2><span class="sec-num">3</span>Registo de Conta e Segurança</h2>
                     <p>
-                        Para utilizar os serviços da Wasom Upfy, é obrigatório criar uma conta pessoal. Cada utilizador
+                        Para utilizar os serviços da <?php echo APP_NAME ?>, é obrigatório criar uma conta pessoal. Cada
+                        utilizador
                         pode manter <strong>apenas uma conta activa</strong> na plataforma.
                     </p>
                     <h3>3.1 Responsabilidade do Utilizador</h3>
@@ -807,7 +777,8 @@ define('TERMS_DATE',    '11 de Março de 2026');
                             (e-mail e palavra-passe);</li>
                         <li>Qualquer actividade realizada na conta é da inteira responsabilidade do titular;</li>
                         <li>Em caso de acesso não autorizado, o utilizador deve notificar imediatamente a equipa via <a
-                                href="support">pedido de suporte</a>;</li>
+                                href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/support">pedido de suporte</a>;
+                        </li>
                         <li>A partilha de credenciais de acesso com terceiros é estritamente proibida.</li>
                     </ul>
                     <h3>3.2 Dados do Perfil</h3>
@@ -823,7 +794,8 @@ define('TERMS_DATE',    '11 de Março de 2026');
                 <div class="term-section" id="s4">
                     <h2><span class="sec-num">4</span>Planos de Serviço e Condições de Pagamento</h2>
                     <p>
-                        A Wasom Upfy oferece quatro planos de serviço, cada um com características e condições
+                        A <?php echo APP_NAME ?> oferece quatro planos de serviço, cada um com características e
+                        condições
                         específicas.
                         O utilizador deve escolher o plano adequado às suas necessidades antes de efectuar qualquer
                         lançamento.
@@ -879,7 +851,8 @@ define('TERMS_DATE',    '11 de Março de 2026');
                     <p>
                         Os planos <strong>Artist</strong> e <strong>Label</strong> são de subscrição mensal. A renovação
                         não é automática — o utilizador deve efectuar o pagamento e submeter o comprovante antes do
-                        vencimento para garantir a continuidade do serviço sem interrupção. A Wasom Upfy enviará uma
+                        vencimento para garantir a continuidade do serviço sem interrupção. A <?php echo APP_NAME ?>
+                        enviará uma
                         notificação com <strong>7 dias de antecedência</strong> do vencimento.
                     </p>
 
@@ -897,7 +870,7 @@ define('TERMS_DATE',    '11 de Março de 2026');
                     <div class="term-box danger">
                         <strong><i class="bi bi-x-circle-fill me-2"></i>Política de Não Reembolso — Leitura
                             Obrigatória</strong>
-                        Todos os pagamentos efectuados à Wasom Upfy são <strong>definitivos e não
+                        Todos os pagamentos efectuados à <?php echo APP_NAME ?> são <strong>definitivos e não
                             reembolsáveis</strong>,
                         independentemente da circunstância. Ao efectuar o pagamento, o utilizador declara ter
                         compreendido
@@ -919,9 +892,11 @@ define('TERMS_DATE',    '11 de Março de 2026');
                     <h3>5.1 Excepção Única</h3>
                     <p>
                         A única situação em que poderá ser analisado um pedido de crédito de conta (e não reembolso
-                        monetário) é quando a Wasom Upfy cometa um erro técnico comprovável que resulte na cobrança
+                        monetário) é quando a <?php echo APP_NAME ?> cometa um erro técnico comprovável que resulte na
+                        cobrança
                         duplicada pelo mesmo serviço. Nesse caso, o utilizador deve abrir um
-                        <a href="support">pedido de suporte</a> com o comprovante das duas cobranças no prazo de
+                        <a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/support">pedido de suporte</a> com o
+                        comprovante das duas cobranças no prazo de
                         <strong>72 horas</strong> após a ocorrência. A análise não garante resultado favorável.
                     </p>
 
@@ -956,7 +931,8 @@ define('TERMS_DATE',    '11 de Março de 2026');
                     </ul>
                     <h3>6.3 Prazos de Distribuição</h3>
                     <ul>
-                        <li>Revisão interna pela equipa Wasom Upfy: até <strong>72 horas úteis</strong> após a
+                        <li>Revisão interna pela equipa <?php echo APP_NAME ?>: até <strong>72 horas úteis</strong> após
+                            a
                             submissão;</li>
                         <li>Spotify e Apple Music: disponibilização em <strong>3 a 7 dias</strong> após aprovação;</li>
                         <li>Outras plataformas: até <strong>14 dias</strong> após aprovação;</li>
@@ -965,7 +941,8 @@ define('TERMS_DATE',    '11 de Março de 2026');
                     </ul>
                     <h3>6.4 Rejeição de Lançamentos</h3>
                     <p>
-                        A Wasom Upfy reserva-se o direito de rejeitar qualquer lançamento que não cumpra os requisitos
+                        A <?php echo APP_NAME ?> reserva-se o direito de rejeitar qualquer lançamento que não cumpra os
+                        requisitos
                         técnicos, de conteúdo ou legais. Em caso de rejeição, o utilizador será notificado com o motivo.
                         O pagamento do plano não é reembolsável em caso de rejeição por não conformidade.
                     </p>
@@ -973,7 +950,7 @@ define('TERMS_DATE',    '11 de Março de 2026');
                     <p>
                         O utilizador pode solicitar a remoção de um lançamento das plataformas a qualquer momento.
                         A remoção efectiva pode demorar até <strong>30 dias</strong> dependendo de cada plataforma. A
-                        Wasom Upfy
+                        <?php echo APP_NAME ?>
                         não se responsabiliza por streams ou receitas geradas durante o período de processamento da
                         remoção.
                     </p>
@@ -984,7 +961,8 @@ define('TERMS_DATE',    '11 de Março de 2026');
                     <h2><span class="sec-num">7</span>Royalties, Receitas e Levantamentos</h2>
                     <h3>7.1 Distribuição de Royalties</h3>
                     <p>
-                        A Wasom Upfy distribui <strong>90% dos royalties</strong> gerados pelos lançamentos directamente
+                        A <?php echo APP_NAME ?> distribui <strong>90% dos royalties</strong> gerados pelos lançamentos
+                        directamente
                         ao artista. Os restantes <strong>10%</strong> destinam-se à cobertura dos custos operacionais da
                         plataforma, incluindo licenças de distribuição, infraestrutura técnica e suporte administrativo.
                     </p>
@@ -1010,7 +988,7 @@ define('TERMS_DATE',    '11 de Março de 2026');
                         <li>Prazo de processamento: <strong>3 a 5 dias úteis</strong> após confirmação;</li>
                         <li>O utilizador é responsável pela veracidade dos dados bancários fornecidos. Pagamentos
                             efectuados para contas erradas por dados fornecidos incorrectamente pelo utilizador não são
-                            da responsabilidade da Wasom Upfy.</li>
+                            da responsabilidade da <?php echo APP_NAME ?>.</li>
                     </ul>
 
                     <h3>7.4 Divisão de Royalties entre Colaboradores</h3>
@@ -1023,7 +1001,8 @@ define('TERMS_DATE',    '11 de Março de 2026');
 
                     <h3>7.5 Retenção por Suspeita de Fraude</h3>
                     <p>
-                        A Wasom Upfy reserva-se o direito de reter temporariamente pagamentos de royalties quando
+                        A <?php echo APP_NAME ?> reserva-se o direito de reter temporariamente pagamentos de royalties
+                        quando
                         existir suspeita fundada de manipulação de streams, fraude ou actividade irregular detectada
                         pelas plataformas de distribuição. O utilizador será notificado e terá direito a apresentar
                         esclarecimentos no prazo de <strong>15 dias úteis</strong>.
@@ -1036,12 +1015,13 @@ define('TERMS_DATE',    '11 de Março de 2026');
                     <h3>8.1 Propriedade do Conteúdo</h3>
                     <p>
                         O utilizador mantém a totalidade dos direitos de propriedade intelectual sobre as suas obras
-                        musicais. A Wasom Upfy não reivindica qualquer direito de propriedade sobre as músicas,
+                        musicais. A <?php echo APP_NAME ?> não reivindica qualquer direito de propriedade sobre as
+                        músicas,
                         letras, capas ou qualquer outro conteúdo submetido pelo utilizador.
                     </p>
                     <h3>8.2 Licença de Distribuição</h3>
                     <p>
-                        Ao submeter um lançamento, o utilizador concede à Wasom Upfy uma
+                        Ao submeter um lançamento, o utilizador concede à <?php echo APP_NAME ?> uma
                         <strong>licença não exclusiva, mundial e revogável</strong> para distribuir, reproduzir,
                         disponibilizar e promover as obras nas plataformas parceiras, em seu nome, pelo período em
                         que o lançamento estiver activo na plataforma.
@@ -1060,13 +1040,16 @@ define('TERMS_DATE',    '11 de Março de 2026');
                     <p>
                         O utilizador será o único responsável por qualquer reclamação, litígio ou indemnização
                         resultante
-                        da violação desta garantia. A Wasom Upfy reserva-se o direito de remover imediatamente qualquer
+                        da violação desta garantia. A <?php echo APP_NAME ?> reserva-se o direito de remover
+                        imediatamente qualquer
                         conteúdo que seja objecto de reclamação fundamentada de violação de direitos de terceiros.
                     </p>
                     <h3>8.4 Propriedade da Plataforma</h3>
                     <p>
-                        Todos os elementos da plataforma Wasom Upfy — incluindo o design, código-fonte, logótipos,
-                        marcas, textos, relatórios e funcionalidades — são propriedade exclusiva da Wasom Upfy e estão
+                        Todos os elementos da plataforma <?php echo APP_NAME ?> — incluindo o design, código-fonte,
+                        logótipos,
+                        marcas, textos, relatórios e funcionalidades — são propriedade exclusiva da
+                        <?php echo APP_NAME ?> e estão
                         protegidos pelas leis de propriedade intelectual aplicáveis. É expressamente proibida a
                         reprodução, cópia, modificação ou distribuição de qualquer elemento da plataforma sem
                         autorização
@@ -1118,7 +1101,7 @@ define('TERMS_DATE',    '11 de Março de 2026');
                             incluindo através de serviços de "stream farming" ou bots;</li>
                         <li>Partilhar, vender ou transferir a sua conta a terceiros;</li>
                         <li>Utilizar a plataforma para fins comerciais não autorizados, incluindo a revenda de serviços
-                            sem acordo escrito prévio com a Wasom Upfy.</li>
+                            sem acordo escrito prévio com a <?php echo APP_NAME ?>.</li>
                     </ul>
                 </div>
 
@@ -1155,7 +1138,9 @@ define('TERMS_DATE',    '11 de Março de 2026');
                     <h3>11.3 Encerramento Voluntário</h3>
                     <p>
                         O utilizador pode solicitar o encerramento voluntário da sua conta através de um
-                        <a href="support">pedido de suporte</a>. Antes do encerramento, todos os levantamentos
+                        <a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/support">pedido de suporte</a>. Antes
+                        do
+                        encerramento, todos os levantamentos
                         pendentes devem ser processados e todos os lançamentos activos serão mantidos ou removidos
                         conforme instrução do utilizador. O saldo remanescente na carteira após o encerramento
                         voluntário pode ser levantado no prazo de <strong>30 dias</strong> após o pedido.
@@ -1166,7 +1151,7 @@ define('TERMS_DATE',    '11 de Março de 2026');
                 <div class="term-section" id="s12">
                     <h2><span class="sec-num">12</span>Limitação de Responsabilidade</h2>
                     <p>
-                        A Wasom Upfy não se responsabiliza por:
+                        A <?php echo APP_NAME ?> não se responsabiliza por:
                     </p>
                     <ul>
                         <li>Falhas técnicas, indisponibilidade ou atrasos causados por plataformas de distribuição
@@ -1183,7 +1168,8 @@ define('TERMS_DATE',    '11 de Março de 2026');
                             proteger as suas credenciais.</li>
                     </ul>
                     <p>
-                        A responsabilidade total da Wasom Upfy perante o utilizador, em qualquer circunstância,
+                        A responsabilidade total da <?php echo APP_NAME ?> perante o utilizador, em qualquer
+                        circunstância,
                         está limitada ao valor pago pelo utilizador pelo plano activo no momento do evento gerador
                         do dano, referente ao último ciclo de facturação.
                     </p>
@@ -1194,12 +1180,14 @@ define('TERMS_DATE',    '11 de Março de 2026');
                     <h2><span class="sec-num">13</span>Privacidade e Tratamento de Dados</h2>
                     <p>
                         O tratamento dos dados pessoais dos utilizadores é regido pela
-                        <a href="privacy"><strong>Política de Privacidade</strong></a> da Wasom Upfy, que constitui
+                        <a href="privacy"><strong>Política de Privacidade</strong></a> da <?php echo APP_NAME ?>, que
+                        constitui
                         parte integrante dos presentes Termos de Uso. Ao aceitar estes Termos, o utilizador aceita
                         igualmente a Política de Privacidade.
                     </p>
                     <p>
-                        A Wasom Upfy não partilha dados pessoais dos utilizadores com terceiros para fins comerciais
+                        A <?php echo APP_NAME ?> não partilha dados pessoais dos utilizadores com terceiros para fins
+                        comerciais
                         ou publicitários. Os dados são utilizados exclusivamente para a prestação dos serviços
                         contratados e para o cumprimento de obrigações legais.
                     </p>
@@ -1214,7 +1202,7 @@ define('TERMS_DATE',    '11 de Março de 2026');
                 <div class="term-section" id="s14">
                     <h2><span class="sec-num">14</span>Cookies e Tecnologias de Rastreamento</h2>
                     <p>
-                        A Wasom Upfy utiliza cookies e tecnologias similares para:
+                        A <?php echo APP_NAME ?> utiliza cookies e tecnologias similares para:
                     </p>
                     <ul>
                         <li>Manter a sessão de utilizador activa e segura;</li>
@@ -1233,15 +1221,17 @@ define('TERMS_DATE',    '11 de Março de 2026');
                 <div class="term-section" id="s15">
                     <h2><span class="sec-num">15</span>Serviços e Plataformas de Terceiros</h2>
                     <p>
-                        A Wasom Upfy distribui conteúdo para plataformas de terceiros (Spotify, Apple Music, YouTube
+                        A <?php echo APP_NAME ?> distribui conteúdo para plataformas de terceiros (Spotify, Apple Music,
+                        YouTube
                         Music, Deezer, etc.) que possuem os seus próprios Termos de Uso e Políticas de Privacidade
-                        independentes. A Wasom Upfy não controla nem se responsabiliza pelas políticas, decisões
+                        independentes. A <?php echo APP_NAME ?> não controla nem se responsabiliza pelas políticas,
+                        decisões
                         ou alterações efectuadas por essas plataformas.
                     </p>
                     <p>
                         A integração com o <strong>YouTube</strong> para unificação de canal e gestão de Art Tracks
                         está sujeita aos Termos de Serviço do YouTube e às políticas do YouTube Partner Program.
-                        A Wasom Upfy não garante a aprovação pelo YouTube da monetização de qualquer canal.
+                        A <?php echo APP_NAME ?> não garante a aprovação pelo YouTube da monetização de qualquer canal.
                     </p>
                 </div>
 
@@ -1249,7 +1239,8 @@ define('TERMS_DATE',    '11 de Março de 2026');
                 <div class="term-section" id="s16">
                     <h2><span class="sec-num">16</span>Actualizações dos Termos de Uso</h2>
                     <p>
-                        A Wasom Upfy reserva-se o direito de actualizar os presentes Termos de Uso a qualquer momento,
+                        A <?php echo APP_NAME ?> reserva-se o direito de actualizar os presentes Termos de Uso a
+                        qualquer momento,
                         mediante notificação prévia ao utilizador com pelo menos <strong>15 dias de
                             antecedência</strong>
                         através de:
@@ -1284,7 +1275,8 @@ define('TERMS_DATE',    '11 de Março de 2026');
                     </p>
                     <p>
                         Antes de recorrer a qualquer instância judicial, as partes comprometem-se a tentar
-                        resolver o litígio de forma amigável, através do <a href="support">sistema de suporte</a>
+                        resolver o litígio de forma amigável, através do <a
+                            href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/support">sistema de suporte</a>
                         da plataforma, num prazo de <strong>30 dias</strong> a contar da notificação da reclamação.
                     </p>
                 </div>
@@ -1294,13 +1286,18 @@ define('TERMS_DATE',    '11 de Março de 2026');
                     <h2><span class="sec-num">18</span>Contacto</h2>
                     <p>
                         Para questões, dúvidas ou reclamações relativas aos presentes Termos de Uso, o utilizador
-                        pode contactar a equipa Wasom Upfy através dos seguintes meios:
+                        pode contactar a equipa <?php echo APP_NAME ?> através dos seguintes meios:
                     </p>
                     <ul>
-                        <li><strong>Suporte na plataforma:</strong> <a href="support">Enviar pedido de suporte</a> —
+                        <li><strong>Suporte na plataforma:</strong> <a
+                                href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/support">Enviar pedido de
+                                suporte</a>
+                            —
                             resposta em até 48 horas úteis;</li>
                         <li><strong>E-mail:</strong> suporte@wasomupfy.com;</li>
-                        <li><strong>FAQ:</strong> <a href="faq">Perguntas Frequentes</a> — para questões comuns sobre a
+                        <li><strong>FAQ:</strong> <a
+                                href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/faq">Perguntas Frequentes</a> —
+                            para questões comuns sobre a
                             plataforma;</li>
                         <li><strong>Horário de atendimento:</strong> Segunda a Sexta, das 09h00 às 18h00 (WAT), Sábado
                             das 09h00 às 13h00.</li>
@@ -1309,7 +1306,8 @@ define('TERMS_DATE',    '11 de Março de 2026');
                     <div class="term-box info" style="margin-top:1.5rem">
                         <strong><i class="bi bi-check-circle-fill me-2" style="color:#198754"></i>Aceitação Confirmada
                             no Registo</strong>
-                        Ao criares a tua conta na Wasom Upfy, confirmaste a leitura e aceitação integral destes
+                        Ao criares a tua conta na <?php echo APP_NAME ?>, confirmaste a leitura e aceitação integral
+                        destes
                         Termos de Uso e da <a href="privacy">Política de Privacidade</a>. A data e IP do teu
                         registo foram registados como prova de aceitação.
                     </div>
@@ -1321,116 +1319,82 @@ define('TERMS_DATE',    '11 de Março de 2026');
         <!-- Footer dos termos -->
         <div class="text-center mt-4 mb-5" style="font-size:.78rem;color:var(--text-muted,#6c757d)">
             <p>
-                <strong>Wasom Upfy</strong> · Termos de Uso versão <?php echo TERMS_VERSION; ?> ·
+                <strong><?php echo APP_NAME ?></strong> · Termos de Uso versão <?php echo TERMS_VERSION; ?> ·
                 Em vigor desde <?php echo TERMS_DATE; ?> ·
                 <a href="privacy" class="text-secondary">Política de Privacidade</a>
             </p>
-            <p>© <?php echo date('Y'); ?> Wasom Upfy. Todos os direitos reservados.</p>
+            <p>© <?php echo date('Y'); ?> <?php echo APP_NAME ?>. Todos os direitos reservados.</p>
         </div>
 
     </div><!-- /container -->
 
-    <!-- Bottom Nav Mobile -->
-    <nav class="bottom-nav d-lg-none">
-        <ul class="nav justify-content-around">
-            <li class="nav-item"><a class="nav-link" href="../painel"><i
-                        class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../launch/releases"><i
-                        class="bi bi-disc"></i><span>Lançamentos</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../analytics/statistics"><i
-                        class="bi bi-bar-chart"></i><span>Stats</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../finances/overview"><i
-                        class="bi bi-currency-dollar"></i><span>Finanças</span></a></li>
-            <li class="nav-item"><a class="nav-link active" href="terms"><i
-                        class="bi bi-file-text"></i><span>Termos</span></a></li>
-        </ul>
-    </nav>
 
     <!-- Back to top -->
     <button id="backToTop" title="Voltar ao topo"><i class="bi bi-chevron-up"></i></button>
-
-    <!-- Modal Logout -->
-    <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-dark">Terminar sessão</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body text-center text-dark">
-                    <p>Tens a certeza de que desejas terminar sessão, <strong><?php echo $first_name; ?></strong>?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Não, continuar</button>
-                    <a href="../logout" class="btn btn-danger">Sim, terminar sessão</a>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- theme.wp.js é o dono de themeToggle/themeIcon — sem redeclaração inline -->
     <script src="<?php echo APP_URL  ?>/js/theme.wp.js"></script>
     <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
 
-            // ── Barra de progresso de leitura + back to top ──
-            var fill = document.getElementById('progressBar');
-            var backToTop = document.getElementById('backToTop');
+        // ── Barra de progresso de leitura + back to top ──
+        var fill = document.getElementById('progressBar');
+        var backToTop = document.getElementById('backToTop');
 
-            function updateProgress() {
-                var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-                var scrollH = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-                var pct = scrollH > 0 ? (scrollTop / scrollH) * 100 : 0;
-                if (fill) fill.style.width = pct + '%';
-                if (backToTop) backToTop.classList.toggle('visible', scrollTop > 300);
-            }
+        function updateProgress() {
+            var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            var scrollH = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            var pct = scrollH > 0 ? (scrollTop / scrollH) * 100 : 0;
+            if (fill) fill.style.width = pct + '%';
+            if (backToTop) backToTop.classList.toggle('visible', scrollTop > 300);
+        }
 
-            window.addEventListener('scroll', updateProgress);
-            updateProgress();
+        window.addEventListener('scroll', updateProgress);
+        updateProgress();
 
-            // ── Back to top ───────────────────────────────────
-            if (backToTop) {
-                backToTop.addEventListener('click', function() {
-                    window.scrollTo({
-                        top: 0,
-                        behavior: 'smooth'
+        // ── Back to top ───────────────────────────────────
+        if (backToTop) {
+            backToTop.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        }
+
+        // ── Imprimir ──────────────────────────────────────
+        var btnPrint = document.getElementById('btnPrint');
+        if (btnPrint) {
+            btnPrint.addEventListener('click', function() {
+                window.print();
+            });
+        }
+
+        // ── Highlight activo do índice ao scroll ─────────
+        var sections = document.querySelectorAll('.term-section');
+        var indexLinks = document.querySelectorAll('.terms-index a');
+
+        var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    var id = entry.target.getAttribute('id');
+                    indexLinks.forEach(function(link) {
+                        link.classList.toggle('active', link.getAttribute('href') ===
+                            '#' + id);
                     });
-                });
-            }
-
-            // ── Imprimir ──────────────────────────────────────
-            var btnPrint = document.getElementById('btnPrint');
-            if (btnPrint) {
-                btnPrint.addEventListener('click', function() {
-                    window.print();
-                });
-            }
-
-            // ── Highlight activo do índice ao scroll ─────────
-            var sections = document.querySelectorAll('.term-section');
-            var indexLinks = document.querySelectorAll('.terms-index a');
-
-            var observer = new IntersectionObserver(function(entries) {
-                entries.forEach(function(entry) {
-                    if (entry.isIntersecting) {
-                        var id = entry.target.getAttribute('id');
-                        indexLinks.forEach(function(link) {
-                            link.classList.toggle('active', link.getAttribute('href') ===
-                                '#' + id);
-                        });
-                    }
-                });
-            }, {
-                rootMargin: '-20% 0px -70% 0px'
+                }
             });
-
-            sections.forEach(function(sec) {
-                observer.observe(sec);
-            });
-
+        }, {
+            rootMargin: '-20% 0px -70% 0px'
         });
+
+        sections.forEach(function(sec) {
+            observer.observe(sec);
+        });
+
+    });
     </script>
 </body>
 

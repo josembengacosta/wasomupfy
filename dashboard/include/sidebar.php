@@ -45,30 +45,30 @@
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav m-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL . '/' ?>painel"><i
+                    <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/painel"><i
                             class="bi bi-speedometer2"></i>
                         Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL . '/' ?>releases"><i
+                    <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/releases"><i
                             class="bi bi-disc"></i>
                         Lançamentos</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL . '/' ?>statistics"><i
+                    <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/statistics"><i
                             class="bi bi-bar-chart"></i> Estatísticas</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL . '/' ?>overview"><i
+                    <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/overview"><i
                             class="bi bi-currency-dollar"></i> Finanças</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL . '/' ?>artists-list"><i
+                    <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/artists-list"><i
                             class="bi bi-person"></i>
                         Artistas</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL . '/' ?>youtube/ucy"><i
+                    <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/youtube/ucy"><i
                             class="bi bi-youtube"></i> Unificação de canal
                         YouTube</a>
                 </li>
@@ -81,43 +81,43 @@
             <a class="theme-toggle text-white me-2" id="themeToggle">
                 <i class="bi bi-sun" id="themeIcon"></i>
             </a>
-            <a href="<?php echo APP_URL . '/' . APP_URL_PANEL . '/' ?>page/notifications"
+            <a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/notifications"
                 class="text-white me-2 position-relative" aria-label="Notificações" id="navNotifBtn">
                 <i class="bi bi-bell fs-4"></i>
                 <?php if ($notif_count > 0): ?>
-                    <span id="navNotifBadge" class="position-absolute translate-middle badge rounded-pill" style="top:2px;left:calc(100% - 4px);background:#FF0089;font-size:.6rem;
+                <span id="navNotifBadge" class="position-absolute translate-middle badge rounded-pill" style="top:2px;left:calc(100% - 4px);background:#FF0089;font-size:.6rem;
                                min-width:18px;height:18px;padding:0 5px;line-height:18px;
                                box-shadow:0 0 0 2px #1a1a2e;">
-                        <?php echo $notif_count > 99 ? '99+' : $notif_count; ?>
-                    </span>
+                    <?php echo $notif_count > 99 ? '99+' : $notif_count; ?>
+                </span>
                 <?php else: ?>
-                    <span id="navNotifBadge" class="position-absolute translate-middle badge rounded-pill" style="top:2px;left:calc(100% - 4px);background:#FF0089;font-size:.6rem;
+                <span id="navNotifBadge" class="position-absolute translate-middle badge rounded-pill" style="top:2px;left:calc(100% - 4px);background:#FF0089;font-size:.6rem;
                                min-width:18px;height:18px;padding:0 5px;line-height:18px;
                                box-shadow:0 0 0 2px #1a1a2e;display:none;">0</span>
                 <?php endif; ?>
             </a>
             <a href="#" class="text-white" data-bs-toggle="dropdown">
                 <?php if ($user_photo): ?>
-                    <img src="<?php echo APP_URL  ?>/assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
-                        width="32" height="32" class="rounded-circle flex-shrink-0"
-                        style="object-fit:cover;border:2px solid #FF4D4D" alt="Foto conta"
-                        onerror="this.onerror=null;this.src='<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png'">
+                <img src="<?php echo APP_URL  ?>/assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
+                    width="32" height="32" class="rounded-circle flex-shrink-0"
+                    style="object-fit:cover;border:2px solid #FF4D4D" alt="Foto conta"
+                    onerror="this.onerror=null;this.src='<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png'">
                 <?php else: ?>
-                    <img src="<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png" width="32" height="32"
-                        class="rounded-circle flex-shrink-0" style="object-fit:cover;" alt="Avatar">
+                <img src="<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png" width="32" height="32"
+                    class="rounded-circle flex-shrink-0" style="object-fit:cover;" alt="Avatar">
                 <?php endif; ?>
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
                 <li>
                     <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="account/manage-account">
                         <?php if ($user_photo): ?>
-                            <img src="<?php echo APP_URL  ?>/assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
-                                width="32" height="32" class="rounded-circle flex-shrink-0"
-                                style="object-fit:cover;border:2px solid #FF4D4D" alt="Foto conta"
-                                onerror="this.onerror=null;this.src='<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png'">
+                        <img src="<?php echo APP_URL  ?>/assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
+                            width="32" height="32" class="rounded-circle flex-shrink-0"
+                            style="object-fit:cover;border:2px solid #FF4D4D" alt="Foto conta"
+                            onerror="this.onerror=null;this.src='<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png'">
                         <?php else: ?>
-                            <img src="<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png" width="32" height="32"
-                                class="rounded-circle flex-shrink-0" style="object-fit:cover;" alt="Avatar">
+                        <img src="<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png" width="32" height="32"
+                            class="rounded-circle flex-shrink-0" style="object-fit:cover;" alt="Avatar">
                         <?php endif; ?>
                         <div class="overflow-hidden">
                             <div class="fw-bold text-truncate" style="max-width:160px">
@@ -132,70 +132,87 @@
                     <hr class="dropdown-divider" />
                 </li>
                 <li>
-                    <a class="dropdown-item d-flex align-items-center gap-2" href="user/profile">
+                    <a class="dropdown-item d-flex align-items-center gap-2"
+                        href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/user/profile">
                         <?php if ($user_photo): ?>
-                            <img src="<?php echo APP_URL  ?>/assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
-                                width="28" height="28" class="rounded-circle flex-shrink-0" style="object-fit:cover"
-                                alt="Foto perfil"
-                                onerror="this.onerror=null;this.src='<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png'">
+                        <img src="<?php echo APP_URL  ?>/assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
+                            width="28" height="28" class="rounded-circle flex-shrink-0" style="object-fit:cover"
+                            alt="Foto perfil"
+                            onerror="this.onerror=null;this.src='<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png'">
                         <?php else: ?>
-                            <img src="<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png" width="28" height="28"
-                                class="rounded-circle flex-shrink-0" style="object-fit:cover" alt="Perfil"
-                                onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\'bi bi-person-circle fs-5 flex-shrink-0\'></i>')">
+                        <img src="<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png" width="28" height="28"
+                            class="rounded-circle flex-shrink-0" style="object-fit:cover" alt="Perfil"
+                            onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\'bi bi-person-circle fs-5 flex-shrink-0\'></i>')">
                         <?php endif; ?>
                         Meu Perfil
                     </a>
                 </li>
                 <li>
+                    <hr class="dropdown-divider" />
+                </li>
+                <li>
                     <a class="dropdown-item"
-                        href="<?php echo APP_URL . '/' . APP_URL_PANEL . '/' ?>account/manage-account"><i
+                        href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/account/manage-account"><i
                             class="bi bi-tools me-2"></i> Gestão
                         de
                         Conta</a>
                 </li>
                 <li>
-                    <hr class="dropdown-divider" />
-                </li>
-                <li>
-                    <a class="dropdown-item" href="<?php echo APP_URL . '/' . APP_URL_PANEL . '/' ?>page/settings"><i
+                    <a class="dropdown-item" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/settings"><i
                             class="bi bi-gear me-2"></i> Configurações</a>
                 </li>
                 <li>
-                    <a class="dropdown-item"
-                        href="<?php echo APP_URL . '/' . APP_URL_PANEL . '/' ?>page/notifications"><i
+                    <a class="dropdown-item" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/notifications"><i
                             class="bi bi-bell me-2"></i>
                         Notificações</a>
                 </li>
                 <li>
-                    <a class="dropdown-item" href="services/available-services"><i class="bi bi-star me-2"></i>
+                    <a class="dropdown-item"
+                        href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/services/available-services"><i
+                            class="bi bi-star me-2"></i>
                         Conta e
                         serviços disponíveis</a>
                 </li>
                 <li>
-                    <a class="dropdown-item" href="#?logout-wasomupfy" data-bs-toggle="modal"
-                        data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right me-2"></i>
-                        Desconectar-se</a>
+                    <hr class="dropdown-divider" />
+                </li>
+                <!-- <li>
+                    <a class="dropdown-item" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/about"><i
+                            class="bi bi-info-circle me-2"></i> Sobre</a>
+                </li> -->
+                <li>
+                    <a class="dropdown-item" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/support"><i
+                            class="bi bi-headset me-2"></i> Enviar pedido de
+                        suporte</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/faq"><i
+                            class="bi bi-chat-left-text me-2"></i> Perguntas
+                        frequentes</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/help"><i
+                            class="bi bi-question-circle me-2"></i> Ajuda</a>
                 </li>
                 <li>
                     <hr class="dropdown-divider" />
                 </li>
                 <li>
-                    <a class="dropdown-item" href="<?php echo APP_URL . '/' . APP_URL_PANEL . '/' ?>page/about"><i
-                            class="bi bi-info-circle me-2"></i> Sobre</a>
+                    <a class="dropdown-item"
+                        href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/politicies/privacy"><i
+                            class="bi bi-shield-check"></i><span>Privacidade</span></a>
                 </li>
                 <li>
-                    <a class="dropdown-item" href="<?php echo APP_URL . '/' . APP_URL_PANEL . '/' ?>page/support"><i
-                            class="bi bi-headset me-2"></i> Enviar pedido de
-                        suporte</a>
+                    <a class="dropdown-item" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/politicies/terms"><i
+                            class="bi bi-file-text"></i><span>Termos</span></a>
                 </li>
                 <li>
-                    <a class="dropdown-item" href="<?php echo APP_URL . '/' . APP_URL_PANEL . '/' ?>page/faq"><i
-                            class="bi bi-chat-left-text me-2"></i> Perguntas
-                        frequentes</a>
+                    <hr class="dropdown-divider" />
                 </li>
                 <li>
-                    <a class="dropdown-item" href="<?php echo APP_URL . '/' . APP_URL_PANEL . '/' ?>page/help"><i
-                            class="bi bi-question-circle me-2"></i> Ajuda</a>
+                    <a class="dropdown-item text-danger" href="#?logout-wasomupfy" data-bs-toggle="modal"
+                        data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right me-2"></i>
+                        Desconectar-se</a>
                 </li>
                 <li>
                     <hr class="dropdown-divider" />
@@ -234,64 +251,73 @@
     <div class="offcanvas-body">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL . '/' ?>painel"><i
+                <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/painel"><i
                         class="bi bi-speedometer2"></i>
                     Dashboard</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL . '/' ?>releases"><i
+                <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/releases"><i
                         class="bi bi-disc"></i>
                     Lançamentos</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL . '/' ?>statistics"><i
+                <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/statistics"><i
                         class="bi bi-bar-chart"></i>
                     Estatísticas</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL . '/' ?>overview"><i
+                <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/overview"><i
                         class="bi bi-currency-dollar"></i> Finanças</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL . '/' ?>artists-list"><i
+                <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/artists-list"><i
                         class="bi bi-person"></i>
                     Artistas</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL . '/' ?>youtube/ucy"><i
+                <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/youtube/ucy"><i
                         class="bi bi-youtube"></i>
-                    Unificação de canal
+                    Unificação de Canal
                     YouTube</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL . '/' ?>user/profile"><i
-                        class="bi bi-person-circle"></i> Meu
-                    Perfil</a>
+                <a class="nav-link gap-2" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/user/profile">
+                    <?php if ($user_photo): ?>
+                    <img src="<?php echo APP_URL  ?>/assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
+                        width="28" height="28" class="rounded-circle flex-shrink-0" style="object-fit:cover"
+                        alt="Foto perfil"
+                        onerror="this.onerror=null;this.src='<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png'">
+                    <?php else: ?>
+                    <img src="<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png" width="28" height="28"
+                        class="rounded-circle flex-shrink-0" style="object-fit:cover" alt="Perfil"
+                        onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\'bi bi-person-circle fs-5 flex-shrink-0\'></i>')">
+                    <?php endif; ?>
+                    Meu Perfil
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL . '/' ?>page/settings"><i
+                <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/settings"><i
                         class="bi bi-gear"></i>
                     Configurações</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL . '/' ?>page/notifications"><i
+                <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/notifications"><i
                         class="bi bi-bell"></i>
                     Notificações</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL . '/' ?>page/about"><i
+            <!-- <li class="nav-item">
+                <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/about"><i
                         class="bi bi-info-circle"></i>
                     Sobre</a>
-            </li>
+            </li> -->
             <li class="nav-item">
-                <a class="nav-link"
-                    href="<?php echo APP_URL . '/' . APP_URL_PANEL . '/' ?>services/available-services"><i
+                <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/services/available-services"><i
                         class="bi bi-star"></i>
-                    Conta e serviços
-                    disponíveis</a>
+                    Conta e Serviços
+                    Disponíveis</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL . '/' ?>page/help"><i
+                <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/help"><i
                         class="bi bi-question-circle"></i> Ajuda</a>
             </li>
             <li class="nav-item">
@@ -323,23 +349,23 @@
 <nav class="bottom-nav d-lg-none">
     <ul class="nav justify-content-around">
         <li class="nav-item">
-            <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL . '/' ?>painel"
+            <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/painel"
                 aria-label="Ir para Dashboard"><i class="bi bi-speedometer2"></i><span>Dashboard</span></a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL . '/' ?>releases"
+            <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/releases"
                 aria-label="Ir para Lançamentos"><i class="bi bi-disc"></i><span>Lançamentos</span></a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL . '/' ?>statistics"
+            <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/statistics"
                 aria-label="Ir para Estatísticas"><i class="bi bi-bar-chart"></i><span>Estatísticas</span></a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL . '/' ?>overview"
+            <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/overview"
                 aria-label="Ir para Finanças"><i class="bi bi-currency-dollar"></i><span>Finanças</span></a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL . '/' ?>artists-list"
+            <a class="nav-link" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/artists-list"
                 aria-label="Ir para Artistas"><i class="bi bi-person"></i><span>Artistas</span></a>
         </li>
     </ul>
@@ -427,7 +453,7 @@
                     <i class="bi bi-arrow-left me-1"></i>Não, continuar
                 </button>
                 <button class="btn btn-danger flex-fill"
-                    onclick="window.location='<?php echo rtrim(APP_URL, '/'); ?>logout'">
+                    onclick="window.location='<?php echo rtrim(APP_URL,  '/'); ?>/logout'">
                     <i class="bi bi-box-arrow-right me-1"></i>Terminar
                 </button>
             </div>
@@ -435,3 +461,20 @@
     </div>
 </div>
 <!-- ════ MODAL — Logout  FIM ════ -->
+
+<script>
+// ── Conexão offline ─────────────────────────────────
+function checkConnection() {
+    if (!navigator.onLine) {
+        var toast = bootstrap.Toast.getOrCreateInstance(document.getElementById('connectionToast'));
+        toast.show();
+    }
+}
+checkConnection();
+window.addEventListener('offline', checkConnection);
+window.addEventListener('online', function() {
+    var toastEl = document.getElementById('connectionToast');
+    var toast = bootstrap.Toast.getInstance(toastEl);
+    if (toast) toast.hide();
+});
+</script>

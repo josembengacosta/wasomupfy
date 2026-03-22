@@ -385,7 +385,7 @@ $reports_url = $base_url . '/assets/reports/';
                         <i class="bi bi-file-earmark-text fs-1 d-block mb-2 opacity-25"></i>
                         <div class="small fw-semibold mb-1">Nenhum relatório disponível ainda.</div>
                         <div class="small">Os relatórios aparecem aqui após o processamento mensal dos teus royalties
-                            pela equipa Wasom Upfy.</div>
+                            pela equipa <?php echo APP_NAME ?>.</div>
                     </div>
                     <?php else: ?>
                     <table id="reportsWasomupfy" class="table table-striped table-hover mb-0">
@@ -450,7 +450,7 @@ $reports_url = $base_url . '/assets/reports/';
             <div class="d-flex gap-2 align-items-start">
                 <i class="bi bi-info-circle-fill mt-1" style="color:#FF0089;flex-shrink:0"></i>
                 <div style="font-size:.8rem;color:var(--text-muted,#6c757d)">
-                    Os relatórios são gerados mensalmente pela equipa Wasom Upfy após o encerramento do período de
+                    Os relatórios são gerados mensalmente pela equipa <?php echo APP_NAME ?> após o encerramento do período de
                     reporte das plataformas de streaming.
                     Caso tenhas dúvidas sobre os valores apresentados, contacta o <a href="../page/support"
                         class="text-pink">suporte</a>.

@@ -173,172 +173,172 @@ $photo_base  = $base_url . '/assets/comprovantes/uploads/artists/';
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
     <link rel="stylesheet" href="css/collab.css" />
     <style>
-        /* Artist cards */
-        .artist-card {
-            background: var(--card);
-            border-radius: 16px;
-            border: 1.5px solid var(--border);
-            overflow: hidden;
-            cursor: pointer;
-            transition: border-color .2s, box-shadow .2s, transform .15s;
-        }
+    /* Artist cards */
+    .artist-card {
+        background: var(--card);
+        border-radius: 16px;
+        border: 1.5px solid var(--border);
+        overflow: hidden;
+        cursor: pointer;
+        transition: border-color .2s, box-shadow .2s, transform .15s;
+    }
 
-        .artist-card:hover {
-            border-color: rgba(255, 0, 137, .25);
-            box-shadow: 0 6px 24px rgba(255, 0, 137, .1);
-            transform: translateY(-2px);
-        }
+    .artist-card:hover {
+        border-color: rgba(255, 0, 137, .25);
+        box-shadow: 0 6px 24px rgba(255, 0, 137, .1);
+        transform: translateY(-2px);
+    }
 
-        .artist-cover {
-            width: 100%;
-            height: 80px;
-            object-fit: cover;
-            background: linear-gradient(135deg, rgba(255, 0, 137, .08), rgba(255, 77, 77, .08));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            position: relative;
-            /* SEM overflow:hidden — para a foto circular não ficar cortada */
-        }
+    .artist-cover {
+        width: 100%;
+        height: 80px;
+        object-fit: cover;
+        background: linear-gradient(135deg, rgba(255, 0, 137, .08), rgba(255, 77, 77, .08));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        position: relative;
+        /* SEM overflow:hidden — para a foto circular não ficar cortada */
+    }
 
-        .artist-cover img {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 0;
-        }
+    .artist-cover img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 0;
+    }
 
-        .artist-photo-wrap {
-            position: absolute;
-            bottom: -22px;
-            left: 16px;
-            z-index: 2;
-        }
+    .artist-photo-wrap {
+        position: absolute;
+        bottom: -22px;
+        left: 16px;
+        z-index: 2;
+    }
 
-        .artist-photo {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            border: 3px solid var(--card);
-            object-fit: cover;
-            background: rgba(255, 0, 137, .1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            overflow: hidden;
-        }
+    .artist-photo {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: 3px solid var(--card);
+        object-fit: cover;
+        background: rgba(255, 0, 137, .1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        overflow: hidden;
+    }
 
-        .artist-photo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+    .artist-photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 
-        .artist-body {
-            padding: 30px 14px 14px;
-        }
+    .artist-body {
+        padding: 30px 14px 14px;
+    }
 
-        /* Detalhe offcanvas */
-        .detail-panel {
-            position: fixed;
-            top: 0;
-            right: -440px;
-            width: 440px;
-            max-width: 100vw;
-            height: 100vh;
-            background: var(--card);
-            border-left: 1.5px solid var(--border);
-            z-index: 1100;
-            overflow-y: auto;
-            transition: right .3s;
-            box-shadow: -4px 0 32px rgba(0, 0, 0, .1);
-        }
+    /* Detalhe offcanvas */
+    .detail-panel {
+        position: fixed;
+        top: 0;
+        right: -440px;
+        width: 440px;
+        max-width: 100vw;
+        height: 100vh;
+        background: var(--card);
+        border-left: 1.5px solid var(--border);
+        z-index: 1100;
+        overflow-y: auto;
+        transition: right .3s;
+        box-shadow: -4px 0 32px rgba(0, 0, 0, .1);
+    }
 
-        .detail-panel.open {
-            right: 0;
-        }
+    .detail-panel.open {
+        right: 0;
+    }
 
-        .detail-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, .35);
-            z-index: 1050;
-        }
+    .detail-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, .35);
+        z-index: 1050;
+    }
 
-        .detail-overlay.show {
-            display: block;
-        }
+    .detail-overlay.show {
+        display: block;
+    }
 
-        .detail-cover {
-            width: 100%;
-            height: 160px;
-            object-fit: cover;
-            background: linear-gradient(135deg, #FF0089, #FF4D4D);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 5rem;
-            opacity: .3;
-            position: relative;
-            overflow: hidden;
-        }
+    .detail-cover {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+        background: linear-gradient(135deg, #FF0089, #FF4D4D);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 5rem;
+        opacity: .3;
+        position: relative;
+        overflow: hidden;
+    }
 
-        .detail-cover img {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 1;
-        }
+    .detail-cover img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 1;
+    }
 
-        .detail-photo {
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
-            border: 4px solid var(--card);
-            object-fit: cover;
-            background: rgba(255, 0, 137, .1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            overflow: hidden;
-            margin-top: -36px;
-            margin-left: 20px;
-            position: relative;
-        }
+    .detail-photo {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        border: 4px solid var(--card);
+        object-fit: cover;
+        background: rgba(255, 0, 137, .1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        overflow: hidden;
+        margin-top: -36px;
+        margin-left: 20px;
+        position: relative;
+    }
 
-        .detail-photo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+    .detail-photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 
-        /* Social links */
-        .social-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: .75rem;
-            font-weight: 600;
-            text-decoration: none;
-            border: 1.5px solid var(--border);
-            color: var(--text);
-            transition: all .15s;
-        }
+    /* Social links */
+    .social-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: .75rem;
+        font-weight: 600;
+        text-decoration: none;
+        border: 1.5px solid var(--border);
+        color: var(--text);
+        transition: all .15s;
+    }
 
-        .social-btn:hover {
-            border-color: var(--wasom);
-            color: var(--wasom);
-        }
+    .social-btn:hover {
+        border-color: var(--wasom);
+        color: var(--wasom);
+    }
     </style>
 </head>
 
@@ -360,9 +360,9 @@ $photo_base  = $base_url . '/assets/comprovantes/uploads/artists/';
             <button class="nav-avatar dropdown-toggle" style="background:none;border:none;cursor:pointer"
                 data-bs-toggle="dropdown">
                 <?php if ($collab['photo_collab']): ?>
-                    <img src="<?php echo htmlspecialchars($collab['photo_collab']); ?>" alt=""
-                        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
-                    <span style="display:none"> <i class="bi bi-person-circle"></i> </span>
+                <img src="<?php echo htmlspecialchars($collab['photo_collab']); ?>" alt=""
+                    onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+                <span style="display:none"> <i class="bi bi-person-circle"></i> </span>
                 <?php else: ?><span> <i class="bi bi-person-circle"></i> </span><?php endif; ?>
             </button>
             <ul class="dropdown-menu dropdown-menu-end" style="font-size:.84rem;min-width:200px">
@@ -411,26 +411,26 @@ $photo_base  = $base_url . '/assets/comprovantes/uploads/artists/';
             <i class="bi bi-speedometer2"></i>Dashboard
         </a>
         <?php if ($can_view_releases): ?>
-            <a href="<?php echo $base_url; ?>/dashboard/collab/releases" class="sidebar-link">
-                <i class="bi bi-disc"></i>Lançamentos
-            </a>
+        <a href="<?php echo $base_url; ?>/dashboard/collab/releases" class="sidebar-link">
+            <i class="bi bi-disc"></i>Lançamentos
+        </a>
         <?php endif; ?>
         <?php if ($can_view_artists): ?>
-            <a href="<?php echo $base_url; ?>/dashboard/collab/artists" class="sidebar-link active">
-                <i class="bi bi-people"></i>Artistas
-            </a>
+        <a href="<?php echo $base_url; ?>/dashboard/collab/artists" class="sidebar-link active">
+            <i class="bi bi-people"></i>Artistas
+        </a>
         <?php endif; ?>
         <?php if ($can_view_finances): ?>
-            <div class="sidebar-section">Finanças</div>
-            <a href="<?php echo $base_url; ?>/dashboard/collab/finances" class="sidebar-link">
-                <i class="bi bi-currency-dollar"></i>Visão geral
-            </a>
+        <div class="sidebar-section">Finanças</div>
+        <a href="<?php echo $base_url; ?>/dashboard/collab/finances" class="sidebar-link">
+            <i class="bi bi-currency-dollar"></i>Visão geral
+        </a>
         <?php endif; ?>
         <?php if ($can_view_stats): ?>
-            <div class="sidebar-section">Análise</div>
-            <a href="<?php echo $base_url; ?>/dashboard/collab/statistics" class="sidebar-link">
-                <i class="bi bi-bar-chart"></i>Estatísticas
-            </a>
+        <div class="sidebar-section">Análise</div>
+        <a href="<?php echo $base_url; ?>/dashboard/collab/statistics" class="sidebar-link">
+            <i class="bi bi-bar-chart"></i>Estatísticas
+        </a>
         <?php endif; ?>
         <div class="sidebar-section">Conta</div>
         <a href="#" class="sidebar-link" data-bs-toggle="modal" data-bs-target="#myProfileModal">
@@ -453,10 +453,10 @@ $photo_base  = $base_url . '/assets/comprovantes/uploads/artists/';
                 <p class="text-muted small mb-0">Conta de <?php echo $owner_artist_name; ?></p>
             </div>
             <?php if ($can_edit_artists): ?>
-                <a href="<?php echo $base_url; ?>/dashboard/artists/add-artist" class="btn btn-sm fw-semibold px-3"
-                    style="background:var(--wasom);color:#fff;border-radius:20px">
-                    <i class="bi bi-plus me-1"></i>Novo artista
-                </a>
+            <a href="<?php echo $base_url; ?>/dashboard/artists/add-artist" class="btn btn-sm fw-semibold px-3"
+                style="background:var(--wasom);color:#fff;border-radius:20px">
+                <i class="bi bi-plus me-1"></i>Novo artista
+            </a>
             <?php endif; ?>
         </div>
 
@@ -522,109 +522,109 @@ $photo_base  = $base_url . '/assets/comprovantes/uploads/artists/';
                     'blocked'    => ['Bloqueados',  (int)$stats['blocked']],
                 ];
                 foreach ($filters as $val => [$lbl, $cnt]): ?>
-                    <a href="?<?php echo http_build_query(array_merge($_GET, ['status' => $val])); ?>"
-                        class="filter-pill <?php echo $filter === $val ? 'active' : ''; ?>">
-                        <?php echo $lbl; ?><span class="count"><?php echo $cnt; ?></span>
-                    </a>
+                <a href="?<?php echo http_build_query(array_merge($_GET, ['status' => $val])); ?>"
+                    class="filter-pill <?php echo $filter === $val ? 'active' : ''; ?>">
+                    <?php echo $lbl; ?><span class="count"><?php echo $cnt; ?></span>
+                </a>
                 <?php endforeach; ?>
                 <button type="submit" class="btn btn-sm btn-outline-secondary"><i class="bi bi-funnel"></i></button>
                 <?php if ($search || $filter !== 'all'): ?>
-                    <a href="?" class="btn btn-sm btn-outline-danger"><i class="bi bi-x"></i> Limpar</a>
+                <a href="?" class="btn btn-sm btn-outline-danger"><i class="bi bi-x"></i> Limpar</a>
                 <?php endif; ?>
             </form>
         </div>
 
         <!-- Grid de artistas -->
         <?php if (empty($artists)): ?>
-            <div class="text-center py-5" style="color:var(--muted)">
-                <div style="font-size:3.5rem;opacity:.2;margin-bottom:12px">🎤</div>
-                <div class="fw-semibold">Nenhum artista encontrado</div>
-                <div class="small mt-1">Tenta outros filtros</div>
-                <?php if ($can_edit_artists): ?>
-                    <a href="<?php echo $base_url; ?>/dashboard/artists/add-artist" class="btn btn-sm mt-3 px-4"
-                        style="background:var(--wasom);color:#fff;border-radius:20px">
-                        <i class="bi bi-plus me-1"></i>Adicionar artista
-                    </a>
-                <?php endif; ?>
-            </div>
+        <div class="text-center py-5" style="color:var(--muted)">
+            <div style="font-size:3.5rem;opacity:.2;margin-bottom:12px">🎤</div>
+            <div class="fw-semibold">Nenhum artista encontrado</div>
+            <div class="small mt-1">Tenta outros filtros</div>
+            <?php if ($can_edit_artists): ?>
+            <a href="<?php echo $base_url; ?>/dashboard/artists/add-artist" class="btn btn-sm mt-3 px-4"
+                style="background:var(--wasom);color:#fff;border-radius:20px">
+                <i class="bi bi-plus me-1"></i>Adicionar artista
+            </a>
+            <?php endif; ?>
+        </div>
         <?php else: ?>
-            <div class="row g-3">
-                <?php foreach ($artists as $a):
+        <div class="row g-3">
+            <?php foreach ($artists as $a):
                     $sm = $artist_status_meta[$a['status_artist']] ?? $artist_status_meta['inactive'];
                 ?>
-                    <div class="col-6 col-md-4 col-xl-3">
-                        <div class="artist-card h-100" onclick="openDetail(<?php echo $a['id_artist']; ?>)">
-                            <!-- Cover + foto -->
-                            <div class="artist-cover">
-                                <?php if ($a['cover_artist']): ?>
-                                    <img src="<?php echo htmlspecialchars($photo_base . $a['cover_artist']); ?>"
-                                        onerror="this.style.display='none'" alt="" />
+            <div class="col-6 col-md-4 col-xl-3">
+                <div class="artist-card h-100" onclick="openDetail(<?php echo $a['id_artist']; ?>)">
+                    <!-- Cover + foto -->
+                    <div class="artist-cover">
+                        <?php if ($a['cover_artist']): ?>
+                        <img src="<?php echo htmlspecialchars($photo_base . $a['cover_artist']); ?>"
+                            onerror="this.style.display='none'" alt="" />
+                        <?php else: ?><i class="bi bi-mic"></i><?php endif; ?>
+                        <div class="artist-photo-wrap">
+                            <div class="artist-photo">
+                                <?php if ($a['photo_artist']): ?>
+                                <img src="<?php echo htmlspecialchars($photo_base . $a['photo_artist']); ?>"
+                                    onerror="this.style.display='none'" alt="" />
                                 <?php else: ?><i class="bi bi-mic"></i><?php endif; ?>
-                                <div class="artist-photo-wrap">
-                                    <div class="artist-photo">
-                                        <?php if ($a['photo_artist']): ?>
-                                            <img src="<?php echo htmlspecialchars($photo_base . $a['photo_artist']); ?>"
-                                                onerror="this.style.display='none'" alt="" />
-                                        <?php else: ?><i class="bi bi-mic"></i><?php endif; ?>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="artist-body">
-                                <!-- Status chip -->
-                                <span class="chip mb-2"
-                                    style="background:<?php echo $sm['bg']; ?>;color:<?php echo $sm['color']; ?>">
-                                    <?php echo $sm['label']; ?>
-                                </span>
-                                <!-- Nome -->
-                                <div class="fw-bold text-truncate" style="font-size:.9rem">
-                                    <?php echo htmlspecialchars($a['stage_name']); ?>
-                                </div>
-                                <!-- Nome real -->
-                                <?php if ($a['real_name']): ?>
-                                    <div class="text-muted text-truncate" style="font-size:.72rem;margin-top:1px">
-                                        <?php echo htmlspecialchars($a['real_name']); ?>
-                                    </div>
-                                <?php endif; ?>
-                                <!-- Género + país -->
-                                <div class="text-muted mt-1" style="font-size:.7rem">
-                                    <?php if ($a['genre_main']): ?>
-                                        <span><i
-                                                class="bi bi-music-note me-1"></i><?php echo htmlspecialchars($a['genre_main']); ?></span>
-                                    <?php endif; ?>
-                                    <?php if ($a['country']): ?>
-                                        <span class="ms-2"><i
-                                                class="bi bi-geo-alt me-1"></i><?php echo htmlspecialchars($a['country']); ?></span>
-                                    <?php endif; ?>
-                                </div>
-                                <!-- Lançamentos -->
-                                <div class="d-flex gap-2 mt-2 flex-wrap">
-                                    <span class="chip"
-                                        style="background:rgba(255,0,137,.07);color:var(--wasom);font-size:.65rem">
-                                        <i class="bi bi-disc"></i> <?php echo (int)$a['total_albums']; ?>
-                                        lançamento<?php echo $a['total_albums'] != 1 ? 's' : ''; ?>
-                                    </span>
-                                    <?php if ((int)$a['albums_pending'] > 0): ?>
-                                        <span class="chip" style="background:rgba(255,193,7,.1);color:#856404;font-size:.65rem">
-                                            <?php echo $a['albums_pending']; ?>
-                                            pendente<?php echo $a['albums_pending'] != 1 ? 's' : ''; ?>
-                                        </span>
-                                    <?php endif; ?>
-                                </div>
-                                <!-- Botão editar (só editor/admin) -->
-                                <?php if ($can_edit_artists): ?>
-                                    <div class="mt-3">
-                                        <a href="<?php echo $base_url; ?>/dashboard/artists/add-artist?edit=<?php echo $a['id_artist']; ?>"
-                                            class="btn btn-sm w-100" onclick="event.stopPropagation()"
-                                            style="background:rgba(255,0,137,.07);color:var(--wasom);border:1px solid rgba(255,0,137,.15);font-size:.72rem;border-radius:8px">
-                                            <i class="bi bi-pencil me-1"></i>Editar
-                                        </a>
-                                    </div>
-                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
-                <?php endforeach; ?>
+                    <div class="artist-body">
+                        <!-- Status chip -->
+                        <span class="chip mb-2"
+                            style="background:<?php echo $sm['bg']; ?>;color:<?php echo $sm['color']; ?>">
+                            <?php echo $sm['label']; ?>
+                        </span>
+                        <!-- Nome -->
+                        <div class="fw-bold text-truncate" style="font-size:.9rem">
+                            <?php echo htmlspecialchars($a['stage_name']); ?>
+                        </div>
+                        <!-- Nome real -->
+                        <?php if ($a['real_name']): ?>
+                        <div class="text-muted text-truncate" style="font-size:.72rem;margin-top:1px">
+                            <?php echo htmlspecialchars($a['real_name']); ?>
+                        </div>
+                        <?php endif; ?>
+                        <!-- Género + país -->
+                        <div class="text-muted mt-1" style="font-size:.7rem">
+                            <?php if ($a['genre_main']): ?>
+                            <span><i
+                                    class="bi bi-music-note me-1"></i><?php echo htmlspecialchars($a['genre_main']); ?></span>
+                            <?php endif; ?>
+                            <?php if ($a['country']): ?>
+                            <span class="ms-2"><i
+                                    class="bi bi-geo-alt me-1"></i><?php echo htmlspecialchars($a['country']); ?></span>
+                            <?php endif; ?>
+                        </div>
+                        <!-- Lançamentos -->
+                        <div class="d-flex gap-2 mt-2 flex-wrap">
+                            <span class="chip"
+                                style="background:rgba(255,0,137,.07);color:var(--wasom);font-size:.65rem">
+                                <i class="bi bi-disc"></i> <?php echo (int)$a['total_albums']; ?>
+                                lançamento<?php echo $a['total_albums'] != 1 ? 's' : ''; ?>
+                            </span>
+                            <?php if ((int)$a['albums_pending'] > 0): ?>
+                            <span class="chip" style="background:rgba(255,193,7,.1);color:#856404;font-size:.65rem">
+                                <?php echo $a['albums_pending']; ?>
+                                pendente<?php echo $a['albums_pending'] != 1 ? 's' : ''; ?>
+                            </span>
+                            <?php endif; ?>
+                        </div>
+                        <!-- Botão editar (só editor/admin) -->
+                        <?php if ($can_edit_artists): ?>
+                        <div class="mt-3">
+                            <a href="<?php echo $base_url; ?>/dashboard/artists/add-artist?edit=<?php echo $a['id_artist']; ?>"
+                                class="btn btn-sm w-100" onclick="event.stopPropagation()"
+                                style="background:rgba(255,0,137,.07);color:var(--wasom);border:1px solid rgba(255,0,137,.15);font-size:.72rem;border-radius:8px">
+                                <i class="bi bi-pencil me-1"></i>Editar
+                            </a>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
             </div>
+            <?php endforeach; ?>
+        </div>
         <?php endif; ?>
 
     </main>
@@ -642,7 +642,7 @@ $photo_base  = $base_url . '/assets/comprovantes/uploads/artists/';
 
     <!-- Dados artistas para JS -->
     <script>
-        const ARTISTS_DATA = <?php
+    const ARTISTS_DATA = <?php
                                 $js_artists = [];
                                 foreach ($artists as $a) {
                                     $js_artists[$a['id_artist']] = [
@@ -674,7 +674,7 @@ $photo_base  = $base_url . '/assets/comprovantes/uploads/artists/';
                                 echo json_encode($js_artists);
                                 ?>;
 
-        const ALBUMS_BY_ARTIST = <?php
+    const ALBUMS_BY_ARTIST = <?php
                                     $js_albums = [];
                                     foreach ($albums_by_artist as $artist_id => $albs) {
                                         foreach ($albs as $alb) {
@@ -690,78 +690,79 @@ $photo_base  = $base_url . '/assets/comprovantes/uploads/artists/';
                                     echo json_encode($js_albums);
                                     ?>;
 
-        const BASE_URL = '<?php echo $base_url; ?>';
-        const CAN_EDIT = <?php echo $can_edit_artists ? 'true' : 'false'; ?>;
-        const PHOTO_BASE = '<?php echo $photo_base; ?>';
+    const BASE_URL = '<?php echo $base_url; ?>';
+    const CAN_EDIT = <?php echo $can_edit_artists ? 'true' : 'false'; ?>;
+    const PHOTO_BASE = '<?php echo $photo_base; ?>';
 
-        const STATUS_META = {
-            active: {
-                label: 'Activo',
-                color: '#198754',
-                bg: 'rgba(25,135,84,.1)'
-            },
-            inactive: {
-                label: 'Inactivo',
-                color: '#6c757d',
-                bg: 'rgba(108,117,125,.1)'
-            },
-            blocked: {
-                label: 'Bloqueado',
-                color: '#dc3545',
-                bg: 'rgba(220,53,69,.1)'
-            },
-            processing: {
-                label: 'Em processo',
-                color: '#856404',
-                bg: 'rgba(255,193,7,.12)'
-            },
-        };
-        const ALBUM_STATUS_META = {
-            approved: {
-                label: 'Aprovado',
-                color: '#198754',
-                bg: 'rgba(25,135,84,.1)'
-            },
-            pending: {
-                label: 'Pendente',
-                color: '#856404',
-                bg: 'rgba(255,193,7,.12)'
-            },
-            under_review: {
-                label: 'Em revisão',
-                color: '#0d6efd',
-                bg: 'rgba(13,110,253,.1)'
-            },
-            rejected: {
-                label: 'Recusado',
-                color: '#dc3545',
-                bg: 'rgba(220,53,69,.1)'
-            },
-            draft: {
-                label: 'Rascunho',
-                color: '#6c757d',
-                bg: 'rgba(108,117,125,.1)'
-            },
-        };
+    const STATUS_META = {
+        active: {
+            label: 'Activo',
+            color: '#198754',
+            bg: 'rgba(25,135,84,.1)'
+        },
+        inactive: {
+            label: 'Inactivo',
+            color: '#6c757d',
+            bg: 'rgba(108,117,125,.1)'
+        },
+        blocked: {
+            label: 'Bloqueado',
+            color: '#dc3545',
+            bg: 'rgba(220,53,69,.1)'
+        },
+        processing: {
+            label: 'Em processo',
+            color: '#856404',
+            bg: 'rgba(255,193,7,.12)'
+        },
+    };
+    const ALBUM_STATUS_META = {
+        approved: {
+            label: 'Aprovado',
+            color: '#198754',
+            bg: 'rgba(25,135,84,.1)'
+        },
+        pending: {
+            label: 'Pendente',
+            color: '#856404',
+            bg: 'rgba(255,193,7,.12)'
+        },
+        under_review: {
+            label: 'Em revisão',
+            color: '#0d6efd',
+            bg: 'rgba(13,110,253,.1)'
+        },
+        rejected: {
+            label: 'Recusado',
+            color: '#dc3545',
+            bg: 'rgba(220,53,69,.1)'
+        },
+        draft: {
+            label: 'Rascunho',
+            color: '#6c757d',
+            bg: 'rgba(108,117,125,.1)'
+        },
+    };
     </script>
 
 
     <!-- Bottom nav -->
     <nav class="bottom-nav-collab">
-        <a href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/overview"><i
+        <a href="<?php echo $base_url; ?>/<?php echo  APP_URL_PANEL ?>/collab/overview"><i
                 class="bi bi-speedometer2"></i>Dashboard</a>
         <?php if ($can_view_releases): ?>
-            <a href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/releases"><i class="bi bi-disc"></i>Releases</a>
+        <a href="<?php echo $base_url; ?>/<?php echo  APP_URL_PANEL ?>/collab/releases"><i
+                class="bi bi-disc"></i>Releases</a>
         <?php endif; ?>
-        <a href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/artists" class="active"><i
+        <a href="<?php echo $base_url; ?>/<?php echo  APP_URL_PANEL ?>/collab/artists" class="active"><i
                 class="bi bi-people"></i>Artistas</a>
         <?php if ($can_view_stats): ?>
-            <a href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/statistics"><i
-                    class="bi bi-bar-chart"></i>Stats</a>
+        <a href="<?php echo $base_url; ?>/<?php echo  APP_URL_PANEL ?>/collab/statistics"><i
+                class="bi bi-bar-chart"></i>Stats</a>
         <?php endif; ?>
         <?php if ($can_view_finances): ?>
-            <a href="<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/finances"><i
-                    class="bi bi-currency-dollar"></i>Finanças</a>
+        <a href="<?php echo $base_url; ?>/<?php echo  APP_URL_PANEL ?>/collab/finances"><i
+                class="bi bi-currency-dollar"></i>Finanças</a>
         <?php endif; ?>
     </nav>
 
@@ -778,13 +779,13 @@ $photo_base  = $base_url . '/assets/comprovantes/uploads/artists/';
                 <div class="modal-body pt-0">
                     <div class="text-center mb-3">
                         <?php if ($collab['photo_collab']): ?>
-                            <img src="<?php echo htmlspecialchars($collab['photo_collab']); ?>"
-                                style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid var(--wasom)"
-                                onerror="this.style.display='none'" alt="" />
+                        <img src="<?php echo htmlspecialchars($collab['photo_collab']); ?>"
+                            style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid var(--wasom)"
+                            onerror="this.style.display='none'" alt="" />
                         <?php else: ?>
-                            <div
-                                style="width:72px;height:72px;border-radius:50%;background:rgba(255,0,137,.1);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto">
-                                🎤</div>
+                        <div
+                            style="width:72px;height:72px;border-radius:50%;background:rgba(255,0,137,.1);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto">
+                            🎤</div>
                         <?php endif; ?>
                         <h5 class="fw-bold mt-2 mb-0">
                             <?php echo htmlspecialchars($collab['first_name'] . ' ' . ($collab['second_name'] ?? '')); ?>
@@ -802,19 +803,19 @@ $photo_base  = $base_url . '/assets/comprovantes/uploads/artists/';
                         ];
                         foreach ($info_rows as [$label, $val, $ico]):
                         ?>
-                            <div class="d-flex gap-2 py-2 border-bottom align-items-center">
-                                <i class="bi <?php echo $ico; ?> text-muted" style="width:16px"></i>
-                                <span class="text-muted" style="width:100px;flex-shrink:0"><?php echo $label; ?></span>
-                                <span class="fw-semibold text-truncate"><?php echo htmlspecialchars($val); ?></span>
-                            </div>
+                        <div class="d-flex gap-2 py-2 border-bottom align-items-center">
+                            <i class="bi <?php echo $ico; ?> text-muted" style="width:16px"></i>
+                            <span class="text-muted" style="width:100px;flex-shrink:0"><?php echo $label; ?></span>
+                            <span class="fw-semibold text-truncate"><?php echo htmlspecialchars($val); ?></span>
+                        </div>
                         <?php endforeach; ?>
                     </div>
                     <?php if ($collab['notes']): ?>
-                        <div class="mt-3 p-3"
-                            style="background:rgba(255,0,137,.04);border-radius:10px;border:1px solid rgba(255,0,137,.1)">
-                            <div class="text-muted" style="font-size:.7rem;margin-bottom:4px">NOTAS DO ADMINISTRADOR</div>
-                            <div style="font-size:.82rem"><?php echo htmlspecialchars($collab['notes']); ?></div>
-                        </div>
+                    <div class="mt-3 p-3"
+                        style="background:rgba(255,0,137,.04);border-radius:10px;border:1px solid rgba(255,0,137,.1)">
+                        <div class="text-muted" style="font-size:.7rem;margin-bottom:4px">NOTAS DO ADMINISTRADOR</div>
+                        <div style="font-size:.82rem"><?php echo htmlspecialchars($collab['notes']); ?></div>
+                    </div>
                     <?php endif; ?>
                 </div>
                 <div class="modal-footer border-0 pt-0">
@@ -850,54 +851,54 @@ $photo_base  = $base_url . '/assets/comprovantes/uploads/artists/';
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
-        // ── Sidebar toggle ────────────────────────────
-        function closeSidebar() {
-            document.getElementById('collabSidebar').classList.remove('open');
-            document.getElementById('sidebarOverlay').classList.remove('show');
-        }
-        document.getElementById('btn-sidebar-toggle')?.addEventListener('click', () => {
-            const sb = document.getElementById('collabSidebar');
-            const ov = document.getElementById('sidebarOverlay');
-            sb.classList.toggle('open');
-            ov.classList.toggle('show', sb.classList.contains('open'));
-        });
+    // ── Sidebar toggle ────────────────────────────
+    function closeSidebar() {
+        document.getElementById('collabSidebar').classList.remove('open');
+        document.getElementById('sidebarOverlay').classList.remove('show');
+    }
+    document.getElementById('btn-sidebar-toggle')?.addEventListener('click', () => {
+        const sb = document.getElementById('collabSidebar');
+        const ov = document.getElementById('sidebarOverlay');
+        sb.classList.toggle('open');
+        ov.classList.toggle('show', sb.classList.contains('open'));
+    });
 
-        // ── Theme ─────────────────────────────────────
-        const html = document.documentElement;
-        const saved = localStorage.getItem('wu_theme') || 'light';
-        html.setAttribute('data-theme', saved);
-        document.getElementById('themeIcon').className = saved === 'dark' ? 'bi bi-moon' : 'bi bi-sun';
-        document.getElementById('themeToggle').addEventListener('click', () => {
-            const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-            html.setAttribute('data-theme', next);
-            localStorage.setItem('wu_theme', next);
-            document.getElementById('themeIcon').className = next === 'dark' ? 'bi bi-moon' : 'bi bi-sun';
-        });
+    // ── Theme ─────────────────────────────────────
+    const html = document.documentElement;
+    const saved = localStorage.getItem('wu_theme') || 'light';
+    html.setAttribute('data-theme', saved);
+    document.getElementById('themeIcon').className = saved === 'dark' ? 'bi bi-moon' : 'bi bi-sun';
+    document.getElementById('themeToggle').addEventListener('click', () => {
+        const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        localStorage.setItem('wu_theme', next);
+        document.getElementById('themeIcon').className = next === 'dark' ? 'bi bi-moon' : 'bi bi-sun';
+    });
 
-        // ── Painel de detalhe ─────────────────────────
-        function openDetail(id) {
-            const a = ARTISTS_DATA[id];
-            if (!a) return;
+    // ── Painel de detalhe ─────────────────────────
+    function openDetail(id) {
+        const a = ARTISTS_DATA[id];
+        if (!a) return;
 
-            const sm = STATUS_META[a.status_artist] || STATUS_META.inactive;
-            const albs = ALBUMS_BY_ARTIST[id] || [];
+        const sm = STATUS_META[a.status_artist] || STATUS_META.inactive;
+        const albs = ALBUMS_BY_ARTIST[id] || [];
 
-            // Socials
-            const socials = [
-                ['instagram_url', 'bi-instagram', 'Instagram'],
-                ['spotify_url', 'bi-spotify', 'Spotify'],
-                ['youtube_url', 'bi-youtube', 'YouTube'],
-                ['tiktok_url', 'bi-tiktok', 'TikTok'],
-                ['facebook_url', 'bi-facebook', 'Facebook'],
-                ['website_url', 'bi-globe', 'Website'],
-            ].filter(([k]) => a[k]).map(([k, icon, lbl]) =>
-                `<a href="${a[k]}" target="_blank" class="social-btn"><i class="bi ${icon}"></i>${lbl}</a>`
-            ).join('');
+        // Socials
+        const socials = [
+            ['instagram_url', 'bi-instagram', 'Instagram'],
+            ['spotify_url', 'bi-spotify', 'Spotify'],
+            ['youtube_url', 'bi-youtube', 'YouTube'],
+            ['tiktok_url', 'bi-tiktok', 'TikTok'],
+            ['facebook_url', 'bi-facebook', 'Facebook'],
+            ['website_url', 'bi-globe', 'Website'],
+        ].filter(([k]) => a[k]).map(([k, icon, lbl]) =>
+            `<a href="${a[k]}" target="_blank" class="social-btn"><i class="bi ${icon}"></i>${lbl}</a>`
+        ).join('');
 
-            // Albums
-            const albsHtml = albs.length ? albs.map(alb => {
-                const as = ALBUM_STATUS_META[alb.status_album] || ALBUM_STATUS_META.draft;
-                return `<div class="d-flex align-items-center gap-2 py-2 border-bottom">
+        // Albums
+        const albsHtml = albs.length ? albs.map(alb => {
+            const as = ALBUM_STATUS_META[alb.status_album] || ALBUM_STATUS_META.draft;
+            return `<div class="d-flex align-items-center gap-2 py-2 border-bottom">
             <div style="width:36px;height:36px;border-radius:8px;overflow:hidden;background:rgba(255,0,137,.06);flex-shrink:0;display:flex;align-items:center;justify-content:center">
                 ${alb.img_cover ? `<img src="${alb.img_cover}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.innerHTML='🎵'"/>` : '🎵'}
             </div>
@@ -907,9 +908,9 @@ $photo_base  = $base_url . '/assets/comprovantes/uploads/artists/';
             </div>
             <span style="background:${as.bg};color:${as.color};padding:2px 8px;border-radius:12px;font-size:.65rem;font-weight:700;white-space:nowrap">${as.label}</span>
         </div>`;
-            }).join('') : '<div class="text-muted small text-center py-3">Sem lançamentos</div>';
+        }).join('') : '<div class="text-muted small text-center py-3">Sem lançamentos</div>';
 
-            document.getElementById('detailContent').innerHTML = `
+        document.getElementById('detailContent').innerHTML = `
     <!-- Cover -->
     <div class="detail-cover">
         ${a.cover_artist ? `<img src="${a.cover_artist}" onerror="this.style.display='none'" alt=""/>` : ''}
@@ -977,21 +978,21 @@ $photo_base  = $base_url . '/assets/comprovantes/uploads/artists/';
         </a>` : ''}
     </div>`;
 
-            document.getElementById('detailPanel').classList.add('open');
-            document.getElementById('detailOverlay').classList.add('show');
-        }
+        document.getElementById('detailPanel').classList.add('open');
+        document.getElementById('detailOverlay').classList.add('show');
+    }
 
-        function closeDetail() {
-            document.getElementById('detailPanel').classList.remove('open');
-            document.getElementById('detailOverlay').classList.remove('show');
-        }
+    function closeDetail() {
+        document.getElementById('detailPanel').classList.remove('open');
+        document.getElementById('detailOverlay').classList.remove('show');
+    }
 
-        // ── Ping ──────────────────────────────────────
-        setInterval(() => {
-            fetch('<?php echo $base_url; ?>/<?php APP_URL_PANEL ?>/collab/ping', {
-                method: 'POST'
-            }).catch(() => {});
-        }, 120000);
+    // ── Ping ──────────────────────────────────────
+    setInterval(() => {
+        fetch('<?php echo $base_url; ?>/<?php echo  APP_URL_PANEL ?>/collab/ping', {
+            method: 'POST'
+        }).catch(() => {});
+    }, 120000);
     </script>
 </body>
 

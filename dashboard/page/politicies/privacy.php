@@ -4,505 +4,577 @@
 // Arquivo: dashboard/page/privacy.php
 // ══════════════════════════════════════════════════════
 require_once __DIR__ . '/../../../authentic/include/functions.php';
+require_once __DIR__ . '/../../include/platform.php';
 startSecureSession();
 checkRememberMe();
 requireLogin();
+$platform = checkDashboardStatus();
+$user     = checkUserAccess((int)$_SESSION['id_users']);
 
-$id_users   = (int)$_SESSION['id_users'];
-$user       = getUserById($id_users);
-if (!$user) {
-    session_destroy();
-    redirect(APP_URL  . '/' . 'login', ['error' => 'csrf']);
+$id_users       = (int)$user['id_users'];
+$first_name     = htmlspecialchars($user['first_name']);
+$user_name      = htmlspecialchars($user['user_name'] ?? '');
+$email_verified = (bool)$user['email_verified'];
+$plan_selected  = $user['plan_selected'];
+$onboard_done   = (bool)($user['onboarding_done'] ?? false);
+$user_photo     = $user['photo_user'] ?? null;
+$name_artist_band = htmlspecialchars($user['name_artist_band'] ?? 'Cria Perfil Artístico');
+$notif_count    = getUnreadNotifCount($id_users);
+$db             = getDB();
+
+// ── Saldo ─────────────────────────────────────
+$w = $db->prepare('SELECT balance_aoa FROM _wallet WHERE id_users = ?');
+$w->execute([$id_users]);
+$balance = $w->fetch() ?: ['balance_aoa' => 0];
+
+// ── Plano ─────────────────────────────────────
+$plan_id     = (int)$user['plan_selected'];
+$plan        = null;
+$max_artists = 1;
+if ($plan_id) {
+    $ps = $db->prepare('SELECT * FROM _plans WHERE id_plan = ?');
+    $ps->execute([$plan_id]);
+    $plan = $ps->fetch();
+    if ($plan) $max_artists = (int)($plan['max_artists'] ?? 1);
+}
+$plan_name = $plan ? htmlspecialchars($plan['name_plan']) : 'Sem plano';
+
+// ── Plano ─────────────────────────────────────
+$plan      = null;
+$plan_paid = ($user['status_user'] === 'active' && !empty($user['plan_activated_at']));
+if ($plan_selected) {
+    $ps = $db->prepare('SELECT * FROM _plans WHERE id_plan = ?');
+    $ps->execute([$plan_selected]);
+    $plan = $ps->fetch();
 }
 
-$first_name = htmlspecialchars($user['first_name'] ?? '');
-$full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['second_name'] ?? '')));
+// Adicionar verificação de expiração do plano
+$plan_expired = false;
+if ($plan_paid && !empty($user['plan_expires_at'])) {
+    $plan_expired = strtotime($user['plan_expires_at']) < time();
+}
 
-define('PRIVACY_VERSION', '2.0');
-define('PRIVACY_DATE',    '11 de Março de 2026');
+// ── Artistas ──────────────────────────────────
+$as = $db->prepare('SELECT COUNT(*) AS total FROM _artist WHERE id_users = ?');
+$as->execute([$id_users]);
+$has_artist = (int)($as->fetch()['total'] ?? 0) > 0;
+
+// ── Conta bancária ────────────────────────────
+$ba = $db->prepare("SELECT id_account FROM _account WHERE id_users = ? AND status_account = 'verified' LIMIT 1");
+$ba->execute([$id_users]);
+$bank_account = $ba->fetch();
+
+// ── Conta rejeitada ───────────────────────────
+$rejected_account = null;
+if ($plan_paid) {
+    $rj = $db->prepare("SELECT type_account, reject_reason FROM _account WHERE id_users = ? AND status_account = 'rejected' LIMIT 1");
+    $rj->execute([$id_users]);
+    $rejected_account = $rj->fetch();
+}
+
+// ── Sessão info (modal logout) ────────────────
+$ls = $db->prepare('SELECT last_login_at, last_login_ip FROM _users_security WHERE id_users = ?');
+$ls->execute([$id_users]);
+$sec = $ls->fetch();
+
+$sess_stmt = $db->prepare("
+    SELECT ip_address, user_agent, country, city, creat_session, last_activity
+    FROM _users_sessions WHERE id_users = ? AND is_active = 1
+    ORDER BY last_activity DESC LIMIT 1
+");
+$sess_stmt->execute([$id_users]);
+$current_session  = $sess_stmt->fetch();
+$session_duration_str = '—';
+if ($current_session && $current_session['creat_session']) {
+    $secs = time() - strtotime($current_session['creat_session']);
+    if ($secs < 60)     $session_duration_str = $secs . 's';
+    elseif ($secs < 3600)  $session_duration_str = floor($secs / 60) . 'min';
+    elseif ($secs < 86400) $session_duration_str = floor($secs / 3600) . 'h ' . floor(($secs % 3600) / 60) . 'min';
+    else                   $session_duration_str = floor($secs / 86400) . 'd ' . floor(($secs % 86400) / 3600) . 'h';
+}
+$member_since   = $user['creat_user'] ? date('d/m/Y', strtotime($user['creat_user'])) : '—';
+$last_login_str = ($sec && $sec['last_login_at']) ? date('d/m/Y H:i', strtotime($sec['last_login_at'])) : '—';
+$ua_raw   = $current_session['user_agent'] ?? '';
+$browser  = 'Desconhecido';
+if (str_contains($ua_raw, 'Edg'))     $browser = 'Microsoft Edge';
+elseif (str_contains($ua_raw, 'Chrome'))  $browser = 'Google Chrome';
+elseif (str_contains($ua_raw, 'Firefox')) $browser = 'Mozilla Firefox';
+elseif (str_contains($ua_raw, 'Safari'))  $browser = 'Safari';
+elseif (str_contains($ua_raw, 'Opera'))   $browser = 'Opera';
+$sess_location = trim(($current_session['city'] ?? '') . ', ' . ($current_session['country'] ?? ''), ', ') ?: 'Desconhecida';
+$sess_ip       = $current_session['ip_address'] ?? ($sec['last_login_ip'] ?? '—');
 ?>
 <!DOCTYPE html>
 <html lang="pt-ao">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="robots" content="noindex, nofollow" />
-    <meta name="theme-color" content="#FF0089" />
-    <link rel="apple-touch-icon" href="../../../assets/img/icones/wasomupfy_fiv_512.png" />
-    <link rel="manifest" href="../manifest.json" />
+    <?php require_once __DIR__ . '/../../include/head.php'; ?>
     <title>Política de Privacidade — <?php echo APP_NAME; ?></title>
-    <link rel="shortcut icon" href="../../../assets/img/icones/wasomupfy_fiv.png" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
-    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/dashboard-style.css" />
-    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/lastest-style.css" />
     <style>
-        /* ══ Progress bar ══ */
-        .read-progress {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            z-index: 9999;
-            background: rgba(0, 0, 0, .08);
-        }
+    /* ══ Progress bar ══ */
+    .read-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        z-index: 9999;
+        background: rgba(0, 0, 0, .08);
+    }
 
-        .read-progress-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #0d6efd, #6f42c1);
-            transition: width .1s linear;
-        }
+    .read-progress-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #0d6efd, #6f42c1);
+        transition: width .1s linear;
+    }
 
-        /* ══ Hero ══ */
-        .privacy-hero {
-            background: linear-gradient(135deg, #0f0c29 0%, #302b63 55%, #24243e 100%);
-            border-radius: 22px;
-            padding: 3rem 2.4rem 2.4rem;
-            margin-bottom: 2rem;
-            color: #fff;
-            position: relative;
-            overflow: hidden;
-        }
+    /* ══ Hero ══ */
+    .privacy-hero {
+        background: linear-gradient(135deg, #0f0c29 0%, #302b63 55%, #24243e 100%);
+        border-radius: 22px;
+        padding: 3rem 2.4rem 2.4rem;
+        margin-bottom: 2rem;
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+    }
 
-        .privacy-hero::before {
-            content: '\F4B3';
-            font-family: 'bootstrap-icons';
-            position: absolute;
-            right: -20px;
-            bottom: -30px;
-            font-size: 11rem;
-            opacity: .06;
-        }
+    .privacy-hero::before {
+        content: '\F4B3';
+        font-family: 'bootstrap-icons';
+        position: absolute;
+        right: -20px;
+        bottom: -30px;
+        font-size: 11rem;
+        opacity: .06;
+    }
 
-        .privacy-hero .version-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(13, 110, 253, .25);
-            border: 1px solid rgba(13, 110, 253, .45);
-            border-radius: 999px;
-            padding: 4px 14px;
-            font-size: .75rem;
-            font-weight: 700;
-            margin-bottom: .8rem;
-        }
+    .privacy-hero .version-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(13, 110, 253, .25);
+        border: 1px solid rgba(13, 110, 253, .45);
+        border-radius: 999px;
+        padding: 4px 14px;
+        font-size: .75rem;
+        font-weight: 700;
+        margin-bottom: .8rem;
+    }
 
-        .privacy-hero h1 {
-            font-size: 2.2rem;
-            font-weight: 900;
-            margin-bottom: .4rem;
-        }
+    .privacy-hero h1 {
+        font-size: 2.2rem;
+        font-weight: 900;
+        margin-bottom: .4rem;
+    }
 
-        .privacy-hero p {
-            opacity: .8;
-            font-size: .92rem;
-            max-width: 640px;
-            margin-bottom: 0;
-        }
+    .privacy-hero p {
+        opacity: .8;
+        font-size: .92rem;
+        max-width: 640px;
+        margin-bottom: 0;
+    }
 
-        .privacy-hero .hero-meta {
-            display: flex;
-            gap: 1.5rem;
-            flex-wrap: wrap;
-            margin-top: 1.2rem;
-        }
+    .privacy-hero .hero-meta {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        margin-top: 1.2rem;
+    }
 
-        .privacy-hero .hero-meta span {
-            font-size: .78rem;
-            opacity: .7;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+    .privacy-hero .hero-meta span {
+        font-size: .78rem;
+        opacity: .7;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
 
-        /* ══ Action buttons ══ */
-        .action-btns {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 2rem;
-        }
+    /* ══ Action buttons ══ */
+    .action-btns {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 2rem;
+    }
 
-        .action-btns a,
-        .action-btns button {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: .42rem 1.2rem;
-            border-radius: 999px;
-            font-size: .8rem;
-            font-weight: 700;
-            border: 1.5px solid rgba(13, 110, 253, .35);
-            color: #0d6efd;
-            background: transparent;
-            text-decoration: none;
-            transition: all .2s;
-            cursor: pointer;
-        }
+    .action-btns a,
+    .action-btns button {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: .42rem 1.2rem;
+        border-radius: 999px;
+        font-size: .8rem;
+        font-weight: 700;
+        border: 1.5px solid rgba(13, 110, 253, .35);
+        color: #0d6efd;
+        background: transparent;
+        text-decoration: none;
+        transition: all .2s;
+        cursor: pointer;
+    }
 
-        .action-btns a:hover,
-        .action-btns button:hover {
-            background: #0d6efd;
-            color: #fff;
-            border-color: #0d6efd;
-        }
+    .action-btns a:hover,
+    .action-btns button:hover {
+        background: #0d6efd;
+        color: #fff;
+        border-color: #0d6efd;
+    }
 
-        /* ══ Layout ══ */
+    /* ══ Layout ══ */
+    .privacy-layout {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        gap: 2rem;
+        align-items: start;
+    }
+
+    @media(max-width:991px) {
         .privacy-layout {
-            display: grid;
-            grid-template-columns: 260px 1fr;
-            gap: 2rem;
-            align-items: start;
+            grid-template-columns: 1fr;
         }
+    }
 
-        @media(max-width:991px) {
-            .privacy-layout {
-                grid-template-columns: 1fr;
-            }
-        }
+    /* ══ Index sidebar ══ */
+    .privacy-index {
+        background: var(--card-bg, #fff);
+        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
+        border-radius: 18px;
+        padding: 1.5rem;
+        position: sticky;
+        top: 80px;
+    }
 
-        /* ══ Index sidebar ══ */
-        .privacy-index {
-            background: var(--card-bg, #fff);
-            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
-            border-radius: 18px;
-            padding: 1.5rem;
-            position: sticky;
-            top: 80px;
-        }
+    .privacy-index h3 {
+        font-size: .9rem;
+        font-weight: 900;
+        color: #0d6efd;
+        margin-bottom: 1rem;
+    }
 
-        .privacy-index h3 {
-            font-size: .9rem;
-            font-weight: 900;
-            color: #0d6efd;
-            margin-bottom: 1rem;
-        }
+    .privacy-index ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
 
-        .privacy-index ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
+    .privacy-index li {
+        margin-bottom: .35rem;
+    }
 
-        .privacy-index li {
-            margin-bottom: .35rem;
-        }
+    .privacy-index a {
+        font-size: .78rem;
+        color: var(--text-muted, #6c757d);
+        text-decoration: none;
+        display: flex;
+        align-items: flex-start;
+        gap: 6px;
+        line-height: 1.4;
+        padding: .25rem .4rem;
+        border-radius: 7px;
+        transition: all .15s;
+    }
 
-        .privacy-index a {
-            font-size: .78rem;
-            color: var(--text-muted, #6c757d);
-            text-decoration: none;
-            display: flex;
-            align-items: flex-start;
-            gap: 6px;
-            line-height: 1.4;
-            padding: .25rem .4rem;
-            border-radius: 7px;
-            transition: all .15s;
-        }
+    .privacy-index a .num {
+        color: #0d6efd;
+        font-weight: 800;
+        flex-shrink: 0;
+        min-width: 18px;
+    }
 
-        .privacy-index a .num {
-            color: #0d6efd;
-            font-weight: 800;
-            flex-shrink: 0;
-            min-width: 18px;
-        }
+    .privacy-index a:hover,
+    .privacy-index a.active {
+        color: #0d6efd;
+        background: rgba(13, 110, 253, .07);
+    }
 
-        .privacy-index a:hover,
-        .privacy-index a.active {
-            color: #0d6efd;
-            background: rgba(13, 110, 253, .07);
-        }
+    /* ══ Privacy content ══ */
+    .privacy-content {
+        background: var(--card-bg, #fff);
+        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
+        border-radius: 18px;
+        padding: 2.5rem;
+    }
 
-        /* ══ Privacy content ══ */
+    @media(max-width:576px) {
         .privacy-content {
-            background: var(--card-bg, #fff);
-            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
-            border-radius: 18px;
-            padding: 2.5rem;
+            padding: 1.4rem;
+        }
+    }
+
+    .priv-section {
+        margin-bottom: 2.5rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .06));
+    }
+
+    .priv-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .priv-section h2 {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: #0d6efd;
+        margin-bottom: 1rem;
+        padding-bottom: .5rem;
+        border-bottom: 2px solid rgba(13, 110, 253, .12);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .priv-section h2 .sec-num {
+        background: rgba(13, 110, 253, .1);
+        color: #0d6efd;
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .82rem;
+        font-weight: 900;
+        flex-shrink: 0;
+    }
+
+    .priv-section h3 {
+        font-size: .9rem;
+        font-weight: 800;
+        margin: 1.2rem 0 .6rem;
+        color: var(--heading-color, #222);
+    }
+
+    .priv-section p {
+        font-size: .87rem;
+        line-height: 1.8;
+        margin-bottom: .8rem;
+        color: var(--text-body, #444);
+    }
+
+    .priv-section ul {
+        padding-left: 0;
+        list-style: none;
+        margin-bottom: .8rem;
+    }
+
+    .priv-section ul li {
+        font-size: .87rem;
+        line-height: 1.7;
+        padding: .3rem 0 .3rem 1.3rem;
+        position: relative;
+        color: var(--text-body, #444);
+    }
+
+    .priv-section ul li::before {
+        content: '›';
+        position: absolute;
+        left: 0;
+        color: #0d6efd;
+        font-weight: 900;
+    }
+
+    /* ══ Highlight boxes ══ */
+    .priv-box {
+        border-radius: 12px;
+        padding: 1rem 1.2rem;
+        margin: 1rem 0;
+        font-size: .84rem;
+        line-height: 1.7;
+    }
+
+    .priv-box.blue {
+        background: rgba(13, 110, 253, .08);
+        border-left: 4px solid #0d6efd;
+        color: var(--text-body, #444);
+    }
+
+    .priv-box.purple {
+        background: rgba(111, 66, 193, .08);
+        border-left: 4px solid #6f42c1;
+        color: var(--text-body, #444);
+    }
+
+    .priv-box.green {
+        background: rgba(25, 135, 84, .08);
+        border-left: 4px solid #198754;
+        color: var(--text-body, #444);
+    }
+
+    .priv-box.yellow {
+        background: rgba(255, 193, 7, .1);
+        border-left: 4px solid #ffc107;
+        color: var(--text-body, #444);
+    }
+
+    .priv-box.red {
+        background: rgba(220, 53, 69, .08);
+        border-left: 4px solid #dc3545;
+        color: var(--text-body, #444);
+    }
+
+    .priv-box strong {
+        display: block;
+        margin-bottom: .3rem;
+    }
+
+    /* ══ Dados table ══ */
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1rem 0;
+        font-size: .82rem;
+    }
+
+    .data-table th {
+        background: rgba(13, 110, 253, .08);
+        color: #0d6efd;
+        padding: .65rem 1rem;
+        text-align: left;
+        font-weight: 800;
+        border-bottom: 2px solid rgba(13, 110, 253, .2);
+    }
+
+    .data-table td {
+        padding: .6rem 1rem;
+        border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .07));
+        vertical-align: top;
+    }
+
+    .data-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .data-table tr:hover td {
+        background: rgba(13, 110, 253, .03);
+    }
+
+    /* ══ Direitos do utilizador — cards ══ */
+    .rights-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 12px;
+        margin: 1rem 0;
+    }
+
+    .right-card {
+        background: var(--metric-bg, rgba(0, 0, 0, .03));
+        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
+        border-radius: 14px;
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .right-card i {
+        font-size: 1.6rem;
+        color: #0d6efd;
+        display: block;
+        margin-bottom: .5rem;
+    }
+
+    .right-card strong {
+        font-size: .82rem;
+        display: block;
+        margin-bottom: .3rem;
+    }
+
+    .right-card span {
+        font-size: .75rem;
+        color: var(--text-muted, #6c757d);
+    }
+
+    /* ══ Retenção de dados — timeline ══ */
+    .retention-list {
+        list-style: none;
+        padding: 0;
+        margin: 1rem 0;
+    }
+
+    .retention-list li {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        padding: .6rem 0;
+        border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .06));
+        font-size: .85rem;
+    }
+
+    .retention-list li:last-child {
+        border-bottom: none;
+    }
+
+    .retention-badge {
+        background: rgba(13, 110, 253, .1);
+        color: #0d6efd;
+        border-radius: 8px;
+        padding: .25rem .7rem;
+        font-size: .72rem;
+        font-weight: 800;
+        white-space: nowrap;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+    /* ══ Back to top ══ */
+    #backToTop {
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: #0d6efd;
+        color: #fff;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        box-shadow: 0 4px 14px rgba(13, 110, 253, .4);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .25s;
+        z-index: 1000;
+        cursor: pointer;
+    }
+
+    #backToTop.visible {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    /* ══ Print ══ */
+    @media print {
+
+        .navbar,
+        .offcanvas,
+        .bottom-nav,
+        .action-btns,
+        .privacy-index,
+        #backToTop,
+        .read-progress,
+        nav {
+            display: none !important;
         }
 
-        @media(max-width:576px) {
-            .privacy-content {
-                padding: 1.4rem;
-            }
+        .privacy-layout {
+            grid-template-columns: 1fr !important;
         }
 
-        .priv-section {
-            margin-bottom: 2.5rem;
-            padding-bottom: 2rem;
-            border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .06));
-        }
-
-        .priv-section:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
+        .privacy-content {
+            border: none !important;
+            padding: 0 !important;
         }
 
         .priv-section h2 {
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: #0d6efd;
-            margin-bottom: 1rem;
-            padding-bottom: .5rem;
-            border-bottom: 2px solid rgba(13, 110, 253, .12);
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            color: #000 !important;
         }
-
-        .priv-section h2 .sec-num {
-            background: rgba(13, 110, 253, .1);
-            color: #0d6efd;
-            width: 28px;
-            height: 28px;
-            border-radius: 8px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: .82rem;
-            font-weight: 900;
-            flex-shrink: 0;
-        }
-
-        .priv-section h3 {
-            font-size: .9rem;
-            font-weight: 800;
-            margin: 1.2rem 0 .6rem;
-            color: var(--heading-color, #222);
-        }
-
-        .priv-section p {
-            font-size: .87rem;
-            line-height: 1.8;
-            margin-bottom: .8rem;
-            color: var(--text-body, #444);
-        }
-
-        .priv-section ul {
-            padding-left: 0;
-            list-style: none;
-            margin-bottom: .8rem;
-        }
-
-        .priv-section ul li {
-            font-size: .87rem;
-            line-height: 1.7;
-            padding: .3rem 0 .3rem 1.3rem;
-            position: relative;
-            color: var(--text-body, #444);
-        }
-
-        .priv-section ul li::before {
-            content: '›';
-            position: absolute;
-            left: 0;
-            color: #0d6efd;
-            font-weight: 900;
-        }
-
-        /* ══ Highlight boxes ══ */
-        .priv-box {
-            border-radius: 12px;
-            padding: 1rem 1.2rem;
-            margin: 1rem 0;
-            font-size: .84rem;
-            line-height: 1.7;
-        }
-
-        .priv-box.blue {
-            background: rgba(13, 110, 253, .08);
-            border-left: 4px solid #0d6efd;
-            color: var(--text-body, #444);
-        }
-
-        .priv-box.purple {
-            background: rgba(111, 66, 193, .08);
-            border-left: 4px solid #6f42c1;
-            color: var(--text-body, #444);
-        }
-
-        .priv-box.green {
-            background: rgba(25, 135, 84, .08);
-            border-left: 4px solid #198754;
-            color: var(--text-body, #444);
-        }
-
-        .priv-box.yellow {
-            background: rgba(255, 193, 7, .1);
-            border-left: 4px solid #ffc107;
-            color: var(--text-body, #444);
-        }
-
-        .priv-box.red {
-            background: rgba(220, 53, 69, .08);
-            border-left: 4px solid #dc3545;
-            color: var(--text-body, #444);
-        }
-
-        .priv-box strong {
-            display: block;
-            margin-bottom: .3rem;
-        }
-
-        /* ══ Dados table ══ */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1rem 0;
-            font-size: .82rem;
-        }
-
-        .data-table th {
-            background: rgba(13, 110, 253, .08);
-            color: #0d6efd;
-            padding: .65rem 1rem;
-            text-align: left;
-            font-weight: 800;
-            border-bottom: 2px solid rgba(13, 110, 253, .2);
-        }
-
-        .data-table td {
-            padding: .6rem 1rem;
-            border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .07));
-            vertical-align: top;
-        }
-
-        .data-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .data-table tr:hover td {
-            background: rgba(13, 110, 253, .03);
-        }
-
-        /* ══ Direitos do utilizador — cards ══ */
-        .rights-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 12px;
-            margin: 1rem 0;
-        }
-
-        .right-card {
-            background: var(--metric-bg, rgba(0, 0, 0, .03));
-            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
-            border-radius: 14px;
-            padding: 1rem;
-            text-align: center;
-        }
-
-        .right-card i {
-            font-size: 1.6rem;
-            color: #0d6efd;
-            display: block;
-            margin-bottom: .5rem;
-        }
-
-        .right-card strong {
-            font-size: .82rem;
-            display: block;
-            margin-bottom: .3rem;
-        }
-
-        .right-card span {
-            font-size: .75rem;
-            color: var(--text-muted, #6c757d);
-        }
-
-        /* ══ Retenção de dados — timeline ══ */
-        .retention-list {
-            list-style: none;
-            padding: 0;
-            margin: 1rem 0;
-        }
-
-        .retention-list li {
-            display: flex;
-            gap: 12px;
-            align-items: flex-start;
-            padding: .6rem 0;
-            border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .06));
-            font-size: .85rem;
-        }
-
-        .retention-list li:last-child {
-            border-bottom: none;
-        }
-
-        .retention-badge {
-            background: rgba(13, 110, 253, .1);
-            color: #0d6efd;
-            border-radius: 8px;
-            padding: .25rem .7rem;
-            font-size: .72rem;
-            font-weight: 800;
-            white-space: nowrap;
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-
-        /* ══ Back to top ══ */
-        #backToTop {
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            background: #0d6efd;
-            color: #fff;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-            box-shadow: 0 4px 14px rgba(13, 110, 253, .4);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity .25s;
-            z-index: 1000;
-            cursor: pointer;
-        }
-
-        #backToTop.visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        /* ══ Print ══ */
-        @media print {
-
-            .navbar,
-            .offcanvas,
-            .bottom-nav,
-            .action-btns,
-            .privacy-index,
-            #backToTop,
-            .read-progress,
-            nav {
-                display: none !important;
-            }
-
-            .privacy-layout {
-                grid-template-columns: 1fr !important;
-            }
-
-            .privacy-content {
-                border: none !important;
-                padding: 0 !important;
-            }
-
-            .priv-section h2 {
-                color: #000 !important;
-            }
-        }
+    }
     </style>
 </head>
 
@@ -513,242 +585,141 @@ define('PRIVACY_DATE',    '11 de Março de 2026');
         <div class="read-progress-fill" id="progressBar"></div>
     </div>
 
-    <!-- Tela de Carregamento -->
-    <!-- <div class="loading-screen" id="loadingScreen">
-        <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg" class="loading-logo">
-            <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2"/>
-            <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
-        </svg>
-        <div class="spinner"></div>
-    </div> -->
-
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <!-- Menu Button (Left) -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu"
-                aria-controls="offcanvasMenu">
-                <span class="navbar-toggler-icon"><i class="bi bi-list text-white fs-1"></i></span>
-            </button>
-
-            <!-- Logo (Center on Mobile, Left on Desktop) -->
-            <a class="navbar-brand" href="../../painel">
-                <!-- SVG Logo Wasom Upfy -->
-                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
-                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
-                        fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
-                </svg> -->
-                <span class="text-light" style="
-              font-weight: bold;
-              box-sizing: border-box;
-              text-transform: uppercase;
-              font-family: Arial, sans-serif;
-            "><?php echo APP_NAME; ?></span>
-            </a>
-
-            <!-- Desktop Menu -->
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav m-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="../../painel"><i class="bi bi-speedometer2"></i> Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../../launch/releases"><i class="bi bi-disc"></i> Lançamentos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../../analytics/statistics"><i class="bi bi-bar-chart"></i>
-                            Estatísticas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../../finances/overview"><i class="bi bi-currency-dollar"></i>
-                            Finanças</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../../artists/artists-list"><i class="bi bi-person"></i> Artistas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../../artists/youtube/ucy"><i class="bi bi-youtube"></i> Unificação de
-                            canal
-                            YouTube</a>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- User Icon (Right) -->
-            <div class="user-menu d-flex align-items-center">
-                <!-- Theme Toggle Button -->
-                <a class="theme-toggle text-white me-2" id="themeToggle">
-                    <i class="bi bi-sun" id="themeIcon"></i>
-                </a>
-                <a href="../notifications" class="text-white me-2" aria-label="Notificações">
-                    <i class="bi bi-bell fs-4"></i>
-                    <span class="badge bg-danger">9</span>
-                </a>
-                <a href="#" class="text-white" data-bs-toggle="dropdown">
-                    <i class="bi bi-person-circle fs-4"></i>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li>
-                        <a class="dropdown-item" href="../../user/profile"><i class="bi bi-person me-2"></i>
-                            <strong><?php echo $first_name; ?></strong></a>
-                        <div class="text-white-50">
-                            &nbsp; &nbsp; &nbsp; &nbsp; (Conta <?php echo str_pad($id_users, 6, "0", STR_PAD_LEFT); ?>)
-                        </div>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../../user/profile"><i class="bi bi-person me-2"></i> Meu
-                            Perfil</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../../account/manage-account"><i class="bi bi-tools me-2"></i>
-                            Gestão de
-                            Conta</a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../../page/settings"><i class="bi bi-gear me-2"></i>
-                            Configurações</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../../page/notifications"><i class="bi bi-bell me-2"></i>
-                            Notificações</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../../page/plans"><i class="bi bi-star me-2"></i> Planos</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="#?logout-wasomupfy" data-bs-toggle="modal"
-                            data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right me-2"></i>
-                            Desconectar-se</a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../../page/about"><i class="bi bi-info-circle me-2"></i>
-                            Sobre</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../../page/support"><i class="bi bi-headset me-2"></i> Enviar
-                            pedido de
-                            suporte</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../../page/faq"><i class="bi bi-chat-left-text me-2"></i>
-                            Perguntas
-                            frequentes</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="../../page/help"><i class="bi bi-question-circle me-2"></i>
-                            Ajuda</a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li>
-                        <span class="dropdown-item-text" id="versionDropdown"></span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Offcanvas Menu par Mobile e Desktop -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasMenuLabel">
-                <!-- <svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="2" y="2" width="116" height="36" rx="5" fill="none" stroke="#ff0089" stroke-width="2" />
-                    <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="20" font-weight="bold"
-                        fill="#ff0089" text-anchor="middle" dominant-baseline="middle">WASOM UPFY</text>
-                </svg> -->
-                <span class="text-light" style="
-              font-weight: bold;
-              box-sizing: border-box;
-              text-transform: uppercase;
-              font-family: Arial, sans-serif;
-            "><?php echo APP_NAME; ?></span>
-            </h5>
-            <button type="button" class="btn-close text-white" data-bs-dismiss="offcanvas" aria-label="Close">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-        <div class="offcanvas-body">
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link" href="../../painel"><i class="bi bi-speedometer2"></i> Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../../launch/releases"><i class="bi bi-disc"></i> Lançamentos</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../../analytics/statistics"><i class="bi bi-bar-chart"></i>
-                        Estatísticas</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../../finances/overview"><i class="bi bi-currency-dollar"></i>
-                        Finanças</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../../artists/artists-list"><i class="bi bi-person"></i> Artistas</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../../youtube"><i class="bi bi-youtube"></i> Unificação de canal
-                        YouTube</a>
-                </li>
-                <!-- Links secundários exibidos apenas em mobile -->
-                <li class="nav-item d-lg-none">
-                    <a class="nav-link" href="../../user/profile"><i class="bi bi-person-circle"></i> Meu Perfil</a>
-                </li>
-                <li class="nav-item d-lg-none">
-                    <a class="nav-link active" href="../../page/settings"><i class="bi bi-gear"></i> Configurações</a>
-                </li>
-                <li class="nav-item d-lg-none">
-                    <a class="nav-link" href="../../page/notifications"><i class="bi bi-bell"></i> Notificações</a>
-                </li>
-                <li class="nav-item d-lg-none">
-                    <a class="nav-link" href="../../page/about"><i class="bi bi-info-circle"></i> Sobre</a>
-                </li>
-                <li class="nav-item d-lg-none">
-                    <a class="nav-link" href="../../page/plans"><i class="bi bi-star"></i> Planos</a>
-                </li>
-                <li class="nav-item d-lg-none">
-                    <a class="nav-link" href="../../page/help"><i class="bi bi-question-circle"></i> Ajuda</a>
-                </li>
-                <li class="nav-item d-lg-none">
-                    <a class="nav-link" href="#?logout-wasomupfy" data-bs-toggle="modal"
-                        data-bs-target="#logoutwasomupfy"><i class="bi bi-box-arrow-right"></i> Desconectar-se</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- Toast para Notificações de Status -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="connectionToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <strong class="me-auto">Conexão</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Fechar"></button>
-            </div>
-            <div class="toast-body">
-                Você está offline. Alguns dados podem estar desatualizados.
-                <div class="mt-2">
-                    <button class="btn btn-pink btn-sm" onclick="tryReconnect()">
-                        Tentar Reconectar
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <!-- ═══ NAVBAR ═══ -->
+    <?php require_once __DIR__ . '/../../include/sidebar.php'; ?>
     <!-- ═══ MAIN ═══ -->
     <div class="container my-4">
+        <?php /* ============================================
+    BANNERS DE NOTIFICACAO DO PAINEL
+    Estilo: inline CSS consistente com renderDashboardAlerts().
+    Bootstrap alert nativo removido — um único sistema visual.
+    Lógica de prioridade:
+      Nível 1 (danger)  — bloqueia distribuição
+      Nível 2 (warning) — importante, requer atenção
+      Nível 3 (info)    — informativo / acção opcional
+    ============================================ */ ?>
+
+        <?php renderDashboardAlerts($user, $platform); ?>
+
+        <?php
+        // Cor map para helpers inline — idêntico ao renderDashboardAlerts()
+        $alertColors = [
+            'danger'  => ['bg' => 'rgba(239,68,68,.08)',  'border' => 'rgba(239,68,68,.25)',  'text' => '#ef4444'],
+            'warning' => ['bg' => 'rgba(234,179,8,.08)',  'border' => 'rgba(234,179,8,.25)',  'text' => '#eab308'],
+            'info'    => ['bg' => 'rgba(99,102,241,.08)', 'border' => 'rgba(99,102,241,.25)', 'text' => '#6366f1'],
+        ];
+        function wuAlert(string $type, string $icon, string $message, ?array $action = null, bool $dismiss = true, string $id = ''): void
+        {
+            global $alertColors;
+            $c   = $alertColors[$type] ?? $alertColors['info'];
+            $eid = $id ?: ('wuPanelAlert_' . md5($message));
+            echo "<div id=\"{$eid}\" style=\"display:flex;align-items:flex-start;gap:10px;"
+                . "background:{$c['bg']};border:1px solid {$c['border']};border-radius:12px;"
+                . "padding:.75rem 1rem;font-size:.83rem;margin-bottom:.6rem;"
+                . "transition:opacity .3s;\">";
+            echo "<i class=\"bi {$icon}\" style=\"font-size:1rem;flex-shrink:0;margin-top:2px;color:{$c['text']};\"></i>";
+            echo '<span class="wu-alert-msg">' . $message;
+            if ($action) {
+                echo " <a href=\"{$action['url']}\" style=\"color:{$c['text']};font-weight:700;"
+                    . "text-decoration:underline;white-space:nowrap\">{$action['label']} &rarr;</a>";
+            }
+            echo '</span>';
+            if ($dismiss) {
+                echo "<button type=\"button\" class=\"wu-alert-dismiss\" aria-label=\"Fechar\""
+                    . " onclick=\"(function(el){el.style.opacity='0';"
+                    . "setTimeout(function(){el.style.display='none'},300)})(document.getElementById('{$eid}'))\">"
+                    . "&times;</button>";
+            }
+            echo '</div>';
+        }
+        ?>
+
+        <?php /* ── NÍVEL 1: Crítico — bloqueia distribuição ── */ ?>
+
+        <?php if (!$email_verified): ?>
+        <?php wuAlert(
+                'danger',
+                'bi-envelope-exclamation-fill',
+                '<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta e receber notificações de pagamentos.',
+                ['label' => 'Verificar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/user/profile#perfil'],
+                true,
+                'banner-email'
+            ); ?>
+        <?php endif; ?>
+
+        <?php if ($plan && !$plan_paid): ?>
+        <?php wuAlert(
+                'warning',
+                'bi-clock-history',
+                '<strong>Pagamento pendente — ' . htmlspecialchars($plan['name_plan']) . '.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados até confirmação.',
+                ['label' => 'Finalizar pagamento', 'url' => APP_URL . '/' . APP_URL_PANEL . '/payment/pay'],
+                true,
+                'banner-plan-pending'
+            ); ?>
+        <?php elseif (!$plan): ?>
+        <?php wuAlert(
+                'danger',
+                'bi-credit-card-fill',
+                '<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir a tua música para +150 plataformas.',
+                ['label' => 'Ver planos', 'url' => APP_URL . '/' . APP_URL_PANEL . '/all-plans'],
+                false,
+                'banner-plan'
+            ); ?>
+        <?php endif; ?>
+
+        <?php /* ── NÍVEL 2: Importante — perfil incompleto ── */ ?>
+
+        <?php if ($plan_paid && !$has_artist): ?>
+        <?php wuAlert(
+                'info',
+                'bi-person-plus-fill',
+                '<strong>Cria o teu perfil de artista.</strong> Tens plano activo mas ainda não criaste um perfil. Precisas de um para poder lançar música.',
+                ['label' => 'Criar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/add-artist'],
+                true,
+                'banner-artist'
+            ); ?>
+        <?php endif; ?>
+
+        <?php /* ── NÍVEL 3: Informativo — conta bancária ── */ ?>
+
+        <?php if ($plan_paid && $has_artist && !$bank_account): ?>
+        <?php wuAlert(
+                'info',
+                'bi-bank',
+                '<strong>Conta bancária não registada.</strong> Para poder sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.',
+                ['label' => 'Registar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/withdraw'],
+                true,
+                'banner-bank'
+            ); ?>
+        <?php endif; ?>
+
+        <?php /* ── NÍVEL 3: Conta bancária rejeitada ── */ ?>
+
+        <?php
+        $rejected_account = null;
+        if ($plan_paid) {
+            $rej_stmt = getDB()->prepare("SELECT type_account, reject_reason FROM _account WHERE id_users = ? AND status_account = 'rejected' LIMIT 1");
+            $rej_stmt->execute([$id_users]);
+            $rejected_account = $rej_stmt->fetch();
+        }
+        ?>
+        <?php if ($rejected_account): ?>
+        <?php
+            $rej_msg = '<strong>Conta ' . htmlspecialchars($rejected_account['type_account']) . ' rejeitada.</strong>';
+            if ($rejected_account['reject_reason']) {
+                $rej_msg .= ' Motivo: <em>' . htmlspecialchars($rejected_account['reject_reason']) . '</em>.';
+            }
+            $rej_msg .= ' Actualiza os dados e submete novamente.';
+            wuAlert(
+                'danger',
+                'bi-x-circle-fill',
+                $rej_msg,
+                ['label' => 'Corrigir agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/withdraw'],
+                true,
+                'banner-account-rejected'
+            );
+            ?>
+        <?php endif; ?>
 
         <!-- HERO -->
         <div class="privacy-hero">
@@ -758,7 +729,7 @@ define('PRIVACY_DATE',    '11 de Março de 2026');
             </div>
             <h1><i class="bi bi-shield-check me-3" style="color:#0d6efd"></i>Política de Privacidade</h1>
             <p>
-                A Wasom Upfy trata os teus dados pessoais com responsabilidade, transparência e segurança.
+                A <?php echo APP_NAME ?> trata os teus dados pessoais com responsabilidade, transparência e segurança.
                 Este documento explica exactamente quais dados recolhemos, para que os usamos, como os protegemos
                 e quais são os teus direitos enquanto titular dos dados.
             </p>
@@ -813,14 +784,16 @@ define('PRIVACY_DATE',    '11 de Março de 2026');
                     <h2><span class="sec-num">1</span>Responsável pelo Tratamento dos Dados</h2>
                     <p>
                         O responsável pelo tratamento dos dados pessoais recolhidos através da plataforma
-                        Wasom Upfy é:
+                        <?php echo APP_NAME ?> é:
                     </p>
                     <div class="priv-box blue">
-                        <strong><i class="bi bi-building me-2"></i>Wasom Upfy</strong>
+                        <strong><i class="bi bi-building me-2"></i><?php echo APP_NAME ?></strong>
                         Plataforma digital de distribuição musical e gestão de direitos autorais<br>
                         <i class="bi bi-geo-alt me-1"></i> Luanda, República de Angola<br>
                         <i class="bi bi-envelope me-1"></i> privacidade@wasomupfy.com<br>
-                        <i class="bi bi-headset me-1"></i> <a href="support">Pedido de suporte</a> — resposta em até 48h
+                        <i class="bi bi-headset me-1"></i> <a
+                            href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/support">Pedido de suporte</a> —
+                        resposta em até 48h
                         úteis
                     </div>
                     <p>
@@ -834,7 +807,7 @@ define('PRIVACY_DATE',    '11 de Março de 2026');
                 <div class="priv-section" id="p2">
                     <h2><span class="sec-num">2</span>Dados Pessoais que Recolhemos</h2>
                     <p>
-                        A Wasom Upfy recolhe apenas os dados estritamente necessários para a prestação dos
+                        A <?php echo APP_NAME ?> recolhe apenas os dados estritamente necessários para a prestação dos
                         serviços contratados. Abaixo encontras uma descrição detalhada dos dados recolhidos,
                         organizados por categoria.
                     </p>
@@ -1087,7 +1060,8 @@ define('PRIVACY_DATE',    '11 de Março de 2026');
 
                     <div class="priv-box green">
                         <strong><i class="bi bi-check-circle-fill me-2"></i>Compromisso</strong>
-                        A Wasom Upfy não utiliza os teus dados para fins publicitários, não os vende a terceiros e não
+                        A <?php echo APP_NAME ?> não utiliza os teus dados para fins publicitários, não os vende a
+                        terceiros e não
                         os utiliza para criar perfis de comportamento para fins comerciais externos.
                     </div>
                 </div>
@@ -1096,7 +1070,7 @@ define('PRIVACY_DATE',    '11 de Março de 2026');
                 <div class="priv-section" id="p5">
                     <h2><span class="sec-num">5</span>Base Legal do Tratamento</h2>
                     <p>
-                        O tratamento dos dados pessoais pela Wasom Upfy assenta nas seguintes bases legais,
+                        O tratamento dos dados pessoais pela <?php echo APP_NAME ?> assenta nas seguintes bases legais,
                         em conformidade com a legislação angolana aplicável:
                     </p>
                     <ul>
@@ -1104,7 +1078,8 @@ define('PRIVACY_DATE',    '11 de Março de 2026');
                             serviços contratados ao criar uma conta e activar um plano;</li>
                         <li><strong>Consentimento:</strong> para tratamentos opcionais, como notificações push, o
                             tratamento baseia-se no consentimento explícito do utilizador, que pode ser retirado a
-                            qualquer momento nas <a href="settings">Configurações</a>;</li>
+                            qualquer momento nas <a
+                                href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/settings">Configurações</a>;</li>
                         <li><strong>Interesse legítimo:</strong> para fins de segurança, prevenção de fraude e melhoria
                             da plataforma, desde que não prevaleçam sobre os direitos do utilizador;</li>
                         <li><strong>Obrigação legal:</strong> para o cumprimento de obrigações legais, fiscais ou
@@ -1116,7 +1091,7 @@ define('PRIVACY_DATE',    '11 de Março de 2026');
                 <div class="priv-section" id="p6">
                     <h2><span class="sec-num">6</span>Partilha de Dados com Terceiros</h2>
                     <p>
-                        A Wasom Upfy não vende, arrenda nem partilha os teus dados pessoais para fins
+                        A <?php echo APP_NAME ?> não vende, arrenda nem partilha os teus dados pessoais para fins
                         comerciais. A partilha de dados ocorre apenas nas seguintes situações:
                     </p>
 
@@ -1156,7 +1131,7 @@ define('PRIVACY_DATE',    '11 de Março de 2026');
 
                     <div class="priv-box yellow">
                         <strong><i class="bi bi-exclamation-triangle-fill me-2"></i>Importante</strong>
-                        A Wasom Upfy nunca partilha dados financeiros, palavras-passe, dados bancários ou
+                        A <?php echo APP_NAME ?> nunca partilha dados financeiros, palavras-passe, dados bancários ou
                         informações pessoais identificáveis com outras plataformas além das estritamente
                         necessárias para a distribuição musical.
                     </div>
@@ -1179,7 +1154,7 @@ define('PRIVACY_DATE',    '11 de Março de 2026');
                     <p>
                         Os teus dados pessoais identificáveis (e-mail, telefone, dados bancários, endereço IP)
                         <strong>não são transferidos para o exterior</strong> e permanecem nos servidores da
-                        Wasom Upfy, localizados em Angola ou em servidores de alojamento com localização
+                        <?php echo APP_NAME ?>, localizados em Angola ou em servidores de alojamento com localização
                         contratualmente definida.
                     </p>
                 </div>
@@ -1235,7 +1210,7 @@ define('PRIVACY_DATE',    '11 de Março de 2026');
                 <div class="priv-section" id="p9">
                     <h2><span class="sec-num">9</span>Segurança dos Dados</h2>
                     <p>
-                        A Wasom Upfy implementa medidas técnicas e organizacionais adequadas para proteger
+                        A <?php echo APP_NAME ?> implementa medidas técnicas e organizacionais adequadas para proteger
                         os dados pessoais contra acesso não autorizado, perda, destruição ou divulgação indevida.
                         As medidas incluem:
                     </p>
@@ -1272,7 +1247,7 @@ define('PRIVACY_DATE',    '11 de Março de 2026');
                 <!-- ════ 10. COOKIES ════ -->
                 <div class="priv-section" id="p10">
                     <h2><span class="sec-num">10</span>Cookies e Tecnologias de Rastreamento</h2>
-                    <p>A Wasom Upfy utiliza os seguintes tipos de cookies:</p>
+                    <p>A <?php echo APP_NAME ?> utiliza os seguintes tipos de cookies:</p>
 
                     <table class="data-table">
                         <thead>
@@ -1318,12 +1293,14 @@ define('PRIVACY_DATE',    '11 de Março de 2026');
                     </table>
 
                     <p>
-                        A Wasom Upfy <strong>não utiliza cookies de publicidade ou rastreamento de terceiros</strong>.
+                        A <?php echo APP_NAME ?> <strong>não utiliza cookies de publicidade ou rastreamento de
+                            terceiros</strong>.
                         Não existe integração com redes de publicidade, pixels de rastreamento social ou
                         ferramentas de análise externas que recolham dados identificáveis.
                     </p>
                     <p>
-                        Podes gerir as preferências de cookies nas <a href="settings">Configurações</a> da conta.
+                        Podes gerir as preferências de cookies nas <a
+                            href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/settings">Configurações</a> da conta.
                         A desactivação dos cookies essenciais impedirá o funcionamento correcto da sessão
                         de login e de algumas funcionalidades da plataforma.
                     </p>
@@ -1333,7 +1310,7 @@ define('PRIVACY_DATE',    '11 de Março de 2026');
                 <div class="priv-section" id="p11">
                     <h2><span class="sec-num">11</span>Notificações Push e Service Worker</h2>
                     <p>
-                        A Wasom Upfy oferece notificações push — alertas enviados directamente para o teu
+                        A <?php echo APP_NAME ?> oferece notificações push — alertas enviados directamente para o teu
                         dispositivo, mesmo quando não estás activamente a usar a plataforma. Esta funcionalidade
                         é <strong>totalmente opcional</strong> e requer o teu consentimento explícito.
                     </p>
@@ -1346,7 +1323,8 @@ define('PRIVACY_DATE',    '11 de Março de 2026');
                     <h3>11.2 Como Revogar o Consentimento</h3>
                     <p>
                         Podes desactivar as notificações push a qualquer momento em
-                        <a href="notifications"><strong>Notificações → Preferências → Notificações push</strong></a>.
+                        <a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/notifications"><strong>Notificações →
+                                Preferências → Notificações push</strong></a>.
                         Após a revogação, a subscrição é eliminada imediatamente dos nossos servidores.
                     </p>
                     <h3>11.3 Service Worker</h3>
@@ -1363,14 +1341,17 @@ define('PRIVACY_DATE',    '11 de Março de 2026');
                     <h2><span class="sec-num">12</span>Dados de Menores</h2>
                     <div class="priv-box red">
                         <strong><i class="bi bi-shield-exclamation me-2"></i>Restrição de Idade</strong>
-                        A Wasom Upfy é destinada exclusivamente a utilizadores com <strong>18 anos ou mais</strong>.
+                        A <?php echo APP_NAME ?> é destinada exclusivamente a utilizadores com <strong>18 anos ou
+                            mais</strong>.
                         Não recolhemos intencionalmente dados pessoais de menores de idade. Se tomarmos
                         conhecimento de que recolhemos dados de um menor, esses dados serão imediatamente
                         eliminados e a conta encerrada.
                     </div>
                     <p>
-                        Se és pai, mãe ou tutor legal e acreditas que o teu filho criou uma conta na Wasom Upfy,
-                        contacta-nos imediatamente através de <a href="support">pedido de suporte</a> ou por
+                        Se és pai, mãe ou tutor legal e acreditas que o teu filho criou uma conta na
+                        <?php echo APP_NAME ?>,
+                        contacta-nos imediatamente através de <a
+                            href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/support">pedido de suporte</a> ou por
                         e-mail para privacidade@wasomupfy.com.
                     </p>
                 </div>
@@ -1379,7 +1360,8 @@ define('PRIVACY_DATE',    '11 de Março de 2026');
                 <div class="priv-section" id="p13">
                     <h2><span class="sec-num">13</span>Os Teus Direitos como Titular dos Dados</h2>
                     <p>
-                        Enquanto titular dos dados pessoais tratados pela Wasom Upfy, tens os seguintes direitos,
+                        Enquanto titular dos dados pessoais tratados pela <?php echo APP_NAME ?>, tens os seguintes
+                        direitos,
                         que podes exercer a qualquer momento:
                     </p>
 
@@ -1421,9 +1403,12 @@ define('PRIVACY_DATE',    '11 de Março de 2026');
                         Para exercer qualquer um dos direitos acima, podes:
                     </p>
                     <ul>
-                        <li>Aceder às <a href="settings"><strong>Configurações</strong></a> da conta para alterar ou
+                        <li>Aceder às <a
+                                href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/settings"><strong>Configurações</strong></a>
+                            da conta para alterar ou
                             eliminar dados de perfil;</li>
-                        <li>Abrir um <a href="support"><strong>pedido de suporte</strong></a> descrevendo o direito que
+                        <li>Abrir um <a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/support"><strong>pedido
+                                    de suporte</strong></a> descrevendo o direito que
                             desejas exercer;</li>
                         <li>Enviar um e-mail para <strong>privacidade@wasomupfy.com</strong> com o assunto "Exercício de
                             Direitos — [tipo de direito]".</li>
@@ -1452,7 +1437,8 @@ define('PRIVACY_DATE',    '11 de Março de 2026');
                     <h3>14.1 Reclamação Interna</h3>
                     <p>
                         Antes de recorrer a qualquer instância externa, incentivamos a resolução directa
-                        através do nosso <a href="support">sistema de suporte</a>. Comprometemo-nos a analisar
+                        através do nosso <a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/support">sistema de
+                            suporte</a>. Comprometemo-nos a analisar
                         todas as reclamações de forma séria e a responder no prazo de <strong>15 dias úteis</strong>.
                     </p>
                     <h3>14.2 Autoridade Competente</h3>
@@ -1469,7 +1455,7 @@ define('PRIVACY_DATE',    '11 de Março de 2026');
                 <div class="priv-section" id="p15">
                     <h2><span class="sec-num">15</span>Actualizações desta Política de Privacidade</h2>
                     <p>
-                        A Wasom Upfy reserva-se o direito de actualizar esta Política de Privacidade para
+                        A <?php echo APP_NAME ?> reserva-se o direito de actualizar esta Política de Privacidade para
                         reflectir alterações nos serviços, na legislação aplicável ou nas práticas de
                         tratamento de dados.
                     </p>
@@ -1500,7 +1486,9 @@ define('PRIVACY_DATE',    '11 de Março de 2026');
                     <ul>
                         <li><strong>E-mail dedicado:</strong> privacidade@wasomupfy.com — assunto: "Privacidade —
                             [descrição breve]";</li>
-                        <li><strong>Suporte na plataforma:</strong> <a href="support">Enviar pedido de suporte</a> —
+                        <li><strong>Suporte na plataforma:</strong> <a
+                                href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/support">Enviar pedido de
+                                suporte</a> —
                             categoria: Privacidade e Dados;</li>
                         <li><strong>Resposta garantida:</strong> até <strong>30 dias úteis</strong> para questões de
                             privacidade e exercício de direitos.</li>
@@ -1508,7 +1496,8 @@ define('PRIVACY_DATE',    '11 de Março de 2026');
 
                     <div class="priv-box purple" style="margin-top:1.5rem">
                         <strong><i class="bi bi-shield-lock-fill me-2"></i>O teu compromisso com a privacidade</strong>
-                        Ao utilizares a plataforma Wasom Upfy, partilhas connosco a responsabilidade de proteger
+                        Ao utilizares a plataforma <?php echo APP_NAME ?>, partilhas connosco a responsabilidade de
+                        proteger
                         os dados. Mantém as tuas credenciais em segurança, não partilhes a tua palavra-passe e
                         reporta qualquer actividade suspeita na tua conta o mais rapidamente possível.
                         A privacidade é uma responsabilidade partilhada.
@@ -1521,114 +1510,80 @@ define('PRIVACY_DATE',    '11 de Março de 2026');
         <!-- Footer -->
         <div class="text-center mt-4 mb-5" style="font-size:.78rem;color:var(--text-muted,#6c757d)">
             <p>
-                <strong>Wasom Upfy</strong> · Política de Privacidade versão <?php echo PRIVACY_VERSION; ?> ·
+                <strong><?php echo APP_NAME ?></strong> · Política de Privacidade versão <?php echo PRIVACY_VERSION; ?>
+                ·
                 Em vigor desde <?php echo PRIVACY_DATE; ?> ·
                 <a href="terms" class="text-secondary">Termos de Uso</a>
             </p>
-            <p>© <?php echo date('Y'); ?> Wasom Upfy. Todos os direitos reservados.</p>
+            <p>© <?php echo date('Y'); ?> <?php echo APP_NAME ?>. Todos os direitos reservados.</p>
         </div>
 
     </div><!-- /container -->
 
-    <!-- Bottom Nav Mobile -->
-    <nav class="bottom-nav d-lg-none">
-        <ul class="nav justify-content-around">
-            <li class="nav-item"><a class="nav-link" href="../painel"><i
-                        class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../launch/releases"><i
-                        class="bi bi-disc"></i><span>Lançamentos</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../analytics/statistics"><i
-                        class="bi bi-bar-chart"></i><span>Stats</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="../finances/overview"><i
-                        class="bi bi-currency-dollar"></i><span>Finanças</span></a></li>
-            <li class="nav-item"><a class="nav-link active" href="privacy"><i
-                        class="bi bi-shield-check"></i><span>Privacidade</span></a></li>
-        </ul>
-    </nav>
-
     <!-- Back to top -->
     <button id="backToTop" title="Voltar ao topo"><i class="bi bi-chevron-up"></i></button>
-
-    <!-- Modal Logout -->
-    <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-dark">Terminar sessão</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body text-center text-dark">
-                    <p>Tens a certeza de que desejas terminar sessão, <strong><?php echo $first_name; ?></strong>?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Não, continuar</button>
-                    <a href="../logout" class="btn btn-danger">Sim, terminar sessão</a>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="<?php echo APP_URL  ?>/js/theme.wp.js"></script>
     <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
 
-            // ── Barra de progresso + back to top ─────────────
-            var fill = document.getElementById('progressBar');
-            var backToTop = document.getElementById('backToTop');
+        // ── Barra de progresso + back to top ─────────────
+        var fill = document.getElementById('progressBar');
+        var backToTop = document.getElementById('backToTop');
 
-            function updateProgress() {
-                var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-                var scrollH = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-                var pct = scrollH > 0 ? (scrollTop / scrollH) * 100 : 0;
-                if (fill) fill.style.width = pct + '%';
-                if (backToTop) backToTop.classList.toggle('visible', scrollTop > 300);
-            }
-            window.addEventListener('scroll', updateProgress);
-            updateProgress();
+        function updateProgress() {
+            var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            var scrollH = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            var pct = scrollH > 0 ? (scrollTop / scrollH) * 100 : 0;
+            if (fill) fill.style.width = pct + '%';
+            if (backToTop) backToTop.classList.toggle('visible', scrollTop > 300);
+        }
+        window.addEventListener('scroll', updateProgress);
+        updateProgress();
 
-            // ── Back to top ───────────────────────────────────
-            if (backToTop) {
-                backToTop.addEventListener('click', function() {
-                    window.scrollTo({
-                        top: 0,
-                        behavior: 'smooth'
+        // ── Back to top ───────────────────────────────────
+        if (backToTop) {
+            backToTop.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        }
+
+        // ── Imprimir ──────────────────────────────────────
+        var btnPrint = document.getElementById('btnPrint');
+        if (btnPrint) {
+            btnPrint.addEventListener('click', function() {
+                window.print();
+            });
+        }
+
+        // ── Highlight activo do índice ao scroll ─────────
+        var sections = document.querySelectorAll('.priv-section');
+        var indexLinks = document.querySelectorAll('.privacy-index a');
+
+        var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    var id = entry.target.getAttribute('id');
+                    indexLinks.forEach(function(link) {
+                        link.classList.toggle('active', link.getAttribute('href') ===
+                            '#' + id);
                     });
-                });
-            }
-
-            // ── Imprimir ──────────────────────────────────────
-            var btnPrint = document.getElementById('btnPrint');
-            if (btnPrint) {
-                btnPrint.addEventListener('click', function() {
-                    window.print();
-                });
-            }
-
-            // ── Highlight activo do índice ao scroll ─────────
-            var sections = document.querySelectorAll('.priv-section');
-            var indexLinks = document.querySelectorAll('.privacy-index a');
-
-            var observer = new IntersectionObserver(function(entries) {
-                entries.forEach(function(entry) {
-                    if (entry.isIntersecting) {
-                        var id = entry.target.getAttribute('id');
-                        indexLinks.forEach(function(link) {
-                            link.classList.toggle('active', link.getAttribute('href') ===
-                                '#' + id);
-                        });
-                    }
-                });
-            }, {
-                rootMargin: '-20% 0px -70% 0px'
+                }
             });
-
-            sections.forEach(function(sec) {
-                observer.observe(sec);
-            });
-
+        }, {
+            rootMargin: '-20% 0px -70% 0px'
         });
+
+        sections.forEach(function(sec) {
+            observer.observe(sec);
+        });
+
+    });
     </script>
 </body>
 

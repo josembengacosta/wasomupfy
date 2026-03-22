@@ -53,6 +53,11 @@ define('MAX_FILE_SIZE', 10 * 1024 * 1024); // 10MB
 // ─── Caminhos ─────────────────────────────────
 define('AUTHENTIC_URL', APP_URL . '/authentic');
 define('DASHBOARD_URL', APP_URL . '/dashboard');
+// Data de vigência dos termos
+define('PRIVACY_VERSION', '2.0');
+define('PRIVACY_DATE',    '11 de Março de 2026');
+define('TERMS_VERSION', '2.0');
+define('TERMS_DATE',    '11 de Março de 2026');
 
 
 // ─── Painel Admin ────────────────────────────
