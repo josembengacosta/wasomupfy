@@ -1040,7 +1040,7 @@ $photo_base = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/artists/';
 
     <script>
         const CSRF = '<?php echo $csrf; ?>';
-        const BASE = '<?php echo rtrim(APP_URL, '/' . APP_URL_PANEL); ?>';
+        const BASE = '<?php echo (APP_URL. '/' . APP_URL_PANEL); ?>';
         const PROCESS = BASE + '/artists/add_artist_process';
 
         toastr.options = {

@@ -269,6 +269,7 @@ $cover_artists = $base_url . '/assets/comprovantes/uploads/artists/';
 <html lang="pt-ao">
 
 <head>
+    <?php require_once __DIR__ . '/../include/head.php'; ?>
     <title>Estatísticas — <?php echo APP_NAME; ?></title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/statistics.css" />

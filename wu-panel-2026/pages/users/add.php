@@ -1,931 +1,1046 @@
+<?php
+// ══════════════════════════════════════════════
+// WASOM UPFY v2.0 — Adicionar Utilizador
+// Arquivo: admin/pages/users/add.php
+// Rota: admin/users/add
+// ══════════════════════════════════════════════
+require_once __DIR__ . '/../../include/platform_admin.php';
+requirePermission($admin_id, 'users.edit');
+
+// Feedback de erro de validação (volta do process)
+$err = $_GET['err'] ?? null;
+$errors = match ($err) {
+    'email_exists'    => ['danger', 'Este e-mail já está registado em outra conta.'],
+    'user_exists'     => ['danger', 'Este nome de utilizador já está em uso.'],
+    'invalid'         => ['danger', 'Dados inválidos. Verifica os campos obrigatórios.'],
+    'password_weak'   => ['danger', 'A senha é muito fraca. Usa pelo menos 8 caracteres, maiúsculas, minúsculas e números.'],
+    'email_fail'      => ['warning', 'Conta criada, mas o e-mail de confirmação falhou.'],
+    'error'           => ['danger', 'Ocorreu um erro ao criar a conta. Tenta novamente.'],
+    default           => null,
+};
+
+// ── Buscar planos disponíveis ──
+$plans = $db->query("SELECT id_plan, name_plan, slug_plan, price_plan FROM _plans WHERE is_active = 1 ORDER BY price_plan")->fetchAll();
+
+// ── Lista de países (completa) ──
+$paises = [
+    "AF" => "Afeganistão", "ZA" => "África do Sul", "AL" => "Albânia", "DE" => "Alemanha",
+    "AD" => "Andorra", "AO" => "Angola", "AG" => "Antígua e Barbuda", "SA" => "Arábia Saudita",
+    "DZ" => "Argélia", "AR" => "Argentina", "AM" => "Arménia", "AU" => "Austrália",
+    "AT" => "Áustria", "AZ" => "Azerbaijão", "BS" => "Bahamas", "BH" => "Bahrein",
+    "BD" => "Bangladesh", "BB" => "Barbados", "BE" => "Bélgica", "BZ" => "Belize",
+    "BJ" => "Benim", "BY" => "Bielorrússia", "BO" => "Bolívia", "BA" => "Bósnia e Herzegovina",
+    "BW" => "Botsuana", "BR" => "Brasil", "BN" => "Brunei", "BG" => "Bulgária",
+    "BF" => "Burkina Faso", "BI" => "Burundi", "BT" => "Butão", "CV" => "Cabo Verde",
+    "CM" => "Camarões", "KH" => "Camboja", "CA" => "Canadá", "QA" => "Catar",
+    "KZ" => "Cazaquistão", "TD" => "Chade", "CL" => "Chile", "CN" => "China",
+    "CY" => "Chipre", "CO" => "Colômbia", "KM" => "Comores", "CG" => "Congo",
+    "CD" => "Congo (República Democrática)", "KP" => "Coreia do Norte", "KR" => "Coreia do Sul",
+    "CI" => "Costa do Marfim", "CR" => "Costa Rica", "HR" => "Croácia", "CU" => "Cuba",
+    "DK" => "Dinamarca", "DJ" => "Djibouti", "DM" => "Dominica", "EG" => "Egito",
+    "SV" => "El Salvador", "AE" => "Emirados Árabes Unidos", "EC" => "Equador", "ER" => "Eritreia",
+    "SK" => "Eslováquia", "SI" => "Eslovénia", "ES" => "Espanha", "US" => "Estados Unidos",
+    "EE" => "Estónia", "SZ" => "Eswatini", "ET" => "Etiópia", "FJ" => "Fiji",
+    "PH" => "Filipinas", "FI" => "Finlândia", "FR" => "França", "GA" => "Gabão",
+    "GM" => "Gâmbia", "GH" => "Gana", "GE" => "Geórgia", "GD" => "Granada",
+    "GR" => "Grécia", "GL" => "Gronelândia", "GP" => "Guadalupe", "GU" => "Guam",
+    "GT" => "Guatemala", "GG" => "Guernsey", "GY" => "Guiana", "GN" => "Guiné",
+    "GQ" => "Guiné Equatorial", "GW" => "Guiné-Bissau", "HT" => "Haiti", "HN" => "Honduras",
+    "HK" => "Hong Kong", "HU" => "Hungria", "YE" => "Iémen", "IN" => "Índia",
+    "ID" => "Indonésia", "IR" => "Irão", "IQ" => "Iraque", "IE" => "Irlanda",
+    "IS" => "Islândia", "IL" => "Israel", "IT" => "Itália", "JM" => "Jamaica",
+    "JP" => "Japão", "JE" => "Jersey", "JO" => "Jordânia", "KW" => "Kuwait",
+    "LA" => "Laos", "LS" => "Lesoto", "LV" => "Letónia", "LB" => "Líbano",
+    "LR" => "Libéria", "LY" => "Líbia", "LI" => "Liechtenstein", "LT" => "Lituânia",
+    "LU" => "Luxemburgo", "MO" => "Macau", "MK" => "Macedónia do Norte", "MG" => "Madagáscar",
+    "MY" => "Malásia", "MW" => "Malawi", "MV" => "Maldivas", "ML" => "Mali",
+    "MT" => "Malta", "MA" => "Marrocos", "MQ" => "Martinica", "MU" => "Maurícia",
+    "MR" => "Mauritânia", "YT" => "Mayotte", "MX" => "México", "MM" => "Myanmar",
+    "FM" => "Micronésia", "MZ" => "Moçambique", "MD" => "Moldávia", "MC" => "Mónaco",
+    "MN" => "Mongólia", "ME" => "Montenegro", "MS" => "Montserrat", "NA" => "Namíbia",
+    "NR" => "Nauru", "NP" => "Nepal", "NI" => "Nicarágua", "NE" => "Níger",
+    "NG" => "Nigéria", "NU" => "Niue", "NO" => "Noruega", "NC" => "Nova Caledónia",
+    "NZ" => "Nova Zelândia", "OM" => "Omã", "NL" => "Países Baixos", "PW" => "Palau",
+    "PS" => "Palestina", "PA" => "Panamá", "PG" => "Papua-Nova Guiné", "PK" => "Paquistão",
+    "PY" => "Paraguai", "PE" => "Peru", "PF" => "Polinésia Francesa", "PL" => "Polónia",
+    "PR" => "Porto Rico", "PT" => "Portugal", "KE" => "Quénia", "KG" => "Quirguistão",
+    "KI" => "Quiribati", "GB" => "Reino Unido", "CF" => "República Centro-Africana",
+    "CZ" => "República Checa", "DO" => "República Dominicana", "RE" => "Reunião",
+    "RO" => "Roménia", "RW" => "Ruanda", "RU" => "Rússia", "EH" => "Saara Ocidental",
+    "WS" => "Samoa", "AS" => "Samoa Americana", "SM" => "São Marinho", "ST" => "São Tomé e Príncipe",
+    "VC" => "São Vicente e Granadinas", "LC" => "Santa Lúcia", "SC" => "Seicheles",
+    "SN" => "Senegal", "SL" => "Serra Leoa", "RS" => "Sérvia", "SG" => "Singapura",
+    "SY" => "Síria", "SO" => "Somália", "LK" => "Sri Lanka", "SD" => "Sudão",
+    "SS" => "Sudão do Sul", "SE" => "Suécia", "CH" => "Suíça", "SR" => "Suriname",
+    "TH" => "Tailândia", "TW" => "Taiwan", "TJ" => "Tajiquistão", "TZ" => "Tanzânia",
+    "TL" => "Timor-Leste", "TG" => "Togo", "TO" => "Tonga", "TT" => "Trindade e Tobago",
+    "TN" => "Tunísia", "TM" => "Turquemenistão", "TR" => "Turquia", "TV" => "Tuvalu",
+    "UA" => "Ucrânia", "UG" => "Uganda", "UY" => "Uruguai", "UZ" => "Usbequistão",
+    "VU" => "Vanuatu", "VA" => "Vaticano", "VE" => "Venezuela", "VN" => "Vietname",
+    "WF" => "Wallis e Futuna", "ZM" => "Zâmbia", "ZW" => "Zimbabué"
+];
+
+// Status options para utilizadores
+$status_options = [
+    'active' => ['label' => 'Activo', 'icon' => 'bi-check-circle-fill', 'color' => '#22c55e'],
+    'suspended' => ['label' => 'Suspenso', 'icon' => 'bi-exclamation-triangle-fill', 'color' => '#ef4444'],
+    'blocked' => ['label' => 'Bloqueado', 'icon' => 'bi-lock-fill', 'color' => '#6b7280'],
+    'inactive' => ['label' => 'Inactivo', 'icon' => 'bi-person-slash', 'color' => '#3b82f6'],
+    'pending_plan' => ['label' => 'Plano Pendente', 'icon' => 'bi-hourglass-split', 'color' => '#eab308'],
+];
+
+// Género options
+$gender_options = [
+    'M' => ['label' => 'Masculino', 'icon' => 'bi-gender-male'],
+    'F' => ['label' => 'Feminino', 'icon' => 'bi-gender-female'],
+    'Outro' => ['label' => 'Outro', 'icon' => 'bi-gender-ambiguous'],
+];
+
+// Repopular campos após erro
+$old = [
+    'first_name'  => htmlspecialchars($_GET['first_name']  ?? ''),
+    'second_name' => htmlspecialchars($_GET['second_name'] ?? ''),
+    'username'    => htmlspecialchars($_GET['username']    ?? ''),
+    'email'       => htmlspecialchars($_GET['email']       ?? ''),
+    'tel'         => htmlspecialchars($_GET['tel']         ?? ''),
+    'gender'      => $_GET['gender'] ?? '',
+    'birth_date'  => htmlspecialchars($_GET['birth_date'] ?? ''),
+    'country'     => htmlspecialchars($_GET['country'] ?? ''),
+    'city'        => htmlspecialchars($_GET['city']    ?? ''),
+    'plan'        => (int)($_GET['plan'] ?? 0),
+    'status'      => $_GET['status'] ?? 'active',
+];
+?>
+
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-ao">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="robots" content="noindex, nofollow">
+    <meta name="robots" content="noindex,nofollow" />
     <meta name="author" content="José Mbenga da Costa" />
-    <meta name="theme-color" content="#FF0089">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="#FF0089">
-    <link rel="apple-touch-icon" href="../../../assets/img/icones/wasomupfy_fiv_512.png">
-    <link rel="apple-touch-startup-image" href="../../../assets/img/screenshots/splash.png">
-    <link rel="manifest" href="manifest.json">
-    <title>Adicionar Usuário — <?php echo APP_NAME; ?></title>
-    <link rel="shortcut icon" href="../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
-    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/libs/plugins.css">
-    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/libs/scrollue.css">
+    <meta name="theme-color" content="#FF0089" />
+    <title>Adicionar Utilizador — <?php echo APP_NAME; ?> Admin</title>
+    <link rel="shortcut icon" href="<?php echo APP_URL; ?>/assets/img/icones/wasomupfy_fiv.png" type="image/x-icon" />
+    <link rel="stylesheet" href="<?php echo APP_URL; ?>/css/libs/plugins.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
-    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/lastest-style.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <!-- Google Fonts - Poppins -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?php echo APP_URL; ?>/css/lastest-style.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
+        rel="stylesheet" />
+    <style>
+    /* Mesmo CSS anterior... (manter tudo) */
+    * {
+        font-family: 'Inter', sans-serif;
+    }
 
+    .hero-card {
+        background: linear-gradient(135deg, #0f0f17 0%, #1a1a2e 50%, #16213e 100%);
+        border-radius: 24px;
+        padding: 28px 32px;
+        margin-bottom: 28px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, .05);
+    }
+
+    .form-card {
+        background: var(--card-bg, #fff);
+        border: 1px solid var(--border-color, #e8e8f0);
+        border-radius: 20px;
+        padding: 28px;
+        transition: all .3s;
+    }
+
+    .dark-mode .form-card {
+        background: var(--dark-card, #1a1a27);
+        border-color: var(--dark-border, #2e2e42);
+    }
+
+    .section-title {
+        font-size: .75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #FF0089;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border-color, #e8e8f0);
+    }
+
+    .form-control,
+    .form-select {
+        border-radius: 12px;
+        padding: 10px 14px;
+        font-size: .85rem;
+    }
+
+    .gender-options {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .gender-option {
+        flex: 1;
+        min-width: 100px;
+    }
+
+    .gender-option input[type="radio"] {
+        display: none;
+    }
+
+    .gender-option label {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 12px;
+        border-radius: 12px;
+        border: 2px solid var(--border-color, #e8e8f0);
+        cursor: pointer;
+        transition: all .2s;
+        background: var(--card-bg, #fff);
+    }
+
+    .gender-option label i {
+        font-size: 1.5rem;
+        margin-bottom: 6px;
+    }
+
+    .gender-option input:checked+label {
+        border-color: #FF0089;
+        background: rgba(255, 0, 137, .07);
+        color: #FF0089;
+    }
+
+    .pw-strength-bar {
+        height: 4px;
+        border-radius: 2px;
+        background: #e8e8f0;
+        overflow: hidden;
+        margin: 8px 0 4px;
+    }
+
+    .pw-strength-fill {
+        height: 100%;
+        border-radius: 2px;
+        width: 0;
+        transition: width .3s, background .3s;
+    }
+
+    .preview-card {
+        position: sticky;
+        top: 20px;
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid var(--border-color, #e8e8f0);
+        background: var(--card-bg, #fff);
+    }
+
+    .preview-header {
+        background: linear-gradient(135deg, #FF0089, #6c63ff);
+        padding: 28px 20px 20px;
+        text-align: center;
+        color: #fff;
+    }
+
+    .preview-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, .2);
+        border: 3px solid rgba(255, 255, 255, .4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin: 0 auto 12px;
+        overflow: hidden;
+    }
+
+    .preview-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .preview-name {
+        font-size: 1rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+
+    .preview-body {
+        padding: 18px;
+    }
+
+    .preview-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border-color, #f0f0f8);
+        font-size: .83rem;
+    }
+
+    .preview-row:last-child {
+        border-bottom: none;
+    }
+
+    .preview-label {
+        opacity: .6;
+    }
+
+    .preview-val {
+        font-weight: 600;
+        text-align: right;
+        max-width: 55%;
+        word-break: break-all;
+    }
+
+    .status-options {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+    }
+
+    .status-option {
+        flex: 1;
+        min-width: 140px;
+    }
+
+    .status-option input[type="radio"] {
+        display: none;
+    }
+
+    .status-option label {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 14px 10px;
+        border-radius: 10px;
+        border: 2px solid var(--border-color, #e8e8f0);
+        cursor: pointer;
+        transition: all .2s;
+        text-align: center;
+    }
+
+    .status-option input:checked+label {
+        border-color: #FF0089;
+        background: rgba(255, 0, 137, .07);
+        color: #FF0089;
+    }
+
+    .invite-box {
+        border: 2px dashed rgba(255, 0, 137, .3);
+        border-radius: 12px;
+        padding: 16px 18px;
+        background: rgba(255, 0, 137, .03);
+        transition: border-color .2s, background .2s;
+    }
+
+    .invite-box.active {
+        border-color: rgba(255, 0, 137, .6);
+        background: rgba(255, 0, 137, .06);
+    }
+
+    .invite-detail {
+        display: none;
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid rgba(255, 0, 137, .15);
+    }
+
+    .invite-detail.show {
+        display: block;
+    }
+
+    .action-btn {
+        padding: 8px 20px;
+        border-radius: 12px;
+        font-weight: 500;
+        font-size: .85rem;
+        transition: all .2s;
+    }
+
+    .action-btn-primary {
+        background: #FF0089;
+        color: #fff;
+        border: none;
+    }
+
+    .action-btn-primary:hover {
+        background: #ff338f;
+        transform: translateY(-2px);
+    }
+
+    .action-btn-secondary {
+        background: transparent;
+        border: 1px solid var(--border-color, #e8e8f0);
+    }
+
+    .form-switch .form-check-input {
+        width: 40px;
+        height: 20px;
+        cursor: pointer;
+    }
+
+    .form-switch .form-check-input:checked {
+        background-color: #FF0089;
+        border-color: #FF0089;
+    }
+    </style>
 </head>
 
 <body>
     <div class="wrapper">
-        <!-- Sidebar Overlay -->
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        <?php require_once __DIR__ . '/../../include/sidebar.php'; ?>
 
-        <!-- Sidebar -->
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="d-flex align-items-center">
-                    <img src="../../../assets/img/brand/wasomupfy_brand.png" alt="Logo Wasom Upfy"
-                        class="rounded-circle me-2" style="height: 40px;">
-                    <span class="brand-text"><?php echo APP_NAME; ?></span>
-                </div>
-                <i class="bi bi-chevron-left toggle-icon" id="sidebarCollapse" title="Colapsar/Expandir Menu"
-                    aria-label="Colapsar/Expandir Menu"></i>
-            </div>
-            <ul class="nav flex-column mt-3">
-                <li class="nav-item">
-                    <a href="../../home" class="nav-link">
-                        <i class="bi bi-speedometer2"></i>
-                        <span>Painel de Controle</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseAnalytics" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseAnalytics">
-                        <i class="bi bi-graph-up"></i>
-                        <span>Estatísticas e Análises</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseAnalytics">
-                        <a href="../analytics/home" class="nav-link">
-                            <i class="bi bi-bar-chart-line"></i>
-                            <span>Visão Geral</span>
-                        </a>
-                        <a href="../analytics/artists" class="nav-link">
-                            <i class="bi bi-person-lines-fill"></i>
-                            <span>Desempenho por Artista</span>
-                        </a>
-                        <a href="../analytics/stores" class="nav-link">
-                            <i class="bi bi-shop"></i>
-                            <span>Desempenho por Loja Digital</span>
-                        </a>
-                        <a href="../analytics/reports" class="nav-link">
-                            <i class="bi bi-file-earmark-bar-graph"></i>
-                            <span>Relatórios Personalizados</span>
-                        </a>
-                    </div>
-                </li>
-
-                <li class="nav-item">
-                    <a href="#collapseAdmins" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseAdmins">
-                        <i class="bi bi-person-gear"></i>
-                        <span>Gestão de Admins</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseAdmins">
-                        <a href="../employees/all-employees" class="nav-link">
-                            <i class="bi bi-people"></i>
-                            <span>Listar Admins</span>
-                        </a>
-                        <a href="../employees/add" class="nav-link">
-                            <i class="bi bi-person-plus"></i>
-                            <span>Adicionar</span>
-                        </a>
-                        <a href="../employees/edit" class="nav-link">
-                            <i class="bi bi-person-gear"></i>
-                            <span>Editar</span>
-                        </a>
-                        <a href="../employees/delete" class="nav-link">
-                            <i class="bi bi-person-x"></i>
-                            <span>Excluir</span>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseUsers" class="nav-link active" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseUsers">
-                        <i class="bi bi-person-gear"></i>
-                        <span>Gestão de Usuários</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseUsers">
-                        <a href="all-users" class="nav-link">
-                            <i class="bi bi-people"></i>
-                            <span>Todos Usuários</span>
-                        </a>
-                        <a href="add" class="nav-link active">
-                            <i class="bi bi-person-plus"></i>
-                            <span>Adicionar</span>
-                        </a>
-                        <a href="edit" class="nav-link">
-                            <i class="bi bi-person-gear"></i>
-                            <span>Editar</span>
-                        </a>
-                        <a href="delete" class="nav-link">
-                            <i class="bi bi-person-x"></i>
-                            <span>Excluir</span>
-                        </a>
-                        <a href="available-account" class="nav-link">
-                            <i class="bi bi-person-check"></i>
-                            <span>Contas Disponíveis</span>
-                        </a>
-                        <a href="unavailable-account" class="nav-link">
-                            <i class="bi bi-person-exclamation"></i>
-                            <span>Contas Indisponíveis</span>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseSongs" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseSongs">
-                        <i class="bi bi-music-note-list"></i>
-                        <span>Gestão de Músicas</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseSongs">
-                        <a href="../music/revise" class="nav-link">
-                            <i class="bi bi-eye"></i>
-                            <span>Revisar Envios</span>
-                        </a>
-                        <a href="../music/approve" class="nav-link">
-                            <i class="bi bi-check-circle"></i>
-                            <span>Aprovar</span>
-                        </a>
-                        <a href="../music/reject" class="nav-link">
-                            <i class="bi bi-x-circle"></i>
-                            <span>Rejeitar</span>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="../artist/accounts-users" class="nav-link">
-                        <i class="bi bi-person-check"></i>
-                        <span>Contas e Usuários</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="../artist/collaborators-artist" class="nav-link">
-                        <i class="bi bi-people"></i>
-                        <span>Artistas e Colaboradores</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseDistribution" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseDistribution">
-                        <i class="bi bi-globe"></i>
-                        <span>Distribuição</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseDistribution">
-                        <a href="../distribution/releases" class="nav-link">
-                            <i class="bi bi-rocket-takeoff"></i>
-                            <span>Lançamentos</span>
-                        </a>
-                        <a href="../distribution/store" class="nav-link">
-                            <i class="bi bi-shop"></i>
-                            <span>Lojas Digitais</span>
-                        </a>
-                        <a href="../distribution/schedule" class="nav-link">
-                            <i class="bi bi-calendar-event"></i>
-                            <span>Agendar Lançamento</span>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="../manager/gestion" class="nav-link">
-                        <i class="bi bi-star"></i>
-                        <span>Gestão Geral</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="../finances/payments" class="nav-link">
-                        <i class="bi bi-wallet2"></i>
-                        <span>Pagamentos</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="../finances/earnings" class="nav-link">
-                        <i class="bi bi-currency-dollar"></i>
-                        <span>Finanças e Rendimentos</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseIntegration" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseIntegration">
-                        <i class="bi bi-youtube"></i>
-                        <span>Unificação e V. Youtube</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseIntegration">
-                        <a href="../integration/youtube" class="nav-link">
-                            <i class="bi bi-gear"></i>
-                            <span>Configurar Integração</span>
-                        </a>
-                        <a href="../integration/verify" class="nav-link">
-                            <i class="bi bi-check2-all"></i>
-                            <span>Verificar Canais</span>
-                        </a>
-                        <a href="../integration/monetization" class="nav-link">
-                            <i class="bi bi-youtube"></i>
-                            <span>Gerenciamento de Conteúdo Monetizado</span>
-                        </a>
-                    </div>
-                </li>
-
-                <li class="nav-item">
-                    <a href="#collapseSupport" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseSupport">
-                        <i class="bi bi-headset"></i>
-                        <span>Suporte</span>
-                        <span class="badge bg-danger badge-notification">3</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseSupport">
-                        <a href="../messages/inbox" class="nav-link">
-                            <i class="bi bi-envelope"></i>
-                            <span>Caixa de entrada</span>
-                        </a>
-                        <a href="../messages/compose" class="nav-link">
-                            <i class="bi bi-pencil"></i>
-                            <span>Enviar mensagens</span>
-                        </a>
-                    </div>
-                </li>
-
-                <li class="nav-item">
-                    <a href="#collapseHelp" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseHelp">
-                        <i class="bi bi-question-circle"></i>
-                        <span>Ajuda</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseHelp">
-                        <a href="../help/faqs" class="nav-link">
-                            <i class="bi bi-messenger"></i>
-                            <span>FAQs</span>
-                        </a>
-                        <a href="../help/tutorials" class="nav-link">
-                            <i class="bi bi-book"></i>
-                            <span>Tutoriais</span>
-                        </a>
-                        <a href="../help/contact" class="nav-link">
-                            <i class="bi bi-telephone"></i>
-                            <span>Contacto com suporte</span>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="../settings/config" class="nav-link">
-                        <i class="bi bi-sliders"></i>
-                        <span>Configurações</span>
-                    </a>
-                </li>
-                <li class="nav-item mt-4">
-                    <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#logoutwasomupfy">
-                        <i class="bi bi-box-arrow-right"></i>
-                        <span>Logout</span>
-                    </a>
-                </li>
-                <li class="nav-item mt-4">
-                    <a href="http://localhost:5500/home" target="_blank" class="nav-link">
-                        <i class="bi bi-box-arrow-in-up-right"></i>
-                        <span>Visitar Site</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-        <!-- Content -->
         <div class="content w-100" id="mainContent">
-            <nav class="navbar navbar-expand-lg">
-                <button class="navbar-toggler" type="button" id="sidebarToggle" aria-label="Abrir/Fechar Menu">
-                    <i class="bi bi-list text-white"></i>
-                </button>
-                <div class="ms-auto d-flex align-items-center">
-                    <button class="btn btn-outline-light btn-sm me-2" onclick="toggleDarkMode()"
-                        aria-label="Alternar Modo Escuro">
-                        <i class="bi bi-moon"></i>
-                    </button>
-                    <div class="dropdown me-2 position-relative">
-                        <button class="btn btn-outline-light btn-sm position-relative" type="button"
-                            data-bs-toggle="dropdown" aria-label="Notificações">
-                            <i class="bi bi-bell"></i>
-                            <span
-                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">5</span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-start p-0" style="min-width: 250px;">
-                            <li class="dropdown-header bg-dark text-white p-2">Notificações (5)</li>
-                            <li><a class="dropdown-item p-2" href="#">Novo artista registrado</a></li>
-                            <li><a class="dropdown-item p-2" href="#">Música atingiu 1000 plays</a></li>
-                            <li><a class="dropdown-item p-2" href="#">Atualização do sistema disponível</a></li>
-                            <li class="dropdown-footer text-center p-2"><a href="#" class="text-primary">Ver todas</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="dropdown me-2 position-relative">
-                        <button class="btn btn-outline-light btn-sm position-relative" type="button"
-                            data-bs-toggle="dropdown" aria-label="Mensagens">
-                            <i class="bi bi-envelope"></i>
-                            <span
-                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">2</span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-start p-0" style="min-width: 250px;">
-                            <li class="dropdown-header bg-dark text-white p-2">Mensagens (2)</li>
-                            <li><a class="dropdown-item p-2" href="#">Suporte #4521 - Novo ticket</a></li>
-                            <li><a class="dropdown-item p-2" href="#">Mensagem de artista</a></li>
-                            <li class="dropdown-footer text-center p-2"><a href="#" class="text-primary">Ver todas</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="dropdown">
-                        <button class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center"
-                            type="button" data-bs-toggle="dropdown" aria-label="Menu do Usuário">
-                            <img src="../../../assets/img/avatar/avatar.png" alt="Usuário" class="rounded-circle me-1"
-                                style="height: 24px;">
-                            <span>Cristiano Amadeu</span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="../user/profile"><i
-                                        class="bi bi-person me-2"></i>Perfil</a></li>
-                            <li><a class="dropdown-item" href="../settings/config"><i
-                                        class="bi bi-sliders me-2"></i>Configurações</a></li>
-                            <li><a class="dropdown-item" href="../help/help"><i
-                                        class="bi bi-question-circle me-2"></i>Ajuda</a>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutwasomupfy"
-                                    href="#"><i class="bi bi-box-arrow-right me-2"></i>Sair</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-
-            <!-- Adicione isso dentro da tag <nav class="bottom-nav"> -->
-            <div class="connection-status" id="connectionStatus"></div>
-            <div class="status-notification" id="statusNotification"></div>
-
-            <!-- ════ MODAL — Logout ════ -->
-            <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false"
-                tabindex="-1" aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content modal-bottom">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">Terminar sessão</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="container">
-                                <div class="row justify-content-center text-center">
-                                    <div class="col-md-12 content-center justify-center text-center">
-                                        <p class="text-center text-dark">@josembengadacosta você tem
-                                            certeza
-                                            de que desejas terminar
-                                            sessão?</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <div>
-                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Não,
-                                    continuar</button>
-                            </div>
-                            <div>
-                                <button class="btn btn-danger" type="button" name="logout_wasomupfy"
-                                    onclick="logout_wasomupfy()">Sim, terminar</button>
-                            </div>
-                            <script type="text/javascript">
-                                function logout_wasomupfy() {
-                                    window.location = 'logout';
-                                }
-                            </script>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- ════ MODAL — Logout  FIM ════ -->
-
+            <?php require_once __DIR__ . '/../../include/navbar.php'; ?>
             <div class="container-fluid p-0">
-                <div class="row mb-3 mt-2">
-                    <div class="welcome-text col-auto d-sm-block">
-                        <h2 class="h4 mb-2"><i class="bi bi-person-fill-add me-2"></i>Adicionar Usuário</span></h2>
+
+                <!-- Cabeçalho -->
+                <div class="row mb-3 mt-2 align-items-center">
+                    <div class="welcome-text col-auto">
+                        <h2 class="h4 mb-1"><i class="bi bi-person-plus-fill me-2"></i>Adicionar Utilizador</h2>
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb mb-0">
-                                <li class="breadcrumb-item"><a href="add" class="text-secondary">Usuários</a>
-                                </li>
-                                <li class="breadcrumb-item active text-secondary" aria-current="page">Adcionar Usuário
-                                </li>
+                                <li class="breadcrumb-item"><a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users"
+                                        class="text-secondary">Utilizadores</a></li>
+                                <li class="breadcrumb-item active text-white-stable">Adicionar</li>
                             </ol>
                         </nav>
                     </div>
-                    <div class="col-auto ms-auto text-end mt-n1 mt-3 mb-2">
-                        <a class="text-secondary shadow-sm me-2" href="all-users">Todos Usuários</a>
-                        <a class="text-secondary shadow-sm me-2" href="edit">Editar Usuários</a>
-                        <a class="text-secondary shadow-sm" href="delete">Excluír Usuário</a>
+                    <div class="col-auto ms-auto">
+                        <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users"
+                            class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-arrow-left me-1"></i>Voltar à lista
+                        </a>
                     </div>
-                    <!-- Stats Description -->
-                    <p class="stats-description mt-2">
-                        Encontras aqui o lançamento de todas as contas da plataforma, mais poderá depender se és
-                        administrador regional ou glboal para veres alguns lançamentos disponíveis. Caso tenhas dúvidas
-                        em
-                        alguns lançamentos faça a pesquisa do mesmo através do seu <strong>Título</strong>,
-                        <strong>Artista</strong> ou <strong>UPC</strong>.
-                    </p>
+                </div>
 
+                <!-- Feedback -->
+                <?php if ($errors): ?>
+                <div class="alert alert-<?php echo $errors[0]; ?> alert-dismissible fade show mb-3">
+                    <i class="bi bi-exclamation-circle me-2"></i><?php echo htmlspecialchars($errors[1]); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                <?php endif; ?>
 
-                    <div class="card fade-in-custom mt-3">
-                        <div class="row">
-                            <div class="col-lg-8">
-                                <form id="create-user-form">
-                                    <!-- Seção de Informações Básicas -->
-                                    <div class="form-section">
-                                        <h4><i class="bi bi-person-badge me-2"></i> Informações Básicas</h4>
-                                        <div class="row g-3 mt-3">
-                                            <div class="col-md-6">
-                                                <label for="account" class="form-label">Conta*</label>
-                                                <input type="text" class="form-control"
-                                                    placeholder="Insira o nome da conta" autocomplete="name"
-                                                    id="account" required>
-                                                <small class="text-muted">Identificador único do usuário</small>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="name" class="form-label">Nome Completo*</label>
-                                                <input type="text" class="form-control"
-                                                    placeholder="Insira o nome completo" autocomplete="additional-name"
-                                                    id="name" required>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="username" class="form-label">Nome de Usuário*</label>
-                                                <input type="text" class="form-control"
-                                                    placeholder="(Nome de usuário automático)" autocomplete="username"
-                                                    id="username" required>
-                                                <small class="text-muted">Usado para login no sistema</small>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="email" class="form-label">E-mail*</label>
-                                                <input type="email" class="form-control" placeholder="Insira o e-mail"
-                                                    autocomplete="email" id="email" required>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Seção de Senha -->
-                                    <div class="form-section mt-4">
-                                        <h4><i class="bi bi-shield-lock me-2"></i> Segurança</h4>
-                                        <div class="row g-3 mt-3">
-                                            <div class="col-md-8">
-                                                <label for="password" class="form-label">Senha*</label>
-                                                <div class="input-group">
-                                                    <input type="text" class="form-control" placeholder="Insira a senha"
-                                                        autocomplete="new-password" id="password" readonly required>
-                                                    <button class="btn btn-outline-secondary" type="button"
-                                                        id="generate-password">
-                                                        <i class="bi bi-arrow-repeat me-1"></i> Gerar Senha
-                                                    </button>
-                                                    <button class="btn btn-outline-secondary" type="button"
-                                                        id="copy-password">
-                                                        <i class="bi bi-clipboard me-1"></i> Copiar
-                                                    </button>
-                                                </div>
-                                                <div class="password-strength mt-1">
-                                                    <div class="password-strength-bar" id="password-strength-bar"></div>
-                                                </div>
-                                                <small class="text-muted">A senha será gerada automaticamente com no
-                                                    mínimo 12 caracteres</small>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label class="form-label">Força da Senha</label>
-                                                <div class="alert alert-light" id="password-strength-text">Muito fraca
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Seção de Configurações -->
-                                    <div class="form-section mt-4">
-                                        <h4><i class="bi bi-gear me-2"></i> Configurações</h4>
-                                        <div class="row g-3 mt-3">
-                                            <div class="col-md-6">
-                                                <label for="roles" class="form-label">Funções*</label>
-                                                <select class="form-select" id="roles" multiple size="4" required>
-                                                    <option value="admin">Administrador</option>
-                                                    <option value="distributor">Distribuidor</option>
-                                                    <option value="analyst">Analista</option>
-                                                    <option value="financial">Financeiro</option>
-                                                </select>
-                                                <small class="text-muted">Segure Ctrl para selecionar múltiplas
-                                                    funções</small>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="status" class="form-label">Estado da Conta*</label>
-                                                <select class="form-select" id="status" required>
-                                                    <option value="active">Ativo</option>
-                                                    <option value="review">Em Revisão</option>
-                                                    <option value="suspended">Suspenso</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Seção de Localização -->
-                                    <div class="form-section mt-4">
-                                        <h4><i class="bi bi-geo-alt me-2"></i> Localização</h4>
-                                        <div class="row g-3 mt-3">
-                                            <div class="col-md-6">
-                                                <label for="country" class="form-label">País*</label>
-                                                <select class="form-select" placeholder="Insira o o País"
-                                                    autocomplete="country" id="country" required>
-                                                    <option value="">Selecione um país</option>
-                                                    <option value="AO">Angola</option>
-                                                    <option value="PT">Portugal</option>
-                                                    <option value="BR">Brasil</option>
-                                                    <option value="MZ">Moçambique</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="city" class="form-label">Cidade</label>
-                                                <input type="text" class="form-control" placeholder="Insira a cidade"
-                                                    autocomplete="country" id="city">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Seção de Foto de Perfil -->
-                                    <div class="form-section mt-4">
-                                        <h4><i class="bi bi-image me-2"></i> Foto de Perfil</h4>
-                                        <div class="mt-3">
-                                            <div class="mb-3">
-                                                <label for="avatar" class="form-label">Enviar imagem</label>
-                                                <input class="form-control" type="file" id="avatar" accept="image/*">
-                                                <small class="text-muted">Formatos aceitos: JPG, PNG (Máx. 2MB)</small>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="d-flex justify-content-between mt-4">
-                                        <a href="#" class="btn btn-outline-secondary">
-                                            <i class="bi bi-arrow-left me-2"></i> Cancelar
-                                        </a>
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="bi bi-save me-2"></i> Criar Conta
-                                        </button>
-                                    </div>
-                                </form>
+                <!-- Hero Card -->
+                <div class="hero-card">
+                    <div class="d-flex flex-wrap align-items-center gap-4 position-relative" style="z-index: 1">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-2 fw-bold" style="color: #fff;">Novo Utilizador</h3>
+                            <div class="d-flex flex-wrap gap-3" style="font-size: .8rem; color: rgba(255,255,255,.6);">
+                                <span><i class="bi bi-info-circle me-1"></i>Preencha os dados para criar uma nova
+                                    conta</span>
+                                <span><i class="bi bi-envelope-paper me-1"></i>O utilizador receberá um e-mail com as
+                                    credenciais</span>
                             </div>
+                        </div>
+                    </div>
+                </div>
 
-                            <div class="col-lg-4">
-                                <div class="preview-section">
-                                    <h4 class="mb-4"><i class="bi bi-eye me-2"></i> Pré-visualização</h4>
+                <div class="row g-4">
+                    <!-- Formulário Principal -->
+                    <div class="col-xl-8">
+                        <div class="form-card">
+                            <form method="POST" action="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users/add-process"
+                                enctype="multipart/form-data" id="form-add-user">
+                                <input type="hidden" name="csrf_token"
+                                    value="<?php echo htmlspecialchars($_SESSION['admin_csrf_token']); ?>" />
 
-                                    <div class="d-flex justify-content-center">
-                                        <div class="avatar-preview" id="avatar-preview">
-                                            <i class="bi bi-person"></i>
+                                <!-- Informações Pessoais -->
+                                <div class="section-title">
+                                    <i class="bi bi-person-badge"></i>Informações Pessoais
+                                </div>
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Primeiro Nome <span
+                                                class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-transparent"><i
+                                                    class="bi bi-person"></i></span>
+                                            <input type="text" class="form-control" name="first_name" id="first_name"
+                                                value="<?php echo $old['first_name']; ?>" required>
                                         </div>
                                     </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Apelido</label>
+                                        <input type="text" class="form-control" name="second_name" id="second_name"
+                                            value="<?php echo $old['second_name']; ?>">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Nome de Utilizador <span
+                                                class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-transparent">@</span>
+                                            <input type="text" class="form-control" name="username" id="username"
+                                                value="<?php echo $old['username']; ?>" required>
+                                        </div>
+                                        <div class="form-text">Usado para login · só letras, números e _ (3-60
+                                            caracteres)</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">E-mail <span
+                                                class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-transparent"><i
+                                                    class="bi bi-envelope"></i></span>
+                                            <input type="email" class="form-control" name="email" id="email"
+                                                value="<?php echo $old['email']; ?>" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Telefone</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-transparent"><i
+                                                    class="bi bi-whatsapp"></i></span>
+                                            <input type="tel" class="form-control" name="tel" id="tel"
+                                                value="<?php echo $old['tel']; ?>">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Data de Nascimento</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-transparent"><i
+                                                    class="bi bi-calendar"></i></span>
+                                            <input type="date" class="form-control" name="birth_date" id="birth_date"
+                                                value="<?php echo $old['birth_date']; ?>"
+                                                max="<?php echo date('Y-m-d', strtotime('-13 years')); ?>">
+                                        </div>
+                                        <div class="form-text">Deve ter pelo menos 13 anos</div>
+                                    </div>
+                                </div>
 
-                                    <h5 class="text-center" id="preview-name">Nome do Usuário</h5>
-                                    <p class="text-center text-muted mb-3" id="preview-account">@conta</p>
+                                <!-- Género -->
+                                <div class="section-title">
+                                    <i class="bi bi-gender-ambiguous"></i>Género
+                                </div>
+                                <div class="gender-options mb-4">
+                                    <?php foreach ($gender_options as $key => $opt): ?>
+                                    <div class="gender-option">
+                                        <input type="radio" name="gender" id="gender_<?php echo $key; ?>"
+                                            value="<?php echo $key; ?>"
+                                            <?php echo $old['gender'] === $key ? 'checked' : ($key === 'M' && !$old['gender'] ? 'checked' : ''); ?>>
+                                        <label for="gender_<?php echo $key; ?>">
+                                            <i class="bi <?php echo $opt['icon']; ?>"></i>
+                                            <?php echo $opt['label']; ?>
+                                        </label>
+                                    </div>
+                                    <?php endforeach; ?>
+                                </div>
 
-                                    <div class="mb-3">
-                                        <h6><i class="bi bi-person-circle me-2"></i> Informações</h6>
-                                        <ul class="list-group list-group-flush">
-                                            <li
-                                                class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                                <span>Usuário:</span>
-                                                <span id="preview-username">username</span>
-                                            </li>
-                                            <li
-                                                class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                                <span>E-mail:</span>
-                                                <span id="preview-email">email@exemplo.com</span>
-                                            </li>
-                                            <li
-                                                class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                                <span>Localização:</span>
-                                                <span id="preview-location">País, Cidade</span>
-                                            </li>
+                                <!-- Senha -->
+                                <div class="section-title">
+                                    <i class="bi bi-shield-lock"></i>Segurança
+                                </div>
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-8">
+                                        <label class="form-label fw-semibold">Senha <span
+                                                class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control font-monospace" name="password"
+                                                id="password" placeholder="Clica em Gerar Senha →" readonly required />
+                                            <button class="btn btn-outline-secondary" type="button" id="btn-gen-pw">
+                                                <i class="bi bi-arrow-repeat me-1"></i>Gerar
+                                            </button>
+                                            <button class="btn btn-outline-secondary" type="button" id="btn-copy-pw">
+                                                <i class="bi bi-clipboard"></i>
+                                            </button>
+                                        </div>
+                                        <div class="pw-strength-bar">
+                                            <div class="pw-strength-fill" id="pw-fill"></div>
+                                        </div>
+                                        <div class="pw-strength-label" id="pw-label">Gera uma senha para continuar</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold">Força</label>
+                                        <div class="alert py-2 text-center" id="pw-strength-text"
+                                            style="font-size:.82rem;margin-bottom:0">—</div>
+                                    </div>
+                                </div>
+
+                                <!-- Plano e Status -->
+                                <div class="section-title">
+                                    <i class="bi bi-star"></i>Plano e Estado
+                                </div>
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Plano</label>
+                                        <select class="form-select" name="plan" id="plan">
+                                            <option value="">Sem plano</option>
+                                            <?php foreach ($plans as $plan): ?>
+                                            <option value="<?php echo $plan['id_plan']; ?>"
+                                                <?php echo $old['plan'] == $plan['id_plan'] ? 'selected' : ''; ?>>
+                                                <?php echo htmlspecialchars($plan['name_plan']); ?>
+                                            </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Estado da Conta</label>
+                                        <div class="status-options">
+                                            <?php foreach ($status_options as $key => $opt): ?>
+                                            <div class="status-option">
+                                                <input type="radio" name="status" id="status_<?php echo $key; ?>"
+                                                    value="<?php echo $key; ?>"
+                                                    <?php echo $old['status'] === $key ? 'checked' : ($key === 'active' ? 'checked' : ''); ?>>
+                                                <label for="status_<?php echo $key; ?>">
+                                                    <i class="bi <?php echo $opt['icon']; ?>"></i>
+                                                    <strong><?php echo $opt['label']; ?></strong>
+                                                </label>
+                                            </div>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Localização -->
+                                <div class="section-title">
+                                    <i class="bi bi-geo-alt"></i>Localização
+                                </div>
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">País</label>
+                                        <select class="form-select" name="country" id="country">
+                                            <option value="">Selecionar país</option>
+                                            <?php foreach ($paises as $code => $name): ?>
+                                            <option value="<?php echo $code; ?>"
+                                                <?php echo $old['country'] === $code ? 'selected' : ''; ?>>
+                                                <?php echo $name; ?>
+                                            </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Cidade</label>
+                                        <input type="text" class="form-control" name="city" id="city"
+                                            value="<?php echo $old['city']; ?>">
+                                    </div>
+                                </div>
+
+                                <!-- Sobre -->
+                                <div class="section-title">
+                                    <i class="bi bi-chat-text"></i>Sobre
+                                </div>
+                                <div class="mb-4">
+                                    <textarea class="form-control" name="about" id="about" rows="3"></textarea>
+                                    <div class="form-text">Informações adicionais sobre o utilizador (opcional)</div>
+                                </div>
+
+                                <!-- Notificações -->
+                                <div class="section-title">
+                                    <i class="bi bi-bell"></i>Notificações
+                                </div>
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" name="notif_email"
+                                                id="notif_email" value="1" checked>
+                                            <label class="form-check-label">E-mail</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" name="notif_push"
+                                                id="notif_push" value="1">
+                                            <label class="form-check-label">Push</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" name="notif_weekly"
+                                                id="notif_weekly" value="1">
+                                            <label class="form-check-label">Resumo semanal</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" name="notif_releases"
+                                                id="notif_releases" value="1">
+                                            <label class="form-check-label">Lançamentos</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Foto de Perfil -->
+                                <div class="section-title">
+                                    <i class="bi bi-image"></i>Foto de Perfil
+                                </div>
+                                <div class="mb-4">
+                                    <input class="form-control" type="file" name="photo" id="photo"
+                                        accept="image/jpeg,image/png,image/webp">
+                                    <div class="form-text">JPG, PNG ou WebP · Máximo 2MB.</div>
+                                </div>
+
+                                <!-- Convite por e-mail -->
+                                <div class="invite-box" id="invite-box">
+                                    <div class="form-check form-switch d-flex align-items-center gap-3">
+                                        <input class="form-check-input" type="checkbox" role="switch" name="send_invite"
+                                            id="chk-invite" value="1" style="width:2.5em;height:1.3em;cursor:pointer"
+                                            checked />
+                                        <label class="form-check-label" for="chk-invite">
+                                            <i class="bi bi-envelope-paper me-2" style="color:#FF0089"></i>
+                                            Enviar e-mail de boas-vindas com as credenciais de acesso
+                                        </label>
+                                    </div>
+                                    <div class="invite-detail show" id="invite-detail">
+                                        <p style="font-size:.82rem;margin-bottom:8px;opacity:.8">
+                                            O e-mail de boas-vindas incluirá:
+                                        </p>
+                                        <ul style="padding-left:18px;margin:0">
+                                            <li>Nome completo e nome de utilizador atribuído</li>
+                                            <li>Endereço de e-mail</li>
+                                            <li>Senha temporária gerada</li>
+                                            <li>Link de activação para definir uma nova senha (expira em 72h)</li>
                                         </ul>
                                     </div>
+                                </div>
 
-                                    <div class="mb-3">
-                                        <h6><i class="bi bi-award me-2"></i> Funções</h6>
-                                        <div id="preview-roles">
-                                            <span class="badge bg-secondary badge-role">Nenhuma função
-                                                selecionada</span>
-                                        </div>
-                                    </div>
+                                <!-- Botões -->
+                                <div class="d-flex justify-content-end gap-3 pt-3 border-top">
+                                    <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users"
+                                        class="action-btn action-btn-secondary">
+                                        <i class="bi bi-arrow-left me-1"></i>Cancelar
+                                    </a>
+                                    <button type="submit" class="action-btn action-btn-primary" id="btn-submit"
+                                        disabled>
+                                        <span class="spinner-border spinner-border-sm d-none me-1"
+                                            id="spin-submit"></span>
+                                        <i class="bi bi-person-check me-1"></i>Criar Conta
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
 
-                                    <div class="mb-3">
-                                        <h6><i class="bi bi-info-circle me-2"></i> Estado da Conta</h6>
-                                        <div id="preview-status">
-                                            <span class="status-badge status-active">Ativo</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="alert alert-info mt-4">
-                                        <i class="bi bi-info-circle me-2"></i>
-                                        <span id="preview-password-info">A senha será gerada automaticamente e mostrada
-                                            ao usuário após a criação da conta.</span>
-                                    </div>
+                    <!-- Sidebar Direita - Pré-visualização -->
+                    <div class="col-xl-4">
+                        <div class="preview-card">
+                            <div class="preview-header">
+                                <div class="preview-avatar" id="prev-avatar">
+                                    <i class="bi bi-person" style="color:rgba(255,255,255,.6)"></i>
+                                </div>
+                                <div class="preview-name" id="prev-name">Nome do Utilizador</div>
+                            </div>
+                            <div class="preview-body">
+                                <div class="preview-row">
+                                    <span class="preview-label">Username</span>
+                                    <span class="preview-val" id="prev-user">—</span>
+                                </div>
+                                <div class="preview-row">
+                                    <span class="preview-label">E-mail</span>
+                                    <span class="preview-val" id="prev-email">—</span>
+                                </div>
+                                <div class="preview-row">
+                                    <span class="preview-label">Telefone</span>
+                                    <span class="preview-val" id="prev-tel">—</span>
+                                </div>
+                                <div class="preview-row">
+                                    <span class="preview-label">Género</span>
+                                    <span class="preview-val" id="prev-gender">—</span>
+                                </div>
+                                <div class="preview-row">
+                                    <span class="preview-label">Data Nasc.</span>
+                                    <span class="preview-val" id="prev-birth">—</span>
+                                </div>
+                                <div class="preview-row">
+                                    <span class="preview-label">Localização</span>
+                                    <span class="preview-val" id="prev-loc">—</span>
+                                </div>
+                                <div class="preview-row">
+                                    <span class="preview-label">Plano</span>
+                                    <span class="preview-val" id="prev-plan">—</span>
+                                </div>
+                                <div class="preview-row">
+                                    <span class="preview-label">Estado</span>
+                                    <span class="preview-val" id="prev-status">—</span>
+                                </div>
+                                <div class="preview-row">
+                                    <span class="preview-label">Senha</span>
+                                    <span class="preview-val" id="prev-pw"
+                                        style="font-family:monospace;font-size:.75rem;color:#FF0089">—</span>
+                                </div>
+                                <div class="preview-row">
+                                    <span class="preview-label">Notificações</span>
+                                    <span class="preview-val" id="prev-notif">E-mail</span>
+                                </div>
+                            </div>
+                            <div class="px-3 pb-3">
+                                <div class="alert alert-info py-2 mb-0" id="prev-invite-info" style="font-size:.78rem">
+                                    <i class="bi bi-envelope-paper me-1"></i>
+                                    E-mail de boas-vindas será enviado após criação.
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
-    </div>
 
-    <!-- Floating Action Button -->
-    <div class="fab" onclick="showQuickAction()" aria-label="Ações Rápidas">
-        <i class="bi bi-plus-lg"></i>
-    </div>
-
-    <!-- Footer -->
     <footer>
         <div class="container">
-            <div class="row">
-                <div class="col-12 text-center">
-                    <p class="mb-2">© 2026 Wasom Upfy. Todos os direitos reservados.</p>
-                    <a href="#" class="me-2">Termos de Uso</a>
-                    <a href="#" class="me-2">Privacidade</a>
-                    <a href="#">Suporte</a>
-                </div>
+            <div class="col-12 text-center py-2" style="font-size:.8rem">
+                <p class="mb-0">© 2026 Wasom Upfy. Todos os direitos reservados.</p>
             </div>
         </div>
     </footer>
 
-
-    <!-- Bottom Navigation -->
-    <!-- <nav class="bottom-nav">
-    <ul>
-        <li>
-            <a href="home" class="active">
-                <i class="bi bi-speedometer2"></i>
-                <span>Dashboard</span>
-            </a>
-        </li>
-        <li>
-            <a href="../music/approve">
-                <i class="bi bi-music-note-list"></i>
-                <span>Músicas</span>
-            </a>
-        </li>
-        <li>
-            <a href="../users/all-users">
-                <i class="bi bi-people"></i>
-                <span>Usuários</span>
-            </a>
-        </li>
-        <li>
-            <a href="../finances/earnings">
-                <i class="bi bi-currency-dollar"></i>
-                <span>Finanças</span>
-            </a>
-        </li>
-        <li>
-            <a href="../settings/config">
-                <i class="bi bi-sliders"></i>
-                <span>Config</span>
-            </a>
-        </li>
-    </ul>
-</nav> -->
-
-
-
     <div class="page-loader" id="pageLoader">
         <div class="loader-content">
-            <!-- Sua imagem pulsante -->
-            <img src="../../../assets/img/brand/wasomupfy_brand.png" class="loader-image" alt="Carregando">
-            <!-- Barra de progresso agora perfeitamente centralizada -->
+            <img src="<?php echo APP_URL; ?>/assets/img/brand/wasomupfy_brand.png" class="loader-image" alt="" />
             <div class="loader-progress"></div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="<?php echo APP_URL  ?>/js/lastest.js"></script>
+    <script src="<?php echo APP_URL; ?>/js/lastest.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Elementos do formulário
-            const form = document.getElementById('create-user-form');
-            const accountInput = document.getElementById('account');
-            const nameInput = document.getElementById('name');
-            const usernameInput = document.getElementById('username');
-            const emailInput = document.getElementById('email');
-            const passwordInput = document.getElementById('password');
-            const rolesSelect = document.getElementById('roles');
-            const statusSelect = document.getElementById('status');
-            const countrySelect = document.getElementById('country');
-            const cityInput = document.getElementById('city');
-            const avatarInput = document.getElementById('avatar');
+    document.addEventListener('DOMContentLoaded', function() {
+        // Elementos
+        const form = document.getElementById('form-add-user');
+        const firstName = document.getElementById('first_name');
+        const secondName = document.getElementById('second_name');
+        const username = document.getElementById('username');
+        const email = document.getElementById('email');
+        const tel = document.getElementById('tel');
+        const birthDate = document.getElementById('birth_date');
+        const country = document.getElementById('country');
+        const city = document.getElementById('city');
+        const plan = document.getElementById('plan');
+        const password = document.getElementById('password');
+        const photo = document.getElementById('photo');
+        const btnGenPw = document.getElementById('btn-gen-pw');
+        const btnCopyPw = document.getElementById('btn-copy-pw');
+        const btnSubmit = document.getElementById('btn-submit');
+        const spinSub = document.getElementById('spin-submit');
+        const chkInvite = document.getElementById('chk-invite');
+        const inviteBox = document.getElementById('invite-box');
+        const inviteDetail = document.getElementById('invite-detail');
+        const prevInviteInfo = document.getElementById('prev-invite-info');
 
-            // Elementos de pré-visualização
-            const previewName = document.getElementById('preview-name');
-            const previewAccount = document.getElementById('preview-account');
-            const previewUsername = document.getElementById('preview-username');
-            const previewEmail = document.getElementById('preview-email');
-            const previewLocation = document.getElementById('preview-location');
-            const previewRoles = document.getElementById('preview-roles');
-            const previewStatus = document.getElementById('preview-status');
-            const previewAvatar = document.getElementById('avatar-preview');
-            const previewPasswordInfo = document.getElementById('preview-password-info');
+        // Preview
+        const prevAvatar = document.getElementById('prev-avatar');
+        const prevName = document.getElementById('prev-name');
+        const prevUser = document.getElementById('prev-user');
+        const prevEmail = document.getElementById('prev-email');
+        const prevTel = document.getElementById('prev-tel');
+        const prevGender = document.getElementById('prev-gender');
+        const prevBirth = document.getElementById('prev-birth');
+        const prevLoc = document.getElementById('prev-loc');
+        const prevPlan = document.getElementById('prev-plan');
+        const prevStatus = document.getElementById('prev-status');
+        const prevPw = document.getElementById('prev-pw');
+        const prevNotif = document.getElementById('prev-notif');
 
-            // Elementos de força da senha
-            const passwordStrengthBar = document.getElementById('password-strength-bar');
-            const passwordStrengthText = document.getElementById('password-strength-text');
+        // Password strength
+        const pwFill = document.getElementById('pw-fill');
+        const pwLabel = document.getElementById('pw-label');
+        const pwStrText = document.getElementById('pw-strength-text');
 
-            // Botões de senha
-            const generatePasswordBtn = document.getElementById('generate-password');
-            const copyPasswordBtn = document.getElementById('copy-password');
+        // Género labels
+        const genderLabels = {
+            'M': 'Masculino',
+            'F': 'Feminino',
+            'Outro': 'Outro'
+        };
 
-            // Gerar senha forte
-            function generateStrongPassword() {
-                const length = 12; // Senha com 12 caracteres (pode ajustar)
-                const charset =
-                    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]\:;?><,./-=";
-                let password = "";
+        // Planos e status
+        const plansData = <?php echo json_encode(array_column($plans, 'name_plan', 'id_plan')); ?>;
+        const statusOptions = <?php echo json_encode($status_options); ?>;
 
-                // Garante que a senha tenha pelo menos um caractere de cada tipo
-                password += getRandomChar("abcdefghijklmnopqrstuvwxyz"); // minúscula
-                password += getRandomChar("ABCDEFGHIJKLMNOPQRSTUVWXYZ"); // maiúscula
-                password += getRandomChar("0123456789"); // número
-                password += getRandomChar("!@#$%^&*()_+~`|}{[]\:;?><,./-="); // especial
+        // Gerar username automático
+        function genUsername(first, second) {
+            let f = (first || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(
+                /[^a-z0-9]/g, '');
+            let s = (second || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(
+                /[^a-z0-9]/g, '');
+            let username = f + (s ? s.substring(0, 3) : '');
+            return username.substring(0, 60);
+        }
 
-                // Completa o resto da senha
-                for (let i = 4; i < length; i++) {
-                    password += charset.charAt(Math.floor(Math.random() * charset.length));
-                }
-
-                // Embaralha a senha
-                password = password.split('').sort(() => 0.5 - Math.random()).join('');
-
-                return password;
-            }
-
-            function getRandomChar(charSet) {
-                return charSet.charAt(Math.floor(Math.random() * charSet.length));
-            }
-
-            // Avaliar força da senha
-            function evaluatePasswordStrength(password) {
-                let strength = 0;
-
-                // Comprimento
-                if (password.length > 10) strength += 2;
-                else if (password.length > 7) strength += 1;
-
-                // Tipos de caracteres
-                if (/[a-z]/.test(password)) strength += 1; // minúsculas
-                if (/[A-Z]/.test(password)) strength += 1; // maiúsculas
-                if (/[0-9]/.test(password)) strength += 1; // números
-                if (/[^a-zA-Z0-9]/.test(password)) strength += 2; // especiais
-
-                // Ajusta para escala de 0-5
-                strength = Math.min(strength, 5);
-
-                return strength;
-            }
-
-            // Atualizar visualização da força da senha
-            function updatePasswordStrength(password) {
-                const strength = evaluatePasswordStrength(password);
-                const strengthText = ["Muito fraca", "Fraca", "Moderada", "Forte", "Muito forte", "Excelente"];
-                const strengthColors = ["#dc3545", "#fd7e14", "#ffc107", "#28a745", "#20c997", "#198754"];
-
-                passwordStrengthBar.style.width = `${strength * 20}%`;
-                passwordStrengthBar.style.backgroundColor = strengthColors[strength];
-                passwordStrengthText.textContent = strengthText[strength];
-                passwordStrengthText.className =
-                    `alert alert-${strength < 2 ? 'danger' : strength < 4 ? 'warning' : 'success'}`;
-            }
-
-            // Atualizar pré-visualização
-            function updatePreview() {
-                // Informações básicas
-                previewName.textContent = nameInput.value || "Nome do Usuário";
-                previewAccount.textContent = accountInput.value ? `@${accountInput.value}` : "@conta";
-                previewUsername.textContent = usernameInput.value || "username";
-                previewEmail.textContent = emailInput.value || "email@exemplo.com";
-
-                // Localização
-                const country = countrySelect.options[countrySelect.selectedIndex]?.text || "";
-                const city = cityInput.value || "";
-                previewLocation.textContent = country + (city ? `, ${city}` : "");
-
-                // Funções
-                previewRoles.innerHTML = "";
-                const selectedRoles = Array.from(rolesSelect.selectedOptions).map(opt => opt.value);
-
-                if (selectedRoles.length === 0) {
-                    previewRoles.innerHTML =
-                        '<span class="badge bg-secondary badge-role">Nenhuma função selecionada</span>';
-                } else {
-                    selectedRoles.forEach(role => {
-                        const badge = document.createElement('span');
-                        badge.className = 'badge bg-primary badge-role';
-                        badge.textContent = role === 'admin' ? 'Administrador' :
-                            role === 'distributor' ? 'Distribuidor' :
-                            role === 'analyst' ? 'Analista' : 'Financeiro';
-                        previewRoles.appendChild(badge);
-                    });
-                }
-
-                // Status
-                previewStatus.innerHTML = "";
-                const status = statusSelect.value;
-                const statusBadge = document.createElement('span');
-
-                statusBadge.className = `status-badge ${status === 'active' ? 'status-active' :
-                    status === 'review' ? 'status-review' : 'status-suspended'
-                    }`;
-
-                statusBadge.textContent = status === 'active' ? 'Ativo' :
-                    status === 'review' ? 'Em Revisão' : 'Suspenso';
-
-                previewStatus.appendChild(statusBadge);
-            }
-
-            // Event listeners para atualização em tempo real
-            [accountInput, nameInput, usernameInput, emailInput, countrySelect, cityInput, rolesSelect,
-                statusSelect
-            ].forEach(element => {
-                element.addEventListener('input', updatePreview);
-                element.addEventListener('change', updatePreview);
-            });
-
-            // Avatar preview
-            avatarInput.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        previewAvatar.innerHTML = '';
-                        const img = document.createElement('img');
-                        img.src = event.target.result;
-                        img.style.width = '100%';
-                        img.style.height = '100%';
-                        img.style.borderRadius = '50%';
-                        img.style.objectFit = 'cover';
-                        previewAvatar.appendChild(img);
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-
-            // Gerar senha
-            generatePasswordBtn.addEventListener('click', function() {
-                const password = generateStrongPassword();
-                passwordInput.value = password;
-                updatePasswordStrength(password);
-                previewPasswordInfo.textContent = `Senha gerada: ${password}`;
-            });
-
-            // Copiar senha
-            copyPasswordBtn.addEventListener('click', function() {
-                if (passwordInput.value) {
-                    navigator.clipboard.writeText(passwordInput.value).then(() => {
-                        const originalText = copyPasswordBtn.innerHTML;
-                        copyPasswordBtn.innerHTML = '<i class="bi bi-check me-1"></i> Copiado!';
-                        setTimeout(() => {
-                            copyPasswordBtn.innerHTML = originalText;
-                        }, 2000);
-                    });
-                }
-            });
-
-            // Validar senha ao digitar (caso o campo não seja readonly)
-            passwordInput.addEventListener('input', function() {
-                updatePasswordStrength(this.value);
-            });
-
-            // Enviar formulário
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-
-                // Validações adicionais podem ser adicionadas aqui
-                if (!passwordInput.value) {
-                    alert('Por favor, gere uma senha antes de criar a conta.');
-                    return;
-                }
-
-                // Simular envio (substituir por AJAX/API real)
-                alert('Conta criada com sucesso!\n\nSenha do usuário: ' + passwordInput.value);
-
-                // Resetar formulário (opcional)
-                // form.reset();
-                // updatePreview();
-            });
-
-            // Gerar senha inicial
-            generatePasswordBtn.click();
+        let manualUsername = false;
+        firstName.addEventListener('input', function() {
+            if (!manualUsername) username.value = genUsername(this.value, secondName.value);
             updatePreview();
         });
+        secondName.addEventListener('input', function() {
+            if (!manualUsername) username.value = genUsername(firstName.value, this.value);
+            updatePreview();
+        });
+        username.addEventListener('input', function() {
+            manualUsername = true;
+            updatePreview();
+        });
+
+        // Gerar senha forte
+        function generatePassword() {
+            const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const lower = 'abcdefghijklmnopqrstuvwxyz';
+            const digits = '0123456789';
+            const syms = '!@#$%^&*';
+            const all = upper + lower + digits + syms;
+            let pw = '';
+            pw += upper[Math.floor(Math.random() * upper.length)];
+            pw += lower[Math.floor(Math.random() * lower.length)];
+            pw += digits[Math.floor(Math.random() * digits.length)];
+            pw += syms[Math.floor(Math.random() * syms.length)];
+            for (let i = pw.length; i < 12; i++) pw += all[Math.floor(Math.random() * all.length)];
+            return pw.split('').sort(() => 0.5 - Math.random()).join('');
+        }
+
+        function evalStrength(pw) {
+            let score = 0;
+            if (pw.length >= 12) score++;
+            if (/[A-Z]/.test(pw)) score++;
+            if (/[a-z]/.test(pw)) score++;
+            if (/[0-9]/.test(pw)) score++;
+            if (/[^a-zA-Z0-9]/.test(pw)) score += 2;
+            return Math.min(score, 5);
+        }
+
+        function updateStrength(pw) {
+            let s = evalStrength(pw);
+            let colors = ['#e8e8f0', '#ef4444', '#f97316', '#eab308', '#22c55e', '#16a34a'];
+            let labels = ['—', 'Muito fraca', 'Fraca', 'Razoável', 'Forte', 'Muito forte'];
+            pwFill.style.width = (s * 20) + '%';
+            pwFill.style.background = colors[s];
+            pwLabel.textContent = labels[s];
+            pwStrText.textContent = labels[s];
+            pwStrText.className =
+                `alert alert-${s < 2 ? 'danger' : s < 4 ? 'warning' : 'success'} py-2 text-center`;
+        }
+
+        btnGenPw.addEventListener('click', function() {
+            let pw = generatePassword();
+            password.value = pw;
+            updateStrength(pw);
+            prevPw.textContent = pw;
+            checkCanSubmit();
+        });
+
+        btnCopyPw.addEventListener('click', function() {
+            if (!password.value) return;
+            navigator.clipboard.writeText(password.value).then(() => {
+                btnCopyPw.innerHTML = '<i class="bi bi-check"></i>';
+                setTimeout(() => btnCopyPw.innerHTML = '<i class="bi bi-clipboard"></i>', 2000);
+            });
+        });
+
+        // Toggle convite
+        chkInvite.addEventListener('change', function() {
+            inviteDetail.classList.toggle('show', this.checked);
+            inviteBox.classList.toggle('active', this.checked);
+            prevInviteInfo.style.display = this.checked ? '' : 'none';
+        });
+
+        // Atualizar preview
+        function updatePreview() {
+            // Nome
+            let full = [firstName.value.trim(), secondName.value.trim()].filter(Boolean).join(' ');
+            prevName.textContent = full || 'Nome do Utilizador';
+
+            // Informações básicas
+            prevUser.textContent = username.value ? '@' + username.value : '—';
+            prevEmail.textContent = email.value || '—';
+            prevTel.textContent = tel.value || '—';
+
+            // Género
+            let genderVal = document.querySelector('input[name="gender"]:checked')?.value || '';
+            prevGender.textContent = genderLabels[genderVal] || '—';
+
+            // Data de nascimento
+            if (birthDate.value) {
+                let date = new Date(birthDate.value);
+                prevBirth.textContent = date.toLocaleDateString('pt-PT');
+            } else {
+                prevBirth.textContent = '—';
+            }
+
+            // Localização
+            let countryText = country.options[country.selectedIndex]?.text || '';
+            let cityText = city.value.trim();
+            prevLoc.textContent = (countryText && countryText !== 'Selecionar país') ?
+                countryText + (cityText ? ', ' + cityText : '') : (cityText || '—');
+
+            // Plano
+            let planId = plan.value;
+            prevPlan.textContent = plansData[planId] || '—';
+
+            // Status
+            let statusVal = document.querySelector('input[name="status"]:checked')?.value || 'active';
+            prevStatus.innerHTML =
+                `<span style="color:${statusOptions[statusVal]?.color || '#888'}">${statusOptions[statusVal]?.label || 'Activo'}</span>`;
+
+            // Notificações
+            let notifs = [];
+            if (document.getElementById('notif_email').checked) notifs.push('E-mail');
+            if (document.getElementById('notif_push').checked) notifs.push('Push');
+            if (document.getElementById('notif_weekly').checked) notifs.push('Semanal');
+            if (document.getElementById('notif_releases').checked) notifs.push('Lançamentos');
+            prevNotif.textContent = notifs.length ? notifs.join(', ') : 'Nenhuma';
+        }
+
+        function checkCanSubmit() {
+            let ok = firstName.value.trim() !== '' && email.value.trim() !== '' && username.value.trim() !==
+                '' && password.value.trim() !== '';
+            btnSubmit.disabled = !ok;
+        }
+
+        // Listeners
+        [firstName, secondName, username, email, tel, birthDate, country, city, plan].forEach(el => {
+            if (el) el.addEventListener('input', updatePreview);
+            if (el) el.addEventListener('change', updatePreview);
+        });
+        document.querySelectorAll('input[name="gender"]').forEach(el => el.addEventListener('change',
+            updatePreview));
+        document.querySelectorAll('input[name="status"]').forEach(el => el.addEventListener('change',
+            updatePreview));
+        document.querySelectorAll('.form-switch input').forEach(el => el.addEventListener('change',
+            updatePreview));
+
+        // Avatar preview
+        photo.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    prevAvatar.innerHTML =
+                        `<img src="${event.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Submit
+        form.addEventListener('submit', function(e) {
+            if (!password.value.trim()) {
+                e.preventDefault();
+                alert('Gera uma senha antes de criar a conta.');
+                return;
+            }
+            spinSub.classList.remove('d-none');
+            btnSubmit.disabled = true;
+            btnSubmit.querySelector('i').className = '';
+        });
+
+        // Gerar senha inicial
+        btnGenPw.click();
+        updatePreview();
+    });
     </script>
 </body>
 

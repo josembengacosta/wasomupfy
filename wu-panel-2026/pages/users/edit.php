@@ -1,1250 +1,1135 @@
+<?php
+// ══════════════════════════════════════════════
+// WASOM UPFY v2.0 — Editar Utilizador
+// Arquivo: admin/pages/users/edit.php
+// Rota:    admin/users/edit?id=X
+// ══════════════════════════════════════════════
+require_once __DIR__ . '/../../include/platform_admin.php';
+requirePermission($admin_id, 'users.edit');
+
+$id = (int)($_GET['id'] ?? 0);
+if (!$id) adminRedirect('/' . ADMIN_PATH . '/users');
+
+// ── Buscar dados do utilizador ──
+$stmt = $db->prepare("
+    SELECT
+        u.id_users,
+        u.first_name,
+        u.second_name,
+        u.user_name,
+        u.email_user,
+        u.tel_user,
+        u.country_user,
+        u.city_user,
+        u.status_user,
+        u.plan_selected,
+        u.photo_user,
+        u.about_user,
+        u.creat_user,
+        u.modif_user,
+        u.notif_email,
+        u.notif_push,
+        u.notif_weekly,
+        u.notif_releases,
+        u.notif_payments,
+        u.trust_score,
+        u.onboarding_done,
+        us.last_login_at,
+        us.last_login_ip,
+        us.two_factor_enabled,
+        pl.name_plan,
+        pl.slug_plan
+    FROM _users u
+    LEFT JOIN _users_security us ON us.id_users = u.id_users
+    LEFT JOIN _plans pl ON pl.id_plan = u.plan_selected
+    WHERE u.id_users = ?
+");
+$stmt->execute([$id]);
+$user = $stmt->fetch();
+
+if (!$user) {
+    adminRedirect('/' . ADMIN_PATH . '/users?msg=not_found');
+}
+
+// ── Buscar planos disponíveis ──
+$plans = $db->query("SELECT id_plan, name_plan, slug_plan, price_plan FROM _plans WHERE is_active = 1 ORDER BY price_plan")->fetchAll();
+
+// ── Buscar artistas do utilizador ──
+$artists = $db->prepare("
+    SELECT id_artist, stage_name, photo_artist, status_artist
+    FROM _artist WHERE id_users = ? ORDER BY creat_artist DESC LIMIT 5
+");
+$artists->execute([$id]);
+$artist_list = $artists->fetchAll();
+
+// ── Buscar lançamentos recentes ──
+$releases = $db->prepare("
+    SELECT a.id_album, a.title_album, a.status_album, a.img_cover, a.creat_album
+    FROM _album a
+    INNER JOIN _artist ar ON ar.id_artist = a.id_artist
+    WHERE ar.id_users = ?
+    ORDER BY a.creat_album DESC LIMIT 3
+");
+$releases->execute([$id]);
+$release_list = $releases->fetchAll();
+
+// ── Lista de países (completa) ──
+$paises = [
+    "AF" => "Afeganistão",
+    "ZA" => "África do Sul",
+    "AL" => "Albânia",
+    "DE" => "Alemanha",
+    "AD" => "Andorra",
+    "AO" => "Angola",
+    "AI" => "Anguilla",
+    "AQ" => "Antártida",
+    "AG" => "Antígua e Barbuda",
+    "SA" => "Arábia Saudita",
+    "DZ" => "Argélia",
+    "AR" => "Argentina",
+    "AM" => "Arménia",
+    "AW" => "Aruba",
+    "AU" => "Austrália",
+    "AT" => "Áustria",
+    "AZ" => "Azerbaijão",
+    "BS" => "Bahamas",
+    "BH" => "Bahrein",
+    "BD" => "Bangladesh",
+    "BB" => "Barbados",
+    "BE" => "Bélgica",
+    "BZ" => "Belize",
+    "BJ" => "Benim",
+    "BM" => "Bermudas",
+    "BY" => "Bielorrússia",
+    "BO" => "Bolívia",
+    "BA" => "Bósnia e Herzegovina",
+    "BW" => "Botsuana",
+    "BR" => "Brasil",
+    "BN" => "Brunei",
+    "BG" => "Bulgária",
+    "BF" => "Burkina Faso",
+    "BI" => "Burundi",
+    "BT" => "Butão",
+    "CV" => "Cabo Verde",
+    "CM" => "Camarões",
+    "KH" => "Camboja",
+    "CA" => "Canadá",
+    "QA" => "Catar",
+    "KZ" => "Cazaquistão",
+    "TD" => "Chade",
+    "CL" => "Chile",
+    "CN" => "China",
+    "CY" => "Chipre",
+    "CO" => "Colômbia",
+    "KM" => "Comores",
+    "CG" => "Congo",
+    "CD" => "Congo (República Democrática)",
+    "KP" => "Coreia do Norte",
+    "KR" => "Coreia do Sul",
+    "CI" => "Costa do Marfim",
+    "CR" => "Costa Rica",
+    "HR" => "Croácia",
+    "CU" => "Cuba",
+    "CW" => "Curaçau",
+    "DK" => "Dinamarca",
+    "DJ" => "Djibouti",
+    "DM" => "Dominica",
+    "EG" => "Egito",
+    "SV" => "El Salvador",
+    "AE" => "Emirados Árabes Unidos",
+    "EC" => "Equador",
+    "ER" => "Eritreia",
+    "SK" => "Eslováquia",
+    "SI" => "Eslovénia",
+    "ES" => "Espanha",
+    "US" => "Estados Unidos",
+    "EE" => "Estónia",
+    "SZ" => "Eswatini",
+    "ET" => "Etiópia",
+    "FJ" => "Fiji",
+    "PH" => "Filipinas",
+    "FI" => "Finlândia",
+    "FR" => "França",
+    "GA" => "Gabão",
+    "GM" => "Gâmbia",
+    "GH" => "Gana",
+    "GE" => "Geórgia",
+    "GS" => "Geórgia do Sul e Ilhas Sandwich do Sul",
+    "GI" => "Gibraltar",
+    "GD" => "Granada",
+    "GR" => "Grécia",
+    "GL" => "Gronelândia",
+    "GP" => "Guadalupe",
+    "GU" => "Guam",
+    "GT" => "Guatemala",
+    "GG" => "Guernsey",
+    "GY" => "Guiana",
+    "GF" => "Guiana Francesa",
+    "GN" => "Guiné",
+    "GQ" => "Guiné Equatorial",
+    "GW" => "Guiné-Bissau",
+    "HT" => "Haiti",
+    "HN" => "Honduras",
+    "HK" => "Hong Kong",
+    "HU" => "Hungria",
+    "YE" => "Iémen",
+    "IM" => "Ilha de Man",
+    "NF" => "Ilha Norfolk",
+    "CX" => "Ilha Natal",
+    "BV" => "Ilha Bouvet",
+    "HM" => "Ilha Heard e Ilhas McDonald",
+    "KY" => "Ilhas Caimão",
+    "CC" => "Ilhas Cocos (Keeling)",
+    "CK" => "Ilhas Cook",
+    "FO" => "Ilhas Faroé",
+    "FK" => "Ilhas Malvinas",
+    "MP" => "Ilhas Marianas do Norte",
+    "MH" => "Ilhas Marshall",
+    "UM" => "Ilhas Menores Distantes dos Estados Unidos",
+    "PN" => "Ilhas Pitcairn",
+    "SB" => "Ilhas Salomão",
+    "TC" => "Ilhas Turcas e Caicos",
+    "VG" => "Ilhas Virgens Britânicas",
+    "VI" => "Ilhas Virgens dos EUA",
+    "IN" => "Índia",
+    "ID" => "Indonésia",
+    "IR" => "Irão",
+    "IQ" => "Iraque",
+    "IE" => "Irlanda",
+    "IS" => "Islândia",
+    "IL" => "Israel",
+    "IT" => "Itália",
+    "JM" => "Jamaica",
+    "JP" => "Japão",
+    "JE" => "Jersey",
+    "JO" => "Jordânia",
+    "KW" => "Kuwait",
+    "LA" => "Laos",
+    "LS" => "Lesoto",
+    "LV" => "Letónia",
+    "LB" => "Líbano",
+    "LR" => "Libéria",
+    "LY" => "Líbia",
+    "LI" => "Liechtenstein",
+    "LT" => "Lituânia",
+    "LU" => "Luxemburgo",
+    "MO" => "Macau",
+    "MK" => "Macedónia do Norte",
+    "MG" => "Madagáscar",
+    "MY" => "Malásia",
+    "MW" => "Malawi",
+    "MV" => "Maldivas",
+    "ML" => "Mali",
+    "MT" => "Malta",
+    "MA" => "Marrocos",
+    "MQ" => "Martinica",
+    "MU" => "Maurícia",
+    "MR" => "Mauritânia",
+    "YT" => "Mayotte",
+    "MX" => "México",
+    "MM" => "Myanmar",
+    "FM" => "Micronésia",
+    "MZ" => "Moçambique",
+    "MD" => "Moldávia",
+    "MC" => "Mónaco",
+    "MN" => "Mongólia",
+    "ME" => "Montenegro",
+    "MS" => "Montserrat",
+    "NA" => "Namíbia",
+    "NR" => "Nauru",
+    "NP" => "Nepal",
+    "NI" => "Nicarágua",
+    "NE" => "Níger",
+    "NG" => "Nigéria",
+    "NU" => "Niue",
+    "NO" => "Noruega",
+    "NC" => "Nova Caledónia",
+    "NZ" => "Nova Zelândia",
+    "OM" => "Omã",
+    "NL" => "Países Baixos",
+    "BQ" => "Países Baixos Caribenhos",
+    "PW" => "Palau",
+    "PS" => "Palestina",
+    "PA" => "Panamá",
+    "PG" => "Papua-Nova Guiné",
+    "PK" => "Paquistão",
+    "PY" => "Paraguai",
+    "PE" => "Peru",
+    "PF" => "Polinésia Francesa",
+    "PL" => "Polónia",
+    "PR" => "Porto Rico",
+    "PT" => "Portugal",
+    "KE" => "Quénia",
+    "KG" => "Quirguistão",
+    "KI" => "Quiribati",
+    "GB" => "Reino Unido",
+    "CF" => "República Centro-Africana",
+    "CZ" => "República Checa",
+    "DO" => "República Dominicana",
+    "RE" => "Reunião",
+    "RO" => "Roménia",
+    "RW" => "Ruanda",
+    "RU" => "Rússia",
+    "EH" => "Saara Ocidental",
+    "PM" => "Saint Pierre e Miquelon",
+    "WS" => "Samoa",
+    "AS" => "Samoa Americana",
+    "BL" => "São Bartolomeu",
+    "KN" => "São Cristóvão e Neves",
+    "SM" => "São Marinho",
+    "MF" => "São Martinho",
+    "SX" => "São Martinho (Países Baixos)",
+    "ST" => "São Tomé e Príncipe",
+    "VC" => "São Vicente e Granadinas",
+    "SH" => "Santa Helena",
+    "LC" => "Santa Lúcia",
+    "SC" => "Seicheles",
+    "SN" => "Senegal",
+    "SL" => "Serra Leoa",
+    "RS" => "Sérvia",
+    "SG" => "Singapura",
+    "SY" => "Síria",
+    "SO" => "Somália",
+    "LK" => "Sri Lanka",
+    "SD" => "Sudão",
+    "SS" => "Sudão do Sul",
+    "SE" => "Suécia",
+    "CH" => "Suíça",
+    "SR" => "Suriname",
+    "SJ" => "Svalbard e Jan Mayen",
+    "TH" => "Tailândia",
+    "TW" => "Taiwan",
+    "TJ" => "Tajiquistão",
+    "TZ" => "Tanzânia",
+    "IO" => "Território Britânico do Oceano Índico",
+    "TF" => "Territórios Franceses do Sul",
+    "TL" => "Timor-Leste",
+    "TG" => "Togo",
+    "TK" => "Toquelau",
+    "TO" => "Tonga",
+    "TT" => "Trindade e Tobago",
+    "TN" => "Tunísia",
+    "TM" => "Turquemenistão",
+    "TR" => "Turquia",
+    "TV" => "Tuvalu",
+    "UA" => "Ucrânia",
+    "UG" => "Uganda",
+    "UY" => "Uruguai",
+    "UZ" => "Usbequistão",
+    "VU" => "Vanuatu",
+    "VA" => "Vaticano",
+    "VE" => "Venezuela",
+    "VN" => "Vietname",
+    "WF" => "Wallis e Futuna",
+    "ZM" => "Zâmbia",
+    "ZW" => "Zimbabué"
+];
+
+// ── Feedback ──
+$msg = $_GET['msg'] ?? null;
+$feedback = match ($msg) {
+    'updated'   => ['success', 'bi-check-circle-fill', 'Utilizador actualizado com sucesso!'],
+    'error'     => ['danger',  'bi-x-circle-fill',     'Ocorreu um erro. Tenta novamente.'],
+    default     => null,
+};
+
+$fullname = trim($user['first_name'] . ' ' . ($user['second_name'] ?? ''));
+$ini      = adm_initials($user['first_name'], $user['second_name'] ?? '');
+$color    = adm_avatar_color($fullname);
+$member_since = date('d/m/Y', strtotime($user['creat_user']));
+
+// ── Status options ──
+$status_options = [
+    'approved' => ['label' => 'Aprovado', 'icon' => 'bi-check-circle-fill', 'color' => '#22c55e'],
+    'suspended' => ['label' => 'Suspenso', 'icon' => 'bi-exclamation-triangle-fill', 'color' => '#ef4444'],
+    'rejected' => ['label' => 'Rejeitado', 'icon' => 'bi-exclamation-triangle-fill', 'color' => '#ef4444'],
+    'blocked' => ['label' => 'Bloqueado', 'icon' => 'bi-lock-fill', 'color' => '#6b7280'],
+    'inactive' => ['label' => 'Inactivo', 'icon' => 'bi-person-slash', 'color' => '#3b82f6'],
+    'pending_plan' => ['label' => 'Plano Pendente', 'icon' => 'bi-hourglass-split', 'color' => '#eab308'],
+];
+
+// ── Trust score classes ──
+$trust_class = match (true) {
+    $user['trust_score'] >= 80 => 'success',
+    $user['trust_score'] >= 50 => 'warning',
+    default => 'danger'
+};
+?>
+
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-ao">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="robots" content="noindex, nofollow">
+    <meta name="robots" content="noindex,nofollow" />
     <meta name="author" content="José Mbenga da Costa" />
-    <meta name="theme-color" content="#FF0089">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="#FF0089">
-    <link rel="apple-touch-icon" href="../../../assets/img/icones/wasomupfy_fiv_512.png">
-    <link rel="apple-touch-startup-image" href="../../../assets/img/screenshots/splash.png">
-    <link rel="manifest" href="manifest.json">
-    <title>Editar Usuário — <?php echo APP_NAME; ?></title>
-    <link rel="shortcut icon" href="../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
-    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/libs/plugins.css">
-    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/libs/scrollue.css">
+    <meta name="theme-color" content="#FF0089" />
+    <title>Editar Utilizador — <?php echo APP_NAME; ?> Admin</title>
+    <link rel="shortcut icon" href="<?php echo APP_URL; ?>/assets/img/icones/wasomupfy_fiv.png" type="image/x-icon" />
+    <link rel="stylesheet" href="<?php echo APP_URL; ?>/css/libs/plugins.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
-    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/css/lastest-style.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <!-- Google Fonts - Poppins -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-
+    <link rel="stylesheet" href="<?php echo APP_URL; ?>/css/lastest-style.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
     <style>
-        .fade-in-custom {
-            animation: fadeIn 0.5s ease-in;
+        /* Hero Card */
+        .hero-card {
+            background: linear-gradient(135deg, #0f0f17 0%, #1a1a2e 50%, #16213e 100%);
+            border-radius: 24px;
+            padding: 28px 32px;
+            margin-bottom: 28px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, .05);
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
+        .hero-card::before {
+            content: '';
+            position: absolute;
+            top: -80px;
+            right: -80px;
+            width: 280px;
+            height: 280px;
+            background: radial-gradient(circle, rgba(255, 0, 137, .2) 0%, transparent 70%);
+            pointer-events: none;
         }
 
-        .btn-wasomupfy {
-            background-color: #6f42c1;
+        .hero-card::after {
+            content: '';
+            position: absolute;
+            bottom: -60px;
+            left: 20%;
+            width: 220px;
+            height: 220px;
+            background: radial-gradient(circle, rgba(108, 99, 255, .12) 0%, transparent 70%);
+            pointer-events: none;
         }
 
-        .status-badge {
-            padding: 0.35em 0.65em;
-            border-radius: 0.25rem;
-            font-size: 0.75em;
-            font-weight: 700;
+        .avatar-wrapper {
+            position: relative;
+            display: inline-block;
         }
 
-        .status-active {
-            background-color: #198754;
-            color: white;
-        }
-
-        .status-suspended {
-            background-color: #dc3545;
-            color: white;
-        }
-
-        .status-review {
-            background-color: #ffc107;
-            color: #212529;
-        }
-
-        .email-link {
-            color: #d93025;
-            text-decoration: none;
-        }
-
-        .role-badge {
-            margin-right: 0.3rem;
-            margin-bottom: 0.3rem;
-        }
-
-        .profile-img {
-            width: 40px;
-            height: 40px;
+        .avatar-img {
+            width: 96px;
+            height: 96px;
             border-radius: 50%;
             object-fit: cover;
-        }
-
-        .profile-img-lg {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .streaming-progress {
-            height: 10px;
-            border-radius: 5px;
-        }
-
-        .role-selector {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-        }
-
-        .role-checkbox {
-            display: none;
-        }
-
-        .role-label {
-            padding: 0.25rem 0.75rem;
-            border-radius: 1rem;
-            background-color: #e9ecef;
+            border: 3px solid rgba(255, 0, 137, .4);
+            box-shadow: 0 0 0 6px rgba(255, 0, 137, .1), 0 8px 24px rgba(0, 0, 0, .3);
             cursor: pointer;
-            font-size: 0.875rem;
+            transition: all .3s;
         }
 
-        .role-checkbox:checked+.role-label {
-            background-color: #0d6efd;
-            color: white;
+        .avatar-img:hover {
+            transform: scale(1.02);
+            border-color: #FF0089;
         }
 
-        .profile-img {
+        .avatar-ini {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: #fff;
+            cursor: pointer;
+            transition: all .3s;
+            box-shadow: 0 0 0 6px rgba(255, 0, 137, .1), 0 8px 24px rgba(0, 0, 0, .3);
+        }
+
+        .avatar-ini:hover {
+            transform: scale(1.02);
+            filter: brightness(1.05);
+        }
+
+        .avatar-edit-badge {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            background: #FF0089;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 2px solid #1a1a2e;
+            transition: all .2s;
+        }
+
+        .avatar-edit-badge:hover {
+            transform: scale(1.1);
+            background: #ff338f;
+        }
+
+        /* Status Badge Hero */
+        .hero-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: .75rem;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-status-active {
+            background: rgba(34, 197, 94, .2);
+            color: #4ade80;
+        }
+
+        .hero-status-suspended {
+            background: rgba(239, 68, 68, .2);
+            color: #f87171;
+        }
+
+        .hero-status-blocked {
+            background: rgba(107, 114, 128, .2);
+            color: #9ca3af;
+        }
+
+        .hero-status-inactive {
+            background: rgba(59, 130, 246, .2);
+            color: #93c5fd;
+        }
+
+        .hero-status-pending_plan {
+            background: rgba(234, 179, 8, .2);
+            color: #facc15;
+        }
+
+        /* Form Card */
+        .form-card {
+            background: var(--card-bg, #fff);
+            border: 1px solid var(--border-color, #e8e8f0);
+            border-radius: 20px;
+            padding: 28px;
+            transition: all .3s;
+        }
+
+        .dark-mode .form-card {
+            background: var(--dark-card, #1a1a27);
+            border-color: var(--dark-border, #2e2e42);
+        }
+
+        .section-title {
+            font-size: .75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #FF0089;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color, #e8e8f0);
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-size: .85rem;
+            transition: all .2s;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #FF0089;
+            box-shadow: 0 0 0 3px rgba(255, 0, 137, .1);
+        }
+
+        /* Info Stats */
+        .info-stat {
+            background: rgba(255, 0, 137, .04);
+            border-radius: 14px;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+        }
+
+        .info-stat-label {
+            font-size: .7rem;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            color: #888;
+            margin-bottom: 4px;
+        }
+
+        .info-stat-value {
+            font-size: .9rem;
+            font-weight: 600;
+        }
+
+        /* Trust Score */
+        .trust-score {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: .75rem;
+            font-weight: 600;
+        }
+
+        .trust-high {
+            background: rgba(34, 197, 94, .1);
+            color: #22c55e;
+        }
+
+        .trust-medium {
+            background: rgba(234, 179, 8, .1);
+            color: #eab308;
+        }
+
+        .trust-low {
+            background: rgba(239, 68, 68, .1);
+            color: #ef4444;
+        }
+
+        /* Artist Mini Card */
+        .artist-mini {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(255, 0, 137, .03);
+            border-radius: 14px;
+            margin-bottom: 8px;
+            transition: all .2s;
+        }
+
+        .artist-mini:hover {
+            background: rgba(255, 0, 137, .08);
+        }
+
+        .artist-mini-img {
             width: 40px;
             height: 40px;
-            border-radius: 50%;
+            border-radius: 12px;
             object-fit: cover;
         }
 
-        .status-badge {
-            padding: 0.25rem 0.5rem;
-            border-radius: 50rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
-        .status-active {
-            background-color: #d1fae5;
-            color: #065f46;
-        }
-
-        .status-suspended {
-            background-color: #fee2e2;
-            color: #b91c1c;
-        }
-
-        .status-review {
-            background-color: #fef3c7;
-            color: #92400e;
-        }
-
-        .email-link {
-            color: #3b82f6;
-            text-decoration: none;
-        }
-
-        .btn-wasomupfy {
-            background-color: #6c757d;
-        }
-
-        .role-selector {
+        .artist-mini-ini {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
             display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: .8rem;
+            color: #fff;
         }
 
-        .role-checkbox {
-            margin-right: 0.5rem;
+        /* Release Mini */
+        .release-mini {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color, #e8e8f0);
+        }
+
+        .release-mini:last-child {
+            border-bottom: none;
+        }
+
+        .release-mini-cover {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        /* Switch */
+        .form-switch .form-check-input {
+            width: 40px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .form-switch .form-check-input:checked {
+            background-color: #FF0089;
+            border-color: #FF0089;
+        }
+
+        /* Action Buttons */
+        .action-btn {
+            padding: 8px 20px;
+            border-radius: 12px;
+            font-weight: 500;
+            font-size: .85rem;
+            transition: all .2s;
+        }
+
+        .action-btn-primary {
+            background: #FF0089;
+            color: #fff;
+            border: none;
+        }
+
+        .action-btn-primary:hover {
+            background: #ff338f;
+            transform: translateY(-2px);
+        }
+
+        .action-btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border-color, #e8e8f0);
+        }
+
+        .action-btn-secondary:hover {
+            background: rgba(255, 0, 137, .05);
+            border-color: #FF0089;
         }
     </style>
 </head>
 
 <body>
     <div class="wrapper">
-        <!-- Sidebar Overlay -->
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        <?php require_once __DIR__ . '/../../include/sidebar.php'; ?>
 
-        <!-- Sidebar -->
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="d-flex align-items-center">
-                    <img src="../../../assets/img/brand/wasomupfy_brand.png" alt="Logo Wasom Upfy"
-                        class="rounded-circle me-2" style="height: 40px;">
-                    <span class="brand-text"><?php echo APP_NAME; ?></span>
-                </div>
-                <i class="bi bi-chevron-left toggle-icon" id="sidebarCollapse" title="Colapsar/Expandir Menu"
-                    aria-label="Colapsar/Expandir Menu"></i>
-            </div>
-            <ul class="nav flex-column mt-3">
-                <li class="nav-item">
-                    <a href="../../home" class="nav-link">
-                        <i class="bi bi-speedometer2"></i>
-                        <span>Painel de Controle</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseAnalytics" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseAnalytics">
-                        <i class="bi bi-graph-up"></i>
-                        <span>Estatísticas e Análises</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseAnalytics">
-                        <a href="../analytics/home" class="nav-link">
-                            <i class="bi bi-bar-chart-line"></i>
-                            <span>Visão Geral</span>
-                        </a>
-                        <a href="../analytics/artists" class="nav-link">
-                            <i class="bi bi-person-lines-fill"></i>
-                            <span>Desempenho por Artista</span>
-                        </a>
-                        <a href="../analytics/stores" class="nav-link">
-                            <i class="bi bi-shop"></i>
-                            <span>Desempenho por Loja Digital</span>
-                        </a>
-                        <a href="../analytics/reports" class="nav-link">
-                            <i class="bi bi-file-earmark-bar-graph"></i>
-                            <span>Relatórios Personalizados</span>
-                        </a>
-                    </div>
-                </li>
-
-                <li class="nav-item">
-                    <a href="#collapseAdmins" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseAdmins">
-                        <i class="bi bi-person-gear"></i>
-                        <span>Gestão de Admins</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseAdmins">
-                        <a href="../employees/all-employees" class="nav-link">
-                            <i class="bi bi-people"></i>
-                            <span>Listar Admins</span>
-                        </a>
-                        <a href="../employees/add" class="nav-link">
-                            <i class="bi bi-person-plus"></i>
-                            <span>Adicionar</span>
-                        </a>
-                        <a href="../employees/edit" class="nav-link">
-                            <i class="bi bi-person-gear"></i>
-                            <span>Editar</span>
-                        </a>
-                        <a href="../employees/delete" class="nav-link">
-                            <i class="bi bi-person-x"></i>
-                            <span>Excluir</span>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseUsers" class="nav-link active" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseUsers">
-                        <i class="bi bi-person-gear"></i>
-                        <span>Gestão de Usuários</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseUsers">
-                        <a href="all-users" class="nav-link">
-                            <i class="bi bi-people"></i>
-                            <span>Todos Usuários</span>
-                        </a>
-                        <a href="add" class="nav-link">
-                            <i class="bi bi-person-plus"></i>
-                            <span>Adicionar</span>
-                        </a>
-                        <a href="edit" class="nav-link active">
-                            <i class="bi bi-person-gear"></i>
-                            <span>Editar</span>
-                        </a>
-                        <a href="delete" class="nav-link">
-                            <i class="bi bi-person-x"></i>
-                            <span>Excluir</span>
-                        </a>
-                        <a href="available-account" class="nav-link">
-                            <i class="bi bi-person-check"></i>
-                            <span>Contas Disponíveis</span>
-                        </a>
-                        <a href="unavailable-account" class="nav-link">
-                            <i class="bi bi-person-exclamation"></i>
-                            <span>Contas Indisponíveis</span>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseSongs" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseSongs">
-                        <i class="bi bi-music-note-list"></i>
-                        <span>Gestão de Músicas</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseSongs">
-                        <a href="../music/revise" class="nav-link">
-                            <i class="bi bi-eye"></i>
-                            <span>Revisar Envios</span>
-                        </a>
-                        <a href="../music/approve" class="nav-link">
-                            <i class="bi bi-check-circle"></i>
-                            <span>Aprovar</span>
-                        </a>
-                        <a href="../music/reject" class="nav-link">
-                            <i class="bi bi-x-circle"></i>
-                            <span>Rejeitar</span>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="../artist/accounts-users" class="nav-link">
-                        <i class="bi bi-person-check"></i>
-                        <span>Contas e Usuários</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="../artist/collaborators-artist" class="nav-link">
-                        <i class="bi bi-people"></i>
-                        <span>Artistas e Colaboradores</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseDistribution" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseDistribution">
-                        <i class="bi bi-globe"></i>
-                        <span>Distribuição</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseDistribution">
-                        <a href="../distribution/releases" class="nav-link">
-                            <i class="bi bi-rocket-takeoff"></i>
-                            <span>Lançamentos</span>
-                        </a>
-                        <a href="../distribution/store" class="nav-link">
-                            <i class="bi bi-shop"></i>
-                            <span>Lojas Digitais</span>
-                        </a>
-                        <a href="../distribution/schedule" class="nav-link">
-                            <i class="bi bi-calendar-event"></i>
-                            <span>Agendar Lançamento</span>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="../manager/gestion" class="nav-link">
-                        <i class="bi bi-star"></i>
-                        <span>Gestão Geral</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="../finances/payments" class="nav-link">
-                        <i class="bi bi-wallet2"></i>
-                        <span>Pagamentos</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="../finances/earnings" class="nav-link">
-                        <i class="bi bi-currency-dollar"></i>
-                        <span>Finanças e Rendimentos</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseIntegration" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseIntegration">
-                        <i class="bi bi-youtube"></i>
-                        <span>Unificação e V. Youtube</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseIntegration">
-                        <a href="../integration/youtube" class="nav-link">
-                            <i class="bi bi-gear"></i>
-                            <span>Configurar Integração</span>
-                        </a>
-                        <a href="../integration/verify" class="nav-link">
-                            <i class="bi bi-check2-all"></i>
-                            <span>Verificar Canais</span>
-                        </a>
-                        <a href="../integration/monetization" class="nav-link">
-                            <i class="bi bi-youtube"></i>
-                            <span>Gerenciamento de Conteúdo Monetizado</span>
-                        </a>
-                    </div>
-                </li>
-
-                <li class="nav-item">
-                    <a href="#collapseSupport" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseSupport">
-                        <i class="bi bi-headset"></i>
-                        <span>Suporte</span>
-                        <span class="badge bg-danger badge-notification">3</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseSupport">
-                        <a href="../messages/inbox" class="nav-link">
-                            <i class="bi bi-envelope"></i>
-                            <span>Caixa de entrada</span>
-                        </a>
-                        <a href="../messages/compose" class="nav-link">
-                            <i class="bi bi-pencil"></i>
-                            <span>Enviar mensagens</span>
-                        </a>
-                    </div>
-                </li>
-
-                <li class="nav-item">
-                    <a href="#collapseHelp" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseHelp">
-                        <i class="bi bi-question-circle"></i>
-                        <span>Ajuda</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseHelp">
-                        <a href="../help/faqs" class="nav-link">
-                            <i class="bi bi-messenger"></i>
-                            <span>FAQs</span>
-                        </a>
-                        <a href="../help/tutorials" class="nav-link">
-                            <i class="bi bi-book"></i>
-                            <span>Tutoriais</span>
-                        </a>
-                        <a href="../help/contact" class="nav-link">
-                            <i class="bi bi-telephone"></i>
-                            <span>Contacto com suporte</span>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="../settings/config" class="nav-link">
-                        <i class="bi bi-sliders"></i>
-                        <span>Configurações</span>
-                    </a>
-                </li>
-                <li class="nav-item mt-4">
-                    <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#logoutwasomupfy">
-                        <i class="bi bi-box-arrow-right"></i>
-                        <span>Logout</span>
-                    </a>
-                </li>
-                <li class="nav-item mt-4">
-                    <a href="http://localhost:5500/home" target="_blank" class="nav-link">
-                        <i class="bi bi-box-arrow-in-up-right"></i>
-                        <span>Visitar Site</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-        <!-- Content -->
         <div class="content w-100" id="mainContent">
-            <nav class="navbar navbar-expand-lg">
-                <button class="navbar-toggler" type="button" id="sidebarToggle" aria-label="Abrir/Fechar Menu">
-                    <i class="bi bi-list text-white"></i>
-                </button>
-                <div class="ms-auto d-flex align-items-center">
-                    <button class="btn btn-outline-light btn-sm me-2" onclick="toggleDarkMode()"
-                        aria-label="Alternar Modo Escuro">
-                        <i class="bi bi-moon"></i>
-                    </button>
-                    <div class="dropdown me-2 position-relative">
-                        <button class="btn btn-outline-light btn-sm position-relative" type="button"
-                            data-bs-toggle="dropdown" aria-label="Notificações">
-                            <i class="bi bi-bell"></i>
-                            <span
-                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">5</span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-start p-0" style="min-width: 250px;">
-                            <li class="dropdown-header bg-dark text-white p-2">Notificações (5)</li>
-                            <li><a class="dropdown-item p-2" href="#">Novo artista registrado</a></li>
-                            <li><a class="dropdown-item p-2" href="#">Música atingiu 1000 plays</a></li>
-                            <li><a class="dropdown-item p-2" href="#">Atualização do sistema disponível</a></li>
-                            <li class="dropdown-footer text-center p-2"><a href="#" class="text-primary">Ver todas</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="dropdown me-2 position-relative">
-                        <button class="btn btn-outline-light btn-sm position-relative" type="button"
-                            data-bs-toggle="dropdown" aria-label="Mensagens">
-                            <i class="bi bi-envelope"></i>
-                            <span
-                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">2</span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-start p-0" style="min-width: 250px;">
-                            <li class="dropdown-header bg-dark text-white p-2">Mensagens (2)</li>
-                            <li><a class="dropdown-item p-2" href="#">Suporte #4521 - Novo ticket</a></li>
-                            <li><a class="dropdown-item p-2" href="#">Mensagem de artista</a></li>
-                            <li class="dropdown-footer text-center p-2"><a href="#" class="text-primary">Ver todas</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="dropdown">
-                        <button class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center"
-                            type="button" data-bs-toggle="dropdown" aria-label="Menu do Usuário">
-                            <img src="../../../assets/img/avatar/avatar.png" alt="Usuário" class="rounded-circle me-1"
-                                style="height: 24px;">
-                            <span>Cristiano Amadeu</span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="../user/profile"><i
-                                        class="bi bi-person me-2"></i>Perfil</a></li>
-                            <li><a class="dropdown-item" href="../settings/config"><i
-                                        class="bi bi-sliders me-2"></i>Configurações</a></li>
-                            <li><a class="dropdown-item" href="../help/help"><i
-                                        class="bi bi-question-circle me-2"></i>Ajuda</a>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutwasomupfy"
-                                    href="#"><i class="bi bi-box-arrow-right me-2"></i>Sair</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-
-            <!-- Adicione isso dentro da tag <nav class="bottom-nav"> -->
-            <div class="connection-status" id="connectionStatus"></div>
-            <div class="status-notification" id="statusNotification"></div>
-
-            <!-- ════ MODAL — Logout ════ -->
-            <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false"
-                tabindex="-1" aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content modal-bottom">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">Terminar sessão</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="container">
-                                <div class="row justify-content-center text-center">
-                                    <div class="col-md-12 content-center justify-center text-center">
-                                        <p class="text-center text-dark">@josembengadacosta você tem
-                                            certeza
-                                            de que desejas terminar
-                                            sessão?</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <div>
-                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Não,
-                                    continuar</button>
-                            </div>
-                            <div>
-                                <button class="btn btn-danger" type="button" name="logout_wasomupfy"
-                                    onclick="logout_wasomupfy()">Sim, terminar</button>
-                            </div>
-                            <script type="text/javascript">
-                                function logout_wasomupfy() {
-                                    window.location = 'logout';
-                                }
-                            </script>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- ════ MODAL — Logout  FIM ════ -->
-
+            <?php require_once __DIR__ . '/../../include/navbar.php'; ?>
             <div class="container-fluid p-0">
-                <div class="row mb-3 mt-2">
-                    <div class="welcome-text col-auto d-sm-block">
-                        <h2 class="h4 mb-2"><i class="bi bi-person-fill-gear me-2"></i>Editar Usuário</span></h2>
+
+                <!-- Cabeçalho -->
+                <div class="row mb-3 mt-2 align-items-center">
+                    <div class="welcome-text col-auto">
+                        <h2 class="h4 mb-1"><i class="bi bi-person-lines-fill me-2"></i>Perfil do Utilizador</h2>
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb mb-0">
-                                <li class="breadcrumb-item"><a href="edit" class="text-secondary">Usuários</a>
-                                </li>
-                                <li class="breadcrumb-item active text-secondary" aria-current="page">Editar Usuário
-                                </li>
+                                <li class="breadcrumb-item"><a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users"
+                                        class="text-secondary">Utilizadores</a></li>
+                                <li class="breadcrumb-item active text-white-stable">
+                                    <?php echo htmlspecialchars($user['first_name']); ?></li>
                             </ol>
                         </nav>
                     </div>
-                    <div class="col-auto ms-auto text-end mt-n1 mt-3 mb-2">
-                        <a class="text-secondary shadow-sm me-2" href="all-users">Todos Usuários</a>
-                        <a class="text-secondary shadow-sm" href="delete">Excluír Usuário</a>
-                        <button class="btn btn-wasomupfy text-white shadow-sm" data-bs-toggle="modal"
-                            data-bs-target="#addArtistwasomupfy">
-                            <i class="align-middle bi bi-plus"></i> Adcionar dados</button>
-                    </div>
-                    <!-- Stats Description -->
-                    <p class="stats-description mt-2">
-                        Encontras aqui o lançamento de todas as contas da plataforma, mais poderá depender se és
-                        administrador regional ou glboal para veres alguns lançamentos disponíveis. Caso tenhas dúvidas
-                        em
-                        alguns lançamentos faça a pesquisa do mesmo através do seu <strong>Título</strong>,
-                        <strong>Artista</strong> ou <strong>UPC</strong>.
-                    </p>
+                </div>
+                <!-- Hero Card -->
+                <div class="hero-card">
+                    <div class="d-flex flex-wrap align-items-center gap-4 position-relative" style="z-index: 1">
+                        <!-- Avatar -->
+                        <div class="avatar-wrapper">
+                            <?php if (!empty($user['photo_user'])): ?>
+                                <img src="<?php echo APP_URL; ?>/assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user['photo_user']); ?>"
+                                    class="avatar-img" id="avatar-preview" alt="Avatar"
+                                    onclick="document.getElementById('avatar-input').click()">
+                            <?php else: ?>
+                                <div class="avatar-ini" id="avatar-placeholder" style="background:<?php echo $color; ?>"
+                                    onclick="document.getElementById('avatar-input').click()">
+                                    <?php echo $ini; ?>
+                                </div>
+                            <?php endif; ?>
+                            <div class="avatar-edit-badge" onclick="document.getElementById('avatar-input').click()">
+                                <i class="bi bi-camera-fill" style="font-size: .75rem;"></i>
+                            </div>
+                            <input type="file" id="avatar-input" name="photo_user" accept="image/*" class="d-none">
+                        </div>
 
-                    <!-- Filtros -->
-                    <div class="search-container fade-in-custom mt-3">
-                        <div class="row g-3">
-                            <div class="col-md-2">
-                                <label for="user-id">ID:</label>
-                                <input type="number" class="form-control" id="user-id" placeholder="ID">
+                        <!-- Info -->
+                        <div class="flex-grow-1">
+                            <div class="d-flex flex-wrap align-items-center gap-3 mb-2">
+                                <h3 class="mb-0 fw-bold" style="color: #fff;"><?php echo htmlspecialchars($fullname); ?>
+                                </h3>
+                                <span class="hero-status hero-status-<?php echo $user['status_user']; ?>">
+                                    <i
+                                        class="bi <?php echo $status_options[$user['status_user']]['icon'] ?? 'bi-person'; ?>"></i>
+                                    <?php echo $status_options[$user['status_user']]['label'] ?? ucfirst($user['status_user']); ?>
+                                </span>
+                                <span class="trust-score trust-<?php echo $trust_class; ?>">
+                                    <i class="bi bi-shield-check"></i>
+                                    Score: <?php echo $user['trust_score']; ?>/100
+                                </span>
                             </div>
-                            <div class="col-md-2">
-                                <label for="user-account">Conta:</label>
-                                <input type="text" class="form-control" id="user-account" placeholder="Conta">
-                            </div>
-                            <div class="col-md-2">
-                                <label for="user-name">Nome:</label>
-                                <input type="text" class="form-control" id="user-name" placeholder="Nome">
-                            </div>
-                            <div class="col-md-2">
-                                <label for="user-role">Função:</label>
-                                <select class="form-select" id="user-role" multiple>
-                                    <option value="admin">Administrador</option>
-                                    <option value="distributor">Distribuidor</option>
-                                    <option value="analyst">Analista</option>
-                                    <option value="financial">Financeiro</option>
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <label for="user-country">País:</label>
-                                <select class="form-select" id="user-country">
-                                    <option value="">Todos</option>
-                                    <option value="AO">Angola</option>
-                                    <option value="PT">Portugal</option>
-                                    <option value="BR">Brasil</option>
-                                    <option value="MZ">Moçambique</option>
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <label for="user-status">Estado:</label>
-                                <select class="form-select" id="user-status">
-                                    <option value="">Todos</option>
-                                    <option value="active">Ativo</option>
-                                    <option value="suspended">Suspenso</option>
-                                    <option value="review">Revisão</option>
-                                </select>
+                            <div class="d-flex flex-wrap gap-3" style="font-size: .8rem; color: rgba(255,255,255,.6);">
+                                <span><i
+                                        class="bi bi-envelope me-1"></i><?php echo htmlspecialchars($user['email_user']); ?></span>
+                                <?php if ($user['tel_user']): ?>
+                                    <span><i
+                                            class="bi bi-telephone me-1"></i><?php echo htmlspecialchars($user['tel_user']); ?></span>
+                                <?php endif; ?>
+                                <span><i class="bi bi-calendar3 me-1"></i>Membro desde
+                                    <?php echo $member_since; ?></span>
+                                <?php if ($user['last_login_at']): ?>
+                                    <span><i class="bi bi-clock-history me-1"></i>Último acesso:
+                                        <?php echo date('d/m/Y H:i', strtotime($user['last_login_at'])); ?></span>
+                                <?php endif; ?>
                             </div>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center mt-2 mb-2">
-                            <button class="btn btn-wasomupfy text-white" id="clear-user-filters">
-                                <i class="bi bi-eraser me-2"></i> Limpar Filtros
-                            </button>
-                            <span class="" id="user-results-count">0 resultados</span>
-                        </div>
-                    </div>
 
-                    <!-- Tabela -->
-                    <div class="card fade-in-custom mt-3">
-                        <div class="table-responsive">
-                            <table id="users-table" class="table table-striped table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Foto</th>
-                                        <th>Conta</th>
-                                        <th>Nome</th>
-                                        <th>Usuário</th>
-                                        <th>Funções</th>
-                                        <th>E-mail</th>
-                                        <th>País</th>
-                                        <th>Cidade</th>
-                                        <th>Estado</th>
-                                        <th>Criação</th>
-                                        <th>Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="users-list">
-                                    <!-- Dados serão carregados via JavaScript -->
-                                </tbody>
-                            </table>
+                        <!-- Quick Actions -->
+                        <div class="d-flex gap-2">
+                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users/view?id=<?php echo $id; ?>"
+                                class="action-btn action-btn-secondary"
+                                style="background: rgba(255,255,255,.1); color:#fff;">
+                                <i class="bi bi-eye me-1"></i>Ver perfil
+                            </a>
                         </div>
-                        <nav aria-label="Page navigation">
-                            <ul class="pagination justify-content-center" id="users-pagination"></ul>
-                        </nav>
                     </div>
                 </div>
-            </div>
-        </div>
 
-
-        <!-- Modal de Edição -->
-        <div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Editar Usuário <span id="edit-user-id-badge"
-                                class="badge bg-primary"></span></h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <!-- Feedback -->
+                <?php if ($feedback): ?>
+                    <div class="alert alert-<?php echo $feedback[0]; ?> alert-dismissible fade show mb-3">
+                        <i class="bi <?php echo $feedback[1]; ?> me-2"></i>
+                        <?php echo htmlspecialchars($feedback[2]); ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
-                    <div class="modal-body">
-                        <form id="edit-user-form">
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Nome Completo</label>
-                                    <input type="text" class="form-control" id="edit-name" required>
+                <?php endif; ?>
+
+                <div class="row g-4">
+                    <!-- Formulário Principal -->
+                    <div class="col-xl-8">
+                        <div class="form-card">
+                            <form id="edit-user-form" method="POST"
+                                action="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users/edit-process"
+                                enctype="multipart/form-data">
+                                <input type="hidden" name="id_users" value="<?php echo $id; ?>">
+                                <input type="hidden" name="csrf_token"
+                                    value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
+
+                                <!-- Informações Pessoais -->
+                                <div class="section-title">
+                                    <i class="bi bi-person-badge"></i>Informações Pessoais
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Nome de Usuário</label>
-                                    <input type="text" class="form-control" id="edit-username" required>
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Conta</label>
-                                    <input type="text" class="form-control" id="edit-account" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">E-mail</label>
-                                    <input type="email" class="form-control" id="edit-email" required>
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Telefone</label>
-                                    <input type="tel" class="form-control" id="edit-phone" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Plano</label>
-                                    <select class="form-select" id="edit-plan">
-                                        <option value="Free">Free</option>
-                                        <option value="Premium">Premium</option>
-                                        <option value="Enterprise">Enterprise</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">País</label>
-                                    <select class="form-select" id="edit-country">
-                                        <option value="AO">Angola</option>
-                                        <option value="PT">Portugal</option>
-                                        <option value="BR">Brasil</option>
-                                        <option value="MZ">Moçambique</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Cidade</label>
-                                    <input type="text" class="form-control" id="edit-city" required>
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Funções</label>
-                                <div class="role-selector">
-                                    <input type="checkbox" id="edit-role-admin" class="role-checkbox" value="admin">
-                                    <label for="edit-role-admin" class="role-label">Administrador</label>
-
-                                    <input type="checkbox" id="edit-role-distributor" class="role-checkbox"
-                                        value="distributor">
-                                    <label for="edit-role-distributor" class="role-label">Distribuidor</label>
-
-                                    <input type="checkbox" id="edit-role-analyst" class="role-checkbox" value="analyst">
-                                    <label for="edit-role-analyst" class="role-label">Analista</label>
-
-                                    <input type="checkbox" id="edit-role-financial" class="role-checkbox"
-                                        value="financial">
-                                    <label for="edit-role-financial" class="role-label">Financeiro</label>
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Estado da Conta</label>
-                                <select class="form-select" id="edit-status">
-                                    <option value="active">Ativo</option>
-                                    <option value="suspended">Suspenso</option>
-                                    <option value="review">Revisão</option>
-                                </select>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-primary" id="save-user-changes">Salvar Alterações</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        <!-- Modal add new user -->
-        <div class="modal fade" id="addArtistwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-            aria-labelledby="addArtistwasomupfyLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content modal-bottom">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5 text-dark" id="addArtistwasomupfyLabel">Adcionar Usuário</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="artist-form">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-floating mb-3">
-                                        <input type="text" class="form-control" name="name" value="" required>
-                                        <label class="form-label">ID</label>
-                                    </div>
-                                    <div class="form-floating mb-3">
-                                        <input type="text" class="form-control" name="account" value="" required>
-                                        <label class="form-label">Conta</label>
-                                    </div>
-                                    <div class="form-floating mb-3">
-                                        <input type="text" class="form-control" name="account" value="" required>
-                                        <label class="form-label">E-mail</label>
-                                    </div>
-                                    <div class="form-floating mb-3">
-                                        <input type="tel" maxlength="18" placeholder="+244 9xx xxx xxx"
-                                            class="form-control" autocomplete="tel" id="tel" name="tel_user"
-                                            list="tel_codes">
-                                        <span class="input-group-text"><i data-feather="phone"></i></span>
-                                        <datalist id="tel_codes">
-                                            <option value="+93">Afeganistão
-                                            </option>
-                                            <option value="+27">África do
-                                                Sul</option>
-                                            <option value="+247">Ascensão
-                                            </option>
-                                            <option value="+355">Albânia
-                                            </option>
-                                            <option value="+49">Alemanha
-                                            </option>
-                                            <option value="+376">Andorra
-                                            </option>
-                                            <option value="+244">Angola
-                                            </option>
-                                            <option value="+1">Anguilla
-                                            </option>
-                                            <option value="+1">Antígua e
-                                                Barbuda</option>
-                                            <option value="+966">Arábia
-                                                Saudita</option>
-                                            <option value="+213">Argélia
-                                            </option>
-                                            <option value="+54">Argentina
-                                            </option>
-                                            <option value="+374">Arménia
-                                            </option>
-                                            <option value="+994">Azerbaijão
-                                            </option>
-                                            <option value="+599"> Antilhas
-                                                Holandesas</option>
-                                            <option value="+994">Azerbaijão
-                                            </option>
-                                            <option value="+297">Aruba
-                                            </option>
-                                            <option value="+61">Austrália
-                                            </option>
-                                            <option value="+1">Bahamas
-                                            </option>
-                                            <option value="+880">Bangladesh
-                                            </option>
-                                            <option value="+1">Barbados
-                                            </option>
-                                            <option valeu=" ">Barém</option>
-                                            <option value="+32">Bélgica
-                                            </option>
-                                            <option value="+501">Belize
-                                            </option>
-                                            <option valeu="+229">Benim
-                                            </option>
-                                            <option value="+1">Bermudas
-                                            </option>
-                                            <option value="+375">
-                                                Bielorrússia</option>
-                                            <option value="+973">Bahrein
-                                            </option>
-                                            <option value="+591">Bolívia e
-                                                Herzegovina</option>
-                                            <option value="+387">Bósnia
-                                            </option>
-                                            <option value="+267">Botsuana
-                                            </option>
-                                            <option value="+55">Brasil
-                                            </option>
-                                            <option value="+673">Brunei
-                                            </option>
-                                            <option value="+359">Bulgária
-                                            </option>
-                                            <option value="+226">Burquina
-                                                Faso</option>
-                                            <option value="+257">Burundi
-                                            </option>
-                                            <option value="+975">Butão
-                                            </option>
-                                        </datalist>
-                                        <label for="tel" class="form-label">Telefone <span
-                                                class="text-muted">(opcional)</span></label>
-                                    </div>
-                                    <div class="form-floating mb-3">
-                                        <select class="form-control" id="country" required name="country_user"
-                                            autocomplete="country-name">
-                                            <option value="" disabled selected>Selecione seu país</option>
-                                            <option>Afeganistão</option>
-                                            <option>Alanda</option>
-                                            <option>Albânia</option>
-                                            <option>África do Sul</option>
-                                            <option>Alemanha</option>
-                                            <option>Andorra</option>
-                                            <option>Angola</option>
-                                            <option>Anguilla</option>
-                                            <option>Antígua</option>
-                                            <option>Arábia Saudita</option>
-                                            <option>Argélia</option>
-                                            <option>Argentina</option>
-                                            <option>Arménia</option>
-                                            <option>Azerbaijão</option>
-                                            <option>Aruba</option>
-                                            <option>Austrália</option>
-                                            <option>Bahamas</option>
-                                            <option>Barbuda</option>
-                                            <option>Bangladesh</option>
-                                            <option>Barbados</option>
-                                            <option>Barém</option>
-                                            <option>Bélgica</option>
-                                            <option>Belize</option>
-                                            <option>Benim</option>
-                                            <option>Bermudas</option>
-                                            <option>Bielorrússia</option>
-                                            <option>Bolívia</option>
-                                            <option>Bósnia</option>
-                                            <option>Botsuana</option>
-                                            <option>Brasil</option>
-                                            <option>Brunei</option>
-                                            <option>Bulgária</option>
-                                            <option>Burquina Faso</option>
-                                            <option>Burundi</option>
-                                            <option>Butão</option>
-                                            <option>Cabo Verde</option>
-                                            <option>Camerões</option>
-                                            <option>Camboia</option>
-                                            <option>Camboja</option>
-                                            <option>Canadá</option>
-                                            <option>Catar</option>
-                                            <option>Caicos</option>
-                                            <option>Cazaquistão</option>
-                                            <option>Chade</option>
-                                            <option>Chile</option>
-                                            <option>Cidade do Vaticano</option>
-                                            <option>Colômbia</option>
-                                            <option>Comores</option>
-                                            <option>Congo-Brazzaville</option>
-                                            <option>Congo-Kinshasa</option>
-                                            <option>Coreia do Norte</option>
-                                            <option>Coreia do Sul</option>
-                                            <option>Costa do Marfim</option>
-                                            <option>Costa Rica</option>
-                                            <option>Croácia</option>
-                                            <option>Cuba</option>
-                                            <option>Curaçau</option>
-                                            <option>Dinamarca</option>
-                                            <option>Domínica</option>
-                                            <option>Egito</option>
-                                            <option>Emirados Árabes Unidos</option>
-                                            <option>Equador</option>
-                                            <option>Eritreia</option>
-                                            <option>Eslováquia</option>
-                                            <option>Eslovénia</option>
-                                            <option>Espanha</option>
-                                            <option>Estados Unidos</option>
-                                            <option>Estónia</option>
-                                            <option>Etiópia</option>
-                                            <option>Fiji</option>
-                                            <option>Filipinas</option>
-                                            <option>Finlândia</option>
-                                            <option>França</option>
-                                            <option>Gabão</option>
-                                            <option>Gâmbia</option>
-                                            <option>Gana</option>
-                                            <option>Geórgia</option>
-                                            <option>Gibraltar</option>
-                                            <option>Granada</option>
-                                            <option>Grécia</option>
-                                            <option>Gronelândia</option>
-                                            <option>Guadalupe</option>
-                                            <option>Guame</option>
-                                            <option>Guatemala</option>
-                                            <option>Guernsey</option>
-                                            <option>Guiana</option>
-                                            <option>Guiana Francesa</option>
-                                            <option>Guiné</option>
-                                            <option>Guiné Equatorial</option>
-                                            <option>Guiné-Bissau</option>
-                                            <option>Haiti</option>
-                                            <option>Honduras</option>
-                                            <option>Hong Kong</option>
-                                            <option>Hungria</option>
-                                            <option>Lémen</option>
-                                            <option>Ilhas de Ascensão</option>
-                                            <option>Ilha de Man</option>
-                                            <option>Ilha Natal</option>
-                                            <option>Ilha Norfolk</option>
-                                            <option>Ilhas Caimão</option>
-                                            <option>Ilhas Cook</option>
-                                            <option>Ilhas dos Cocos(Keeling)</option>
-                                            <option>Ilhas Faroé</option>
-                                            <option>Ilhas Malvinas</option>
-                                            <option>Ilhas Marshall</option>
-                                            <option>Ilhas Salomão</option>
-                                            <option>Ilhas Turcas</option>
-                                            <option>Ilhas Virgens Britânicas</option>
-                                            <option>Ilhas Virgens dos EUA</option>
-                                            <option>Índia</option>
-                                            <option>Indonésia</option>
-                                            <option>Irão</option>
-                                            <option>Iraque</option>
-                                            <option>Irlanda</option>
-                                            <option>Islândia</option>
-                                            <option>Israel</option>
-                                            <option>Itália</option>
-                                            <option>Jamaica</option>
-                                            <option>Japão</option>
-                                            <option>Jersey</option>
-                                            <option>Jibute</option>
-                                            <option>Jordânia</option>
-                                            <option>Kosovo</option>
-                                            <option>Kuwait</option>
-                                            <option>Laos</option>
-                                            <option>Lesoto</option>
-                                            <option>Letónia</option>
-                                            <option>Líbano</option>
-                                            <option>Libéria</option>
-                                            <option>Líbia</option>
-                                            <option>Listenstaine</option>
-                                            <option>Lituânia</option>
-                                            <option>Luxemburgo</option>
-                                            <option>Macau</option>
-                                            <option>Macedónia(ARJM)</option>
-                                            <option>Madagáscar</option>
-                                            <option>Maiote</option>
-                                            <option>Malásia</option>
-                                            <option>Maláui</option>
-                                            <option>Maldivas</option>
-                                            <option>Mali</option>
-                                            <option>Malta</option>
-                                            <option>Marrocos</option>
-                                            <option>Martinica</option>
-                                            <option>Maurício</option>
-                                            <option>Mauritânia</option>
-                                            <option>México</option>
-                                            <option>Mianmar (Birmânia)</option>
-                                            <option>Micronésia</option>
-                                            <option>Moçambique</option>
-                                            <option>Moldávia</option>
-                                            <option>Mónaco</option>
-                                            <option>Mongólia</option>
-                                            <option>Monserrate</option>
-                                            <option>Montenegro</option>
-                                            <option>Namíbia</option>
-                                            <option>Nauru</option>
-                                            <option>Nepal</option>
-                                            <option>Nicarágua</option>
-                                            <option>Níger</option>
-                                            <option>Nigéria</option>
-                                            <option>Niue</option>
-                                            <option>Noruega</option>
-                                            <option>Nova Caledónia</option>
-                                            <option>Nova Zelândia</option>
-                                            <option>Omã</option>
-                                            <option>Países Baixos</option>
-                                            <option>Países Baixos Caribenhos</option>
-                                            <option>Palau</option>
-                                            <option>Panamá</option>
-                                            <option>Papua-Nova Guiné</option>
-                                            <option>Paquistão</option>
-                                            <option>Paraguai</option>
-                                            <option>Peru</option>
-                                            <option>Polinésia Francesa</option>
-                                            <option>Polónia</option>
-                                            <option>Porto Rico</option>
-                                            <option>Portugal</option>
-                                            <option>Quénia</option>
-                                            <option>Quirguistão</option>
-                                            <option>Quiribati</option>
-                                            <option>Reino Unido</option>
-                                            <option>República Centro-Africa</option>
-                                            <option>República Checa</option>
-                                            <option>República Dominicana</option>
-                                            <option>Reunião</option>
-                                            <option>Romênia</option>
-                                            <option>Ruanda</option>
-                                            <option>Saara Ocidental</option>
-                                            <option>Salvador</option>
-                                            <option>Samoa</option>
-                                            <option>Samoa Americana</option>
-                                            <option>Santa Helena</option>
-                                            <option>Santa Lúcia</option>
-                                            <option>São Bartolomeu</option>
-                                            <option>São Cristóvão e Neves</option>
-                                            <option>São Marinho</option>
-                                            <option>São Martinho</option>
-                                            <option>São Tomé e Príncipe</option>
-                                            <option>São Vicente</option>
-                                            <option>Seicheles</option>
-                                            <option>Senegal</option>
-                                            <option>Serra Leoa</option>
-                                            <option>Sérvia</option>
-                                            <option>Singapura</option>
-                                            <option>Síria</option>
-                                            <option>Somália</option>
-                                            <option>Sri Lanka</option>
-                                            <option>Suazilândia</option>
-                                            <option>Sudão</option>
-                                            <option>Sudão do Sul</option>
-                                            <option>Suécia</option>
-                                            <option>Suriname</option>
-                                            <option>Svalbard</option>
-                                            <option>Tailândia</option>
-                                            <option>Taiwan</option>
-                                            <option>Tajiquistão</option>
-                                            <option>Tanzânia</option>
-                                            <option>Território Britânico do Oceano Índico</option>
-                                            <option>Território Palestinianos</option>
-                                            <option>Timor-Leste</option>
-                                            <option>Togo</option>
-                                            <option>Tonga</option>
-                                            <option>Toquelau</option>
-                                            <option>Trindade</option>
-                                            <option>Tobago</option>
-                                            <option>Tristão da Cunha</option>
-                                            <option>Tunísia</option>
-                                            <option>Turquia</option>
-                                            <option>Turquemenistão</option>
-                                            <option>Tuvalu</option>
-                                            <option>Ucrânia</option>
-                                            <option>Uruguai</option>
-                                            <option>Usbequistão</option>
-                                            <option>Vanuatu</option>
-                                            <option>Venezuela</option>
-                                            <option>Vietname</option>
-                                            <option>Wallis</option>
-                                            <option>Zâmbia</option>
-                                            <option>Zimbábue</option>
-                                            <div class="invalid-feedback">Por favor, selecione um país.</div>
-                                        </select>
-                                        <label for="country" class="form-label">País <span
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Nome Completo <span
                                                 class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-transparent"><i
+                                                    class="bi bi-person"></i></span>
+                                            <input type="text" class="form-control" name="first_name"
+                                                value="<?php echo htmlspecialchars($user['first_name']); ?>" required>
+                                        </div>
                                     </div>
-                                    <div class="form-floating mb-3">
-                                        <input type="text" class="form-control" name="city" autocomplete="" value=""
-                                            required>
-                                        <label class="form-label">Cidade</label>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Apelido</label>
+                                        <input type="text" class="form-control" name="second_name"
+                                            value="<?php echo htmlspecialchars($user['second_name'] ?? ''); ?>">
                                     </div>
-                                    <div class="form-floating mb-3">
-                                        <select class="form-select" name="role" required>
-                                            <option value="verified">Verificado</option>
-                                            <option value="pending">Pendente</option>
-                                            <option value="rejected">Rejeitado</option>
-                                            <option value="expired">Expirado</option>
-                                        </select>
-                                        <label class="form-label">Estado</label>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Nome de Utilizador</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-transparent">@</span>
+                                            <input type="text" class="form-control" name="user_name"
+                                                value="<?php echo htmlspecialchars($user['user_name'] ?? ''); ?>">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">E-mail <span
+                                                class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-transparent"><i
+                                                    class="bi bi-envelope"></i></span>
+                                            <input type="email" class="form-control" name="email_user"
+                                                value="<?php echo htmlspecialchars($user['email_user']); ?>" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Telefone</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-transparent"><i
+                                                    class="bi bi-whatsapp"></i></span>
+                                            <input type="tel" class="form-control" name="tel_user"
+                                                value="<?php echo htmlspecialchars($user['tel_user'] ?? ''); ?>">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Sobre</label>
+                                        <textarea class="form-control" name="about_user"
+                                            rows="2"><?php echo htmlspecialchars($user['about_user'] ?? ''); ?></textarea>
                                     </div>
                                 </div>
-                                <div class="col-md-12">
-                                    <div class="form-floating mb-3">
-                                        <select class="form-select" name="role" required>
-                                            <option value="verified">Artist</option>
-                                            <option value="pending">Manager</option>
-                                            <option value="rejected">Label</option>
+
+                                <!-- Localização & Plano -->
+                                <div class="section-title">
+                                    <i class="bi bi-geo-alt"></i>Localização & Plano
+                                </div>
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">País</label>
+                                        <select class="form-select" name="country_user">
+                                            <option value="">Selecionar país</option>
+                                            <?php foreach ($paises as $code => $name): ?>
+                                                <option value="<?php echo $code; ?>"
+                                                    <?php echo ($user['country_user'] ?? '') === $code ? 'selected' : ''; ?>>
+                                                    <?php echo $name; ?>
+                                                </option>
+                                            <?php endforeach; ?>
                                         </select>
-                                        <label class="form-label">Plano</label>
                                     </div>
-                                    <div class="form-floating mb-3">
-                                        <select class="form-select" name="role" required>
-                                            <option value="verified">Ativo</option>
-                                            <option value="pending">Suspenso</option>
-                                            <option value="rejected">Revisão</option>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Cidade</label>
+                                        <input type="text" class="form-control" name="city_user"
+                                            value="<?php echo htmlspecialchars($user['city_user'] ?? ''); ?>">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Plano</label>
+                                        <select class="form-select" name="plan_selected">
+                                            <option value="">Sem plano</option>
+                                            <?php foreach ($plans as $plan): ?>
+                                                <option value="<?php echo $plan['id_plan']; ?>"
+                                                    <?php echo ($user['plan_selected'] ?? 0) == $plan['id_plan'] ? 'selected' : ''; ?>>
+                                                    <?php echo htmlspecialchars($plan['name_plan']); ?>
+                                                </option>
+                                            <?php endforeach; ?>
                                         </select>
-                                        <label class="form-label">Estado</label>
                                     </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Estado da Conta</label>
+                                        <select class="form-select" name="status_user">
+                                            <?php foreach ($status_options as $key => $opt): ?>
+                                                <option value="<?php echo $key; ?>"
+                                                    <?php echo $user['status_user'] === $key ? 'selected' : ''; ?>>
+                                                    <?php echo $opt['label']; ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Notificações -->
+                                <div class="section-title">
+                                    <i class="bi bi-bell"></i>Notificações
+                                </div>
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" name="notif_email" value="1"
+                                                <?php echo $user['notif_email'] ? 'checked' : ''; ?>>
+                                            <label class="form-check-label">E-mail</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" name="notif_push" value="1"
+                                                <?php echo $user['notif_push'] ? 'checked' : ''; ?>>
+                                            <label class="form-check-label">Push</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" name="notif_weekly"
+                                                value="1" <?php echo $user['notif_weekly'] ? 'checked' : ''; ?>>
+                                            <label class="form-check-label">Resumo semanal</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" name="notif_releases"
+                                                value="1" <?php echo $user['notif_releases'] ? 'checked' : ''; ?>>
+                                            <label class="form-check-label">Lançamentos</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Ações -->
+                                <div class="d-flex justify-content-end gap-3 pt-3 border-top">
+                                    <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users"
+                                        class="action-btn action-btn-secondary">
+                                        <i class="bi bi-arrow-left me-1"></i>Cancelar
+                                    </a>
+                                    <button type="submit" class="action-btn action-btn-primary">
+                                        <i class="bi bi-check-lg me-1"></i>Guardar Alterações
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar Direita - Informações adicionais -->
+                    <div class="col-xl-4">
+                        <!-- Estatísticas -->
+                        <div class="form-card mb-4">
+                            <div class="section-title">
+                                <i class="bi bi-graph-up"></i>Estatísticas
+                            </div>
+                            <div class="info-stat">
+                                <div class="info-stat-label">ID do Utilizador</div>
+                                <div class="info-stat-value">
+                                    <code>#<?php echo str_pad($id, 6, '0', STR_PAD_LEFT); ?></code>
                                 </div>
                             </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <div>
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                            <div class="info-stat">
+                                <div class="info-stat-label">Membro desde</div>
+                                <div class="info-stat-value">
+                                    <?php echo date('d/m/Y \à\s H:i', strtotime($user['creat_user'])); ?></div>
+                            </div>
+                            <?php if ($user['modif_user']): ?>
+                                <div class="info-stat">
+                                    <div class="info-stat-label">Última atualização</div>
+                                    <div class="info-stat-value">
+                                        <?php echo date('d/m/Y \à\s H:i', strtotime($user['modif_user'])); ?></div>
+                                </div>
+                            <?php endif; ?>
+                            <div class="info-stat">
+                                <div class="info-stat-label">Onboarding concluído</div>
+                                <div class="info-stat-value">
+                                    <?php if ($user['onboarding_done']): ?>
+                                        <span class="badge bg-success"><i class="bi bi-check"></i> Sim</span>
+                                    <?php else: ?>
+                                        <span class="badge bg-secondary"><i class="bi bi-clock"></i> Não</span>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            <div class="info-stat">
+                                <div class="info-stat-label">2FA Activado</div>
+                                <div class="info-stat-value">
+                                    <?php if ($user['two_factor_enabled']): ?>
+                                        <span class="badge bg-success"><i class="bi bi-check"></i> Activado</span>
+                                    <?php else: ?>
+                                        <span class="badge bg-secondary"><i class="bi bi-x"></i> Desactivado</span>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <button class="btn btn-wasomupfy text-white" type="button"
-                                name="logout_wasomupfy">Salvar</button>
+
+                        <!-- Artistas -->
+                        <div class="form-card mb-4">
+                            <div class="section-title">
+                                <i class="bi bi-mic"></i>Artistas
+                                <span class="ms-auto badge bg-secondary"><?php echo count($artist_list); ?></span>
+                            </div>
+                            <?php if (empty($artist_list)): ?>
+                                <div class="text-center py-4 text-muted">
+                                    <i class="bi bi-person-x fs-1 opacity-25"></i>
+                                    <p class="small mb-0 mt-2">Nenhum artista registado</p>
+                                </div>
+                            <?php else: ?>
+                                <?php foreach ($artist_list as $art): ?>
+                                    <div class="artist-mini">
+                                        <?php if (!empty($art['photo_artist'])): ?>
+                                            <img src="<?php echo APP_URL; ?>/assets/comprovantes/uploads/artists/<?php echo htmlspecialchars($art['photo_artist']); ?>"
+                                                class="artist-mini-img" alt="">
+                                        <?php else: ?>
+                                            <div class="artist-mini-ini"
+                                                style="background: <?php echo adm_avatar_color($art['stage_name']); ?>">
+                                                <?php echo mb_strtoupper(mb_substr($art['stage_name'], 0, 2)); ?>
+                                            </div>
+                                        <?php endif; ?>
+                                        <div class="flex-grow-1">
+                                            <div class="fw-semibold"><?php echo htmlspecialchars($art['stage_name']); ?></div>
+                                            <span
+                                                class="badge bg-<?php echo $art['status_artist'] === 'active' ? 'success' : 'secondary'; ?>"
+                                                style="font-size: .65rem;">
+                                                <?php echo ucfirst($art['status_artist']); ?>
+                                            </span>
+                                        </div>
+                                        <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/artists/edit?id=<?php echo $art['id_artist']; ?>"
+                                            class="text-muted">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                            <div class="mt-2 text-end">
+                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/artist/accounts-users?id=<?php echo $id; ?>"
+                                    class="small text-wasom">
+                                    <i class="bi bi-arrow-right"></i> Ver todos os artistas
+                                </a>
+                            </div>
                         </div>
+
+                        <!-- Lançamentos Recentes -->
+                        <?php if (!empty($release_list)): ?>
+                            <div class="form-card">
+                                <div class="section-title">
+                                    <i class="bi bi-vinyl"></i>Lançamentos Recentes
+                                    <span class="ms-auto badge bg-secondary"><?php echo count($release_list); ?></span>
+                                </div>
+                                <?php foreach ($release_list as $rel): ?>
+                                    <div class="release-mini">
+                                        <?php if (!empty($rel['img_cover'])): ?>
+                                            <img src="<?php echo APP_URL; ?>/assets/comprovantes/uploads/covers/<?php echo htmlspecialchars($rel['img_cover']); ?>"
+                                                class="release-mini-cover" alt="">
+                                        <?php else: ?>
+                                            <div
+                                                class="release-mini-cover d-flex align-items-center justify-content-center bg-light">
+                                                <i class="bi bi-music-note text-muted"></i>
+                                            </div>
+                                        <?php endif; ?>
+                                        <div class="flex-grow-1">
+                                            <div class="fw-semibold small"><?php echo htmlspecialchars($rel['title_album']); ?>
+                                            </div>
+                                            <span class="badge bg-<?php echo match ($rel['status_album']) {
+                                                                        'approved' => 'success',
+                                                                        'pending' => 'warning',
+                                                                        'rejected' => 'danger',
+                                                                        default => 'secondary'
+                                                                    }; ?>">
+                                                <?php echo ucfirst($rel['status_album']); ?>
+                                            </span>
+                                        </div>
+                                        <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/music/view?id=<?php echo $rel['id_album']; ?>"
+                                            class="text-muted">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
+
             </div>
         </div>
-        <!-- ════ MODAL — Logout  FIM ════ -->
+    </div>
 
-        <!-- Floating Action Button -->
-        <div class="fab" onclick="showQuickAction()" aria-label="Ações Rápidas">
-            <i class="bi bi-plus-lg"></i>
-        </div>
-
-        <!-- Footer -->
-        <footer>
-            <div class="container">
-                <div class="row">
-                    <div class="col-12 text-center">
-                        <p class="mb-2">© 2026 Wasom Upfy. Todos os direitos reservados.</p>
-                        <a href="#" class="me-2">Termos de Uso</a>
-                        <a href="#" class="me-2">Privacidade</a>
-                        <a href="#">Suporte</a>
-                    </div>
-                </div>
-            </div>
-        </footer>
-
-
-        <!-- Bottom Navigation -->
-        <!-- <nav class="bottom-nav">
-    <ul>
-        <li>
-            <a href="home" class="active">
-                <i class="bi bi-speedometer2"></i>
-                <span>Dashboard</span>
-            </a>
-        </li>
-        <li>
-            <a href="../music/approve">
-                <i class="bi bi-music-note-list"></i>
-                <span>Músicas</span>
-            </a>
-        </li>
-        <li>
-            <a href="../users/all-users">
-                <i class="bi bi-people"></i>
-                <span>Usuários</span>
-            </a>
-        </li>
-        <li>
-            <a href="../finances/earnings">
-                <i class="bi bi-currency-dollar"></i>
-                <span>Finanças</span>
-            </a>
-        </li>
-        <li>
-            <a href="../settings/config">
-                <i class="bi bi-sliders"></i>
-                <span>Config</span>
-            </a>
-        </li>
-    </ul>
-</nav> -->
-
-
-        <div class="page-loader" id="pageLoader">
-            <div class="loader-content">
-                <!-- Sua imagem pulsante -->
-                <img src="../../../assets/img/brand/wasomupfy_brand.png" class="loader-image" alt="Carregando">
-                <!-- Barra de progresso agora perfeitamente centralizada -->
-                <div class="loader-progress"></div>
+    <footer>
+        <div class="container">
+            <div class="col-12 text-center py-2" style="font-size:.8rem">
+                <p class="mb-0">© 2026 Wasom Upfy. Todos os direitos reservados.</p>
             </div>
         </div>
+    </footer>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="<?php echo APP_URL  ?>/js/lastest.js"></script>
-        <script src="data/database.all.users.js"></script>
-        <script src="js/edit.js" type="module"></script>
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-content">
+            <img src="<?php echo APP_URL; ?>/assets/img/brand/wasomupfy_brand.png" class="loader-image" alt="" />
+            <div class="loader-progress"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="<?php echo APP_URL; ?>/js/lastest.js"></script>
+    <script>
+        window.__BASE_URL__ = '<?php echo APP_URL; ?>';
+        window.__ADMIN_PATH__ = '<?php echo ADMIN_PATH; ?>';
+
+        // Preview de avatar
+        document.getElementById('avatar-input')?.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const preview = document.getElementById('avatar-preview');
+                    const placeholder = document.getElementById('avatar-placeholder');
+                    if (preview) {
+                        preview.src = event.target.result;
+                        preview.classList.remove('d-none');
+                        if (placeholder) placeholder.style.display = 'none';
+                    } else if (placeholder) {
+                        placeholder.style.backgroundImage = `url(${event.target.result})`;
+                        placeholder.style.backgroundSize = 'cover';
+                        placeholder.innerHTML = '';
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
 </body>
 
 </html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-ao">
+<head>
+    <meta charset="UTF-8">
+    <title>Recibo de Pagamento #00000003</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .receipt-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #FF0089;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            margin: 0;
+            color: #FF0089;
+            font-size: 24px;
+        }
+        .header p {
+            margin: 5px 0 0;
+            font-size: 12px;
+            color: #777;
+        }
+        .receipt-title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .row {
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed #eee;
+            padding: 5px 0;
+        }
+        .label {
+            font-weight: bold;
+            width: 40%;
+        }
+        .value {
+            width: 60%;
+            text-align: right;
+        }
+        .total-row {
+            margin-top: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 10px;
+            color: #aaa;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+        .signature {
+            margin-top: 30px;
+            text-align: right;
+            font-style: italic;
+            font-size: 12px;
+        }
+        @media print {
+            body { background: #fff; padding: 0; }
+            .receipt-container { box-shadow: none; border: none; }
+            .btn-print { display: none; }
+        }
+        .btn-print {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 8px 16px;
+            background: #FF0089;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .btn-print:hover { background: #d40073; }
+    </style>
+</head>
+<body>
+    <div class="receipt-container">
+        <div class="header">
+            <h1>Wasom Upfy</h1>
+            <p>Luanda, Angola | NIF: 5417020235 | +244 923 000 000</p>
+            <p>suporte@wasomupfy.com | wasomupfy.com</p>
+        </div>
+
+        <div class="receipt-title">RECIBO DE PAGAMENTO</div>
+        <div class="row"><div class="label">Número do Recibo:</div><div class="value">00000003</div></div>
+        <div class="row"><div class="label">Data:</div><div class="value">24/03/2026 04:51</div></div>
+        <div class="row"><div class="label">Referência do Pagamento:</div><div class="value">WUF-JS0SM0YJ7</div></div>
+
+        <div style="margin: 20px 0 10px; font-weight: bold;">Dados do Cliente</div>
+        <div class="row"><div class="label">Nome:</div><div class="value">Cristiano Amadeu</div></div>
+        <div class="row"><div class="label">E-mail:</div><div class="value">wasomupfy@gmail.com</div></div>        <div style="margin: 20px 0 10px; font-weight: bold;">Detalhes do Pagamento</div>
+        <div class="row"><div class="label">Plano:</div><div class="value">Single</div></div>
+        <div class="row"><div class="label">Método de Pagamento:</div><div class="value">Multicaixa Express</div></div>
+        <div class="row"><div class="label">Valor:</div><div class="value">2,000.00 AOA</div></div><div class="row"><div class="label">Aprovado em:</div><div class="value">24/03/2026 04:51</div></div><div class="row"><div class="label">Comprovativo enviado em:</div><div class="value">24/03/2026 04:51</div></div>        <div class="total-row">
+            <div class="label">Total Pago:</div>
+            <div class="value">2,000.00 AOA</div>
+        </div>
+
+        <div class="signature">
+            ________________________________<br>
+            Wasom Upfy
+        </div>
+
+        <div class="footer">
+            Este documento é uma prova de pagamento válida para os efeitos legais.<br>
+            Gerado automaticamente em Wasom Upfy em 25/03/2026 03:24:59.
+        </div>
+
+        <div style="text-align: center;">
+            <button class="btn-print" onclick="window.print();">Imprimir / Salvar como PDF</button>
+        </div>
+    </div>
+</body>
+</html>

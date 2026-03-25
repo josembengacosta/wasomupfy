@@ -79,69 +79,127 @@ $fullname = trim($emp['first_name'] . ' ' . ($emp['second_name'] ?? ''));
 $ini      = adm_initials($emp['first_name'], $emp['second_name'] ?? '');
 $color    = adm_avatar_color($fullname);
 
-// Permissões disponíveis mapeadas para o sistema real
+// ═══════════════════════════════════════════════════════════════════════════════
+// Mapeamento de permissões do sistema (actualizado com todos os módulos)
+// Utilizado na página de edição de funcionários e nas verificações de acesso.
+// ═══════════════════════════════════════════════════════════════════════════════
 $all_permissions = [
+    // ─── Administração do sistema ──────────────────────────────────────────
     'employees' => [
         'label' => 'Gestão de Admins',
         'icon'  => 'bi-person-gear',
         'perms' => [
-            'employees.view' => 'Ver funcionários',
-            'employees.edit' => 'Editar funcionários',
+            'employees.view' => 'Ver lista de administradores',
+            'employees.edit' => 'Criar/editar/remover administradores',
         ],
-    ],
-    'users' => [
-        'label' => 'Gestão de Utilizadores',
-        'icon'  => 'bi-people',
-        'perms' => [
-            'users.view' => 'Ver utilizadores',
-            'users.edit' => 'Editar utilizadores',
-        ],
-    ],
-    'music' => [
-        'label' => 'Músicas e Lançamentos',
-        'icon'  => 'bi-music-note-list',
-        'perms' => [
-            'music.view'    => 'Ver músicas',
-            'music.approve' => 'Aprovar / Rejeitar músicas',
-        ],
-    ],
-    'finances' => [
-        'label' => 'Finanças',
-        'icon'  => 'bi-currency-dollar',
-        'perms' => [
-            'finances.view' => 'Ver finanças',
-            'finances.edit' => 'Processar pagamentos',
-        ],
-    ],
-    'analytics' => [
-        'label' => 'Estatísticas',
-        'icon'  => 'bi-graph-up',
-        'perms' => [
-            'analytics.view' => 'Ver estatísticas e relatórios',
-        ],
-    ],
-    'support' => [
-        'label' => 'Suporte',
-        'icon'  => 'bi-headset',
-        'perms' => [
-            'support.view' => 'Ver tickets',
-            'support.edit' => 'Responder tickets',
-        ],
+        'desc'  => 'Permite gerir outros funcionários do painel.',
     ],
     'audit' => [
         'label' => 'Auditoria',
         'icon'  => 'bi-journal-text',
         'perms' => [
-            'audit.view' => 'Ver log de auditoria',
+            'audit.view' => 'Visualizar logs de auditoria',
         ],
+        'desc'  => 'Acesso ao histórico de ações dos administradores e utilizadores.',
     ],
     'settings' => [
         'label' => 'Configurações',
         'icon'  => 'bi-sliders',
         'perms' => [
-            'settings.view' => 'Ver configurações',
-            'settings.edit' => 'Editar configurações',
+            'settings.view' => 'Visualizar configurações',
+            'settings.edit' => 'Editar configurações globais (plataforma, e-mail, etc.)',
         ],
+        'desc'  => 'Permite alterar parâmetros do sistema.',
+    ],
+
+    // ─── Utilizadores e perfis ────────────────────────────────────────────
+    'users' => [
+        'label' => 'Gestão de Utilizadores',
+        'icon'  => 'bi-people',
+        'perms' => [
+            'users.view' => 'Ver lista de utilizadores e detalhes',
+            'users.edit' => 'Editar, suspender, activar ou eliminar utilizadores',
+        ],
+        'desc'  => 'Controla o acesso aos dados dos artistas (clientes finais).',
+    ],
+    'artists' => [
+        'label' => 'Artistas',
+        'icon'  => 'bi-mic',
+        'perms' => [
+            'artists.view' => 'Ver artistas cadastrados',
+            'artists.edit' => 'Editar ou eliminar artistas',
+        ],
+        'desc'  => 'Artistas associados aos utilizadores (perfis musicais).',
+    ],
+    'collaborators' => [
+        'label' => 'Colaboradores',
+        'icon'  => 'bi-person-plus',
+        'perms' => [
+            'collaborators.view' => 'Ver colaboradores',
+            'collaborators.edit' => 'Gerir colaboradores (convidar, editar, remover)',
+        ],
+        'desc'  => 'Colaboradores convidados pelos utilizadores para ajudar na gestão.',
+    ],
+
+    // ─── Música e distribuição ───────────────────────────────────────────
+    'music' => [
+        'label' => 'Músicas e Lançamentos',
+        'icon'  => 'bi-music-note-list',
+        'perms' => [
+            'music.view'    => 'Ver lançamentos e faixas',
+            'music.approve' => 'Aprovar / Rejeitar envios de música',
+        ],
+        'desc'  => 'Gerencia o catálogo musical e o fluxo de aprovação.',
+    ],
+    'distribution' => [
+        'label' => 'Distribuição',
+        'icon'  => 'bi-globe',
+        'perms' => [
+            'distribution.view'   => 'Ver lojas e canais de distribuição',
+            'distribution.edit'   => 'Adicionar/editar lojas e parâmetros de distribuição',
+        ],
+        'desc'  => 'Controla para onde as músicas são enviadas (Spotify, Apple, etc.).',
+    ],
+
+    // ─── Financeiro ──────────────────────────────────────────────────────
+    'payments' => [
+        'label' => 'Pagamentos',
+        'icon'  => 'bi-wallet2',
+        'perms' => [
+            'payments.view' => 'Ver lista de pagamentos e detalhes',
+            'payments.edit' => 'Aprovar, rejeitar ou reembolsar pagamentos',
+        ],
+        'desc'  => 'Gestão de comprovativos e ativação de planos.',
+    ],
+    'finances' => [
+        'label' => 'Finanças e Rendimentos',
+        'icon'  => 'bi-currency-dollar',
+        'perms' => [
+            'finances.view' => 'Ver relatórios financeiros e royalties',
+            'finances.edit' => 'Processar pagamentos a artistas (saques)',
+        ],
+        'desc'  => 'Controla a visibilidade e processamento de royalties e saques.',
+    ],
+
+    // ─── Estatísticas e análises ─────────────────────────────────────────
+    'analytics' => [
+        'label' => 'Estatísticas',
+        'icon'  => 'bi-graph-up',
+        'perms' => [
+            'analytics.view' => 'Visualizar gráficos, relatórios e dados agregados',
+        ],
+        'desc'  => 'Acesso a métricas de streaming, desempenho de artistas, etc.',
+    ],
+
+    // ─── Suporte ─────────────────────────────────────────────────────────
+    'support' => [
+        'label' => 'Suporte',
+        'icon'  => 'bi-headset',
+        'perms' => [
+            'support.view' => 'Ver tickets de suporte',
+            'support.edit' => 'Responder tickets e alterar status',
+        ],
+        'desc'  => 'Gerencia o atendimento aos utilizadores.',
     ],
 ];
 ?>
@@ -973,6 +1031,7 @@ $all_permissions = [
                                 </div><!-- /tab-security -->
 
                                 <!-- ══ TAB: PERMISSÕES ══ -->
+                                <!-- ══ TAB: PERMISSÕES ══ -->
                                 <?php if ($admin_role === 'super_admin' || hasPermission($admin_id, 'employees.edit')): ?>
                                 <div class="tab-pane fade <?php echo $active_tab==='permissions'?'show active':''; ?>"
                                     id="tab-permissions" role="tabpanel">
@@ -1000,6 +1059,7 @@ $all_permissions = [
                                         <code><?php echo $emp['role']; ?></code>.
                                         Deixa um toggle sem definir para usar os padrões.
                                     </div>
+
                                     <form method="POST"
                                         action="<?php echo APP_URL.'/'.ADMIN_PATH; ?>/employees/edit-process"
                                         id="form-perms">
@@ -1009,27 +1069,31 @@ $all_permissions = [
                                         <input type="hidden" name="id" value="<?php echo $id; ?>" />
 
                                         <?php foreach ($all_permissions as $group_key => $group): ?>
-                                        <div class="perm-group-card">
-                                            <div class="perm-group-header">
-                                                <i class="bi <?php echo $group['icon']; ?>"></i>
-                                                <?php echo $group['label']; ?>
+                                        <div class="perm-group-card mb-3">
+                                            <div class="perm-group-header d-flex align-items-center gap-2 mb-2">
+                                                <i class="bi <?php echo $group['icon']; ?>"
+                                                    style="font-size:1.2rem;color:#FF0089"></i>
+                                                <span class="fw-semibold"><?php echo $group['label']; ?></span>
+                                                <span class="text-muted small ms-2" data-bs-toggle="tooltip"
+                                                    title="<?php echo htmlspecialchars($group['desc'] ?? ''); ?>">
+                                                    <i class="bi bi-question-circle"></i>
+                                                </span>
                                             </div>
-                                            <div class="perm-body">
+                                            <div class="perm-body ps-4">
                                                 <?php foreach ($group['perms'] as $perm_key => $perm_label):
-                                                // Estado actual: 1=concedido, 0=negado, null=padrão
-                                                $current = $perm_map[$perm_key] ?? null;
-                                            ?>
-                                                <div class="perm-toggle">
+                    $current = $perm_map[$perm_key] ?? null; // 1 = concedido, 0 = negado, null = padrão
+                ?>
+                                                <div
+                                                    class="perm-toggle d-flex justify-content-between align-items-center py-2 border-bottom">
                                                     <span
                                                         class="perm-label"><?php echo htmlspecialchars($perm_label); ?></span>
                                                     <div class="d-flex align-items-center gap-2">
-                                                        <!-- Três estados: padrão / concedido / negado -->
                                                         <select class="form-select form-select-sm"
                                                             name="perm[<?php echo htmlspecialchars($perm_key); ?>]"
-                                                            style="width:120px;font-size:.78rem">
+                                                            style="width:130px;font-size:.78rem">
                                                             <option value=""
                                                                 <?php echo $current === null ? 'selected' : ''; ?>>
-                                                                Padrão
+                                                                ◉ Padrão (<?php echo $emp['role']; ?>)
                                                             </option>
                                                             <option value="1"
                                                                 <?php echo $current === 1 ? 'selected' : ''; ?>>
@@ -1047,9 +1111,9 @@ $all_permissions = [
                                         </div>
                                         <?php endforeach; ?>
 
-                                        <div class="d-flex justify-content-between mt-3">
+                                        <div class="d-flex justify-content-between mt-4">
                                             <button type="button" class="btn btn-outline-secondary btn-sm"
-                                                onclick="document.querySelectorAll('#form-perms select').forEach(s=>s.value='')">
+                                                onclick="resetPermissions()">
                                                 <i class="bi bi-arrow-counterclockwise me-1"></i>
                                                 Repor tudo para Padrão
                                             </button>
@@ -1059,6 +1123,22 @@ $all_permissions = [
                                             </button>
                                         </div>
                                     </form>
+
+                                    <script>
+                                    function resetPermissions() {
+                                        document.querySelectorAll('#form-perms select').forEach(select => select.value =
+                                            '');
+                                    }
+                                    // Activar tooltips
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        var tooltipTriggerList = [].slice.call(document.querySelectorAll(
+                                            '[data-bs-toggle="tooltip"]'));
+                                        tooltipTriggerList.map(function(tooltipTriggerEl) {
+                                            return new bootstrap.Tooltip(tooltipTriggerEl);
+                                        });
+                                    });
+                                    </script>
+
                                     <?php endif; ?>
                                 </div><!-- /tab-permissions -->
                                 <?php endif; ?>

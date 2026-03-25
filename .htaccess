@@ -297,15 +297,32 @@ RewriteRule ^wu-panel-2026/employees/view/?$                wu-panel-2026/pages/
 
 # ── Utilizadores ──
 RewriteRule ^wu-panel-2026/users/?$                         wu-panel-2026/pages/users/all-users.php [L]
+RewriteRule ^wu-panel-2026/users/view/?$                    wu-panel-2026/pages/users/view-user.php [L]
 RewriteRule ^wu-panel-2026/users/add/?$                     wu-panel-2026/pages/users/add.php [L]
+RewriteRule ^wu-panel-2026/users/add-process/?$             wu-panel-2026/pages/users/add-process.php [L]
 RewriteRule ^wu-panel-2026/users/edit/?$                    wu-panel-2026/pages/users/edit.php [L,QSA]
+RewriteRule ^wu-panel-2026/users/edit-process/?$            wu-panel-2026/pages/users/edit-process.php [L,QSA]
 RewriteRule ^wu-panel-2026/users/delete/?$                  wu-panel-2026/pages/users/delete.php [L,QSA]
 RewriteRule ^wu-panel-2026/users/available-account/?$       wu-panel-2026/pages/users/available-account.php [L]
 RewriteRule ^wu-panel-2026/users/unavailable-account/?$     wu-panel-2026/pages/users/unavailable-account.php [L]
 
 # ── Artistas ──
-RewriteRule ^wu-panel-2026/accounts-users/?$                wu-panel-2026/pages/artist/accounts-users.php [L]
-RewriteRule ^wu-panel-2026/collaborators/?$                 wu-panel-2026/pages/artist/collaborators-artist.php [L]
+RewriteRule ^wu-panel-2026/artist/?$                        wu-panel-2026/pages/artist/all-artists.php [L]
+RewriteRule ^wu-panel-2026/artist/process/?$                wu-panel-2026/pages/artist/process.php [L]
+RewriteRule ^wu-panel-2026/artist/add/?$                     wu-panel-2026/pages/artist/add.php [L]
+RewriteRule ^wu-panel-2026/artist/add-process/?$             wu-panel-2026/pages/artist/add-process.php [L]
+RewriteRule ^wu-panel-2026/artist/view/?$                   wu-panel-2026/pages/artist/view.php [L,QSA]
+RewriteRule ^wu-panel-2026/artist/edit/?$                   wu-panel-2026/pages/artist/edit.php [L,QSA]
+RewriteRule ^wu-panel-2026/artist/edit-process/?$           wu-panel-2026/pages/artist/edit-process.php [L]
+
+# ── Collaboratores ──
+RewriteRule ^wu-panel-2026/collab/?$                        wu-panel-2026/pages/collab/all-collaborators.php [L]
+RewriteRule ^wu-panel-2026/collab/process/?$                wu-panel-2026/pages/collab/process.php [L]
+RewriteRule ^wu-panel-2026/collab/view/?$                   wu-panel-2026/pages/collab/view.php [L,QSA]
+RewriteRule ^wu-panel-2026/collab/edit/?$                   wu-panel-2026/pages/collab/edit.php [L,QSA]
+RewriteRule ^wu-panel-2026/collab/edit-process/?$           wu-panel-2026/pages/collab/edit-process.php [L]
+RewriteRule ^wu-panel-2026/collab/add/?$                     wu-panel-2026/pages/collab/add.php [L]
+RewriteRule ^wu-panel-2026/collab/add-process/?$             wu-panel-2026/pages/collab/add-process.php [L]
 
 # ── Músicas ──
 RewriteRule ^wu-panel-2026/music/revise/?$                  wu-panel-2026/pages/distribution/releases.php?filter=pending [L,QSA]
@@ -324,7 +341,16 @@ RewriteRule ^wu-panel-2026/manager/top-music/?$             wu-panel-2026/pages/
 
 # ── Finanças ──
 RewriteRule ^wu-panel-2026/finances/?$                      wu-panel-2026/pages/finances/earnings.php [L]
-RewriteRule ^wu-panel-2026/finances/payments/?$             wu-panel-2026/pages/finances/payments.php [L]
+
+
+# ── Pagamentos ──
+RewriteRule ^wu-panel-2026/payments/?$                     wu-panel-2026/pages/payments/all-payments.php [L]
+RewriteRule ^wu-panel-2026/payments/view/?$                wu-panel-2026/pages/payments/view-payment.php [L,QSA]
+RewriteRule ^wu-panel-2026/payments/edit/?$                wu-panel-2026/pages/payments/edit.php [L,QSA]
+RewriteRule ^wu-panel-2026/payments/edit-process/?$        wu-panel-2026/pages/payments/edit-process.php [L]
+RewriteRule ^wu-panel-2026/payments/process/?$             wu-panel-2026/pages/payments/process.php [L]
+RewriteRule ^wu-panel-2026/payments/export/?$              wu-panel-2026/pages/payments/export-payments.php [L,QSA]
+RewriteRule ^wu-panel-2026/payments/print/?$                wu-panel-2026/pages/payments/print-payments.php [L,QSA]
 
 # ── Integração ──
 RewriteRule ^wu-panel-2026/integration/verify/?$            wu-panel-2026/pages/integration/verify.php [L]

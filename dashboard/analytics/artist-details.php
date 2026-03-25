@@ -968,7 +968,7 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
     </div><!-- /container -->
 
     <script>
-    const BASE_URL = <?php echo rtrim(APP_URL, '/' . APP_URL_PANEL); ?>;
+    const BASE_URL = <?php echo (APP_URL. '/' . APP_URL_PANEL); ?>;
     (function() {
         function refreshBadge() {
             fetch(BASE_URL + '/ajax/notifications_api.php?action=count', {
