@@ -181,7 +181,7 @@ try {
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
-// Enviar e-mail de convite
+// Enviar e-mail de convite usando WasomMailer
 // ──────────────────────────────────────────────────────────────────────────────
 function sendCollabInviteEmail(
     string $email, string $first_name, string $user_collab, string $plain_password,
@@ -230,10 +230,23 @@ function sendCollabInviteEmail(
             </p>
         </div>
     </div>";
-    sendEmail($email, $subject, $body);
+
+    // Usar WasomMailer para enviar
+    $mailer = new \Wasom\Mailer();
+    $mailer->host     = MAIL_HOST;
+    $mailer->port     = MAIL_PORT;
+    $mailer->secure   = defined('MAIL_SECURE') ? MAIL_SECURE : 'tls';
+    $mailer->username = MAIL_USER;
+    $mailer->password = MAIL_PASS;
+    $mailer->debug    = 0;
+    $mailer->setFrom(MAIL_FROM, MAIL_FROM_NAME);
+    $mailer->addAddress($email, $first_name);
+    $mailer->setSubject($subject);
+    $mailer->setBody($body, strip_tags($body));
+    $mailer->send();
 }
 
-$activate_url = rtrim(APP_URL, '/') . '/dashboard/account/collab-activate?token=' . urlencode($invite_token);
+$activate_url = rtrim(APP_URL, '/') . APP_URL_PANEL .'/account/collab-activate?token=' . urlencode($invite_token);
 $role_labels  = ['admin' => 'Administrador', 'editor' => 'Editor', 'analyst' => 'Analista', 'support' => 'Suporte'];
 $role_label   = $role_labels[$role] ?? 'Editor';
 

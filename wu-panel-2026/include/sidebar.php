@@ -182,13 +182,26 @@
         <?php endif; ?>
 
         <!-- ── Artistas ── -->
-        <?php if (hasPermission($admin_id, 'users.view')): ?>
+        <?php if (hasPermission($admin_id, 'artists.view')): ?>
         <li class="nav-item">
-            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/artist/"
-                class="nav-link<?php echo adm_is_active('artist') ? ' active' : ''; ?>">
+            <a href="#collapseArtist" class="nav-link<?php echo adm_is_active('artist') ? ' active' : ''; ?>"
+                data-bs-toggle="collapse">
                 <i class="bi bi-mic"></i>
                 <span>Artistas</span>
+                <i class="bi bi-chevron-down ms-auto"></i>
             </a>
+            <div class="collapse<?php echo adm_is_active('artist') ? ' show' : ''; ?>" id="collapseArtist">
+                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/artist/"
+                    class="nav-link<?php echo adm_is_active('artist') && !adm_is_active('artist/add') ? ' active' : ''; ?>">
+                    <i class="bi bi-people"></i> Todos Artistas
+                </a>
+                <?php if (hasPermission($admin_id, 'artists.edit')): ?>
+                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/artist/add"
+                    class="nav-link<?php echo adm_is_active('artist/add'); ?>">
+                    <i class="bi bi-person-plus"></i> Adicionar
+                </a>
+                <?php endif; ?>
+            </div>
         </li>
         <?php endif; ?>
 
@@ -204,7 +217,7 @@
             <div class="collapse<?php echo adm_is_active('collab') ? ' show' : ''; ?>" id="collapseCollab">
                 <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/collab/"
                     class="nav-link<?php echo adm_is_active('collab') && !adm_is_active('collab/add') ? ' active' : ''; ?>">
-                    <i class="bi bi-people"></i> Todos
+                    <i class="bi bi-people"></i> Todos Colaboradores
                 </a>
                 <?php if (hasPermission($admin_id, 'collaborators.edit')): ?>
                 <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/collab/add"
@@ -281,6 +294,22 @@
                 class="nav-link<?php echo adm_is_active('finances'); ?>">
                 <i class="bi bi-currency-dollar"></i>
                 <span>Finanças e Rendimentos</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <?php
+                // Contar contas pendentes para badge informativo
+                $pending_accounts_count = (int)$db->query("SELECT COUNT(*) FROM _account WHERE status_account = 'pending'")->fetchColumn();
+                ?>
+            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/accounts"
+                class="nav-link<?php echo adm_is_active('accounts'); ?>">
+                <i class="bi bi-bank"></i>
+                <span>Contas Bancárias</span>
+                <?php if ($pending_accounts_count > 0): ?>
+                <span class="badge bg-warning text-dark ms-1" style="font-size:.6rem">
+                    <?php echo $pending_accounts_count; ?>
+                </span>
+                <?php endif; ?>
             </a>
         </li>
         <?php endif; ?>

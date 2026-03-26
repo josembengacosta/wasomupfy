@@ -399,7 +399,7 @@ $banks = ['Banco Angolano de Investimentos (BAI)', 'Banco de Fomento Angola (BFA
                             data-bs-parent="#accordionExample">
                             <div class="mt-3">
                                 <?php if ($acc_express): ?>
-                                <form action="account_process" method="post"
+                                <form action="finances/account_process" method="post"
                                     class="needs-validation mb-2 row text-start g-3" id="form-express" novalidate>
                                     <input type="hidden" name="csrf_token"
                                         value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
@@ -493,7 +493,7 @@ $banks = ['Banco Angolano de Investimentos (BAI)', 'Banco de Fomento Angola (BFA
                             data-bs-parent="#accordionExample">
                             <div class="mt-3">
                                 <?php if ($acc_iban): ?>
-                                <form action="account_process" method="post"
+                                <form action="finances/account_process" method="post"
                                     class="needs-validation mb-2 row text-start g-3" id="form-iban" novalidate>
                                     <input type="hidden" name="csrf_token"
                                         value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
@@ -1060,7 +1060,7 @@ $banks = ['Banco Angolano de Investimentos (BAI)', 'Banco de Fomento Angola (BFA
         if (capturedBI[`back-${type}`] && !form.querySelector('[name=bi_back]').files[0]) fd.set('bi_back', capturedBI[
             `back-${type}`]);
 
-        fetch('account_process.php', {
+        fetch('finances/account_process', {
                 method: 'POST',
                 body: fd
             })
@@ -1103,7 +1103,7 @@ $banks = ['Banco Angolano de Investimentos (BAI)', 'Banco de Fomento Angola (BFA
             const btn = this.querySelector('[type=submit]');
             btn.disabled = true;
             btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>A guardar...';
-            fetch('account_process.php', {
+            fetch('finances/account_process', {
                     method: 'POST',
                     body: new FormData(this)
                 })
@@ -1152,7 +1152,7 @@ $banks = ['Banco Angolano de Investimentos (BAI)', 'Banco de Fomento Angola (BFA
                     confirm_password: password,
                     csrf_token: CSRF
                 });
-                return fetch('account_process.php', {
+                return fetch('finances/account_process', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
@@ -1195,7 +1195,7 @@ $banks = ['Banco Angolano de Investimentos (BAI)', 'Banco de Fomento Angola (BFA
     // ── Badge de notificações — polling 60s ──────────────────
     (function() {
         function refreshBadge() {
-            fetch('../ajax/notifications_api.php?action=count', {
+            fetch('/ajax/notifications_api?action=count', {
                     credentials: 'same-origin'
                 })
                 .then(r => r.json())

@@ -816,14 +816,14 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                             </h5>
                                             <p class="mb-2">Todos os visitantes globais da <strong>Wasom Upfy</strong></p>
                                             <div class="mb-0">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/visitors"
+                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/analytics/visitors"
                                                     class="card-link">Ver os
                                                     visitantes <i class="bi bi-arrow-right"></i></a>
                                             </div>
                                         </div>
                                         <div class="d-inline-block ms-3">
                                             <div class="stat">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/visitors"
+                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/analytics/visitors"
                                                     title="Ver visitantes"><i class="align-middle bi-eye card-icon"></i></a>
                                             </div>
                                         </div>
@@ -844,14 +844,14 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                             </h5>
                                             <p class="mb-2">Todos os usuários online na <strong>Wasom Upfy</strong></p>
                                             <div class="mb-0">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/visitors"
+                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/analytics/online-users"
                                                     class="card-link">Ver
                                                     actividade <i class="bi bi-arrow-right"></i></a>
                                             </div>
                                         </div>
                                         <div class="d-inline-block ms-3">
                                             <div class="stat">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/visitors"
+                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/analytics/online-users"
                                                     title="Usuários online"><i
                                                         class="align-middle bi-person-workspace card-icon"></i></a>
                                             </div>

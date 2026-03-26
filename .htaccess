@@ -165,8 +165,8 @@ RewriteRule ^dashboard/painel/?$                                dashboard/painel
 RewriteRule ^dashboard/onboarding_done/?$                       dashboard/onboarding_done.php [L]
 RewriteRule ^dashboard/all-plans/?$                             dashboard/all-plans.php [L]
 RewriteRule ^dashboard/logout/?$                                dashboard/logout.php [L]
-RewriteRule ^dashboard/ajax/support_dashboard/?$                dashboard/ajax/support_dashboard.php [L]
-RewriteRule ^dashboard/ajax/notifications_api/?$                dashboard/ajax/notifications_api.php [L]
+RewriteRule ^dashboard/ajax/support_dashboard/?$                     dashboard/ajax/support_dashboard.php [L]
+RewriteRule ^dashboard/ajax/notifications_api/?$                     dashboard/ajax/notifications_api.php [L]
 
 # ─── Account ──────────────────────────────────
 RewriteRule ^dashboard/account/add-user/?$                      dashboard/account/add-user.php [L]
@@ -284,7 +284,10 @@ RewriteRule ^wu-panel-2026/analytics/artists/?$             wu-panel-2026/pages/
 RewriteRule ^wu-panel-2026/analytics/stores/?$              wu-panel-2026/pages/analytics/stores.php [L]
 RewriteRule ^wu-panel-2026/analytics/online-users/?$        wu-panel-2026/pages/analytics/online-users.php [L]
 RewriteRule ^wu-panel-2026/analytics/reports/?$             wu-panel-2026/pages/analytics/reports.php [L]
-RewriteRule ^wu-panel-2026/analytics/visitors/?$            wu-panel-2026/pages/analytics/visites.php [L]
+RewriteRule ^wu-panel-2026/analytics/visitors/?$            wu-panel-2026/pages/analytics/visitors.php [L]
+RewriteRule ^wu-panel-2026/analytics/process/?$             wu-panel-2026/pages/analytics/process.php [L]
+RewriteRule ^wu-panel-2026/analytics/visitors-api/?$        wu-panel-2026/pages/analytics/visitors-api.php [L,QSA]
+RewriteRule ^wu-panel-2026/analytics/process-artists/?$      wu-panel-2026/pages/analytics/process-artists.php [L,QSA]
 
 # ── Funcionários ──
 RewriteRule ^wu-panel-2026/employees/?$                     wu-panel-2026/pages/employees/all-employees.php [L]
@@ -341,7 +344,16 @@ RewriteRule ^wu-panel-2026/manager/top-music/?$             wu-panel-2026/pages/
 
 # ── Finanças ──
 RewriteRule ^wu-panel-2026/finances/?$                      wu-panel-2026/pages/finances/earnings.php [L]
+RewriteRule ^wu-panel-2026/finances/royalty-splits/?$       wu-panel-2026/pages/finances/royalty-splits.php [L]
+RewriteRule ^wu-panel-2026/finances/withdrawals/?$          wu-panel-2026/pages/finances/withdrawals.php [L]
 
+# ── Contas Bancaria ──
+RewriteRule ^wu-panel-2026/accounts/?$                      wu-panel-2026/pages/accounts/all-accounts.php [L]
+RewriteRule ^wu-panel-2026/accounts/view/?$                 wu-panel-2026/pages/accounts/view-account.php [L,QSA]
+RewriteRule ^wu-panel-2026/accounts/process/?$              wu-panel-2026/pages/accounts/process.php [L]
+RewriteRule ^wu-panel-2026/account/delete/?$               wu-panel-2026/pages/account/delete.php [L]
+RewriteRule ^wu-panel-2026/accounts/edit/?$                wu-panel-2026/pages/accounts/edit.php [L,QSA]
+RewriteRule ^wu-panel-2026/accounts/edit-process/?$        wu-panel-2026/pages/accounts/edit-process.php [L]
 
 # ── Pagamentos ──
 RewriteRule ^wu-panel-2026/payments/?$                     wu-panel-2026/pages/payments/all-payments.php [L]
