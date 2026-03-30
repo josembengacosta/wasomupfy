@@ -7,7 +7,7 @@
 require_once __DIR__ . '/../../include/platform_admin.php';
 requirePermission($admin_id, 'finances.view');
 
-$receipts_dir = $_SERVER['DOCUMENT_ROOT'] . '/assets/payments/receipts';
+$receipts_dir = $_SERVER['DOCUMENT_ROOT'] . '/assets/payment/uploads/receipts';
 if (!is_dir($receipts_dir)) {
     mkdir($receipts_dir, 0750, true);
 }
@@ -356,10 +356,10 @@ HTML;
 HTML;
 
     // Salvar o arquivo HTML temporário
-    $receipts_dir = dirname(__DIR__, 3) . '/assets/payments/receipts';
+    $receipts_dir = dirname(__DIR__, 3) . '/assets/payment/uploads/receipts';
     if (!is_dir($receipts_dir)) mkdir($receipts_dir, 0750, true);
     $filename = 'receipt_' . $id_payment . '_' . time() . '.html';
-    $file_path = '/assets/payments/receipts/' . $filename;
+    $file_path = '/assets/payment/uploads/receipts/' . $filename;
     $full_path = $receipts_dir . '/' . $filename;
     file_put_contents($full_path, $html);
 

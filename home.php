@@ -137,6 +137,8 @@ $planFeatures = [
     <meta name="author" content="José Mbenga da Costa" />
     <meta name="robots" content="follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large" />
     <meta name="theme-color" content="#FF009D" />
+    <meta name="site-csrf" content="<?php echo htmlspecialchars($csrf_home); ?>" />
+    <meta name="visitor-page-url" content="/home" />
 
     <!-- SEO dinâmico -->
     <title><?php echo $siteName; ?> | Home</title>
@@ -2107,6 +2109,7 @@ $planFeatures = [
     <script src="https://cdn.jsdelivr.net/npm/jarallax@2.2.0/dist/jarallax.min.js"></script>
     <script src="js/vendors/password.js"></script>
     <script src="js/cookies.js"></script>
+    <script src="js/visitor-presence.js"></script>
 
     <script>
         feather.replace({

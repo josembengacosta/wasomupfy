@@ -79,10 +79,12 @@ $total_artists    = (int)$db->query("SELECT COUNT(*) FROM _artist")->fetchColumn
 // Visitantes do site público (_visitor = quem visita o site)
 $total_visitors   = (int)$db->query("SELECT COUNT(*) FROM _visitor WHERE is_bot=0")->fetchColumn();
 
-// Usuários online = utilizadores que fizeram login nos últimos 10 minutos
-$online_now       = (int)$db->query("
-    SELECT COUNT(*) FROM _users_security
-    WHERE last_login_at >= DATE_SUB(NOW(), INTERVAL 10 MINUTE)
+// Usuários online = utilizadores que fizeram login nos últimos 5 minutos
+$online_now = (int)$db->query("
+    SELECT COUNT(*)
+    FROM _user_presence
+    WHERE online_status != 'offline'
+      AND last_activity >= DATE_SUB(NOW(), INTERVAL 5 MINUTE)
 ")->fetchColumn();
 
 $revenue_today    = (float)$db->query("SELECT COALESCE(SUM(amount),0) FROM _payment WHERE status_payment='approved' AND DATE(creat_payment)=CURDATE()")->fetchColumn();
@@ -356,278 +358,278 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
 
     <style>
-        /* ── Novos Clientes — cards com foto/nome/email ── */
-        .client-user-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 12px;
-            margin-top: 8px;
-        }
+    /* ── Novos Clientes — cards com foto/nome/email ── */
+    .client-user-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 12px;
+        margin-top: 8px;
+    }
 
-        .client-user-card {
-            background: rgba(255, 255, 255, .04);
-            border: 1px solid rgba(255, 255, 255, .08);
-            border-radius: 12px;
-            padding: 14px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            transition: background .2s, border-color .2s, transform .2s;
-            cursor: default;
-        }
+    .client-user-card {
+        background: rgba(255, 255, 255, .04);
+        border: 1px solid rgba(255, 255, 255, .08);
+        border-radius: 12px;
+        padding: 14px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: background .2s, border-color .2s, transform .2s;
+        cursor: default;
+    }
 
-        .client-user-card:hover {
-            background: rgba(255, 0, 137, .08);
-            border-color: rgba(255, 0, 137, .25);
-            transform: translateY(-2px);
-        }
+    .client-user-card:hover {
+        background: rgba(255, 0, 137, .08);
+        border-color: rgba(255, 0, 137, .25);
+        transform: translateY(-2px);
+    }
 
-        .client-user-avatar {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            flex-shrink: 0;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: .82rem;
-            color: #fff;
-            border: 2px solid rgba(255, 255, 255, .1);
-        }
+    .client-user-avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: .82rem;
+        color: #fff;
+        border: 2px solid rgba(255, 255, 255, .1);
+    }
 
-        .client-user-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+    .client-user-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 
-        .client-user-info {
-            flex: 1;
-            min-width: 0;
-        }
+    .client-user-info {
+        flex: 1;
+        min-width: 0;
+    }
 
-        .client-user-name {
-            font-size: .82rem;
-            font-weight: 600;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+    .client-user-name {
+        font-size: .82rem;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
-        .client-user-email {
-            font-size: .72rem;
-            opacity: .55;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+    .client-user-email {
+        font-size: .72rem;
+        opacity: .55;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
-        .client-user-plan {
-            font-size: .65rem;
-            background: rgba(255, 0, 137, .15);
-            color: #FF0089;
-            padding: 2px 7px;
-            border-radius: 20px;
-            font-weight: 600;
-            white-space: nowrap;
-            margin-top: 3px;
-            display: inline-block;
-        }
+    .client-user-plan {
+        font-size: .65rem;
+        background: rgba(255, 0, 137, .15);
+        color: #FF0089;
+        padding: 2px 7px;
+        border-radius: 20px;
+        font-weight: 600;
+        white-space: nowrap;
+        margin-top: 3px;
+        display: inline-block;
+    }
 
-        .client-user-date {
-            font-size: .68rem;
-            opacity: .4;
-            margin-top: 2px;
-        }
+    .client-user-date {
+        font-size: .68rem;
+        opacity: .4;
+        margin-top: 2px;
+    }
 
-        /* ── Logout modal melhorado ── */
-        .logout-modal-session {
-            background: rgba(0, 0, 0, .04);
-            border: 1px solid rgba(0, 0, 0, .08);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 16px;
-        }
+    /* ── Logout modal melhorado ── */
+    .logout-modal-session {
+        background: rgba(0, 0, 0, .04);
+        border: 1px solid rgba(0, 0, 0, .08);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 16px;
+    }
 
-        .logout-session-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 0;
-            font-size: .84rem;
-            color: #555;
-            border-bottom: 1px solid rgba(0, 0, 0, .06);
-        }
+    .logout-session-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 0;
+        font-size: .84rem;
+        color: #555;
+        border-bottom: 1px solid rgba(0, 0, 0, .06);
+    }
 
-        .logout-session-row:last-child {
-            border-bottom: none;
-        }
+    .logout-session-row:last-child {
+        border-bottom: none;
+    }
 
-        .logout-session-row i {
-            color: #FF0089;
-            width: 16px;
-            flex-shrink: 0;
-        }
+    .logout-session-row i {
+        color: #FF0089;
+        width: 16px;
+        flex-shrink: 0;
+    }
 
-        .logout-session-row strong {
-            color: #222;
-            margin-left: auto;
-            text-align: right;
-            font-size: .82rem;
-            max-width: 60%;
-            word-break: break-all;
-        }
+    .logout-session-row strong {
+        color: #222;
+        margin-left: auto;
+        text-align: right;
+        font-size: .82rem;
+        max-width: 60%;
+        word-break: break-all;
+    }
 
-        .logout-admin-card {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 14px 16px;
-            background: #f8f7fc;
-            border-radius: 12px;
-            margin-bottom: 14px;
-        }
+    .logout-admin-card {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 14px 16px;
+        background: #f8f7fc;
+        border-radius: 12px;
+        margin-bottom: 14px;
+    }
 
-        .logout-admin-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #FF0089, #ff6bb5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: .95rem;
-            color: #fff;
-            flex-shrink: 0;
-            overflow: hidden;
-        }
+    .logout-admin-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #FF0089, #ff6bb5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: .95rem;
+        color: #fff;
+        flex-shrink: 0;
+        overflow: hidden;
+    }
 
-        .logout-admin-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+    .logout-admin-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 
-        .logout-admin-name {
-            font-size: .95rem;
-            font-weight: 700;
-            color: #111;
-        }
+    .logout-admin-name {
+        font-size: .95rem;
+        font-weight: 700;
+        color: #111;
+    }
 
-        .logout-admin-role {
-            font-size: .78rem;
-            color: #888;
-            margin-top: 2px;
-        }
+    .logout-admin-role {
+        font-size: .78rem;
+        color: #888;
+        margin-top: 2px;
+    }
 
-        /* ── List items para Lançamentos por Rever e Pagamentos ── */
-        .adm-list-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, .07);
-        }
+    /* ── List items para Lançamentos por Rever e Pagamentos ── */
+    .adm-list-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, .07);
+    }
 
-        .adm-list-item:last-child {
-            border-bottom: none;
-        }
+    .adm-list-item:last-child {
+        border-bottom: none;
+    }
 
-        .adm-list-info {
-            flex: 1;
-            min-width: 0;
-        }
+    .adm-list-info {
+        flex: 1;
+        min-width: 0;
+    }
 
-        .adm-list-title {
-            font-size: .84rem;
-            font-weight: 600;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+    .adm-list-title {
+        font-size: .84rem;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
-        .adm-list-sub {
-            font-size: .74rem;
-            opacity: .6;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+    .adm-list-sub {
+        font-size: .74rem;
+        opacity: .6;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
-        .adm-list-meta {
-            text-align: right;
-            flex-shrink: 0;
-        }
+    .adm-list-meta {
+        text-align: right;
+        flex-shrink: 0;
+    }
 
-        .adm-cover-thumb {
-            width: 38px;
-            height: 38px;
-            border-radius: 7px;
-            object-fit: cover;
-            flex-shrink: 0;
-            border: 1px solid rgba(255, 255, 255, .1);
-        }
+    .adm-cover-thumb {
+        width: 38px;
+        height: 38px;
+        border-radius: 7px;
+        object-fit: cover;
+        flex-shrink: 0;
+        border: 1px solid rgba(255, 255, 255, .1);
+    }
 
-        .adm-cover-placeholder {
-            width: 38px;
-            height: 38px;
-            border-radius: 7px;
-            background: rgba(255, 0, 137, .12);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #FF0089;
-            flex-shrink: 0;
-        }
+    .adm-cover-placeholder {
+        width: 38px;
+        height: 38px;
+        border-radius: 7px;
+        background: rgba(255, 0, 137, .12);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #FF0089;
+        flex-shrink: 0;
+    }
 
-        .adm-avatar-sm {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: .65rem;
-            color: #fff;
-            flex-shrink: 0;
-            overflow: hidden;
-        }
+    .adm-avatar-sm {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: .65rem;
+        color: #fff;
+        flex-shrink: 0;
+        overflow: hidden;
+    }
 
-        .adm-avatar-sm img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+    .adm-avatar-sm img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 
-        /* ── Hora ao vivo ── */
-        .live-clock-wrap {
-            text-align: right;
-            margin-bottom: 6px;
-        }
+    /* ── Hora ao vivo ── */
+    .live-clock-wrap {
+        text-align: right;
+        margin-bottom: 6px;
+    }
 
-        .live-clock-time {
-            font-size: 1.1rem;
-            font-weight: 700;
-            letter-spacing: .5px;
-        }
+    .live-clock-time {
+        font-size: 1.1rem;
+        font-weight: 700;
+        letter-spacing: .5px;
+    }
 
-        .live-clock-date {
-            font-size: .73rem;
-            opacity: .6;
-            margin-top: 1px;
-        }
+    .live-clock-date {
+        font-size: .73rem;
+        opacity: .6;
+        margin-top: 1px;
+    }
 
-        /* ── Card section header ── */
-        .section-card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 14px;
-        }
+    /* ── Card section header ── */
+    .section-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px;
+    }
     </style>
 </head>
 
@@ -672,30 +674,30 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                 <div class="dropdown-menu dropdown-menu-end">
                                     <h6 class="dropdown-header">Opções rápidas</h6>
                                     <?php if (hasPermission($admin_id, 'music.approve')): ?>
-                                        <a class="dropdown-item"
-                                            href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/releases/pending">Aprovar
-                                            Lançamentos</a>
+                                    <a class="dropdown-item"
+                                        href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/releases/pending">Aprovar
+                                        Lançamentos</a>
                                     <?php endif; ?>
                                     <?php if (hasPermission($admin_id, 'finances.view')): ?>
-                                        <a class="dropdown-item"
-                                            href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/finances/payments">Aprovar
-                                            Pagamentos</a>
+                                    <a class="dropdown-item"
+                                        href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/finances/payments">Aprovar
+                                        Pagamentos</a>
                                     <?php endif; ?>
                                     <?php if (hasPermission($admin_id, 'employees.edit')): ?>
-                                        <a class="dropdown-item"
-                                            href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees">Novo
-                                            funcionário</a>
+                                    <a class="dropdown-item"
+                                        href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees">Novo
+                                        funcionário</a>
                                     <?php endif; ?>
                                     <?php if (hasPermission($admin_id, 'settings.view')): ?>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item"
-                                            href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/settings">Configurações</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item"
+                                        href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/settings">Configurações</a>
                                     <?php endif; ?>
                                     <?php if (hasPermission($admin_id, 'audit.view')): ?>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item" href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/audit">Log
-                                            de
-                                            Auditoria</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/audit">Log
+                                        de
+                                        Auditoria</a>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -739,352 +741,352 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                     </div>
 
                     <?php if (hasPermission($admin_id, 'employees.view')): ?>
-                        <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
-                            <div class="card stats-card-primary flex-fill">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-start">
-                                        <div class="flex-grow-1">
-                                            <h5 class="text-white-stable">
-                                                Total de Funcionários
-                                                <span class="badge badge-soft-pink counter"
-                                                    data-valor="<?php echo $total_emp; ?>" data-tipo="contagem">0</span>
-                                            </h5>
-                                            <p class="mb-2">Total de funcionários da <strong>Wasom Upfy</strong></p>
-                                            <div class="mb-0">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees"
-                                                    class="card-link">Ver
-                                                    funcionários <i class="bi bi-arrow-right"></i></a>
-                                            </div>
+                    <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
+                        <div class="card stats-card-primary flex-fill">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h5 class="text-white-stable">
+                                            Total de Funcionários
+                                            <span class="badge badge-soft-pink counter"
+                                                data-valor="<?php echo $total_emp; ?>" data-tipo="contagem">0</span>
+                                        </h5>
+                                        <p class="mb-2">Total de funcionários da <strong>Wasom Upfy</strong></p>
+                                        <div class="mb-0">
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees"
+                                                class="card-link">Ver
+                                                funcionários <i class="bi bi-arrow-right"></i></a>
                                         </div>
-                                        <div class="d-inline-block ms-3">
-                                            <div class="stat">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees"
-                                                    title="Ver funcionários"><i
-                                                        class="align-middle bi bi-people card-icon"></i></a>
-                                            </div>
+                                    </div>
+                                    <div class="d-inline-block ms-3">
+                                        <div class="stat">
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees"
+                                                title="Ver funcionários"><i
+                                                    class="align-middle bi bi-people card-icon"></i></a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
                     <?php endif; ?>
 
                     <?php if (hasPermission($admin_id, 'music.view')): ?>
-                        <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
-                            <div class="card stats-card-primary flex-fill">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-start">
-                                        <div class="flex-grow-1">
-                                            <h5 class="text-white-stable">
-                                                Total de Lançamentos
-                                                <span class="badge badge-soft-pink counter"
-                                                    data-valor="<?php echo $total_releases; ?>"
-                                                    data-tipo="contagem">0</span>
-                                            </h5>
-                                            <p class="mb-2">Todos os lançamentos dos usuários da <strong>Wasom Upfy</strong>
-                                            </p>
-                                            <div class="mb-0">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/releases"
-                                                    class="card-link">Ver
-                                                    lançamentos <i class="bi bi-arrow-right"></i></a>
-                                            </div>
+                    <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
+                        <div class="card stats-card-primary flex-fill">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h5 class="text-white-stable">
+                                            Total de Lançamentos
+                                            <span class="badge badge-soft-pink counter"
+                                                data-valor="<?php echo $total_releases; ?>"
+                                                data-tipo="contagem">0</span>
+                                        </h5>
+                                        <p class="mb-2">Todos os lançamentos dos usuários da <strong>Wasom Upfy</strong>
+                                        </p>
+                                        <div class="mb-0">
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/releases"
+                                                class="card-link">Ver
+                                                lançamentos <i class="bi bi-arrow-right"></i></a>
                                         </div>
-                                        <div class="d-inline-block ms-3">
-                                            <div class="stat">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/releases"
-                                                    title="Ver lançamentos"><i
-                                                        class="align-middle bi-rocket-takeoff card-icon"></i></a>
-                                            </div>
+                                    </div>
+                                    <div class="d-inline-block ms-3">
+                                        <div class="stat">
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/releases"
+                                                title="Ver lançamentos"><i
+                                                    class="align-middle bi-rocket-takeoff card-icon"></i></a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
                     <?php endif; ?>
 
                     <?php if (hasPermission($admin_id, 'analytics.view')): ?>
-                        <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
-                            <div class="card stats-card-primary flex-fill">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-start">
-                                        <div class="flex-grow-1">
-                                            <h5 class="text-white-stable">
-                                                Visitantes
-                                                <span class="badge badge-soft-pink counter"
-                                                    data-valor="<?php echo $total_visitors; ?>"
-                                                    data-tipo="contagem">0</span>
-                                            </h5>
-                                            <p class="mb-2">Todos os visitantes globais da <strong>Wasom Upfy</strong></p>
-                                            <div class="mb-0">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/analytics/visitors"
-                                                    class="card-link">Ver os
-                                                    visitantes <i class="bi bi-arrow-right"></i></a>
-                                            </div>
+                    <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
+                        <div class="card stats-card-primary flex-fill">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h5 class="text-white-stable">
+                                            Visitantes
+                                            <span class="badge badge-soft-pink counter"
+                                                data-valor="<?php echo $total_visitors; ?>"
+                                                data-tipo="contagem">0</span>
+                                        </h5>
+                                        <p class="mb-2">Todos os visitantes globais da <strong>Wasom Upfy</strong></p>
+                                        <div class="mb-0">
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/analytics/visitors"
+                                                class="card-link">Ver os
+                                                visitantes <i class="bi bi-arrow-right"></i></a>
                                         </div>
-                                        <div class="d-inline-block ms-3">
-                                            <div class="stat">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/analytics/visitors"
-                                                    title="Ver visitantes"><i class="align-middle bi-eye card-icon"></i></a>
-                                            </div>
+                                    </div>
+                                    <div class="d-inline-block ms-3">
+                                        <div class="stat">
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/analytics/visitors"
+                                                title="Ver visitantes"><i class="align-middle bi-eye card-icon"></i></a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
-                            <div class="card stats-card-primary flex-fill">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-start">
-                                        <div class="flex-grow-1">
-                                            <h5 class="text-white-stable">
-                                                Usuários Online
-                                                <span class="badge badge-soft-pink counter"
-                                                    data-valor="<?php echo $online_now; ?>" data-tipo="contagem">0</span>
-                                            </h5>
-                                            <p class="mb-2">Todos os usuários online na <strong>Wasom Upfy</strong></p>
-                                            <div class="mb-0">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/analytics/online-users"
-                                                    class="card-link">Ver
-                                                    actividade <i class="bi bi-arrow-right"></i></a>
-                                            </div>
+                    <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
+                        <div class="card stats-card-primary flex-fill">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h5 class="text-white-stable">
+                                            Usuários Online
+                                            <span class="badge badge-soft-pink counter"
+                                                data-valor="<?php echo $online_now; ?>" data-tipo="contagem">0</span>
+                                        </h5>
+                                        <p class="mb-2">Todos os usuários online na <strong>Wasom Upfy</strong></p>
+                                        <div class="mb-0">
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/analytics/online-users"
+                                                class="card-link">Ver
+                                                actividade <i class="bi bi-arrow-right"></i></a>
                                         </div>
-                                        <div class="d-inline-block ms-3">
-                                            <div class="stat">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/analytics/online-users"
-                                                    title="Usuários online"><i
-                                                        class="align-middle bi-person-workspace card-icon"></i></a>
-                                            </div>
+                                    </div>
+                                    <div class="d-inline-block ms-3">
+                                        <div class="stat">
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/analytics/online-users"
+                                                title="Usuários online"><i
+                                                    class="align-middle bi-person-workspace card-icon"></i></a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
                     <?php endif; ?>
 
                     <?php if (hasPermission($admin_id, 'finances.view')): ?>
-                        <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
-                            <div class="card stats-card-primary flex-fill">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-start">
-                                        <div class="flex-grow-1">
-                                            <h5 class="text-white-stable">
-                                                Receita de Hoje
-                                                <span
-                                                    class="badge badge-soft-pink"><?php echo adm_fmt_aoa($revenue_today); ?></span>
-                                            </h5>
-                                            <p class="mb-2">Vê relatórios sobre a receita de hoje</p>
-                                            <div class="mb-0">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/finances/payments"
-                                                    class="card-link">Ver
-                                                    relatório <i class="bi bi-arrow-right"></i></a>
-                                            </div>
+                    <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
+                        <div class="card stats-card-primary flex-fill">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h5 class="text-white-stable">
+                                            Receita de Hoje
+                                            <span
+                                                class="badge badge-soft-pink"><?php echo adm_fmt_aoa($revenue_today); ?></span>
+                                        </h5>
+                                        <p class="mb-2">Vê relatórios sobre a receita de hoje</p>
+                                        <div class="mb-0">
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/finances/payments"
+                                                class="card-link">Ver
+                                                relatório <i class="bi bi-arrow-right"></i></a>
                                         </div>
-                                        <div class="d-inline-block ms-3">
-                                            <div class="stat">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/finances/payments"
-                                                    title="Receita hoje"><i
-                                                        class="align-middle bi-cash-coin card-icon"></i></a>
-                                            </div>
+                                    </div>
+                                    <div class="d-inline-block ms-3">
+                                        <div class="stat">
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/finances/payments"
+                                                title="Receita hoje"><i
+                                                    class="align-middle bi-cash-coin card-icon"></i></a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
                     <?php endif; ?>
 
                     <?php if (hasPermission($admin_id, 'users.view')): ?>
-                        <div class="col-12 col-sm-6 col-xxl-3 mb-3 d-flex">
-                            <div class="card stats-card-primary flex-fill">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-start">
-                                        <div class="flex-grow-1">
-                                            <h5 class="text-white-stable">
-                                                Contas Disponíveis
-                                                <span class="badge badge-soft-pink counter"
-                                                    data-valor="<?php echo $accounts_ok; ?>" data-tipo="contagem">0</span>
-                                            </h5>
-                                            <p class="mb-2">Vê agora todas as Contas Disponíveis na <strong>Wasom
-                                                    Upfy</strong></p>
-                                            <div class="mb-0">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users/available-account"
-                                                    class="card-link">Ver
-                                                    as Contas Disponíveis <i class="bi bi-arrow-right"></i></a>
-                                            </div>
+                    <div class="col-12 col-sm-6 col-xxl-3 mb-3 d-flex">
+                        <div class="card stats-card-primary flex-fill">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h5 class="text-white-stable">
+                                            Contas Disponíveis
+                                            <span class="badge badge-soft-pink counter"
+                                                data-valor="<?php echo $accounts_ok; ?>" data-tipo="contagem">0</span>
+                                        </h5>
+                                        <p class="mb-2">Vê agora todas as Contas Disponíveis na <strong>Wasom
+                                                Upfy</strong></p>
+                                        <div class="mb-0">
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users/available-account"
+                                                class="card-link">Ver
+                                                as Contas Disponíveis <i class="bi bi-arrow-right"></i></a>
                                         </div>
-                                        <div class="d-inline-block ms-3">
-                                            <div class="stat">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users/available-account"
-                                                    title="Contas disponíveis"><i
-                                                        class="align-middle bi-person-check card-icon"></i></a>
-                                            </div>
+                                    </div>
+                                    <div class="d-inline-block ms-3">
+                                        <div class="stat">
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users/available-account"
+                                                title="Contas disponíveis"><i
+                                                    class="align-middle bi-person-check card-icon"></i></a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="col-12 col-sm-6 col-xxl-3 mb-3 d-flex">
-                            <div class="card stats-card-primary flex-fill">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-start">
-                                        <div class="flex-grow-1">
-                                            <h5 class="text-white-stable">
-                                                Contas Indisponíveis
-                                                <span class="badge badge-soft-pink counter"
-                                                    data-valor="<?php echo $accounts_pend; ?>" data-tipo="contagem">0</span>
-                                            </h5>
-                                            <p class="mb-2">Vê agora todas as contas indisponível na <strong>Wasom
-                                                    Upfy</strong></p>
-                                            <div class="mb-0">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users/unavailable-account"
-                                                    class="card-link">Ver as Contas Indisponíveis <i
-                                                        class="bi bi-arrow-right"></i></a>
-                                            </div>
+                    <div class="col-12 col-sm-6 col-xxl-3 mb-3 d-flex">
+                        <div class="card stats-card-primary flex-fill">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h5 class="text-white-stable">
+                                            Contas Indisponíveis
+                                            <span class="badge badge-soft-pink counter"
+                                                data-valor="<?php echo $accounts_pend; ?>" data-tipo="contagem">0</span>
+                                        </h5>
+                                        <p class="mb-2">Vê agora todas as contas indisponível na <strong>Wasom
+                                                Upfy</strong></p>
+                                        <div class="mb-0">
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users/unavailable-account"
+                                                class="card-link">Ver as Contas Indisponíveis <i
+                                                    class="bi bi-arrow-right"></i></a>
                                         </div>
-                                        <div class="d-inline-block ms-3">
-                                            <div class="stat">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users/unavailable-account"
-                                                    title="Contas indisponíveis"><i
-                                                        class="align-middle bi-person-exclamation card-icon"></i></a>
-                                            </div>
+                                    </div>
+                                    <div class="d-inline-block ms-3">
+                                        <div class="stat">
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users/unavailable-account"
+                                                title="Contas indisponíveis"><i
+                                                    class="align-middle bi-person-exclamation card-icon"></i></a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
                     <?php endif; ?>
 
                     <?php if (hasPermission($admin_id, 'music.approve')): ?>
-                        <!-- NOVO CARD — Lançamentos Pendentes -->
-                        <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
-                            <div class="card stats-card-primary flex-fill">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-start">
-                                        <div class="flex-grow-1">
-                                            <h5 class="text-white-stable">
-                                                Lançamentos Pendentes
-                                                <span class="badge badge-soft-pink counter"
-                                                    data-valor="<?php echo $pending_releases; ?>"
-                                                    data-tipo="contagem">0</span>
-                                            </h5>
-                                            <p class="mb-2">Lançamentos aguardando revisão e aprovação</p>
-                                            <div class="mb-0">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/releases/pending"
-                                                    class="card-link">Rever
-                                                    agora <i class="bi bi-arrow-right"></i></a>
-                                            </div>
+                    <!-- NOVO CARD — Lançamentos Pendentes -->
+                    <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
+                        <div class="card stats-card-primary flex-fill">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h5 class="text-white-stable">
+                                            Lançamentos Pendentes
+                                            <span class="badge badge-soft-pink counter"
+                                                data-valor="<?php echo $pending_releases; ?>"
+                                                data-tipo="contagem">0</span>
+                                        </h5>
+                                        <p class="mb-2">Lançamentos aguardando revisão e aprovação</p>
+                                        <div class="mb-0">
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/releases/pending"
+                                                class="card-link">Rever
+                                                agora <i class="bi bi-arrow-right"></i></a>
                                         </div>
-                                        <div class="d-inline-block ms-3">
-                                            <div class="stat">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/releases/pending"
-                                                    title="Lançamentos pendentes"><i
-                                                        class="align-middle bi-hourglass-split card-icon"></i></a>
-                                            </div>
+                                    </div>
+                                    <div class="d-inline-block ms-3">
+                                        <div class="stat">
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/releases/pending"
+                                                title="Lançamentos pendentes"><i
+                                                    class="align-middle bi-hourglass-split card-icon"></i></a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
                     <?php endif; ?>
 
                     <?php if (hasPermission($admin_id, 'users.view')): ?>
-                        <!-- NOVO — Total com Conta Bancária -->
-                        <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
-                            <div class="card stats-card-primary flex-fill">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-start">
-                                        <div class="flex-grow-1">
-                                            <h5 class="text-white-stable">
-                                                Com Conta Bancária
-                                                <span class="badge badge-soft-pink counter"
-                                                    data-valor="<?php echo $total_bank_accounts; ?>"
-                                                    data-tipo="contagem">0</span>
-                                            </h5>
-                                            <p class="mb-2">Utilizadores com conta bancária registada na <strong>Wasom
-                                                    Upfy</strong></p>
-                                            <div class="mb-0">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users"
-                                                    class="card-link">Ver contas <i class="bi bi-arrow-right"></i></a>
-                                            </div>
+                    <!-- NOVO — Total com Conta Bancária -->
+                    <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
+                        <div class="card stats-card-primary flex-fill">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h5 class="text-white-stable">
+                                            Com Conta Bancária
+                                            <span class="badge badge-soft-pink counter"
+                                                data-valor="<?php echo $total_bank_accounts; ?>"
+                                                data-tipo="contagem">0</span>
+                                        </h5>
+                                        <p class="mb-2">Utilizadores com conta bancária registada na <strong>Wasom
+                                                Upfy</strong></p>
+                                        <div class="mb-0">
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users"
+                                                class="card-link">Ver contas <i class="bi bi-arrow-right"></i></a>
                                         </div>
-                                        <div class="d-inline-block ms-3">
-                                            <div class="stat">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users"
-                                                    title="Contas bancárias"><i
-                                                        class="align-middle bi-bank card-icon"></i></a>
-                                            </div>
+                                    </div>
+                                    <div class="d-inline-block ms-3">
+                                        <div class="stat">
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users"
+                                                title="Contas bancárias"><i
+                                                    class="align-middle bi-bank card-icon"></i></a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
                     <?php endif; ?>
 
                     <?php if (hasPermission($admin_id, 'users.view')): ?>
-                        <!-- NOVO — Total Colaboradores -->
-                        <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
-                            <div class="card stats-card-primary flex-fill">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-start">
-                                        <div class="flex-grow-1">
-                                            <h5 class="text-white-stable">
-                                                Total Colaboradores
-                                                <span class="badge badge-soft-pink counter"
-                                                    data-valor="<?php echo $total_collabs; ?>" data-tipo="contagem">0</span>
-                                            </h5>
-                                            <p class="mb-2">Colaboradores registados pelos artistas da <strong>Wasom
-                                                    Upfy</strong></p>
-                                            <div class="mb-0">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users"
-                                                    class="card-link">Ver
-                                                    colaboradores <i class="bi bi-arrow-right"></i></a>
-                                            </div>
+                    <!-- NOVO — Total Colaboradores -->
+                    <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
+                        <div class="card stats-card-primary flex-fill">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h5 class="text-white-stable">
+                                            Total Colaboradores
+                                            <span class="badge badge-soft-pink counter"
+                                                data-valor="<?php echo $total_collabs; ?>" data-tipo="contagem">0</span>
+                                        </h5>
+                                        <p class="mb-2">Colaboradores registados pelos artistas da <strong>Wasom
+                                                Upfy</strong></p>
+                                        <div class="mb-0">
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users"
+                                                class="card-link">Ver
+                                                colaboradores <i class="bi bi-arrow-right"></i></a>
                                         </div>
-                                        <div class="d-inline-block ms-3">
-                                            <div class="stat">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users"
-                                                    title="Colaboradores"><i
-                                                        class="align-middle bi-people-fill card-icon"></i></a>
-                                            </div>
+                                    </div>
+                                    <div class="d-inline-block ms-3">
+                                        <div class="stat">
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users"
+                                                title="Colaboradores"><i
+                                                    class="align-middle bi-people-fill card-icon"></i></a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
                     <?php endif; ?>
 
                     <?php if (hasPermission($admin_id, 'finances.view')): ?>
-                        <!-- NOVO — Receita Total Acumulada -->
-                        <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
-                            <div class="card stats-card-primary flex-fill">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-start">
-                                        <div class="flex-grow-1">
-                                            <h5 class="text-white-stable">
-                                                Receita Acumulada
-                                                <span
-                                                    class="badge badge-soft-pink"><?php echo adm_fmt_aoa($revenue_total); ?></span>
-                                            </h5>
-                                            <p class="mb-2">Total histórico de pagamentos aprovados na <strong>Wasom
-                                                    Upfy</strong></p>
-                                            <div class="mb-0">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/finances"
-                                                    class="card-link">Ver
-                                                    finanças <i class="bi bi-arrow-right"></i></a>
-                                            </div>
+                    <!-- NOVO — Receita Total Acumulada -->
+                    <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
+                        <div class="card stats-card-primary flex-fill">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h5 class="text-white-stable">
+                                            Receita Acumulada
+                                            <span
+                                                class="badge badge-soft-pink"><?php echo adm_fmt_aoa($revenue_total); ?></span>
+                                        </h5>
+                                        <p class="mb-2">Total histórico de pagamentos aprovados na <strong>Wasom
+                                                Upfy</strong></p>
+                                        <div class="mb-0">
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/finances"
+                                                class="card-link">Ver
+                                                finanças <i class="bi bi-arrow-right"></i></a>
                                         </div>
-                                        <div class="d-inline-block ms-3">
-                                            <div class="stat">
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/finances"
-                                                    title="Receita acumulada"><i
-                                                        class="align-middle bi-graph-up-arrow card-icon"></i></a>
-                                            </div>
+                                    </div>
+                                    <div class="d-inline-block ms-3">
+                                        <div class="stat">
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/finances"
+                                                title="Receita acumulada"><i
+                                                    class="align-middle bi-graph-up-arrow card-icon"></i></a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
                     <?php endif; ?>
 
                 </div>
@@ -1092,42 +1094,42 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                 <!-- ══ SUPORTE + MAPA + STREAMS ══ -->
                 <div class="row">
                     <?php if (hasPermission($admin_id, 'support.view') || hasPermission($admin_id, 'analytics.view')): ?>
-                        <div class="col-md-6 mb-3">
-                            <?php if (hasPermission($admin_id, 'support.view')): ?>
-                                <div class="card stats-card-primary flex-fill">
-                                    <div class="card-body">
-                                        <div class="d-flex align-items-start">
-                                            <div class="flex-grow-1">
-                                                <h5 class="text-white-stable">
-                                                    Pedidos de Suporte de Usuários
-                                                    <?php if ($open_tickets > 0): ?>
-                                                        <span class="badge bg-danger"><?php echo $open_tickets; ?></span>
-                                                    <?php endif; ?>
-                                                </h5>
-                                                <p class="mb-2">Todos os pedidos de suporte da <strong>Wasom Upfy</strong> estão
-                                                    disponíveis aqui.</p>
-                                                <div class="mb-0">
-                                                    <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/support"
-                                                        class="card-link">Ver pedidos
-                                                        de suporte <i class="bi bi-arrow-right"></i></a>
-                                                </div>
-                                            </div>
-                                            <div class="d-inline-block ms-3">
-                                                <div class="stat">
-                                                    <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/support"
-                                                        title="Suporte"><i class="align-middle bi-headset card-icon"></i></a>
-                                                </div>
-                                            </div>
+                    <div class="col-md-6 mb-3">
+                        <?php if (hasPermission($admin_id, 'support.view')): ?>
+                        <div class="card stats-card-primary flex-fill">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h5 class="text-white-stable">
+                                            Pedidos de Suporte de Usuários
+                                            <?php if ($open_tickets > 0): ?>
+                                            <span class="badge bg-danger"><?php echo $open_tickets; ?></span>
+                                            <?php endif; ?>
+                                        </h5>
+                                        <p class="mb-2">Todos os pedidos de suporte da <strong>Wasom Upfy</strong> estão
+                                            disponíveis aqui.</p>
+                                        <div class="mb-0">
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/support"
+                                                class="card-link">Ver pedidos
+                                                de suporte <i class="bi bi-arrow-right"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="d-inline-block ms-3">
+                                        <div class="stat">
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/support"
+                                                title="Suporte"><i class="align-middle bi-headset card-icon"></i></a>
                                         </div>
                                     </div>
                                 </div>
-                            <?php endif; ?>
-                            <?php if (hasPermission($admin_id, 'analytics.view')): ?>
-                                <div class="card stats-card-primary flex-fill">
-                                    <h5 class="card-title">Países que usam a Wasom Upfy</h5>
-                                    <div id="clientMap"></div>
-                                    <div class="row text-center">
-                                        <?php
+                            </div>
+                        </div>
+                        <?php endif; ?>
+                        <?php if (hasPermission($admin_id, 'analytics.view')): ?>
+                        <div class="card stats-card-primary flex-fill">
+                            <h5 class="card-title">Países que usam a Wasom Upfy</h5>
+                            <div id="clientMap"></div>
+                            <div class="row text-center">
+                                <?php
                                         $country_map = ['AO' => 'Angola', 'PT' => 'Portugal', 'BR' => 'Brasil'];
                                         if (!empty($country_stats)):
                                             $grand = max(1, array_sum(array_column($country_stats, 'total')));
@@ -1135,295 +1137,295 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                                 $pct = round(($cs['total'] / $grand) * 100, 1);
                                                 $lbl = $country_map[$cs['country_code']] ?? $cs['country_code'];
                                         ?>
-                                                <div class="col-4 border-end">
-                                                    <h6 class="text-white-stable"><?php echo htmlspecialchars($lbl); ?></h6>
-                                                    <h4 class="counter" data-valor="<?php echo $pct; ?>" data-tipo="porcentagem">0%</h4>
-                                                </div>
-                                            <?php endforeach;
-                                        else: ?>
-                                            <div class="col-4 border-end">
-                                                <h6 class="text-white-stable">Angola</h6>
-                                                <h4 class="counter" data-valor="58" data-tipo="porcentagem">0%</h4>
-                                            </div>
-                                            <div class="col-4 border-end">
-                                                <h6 class="text-white-stable">Portugal</h6>
-                                                <h4 class="counter" data-valor="22" data-tipo="porcentagem">0%</h4>
-                                            </div>
-                                            <div class="col-4">
-                                                <h6 class="text-white-stable">Outros</h6>
-                                                <h4 class="counter" data-valor="20" data-tipo="porcentagem">0%</h4>
-                                            </div>
-                                        <?php endif; ?>
-                                    </div>
+                                <div class="col-4 border-end">
+                                    <h6 class="text-white-stable"><?php echo htmlspecialchars($lbl); ?></h6>
+                                    <h4 class="counter" data-valor="<?php echo $pct; ?>" data-tipo="porcentagem">0%</h4>
                                 </div>
-                            <?php endif; ?>
+                                <?php endforeach;
+                                        else: ?>
+                                <div class="col-4 border-end">
+                                    <h6 class="text-white-stable">Angola</h6>
+                                    <h4 class="counter" data-valor="58" data-tipo="porcentagem">0%</h4>
+                                </div>
+                                <div class="col-4 border-end">
+                                    <h6 class="text-white-stable">Portugal</h6>
+                                    <h4 class="counter" data-valor="22" data-tipo="porcentagem">0%</h4>
+                                </div>
+                                <div class="col-4">
+                                    <h6 class="text-white-stable">Outros</h6>
+                                    <h4 class="counter" data-valor="20" data-tipo="porcentagem">0%</h4>
+                                </div>
+                                <?php endif; ?>
+                            </div>
                         </div>
+                        <?php endif; ?>
+                    </div>
                     <?php endif; ?>
 
                     <?php if (hasPermission($admin_id, 'analytics.view')): ?>
-                        <div class="col-md-6 mb-3 d-flex">
-                            <div class="card stats-card-primary flex-fill">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h5 class="card-title mb-0">Estatísticas de Streams</h5>
-                                    <div class="dropdown">
-                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
-                                            data-bs-toggle="dropdown" aria-label="Selecionar Período">
-                                            Últimos 7 dias
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li><a class="dropdown-item" href="#" data-period="today">Hoje</a></li>
-                                            <li><a class="dropdown-item" href="#" data-period="7days">Últimos 7 dias</a>
-                                            </li>
-                                            <li><a class="dropdown-item" href="#" data-period="30days">Últimos 30 dias</a>
-                                            </li>
-                                            <li><a class="dropdown-item" href="#" data-period="month">Este mês</a></li>
-                                        </ul>
-                                    </div>
+                    <div class="col-md-6 mb-3 d-flex">
+                        <div class="card stats-card-primary flex-fill">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="card-title mb-0">Estatísticas de Streams</h5>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
+                                        data-bs-toggle="dropdown" aria-label="Selecionar Período">
+                                        Últimos 7 dias
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item" href="#" data-period="today">Hoje</a></li>
+                                        <li><a class="dropdown-item" href="#" data-period="7days">Últimos 7 dias</a>
+                                        </li>
+                                        <li><a class="dropdown-item" href="#" data-period="30days">Últimos 30 dias</a>
+                                        </li>
+                                        <li><a class="dropdown-item" href="#" data-period="month">Este mês</a></li>
+                                    </ul>
                                 </div>
-                                <canvas id="streamsChart" style="max-height: 400px"></canvas>
-                                <div class="row mt-3 text-center">
-                                    <div class="col-4 border-end">
-                                        <h6 class="text-white-stable">Total Streams</h6>
-                                        <h4 id="totalStreams" class="counter" data-valor="173.589" data-tipo="decimal">0
-                                        </h4>
-                                    </div>
-                                    <div class="col-4 border-end">
-                                        <h6 class="text-white-stable">Novos Ouvintes</h6>
-                                        <h4 id="newListeners" class="counter" data-valor="1.254" data-tipo="decimal">0</h4>
-                                    </div>
-                                    <div class="col-4">
-                                        <h6 class="text-white-stable">Receita</h6>
-                                        <h4 id="revenue" class="counter" data-valor="<?php echo ($revenue_total); ?>"
-                                            data-tipo="moeda">kz0
-                                        </h4>
-                                    </div>
+                            </div>
+                            <canvas id="streamsChart" style="max-height: 400px"></canvas>
+                            <div class="row mt-3 text-center">
+                                <div class="col-4 border-end">
+                                    <h6 class="text-white-stable">Total Streams</h6>
+                                    <h4 id="totalStreams" class="counter" data-valor="173.589" data-tipo="decimal">0
+                                    </h4>
+                                </div>
+                                <div class="col-4 border-end">
+                                    <h6 class="text-white-stable">Novos Ouvintes</h6>
+                                    <h4 id="newListeners" class="counter" data-valor="1.254" data-tipo="decimal">0</h4>
+                                </div>
+                                <div class="col-4">
+                                    <h6 class="text-white-stable">Receita</h6>
+                                    <h4 id="revenue" class="counter" data-valor="<?php echo ($revenue_total); ?>"
+                                        data-tipo="moeda">kz0
+                                    </h4>
                                 </div>
                             </div>
                         </div>
+                    </div>
                     <?php endif; ?>
                 </div>
 
                 <!-- ══ TOP MÚSICAS (reais) + ATIVIDADE RECENTE (real) ══ -->
                 <div class="row">
                     <?php if (hasPermission($admin_id, 'music.view')): ?>
-                        <div class="col-md-6 mb-3 d-flex">
-                            <div class="card stats-card-primary flex-fill">
-                                <h5 class="card-title">Top Músicas</h5>
-                                <div class="table-responsive">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Música</th>
-                                                <th>Artista</th>
-                                                <th>Streams</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php if (!empty($top_tracks)): ?>
-                                                <?php foreach ($top_tracks as $i => $t): ?>
-                                                    <tr>
-                                                        <td><?php echo $i + 1; ?></td>
-                                                        <td><?php echo htmlspecialchars($t['title_track']); ?></td>
-                                                        <td><?php echo htmlspecialchars($t['artist_name']); ?></td>
-                                                        <td><?php echo number_format((int)$t['total_streams'], 0, ',', '.'); ?></td>
-                                                    </tr>
-                                                <?php endforeach; ?>
-                                            <?php else: ?>
-                                                <tr>
-                                                    <td colspan="4" class="text-center text-muted py-3">Sem dados de streams
-                                                        ainda.</td>
-                                                </tr>
-                                            <?php endif; ?>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/analytics" class="card-link">Ver todas <i
-                                        class="bi bi-arrow-right"></i></a>
+                    <div class="col-md-6 mb-3 d-flex">
+                        <div class="card stats-card-primary flex-fill">
+                            <h5 class="card-title">Top Músicas</h5>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Música</th>
+                                            <th>Artista</th>
+                                            <th>Streams</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php if (!empty($top_tracks)): ?>
+                                        <?php foreach ($top_tracks as $i => $t): ?>
+                                        <tr>
+                                            <td><?php echo $i + 1; ?></td>
+                                            <td><?php echo htmlspecialchars($t['title_track']); ?></td>
+                                            <td><?php echo htmlspecialchars($t['artist_name']); ?></td>
+                                            <td><?php echo number_format((int)$t['total_streams'], 0, ',', '.'); ?></td>
+                                        </tr>
+                                        <?php endforeach; ?>
+                                        <?php else: ?>
+                                        <tr>
+                                            <td colspan="4" class="text-center text-muted py-3">Sem dados de streams
+                                                ainda.</td>
+                                        </tr>
+                                        <?php endif; ?>
+                                    </tbody>
+                                </table>
                             </div>
+                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/analytics" class="card-link">Ver todas <i
+                                    class="bi bi-arrow-right"></i></a>
                         </div>
+                    </div>
                     <?php endif; ?>
 
                     <?php if (hasPermission($admin_id, 'audit.view')): ?>
-                        <!-- Atividade Recente REAL -->
-                        <div class="col-12 col-md-6 mb-3">
-                            <div class="card stats-card-primary flex-fill">
-                                <h5 class="card-title">Atividade Recente</h5>
-                                <div class="activity-list">
-                                    <?php if (empty($audit_list)): ?>
-                                        <p class="text-white-stable" style="opacity:.6;font-size:.85rem">Sem actividade
-                                            registada ainda.</p>
-                                    <?php else: ?>
-                                        <?php foreach ($audit_list as $log):
+                    <!-- Atividade Recente REAL -->
+                    <div class="col-12 col-md-6 mb-3">
+                        <div class="card stats-card-primary flex-fill">
+                            <h5 class="card-title">Atividade Recente</h5>
+                            <div class="activity-list">
+                                <?php if (empty($audit_list)): ?>
+                                <p class="text-white-stable" style="opacity:.6;font-size:.85rem">Sem actividade
+                                    registada ainda.</p>
+                                <?php else: ?>
+                                <?php foreach ($audit_list as $log):
                                             $who   = $log['first_name'] ? trim($log['first_name'] . ' ' . ($log['second_name'] ?? '')) : 'Sistema';
                                             $ini   = $log['first_name'] ? adm_initials($log['first_name'], $log['second_name'] ?? '') : 'WU';
                                             $color = adm_avatar_color($who);
                                         ?>
-                                            <div class="activity-item d-flex mb-3">
-                                                <div class="flex-shrink-0">
-                                                    <div
-                                                        style="width:40px;height:40px;border-radius:50%;background:<?php echo $color; ?>;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem;color:#fff;overflow:hidden">
-                                                        <?php if (!empty($log['photo_employees'])): ?>
-                                                            <img src="../assets/comprovantes/uploads/employees/<?php echo htmlspecialchars($log['photo_employees']); ?>"
-                                                                alt="" style="width:100%;height:100%;object-fit:cover"
-                                                                onerror="this.style.display='none';this.parentElement.textContent='<?php echo $ini; ?>'" />
-                                                        <?php else: ?>
-                                                            <?php echo adm_initials($log['first_name'] ?? '', $log['second_name'] ?? ''); ?>
-                                                        <?php endif; ?>
-                                                    </div>
-                                                </div>
-                                                <div class="flex-grow-1 ms-3">
-                                                    <h6 class="mb-0"><?php echo htmlspecialchars(adm_fmt_action($log['action'])); ?>
-                                                    </h6>
-                                                    <p class="text-white-stable mb-0">
-                                                        <?php echo htmlspecialchars($who); ?>
-                                                        <?php if ($log['ip_address']): ?> · <code
-                                                                style="font-size:.75rem;opacity:.7"><?php echo htmlspecialchars($log['ip_address']); ?></code><?php endif; ?>
-                                                    </p>
-                                                    <small
-                                                        class="text-white-stable"><?php echo adm_fmt_date($log['creat_log']); ?></small>
-                                                </div>
-                                            </div>
-                                        <?php endforeach; ?>
-                                    <?php endif; ?>
+                                <div class="activity-item d-flex mb-3">
+                                    <div class="flex-shrink-0">
+                                        <div
+                                            style="width:40px;height:40px;border-radius:50%;background:<?php echo $color; ?>;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem;color:#fff;overflow:hidden">
+                                            <?php if (!empty($log['photo_employees'])): ?>
+                                            <img src="../assets/comprovantes/uploads/employees/<?php echo htmlspecialchars($log['photo_employees']); ?>"
+                                                alt="" style="width:100%;height:100%;object-fit:cover"
+                                                onerror="this.style.display='none';this.parentElement.textContent='<?php echo $ini; ?>'" />
+                                            <?php else: ?>
+                                            <?php echo adm_initials($log['first_name'] ?? '', $log['second_name'] ?? ''); ?>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="mb-0"><?php echo htmlspecialchars(adm_fmt_action($log['action'])); ?>
+                                        </h6>
+                                        <p class="text-white-stable mb-0">
+                                            <?php echo htmlspecialchars($who); ?>
+                                            <?php if ($log['ip_address']): ?> · <code
+                                                style="font-size:.75rem;opacity:.7"><?php echo htmlspecialchars($log['ip_address']); ?></code><?php endif; ?>
+                                        </p>
+                                        <small
+                                            class="text-white-stable"><?php echo adm_fmt_date($log['creat_log']); ?></small>
+                                    </div>
                                 </div>
-                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/audit" class="card-link mt-3">Ver toda
-                                    actividade <i class="bi bi-arrow-right"></i></a>
+                                <?php endforeach; ?>
+                                <?php endif; ?>
                             </div>
+                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/audit" class="card-link mt-3">Ver toda
+                                actividade <i class="bi bi-arrow-right"></i></a>
                         </div>
+                    </div>
                     <?php endif; ?>
                 </div>
 
                 <!-- ══ NOSSOS CLIENTES MELHORADO + PLANOS ACTIVOS ══ -->
                 <div class="row">
                     <?php if (hasPermission($admin_id, 'users.view')): ?>
-                        <!-- Nossos Clientes — cards com foto/nome/email/plano/data -->
-                        <div class="col-md-7 mb-3 d-flex">
-                            <div class="card stats-card-primary flex-fill">
-                                <div class="section-card-header">
-                                    <h5 class="card-title mb-0">Novos Clientes</h5>
-                                    <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users" class="card-link"
-                                        style="font-size:.8rem">
-                                        Ver todos <i class="bi bi-arrow-right"></i>
-                                    </a>
-                                </div>
-                                <p class="small mb-3">Utilizadores mais recentes a juntar-se à Wasom Upfy</p>
-                                <?php if (empty($recent_users_full)): ?>
-                                    <p class="text-white-stable" style="opacity:.6;font-size:.85rem">Nenhum utilizador registado
-                                        ainda.</p>
-                                <?php else: ?>
-                                    <div class="client-user-grid">
-                                        <?php foreach ($recent_users_full as $u):
+                    <!-- Nossos Clientes — cards com foto/nome/email/plano/data -->
+                    <div class="col-md-7 mb-3 d-flex">
+                        <div class="card stats-card-primary flex-fill">
+                            <div class="section-card-header">
+                                <h5 class="card-title mb-0">Novos Clientes</h5>
+                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users" class="card-link"
+                                    style="font-size:.8rem">
+                                    Ver todos <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </div>
+                            <p class="small mb-3">Utilizadores mais recentes a juntar-se à Wasom Upfy</p>
+                            <?php if (empty($recent_users_full)): ?>
+                            <p class="text-white-stable" style="opacity:.6;font-size:.85rem">Nenhum utilizador registado
+                                ainda.</p>
+                            <?php else: ?>
+                            <div class="client-user-grid">
+                                <?php foreach ($recent_users_full as $u):
                                             $ini   = adm_initials($u['first_name'], $u['second_name'] ?? '');
                                             $color = adm_avatar_color($u['first_name'] . ($u['second_name'] ?? ''));
                                             $plan  = $u['name_plan'] ?? 'Sem plano';
                                             $dt    = $u['plan_activated_at'] ? adm_fmt_date($u['plan_activated_at']) : '—';
                                         ?>
-                                            <div class="client-user-card">
-                                                <div class="client-user-avatar" style="background:<?php echo $color; ?>">
-                                                    <?php if (!empty($u['photo_user'])): ?>
-                                                        <img src="../assets/comprovantes/uploads/users/<?php echo htmlspecialchars($u['photo_user']); ?>"
-                                                            alt="<?php echo htmlspecialchars($u['first_name']); ?>"
-                                                            onerror="this.style.display='none';this.parentElement.textContent='<?php echo $ini; ?>'" />
-                                                    <?php else: echo $ini;
+                                <div class="client-user-card">
+                                    <div class="client-user-avatar" style="background:<?php echo $color; ?>">
+                                        <?php if (!empty($u['photo_user'])): ?>
+                                        <img src="../assets/comprovantes/uploads/users/<?php echo htmlspecialchars($u['photo_user']); ?>"
+                                            alt="<?php echo htmlspecialchars($u['first_name']); ?>"
+                                            onerror="this.style.display='none';this.parentElement.textContent='<?php echo $ini; ?>'" />
+                                        <?php else: echo $ini;
                                                     endif; ?>
-                                                </div>
-                                                <div class="client-user-info">
-                                                    <div class="client-user-name text-white-stable">
-                                                        <?php echo htmlspecialchars($u['first_name'] . ' ' . ($u['second_name'] ?? '')); ?>
-                                                    </div>
-                                                    <div class="client-user-email"><?php echo htmlspecialchars($u['email_user']); ?>
-                                                    </div>
-                                                    <div class="client-user-plan"><?php echo htmlspecialchars($plan); ?></div>
-                                                    <div class="client-user-date"><?php echo $dt; ?></div>
-                                                </div>
-                                            </div>
-                                        <?php endforeach; ?>
                                     </div>
-                                <?php endif; ?>
+                                    <div class="client-user-info">
+                                        <div class="client-user-name text-white-stable">
+                                            <?php echo htmlspecialchars($u['first_name'] . ' ' . ($u['second_name'] ?? '')); ?>
+                                        </div>
+                                        <div class="client-user-email"><?php echo htmlspecialchars($u['email_user']); ?>
+                                        </div>
+                                        <div class="client-user-plan"><?php echo htmlspecialchars($plan); ?></div>
+                                        <div class="client-user-date"><?php echo $dt; ?></div>
+                                    </div>
+                                </div>
+                                <?php endforeach; ?>
                             </div>
+                            <?php endif; ?>
                         </div>
+                    </div>
                     <?php endif; ?>
 
                     <?php if (hasPermission($admin_id, 'finances.view')): ?>
-                        <!-- Planos Activos — donut + lista -->
-                        <div class="col-md-5 mb-3 d-flex">
-                            <div class="card stats-card-primary flex-fill">
-                                <h5 class="card-title">Planos Activos</h5>
-                                <p class="small mb-3">Distribuição de utilizadores por plano</p>
-                                <?php if (empty($plans_dist) || array_sum(array_column($plans_dist, 'total')) === 0): ?>
-                                    <p class="text-white-stable" style="opacity:.6;font-size:.85rem">Nenhum plano activo ainda.
-                                    </p>
-                                <?php else: ?>
-                                    <div style="max-width:160px;margin:0 auto 16px">
-                                        <canvas id="plansDonut"></canvas>
-                                    </div>
-                                    <?php
+                    <!-- Planos Activos — donut + lista -->
+                    <div class="col-md-5 mb-3 d-flex">
+                        <div class="card stats-card-primary flex-fill">
+                            <h5 class="card-title">Planos Activos</h5>
+                            <p class="small mb-3">Distribuição de utilizadores por plano</p>
+                            <?php if (empty($plans_dist) || array_sum(array_column($plans_dist, 'total')) === 0): ?>
+                            <p class="text-white-stable" style="opacity:.6;font-size:.85rem">Nenhum plano activo ainda.
+                            </p>
+                            <?php else: ?>
+                            <div style="max-width:160px;margin:0 auto 16px">
+                                <canvas id="plansDonut"></canvas>
+                            </div>
+                            <?php
                                     $planColors = ['#FF0089', '#3b82f6', '#22c55e', '#f97316', '#8b5cf6'];
                                     foreach ($plans_dist as $i => $plan):
                                         $col = $planColors[$i % count($planColors)];
                                     ?>
-                                        <div class="d-flex align-items-center justify-content-between mb-2">
-                                            <div class="d-flex align-items-center gap-2">
-                                                <span
-                                                    style="width:10px;height:10px;border-radius:3px;background:<?php echo $col; ?>;display:inline-block;flex-shrink:0"></span>
-                                                <span class="text-white-stable"
-                                                    style="font-size:.82rem"><?php echo htmlspecialchars($plan['name_plan']); ?></span>
-                                            </div>
-                                            <strong style="font-size:.82rem"><?php echo (int)$plan['total']; ?></strong>
-                                        </div>
-                                    <?php endforeach; ?>
-                                <?php endif; ?>
-                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users" class="card-link mt-3">Ver
-                                    utilizadores <i class="bi bi-arrow-right"></i></a>
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span
+                                        style="width:10px;height:10px;border-radius:3px;background:<?php echo $col; ?>;display:inline-block;flex-shrink:0"></span>
+                                    <span class="text-white-stable"
+                                        style="font-size:.82rem"><?php echo htmlspecialchars($plan['name_plan']); ?></span>
+                                </div>
+                                <strong style="font-size:.82rem"><?php echo (int)$plan['total']; ?></strong>
                             </div>
+                            <?php endforeach; ?>
+                            <?php endif; ?>
+                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users" class="card-link mt-3">Ver
+                                utilizadores <i class="bi bi-arrow-right"></i></a>
                         </div>
+                    </div>
                 </div>
 
                 <!-- ══ LANÇAMENTOS POR REVER + TIMELINE ══ -->
                 <div class="row">
                     <?php if (hasPermission($admin_id, 'music.approve')): ?>
-                        <div class="col-md-6 mb-3 d-flex">
-                            <div class="card stats-card-primary flex-fill">
-                                <div class="section-card-header">
-                                    <h5 class="card-title mb-0">Lançamentos por Rever</h5>
-                                    <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/releases/pending" class="card-link"
-                                        style="font-size:.8rem">Ver todos <i class="bi bi-arrow-right"></i></a>
-                                </div>
-                                <?php if (empty($pending_rel)): ?>
-                                    <div class="text-center py-3">
-                                        <i class="bi bi-check-circle" style="font-size:2rem;color:#22c55e;opacity:.5"></i>
-                                        <p class="text-white-stable mt-2" style="font-size:.85rem;opacity:.6">Sem lançamentos
-                                            pendentes.</p>
-                                    </div>
-                                <?php else: ?>
-                                    <?php foreach ($pending_rel as $rel):
+                    <div class="col-md-6 mb-3 d-flex">
+                        <div class="card stats-card-primary flex-fill">
+                            <div class="section-card-header">
+                                <h5 class="card-title mb-0">Lançamentos por Rever</h5>
+                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/releases/pending" class="card-link"
+                                    style="font-size:.8rem">Ver todos <i class="bi bi-arrow-right"></i></a>
+                            </div>
+                            <?php if (empty($pending_rel)): ?>
+                            <div class="text-center py-3">
+                                <i class="bi bi-check-circle" style="font-size:2rem;color:#22c55e;opacity:.5"></i>
+                                <p class="text-white-stable mt-2" style="font-size:.85rem;opacity:.6">Sem lançamentos
+                                    pendentes.</p>
+                            </div>
+                            <?php else: ?>
+                            <?php foreach ($pending_rel as $rel):
                                         [$sc, $sl] = rel_status($rel['status_album']);
                                     ?>
-                                        <div class="adm-list-item">
-                                            <?php if (!empty($rel['img_cover'])): ?>
-                                                <img src="../assets/comprovantes/uploads/covers/<?php echo htmlspecialchars($rel['img_cover']); ?>"
-                                                    class="adm-cover-thumb" alt="" onerror="this.style.display='none'" />
-                                            <?php else: ?>
-                                                <div class="adm-cover-placeholder"><i class="bi bi-music-note"></i></div>
-                                            <?php endif; ?>
-                                            <div class="adm-list-info">
-                                                <div class="adm-list-title text-white-stable">
-                                                    <?php echo htmlspecialchars($rel['title_album']); ?></div>
-                                                <div class="adm-list-sub">
-                                                    <?php echo htmlspecialchars($rel['first_name'] . ' ' . ($rel['second_name'] ?? '')); ?>
-                                                    · <?php echo ucfirst($rel['type_album']); ?></div>
-                                            </div>
-                                            <div class="adm-list-meta">
-                                                <span class="badge bg-<?php echo $sc; ?>"><?php echo $sl; ?></span>
-                                                <div style="font-size:.7rem;opacity:.45;margin-top:3px">
-                                                    <?php echo adm_fmt_date($rel['creat_album']); ?></div>
-                                            </div>
-                                        </div>
-                                    <?php endforeach; ?>
+                            <div class="adm-list-item">
+                                <?php if (!empty($rel['img_cover'])): ?>
+                                <img src="../assets/comprovantes/uploads/covers/<?php echo htmlspecialchars($rel['img_cover']); ?>"
+                                    class="adm-cover-thumb" alt="" onerror="this.style.display='none'" />
+                                <?php else: ?>
+                                <div class="adm-cover-placeholder"><i class="bi bi-music-note"></i></div>
                                 <?php endif; ?>
+                                <div class="adm-list-info">
+                                    <div class="adm-list-title text-white-stable">
+                                        <?php echo htmlspecialchars($rel['title_album']); ?></div>
+                                    <div class="adm-list-sub">
+                                        <?php echo htmlspecialchars($rel['first_name'] . ' ' . ($rel['second_name'] ?? '')); ?>
+                                        · <?php echo ucfirst($rel['type_album']); ?></div>
+                                </div>
+                                <div class="adm-list-meta">
+                                    <span class="badge bg-<?php echo $sc; ?>"><?php echo $sl; ?></span>
+                                    <div style="font-size:.7rem;opacity:.45;margin-top:3px">
+                                        <?php echo adm_fmt_date($rel['creat_album']); ?></div>
+                                </div>
                             </div>
+                            <?php endforeach; ?>
+                            <?php endif; ?>
                         </div>
+                    </div>
                     <?php endif; ?>
 
                     <div class="col-md-6 mb-3 d-flex">
@@ -1467,69 +1469,69 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                     style="font-size:.8rem">Ver todos <i class="bi bi-arrow-right"></i></a>
                             </div>
                             <?php if (empty($recent_pays)): ?>
-                                <p class="text-white-stable" style="opacity:.6;font-size:.85rem">Nenhum pagamento registado
-                                    ainda.</p>
+                            <p class="text-white-stable" style="opacity:.6;font-size:.85rem">Nenhum pagamento registado
+                                ainda.</p>
                             <?php else: ?>
-                                <div class="table-responsive">
-                                    <table class="table table-hover mb-0">
-                                        <thead>
-                                            <tr>
-                                                <th>Utilizador</th>
-                                                <th>Referência</th>
-                                                <th>Plano</th>
-                                                <th>Valor</th>
-                                                <th>Método</th>
-                                                <th>Estado</th>
-                                                <th>Data</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php foreach ($recent_pays as $pay):
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Utilizador</th>
+                                            <th>Referência</th>
+                                            <th>Plano</th>
+                                            <th>Valor</th>
+                                            <th>Método</th>
+                                            <th>Estado</th>
+                                            <th>Data</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($recent_pays as $pay):
                                                 $ini   = adm_initials($pay['first_name'], $pay['second_name'] ?? '');
                                                 $color = adm_avatar_color($pay['first_name']);
                                                 $sc    = pay_status_class($pay['status_payment']);
                                                 $sl    = pay_status_label($pay['status_payment']);
                                             ?>
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center gap-2">
-                                                            <div class="adm-avatar-sm" style="background:<?php echo $color; ?>">
-                                                                <?php if (!empty($pay['photo_user'])): ?>
-                                                                    <img src="../assets/comprovantes/uploads/users/<?php echo htmlspecialchars($pay['photo_user']); ?>"
-                                                                        alt="" onerror="this.style.display='none'" />
-                                                                <?php else: echo $ini;
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <div class="adm-avatar-sm" style="background:<?php echo $color; ?>">
+                                                        <?php if (!empty($pay['photo_user'])): ?>
+                                                        <img src="../assets/comprovantes/uploads/users/<?php echo htmlspecialchars($pay['photo_user']); ?>"
+                                                            alt="" onerror="this.style.display='none'" />
+                                                        <?php else: echo $ini;
                                                                 endif; ?>
-                                                            </div>
-                                                            <span
-                                                                style="font-size:.82rem"><?php echo htmlspecialchars($pay['first_name'] . ' ' . ($pay['second_name'] ?? '')); ?></span>
-                                                        </div>
-                                                    </td>
-                                                    <td><code
-                                                            style="font-size:.78rem"><?php echo htmlspecialchars($pay['payment_ref']); ?></code>
-                                                    </td>
-                                                    <td style="font-size:.82rem">
-                                                        <?php echo htmlspecialchars($pay['name_plan']); ?></td>
-                                                    <td style="font-size:.84rem;font-weight:600">
-                                                        <?php echo adm_fmt_aoa((float)$pay['amount']); ?></td>
-                                                    <td style="font-size:.8rem">
-                                                        <?php echo ucfirst(str_replace('_', ' ', $pay['payment_method'])); ?>
-                                                    </td>
-                                                    <td><span class="badge bg-<?php echo $sc; ?>"><?php echo $sl; ?></span></td>
-                                                    <td style="font-size:.78rem;opacity:.65">
-                                                        <?php echo adm_fmt_date($pay['creat_payment']); ?></td>
-                                                </tr>
-                                            <?php endforeach; ?>
-                                        </tbody>
-                                    </table>
-                                </div>
+                                                    </div>
+                                                    <span
+                                                        style="font-size:.82rem"><?php echo htmlspecialchars($pay['first_name'] . ' ' . ($pay['second_name'] ?? '')); ?></span>
+                                                </div>
+                                            </td>
+                                            <td><code
+                                                    style="font-size:.78rem"><?php echo htmlspecialchars($pay['payment_ref']); ?></code>
+                                            </td>
+                                            <td style="font-size:.82rem">
+                                                <?php echo htmlspecialchars($pay['name_plan']); ?></td>
+                                            <td style="font-size:.84rem;font-weight:600">
+                                                <?php echo adm_fmt_aoa((float)$pay['amount']); ?></td>
+                                            <td style="font-size:.8rem">
+                                                <?php echo ucfirst(str_replace('_', ' ', $pay['payment_method'])); ?>
+                                            </td>
+                                            <td><span class="badge bg-<?php echo $sc; ?>"><?php echo $sl; ?></span></td>
+                                            <td style="font-size:.78rem;opacity:.65">
+                                                <?php echo adm_fmt_date($pay['creat_payment']); ?></td>
+                                        </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
                             <?php endif; ?>
                         </div>
                     </div>
                 </div>
-            <?php endif; ?>
+                <?php endif; ?>
 
-            <!-- ══ LANÇAMENTOS NAS ÚLTIMAS 24H ══ -->
-            <?php if (hasPermission($admin_id, 'music.view')): ?>
+                <!-- ══ LANÇAMENTOS NAS ÚLTIMAS 24H ══ -->
+                <?php if (hasPermission($admin_id, 'music.view')): ?>
                 <div class="row">
                     <div class="col-12 mb-3">
                         <div class="card stats-card-primary flex-fill">
@@ -1544,66 +1546,66 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                 </a>
                             </div>
                             <?php if (empty($releases_24h)): ?>
-                                <div class="text-center py-4">
-                                    <i class="bi bi-inbox" style="font-size:2rem;opacity:.3"></i>
-                                    <p class="text-white-stable mt-2" style="font-size:.85rem;opacity:.6">
-                                        Nenhum lançamento nas últimas 24 horas.
-                                    </p>
-                                </div>
+                            <div class="text-center py-4">
+                                <i class="bi bi-inbox" style="font-size:2rem;opacity:.3"></i>
+                                <p class="text-white-stable mt-2" style="font-size:.85rem;opacity:.6">
+                                    Nenhum lançamento nas últimas 24 horas.
+                                </p>
+                            </div>
                             <?php else: ?>
-                                <div class="table-responsive">
-                                    <table class="table table-hover mb-0">
-                                        <thead>
-                                            <tr>
-                                                <th>Capa</th>
-                                                <th>Título</th>
-                                                <th>Tipo</th>
-                                                <th>Artista</th>
-                                                <th>Estado</th>
-                                                <th>Enviado</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php foreach ($releases_24h as $rel):
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Capa</th>
+                                            <th>Título</th>
+                                            <th>Tipo</th>
+                                            <th>Artista</th>
+                                            <th>Estado</th>
+                                            <th>Enviado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($releases_24h as $rel):
                                                 [$sc, $sl] = rel_status($rel['status_album']);
                                             ?>
-                                                <tr>
-                                                    <td>
-                                                        <?php if (!empty($rel['img_cover'])): ?>
-                                                            <img src="../assets/comprovantes/uploads/covers/<?php echo htmlspecialchars($rel['img_cover']); ?>"
-                                                                alt=""
-                                                                style="width:36px;height:36px;border-radius:6px;object-fit:cover"
-                                                                onerror="this.style.display='none'" />
-                                                        <?php else: ?>
-                                                            <div
-                                                                style="width:36px;height:36px;border-radius:6px;background:rgba(255,0,137,.15);display:flex;align-items:center;justify-content:center;color:#FF0089">
-                                                                <i class="bi bi-music-note"></i>
-                                                            </div>
-                                                        <?php endif; ?>
-                                                    </td>
-                                                    <td style="font-weight:600;font-size:.85rem">
-                                                        <?php echo htmlspecialchars($rel['title_album']); ?></td>
-                                                    <td style="font-size:.82rem"><?php echo ucfirst($rel['type_album']); ?></td>
-                                                    <td style="font-size:.82rem">
-                                                        <?php echo htmlspecialchars($rel['first_name'] . ' ' . ($rel['second_name'] ?? '')); ?>
-                                                    </td>
-                                                    <td><span class="badge bg-<?php echo $sc; ?>"><?php echo $sl; ?></span></td>
-                                                    <td style="font-size:.78rem;opacity:.65">
-                                                        <?php echo adm_fmt_date($rel['creat_album']); ?></td>
-                                                </tr>
-                                            <?php endforeach; ?>
-                                        </tbody>
-                                    </table>
-                                </div>
+                                        <tr>
+                                            <td>
+                                                <?php if (!empty($rel['img_cover'])): ?>
+                                                <img src="../assets/comprovantes/uploads/covers/<?php echo htmlspecialchars($rel['img_cover']); ?>"
+                                                    alt=""
+                                                    style="width:36px;height:36px;border-radius:6px;object-fit:cover"
+                                                    onerror="this.style.display='none'" />
+                                                <?php else: ?>
+                                                <div
+                                                    style="width:36px;height:36px;border-radius:6px;background:rgba(255,0,137,.15);display:flex;align-items:center;justify-content:center;color:#FF0089">
+                                                    <i class="bi bi-music-note"></i>
+                                                </div>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td style="font-weight:600;font-size:.85rem">
+                                                <?php echo htmlspecialchars($rel['title_album']); ?></td>
+                                            <td style="font-size:.82rem"><?php echo ucfirst($rel['type_album']); ?></td>
+                                            <td style="font-size:.82rem">
+                                                <?php echo htmlspecialchars($rel['first_name'] . ' ' . ($rel['second_name'] ?? '')); ?>
+                                            </td>
+                                            <td><span class="badge bg-<?php echo $sc; ?>"><?php echo $sl; ?></span></td>
+                                            <td style="font-size:.78rem;opacity:.65">
+                                                <?php echo adm_fmt_date($rel['creat_album']); ?></td>
+                                        </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
                             <?php endif; ?>
                         </div>
                     </div>
                 </div>
 
             </div>
-        <?php endif; ?>
+            <?php endif; ?>
 
-        <?php if (hasPermission($admin_id, 'support.view')): ?>
+            <?php if (hasPermission($admin_id, 'support.view')): ?>
             <!-- ══ PEDIDOS DE SUPORTE NAS ÚLTIMAS 24H ══ -->
             <div class="row">
                 <div class="col-12 mb-3">
@@ -1619,14 +1621,14 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                             </a>
                         </div>
                         <?php if (empty($tickets_24h)): ?>
-                            <div class="text-center py-4">
-                                <i class="bi bi-emoji-smile" style="font-size:2rem;opacity:.3;color:#22c55e"></i>
-                                <p class="text-white-stable mt-2" style="font-size:.85rem;opacity:.6">
-                                    Sem pedidos de suporte nas últimas 24 horas.
-                                </p>
-                            </div>
+                        <div class="text-center py-4">
+                            <i class="bi bi-emoji-smile" style="font-size:2rem;opacity:.3;color:#22c55e"></i>
+                            <p class="text-white-stable mt-2" style="font-size:.85rem;opacity:.6">
+                                Sem pedidos de suporte nas últimas 24 horas.
+                            </p>
+                        </div>
                         <?php else: ?>
-                            <?php foreach ($tickets_24h as $tk):
+                        <?php foreach ($tickets_24h as $tk):
                                 $ini   = adm_initials($tk['first_name'], $tk['second_name'] ?? '');
                                 $color = adm_avatar_color($tk['first_name'] . ($tk['second_name'] ?? ''));
                                 $preview = mb_substr(strip_tags($tk['body']), 0, 120, 'UTF-8');
@@ -1660,59 +1662,59 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                     default  => '—',
                                 };
                             ?>
-                                <div class="activity-item d-flex mb-3 pb-3"
-                                    style="border-bottom:1px solid rgba(255,255,255,.07)">
-                                    <!-- Avatar do utilizador -->
-                                    <div class="flex-shrink-0">
-                                        <div
-                                            style="width:42px;height:42px;border-radius:50%;background:<?php echo $color; ?>;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.78rem;color:#fff;overflow:hidden">
-                                            <?php if (!empty($tk['photo_user'])): ?>
-                                                <img src="../assets/comprovantes/uploads/users/<?php echo htmlspecialchars($tk['photo_user']); ?>"
-                                                    alt="" style="width:100%;height:100%;object-fit:cover"
-                                                    onerror="this.style.display='none';this.parentElement.textContent='<?php echo $ini; ?>'" />
-                                            <?php else: ?>
-                                                <?php echo adm_initials($tk['first_name'], $tk['second_name'] ?? ''); ?>
-                                            <?php endif; ?>
-                                        </div>
+                        <div class="activity-item d-flex mb-3 pb-3"
+                            style="border-bottom:1px solid rgba(255,255,255,.07)">
+                            <!-- Avatar do utilizador -->
+                            <div class="flex-shrink-0">
+                                <div
+                                    style="width:42px;height:42px;border-radius:50%;background:<?php echo $color; ?>;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.78rem;color:#fff;overflow:hidden">
+                                    <?php if (!empty($tk['photo_user'])): ?>
+                                    <img src="../assets/comprovantes/uploads/users/<?php echo htmlspecialchars($tk['photo_user']); ?>"
+                                        alt="" style="width:100%;height:100%;object-fit:cover"
+                                        onerror="this.style.display='none';this.parentElement.textContent='<?php echo $ini; ?>'" />
+                                    <?php else: ?>
+                                    <?php echo adm_initials($tk['first_name'], $tk['second_name'] ?? ''); ?>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <div class="d-flex align-items-start justify-content-between flex-wrap gap-1">
+                                    <div>
+                                        <h6 class="mb-0" style="font-size:.88rem">
+                                            <?php echo htmlspecialchars($tk['subject']); ?></h6>
+                                        <small class="text-white-stable" style="opacity:.6">
+                                            <?php echo htmlspecialchars($tk['first_name'] . ' ' . ($tk['second_name'] ?? '')); ?>
+                                            · <?php echo htmlspecialchars($tk['email_user']); ?>
+                                        </small>
                                     </div>
-                                    <div class="flex-grow-1 ms-3">
-                                        <div class="d-flex align-items-start justify-content-between flex-wrap gap-1">
-                                            <div>
-                                                <h6 class="mb-0" style="font-size:.88rem">
-                                                    <?php echo htmlspecialchars($tk['subject']); ?></h6>
-                                                <small class="text-white-stable" style="opacity:.6">
-                                                    <?php echo htmlspecialchars($tk['first_name'] . ' ' . ($tk['second_name'] ?? '')); ?>
-                                                    · <?php echo htmlspecialchars($tk['email_user']); ?>
-                                                </small>
-                                            </div>
-                                            <div class="d-flex gap-1 flex-shrink-0">
-                                                <span class="badge bg-<?php echo $tk_sc; ?>"><?php echo $tk_sl; ?></span>
-                                                <?php if ($tk['priority']): ?>
-                                                    <span class="badge bg-<?php echo $pr_sc; ?>"><?php echo $pr_sl; ?>
-                                                        prioridade</span>
-                                                <?php endif; ?>
-                                            </div>
-                                        </div>
-                                        <p class="text-white-stable mb-0 mt-1"
-                                            style="font-size:.8rem;opacity:.7;line-height:1.5">
-                                            <?php echo htmlspecialchars($preview); ?>
-                                        </p>
-                                        <div class="mt-1">
-                                            <small class="text-white-stable"
-                                                style="opacity:.5"><?php echo adm_fmt_date($tk['creat_ticket']); ?></small>
-                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/support/<?php echo (int)$tk['id_ticket']; ?>"
-                                                class="card-link ms-3" style="font-size:.75rem">
-                                                Ver ticket <i class="bi bi-arrow-right"></i>
-                                            </a>
-                                        </div>
+                                    <div class="d-flex gap-1 flex-shrink-0">
+                                        <span class="badge bg-<?php echo $tk_sc; ?>"><?php echo $tk_sl; ?></span>
+                                        <?php if ($tk['priority']): ?>
+                                        <span class="badge bg-<?php echo $pr_sc; ?>"><?php echo $pr_sl; ?>
+                                            prioridade</span>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
-                            <?php endforeach; ?>
+                                <p class="text-white-stable mb-0 mt-1"
+                                    style="font-size:.8rem;opacity:.7;line-height:1.5">
+                                    <?php echo htmlspecialchars($preview); ?>
+                                </p>
+                                <div class="mt-1">
+                                    <small class="text-white-stable"
+                                        style="opacity:.5"><?php echo adm_fmt_date($tk['creat_ticket']); ?></small>
+                                    <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/support/<?php echo (int)$tk['id_ticket']; ?>"
+                                        class="card-link ms-3" style="font-size:.75rem">
+                                        Ver ticket <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
                         <?php endif; ?>
                     </div>
                 </div>
             </div>
-        <?php endif; ?>
+            <?php endif; ?>
         </div>
     </div>
     </div>
@@ -1750,227 +1752,227 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
     <script src="<?php echo APP_URL  ?>/js/lastest.min.js"></script>
 
     <script>
-        // ── Mapa — centrado em Angola ──────────────
-        function initClientMap() {
-            const map = L.map("clientMap").setView([-8.8372, 13.2343], 3);
-            const tileUrl = document.body.classList.contains("dark-mode") ?
-                "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" :
-                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+    // ── Mapa — centrado em Angola ──────────────
+    function initClientMap() {
+        const map = L.map("clientMap").setView([-8.8372, 13.2343], 3);
+        const tileUrl = document.body.classList.contains("dark-mode") ?
+            "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" :
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 
-            L.tileLayer(tileUrl, {
-                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            }).addTo(map);
+        L.tileLayer(tileUrl, {
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
 
-            document.getElementById("clientMap")._leaflet_map = map;
+        document.getElementById("clientMap")._leaflet_map = map;
 
-            [{
-                    name: "Luanda, Angola",
-                    lat: -8.8372,
-                    lng: 13.2343
-                },
-                {
-                    name: "Lisboa, Portugal",
-                    lat: 38.7223,
-                    lng: -9.1393
-                },
-                {
-                    name: "São Paulo, Brasil",
-                    lat: -23.5505,
-                    lng: -46.6333
-                },
-                {
-                    name: "Porto, Portugal",
-                    lat: 41.1579,
-                    lng: -8.6291
-                },
-            ].forEach(c => {
-                L.marker([c.lat, c.lng]).addTo(map)
-                    .bindPopup(`<b>${c.name}</b><br>Utilizadores Wasom Upfy`);
-            });
-        }
-
-        // ── Streams Chart — dados reais da BD ──────
-        const streamData = {
-            today: {
-                labels: <?php echo json_encode($streams_today_labels); ?>,
-                streams: <?php echo json_encode($streams_today_data); ?>,
-                totalStreams: <?php echo $streams_total_today; ?>,
-                newListeners: <?php echo $new_listeners_today; ?>,
-                revenue: <?php echo $rev_today; ?>,
+        [{
+                name: "Luanda, Angola",
+                lat: -8.8372,
+                lng: 13.2343
             },
-            "7days": {
-                labels: <?php echo json_encode($streams_7d_labels); ?>,
-                streams: <?php echo json_encode($streams_7d_data); ?>,
-                totalStreams: <?php echo $streams_total_7d; ?>,
-                newListeners: <?php echo $new_listeners_7d; ?>,
-                revenue: <?php echo $rev_7d; ?>,
+            {
+                name: "Lisboa, Portugal",
+                lat: 38.7223,
+                lng: -9.1393
             },
-            "30days": {
-                labels: <?php echo json_encode($streams_30d_labels); ?>,
-                streams: <?php echo json_encode($streams_30d_data); ?>,
-                totalStreams: <?php echo $streams_total_30d; ?>,
-                newListeners: <?php echo $new_listeners_30d; ?>,
-                revenue: <?php echo $rev_30d; ?>,
+            {
+                name: "São Paulo, Brasil",
+                lat: -23.5505,
+                lng: -46.6333
             },
-            month: {
-                labels: <?php echo json_encode($streams_month_labels); ?>,
-                streams: <?php echo json_encode($streams_month_data); ?>,
-                totalStreams: <?php echo $streams_total_month; ?>,
-                newListeners: <?php echo $new_listeners_7d; ?>,
-                revenue: <?php echo $rev_month; ?>,
+            {
+                name: "Porto, Portugal",
+                lat: 41.1579,
+                lng: -8.6291
             },
-        };
+        ].forEach(c => {
+            L.marker([c.lat, c.lng]).addTo(map)
+                .bindPopup(`<b>${c.name}</b><br>Utilizadores Wasom Upfy`);
+        });
+    }
 
-        let streamsChart = null;
-        const ctx = document.getElementById("streamsChart").getContext("2d");
+    // ── Streams Chart — dados reais da BD ──────
+    const streamData = {
+        today: {
+            labels: <?php echo json_encode($streams_today_labels); ?>,
+            streams: <?php echo json_encode($streams_today_data); ?>,
+            totalStreams: <?php echo $streams_total_today; ?>,
+            newListeners: <?php echo $new_listeners_today; ?>,
+            revenue: <?php echo $rev_today; ?>,
+        },
+        "7days": {
+            labels: <?php echo json_encode($streams_7d_labels); ?>,
+            streams: <?php echo json_encode($streams_7d_data); ?>,
+            totalStreams: <?php echo $streams_total_7d; ?>,
+            newListeners: <?php echo $new_listeners_7d; ?>,
+            revenue: <?php echo $rev_7d; ?>,
+        },
+        "30days": {
+            labels: <?php echo json_encode($streams_30d_labels); ?>,
+            streams: <?php echo json_encode($streams_30d_data); ?>,
+            totalStreams: <?php echo $streams_total_30d; ?>,
+            newListeners: <?php echo $new_listeners_30d; ?>,
+            revenue: <?php echo $rev_30d; ?>,
+        },
+        month: {
+            labels: <?php echo json_encode($streams_month_labels); ?>,
+            streams: <?php echo json_encode($streams_month_data); ?>,
+            totalStreams: <?php echo $streams_total_month; ?>,
+            newListeners: <?php echo $new_listeners_7d; ?>,
+            revenue: <?php echo $rev_month; ?>,
+        },
+    };
 
-        function updateChart(period) {
-            const data = streamData[period];
-            const dark = document.body.classList.contains("dark-mode");
-            const lineColor = dark ? "#ff0088" : "#ff4d94";
-            if (streamsChart) streamsChart.destroy();
-            streamsChart = new Chart(ctx, {
-                type: "line",
-                data: {
-                    labels: data.labels,
-                    datasets: [{
-                        label: "Streams",
-                        data: data.streams,
-                        borderColor: lineColor,
-                        backgroundColor: lineColor + "33",
-                        fill: true,
-                        tension: 0.4,
-                        pointRadius: 3,
-                        pointHoverRadius: 5,
-                    }],
+    let streamsChart = null;
+    const ctx = document.getElementById("streamsChart").getContext("2d");
+
+    function updateChart(period) {
+        const data = streamData[period];
+        const dark = document.body.classList.contains("dark-mode");
+        const lineColor = dark ? "#ff0088" : "#ff4d94";
+        if (streamsChart) streamsChart.destroy();
+        streamsChart = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: "Streams",
+                    data: data.streams,
+                    borderColor: lineColor,
+                    backgroundColor: lineColor + "33",
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 3,
+                    pointHoverRadius: 5,
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: dark ? "#333" : "#fff",
+                        titleColor: dark ? "#fff" : "#333",
+                        bodyColor: dark ? "#fff" : "#333",
+                    },
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
+                scales: {
+                    x: {
+                        grid: {
                             display: false
                         },
-                        tooltip: {
-                            backgroundColor: dark ? "#333" : "#fff",
-                            titleColor: dark ? "#fff" : "#333",
-                            bodyColor: dark ? "#fff" : "#333",
-                        },
+                        ticks: {
+                            color: dark ? "#fff" : "#333"
+                        }
                     },
-                    scales: {
-                        x: {
-                            grid: {
-                                display: false
-                            },
-                            ticks: {
-                                color: dark ? "#fff" : "#333"
-                            }
+                    y: {
+                        grid: {
+                            color: dark ? "#444" : "#e0e0e0"
                         },
-                        y: {
-                            grid: {
-                                color: dark ? "#444" : "#e0e0e0"
-                            },
-                            ticks: {
-                                color: dark ? "#fff" : "#333"
-                            }
-                        },
+                        ticks: {
+                            color: dark ? "#fff" : "#333"
+                        }
                     },
                 },
-            });
-            document.getElementById("totalStreams").textContent = data.totalStreams.toLocaleString("pt-AO");
-            document.getElementById("newListeners").textContent = data.newListeners.toLocaleString("pt-AO");
-            // Formatar receita em AOA
-            const rev = data.revenue;
-            let revFmt;
-            if (rev >= 1000000) revFmt = 'Kz ' + (rev / 1000000).toFixed(1).replace('.0', '') + 'M';
-            else if (rev >= 1000) revFmt = 'Kz ' + (rev / 1000).toFixed(1).replace('.0', '') + 'mil';
-            else revFmt = 'Kz ' + rev.toLocaleString("pt-AO", {
-                minimumFractionDigits: 2
-            });
-            document.getElementById("revenue").textContent = revFmt;
-        }
-
-        updateChart("7days");
-
-        document.querySelectorAll(".dropdown-menu a[data-period]").forEach(item => {
-            item.addEventListener("click", e => {
-                e.preventDefault();
-                updateChart(e.target.getAttribute("data-period"));
-                e.target.closest(".dropdown").querySelector(".dropdown-toggle").textContent = e.target
-                    .textContent;
-            });
+            },
         });
-
-        document.querySelector('[onclick="toggleDarkMode()"]').addEventListener("click", () => {
-            const cur = document.querySelector(".dropdown-toggle").textContent.trim();
-            const map = {
-                "Hoje": "today",
-                "Últimos 7 dias": "7days",
-                "Últimos 30 dias": "30days",
-                "Este mês": "month"
-            };
-            updateChart(map[cur] || "7days");
+        document.getElementById("totalStreams").textContent = data.totalStreams.toLocaleString("pt-AO");
+        document.getElementById("newListeners").textContent = data.newListeners.toLocaleString("pt-AO");
+        // Formatar receita em AOA
+        const rev = data.revenue;
+        let revFmt;
+        if (rev >= 1000000) revFmt = 'Kz ' + (rev / 1000000).toFixed(1).replace('.0', '') + 'M';
+        else if (rev >= 1000) revFmt = 'Kz ' + (rev / 1000).toFixed(1).replace('.0', '') + 'mil';
+        else revFmt = 'Kz ' + rev.toLocaleString("pt-AO", {
+            minimumFractionDigits: 2
         });
+        document.getElementById("revenue").textContent = revFmt;
+    }
 
-        // ── Relógio em tempo real ───────────────────
-        function updateClock() {
-            const now = new Date();
-            const days = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
-            const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-            const t = document.getElementById('live-time');
-            const d = document.getElementById('live-date');
-            if (t) t.textContent = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2,
-                '0');
-            if (d) d.textContent = days[now.getDay()] + ' · ' + now.getDate() + ' ' + months[now.getMonth()] + ' ' + now
-                .getFullYear();
-        }
+    updateChart("7days");
 
-        // Chamar dentro do DOMContentLoaded para garantir que os elementos existem
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', function() {
-                updateClock();
-                setInterval(updateClock, 30000);
-            });
-        } else {
+    document.querySelectorAll(".dropdown-menu a[data-period]").forEach(item => {
+        item.addEventListener("click", e => {
+            e.preventDefault();
+            updateChart(e.target.getAttribute("data-period"));
+            e.target.closest(".dropdown").querySelector(".dropdown-toggle").textContent = e.target
+                .textContent;
+        });
+    });
+
+    document.querySelector('[onclick="toggleDarkMode()"]').addEventListener("click", () => {
+        const cur = document.querySelector(".dropdown-toggle").textContent.trim();
+        const map = {
+            "Hoje": "today",
+            "Últimos 7 dias": "7days",
+            "Últimos 30 dias": "30days",
+            "Este mês": "month"
+        };
+        updateChart(map[cur] || "7days");
+    });
+
+    // ── Relógio em tempo real ───────────────────
+    function updateClock() {
+        const now = new Date();
+        const days = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+        const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+        const t = document.getElementById('live-time');
+        const d = document.getElementById('live-date');
+        if (t) t.textContent = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2,
+            '0');
+        if (d) d.textContent = days[now.getDay()] + ' · ' + now.getDate() + ' ' + months[now.getMonth()] + ' ' + now
+            .getFullYear();
+    }
+
+    // Chamar dentro do DOMContentLoaded para garantir que os elementos existem
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
             updateClock();
             setInterval(updateClock, 30000);
-        }
+        });
+    } else {
+        updateClock();
+        setInterval(updateClock, 30000);
+    }
 
-        // ── Gráfico donut de planos ─────────────────
-        document.addEventListener('DOMContentLoaded', function() {
-            const canvas = document.getElementById('plansDonut');
-            if (!canvas) return;
-            const labels = <?php echo $plans_labels_json; ?>;
-            const data = <?php echo $plans_data_json; ?>;
-            if (!data.some(v => v > 0)) return;
-            new Chart(canvas.getContext('2d'), {
-                type: 'doughnut',
-                data: {
-                    labels,
-                    datasets: [{
-                        data,
-                        backgroundColor: ['#FF0089', '#3b82f6', '#22c55e', '#f97316', '#8b5cf6']
-                            .slice(0, labels.length),
-                        borderWidth: 0,
-                        hoverOffset: 6,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    cutout: '65%',
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: ctx => ' ' + ctx.label + ': ' + ctx.parsed + ' utilizadores'
-                            }
+    // ── Gráfico donut de planos ─────────────────
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('plansDonut');
+        if (!canvas) return;
+        const labels = <?php echo $plans_labels_json; ?>;
+        const data = <?php echo $plans_data_json; ?>;
+        if (!data.some(v => v > 0)) return;
+        new Chart(canvas.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels,
+                datasets: [{
+                    data,
+                    backgroundColor: ['#FF0089', '#3b82f6', '#22c55e', '#f97316', '#8b5cf6']
+                        .slice(0, labels.length),
+                    borderWidth: 0,
+                    hoverOffset: 6,
+                }]
+            },
+            options: {
+                responsive: true,
+                cutout: '65%',
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => ' ' + ctx.label + ': ' + ctx.parsed + ' utilizadores'
                         }
                     }
                 }
-            });
+            }
         });
+    });
     </script>
 </body>
 

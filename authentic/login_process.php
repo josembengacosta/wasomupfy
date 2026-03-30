@@ -5,6 +5,7 @@
 // ══════════════════════════════════════════════
 
 require_once __DIR__ . '/include/functions.php';
+require_once __DIR__ . '/../dashboard/include/platform.php';
 startSecureSession();
 
 // Só aceita POST
@@ -58,6 +59,14 @@ if (isset($_POST['action']) && $_POST['action'] === 'confirm_reactivate') {
         VALUES (?, ?, ?, ?, 1, NOW())
     ")->execute([$uid, $session_token, $_SERVER['REMOTE_ADDR'] ?? null, $_SERVER['HTTP_USER_AGENT'] ?? null]);
     $_SESSION['session_token'] = $session_token;
+
+    updateUserPresence(
+        $uid,
+        '/' . trim((string)APP_URL_PANEL, '/') . '/painel',
+        'login',
+        'online',
+        $session_token
+    );
 
     getDB()->prepare("
         UPDATE _users_security SET last_login_at = NOW(), last_login_ip = ? WHERE id_users = ?
@@ -192,6 +201,14 @@ getDB()->prepare("
     $_SERVER['HTTP_USER_AGENT'] ?? null,
 ]);
 $_SESSION['session_token'] = $session_token;
+
+updateUserPresence(
+    $uid,
+    '/' . trim((string)APP_URL_PANEL, '/') . '/painel',
+    'login',
+    'online',
+    $session_token
+);
 
 // ─── Atualizar último login em _users_security ─
 getDB()->prepare("

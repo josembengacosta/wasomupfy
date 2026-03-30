@@ -150,7 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_action'])) {
 if (($_GET['export'] ?? '') === 'csv') {
     requirePermission($admin_id, 'analytics.view');
 
-    // Aplicar os mesmos filtros mas sem LIMIT
+    // Filtros idênticos aos da listagem (exemplo)
     $where = []; $params = [];
     if (!empty($_GET['ip']))      { $where[] = 'v.ip_address LIKE ?';      $params[] = '%' . $_GET['ip'] . '%'; }
     if (!empty($_GET['country'])) { $where[] = 'v.country_code = ?';        $params[] = strtoupper($_GET['country']); }
@@ -177,30 +177,174 @@ if (($_GET['export'] ?? '') === 'csv') {
     ");
     $stmt->execute($params);
     $rows = $stmt->fetchAll();
+    $csvExcelEncode = static function(string $value): string {
+        if (function_exists('mb_convert_encoding')) {
+            return mb_convert_encoding($value, 'UTF-16LE', 'UTF-8');
+        }
 
+        if (function_exists('iconv')) {
+            $converted = iconv('UTF-8', 'UTF-16LE//IGNORE', $value);
+            if ($converted !== false) {
+                return $converted;
+            }
+        }
+
+        return $value;
+    };
+    $csvExcelLine = static function(array $fields) use ($csvExcelEncode): string {
+        $escaped = array_map(static function($value): string {
+            $value = (string)($value ?? '');
+            $value = str_replace('"', '""', $value);
+            return '"' . $value . '"';
+        }, $fields);
+
+        return $csvExcelEncode(implode(';', $escaped) . "\r\n");
+    };
+
+    if (ob_get_level()) {
+        ob_clean();
+    }
+    header('Content-Type: text/csv; charset=UTF-16LE');
+    header('Content-Disposition: attachment; filename="visitantes_' . date('Y-m-d') . '.csv"');
+    header('Content-Transfer-Encoding: binary');
+    header('Cache-Control: no-store, no-cache, must-revalidate');
+
+    $out = fopen('php://output', 'w');
+    fwrite($out, "\xFF\xFE");
+    fwrite($out, $csvExcelEncode("sep=;\r\n"));
+    fwrite($out, $csvExcelLine([
+        'ID',
+        'IP',
+        'Vers' . "\u{00E3}" . 'o IP',
+        'Pa' . "\u{00ED}" . 's (c' . "\u{00F3}" . 'digo)',
+        'Pa' . "\u{00ED}" . 's',
+        'Cidade',
+        'Regi' . "\u{00E3}" . 'o',
+        'ISP',
+        'Browser',
+        'Vers' . "\u{00E3}" . 'o Browser',
+        'SO',
+        'Vers' . "\u{00E3}" . 'o SO',
+        'Dispositivo',
+        'Marca',
+        'Resolu' . "\u{00E7}" . "\u{00E3}" . 'o',
+        "\u{00C9}" . ' Bot',
+        'Nome Bot',
+        'P' . "\u{00E1}" . 'gina Entrada',
+        'P' . "\u{00E1}" . 'gina Sa' . "\u{00ED}" . 'da',
+        'P' . "\u{00E1}" . 'ginas Vistas',
+        'Dura' . "\u{00E7}" . "\u{00E3}" . 'o Sess' . "\u{00E3}" . 'o (s)',
+        'Referrer',
+        'UTM Source',
+        'UTM Medium',
+        'UTM Campaign',
+        'Online Agora',
+        "\u{00DA}" . 'ltima Vista',
+        'Total Visitas',
+        'Estado',
+        'Tipo Bloqueio',
+        'Raz' . "\u{00E3}" . 'o Bloqueio',
+        'Criado em',
+        'Modificado em',
+    ]));
+
+    foreach ($rows as $r) {
+        fwrite($out, $csvExcelLine([
+            $r['id_visitor'],
+            $r['ip_address'],
+            $r['ip_version'],
+            $r['country_code'],
+            $r['country_name'],
+            $r['city'],
+            $r['region'],
+            $r['isp'],
+            $r['browser'],
+            $r['browser_version'],
+            $r['os'],
+            $r['os_version'],
+            $r['device_type'],
+            $r['device_brand'],
+            $r['screen_resolution'],
+            $r['is_bot'] ? 'Sim' : 'Nao',
+            $r['bot_name'],
+            $r['page_entry'],
+            $r['page_exit'],
+            $r['pages_viewed'],
+            $r['session_duration'],
+            $r['referrer'],
+            $r['utm_source'],
+            $r['utm_medium'],
+            $r['utm_campaign'],
+            $r['is_online'] ? 'Sim' : 'Nao',
+            $r['last_seen'],
+            $r['visit_count'],
+            $r['status_visitor'],
+            $r['block_type'],
+            $r['block_reason'],
+            $r['creat_visitor'],
+            $r['modif_visitor'],
+        ]));
+    }
+    fclose($out);
+
+    // Configuração dos cabeçalhos
     header('Content-Type: text/csv; charset=utf-8');
     header('Content-Disposition: attachment; filename="visitantes_' . date('Y-m-d') . '.csv"');
+
+    // Abre o output como stream
     $out = fopen('php://output', 'w');
-    // BOM UTF-8 para Excel
+    // BOM UTF-8 para Excel reconhecer acentos
     fputs($out, "\xEF\xBB\xBF");
-    fputcsv($out, ['ID','IP','Versão IP','País (código)','País','Cidade','Região','ISP',
-                   'Browser','Versão Browser','SO','Versão SO','Dispositivo','Marca',
-                   'Resolução','É Bot','Nome Bot','Página Entrada','Página Saída',
-                   'Páginas Vistas','Duração Sessão (s)','Referrer','UTM Source','UTM Medium','UTM Campaign',
-                   'Online Agora','Última Vista','Total Visitas','Estado','Tipo Bloqueio','Razão Bloqueio',
-                   'Criado em','Modificado em']);
+
+    // Cabeçalhos – use o delimitador que preferir (; para Excel PT)
+    $headers = [
+        'ID', 'IP', 'Versão IP', 'País (código)', 'País', 'Cidade', 'Região', 'ISP',
+        'Browser', 'Versão Browser', 'SO', 'Versão SO', 'Dispositivo', 'Marca',
+        'Resolução', 'É Bot', 'Nome Bot', 'Página Entrada', 'Página Saída',
+        'Páginas Vistas', 'Duração Sessão (s)', 'Referrer', 'UTM Source', 'UTM Medium', 'UTM Campaign',
+        'Online Agora', 'Última Vista', 'Total Visitas', 'Estado', 'Tipo Bloqueio', 'Razão Bloqueio',
+        'Criado em', 'Modificado em'
+    ];
+    fputcsv($out, $headers, ';', '"', '\\');
+
+    // Dados
     foreach ($rows as $r) {
-        fputcsv($out, [
-            $r['id_visitor'],$r['ip_address'],$r['ip_version'],$r['country_code'],$r['country_name'],
-            $r['city'],$r['region'],$r['isp'],$r['browser'],$r['browser_version'],
-            $r['os'],$r['os_version'],$r['device_type'],$r['device_brand'],$r['screen_resolution'],
-            $r['is_bot']?'Sim':'Não',$r['bot_name'],$r['page_entry'],$r['page_exit'],
-            $r['pages_viewed'],$r['session_duration'],$r['referrer'],
-            $r['utm_source'],$r['utm_medium'],$r['utm_campaign'],
-            $r['is_online']?'Sim':'Não',$r['last_seen'],$r['visit_count'],
-            $r['status_visitor'],$r['block_type'],$r['block_reason'],
-            $r['creat_visitor'],$r['modif_visitor'],
-        ]);
+        $row = [
+            $r['id_visitor'],
+            $r['ip_address'],
+            $r['ip_version'],
+            $r['country_code'],
+            $r['country_name'],
+            $r['city'],
+            $r['region'],
+            $r['isp'],
+            $r['browser'],
+            $r['browser_version'],
+            $r['os'],
+            $r['os_version'],
+            $r['device_type'],
+            $r['device_brand'],
+            $r['screen_resolution'],
+            $r['is_bot'] ? 'Sim' : 'Não',
+            $r['bot_name'],
+            $r['page_entry'],
+            $r['page_exit'],
+            $r['pages_viewed'],
+            $r['session_duration'],
+            $r['referrer'],
+            $r['utm_source'],
+            $r['utm_medium'],
+            $r['utm_campaign'],
+            $r['is_online'] ? 'Sim' : 'Não',
+            $r['last_seen'],
+            $r['visit_count'],
+            $r['status_visitor'],
+            $r['block_type'],
+            $r['block_reason'],
+            $r['creat_visitor'],
+            $r['modif_visitor'],
+        ];
+        fputcsv($out, $row, ';', '"', '\\');
     }
     fclose($out);
     exit;
@@ -1459,12 +1603,16 @@ function vis_sort_icon(string $col, string $cur, string $dir): string {
                 '<div class="text-center py-4"><div class="spinner-border" style="color:#FF0089"></div></div>';
             new bootstrap.Modal(document.getElementById('pageviewsModal')).show();
             try {
-                const r = await fetch(BASE_URL + '/' + ADMIN_PATH + '/analytics/visitors-api?visitor_id=' +
-                    id, {
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    });
+                const fd = new FormData();
+                fd.append('visitor_id', id);
+                fd.append('csrf_token', CSRF);
+                const r = await fetch(BASE_URL + '/' + ADMIN_PATH + '/analytics/visitors-api', {
+                    method: 'POST',
+                    body: fd,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
                 const d = await r.json();
                 if (d.ok && d.pageviews.length > 0) {
                     let html =

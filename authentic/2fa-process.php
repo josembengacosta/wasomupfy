@@ -5,6 +5,7 @@
 // ══════════════════════════════════════════════
 ob_start();
 require_once __DIR__ . '/include/functions.php';
+require_once __DIR__ . '/../dashboard/include/platform.php';
 startSecureSession();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -150,6 +151,14 @@ $db->prepare("
     $_SERVER['HTTP_USER_AGENT'] ?? null,
 ]);
 $_SESSION['session_token'] = $session_token;
+
+updateUserPresence(
+    $uid,
+    '/' . trim((string)APP_URL_PANEL, '/') . '/painel',
+    'login',
+    'online',
+    $session_token
+);
 
 $db->prepare("
     UPDATE _users_security SET last_login_at = NOW(), last_login_ip = ? WHERE id_users = ?

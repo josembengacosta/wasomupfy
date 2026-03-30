@@ -1,566 +1,1140 @@
+<?php
+require_once __DIR__ . '/../../include/platform_admin.php';
+require_once __DIR__ . '/include/payment-guard.php';
+
+requirePermission($admin_id, 'finances.view');
+
+paymentPanelEnsureCsrf();
+paymentPanelExpireIfIdle();
+
+$payment_base = paymentPanelBaseUrl();
+$current_target = paymentPanelCurrentTarget();
+$auth_error = '';
+$attempts = (int)($_SESSION['biz_attempts'] ?? 0);
+
+function biz_money(float $value): string
+{
+    return 'Kz ' . number_format($value, 2, ',', '.');
+}
+
+function biz_person_name(array $row): string
+{
+    return trim((string)($row['first_name'] ?? '') . ' ' . (string)($row['second_name'] ?? ''));
+}
+
+function biz_status_badge(string $status): string
+{
+    return match ($status) {
+        'pending' => '<span class="biz-s-pending">Pendente</span>',
+        'processing' => '<span class="biz-s-processing">A processar</span>',
+        'approved', 'paid', 'validated' => '<span class="biz-s-approved">Concluido</span>',
+        'rejected', 'cancelled' => '<span class="biz-s-rejected">Fechado</span>',
+        default => '<span class="biz-s-pending">' . htmlspecialchars(ucfirst($status)) . '</span>',
+    };
+}
+
+function biz_relative_time(?string $value): string
+{
+    if (!$value) return '--';
+    $ts = strtotime($value);
+    if (!$ts) return '--';
+    $diff = time() - $ts;
+    if ($diff < 60) return 'agora';
+    if ($diff < 3600) return floor($diff / 60) . ' min';
+    if ($diff < 86400) return floor($diff / 3600) . ' h';
+    return floor($diff / 86400) . ' dias';
+}
+
+function biz_account_ref(array $row): string
+{
+    if (!empty($row['iban'])) return 'IBAN ...' . substr((string)$row['iban'], -6);
+    if (!empty($row['express_number'])) return (string)$row['express_number'];
+    return '--';
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'unlock_payment_panel') {
+    if (!hash_equals($_SESSION['admin_csrf_token'] ?? '', $_POST['csrf_token'] ?? '')) {
+        $auth_error = 'Sessao expirada. Recarrega a pagina.';
+    } else {
+        $return_to = paymentPanelSanitizeReturnTarget($_POST['return_to'] ?? $current_target);
+        $access_code = trim((string)($_POST['access_code'] ?? ''));
+
+        if ($access_code === '') {
+            $auth_error = 'Introduce o codigo de acesso.';
+        } elseif (paymentPanelVerifyAccessCode($db, (int)$admin_id, $access_code)) {
+            $_SESSION['payment_control_auth'] = true;
+            $_SESSION['biz_auth_time'] = time();
+            unset($_SESSION['biz_attempts']);
+            header('Location: ' . $return_to);
+            exit;
+        } else {
+            $attempts++;
+            $_SESSION['biz_attempts'] = $attempts;
+            $auth_error = 'Codigo invalido. Tenta novamente.';
+        }
+    }
+}
+
+if (empty($_SESSION['payment_control_auth'])):
+?>
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-ao">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="robots" content="noindex, nofollow">
-    <meta name="author" content="José Mbenga da Costa" />
-    <meta name="theme-color" content="#FF0089">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="#FF0089">
-    <link rel="apple-touch-icon" href="../../../assets/img/icones/wasomupfy_fiv_512.png">
-    <link rel="apple-touch-startup-image" href="../../../assets/img/screenshots/splash.png">
-    <link rel="manifest" href="manifest.json">
-    <title>Finanças e Rendimentos — <?php echo APP_NAME; ?></title>
-    <link rel="shortcut icon" href="../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
-    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/libs/plugins.css">
-    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/libs/scrollue.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
-    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/lastest-style.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Treasury Desk - Wasom Upfy for Business</title>
+    <link rel="shortcut icon" href="<?php echo APP_URL; ?>/assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <!-- Google Fonts - Poppins -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+    body {
+        margin: 0;
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: #09101d;
+        color: #fff
+    }
+
+    .unlock {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 1.1fr .9fr
+    }
+
+    .stage {
+        padding: 52px;
+        background: radial-gradient(circle at top left, rgba(255, 0, 137, .2), transparent 34%), linear-gradient(140deg, #09101d, #111a31 55%, #0f172a)
+    }
+
+    .panel {
+        background: #fff;
+        color: #111827;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 28px
+    }
+
+    .cardx {
+        width: min(460px, 100%);
+        padding: 28px;
+        border-radius: 28px;
+        box-shadow: 0 30px 80px rgba(15, 23, 42, .18)
+    }
+
+    .tag,
+    .chip {
+        display: inline-flex;
+        gap: 8px;
+        align-items: center;
+        border-radius: 999px;
+        padding: 8px 14px;
+        font-size: .78rem
+    }
+
+    .tag {
+        background: rgba(255, 255, 255, .09);
+        border: 1px solid rgba(255, 255, 255, .1);
+        color: #ffd2ec
+    }
+
+    .chip {
+        background: rgba(255, 255, 255, .08);
+        color: #dbeafe
+    }
+
+    h1 {
+        font-size: 2.8rem;
+        line-height: 1;
+        margin: 18px 0 14px;
+        max-width: 560px
+    }
+
+    .copy {
+        max-width: 620px;
+        color: #d1d5db;
+        line-height: 1.7
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 24px
+    }
+
+    .metric {
+        padding: 18px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, .07);
+        border: 1px solid rgba(255, 255, 255, .08)
+    }
+
+    .metric strong {
+        display: block;
+        font-size: 1.2rem;
+        margin-bottom: 6px
+    }
+
+    .metric span {
+        font-size: .8rem;
+        color: #cbd5e1
+    }
+
+    .brand {
+        display: flex;
+        gap: 14px;
+        align-items: center
+    }
+
+    .brand img {
+        width: 52px;
+        height: 52px;
+        border-radius: 16px;
+        object-fit: cover
+    }
+
+    .brand strong {
+        display: block;
+        font-size: 1.35rem
+    }
+
+    .brand span {
+        color: #6b7280;
+        font-size: .88rem
+    }
+
+    .list {
+        display: grid;
+        gap: 12px;
+        margin: 22px 0
+    }
+
+    .item {
+        display: flex;
+        gap: 12px;
+        padding: 14px 16px;
+        border-radius: 18px;
+        background: #f8fafc
+    }
+
+    .item i {
+        color: #ff0089
+    }
+
+    .btn-unlock {
+        min-height: 52px;
+        border: 0;
+        border-radius: 16px;
+        font-weight: 700;
+        color: #fff;
+        background: linear-gradient(135deg, #ff0089, #f97316)
+    }
+
+    @media (max-width:991px) {
+        .unlock {
+            grid-template-columns: 1fr
+        }
+
+        .stage {
+            padding: 30px 22px
+        }
+
+        .grid {
+            grid-template-columns: 1fr
+        }
+
+        h1 {
+            font-size: 2rem
+        }
+    }
+    </style>
 </head>
 
 <body>
-    <div class="wrapper">
-        <!-- Sidebar Overlay -->
-        <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-        <!-- Sidebar -->
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="d-flex align-items-center">
-                    <img src="../../../assets/img/brand/wasomupfy_brand.png" alt="Logo Wasom Upfy"
-                        class="rounded-circle me-2" style="height: 40px;">
-                    <span class="brand-text"><?php echo APP_NAME; ?></span>
-                </div>
-                <i class="bi bi-chevron-left toggle-icon" id="sidebarCollapse" title="Colapsar/Expandir Menu"
-                    aria-label="Colapsar/Expandir Menu"></i>
+    <div class="unlock">
+        <section class="stage">
+            <span class="tag"><i class="bi bi-shield-lock"></i> Access code obrigatorio</span>
+            <h1>Treasury Desk para saques, comprovativos e royalties.</h1>
+            <div class="copy">Este cockpit isola a operacao financeira do admin geral. O desbloqueio usa o
+                <code>access_code</code> do colaborador autenticado em <code>Funcionários</code>.
             </div>
-            <ul class="nav flex-column mt-3">
-                <li class="nav-item">
-                    <a href="../../home" class="nav-link">
-                        <i class="bi bi-speedometer2"></i>
-                        <span>Painel de Controle</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseAnalytics" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseAnalytics">
-                        <i class="bi bi-graph-up"></i>
-                        <span>Estatísticas e Análises</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseAnalytics">
-                        <a href="../analytics/home" class="nav-link">
-                            <i class="bi bi-bar-chart-line"></i>
-                            <span>Visão Geral</span>
-                        </a>
-                        <a href="../analytics/artists" class="nav-link">
-                            <i class="bi bi-person-lines-fill"></i>
-                            <span>Desempenho por Artista</span>
-                        </a>
-                        <a href="../analytics/stores" class="nav-link">
-                            <i class="bi bi-shop"></i>
-                            <span>Desempenho por Loja Digital</span>
-                        </a>
-                        <a href="../analytics/reports" class="nav-link">
-                            <i class="bi bi-file-earmark-bar-graph"></i>
-                            <span>Relatórios Personalizados</span>
-                        </a>
+            <div class="grid">
+                <div class="metric"><strong>Saques</strong><span>Triagem, aprovacao e fecho operacional.</span></div>
+                <div class="metric"><strong>Royalties</strong><span>Credito e trilha financeira no mesmo shell.</span>
+                </div>
+                <div class="metric"><strong>Compliance</strong><span>Auditoria, comprovativos e passos
+                        registados.</span></div>
+            </div>
+            <div class="d-flex flex-wrap gap-2 mt-4">
+                <span class="chip"><i class="bi bi-clock-history"></i> Sessao expira em 4h</span>
+                <span class="chip"><i class="bi bi-person-badge"></i> Admin #<?php echo (int)$admin_id; ?></span>
+            </div>
+        </section>
+        <section class="panel">
+            <div class="cardx">
+                <div class="brand">
+                    <img src="<?php echo APP_URL; ?>/assets/img/brand/wasomupfy_brand.png" alt="Wasom Upfy">
+                    <div><strong>Desbloquear Treasury Desk</strong><span>Entra com o codigo de controlo
+                            financeiro.</span></div>
+                </div>
+                <div class="list">
+                    <div class="item"><i class="bi bi-wallet2"></i>
+                        <div><strong>Sala de liquidacao</strong>
+                            <div class="text-muted small">Assume um saque e fecha o pagamento no mesmo ecrã.</div>
+                        </div>
                     </div>
-                </li>
+                    <div class="item"><i class="bi bi-receipt-cutoff"></i>
+                        <div><strong>Fila operacional</strong>
+                            <div class="text-muted small">Comprovativos pendentes e royalties prontos para credito.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php if ($auth_error !== ''): ?><div class="alert alert-danger small">
+                    <?php echo htmlspecialchars($auth_error); ?></div><?php endif; ?>
+                <form method="post">
+                    <input type="hidden" name="action" value="unlock_payment_panel">
+                    <input type="hidden" name="csrf_token"
+                        value="<?php echo htmlspecialchars($_SESSION['admin_csrf_token']); ?>">
+                    <input type="hidden" name="return_to" value="<?php echo htmlspecialchars($current_target); ?>">
+                    <label class="form-label fw-bold small" for="access_code">Access code</label>
+                    <input class="form-control mb-3" type="password" id="access_code" name="access_code"
+                        autocomplete="one-time-code" inputmode="numeric" placeholder="Ex: 482913" required>
+                    <button class="btn btn-unlock w-100" type="submit">Entrar no painel financeiro</button>
+                </form>
+                <div class="text-muted small mt-3">
+                    <?php if ($attempts > 0): ?>
+                    Tentativas nesta sessao: <strong><?php echo $attempts; ?></strong>.
+                    <?php else: ?>
+                    O codigo e comparado directamente com o access_code do colaborador.
+                    <?php endif; ?>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
 
-                <li class="nav-item">
-                    <a href="#collapseAdmins" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseAdmins">
-                        <i class="bi bi-person-gear"></i>
-                        <span>Gestão de Admins</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseAdmins">
-                        <a href="../employees/all-employees" class="nav-link">
-                            <i class="bi bi-people"></i>
-                            <span>Listar Admins</span>
-                        </a>
-                        <a href="../employees/add" class="nav-link">
-                            <i class="bi bi-person-plus"></i>
-                            <span>Adicionar</span>
-                        </a>
-                        <a href="../employees/edit" class="nav-link">
-                            <i class="bi bi-person-gear"></i>
-                            <span>Editar</span>
-                        </a>
-                        <a href="../employees/delete" class="nav-link">
-                            <i class="bi bi-person-x"></i>
-                            <span>Excluir</span>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseUsers" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseUsers">
-                        <i class="bi bi-person-gear"></i>
-                        <span>Gestão de Usuários</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseUsers">
-                        <a href="../users/all-users" class="nav-link">
-                            <i class="bi bi-people"></i>
-                            <span>Listar Usuários</span>
-                        </a>
-                        <a href="../users/add" class="nav-link">
-                            <i class="bi bi-person-plus"></i>
-                            <span>Adicionar</span>
-                        </a>
-                        <a href="../users/edit" class="nav-link">
-                            <i class="bi bi-person-gear"></i>
-                            <span>Editar</span>
-                        </a>
-                        <a href="../users/delete" class="nav-link">
-                            <i class="bi bi-person-x"></i>
-                            <span>Excluir</span>
-                        </a>
-                        <a href="../users/available-account" class="nav-link">
-                            <i class="bi bi-person-check"></i>
-                            <span>Contas Disponíveis</span>
-                        </a>
-                        <a href="../users/unavailable-account" class="nav-link">
-                            <i class="bi bi-person-exclamation"></i>
-                            <span>Contas Indisponíveis</span>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseSongs" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseSongs">
-                        <i class="bi bi-music-note-list"></i>
-                        <span>Gestão de Músicas</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseSongs">
-                        <a href="../music/revise" class="nav-link">
-                            <i class="bi bi-eye"></i>
-                            <span>Revisar Envios</span>
-                        </a>
-                        <a href="../music/approve" class="nav-link">
-                            <i class="bi bi-check-circle"></i>
-                            <span>Aprovar</span>
-                        </a>
-                        <a href="../music/reject" class="nav-link">
-                            <i class="bi bi-x-circle"></i>
-                            <span>Rejeitar</span>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="../artist/accounts-users" class="nav-link">
-                        <i class="bi bi-person-check"></i>
-                        <span>Contas e Usuários</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="../artist/collaborators-artist" class="nav-link">
-                        <i class="bi bi-people"></i>
-                        <span>Artistas e Colaboradores</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseDistribution" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseDistribution">
-                        <i class="bi bi-globe"></i>
-                        <span>Distribuição</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseDistribution">
-                        <a href="../distribution/releases" class="nav-link">
-                            <i class="bi bi-rocket-takeoff"></i>
-                            <span>Lançamentos</span>
-                        </a>
-                        <a href="../distribution/store" class="nav-link">
-                            <i class="bi bi-shop"></i>
-                            <span>Lojas Digitais</span>
-                        </a>
-                        <a href="../distribution/schedule" class="nav-link">
-                            <i class="bi bi-calendar-event"></i>
-                            <span>Agendar Lançamento</span>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="../manager/gestion" class="nav-link">
-                        <i class="bi bi-star"></i>
-                        <span>Gestão Geral</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="../finances/payments" class="nav-link">
-                        <i class="bi bi-wallet2"></i>
-                        <span>Pagamentos</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="../finances/earnings" class="nav-link">
-                        <i class="bi bi-currency-dollar"></i>
-                        <span>Finanças e Rendimentos</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseIntegration" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseIntegration">
-                        <i class="bi bi-youtube"></i>
-                        <span>Unificação e V. Youtube</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseIntegration">
-                        <a href="../integration/youtube" class="nav-link">
-                            <i class="bi bi-gear"></i>
-                            <span>Configurar Integração</span>
-                        </a>
-                        <a href="../integration/verify" class="nav-link">
-                            <i class="bi bi-check2-all"></i>
-                            <span>Verificar Canais</span>
-                        </a>
-                        <a href="../distribution/monetization" class="nav-link">
-                            <i class="bi bi-youtube"></i>
-                            <span>Gerenciamento de Conteúdo Monetizado</span>
-                        </a>
-                    </div>
-                </li>
+</html>
+<?php
+exit;
+endif;
 
-                <li class="nav-item">
-                    <a href="#collapseSupport" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseSupport">
-                        <i class="bi bi-headset"></i>
-                        <span>Suporte</span>
-                        <span class="badge bg-danger badge-notification">3</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseSupport">
-                        <a href="../messages/inbox" class="nav-link">
-                            <i class="bi bi-envelope"></i>
-                            <span>Caixa de entrada</span>
-                        </a>
-                        <a href="../messages/compose" class="nav-link">
-                            <i class="bi bi-pencil"></i>
-                            <span>Enviar mensagens</span>
-                        </a>
-                    </div>
-                </li>
+paymentPanelTouch();
 
-                <li class="nav-item">
-                    <a href="#collapseHelp" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseHelp">
-                        <i class="bi bi-question-circle"></i>
-                        <span>Ajuda</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseHelp">
-                        <a href="../help/faqs" class="nav-link">
-                            <i class="bi bi-messenger"></i>
-                            <span>FAQs</span>
-                        </a>
-                        <a href="../help/tutorials" class="nav-link">
-                            <i class="bi bi-book"></i>
-                            <span>Tutoriais</span>
-                        </a>
-                        <a href="../help/contact" class="nav-link">
-                            <i class="bi bi-telephone"></i>
-                            <span>Contacto com suporte</span>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="../settings/config" class="nav-link">
-                        <i class="bi bi-sliders"></i>
-                        <span>Configurações</span>
-                    </a>
-                </li>
-                <li class="nav-item mt-4">
-                    <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#logoutwasomupfy">
-                        <i class="bi bi-box-arrow-right"></i>
-                        <span>Logout</span>
-                    </a>
-                </li>
-                <li class="nav-item mt-4">
-                    <a href="http://localhost:5500/home" target="_blank" class="nav-link">
-                        <i class="bi bi-box-arrow-in-up-right"></i>
-                        <span>Visitar Site</span>
-                    </a>
-                </li>
-            </ul>
+$can_edit = hasPermission($admin_id, 'finances.edit');
+$payment_sidebar_active = 'dashboard';
+require_once __DIR__ . '/include/payment-sidebar.php';
+$csrf = $_SESSION['admin_csrf_token'];
+$requested_withdrawal_id = max(0, (int)($_GET['withdrawal'] ?? 0));
+
+$stats = $db->query("
+    SELECT
+        SUM(status_withdrawal = 'pending') AS pending_count,
+        SUM(status_withdrawal = 'processing') AS processing_count,
+        COALESCE(SUM(CASE WHEN status_withdrawal IN ('pending','processing') THEN amount_requested ELSE 0 END), 0) AS pipeline_amount,
+        COALESCE(SUM(CASE WHEN status_withdrawal = 'approved' AND DATE(paid_at) = CURDATE() THEN amount_net ELSE 0 END), 0) AS paid_today,
+        (SELECT COUNT(*) FROM _payment_proof WHERE status = 'pending') AS pending_proofs,
+        (SELECT COUNT(*) FROM _royalty WHERE status_royalty = 'pending') AS pending_royalties
+    FROM _withdrawal
+")->fetch(PDO::FETCH_ASSOC) ?: [];
+
+$withdrawal_sql = "
+    SELECT w.*,
+           u.first_name, u.second_name, u.email_user, u.tel_user,
+           a.full_name_account, a.type_account, a.status_account, a.iban, a.express_number,
+           wl.balance_aoa, wl.total_withdrawn
+    FROM _withdrawal w
+    JOIN _users u ON u.id_users = w.id_users
+    LEFT JOIN _account a ON a.id_account = w.id_account
+    LEFT JOIN _wallet wl ON wl.id_users = w.id_users
+";
+
+$active_withdrawal = null;
+if ($requested_withdrawal_id > 0) {
+    $stmt = $db->prepare($withdrawal_sql . " WHERE w.id_withdrawal = ? LIMIT 1");
+    $stmt->execute([$requested_withdrawal_id]);
+    $active_withdrawal = $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+}
+if (!$active_withdrawal) {
+    $active_withdrawal = $db->query($withdrawal_sql . "
+        WHERE w.status_withdrawal IN ('pending','processing')
+        ORDER BY CASE w.status_withdrawal WHEN 'pending' THEN 0 WHEN 'processing' THEN 1 ELSE 2 END, w.creat_withdrawal ASC
+        LIMIT 1
+    ")->fetch(PDO::FETCH_ASSOC) ?: null;
+}
+
+$withdrawal_queue = $db->query($withdrawal_sql . "
+    WHERE w.status_withdrawal IN ('pending','processing')
+    ORDER BY CASE w.status_withdrawal WHEN 'pending' THEN 0 WHEN 'processing' THEN 1 ELSE 2 END, w.creat_withdrawal ASC
+    LIMIT 8
+")->fetchAll(PDO::FETCH_ASSOC);
+
+$pending_proofs = $db->query("
+    SELECT pp.id_proof, pp.file_path, pp.uploaded_at, pi.reference_code, pl.name_plan, u.first_name, u.second_name
+    FROM _payment_proof pp
+    JOIN _payment_intent pi ON pi.id_intent = pp.id_intent
+    JOIN _users u ON u.id_users = pi.id_users
+    LEFT JOIN _plans pl ON pl.id_plan = pi.id_plan
+    WHERE pp.status = 'pending'
+    ORDER BY pp.uploaded_at ASC
+    LIMIT 5
+")->fetchAll(PDO::FETCH_ASSOC);
+
+$pending_royalties = $db->query("
+    SELECT r.id_royalty, r.net_royalty_aoa, r.month_royalty, r.year_royalty, t.title_track,
+           COALESCE(ar.stage_name, u.name_artist_band, u.first_name) AS artist_name
+    FROM _royalty r
+    JOIN _users u ON u.id_users = r.id_users
+    LEFT JOIN _track t ON t.id_track = r.id_track
+    LEFT JOIN _album al ON al.id_album = t.id_album
+    LEFT JOIN _artist ar ON ar.id_artist = al.id_artist
+    WHERE r.status_royalty = 'pending'
+    ORDER BY r.creat_royalty ASC
+    LIMIT 5
+")->fetchAll(PDO::FETCH_ASSOC);
+
+$recent_transactions = $db->query("
+    SELECT t.type_transaction, t.amount, t.reference, t.creat_transaction,
+           u.first_name, u.second_name,
+           e.first_name AS emp_first_name, e.second_name AS emp_second_name
+    FROM _transaction t
+    LEFT JOIN _users u ON u.id_users = t.id_users
+    LEFT JOIN _employees e ON e.id_employees = t.id_employees
+    WHERE t.type_transaction IN ('withdrawal', 'royalty_credit')
+    ORDER BY t.creat_transaction DESC
+    LIMIT 8
+")->fetchAll(PDO::FETCH_ASSOC);
+?>
+<!DOCTYPE html>
+<html lang="pt-ao">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="<?php echo htmlspecialchars($csrf); ?>">
+    <title>Treasury Desk - Wasom Upfy for Business</title>
+    <link rel="shortcut icon" href="<?php echo APP_URL; ?>/assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+    .desk-hero {
+        background: linear-gradient(135deg, #0f172a, #111827 48%, #1f2937);
+        color: #fff;
+        border-radius: 28px;
+        padding: 26px
+    }
+
+    .desk-hero h1 {
+        font-size: 1.95rem;
+        font-weight: 800;
+        margin: 14px 0 8px
+    }
+
+    .desk-hero p {
+        margin: 0;
+        max-width: 760px;
+        color: #d1d5db;
+        line-height: 1.7
+    }
+
+    .desk-tag {
+        display: inline-flex;
+        gap: 8px;
+        align-items: center;
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-size: .76rem;
+        background: rgba(255, 255, 255, .08)
+    }
+
+    .desk-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 20px
+    }
+
+    .desk-mini {
+        background: rgba(255, 255, 255, .08);
+        border: 1px solid rgba(255, 255, 255, .08);
+        border-radius: 18px;
+        padding: 16px
+    }
+
+    .desk-mini strong {
+        display: block;
+        font-size: 1.18rem;
+        margin-bottom: 6px
+    }
+
+    .desk-mini span {
+        font-size: .78rem;
+        color: #d1d5db
+    }
+
+    .desk-card,
+    .focus-card {
+        background: #fff;
+        border-radius: 24px;
+        border: 1px solid rgba(0, 0, 0, .04);
+        box-shadow: 0 4px 16px rgba(15, 23, 42, .04)
+    }
+
+    .desk-card .head,
+    .focus-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 18px 20px;
+        border-bottom: 1px solid #f3f4f6
+    }
+
+    .desk-card .head h5 {
+        margin: 0;
+        font-size: .95rem;
+        font-weight: 800;
+        color: #111827
+    }
+
+    .focus-body,
+    .desk-card .body {
+        padding: 20px
+    }
+
+    .focus-kpi {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 18px
+    }
+
+    .focus-kpi .item {
+        background: #f8fafc;
+        border: 1px solid #eef2f7;
+        border-radius: 18px;
+        padding: 16px
+    }
+
+    .focus-kpi .label {
+        font-size: .72rem;
+        text-transform: uppercase;
+        color: #6b7280;
+        margin-bottom: 6px
+    }
+
+    .focus-kpi .value {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #111827
+    }
+
+    .meta-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid #f3f4f6
+    }
+
+    .meta-row:last-child {
+        border-bottom: 0
+    }
+
+    .meta-row span {
+        font-size: .8rem;
+        color: #6b7280;
+        font-weight: 600
+    }
+
+    .meta-row strong {
+        font-size: .84rem;
+        color: #111827;
+        text-align: right
+    }
+
+    .queue-item,
+    .proof-item,
+    .royalty-item {
+        padding: 14px 0;
+        border-bottom: 1px solid #f3f4f6
+    }
+
+    .queue-item:last-child,
+    .proof-item:last-child,
+    .royalty-item:last-child {
+        border-bottom: 0;
+        padding-bottom: 0
+    }
+
+    .line-name {
+        font-weight: 700;
+        color: #111827;
+        font-size: .85rem
+    }
+
+    .line-sub {
+        font-size: .76rem;
+        color: #6b7280;
+        margin-top: 3px
+    }
+
+    .desk-empty {
+        text-align: center;
+        color: #6b7280;
+        padding: 24px 12px;
+        font-size: .82rem
+    }
+
+    .btn-soft {
+        border-radius: 14px;
+        font-weight: 700
+    }
+
+    .tx-table th,
+    .tx-table td {
+        font-size: .8rem;
+        vertical-align: middle
+    }
+
+    .tx-table th {
+        font-size: .68rem;
+        text-transform: uppercase;
+        color: #6b7280;
+        background: #f8fafc
+    }
+
+    @media (max-width:1199px) {
+
+        .desk-grid,
+        .focus-kpi {
+            grid-template-columns: repeat(2, minmax(0, 1fr))
+        }
+    }
+
+    @media (max-width:767px) {
+
+        .desk-grid,
+        .focus-kpi {
+            grid-template-columns: 1fr
+        }
+
+        .desk-hero h1 {
+            font-size: 1.5rem
+        }
+
+        .meta-row {
+            flex-direction: column
+        }
+
+        .meta-row strong {
+            text-align: left
+        }
+    }
+    </style>
+</head>
+
+<body>
+    <div class="biz-content">
+        <div class="biz-topbar">
+            <div class="d-flex align-items-center gap-3">
+                <button class="biz-hamburger" onclick="openSidebar()"><i class="bi bi-list fs-5"></i></button>
+                <div>
+                    <div class="biz-topbar-title">Treasury Desk</div>
+                    <div class="biz-topbar-sub">Wasom Upfy for Business / Gestao central de pagamentos</div>
+                </div>
+            </div>
+            <a href="<?php echo $payment_base; ?>/withdrawals" class="btn btn-sm btn-outline-secondary btn-soft">Fila de
+                saques</a>
         </div>
 
-        <!-- Content -->
-        <div class="content w-100" id="mainContent">
-            <nav class="navbar navbar-expand-lg">
-                <button class="navbar-toggler" type="button" id="sidebarToggle" aria-label="Abrir/Fechar Menu">
-                    <i class="bi bi-list text-white"></i>
-                </button>
-                <div class="ms-auto d-flex align-items-center">
-                    <button class="btn btn-outline-light btn-sm me-2" onclick="toggleDarkMode()"
-                        aria-label="Alternar Modo Escuro">
-                        <i class="bi bi-moon"></i>
-                    </button>
-                    <div class="dropdown me-2 position-relative">
-                        <button class="btn btn-outline-light btn-sm position-relative" type="button"
-                            data-bs-toggle="dropdown" aria-label="Notificações">
-                            <i class="bi bi-bell"></i>
-                            <span
-                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">5</span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-start p-0" style="min-width: 250px;">
-                            <li class="dropdown-header bg-dark text-white p-2">Notificações (5)</li>
-                            <li><a class="dropdown-item p-2" href="#">Novo artista registrado</a></li>
-                            <li><a class="dropdown-item p-2" href="#">Música atingiu 1000 plays</a></li>
-                            <li><a class="dropdown-item p-2" href="#">Atualização do sistema disponível</a></li>
-                            <li class="dropdown-footer text-center p-2"><a href="#" class="text-primary">Ver todas</a>
-                            </li>
-                        </ul>
+        <div class="biz-inner">
+            <section class="desk-hero mb-4">
+                <span class="desk-tag"><i class="bi bi-stars"></i> Cockpit financeiro operacional</span>
+                <h1>Liquidacao de saques, comprovativos e royalties num painel so.</h1>
+                <p>Assume um saque, valida provas de pagamento e credita royalties sem sair do shell financeiro.</p>
+                <div class="desk-grid">
+                    <div class="desk-mini">
+                        <strong><?php echo (int)($stats['pending_count'] ?? 0); ?></strong><span>saques pendentes</span>
                     </div>
-                    <div class="dropdown me-2 position-relative">
-                        <button class="btn btn-outline-light btn-sm position-relative" type="button"
-                            data-bs-toggle="dropdown" aria-label="Mensagens">
-                            <i class="bi bi-envelope"></i>
-                            <span
-                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">2</span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-start p-0" style="min-width: 250px;">
-                            <li class="dropdown-header bg-dark text-white p-2">Mensagens (2)</li>
-                            <li><a class="dropdown-item p-2" href="#">Suporte #4521 - Novo ticket</a></li>
-                            <li><a class="dropdown-item p-2" href="#">Mensagem de artista</a></li>
-                            <li class="dropdown-footer text-center p-2"><a href="#" class="text-primary">Ver todas</a>
-                            </li>
-                        </ul>
+                    <div class="desk-mini">
+                        <strong><?php echo (int)($stats['processing_count'] ?? 0); ?></strong><span>em
+                            processamento</span>
                     </div>
-                    <div class="dropdown">
-                        <button class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center"
-                            type="button" data-bs-toggle="dropdown" aria-label="Menu do Usuário">
-                            <img src="../../../assets/img/avatar/avatar.png" alt="Usuário" class="rounded-circle me-1"
-                                style="height: 24px;">
-                            <span>Cristiano Amadeu</span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="../user/profile"><i
-                                        class="bi bi-person me-2"></i>Perfil</a></li>
-                            <li><a class="dropdown-item" href="../settings/config"><i
-                                        class="bi bi-sliders me-2"></i>Configurações</a></li>
-                            <li><a class="dropdown-item" href="../help/help"><i
-                                        class="bi bi-question-circle me-2"></i>Ajuda</a>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutwasomupfy"
-                                    href="#"><i class="bi bi-box-arrow-right me-2"></i>Sair</a>
-                            </li>
-                        </ul>
+                    <div class="desk-mini">
+                        <strong><?php echo biz_money((float)($stats['pipeline_amount'] ?? 0)); ?></strong><span>pipeline
+                            financeira</span>
+                    </div>
+                    <div class="desk-mini">
+                        <strong><?php echo biz_money((float)($stats['paid_today'] ?? 0)); ?></strong><span>liquidado
+                            hoje</span>
                     </div>
                 </div>
-            </nav>
+            </section>
 
-            <!-- Adicione isso dentro da tag <nav class="bottom-nav"> -->
-            <div class="connection-status" id="connectionStatus"></div>
-            <div class="status-notification" id="statusNotification"></div>
-
-            <!-- ════ MODAL — Logout ════ -->
-            <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false"
-                tabindex="-1" aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content modal-bottom">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">Terminar sessão</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="container">
-                                <div class="row justify-content-center text-center">
-                                    <div class="col-md-12 content-center justify-center text-center">
-                                        <p class="text-center text-dark">@josembengadacosta você tem
-                                            certeza
-                                            de que desejas terminar
-                                            sessão?</p>
-                                    </div>
+            <div class="row g-4">
+                <div class="col-xl-8">
+                    <section class="focus-card mb-4">
+                        <div class="focus-head">
+                            <div>
+                                <div class="text-uppercase text-muted small fw-bold">Saque em foco</div>
+                                <div class="h4 mb-0 fw-bold text-dark">
+                                    <?php echo $active_withdrawal ? '#' . (int)$active_withdrawal['id_withdrawal'] . ' - ' . htmlspecialchars(biz_person_name($active_withdrawal)) : 'Sem saque activo'; ?>
                                 </div>
                             </div>
+                            <?php if ($active_withdrawal): ?><?php echo biz_status_badge((string)$active_withdrawal['status_withdrawal']); ?><?php endif; ?>
                         </div>
-                        <div class="modal-footer">
-                            <div>
-                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Não,
-                                    continuar</button>
+                        <div class="focus-body">
+                            <?php if ($active_withdrawal): ?>
+                            <div class="focus-kpi">
+                                <div class="item">
+                                    <div class="label">Valor pedido</div>
+                                    <div class="value">
+                                        <?php echo biz_money((float)$active_withdrawal['amount_requested']); ?></div>
+                                </div>
+                                <div class="item">
+                                    <div class="label">Valor liquido</div>
+                                    <div class="value" style="color:#16a34a">
+                                        <?php echo biz_money((float)$active_withdrawal['amount_net']); ?></div>
+                                </div>
+                                <div class="item">
+                                    <div class="label">Wallet actual</div>
+                                    <div class="value">
+                                        <?php echo biz_money((float)($active_withdrawal['balance_aoa'] ?? 0)); ?></div>
+                                </div>
                             </div>
-                            <div>
-                                <button class="btn btn-danger" type="button" name="logout_wasomupfy"
-                                    onclick="logout_wasomupfy()">Sim, terminar</button>
+                            <div class="meta-row"><span>Conta de
+                                    destino</span><strong><?php echo htmlspecialchars((string)($active_withdrawal['full_name_account'] ?: '--')); ?></strong>
                             </div>
-                            <script type="text/javascript">
-                                function logout_wasomupfy() {
-                                    window.location = 'logout';
-                                }
-                            </script>
+                            <div class="meta-row">
+                                <span>Referencia</span><strong><?php echo htmlspecialchars(biz_account_ref($active_withdrawal)); ?></strong>
+                            </div>
+                            <div class="meta-row"><span>Tipo e
+                                    estado</span><strong><?php echo htmlspecialchars((string)($active_withdrawal['type_account'] ?: '--')); ?>
+                                    /
+                                    <?php echo htmlspecialchars((string)($active_withdrawal['status_account'] ?: '--')); ?></strong>
+                            </div>
+                            <div class="meta-row"><span>Pedido
+                                    criado</span><strong><?php echo date('d/m/Y H:i', strtotime((string)$active_withdrawal['creat_withdrawal'])); ?>
+                                    (<?php echo biz_relative_time((string)$active_withdrawal['creat_withdrawal']); ?>)</strong>
+                            </div>
+                            <div class="meta-row">
+                                <span>Contacto</span><strong><?php echo htmlspecialchars((string)($active_withdrawal['email_user'] ?: '--')); ?>
+                                    /
+                                    <?php echo htmlspecialchars((string)($active_withdrawal['tel_user'] ?: '--')); ?></strong>
+                            </div>
+                            <?php else: ?>
+                            <div class="desk-empty">Nao existe nenhum pedido pendente ou em processamento.</div>
+                            <?php endif; ?>
                         </div>
-                    </div>
+                    </section>
+
+                    <section class="desk-card mb-4">
+                        <div class="head">
+                            <h5>Fila operacional de saques</h5>
+                            <a href="<?php echo $payment_base; ?>/withdrawals"
+                                class="btn btn-sm btn-outline-secondary btn-soft">Lista completa</a>
+                        </div>
+                        <div class="body">
+                            <?php if (empty($withdrawal_queue)): ?>
+                            <div class="desk-empty">Sem saques na fila.</div>
+                            <?php else: ?>
+                            <?php foreach ($withdrawal_queue as $item): ?>
+                            <div class="queue-item">
+                                <div class="d-flex justify-content-between gap-3 flex-wrap">
+                                    <div>
+                                        <div class="line-name"><?php echo htmlspecialchars(biz_person_name($item)); ?>
+                                        </div>
+                                        <div class="line-sub">#<?php echo (int)$item['id_withdrawal']; ?> ·
+                                            <?php echo htmlspecialchars((string)$item['email_user']); ?> ·
+                                            <?php echo biz_relative_time((string)$item['creat_withdrawal']); ?></div>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="line-name" style="color:#ff0089">
+                                            <?php echo biz_money((float)$item['amount_requested']); ?></div>
+                                        <div class="line-sub">
+                                            <?php echo htmlspecialchars((string)($item['type_account'] ?: 'Conta')); ?>
+                                            · <?php echo biz_account_ref($item); ?></div>
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-2 flex-wrap mt-3">
+                                    <?php echo biz_status_badge((string)$item['status_withdrawal']); ?>
+                                    <button class="btn btn-sm btn-outline-info btn-soft" type="button"
+                                        onclick="viewWithdrawal(<?php echo (int)$item['id_withdrawal']; ?>)">Visualizar</button>
+                                    <a class="btn btn-sm btn-dark btn-soft"
+                                        href="<?php echo $payment_base; ?>/gestion?withdrawal=<?php echo (int)$item['id_withdrawal']; ?>">Assumir</a>
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+                    </section>
+
+                    <section class="desk-card">
+                        <div class="head">
+                            <h5>Historico recente</h5>
+                            <a href="<?php echo $payment_base; ?>/transactions"
+                                class="btn btn-sm btn-outline-secondary btn-soft">Transaccoes</a>
+                        </div>
+                        <div class="body p-0">
+                            <div class="table-responsive">
+                                <table class="table tx-table mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Tipo</th>
+                                            <th>Utilizador</th>
+                                            <th>Referencia</th>
+                                            <th>Valor</th>
+                                            <th>Executado por</th>
+                                            <th>Data</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php if (empty($recent_transactions)): ?>
+                                        <tr>
+                                            <td colspan="6" class="desk-empty">Sem transaccoes recentes.</td>
+                                        </tr>
+                                        <?php else: ?>
+                                        <?php foreach ($recent_transactions as $tx): ?>
+                                        <tr>
+                                            <td><?php echo $tx['type_transaction'] === 'withdrawal' ? 'Saque' : 'Royalty'; ?>
+                                            </td>
+                                            <td><?php echo htmlspecialchars(trim((string)($tx['first_name'] ?? '') . ' ' . (string)($tx['second_name'] ?? '')) ?: '--'); ?>
+                                            </td>
+                                            <td><?php echo htmlspecialchars((string)($tx['reference'] ?: '--')); ?></td>
+                                            <td class="fw-bold"><?php echo biz_money((float)$tx['amount']); ?></td>
+                                            <td><?php echo htmlspecialchars(trim((string)($tx['emp_first_name'] ?? '') . ' ' . (string)($tx['emp_second_name'] ?? '')) ?: '--'); ?>
+                                            </td>
+                                            <td><?php echo date('d/m H:i', strtotime((string)$tx['creat_transaction'])); ?>
+                                            </td>
+                                        </tr>
+                                        <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
                 </div>
-            </div>
-            <!-- ════ MODAL — Logout  FIM ════ -->
 
-            <div class="container-fluid p-0">
-                <div class="row mb-3 mt-2">
-                    <div class="welcome-text col-auto d-sm-block">
-                        <h2 class="h4 mb-2">Gestão Geral</span></h2>
-                        <nav aria-label="breadcrumb">
-                            <ol class="breadcrumb mb-0">
-                                <li class="breadcrumb-item"><a href="../manager/gestion"
-                                        class="text-secondary">Definir</a>
-                                </li>
-                                <li class="breadcrumb-item active text-secondary" aria-current="page">Gestão Geral</li>
-                            </ol>
-                        </nav>
-                    </div>
-                    <!-- Stats Description -->
-                    <p class="stats-description mt-2">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi veritatis dicta omnis accusantium
-                        expedita repudiandae dolorem dignissimos quisquam. Sapiente magnam corrupti assumenda minus,
-                        animi itaque explicabo a autem nemo ipsam!.
-                    </p>
+                <div class="col-xl-4">
+                    <section class="desk-card mb-4">
+                        <div class="head">
+                            <h5>Sala de liquidacao</h5>
+                            <span
+                                class="text-muted small"><?php echo $can_edit ? 'Modo operativo' : 'Somente leitura'; ?></span>
+                        </div>
+                        <div class="body">
+                            <?php if (!$active_withdrawal): ?>
+                            <div class="desk-empty">Assume um saque da fila para abrir o console de pagamento.</div>
+                            <?php elseif (!$can_edit): ?>
+                            <div class="desk-empty">Esta conta pode visualizar, mas nao aprovar ou rejeitar pagamentos.
+                            </div>
+                            <?php else: ?>
+                            <input type="hidden" id="activeWithdrawalId"
+                                value="<?php echo (int)$active_withdrawal['id_withdrawal']; ?>">
+                            <?php if ((string)$active_withdrawal['status_withdrawal'] === 'pending'): ?>
+                            <button type="button" class="btn btn-primary btn-soft w-100 mb-2"
+                                onclick="setProcessing()">Marcar a processar</button>
+                            <?php endif; ?>
+                            <label class="form-label small fw-bold" for="wdNotes">Notas internas</label>
+                            <textarea class="form-control mb-3" id="wdNotes" rows="3"
+                                placeholder="Ex: Transferido via IBAN as 14:30, confirmado com o titular."></textarea>
+                            <label class="form-label small fw-bold" for="wdProof">Comprovativo</label>
+                            <input class="form-control mb-3" type="file" id="wdProof" accept="image/*,application/pdf">
+                            <button type="button" class="btn btn-success btn-soft w-100 mb-2"
+                                onclick="approveWithdrawal()">Confirmar pagamento</button>
+                            <button type="button" class="btn btn-outline-danger btn-soft w-100"
+                                onclick="rejectWithdrawal()">Rejeitar pedido</button>
+                            <?php endif; ?>
+                        </div>
+                    </section>
 
-                    <div class="row justify-content-center">
-                        <div class="col-xl-5 col-lg-6 col-md-8 col-12 m-auto">
-                            <div class="card shadow-sm">
-                                <div class="card-body p-3">
-                                    <form class="needs-validation" method="post" action="login_process.php" novalidate>
-                                        <div class="text-center mt-3">
-                                            <p>A aréa para <strong>Gestão geral</strong> apenas pode ser acessada por
-                                                gestores autorizados paa realizar a gestão das funcionalidades. Digite a
-                                                sua senha de acesso abaixo para iniciar com suas actividades.</p>
-                                        </div>
-                                        <input type="hidden" name="csrf_token"
-                                            value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
-                                        <div class="mb-3">
-                                            <div class="input-group">
-                                                <input type="password" class="form-control" id="password_user" required
-                                                    name="password_user" placeholder="Insira a sua senha" maxlength="60"
-                                                    autocomplete="off" />
-                                                <button type="button" class="btn btn-outline-secondary"
-                                                    onclick="togglePasswordVisibility()" id="mostrar"
-                                                    aria-label="Mostrar senha"><i data-feather="eye"></i></button>
-                                                <button type="button" class="btn btn-outline-secondary"
-                                                    onclick="togglePasswordVisibility()" style="display: none;"
-                                                    id="mostrar1" aria-label="Esconder senha"><i
-                                                        data-feather="eye-off"></i></button>
-                                                <div class="invalid-feedback">Por favor insira a sua senha.</div>
-                                            </div>
-                                        </div>
-                                        <div class="mb-4 d-flex align-items-center justify-content-between">
-                                            <a href="forgot-password"
-                                                class="text-decoration-none text-secondary">Esqueceu
-                                                sua senha?</a>
-                                        </div>
-                                        <div class="d-grid">
-                                            <button class="btn btn-wasomupfy text-white" type="submit">Conecta-se <i
-                                                    data-feather="arrow-right"></i></button>
-                                        </div>
-                                        <!-- <div class="text-center mt-3">
-                                        <a href="register" class="text-decoration-underline fw-bold" style="color: #FF0089;  font-weight: bold;">Precisa de uma conta? Crie uma agora.</a>
-                                    </div> -->
-                                    </form>
-                                    <!-- <div class="text-center mt-3">
-                                    <a href="#support" data-bs-toggle="modal" data-bs-target="#support" class="text-decoration-none me-2" style="color: #FF0089;">Suporte</a>|
-                                    <a href="#terms" data-bs-toggle="modal" data-bs-target="#terms" class="text-decoration-none me-2" style="color: #FF0089;">Termos</a>|
-                                    <a href="#privacy" data-bs-toggle="modal" data-bs-target="#privacy" class="text-decoration-none me-2" style="color: #FF0089;">Privacidade</a>|
-                                    <a href="../home" class="text-muted text-decoration-none">Voltar para home</a>
-                                </div> -->
-
-                                    <div class="text-center mt-3">
-                                        <p>Caso é um dos gestores autorizados e não consegue acessar está aréa, entre em
-                                            contacto com a <a href="#" class="text-decoration-none"
-                                                style="color:#FF0089" data-bs-toggle="modal"
-                                                data-bs-target="#support">equipa de suporte</a></p>
-                                    </div>
+                    <section class="desk-card mb-4">
+                        <div class="head">
+                            <h5>Comprovativos pendentes</h5>
+                            <a href="<?php echo $payment_base; ?>/proofs"
+                                class="btn btn-sm btn-outline-secondary btn-soft">Abrir area</a>
+                        </div>
+                        <div class="body">
+                            <?php if (empty($pending_proofs)): ?>
+                            <div class="desk-empty">Nao ha comprovativos pendentes.</div>
+                            <?php else: ?>
+                            <?php foreach ($pending_proofs as $proof): ?>
+                            <div class="proof-item">
+                                <div class="line-name"><?php echo htmlspecialchars(biz_person_name($proof)); ?></div>
+                                <div class="line-sub">
+                                    <?php echo htmlspecialchars((string)($proof['name_plan'] ?: 'Plano')); ?> ·
+                                    <?php echo htmlspecialchars((string)($proof['reference_code'] ?: '--')); ?> ·
+                                    <?php echo biz_relative_time((string)$proof['uploaded_at']); ?></div>
+                                <div class="d-flex gap-2 flex-wrap mt-2">
+                                    <?php if (!empty($proof['file_path'])): ?>
+                                    <a class="btn btn-sm btn-outline-info btn-soft"
+                                        href="<?php echo APP_URL . '/' . ltrim((string)$proof['file_path'], '/'); ?>"
+                                        target="_blank" rel="noopener">Abrir ficheiro</a>
+                                    <?php endif; ?>
+                                    <?php if ($can_edit): ?>
+                                    <button class="btn btn-sm btn-success btn-soft" type="button"
+                                        onclick="validateProof(<?php echo (int)$proof['id_proof']; ?>)">Validar</button>
+                                    <button class="btn btn-sm btn-outline-danger btn-soft" type="button"
+                                        onclick="rejectProof(<?php echo (int)$proof['id_proof']; ?>)">Rejeitar</button>
+                                    <?php endif; ?>
                                 </div>
                             </div>
+                            <?php endforeach; ?>
+                            <?php endif; ?>
                         </div>
-                    </div>
+                    </section>
+
+                    <section class="desk-card">
+                        <div class="head">
+                            <h5>Royalties para credito</h5>
+                            <a href="<?php echo $payment_base; ?>/royalty-splits"
+                                class="btn btn-sm btn-outline-secondary btn-soft">Ver mapa</a>
+                        </div>
+                        <div class="body">
+                            <?php if (empty($pending_royalties)): ?>
+                            <div class="desk-empty">Sem royalties pendentes.</div>
+                            <?php else: ?>
+                            <?php foreach ($pending_royalties as $royalty): ?>
+                            <div class="royalty-item">
+                                <div class="line-name">
+                                    <?php echo htmlspecialchars((string)($royalty['artist_name'] ?: '--')); ?></div>
+                                <div class="line-sub">
+                                    <?php echo htmlspecialchars((string)($royalty['title_track'] ?: 'Faixa sem titulo')); ?>
+                                    ·
+                                    <?php echo str_pad((string)$royalty['month_royalty'], 2, '0', STR_PAD_LEFT) . '/' . (string)$royalty['year_royalty']; ?>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap mt-2">
+                                    <strong
+                                        style="color:#ff0089"><?php echo biz_money((float)$royalty['net_royalty_aoa']); ?></strong>
+                                    <?php if ($can_edit): ?>
+                                    <button class="btn btn-sm btn-dark btn-soft" type="button"
+                                        onclick="payRoyalty(<?php echo (int)$royalty['id_royalty']; ?>)">Creditar</button>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+                    </section>
                 </div>
             </div>
         </div>
     </div>
 
-
-    <!-- Floating Action Button -->
-    <div class="fab" onclick="showQuickAction()" aria-label="Ações Rápidas">
-        <i class="bi bi-plus-lg"></i>
-    </div>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-12 text-center">
-                    <p class="mb-2">© 2026 Wasom Upfy. Todos os direitos reservados.</p>
-                    <a href="#" class="me-2">Termos de Uso</a>
-                    <a href="#" class="me-2">Privacidade</a>
-                    <a href="#">Suporte</a>
+    <div class="modal fade" id="viewModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header" style="background:#111827">
+                    <h5 class="modal-title text-white fw-bold"><i class="bi bi-eye me-2"></i>Detalhe do saque</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
+                <div class="modal-body p-4" id="viewModalBody">
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary"></div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0" id="viewModalFooter"></div>
             </div>
-        </div>
-    </footer>
-
-    <!-- Bottom Navigation -->
-    <!-- <nav class="bottom-nav">
-    <ul>
-        <li>
-            <a href="home" class="active">
-                <i class="bi bi-speedometer2"></i>
-                <span>Dashboard</span>
-            </a>
-        </li>
-        <li>
-            <a href="../music/approve">
-                <i class="bi bi-music-note-list"></i>
-                <span>Músicas</span>
-            </a>
-        </li>
-        <li>
-            <a href="../users/all-users">
-                <i class="bi bi-people"></i>
-                <span>Usuários</span>
-            </a>
-        </li>
-        <li>
-            <a href="../finances/earnings">
-                <i class="bi bi-currency-dollar"></i>
-                <span>Finanças</span>
-            </a>
-        </li>
-        <li>
-            <a href="../settings/config">
-                <i class="bi bi-sliders"></i>
-                <span>Config</span>
-            </a>
-        </li>
-    </ul>
-</nav> -->
-
-
-    <div class="page-loader" id="pageLoader">
-        <div class="loader-content">
-            <!-- Sua imagem pulsante -->
-            <img src="../../../assets/img/brand/wasomupfy_brand.png" class="loader-image" alt="Carregando">
-            <!-- Barra de progresso agora perfeitamente centralizada -->
-            <div class="loader-progress"></div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="<?php echo APP_URL  ?>/js/lastest.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/josembengacosta/wasomupfy@main/js/app.js"></script>
-    <script src="data/database.earnings.js"></script>
-    <script src="js/earnings.js" type="module"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    (function() {
+        'use strict';
+        const PROCESS_URL = '<?php echo $payment_base; ?>/process';
+        const CSRF = document.querySelector('meta[name="csrf-token"]').content;
+        const canEdit = <?php echo $can_edit ? 'true' : 'false'; ?>;
+        async function postForm(payload) {
+            const fd = new FormData();
+            Object.entries(payload).forEach(([k, v]) => fd.append(k, v));
+            fd.append('csrf_token', CSRF);
+            const r = await fetch(PROCESS_URL, {
+                method: 'POST',
+                body: fd
+            });
+            return r.json();
+        }
+        async function postWithFile(actionName) {
+            const fd = new FormData();
+            fd.append('action', actionName);
+            fd.append('id_withdrawal', document.getElementById('activeWithdrawalId')?.value || '');
+            fd.append('notes', document.getElementById('wdNotes')?.value || '');
+            fd.append('csrf_token', CSRF);
+            const file = document.getElementById('wdProof')?.files[0];
+            if (file) fd.append('comprovante', file);
+            const r = await fetch(PROCESS_URL, {
+                method: 'POST',
+                body: fd
+            });
+            return r.json();
+        }
+        async function runAction(fn, redirectUrl = '') {
+            Swal.fire({
+                title: 'A processar...',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+            try {
+                const data = await fn();
+                if (!data.ok) throw new Error(data.message);
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Concluido',
+                    text: data.message,
+                    confirmButtonColor: '#ff0089'
+                });
+                if (redirectUrl) {
+                    window.location.href = redirectUrl;
+                    return;
+                }
+                window.location.reload();
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Falha',
+                    text: error.message || 'Operacao nao concluida.',
+                    confirmButtonColor: '#ff0089'
+                });
+            }
+        }
+        window.viewWithdrawal = async function(id) {
+            document.getElementById('viewModalBody').innerHTML =
+                '<div class="text-center py-5"><div class="spinner-border text-primary"></div></div>';
+            document.getElementById('viewModalFooter').innerHTML = '';
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('viewModal')).show();
+            try {
+                const data = await postForm({
+                    action: 'get_withdrawal_details',
+                    id_withdrawal: id
+                });
+                if (!data.ok) throw new Error(data.message);
+                document.getElementById('viewModalBody').innerHTML = data.html ||
+                    '<div class="alert alert-warning">Sem detalhes.</div>';
+                document.getElementById('viewModalFooter').innerHTML = data.footer_html || '';
+            } catch (error) {
+                document.getElementById('viewModalBody').innerHTML = '<div class="alert alert-danger">' + (
+                    error.message || 'Falha ao carregar detalhes.') + '</div>';
+            }
+        };
+        window.setProcessing = async function() {
+            if (!canEdit) return;
+            const ok = await Swal.fire({
+                title: 'Marcar como em processamento?',
+                text: 'O utilizador sera notificado.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sim, avancar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#2563eb'
+            });
+            if (ok.isConfirmed) runAction(() => postForm({
+                action: 'set_processing_withdrawal',
+                id_withdrawal: document.getElementById('activeWithdrawalId')?.value || ''
+            }));
+        };
+        window.approveWithdrawal = async function() {
+            if (!canEdit) return;
+            const file = document.getElementById('wdProof')?.files[0];
+            if (file && file.size > 5 * 1024 * 1024) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Ficheiro grande',
+                    text: 'O comprovativo excede 5MB.',
+                    confirmButtonColor: '#ff0089'
+                });
+                return;
+            }
+            const ok = await Swal.fire({
+                title: 'Confirmar pagamento?',
+                text: 'Wallet e transaccoes serao actualizadas.',
+                icon: 'success',
+                showCancelButton: true,
+                confirmButtonText: 'Confirmar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#16a34a'
+            });
+            if (ok.isConfirmed) runAction(() => postWithFile('approve_withdrawal'),
+                '<?php echo $payment_base; ?>/gestion');
+        };
+        window.rejectWithdrawal = async function() {
+            if (!canEdit) return;
+            const res = await Swal.fire({
+                title: 'Rejeitar pedido de saque',
+                input: 'textarea',
+                inputLabel: 'Motivo visivel para o utilizador',
+                inputValidator: value => value.trim() ? undefined : 'O motivo e obrigatorio.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Rejeitar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#dc2626'
+            });
+            if (res.isConfirmed) runAction(() => postForm({
+                action: 'reject_withdrawal',
+                id_withdrawal: document.getElementById('activeWithdrawalId')?.value || '',
+                reject_reason: res.value.trim()
+            }), '<?php echo $payment_base; ?>/gestion');
+        };
+        window.validateProof = async function(id) {
+            if (!canEdit) return;
+            const ok = await Swal.fire({
+                title: 'Validar comprovativo?',
+                text: 'O utilizador sera notificado da aprovacao.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Validar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#16a34a'
+            });
+            if (ok.isConfirmed) runAction(() => postForm({
+                action: 'validate_proof',
+                id_proof: id,
+                new_status: 'validated'
+            }));
+        };
+        window.rejectProof = async function(id) {
+            if (!canEdit) return;
+            const res = await Swal.fire({
+                title: 'Rejeitar comprovativo',
+                input: 'textarea',
+                inputLabel: 'Motivo da rejeicao',
+                inputValidator: value => value.trim() ? undefined : 'O motivo e obrigatorio.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Rejeitar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#dc2626'
+            });
+            if (res.isConfirmed) runAction(() => postForm({
+                action: 'validate_proof',
+                id_proof: id,
+                new_status: 'rejected',
+                reject_reason: res.value.trim()
+            }));
+        };
+        window.payRoyalty = async function(id) {
+            if (!canEdit) return;
+            const ok = await Swal.fire({
+                title: 'Creditar royalty ao utilizador?',
+                text: 'A carteira sera actualizada.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Creditar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#111827'
+            });
+            if (ok.isConfirmed) runAction(() => postForm({
+                action: 'pay_royalty',
+                id_royalty: id
+            }));
+        };
+    })();
+    </script>
 </body>
 
 </html>

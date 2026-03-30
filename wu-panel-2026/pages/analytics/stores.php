@@ -8,63 +8,43 @@ require_once __DIR__ . '/../../include/platform_admin.php';
 requirePermission($admin_id, 'analytics.view');
 
 if (!isset($_SESSION['admin_csrf_token'])) {
-  $_SESSION['admin_csrf_token'] = bin2hex(random_bytes(32));
+    $_SESSION['admin_csrf_token'] = bin2hex(random_bytes(32));
 }
 
 // ── Feedback ──────────────────────────────────────────────────────────────
 $msg      = $_GET['msg'] ?? null;
 $feedback = match ($msg) {
-  'store_blocked'   => ['warning', 'bi-lock', 'Loja desactivada com sucesso.'],
-  'store_unblocked' => ['success', 'bi-unlock', 'Loja reactivada com sucesso.'],
-  'updated'         => ['success', 'bi-check', 'Dados da loja actualizados.'],
-  'error'           => ['danger',  'bi-x-circle', 'Ocorreu um erro. Tenta novamente.'],
-  default           => null,
+    'store_blocked'   => ['warning', 'bi-lock', 'Loja desactivada com sucesso.'],
+    'store_unblocked' => ['success', 'bi-unlock', 'Loja reactivada com sucesso.'],
+    'updated'         => ['success', 'bi-check', 'Dados da loja actualizados.'],
+    'error'           => ['danger',  'bi-x-circle', 'Ocorreu um erro. Tenta novamente.'],
+    default           => null,
 };
 
 // ── Helpers (reutilizamos as mesmas funções) ─────────────────────────────
 function an_fmt_num(int|float $v): string
 {
-  if ($v >= 1_000_000) return number_format($v / 1_000_000, 1, ',', '.') . 'M';
-  if ($v >= 1_000)     return number_format($v / 1_000, 1, ',', '.') . 'K';
-  return number_format($v, 0, ',', '.');
+    if ($v >= 1_000_000) return number_format($v / 1_000_000, 1, ',', '.') . 'M';
+    if ($v >= 1_000)     return number_format($v / 1_000, 1, ',', '.') . 'K';
+    return number_format($v, 0, ',', '.');
 }
 function an_fmt_aoa(float $v): string
 {
-  if ($v >= 1_000_000) return 'Kz ' . number_format($v / 1_000_000, 1, ',', '.') . 'M';
-  if ($v >= 1_000)     return 'Kz ' . number_format($v / 1_000, 1, ',', '.') . 'mil';
-  return 'Kz ' . number_format($v, 2, ',', '.');
+    if ($v >= 1_000_000) return 'Kz ' . number_format($v / 1_000_000, 1, ',', '.') . 'M';
+    if ($v >= 1_000)     return 'Kz ' . number_format($v / 1_000, 1, ',', '.') . 'mil';
+    return 'Kz ' . number_format($v, 2, ',', '.');
 }
 function an_status_badge(string $s): string
 {
-  return match ($s) {
-    'active'    => '<span class="badge an-s-active">Activa</span>',
-    'inactive'  => '<span class="badge an-s-inactive">Inactiva</span>',
-    default     => '<span class="badge bg-secondary">' . ucfirst($s) . '</span>',
-  };
+    return match ($s) {
+        'active'    => '<span class="badge an-s-active">Activa</span>',
+        'inactive'  => '<span class="badge an-s-inactive">Inactiva</span>',
+        default     => '<span class="badge bg-secondary">' . ucfirst($s) . '</span>',
+    };
 }
-function an_avatar(string $name, ?string $photo, int $size = 32): string
+function escapeHtml(string $str): string
 {
-  // Mesma implementação de antes
-  $parts = explode(' ', trim($name), 2);
-  $ini   = mb_strtoupper(mb_substr($parts[0] ?? '', 0, 1, 'UTF-8'), 'UTF-8')
-    . mb_strtoupper(mb_substr($parts[1] ?? '', 0, 1, 'UTF-8'), 'UTF-8');
-  $clrs  = ['#FF0089', '#f97316', '#8b5cf6', '#06b6d4', '#22c55e', '#eab308', '#3b82f6', '#ef4444'];
-  $color = $clrs[abs(crc32($name)) % count($clrs)];
-  $s     = $size;
-  $fs    = round($s * 0.3);
-  if ($photo) {
-    return '<img src="' . APP_URL . '/assets/comprovantes/uploads/users/' . htmlspecialchars($photo) . '"
-                     width="' . $s . '" height="' . $s . '"
-                     style="border-radius:50%;object-fit:cover;border:2px solid rgba(255,0,137,.2);flex-shrink:0"
-                     onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'"
-                     alt="">
-                <div style="width:' . $s . 'px;height:' . $s . 'px;border-radius:50%;background:' . $color . ';
-                            display:none;align-items:center;justify-content:center;
-                            font-weight:700;font-size:' . $fs . 'px;color:#fff;flex-shrink:0">' . $ini . '</div>';
-  }
-  return '<div style="width:' . $s . 'px;height:' . $s . 'px;border-radius:50%;background:' . $color . ';
-                         display:flex;align-items:center;justify-content:center;
-                         font-weight:700;font-size:' . $fs . 'px;color:#fff;flex-shrink:0">' . $ini . '</div>';
+    return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
 }
 
 // ── Estatísticas gerais das lojas ────────────────────────────────────────
@@ -75,8 +55,6 @@ $usd_rate = (float)($db->query("SELECT usd_to_aoa_rate FROM _platform LIMIT 1")-
 $total_revenue_aoa = $total_revenue_usd * $usd_rate;
 $stores_with_data = (int)$db->query("SELECT COUNT(DISTINCT id_store) FROM _stream")->fetchColumn();
 $unique_territories = (int)$db->query("SELECT COUNT(DISTINCT country_code) FROM _stream_country WHERE country_code IS NOT NULL")->fetchColumn();
-
-// Média de streams por loja
 $avg_streams_per_store = ($stores_with_data > 0) ? ($total_streams_all / $stores_with_data) : 0;
 
 // ── Filtros e ordenação ───────────────────────────────────────────────────
@@ -88,31 +66,31 @@ $f_status  = trim($_GET['status'] ?? '');
 $f_min_str = (int)($_GET['min_str'] ?? 0);
 $f_max_str = (int)($_GET['max_str'] ?? 0);
 $sort_col  = in_array($_GET['sort'] ?? '', ['s.id_store', 's.name_store', 'total_streams', 'total_revenue', 'artist_count', 'track_count', 's.is_active'])
-  ? $_GET['sort'] : 'total_streams';
+    ? $_GET['sort'] : 'total_streams';
 $sort_dir  = ($_GET['dir'] ?? 'desc') === 'asc' ? 'ASC' : 'DESC';
 
 $where  = [];
 $params = [];
 
 if ($f_name !== '') {
-  $where[]  = "s.name_store LIKE ?";
-  $params[] = '%' . $f_name . '%';
+    $where[]  = "s.name_store LIKE ?";
+    $params[] = '%' . $f_name . '%';
 }
 if ($f_type !== '') {
-  $where[]  = "s.type_store = ?";
-  $params[] = $f_type;
+    $where[]  = "s.type_store = ?";
+    $params[] = $f_type;
 }
 if ($f_status !== '') {
-  $where[]  = "s.is_active = ?";
-  $params[] = ($f_status === 'active') ? 1 : 0;
+    $where[]  = "s.is_active = ?";
+    $params[] = ($f_status === 'active') ? 1 : 0;
 }
 if ($f_min_str > 0) {
-  $where[]  = "COALESCE(SUM(str.streams),0) >= ?";
-  $params[] = $f_min_str;
+    $where[]  = "COALESCE(SUM(str.streams),0) >= ?";
+    $params[] = $f_min_str;
 }
 if ($f_max_str > 0) {
-  $where[]  = "COALESCE(SUM(str.streams),0) <= ?";
-  $params[] = $f_max_str;
+    $where[]  = "COALESCE(SUM(str.streams),0) <= ?";
+    $params[] = $f_max_str;
 }
 
 $base_joins = "
@@ -158,6 +136,40 @@ $data_stmt = $db->prepare("
 $data_stmt->execute($params);
 $stores = $data_stmt->fetchAll();
 
+function getStoreIcon(string $slug): string {
+    global $storeIcons;
+    return $storeIcons[$slug] ?? $storeIcons['default'];
+}
+// Converter receita para AOA (só para exibição, não para ordenação)
+foreach ($stores as &$s) {
+    $s['total_revenue_aoa'] = (float)$s['total_revenue'] * $usd_rate;
+}
+unset($s);
+
+// ── Mapeamento de ícones por slug da loja ──────────────────────────────
+$storeIcons = [
+    'spotify'       => 'bi-spotify',
+    'apple-music'   => 'bi-apple',
+    'amazon-music'  => 'bi-amazon',
+    'deezer'        => 'bi-music-note-beamed',
+    'tidal'         => 'bi-droplet',
+    'boomplay'      => 'bi-play-circle',
+    'youtube-music' => 'bi-youtube',
+    'youtube'       => 'bi-youtube',
+    'itunes'        => 'bi-apple',
+    'tiktok'        => 'bi-music-note',
+    'facebook'      => 'bi-facebook',
+    'snapchat'      => 'bi-camera',
+    'pandora'       => 'bi-headphones',
+    'resso'         => 'bi-music-note-list',
+    'claro-music'   => 'bi-brightness-alt-high',
+    'default'       => 'bi-shop',
+];
+foreach ($stores as &$store) {
+    $store['icon_class'] = $storeIcons[$store['slug_store']] ?? $storeIcons['default'];
+}
+unset($store);
+
 // Lista de tipos de loja para filtro
 $store_types = $db->query("SELECT DISTINCT type_store FROM _store ORDER BY type_store")->fetchAll(PDO::FETCH_COLUMN);
 
@@ -179,8 +191,9 @@ $csrf = $_SESSION['admin_csrf_token'];
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="<?php echo APP_URL; ?>/css/lastest-style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.css" />
     <style>
-    /* Reutilizamos os estilos de home.php e artists.php */
+    /* Reutilizamos os estilos de artists.php */
     .an-s-active {
         background: rgba(34, 197, 94, .15);
         color: #166534;
@@ -189,11 +202,6 @@ $csrf = $_SESSION['admin_csrf_token'];
     .an-s-inactive {
         background: rgba(107, 114, 128, .15);
         color: #374151;
-    }
-
-    .an-s-blocked {
-        background: rgba(239, 68, 68, .15);
-        color: #991b1b;
     }
 
     .dark-mode .an-s-active {
@@ -327,6 +335,10 @@ $csrf = $_SESSION['admin_csrf_token'];
         font-size: .82rem;
         text-align: right;
     }
+
+    .toast-container {
+        z-index: 9999;
+    }
     </style>
 </head>
 
@@ -351,10 +363,16 @@ $csrf = $_SESSION['admin_csrf_token'];
                     </div>
                     <?php if (hasPermission($admin_id, 'analytics.edit')): ?>
                     <div class="col-auto ms-auto">
-                        <button class="btn btn-sm text-white" style="background:#FF0089;border-color:#FF0089"
+                        <?php if (hasPermission($admin_id, 'analytics.edit')): ?>
+                        <button class="btn btn-sm text-white me-2" style="background:#22c55e;border-color:#22c55e"
                             data-bs-toggle="modal" data-bs-target="#modalAddStore">
                             <i class="bi bi-plus-lg me-1"></i> Nova Loja
                         </button>
+                        <button class="btn btn-sm text-white" style="background:#FF0089;border-color:#FF0089"
+                            id="exportDataBtn">
+                            <i class="bi bi-download me-1"></i> Exportar (CSV/PDF)
+                        </button>
+                        <?php endif; ?>
                     </div>
                     <?php endif; ?>
                 </div>
@@ -369,14 +387,14 @@ $csrf = $_SESSION['admin_csrf_token'];
                 <!-- Stat cards -->
                 <div class="row g-3 mb-4">
                     <?php
-          $cards = [
-            ['icon' => 'bi-shop', 'color' => '#FF0089', 'val' => number_format($total_stores), 'lbl' => 'Lojas Activas', 'sub' => null],
-            ['icon' => 'bi-headphones', 'color' => '#3b82f6', 'val' => an_fmt_num($total_streams_all), 'lbl' => 'Total Streams', 'sub' => null],
-            ['icon' => 'bi-cash-coin', 'color' => '#f97316', 'val' => an_fmt_aoa($total_revenue_aoa), 'lbl' => 'Receita (AOA)', 'sub' => 'USD ' . number_format($total_revenue_usd, 2)],
-            ['icon' => 'bi-bar-chart', 'color' => '#06b6d4', 'val' => an_fmt_num($avg_streams_per_store), 'lbl' => 'Média / Loja', 'sub' => null],
-            ['icon' => 'bi-globe2', 'color' => '#22c55e', 'val' => number_format($unique_territories), 'lbl' => 'Países', 'sub' => null],
-          ];
-          foreach ($cards as $c): ?>
+                $cards = [
+                    ['icon' => 'bi-shop', 'color' => '#FF0089', 'val' => number_format($total_stores), 'lbl' => 'Lojas Activas', 'sub' => null],
+                    ['icon' => 'bi-headphones', 'color' => '#3b82f6', 'val' => an_fmt_num($total_streams_all), 'lbl' => 'Total Streams', 'sub' => null],
+                    ['icon' => 'bi-cash-coin', 'color' => '#f97316', 'val' => an_fmt_aoa($total_revenue_aoa), 'lbl' => 'Receita (AOA)', 'sub' => 'USD ' . number_format($total_revenue_usd, 2)],
+                    ['icon' => 'bi-bar-chart', 'color' => '#06b6d4', 'val' => an_fmt_num($avg_streams_per_store), 'lbl' => 'Média / Loja', 'sub' => null],
+                    ['icon' => 'bi-globe2', 'color' => '#22c55e', 'val' => number_format($unique_territories), 'lbl' => 'Países', 'sub' => null],
+                ];
+                foreach ($cards as $c): ?>
                     <div class="col-6 col-md-4 col-xl">
                         <div class="an-stat">
                             <div class="an-stat-icon" style="background:<?php echo $c['color']; ?>22">
@@ -473,7 +491,7 @@ $csrf = $_SESSION['admin_csrf_token'];
                                     </th>
                                     <th><a href="?<?php echo http_build_query(array_merge($_GET, ['sort' => 'total_revenue', 'dir' => $sort_col === 'total_revenue' && $sort_dir === 'ASC' ? 'desc' : 'asc', 'page' => 1])); ?>"
                                             class="text-inherit text-decoration-none">Receita
-                                            (USD)<?php echo $sort_col === 'total_revenue' ? ($sort_dir === 'ASC' ? ' ▲' : ' ▼') : ''; ?></a>
+                                            (AOA)<?php echo $sort_col === 'total_revenue' ? ($sort_dir === 'ASC' ? ' ▲' : ' ▼') : ''; ?></a>
                                     </th>
                                     <th><a href="?<?php echo http_build_query(array_merge($_GET, ['sort' => 'artist_count', 'dir' => $sort_col === 'artist_count' && $sort_dir === 'ASC' ? 'desc' : 'asc', 'page' => 1])); ?>"
                                             class="text-inherit text-decoration-none">Artistas</a></th>
@@ -502,9 +520,8 @@ $csrf = $_SESSION['admin_csrf_token'];
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center gap-2">
-                                            <?php if ($s['logo_store']): ?><img
-                                                src="<?php echo APP_URL . '/' . $s['logo_store']; ?>" class="store-logo"
-                                                alt=""><?php endif; ?>
+                                            <i class="bi <?php echo $s['icon_class']; ?> fs-4"
+                                                style="color:#FF0089"></i>
                                             <div>
                                                 <div style="font-size:.8rem;font-weight:600">
                                                     <?php echo htmlspecialchars($s['name_store']); ?></div>
@@ -516,7 +533,7 @@ $csrf = $_SESSION['admin_csrf_token'];
                                     <td><?php echo ucfirst($s['type_store']); ?></td>
                                     <td style="font-size:.85rem;font-weight:700;color:#FF0089">
                                         <?php echo an_fmt_num((int)$s['total_streams']); ?></td>
-                                    <td><?php echo '$ ' . number_format((float)$s['total_revenue'], 2); ?></td>
+                                    <td><?php echo an_fmt_aoa((float)$s['total_revenue_aoa']); ?></td>
                                     <td><?php echo (int)$s['artist_count']; ?></td>
                                     <td><?php echo (int)$s['track_count']; ?></td>
                                     <td><?php echo an_status_badge($s['is_active'] ? 'active' : 'inactive'); ?></td>
@@ -530,9 +547,6 @@ $csrf = $_SESSION['admin_csrf_token'];
                                                         onclick="viewStore(<?php echo htmlspecialchars(json_encode($s)); ?>, event); return false"><i
                                                             class="bi bi-eye text-info"></i> Visualizar</a></li>
                                                 <?php if (hasPermission($admin_id, 'analytics.edit')): ?>
-                                                <li><a class="dropdown-item" href="#"
-                                                        onclick="editStore(<?php echo (int)$s['id_store']; ?>, '<?php echo htmlspecialchars(addslashes($s['name_store'])); ?>', '<?php echo $s['type_store']; ?>', <?php echo $s['is_active']; ?>, event); return false"><i
-                                                            class="bi bi-pencil text-warning"></i> Editar</a></li>
                                                 <?php if ($s['is_active']): ?>
                                                 <li><a class="dropdown-item" href="#"
                                                         onclick="toggleStore(<?php echo (int)$s['id_store']; ?>,'block'); return false"><i
@@ -547,8 +561,7 @@ $csrf = $_SESSION['admin_csrf_token'];
                                         </div>
                                     </td>
                                 </tr>
-                                <?php endforeach;
-                endif; ?>
+                                <?php endforeach; endif; ?>
                             </tbody>
                         </table>
                     </div>
@@ -559,9 +572,9 @@ $csrf = $_SESSION['admin_csrf_token'];
                                     href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page - 1])); ?>"><i
                                         class="bi bi-chevron-left"></i></a></li>
                             <?php
-                $ps = max(1, $page - 2);
-                $pe = min($total_pages, $page + 2);
-                if ($ps > 1): ?>
+                        $ps = max(1, $page - 2);
+                        $pe = min($total_pages, $page + 2);
+                        if ($ps > 1): ?>
                             <li class="page-item"><a class="page-link"
                                     href="?<?php echo http_build_query(array_merge($_GET, ['page' => 1])); ?>">1</a>
                             </li>
@@ -594,28 +607,30 @@ $csrf = $_SESSION['admin_csrf_token'];
 
     <!-- Modal Visualizar Loja -->
     <div class="modal fade" id="modalViewStore" tabindex="-1">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg">
                 <div class="modal-header" style="background:#FF0089">
                     <h5 class="modal-title text-white fw-bold"><i class="bi bi-shop me-2"></i>Detalhes da Loja</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4" id="viewStoreBody"></div>
-                <div class="modal-footer border-0"><button type="button" class="btn btn-outline-secondary btn-sm"
-                        data-bs-dismiss="modal">Fechar</button><button type="button" class="btn btn-sm text-white"
-                        style="background:#FF0089" id="printStoreBtn"><i class="bi bi-file-earmark-pdf me-1"></i>
-                        Download PDF</button></div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-outline-secondary btn-sm"
+                        data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-sm text-white" style="background:#FF0089" id="printStoreBtn"><i
+                            class="bi bi-file-earmark-pdf me-1"></i> Download PDF</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal Editar Loja (simplificado, apenas ativar/desativar) -->
+    <!-- Modal Editar Loja (apenas estado) -->
     <div class="modal fade" id="modalEditStore" tabindex="-1">
-        <div class="modal-dialog modal-sm">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg">
                 <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold" id="editStoreTitle">Editar Loja</h5><button type="button"
-                        class="btn-close" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title fw-bold" id="editStoreTitle">Editar Loja</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <p id="editStoreMsg"></p>
@@ -639,9 +654,152 @@ $csrf = $_SESSION['admin_csrf_token'];
                 <div class="modal-footer border-0 pt-0">
                     <button type="button" class="btn btn-outline-secondary btn-sm"
                         data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-sm btn-danger" id="btn_save_edit_store"><span
-                            class="normal-label">Guardar</span><span class="loading-label d-none"><span
-                                class="spinner-border spinner-border-sm me-1"></span>A guardar…</span></button>
+                    <button type="button" class="btn btn-sm btn-danger" id="btn_save_edit_store">
+                        <span class="normal-label">Guardar</span>
+                        <span class="loading-label d-none"><span class="spinner-border spinner-border-sm me-1"></span>A
+                            guardar…</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Adicionar Loja -->
+    <div class="modal fade" id="modalAddStore" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header" style="background:#22c55e">
+                    <h5 class="modal-title text-white fw-bold"><i class="bi bi-plus-circle me-2"></i>Nova Loja Digital
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="addStoreForm">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">Nome da Loja <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="add_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">Slug (identificador) <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="add_slug" required pattern="[a-z0-9-]+"
+                                placeholder="ex: spotify, apple-music">
+                            <div class="form-text">Usado para ícone e URL amigável. Use apenas letras minúsculas,
+                                números e hífen.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">Tipo</label>
+                            <select class="form-select" id="add_type">
+                                <option value="streaming">Streaming</option>
+                                <option value="download">Download</option>
+                                <option value="social">Social</option>
+                                <option value="video">Video</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">URL</label>
+                            <input type="url" class="form-control" id="add_url" placeholder="https://...">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">Ordem de exibição</label>
+                            <input type="number" class="form-control" id="add_display_order" value="0">
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="add_is_active" checked>
+                                <label class="form-check-label">Activa</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">Confirmar senha <span
+                                    class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="add_password" placeholder="Senha do admin"
+                                required>
+                        </div>
+                        <div class="alert alert-danger d-none" id="add_store_error"></div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-outline-secondary btn-sm"
+                        data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-sm text-white" style="background:#22c55e"
+                        id="btn_save_add_store">
+                        <span class="normal-label">Adicionar Loja</span>
+                        <span class="loading-label d-none"><span class="spinner-border spinner-border-sm me-1"></span>A
+                            adicionar…</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de exportação -->
+    <div class="modal fade" id="modalExport" tabindex="-1">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header" style="background:#22c55e">
+                    <h5 class="modal-title text-white fw-bold"><i class="bi bi-download me-2"></i>Exportar Desempenho de
+                        Lojas</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted small mb-4">Os dados exportados respeitam os filtros aplicados na tabela.</p>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Formato de exportação</label>
+                        <select class="form-select" id="export_format">
+                            <option value="csv">CSV (Excel)</option>
+                            <option value="pdf">PDF (Relatório)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Incluir colunas</label>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <div class="form-check"><input class="form-check-input" type="checkbox" id="col_id"
+                                        checked> <label class="form-check-label">ID</label></div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-check"><input class="form-check-input" type="checkbox" id="col_name"
+                                        checked> <label class="form-check-label">Loja</label></div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-check"><input class="form-check-input" type="checkbox" id="col_type"
+                                        checked> <label class="form-check-label">Tipo</label></div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-check"><input class="form-check-input" type="checkbox" id="col_streams"
+                                        checked> <label class="form-check-label">Streams</label></div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-check"><input class="form-check-input" type="checkbox" id="col_revenue"
+                                        checked> <label class="form-check-label">Receita (AOA)</label></div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-check"><input class="form-check-input" type="checkbox" id="col_artists"
+                                        checked> <label class="form-check-label">Artistas</label></div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-check"><input class="form-check-input" type="checkbox" id="col_tracks"
+                                        checked> <label class="form-check-label">Faixas</label></div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-check"><input class="form-check-input" type="checkbox" id="col_status"
+                                        checked> <label class="form-check-label">Estado</label></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-info mb-0 small">
+                        <i class="bi bi-info-circle me-1"></i> Serão exportados <strong
+                            id="exportCount"><?php echo number_format($total_filtered); ?></strong> registos.
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-outline-secondary btn-sm"
+                        data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-sm text-white" style="background:#22c55e" id="btn_do_export">
+                        <i class="bi bi-download me-1"></i> Exportar
+                    </button>
                 </div>
             </div>
         </div>
@@ -660,8 +818,11 @@ $csrf = $_SESSION['admin_csrf_token'];
         </div>
     </div>
 
+    <div class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="<?php echo APP_URL; ?>/js/lastest.js"></script>
     <script>
     (function() {
@@ -670,6 +831,7 @@ $csrf = $_SESSION['admin_csrf_token'];
         const CSRF = document.querySelector('meta[name="csrf-token"]').content;
         const PROCESS = BASE_URL + '/' + ADMIN_PATH + '/analytics/process-stores';
 
+        // ── Filtros com debounce ─────────────────────────────────────────────
         let dbt;
         document.querySelectorAll('.filter-debounce').forEach(el => el.addEventListener('input', () => {
             clearTimeout(dbt);
@@ -678,6 +840,7 @@ $csrf = $_SESSION['admin_csrf_token'];
         document.querySelectorAll('.filter-instant').forEach(el => el.addEventListener('change', () => document
             .getElementById('filter-form').submit()));
 
+        // ── AJAX helper ──────────────────────────────────────────────────────
         async function postAction(payload) {
             const fd = new FormData();
             Object.entries(payload).forEach(([k, v]) => fd.append(k, v));
@@ -689,73 +852,119 @@ $csrf = $_SESSION['admin_csrf_token'];
             return r.json();
         }
 
+        // ── Visualizar loja ──────────────────────────────────────────────────
         let currentStoreData = null;
         window.viewStore = function(data, event) {
             if (event) event.preventDefault();
             currentStoreData = data;
             const fmtNum = v => parseInt(v || 0).toLocaleString('pt-AO');
-            const fmtMoney = v => '$ ' + parseFloat(v || 0).toLocaleString('pt-AO', {
+            const fmtAOA = v => 'Kz ' + parseFloat(v || 0).toLocaleString('pt-AO', {
                 minimumFractionDigits: 2
             });
             document.getElementById('viewStoreBody').innerHTML = `
-            <div class="row g-4">
-                <div class="col-md-4 text-center">
-                    ${data.logo_store ? `<img src="${BASE_URL}/${data.logo_store}" class="img-fluid rounded-3 shadow mb-3" style="max-height:150px;object-fit:contain">` : `<div class="rounded-3 bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center mb-3" style="height:150px"><i class="bi bi-shop" style="font-size:3rem;opacity:.3"></i></div>`}
-                    <div class="fw-bold">${data.name_store}</div>
-                    <div class="text-muted small">${data.slug_store}</div>
-                </div>
-                <div class="col-md-8">
-                    <div class="view-info-row"><span class="view-info-lbl">ID</span><span class="view-info-val">#${data.id_store}</span></div>
-                    <div class="view-info-row"><span class="view-info-lbl">Tipo</span><span class="view-info-val">${data.type_store}</span></div>
-                    <div class="view-info-row"><span class="view-info-lbl">Estado</span><span class="view-info-val">${data.is_active ? 'Activa' : 'Inactiva'}</span></div>
-                    <div class="view-info-row"><span class="view-info-lbl">URL</span><span class="view-info-val"><a href="${data.url_store}" target="_blank">${data.url_store || '—'}</a></span></div>
-                    <div class="view-info-row"><span class="view-info-lbl">Total Streams</span><span class="view-info-val fw-bold" style="color:#FF0089">${fmtNum(data.total_streams)}</span></div>
-                    <div class="view-info-row"><span class="view-info-lbl">Receita (USD)</span><span class="view-info-val">${fmtMoney(data.total_revenue)}</span></div>
-                    <div class="view-info-row"><span class="view-info-lbl">Artistas</span><span class="view-info-val">${data.artist_count}</span></div>
-                    <div class="view-info-row"><span class="view-info-lbl">Faixas</span><span class="view-info-val">${data.track_count}</span></div>
-                    <div class="view-info-row"><span class="view-info-lbl">Ordem de exibição</span><span class="view-info-val">${data.display_order}</span></div>
-                </div>
-            </div>`;
+        <div class="row g-4">
+            <div class="col-md-4 text-center">
+                ${data.logo_store ? `<img src="${BASE_URL}/${data.logo_store}" class="img-fluid rounded-3 shadow mb-3" style="max-height:150px;object-fit:contain">` : `<div class="rounded-3 bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center mb-3" style="height:150px"><i class="bi bi-shop" style="font-size:3rem;opacity:.3"></i></div>`}
+                <div class="fw-bold">${escapeHtml(data.name_store)}</div>
+                <div class="text-muted small">${escapeHtml(data.slug_store)}</div>
+            </div>
+            <div class="col-md-8">
+                <div class="view-info-row"><span class="view-info-lbl">ID</span><span class="view-info-val">#${data.id_store}</span></div>
+                <div class="view-info-row"><span class="view-info-lbl">Tipo</span><span class="view-info-val">${escapeHtml(data.type_store)}</span></div>
+                <div class="view-info-row"><span class="view-info-lbl">Estado</span><span class="view-info-val">${data.is_active ? 'Activa' : 'Inactiva'}</span></div>
+                <div class="view-info-row"><span class="view-info-lbl">URL</span><span class="view-info-val"><a href="${escapeHtml(data.url_store)}" target="_blank">${escapeHtml(data.url_store || '—')}</a></span></div>
+                <div class="view-info-row"><span class="view-info-lbl">Total Streams</span><span class="view-info-val fw-bold" style="color:#FF0089">${fmtNum(data.total_streams)}</span></div>
+                <div class="view-info-row"><span class="view-info-lbl">Receita (AOA)</span><span class="view-info-val">${fmtAOA(data.total_revenue_aoa)}</span></div>
+                <div class="view-info-row"><span class="view-info-lbl">Artistas</span><span class="view-info-val">${data.artist_count}</span></div>
+                <div class="view-info-row"><span class="view-info-lbl">Faixas</span><span class="view-info-val">${data.track_count}</span></div>
+                <div class="view-info-row"><span class="view-info-lbl">Ordem de exibição</span><span class="view-info-val">${data.display_order}</span></div>
+            </div>
+        </div>`;
             bootstrap.Modal.getOrCreateInstance(document.getElementById('modalViewStore')).show();
         };
-        document.getElementById('printStoreBtn')?.addEventListener('click', () => {
+
+        // ── PDF da loja ──────────────────────────────────────────────────────
+        document.getElementById('printStoreBtn')?.addEventListener('click', async function() {
             if (!currentStoreData) return;
             const d = currentStoreData;
             const fmtNum = v => parseInt(v || 0).toLocaleString('pt-AO');
-            const fmtMoney = v => '$ ' + parseFloat(v || 0).toLocaleString('pt-AO', {
+            const fmtAOA = v => 'Kz ' + parseFloat(v || 0).toLocaleString('pt-AO', {
                 minimumFractionDigits: 2
             });
-            const printContent =
-                `<div style="font-family:Arial,sans-serif;max-width:680px;margin:auto;padding:24px"><div style="text-align:center;border-bottom:3px solid #FF0089;padding-bottom:16px"><h1 style="color:#FF0089;margin:0">WASOM UPFY</h1><h2 style="color:#333;margin:4px 0 0;font-weight:400">Relatório de Loja</h2><p>${new Date().toLocaleString('pt-AO')}</p></div><table style="width:100%;border-collapse:collapse">${[
-                ['Loja', d.name_store],
-                ['Slug', d.slug_store],
-                ['Tipo', d.type_store],
-                ['Estado', d.is_active ? 'Activa' : 'Inactiva'],
-                ['URL', d.url_store || '—'],
-                ['Total Streams', fmtNum(d.total_streams)],
-                ['Receita (USD)', fmtMoney(d.total_revenue)],
-                ['Artistas', d.artist_count],
-                ['Faixas', d.track_count],
-            ].map((r,i) => `<tr style="background:${i%2?'#f9f9f9':'#fff'}"><td style="padding:8px 12px;border:1px solid #eee;width:40%">${r[0]}</td><td style="padding:8px 12px;border:1px solid #eee">${r[1]}</td></tr>`).join('')}</table><p style="color:#bbb;font-size:.72rem;margin-top:20px;text-align:center">Wasom Upfy v2.0 — Documento gerado automaticamente. Ref. #${d.id_store}</p></div>`;
-            const printArea = document.createElement('div');
-            printArea.id = 'printArea';
-            printArea.style.display = 'block';
-            printArea.innerHTML = printContent;
-            document.body.appendChild(printArea);
-            window.print();
-            setTimeout(() => printArea.remove(), 1000);
+            const safe = (val) => val === null || val === undefined ? '—' : escapeHtml(String(val));
+
+            const pdfHtml = `
+        <div style="font-family:Arial,sans-serif;max-width:680px;margin:auto;padding:24px">
+            <div style="text-align:center;margin-bottom:24px;border-bottom:3px solid #FF0089;padding-bottom:16px">
+                <h1 style="color:#FF0089;margin:0;font-size:1.4rem">WASOM UPFY</h1>
+                <h2 style="color:#333;margin:4px 0 0;font-size:1rem;font-weight:400">Relatório de Loja Digital</h2>
+                <p style="color:#999;font-size:.8rem;margin:4px 0 0">Gerado em ${new Date().toLocaleString('pt-AO')}</p>
+            </div>
+            <table style="width:100%;border-collapse:collapse;font-size:.88rem">
+                ${[
+                    ['Loja', d.name_store],
+                    ['Slug', d.slug_store],
+                    ['Tipo', d.type_store],
+                    ['Estado', d.is_active ? 'Activa' : 'Inactiva'],
+                    ['URL', d.url_store || '—'],
+                    ['Total Streams', fmtNum(d.total_streams)],
+                    ['Receita (AOA)', fmtAOA(d.total_revenue_aoa)],
+                    ['Artistas', d.artist_count],
+                    ['Faixas', d.track_count],
+                ].map((r,i) => `<tr style="background:${i%2?'#f9f9f9':'#fff'}">
+                    <td style="padding:8px 12px;border:1px solid #eee;font-weight:600;color:#555;width:40%">${safe(r[0])}<\/td>
+                    <td style="padding:8px 12px;border:1px solid #eee">${safe(r[1])}<\/td>
+                <\/tr>`).join('')}
+            <\/table>
+            <p style="color:#bbb;font-size:.72rem;margin-top:20px;text-align:center">Wasom Upfy v2.0 — Documento gerado automaticamente. Ref. #${d.id_store}</p>
+        </div>`;
+            const opt = {
+                margin: 10,
+                filename: `loja_${safe(d.name_store).replace(/[^a-z0-9]/gi, '_')}.pdf`,
+                image: {
+                    type: 'jpeg',
+                    quality: 0.98
+                },
+                html2canvas: {
+                    scale: 2
+                },
+                jsPDF: {
+                    unit: 'mm',
+                    format: 'a4',
+                    orientation: 'portrait'
+                }
+            };
+            try {
+                await html2pdf().set(opt).from(pdfHtml).save();
+                showToast('success', 'PDF Gerado', 'Relatório da loja descarregado.');
+            } catch (e) {
+                console.error(e);
+                showToast('error', 'Erro', 'Não foi possível gerar o PDF.');
+            }
         });
 
-        window.editStore = function(id, name, type, isActive, event) {
-            if (event) event.preventDefault();
+        // ── Editar/Desactivar Loja ──────────────────────────────────────────
+        window.toggleStore = async function(id, action) {
+            const result = await Swal.fire({
+                title: action === 'block' ? 'Desactivar loja?' : 'Reactivar loja?',
+                text: action === 'block' ? 'A loja deixará de aparecer nas estatísticas.' :
+                    'A loja voltará a aparecer nas estatísticas.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: action === 'block' ? '#ef4444' : '#22c55e',
+                confirmButtonText: 'Sim, ' + (action === 'block' ? 'desactivar' : 'reactivar'),
+                cancelButtonText: 'Cancelar'
+            });
+            if (!result.isConfirmed) return;
             document.getElementById('edit_store_id').value = id;
-            document.getElementById('edit_store_status').value = isActive ? 1 : 0;
-            document.getElementById('editStoreMsg').innerHTML =
-                `A editar loja <strong>${name}</strong> (${type})`;
+            document.getElementById('edit_store_status').value = action === 'block' ? 0 : 1;
+            document.getElementById('editStoreMsg').innerHTML = action === 'block' ? 'Desactivar loja' :
+                'Reactivar loja';
             document.getElementById('edit_store_password').value = '';
             document.getElementById('edit_store_error').classList.add('d-none');
             bootstrap.Modal.getOrCreateInstance(document.getElementById('modalEditStore')).show();
         };
+
         document.getElementById('btn_save_edit_store')?.addEventListener('click', async function() {
             const id = document.getElementById('edit_store_id').value;
             const newStatus = document.getElementById('edit_store_status').value;
@@ -790,31 +999,224 @@ $csrf = $_SESSION['admin_csrf_token'];
             setLoading(this, false);
         });
 
-        window.toggleStore = async function(id, action) {
-            const result = await Swal.fire({
-                title: action === 'block' ? 'Desactivar loja?' : 'Reactivar loja?',
-                text: action === 'block' ? 'A loja deixará de aparecer nas estatísticas.' :
-                    'A loja voltará a aparecer nas estatísticas.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: action === 'block' ? '#ef4444' : '#22c55e',
-                confirmButtonText: 'Sim, ' + (action === 'block' ? 'desactivar' : 'reactivar'),
-                cancelButtonText: 'Cancelar'
-            });
-            if (!result.isConfirmed) return;
-            document.getElementById('edit_store_id').value = id;
-            document.getElementById('edit_store_status').value = action === 'block' ? 0 : 1;
-            document.getElementById('editStoreMsg').innerHTML = action === 'block' ? 'Desactivar loja' :
-                'Reactivar loja';
-            document.getElementById('edit_store_password').value = '';
-            document.getElementById('edit_store_error').classList.add('d-none');
-            bootstrap.Modal.getOrCreateInstance(document.getElementById('modalEditStore')).show();
-        };
+        document.getElementById('btn_save_add_store')?.addEventListener('click', async function() {
+            const name = document.getElementById('add_name').value.trim();
+            const slug = document.getElementById('add_slug').value.trim();
+            const type = document.getElementById('add_type').value;
+            const url = document.getElementById('add_url').value.trim();
+            const displayOrder = parseInt(document.getElementById('add_display_order').value) || 0;
+            const isActive = document.getElementById('add_is_active').checked ? 1 : 0;
+            const password = document.getElementById('add_password').value;
+            const errEl = document.getElementById('add_store_error');
 
+            if (!name || !slug) {
+                errEl.textContent = 'Nome e slug são obrigatórios.';
+                errEl.classList.remove('d-none');
+                return;
+            }
+            if (!/^[a-z0-9-]+$/.test(slug)) {
+                errEl.textContent = 'Slug inválido. Use apenas letras minúsculas, números e hífen.';
+                errEl.classList.remove('d-none');
+                return;
+            }
+            if (!password) {
+                errEl.textContent = 'A senha é obrigatória.';
+                errEl.classList.remove('d-none');
+                return;
+            }
+            errEl.classList.add('d-none');
+            setLoading(this, true);
+
+            try {
+                const data = await postAction({
+                    action: 'add_store',
+                    name: name,
+                    slug: slug,
+                    type: type,
+                    url: url,
+                    display_order: displayOrder,
+                    is_active: isActive,
+                    password_confirm: password
+                });
+                if (data.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('modalAddStore')).hide();
+                    location.reload();
+                } else {
+                    errEl.textContent = data.message;
+                    errEl.classList.remove('d-none');
+                }
+            } catch {
+                errEl.textContent = 'Erro de ligação.';
+                errEl.classList.remove('d-none');
+            } finally {
+                setLoading(this, false);
+            }
+        });
+
+        // ── Exportação ───────────────────────────────────────────────────────
+        document.getElementById('exportDataBtn')?.addEventListener('click', function() {
+            const count = <?php echo $total_filtered; ?>;
+            document.getElementById('exportCount').innerText = count.toLocaleString('pt-BR');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('modalExport')).show();
+        });
+
+        function exportToCSV(data, columns, filename) {
+            const headers = columns.map(col => col.label);
+            const rows = data.map(row => columns.map(col => row[col.key] ?? ''));
+            const csv = [headers.join(';'), ...rows.map(row => row.map(cell =>
+                `"${String(cell).replace(/"/g, '""')}"`).join(';'))].join('\n');
+            const blob = new Blob(["\uFEFF" + csv], {
+                type: 'text/csv;charset=utf-8;'
+            });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        async function exportToPDF(data, columns, filename) {
+            const headers = columns.map(col => col.label);
+            const rows = data.map(row => columns.map(col => row[col.key] ?? ''));
+            const html = `
+        <div style="font-family:Arial,sans-serif;padding:20px">
+            <div style="text-align:center;margin-bottom:30px">
+                <h1 style="color:#FF0089">WASOM UPFY</h1>
+                <h2>Relatório de Desempenho por Loja Digital</h2>
+                <p>Gerado em ${new Date().toLocaleString('pt-AO')}</p>
+            </div>
+            <table border="1" cellpadding="8" cellspacing="0" style="width:100%;border-collapse:collapse">
+                <thead>
+                    <tr style="background:#FF0089;color:white">${headers.map(h => `<th>${escapeHtml(h)}</th>`).join('')}</tr>
+                </thead>
+                <tbody>${rows.map(row => `<tr>${row.map(cell => `<td>${escapeHtml(String(cell))}</td>`).join('')}</tr>`).join('')}</tbody>
+            </table>
+            <p style="margin-top:20px;font-size:12px;color:#666">© Wasom Upfy – Documento gerado automaticamente</p>
+        </div>`;
+            const opt = {
+                margin: 10,
+                filename,
+                image: {
+                    type: 'jpeg',
+                    quality: 0.98
+                },
+                html2canvas: {
+                    scale: 2
+                },
+                jsPDF: {
+                    unit: 'mm',
+                    format: 'a4',
+                    orientation: 'landscape'
+                }
+            };
+            await html2pdf().set(opt).from(html).save();
+        }
+
+        document.getElementById('btn_do_export')?.addEventListener('click', async function() {
+            const format = document.getElementById('export_format').value;
+            const columns = [];
+            if (document.getElementById('col_id').checked) columns.push({
+                key: 'id_store',
+                label: 'ID'
+            });
+            if (document.getElementById('col_name').checked) columns.push({
+                key: 'name_store',
+                label: 'Loja'
+            });
+            if (document.getElementById('col_type').checked) columns.push({
+                key: 'type_store',
+                label: 'Tipo'
+            });
+            if (document.getElementById('col_streams').checked) columns.push({
+                key: 'total_streams',
+                label: 'Streams'
+            });
+            if (document.getElementById('col_revenue').checked) columns.push({
+                key: 'total_revenue_aoa',
+                label: 'Receita (AOA)'
+            });
+            if (document.getElementById('col_artists').checked) columns.push({
+                key: 'artist_count',
+                label: 'Artistas'
+            });
+            if (document.getElementById('col_tracks').checked) columns.push({
+                key: 'track_count',
+                label: 'Faixas'
+            });
+            if (document.getElementById('col_status').checked) columns.push({
+                key: 'is_active',
+                label: 'Estado'
+            });
+
+            if (columns.length === 0) {
+                showToast('warning', 'Nenhuma coluna selecionada', 'Seleccione pelo menos uma coluna.');
+                return;
+            }
+
+            setLoading(this, true);
+            try {
+                const response = await postAction({
+                    action: 'export_data',
+                    filters: <?php echo json_encode($_GET); ?>
+                });
+                if (response.ok && response.data) {
+                    const exportData = response.data;
+                    if (format === 'csv') {
+                        exportToCSV(exportData, columns, 'desempenho_lojas.csv');
+                    } else if (format === 'pdf') {
+                        await exportToPDF(exportData, columns, 'desempenho_lojas.pdf');
+                    }
+                    showToast('success', 'Exportação concluída', 'Ficheiro descarregado.');
+                    bootstrap.Modal.getInstance(document.getElementById('modalExport')).hide();
+                } else {
+                    showToast('error', 'Erro', response.message || 'Falha ao obter dados.');
+                }
+            } catch (e) {
+                console.error(e);
+                showToast('error', 'Erro', 'Não foi possível comunicar com o servidor.');
+            } finally {
+                setLoading(this, false);
+            }
+        });
+
+        // ── Helpers ──────────────────────────────────────────────────────────
         function setLoading(btn, state) {
-            btn.querySelector('.normal-label').classList.toggle('d-none', state);
-            btn.querySelector('.loading-label').classList.toggle('d-none', !state);
+            const normal = btn.querySelector('.normal-label');
+            const loading = btn.querySelector('.loading-label');
+            if (normal) normal.classList.toggle('d-none', state);
+            if (loading) loading.classList.toggle('d-none', !state);
             btn.disabled = state;
+        }
+
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str).replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        function showToast(type, title, message) {
+            const toastContainer = document.querySelector('.toast-container');
+            const toastId = 'toast-' + Date.now();
+            const bgClass = type === 'success' ? 'bg-success' : (type === 'warning' ? 'bg-warning' : 'bg-danger');
+            const html = `
+        <div id="${toastId}" class="toast align-items-center text-white ${bgClass} border-0" role="alert" data-bs-autohide="true" data-bs-delay="5000">
+            <div class="d-flex">
+                <div class="toast-body"><strong>${escapeHtml(title)}</strong><br>${escapeHtml(message)}</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>`;
+            toastContainer.insertAdjacentHTML('beforeend', html);
+            const toastEl = document.getElementById(toastId);
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+            toastEl.addEventListener('hidden.bs.toast', () => toastEl.remove());
         }
     })();
     </script>

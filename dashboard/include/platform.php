@@ -240,14 +240,316 @@ function getUserStatus(int $id_users): ?array
     }
 }
 
+// ══════════════════════════════════════════════════════════════════
+// 4. Presença do utilizador no dashboard
+//    Mantém _user_presence actualizado com último page load/ping.
+//    O backend faz o update inicial e o JS mantém a sessão viva.
+// ══════════════════════════════════════════════════════════════════
+function wuf_detect_ua(string $ua): array
+{
+    if ($ua === '') {
+        return [
+            'device_type' => 'unknown',
+            'browser'     => null,
+        ];
+    }
+
+    $ua_lower = strtolower($ua);
+    $is_bot   = str_contains($ua_lower, 'bot')
+        || str_contains($ua_lower, 'crawler')
+        || str_contains($ua_lower, 'spider');
+
+    $device = 'desktop';
+    if ($is_bot) {
+        // O schema actual não aceita "bot" em _user_presence.device_type.
+        $device = 'unknown';
+    } elseif (preg_match('/tablet|ipad/i', $ua)) {
+        $device = 'tablet';
+    } elseif (preg_match('/mobile|android|iphone|ipod|blackberry|windows phone/i', $ua)) {
+        $device = 'mobile';
+    }
+
+    $browser = null;
+    if (preg_match('/Edg(?:e|A|iOS)?\/([0-9.]+)/i', $ua)) {
+        $browser = 'edge';
+    } elseif (preg_match('/Firefox\/([0-9.]+)/i', $ua)) {
+        $browser = 'firefox';
+    } elseif (preg_match('/OPR\/([0-9.]+)/i', $ua)) {
+        $browser = 'opera';
+    } elseif (preg_match('/Chrome\/([0-9.]+)/i', $ua)) {
+        $browser = 'chrome';
+    } elseif (preg_match('/Version\/([0-9.]+).*Safari/i', $ua)) {
+        $browser = 'safari';
+    } elseif ($is_bot) {
+        $browser = 'bot';
+    }
+
+    return [
+        'device_type' => $device,
+        'browser'     => $browser,
+    ];
+}
+
+function wuf_infer_presence_activity(string $path): string
+{
+    $path = strtolower($path);
+
+    return match (true) {
+        str_contains($path, 'releases')     => 'releases',
+        str_contains($path, 'finances')     => 'finances',
+        str_contains($path, 'withdraw')     => 'finances',
+        str_contains($path, 'artists')      => 'artists',
+        str_contains($path, 'analytics')    => 'analytics',
+        str_contains($path, 'statistics')   => 'analytics',
+        str_contains($path, 'profile')      => 'profile',
+        str_contains($path, 'settings')     => 'settings',
+        str_contains($path, 'support')      => 'support',
+        str_contains($path, 'notification') => 'notifications',
+        default                             => 'dashboard',
+    };
+}
+
+function updateUserPresence(
+    int $id_users,
+    string $last_page = '',
+    string $activity_type = '',
+    string $online_status = 'online',
+    ?string $session_token = null
+): void {
+    try {
+        $db = getDB();
+        $ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
+        $ip = $_SERVER['REMOTE_ADDR'] ?? null;
+
+        $allowed_statuses = ['online', 'away', 'busy', 'invisible', 'offline'];
+        if (!in_array($online_status, $allowed_statuses, true)) {
+            $online_status = 'online';
+        }
+
+        if ($last_page === '') {
+            $last_page = (string)(parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?: '');
+        }
+
+        if ($activity_type === '') {
+            $activity_type = wuf_infer_presence_activity($last_page);
+        }
+
+        $session_token = $session_token ?: ($_SESSION['session_token'] ?? null);
+        $ua_data       = wuf_detect_ua($ua);
+        $session_start = $online_status === 'offline' ? null : date('Y-m-d H:i:s');
+
+        $db->prepare("
+            INSERT INTO _user_presence
+                (id_users, online_status, last_activity, last_activity_type,
+                 last_page, session_token, ip_address, user_agent,
+                 device_type, browser, session_start, session_duration)
+            VALUES
+                (?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, 0)
+            ON DUPLICATE KEY UPDATE
+                online_status      = VALUES(online_status),
+                last_activity      = NOW(),
+                last_activity_type = COALESCE(VALUES(last_activity_type), last_activity_type),
+                last_page          = COALESCE(VALUES(last_page), last_page),
+                session_token      = COALESCE(VALUES(session_token), session_token),
+                ip_address         = VALUES(ip_address),
+                user_agent         = VALUES(user_agent),
+                device_type        = VALUES(device_type),
+                browser            = VALUES(browser),
+                session_start      = CASE
+                    WHEN VALUES(online_status) = 'offline' THEN session_start
+                    WHEN session_token IS NULL AND VALUES(session_token) IS NOT NULL THEN NOW()
+                    WHEN session_token IS NOT NULL AND VALUES(session_token) IS NOT NULL
+                         AND session_token <> VALUES(session_token) THEN NOW()
+                    WHEN online_status = 'offline' THEN NOW()
+                    ELSE COALESCE(session_start, NOW())
+                END,
+                session_duration   = CASE
+                    WHEN last_activity IS NULL THEN session_duration
+                    ELSE session_duration + GREATEST(0, TIMESTAMPDIFF(SECOND, last_activity, NOW()))
+                END,
+                modif_presence     = NOW()
+        ")->execute([
+            $id_users,
+            $online_status,
+            $activity_type ?: null,
+            $last_page ?: null,
+            $session_token,
+            $ip,
+            $ua ?: null,
+            $ua_data['device_type'],
+            $ua_data['browser'],
+            $session_start,
+        ]);
+    } catch (Throwable $e) {
+        error_log('[updateUserPresence] ' . $e->getMessage());
+    }
+}
+
+function markUserOffline(
+    int $id_users,
+    string $activity_type = 'logout',
+    string $last_page = '/dashboard/logout'
+): void
+{
+    try {
+        getDB()->prepare("
+            UPDATE _user_presence
+            SET online_status      = 'offline',
+                last_activity      = NOW(),
+                last_activity_type = ?,
+                last_page          = ?,
+                session_duration   = session_duration + GREATEST(0, TIMESTAMPDIFF(SECOND, last_activity, NOW())),
+                modif_presence     = NOW()
+            WHERE id_users = ?
+        ")->execute([$activity_type, $last_page, $id_users]);
+    } catch (Throwable $e) {
+        error_log('[markUserOffline] ' . $e->getMessage());
+    }
+}
+
+function wuf_register_dashboard_session(int $id_users): ?string
+{
+    $session_token = $_SESSION['session_token'] ?? null;
+    if (is_string($session_token) && $session_token !== '') {
+        return $session_token;
+    }
+
+    try {
+        $session_token = bin2hex(random_bytes(32));
+        $db = getDB();
+        $db->prepare("
+            INSERT INTO _users_sessions
+                (id_users, session_token, ip_address, user_agent, is_active, last_activity)
+            VALUES
+                (?, ?, ?, ?, 1, NOW())
+        ")->execute([
+            $id_users,
+            $session_token,
+            $_SERVER['REMOTE_ADDR'] ?? null,
+            $_SERVER['HTTP_USER_AGENT'] ?? null,
+        ]);
+
+        $_SESSION['session_token'] = $session_token;
+        return $session_token;
+    } catch (Throwable $e) {
+        error_log('[wuf_register_dashboard_session] ' . $e->getMessage());
+        return null;
+    }
+}
+
+function wuf_touch_dashboard_session(?string $session_token = null): void
+{
+    $session_token = $session_token ?: ($_SESSION['session_token'] ?? null);
+    if (!is_string($session_token) || $session_token === '') {
+        return;
+    }
+
+    try {
+        getDB()->prepare("
+            UPDATE _users_sessions
+            SET last_activity = NOW()
+            WHERE session_token = ? AND is_active = 1
+        ")->execute([$session_token]);
+    } catch (Throwable $e) {
+        error_log('[wuf_touch_dashboard_session] ' . $e->getMessage());
+    }
+}
+
+function wuf_is_dashboard_session_active(int $id_users, ?string $session_token = null): bool
+{
+    $session_token = $session_token ?: ($_SESSION['session_token'] ?? null);
+    if (!is_string($session_token) || $session_token === '') {
+        return false;
+    }
+
+    try {
+        $stmt = getDB()->prepare("
+            SELECT is_active
+            FROM _users_sessions
+            WHERE id_users = ? AND session_token = ?
+            LIMIT 1
+        ");
+        $stmt->execute([$id_users, $session_token]);
+        $row = $stmt->fetch();
+
+        return $row && (int)$row['is_active'] === 1;
+    } catch (Throwable $e) {
+        error_log('[wuf_is_dashboard_session_active] ' . $e->getMessage());
+        return true;
+    }
+}
+
+function wuf_destroy_dashboard_session_locally(): void
+{
+    $_SESSION = [];
+
+    if (ini_get('session.use_cookies')) {
+        $params = session_get_cookie_params();
+        setcookie(session_name(), '', [
+            'expires'  => 1,
+            'path'     => $params['path'] ?: '/',
+            'domain'   => $params['domain'] ?? '',
+            'secure'   => (bool)($params['secure'] ?? (APP_ENV === 'production')),
+            'httponly' => (bool)($params['httponly'] ?? true),
+            'samesite' => $params['samesite'] ?? 'Strict',
+        ]);
+    }
+
+    if (isset($_COOKIE['wuf_remember'])) {
+        setcookie('wuf_remember', '', [
+            'expires'  => 1,
+            'path'     => '/',
+            'secure'   => (APP_ENV === 'production'),
+            'httponly' => true,
+            'samesite' => 'Strict',
+        ]);
+    }
+
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        session_destroy();
+    }
+}
+
+function wuf_force_dashboard_logout(int $id_users, string $notice = 'session'): void
+{
+    markUserOffline($id_users, 'forced_logout', '/dashboard/session-expired');
+    wuf_destroy_dashboard_session_locally();
+    redirect('/login', ['notice' => $notice]);
+}
+
+function wuf_validate_dashboard_session(int $id_users, bool $redirect_on_fail = true): bool
+{
+    $session_token = wuf_register_dashboard_session($id_users);
+    if ($session_token === null) {
+        return true;
+    }
+
+    if (!wuf_is_dashboard_session_active($id_users, $session_token)) {
+        if ($redirect_on_fail) {
+            wuf_force_dashboard_logout($id_users);
+        }
+
+        markUserOffline($id_users, 'forced_logout', '/dashboard/session-expired');
+        wuf_destroy_dashboard_session_locally();
+        return false;
+    }
+
+    wuf_touch_dashboard_session($session_token);
+    return true;
+}
+
 
 // ══════════════════════════════════════════════════════════════════
-// 4. Verificar acesso do utilizador ao dashboard
+// 5. Verificar acesso do utilizador ao dashboard
 //    Chama getUserStatus() e redireciona conforme o estado.
 //    Devolve o array do utilizador para uso imediato na página.
 // ══════════════════════════════════════════════════════════════════
 function checkUserAccess(int $id_users): array
 {
+    if (!wuf_validate_dashboard_session($id_users, true)) {
+        exit;
+    }
+
     $user = getUserStatus($id_users);
 
     // Se getUserStatus() falhou (ex: query com JOIN a lançar excepção),
@@ -288,12 +590,14 @@ function checkUserAccess(int $id_users): array
 
     // pending_plan e pending_verification → deixar aceder mas
     // getDashboardAlerts() vai mostrar avisos na UI
+    updateUserPresence((int)$user['id_users']);
+
     return $user;
 }
 
 
 // ══════════════════════════════════════════════════════════════════
-// 5. Alertas do dashboard
+// 6. Alertas do dashboard
 //    Gera lista de avisos contextuais para mostrar no topo das
 //    páginas do dashboard. Cada alerta tem:
 //      type    → 'warning' | 'danger' | 'info' | 'success'
@@ -422,7 +726,7 @@ function getDashboardAlerts(array $user, array $platform): array
 }
 
 // ══════════════════════════════════════════════════════════════════
-// 6. Renderizar alertas no HTML
+// 7. Renderizar alertas no HTML
 //    Chama getDashboardAlerts() e imprime o HTML dos avisos.
 //    Incluir logo após o header/navbar em cada página:
 //       renderDashboardAlerts($user, $platform);
@@ -523,7 +827,7 @@ body.dark-mode .wu-alert-dismiss:hover,
 }
 
 // ══════════════════════════════════════════════════════════════════
-// 7. Notificações — helpers para o dashboard
+// 8. Notificações — helpers para o dashboard
 //    (A lógica completa está em ajax/notifications_api.php;
 //     estas funções são para acesso síncrono no PHP da página.)
 // ══════════════════════════════════════════════════════════════════
@@ -575,7 +879,7 @@ function getRecentNotifs(int $id_users, int $limit = 5): array
 }
 
 // ══════════════════════════════════════════════════════════════════
-// 8. Configuração da plataforma — helpers de acesso rápido
+// 9. Configuração da plataforma — helpers de acesso rápido
 // ══════════════════════════════════════════════════════════════════
 function getPlatformConfig(): array
 {
@@ -631,7 +935,7 @@ function calcRoyalty(float $total_usd): array
 
 
 // ══════════════════════════════════════════════════════════════════
-// 9. Estado do plano — helper para a UI
+// 10. Estado do plano — helper para a UI
 //    Devolve array com informação de apresentação do plano activo.
 // ══════════════════════════════════════════════════════════════════
 function getPlanBadge(array $user): array
@@ -677,7 +981,7 @@ function getPlanBadge(array $user): array
 
 
 // ══════════════════════════════════════════════════════════════════
-// 10. Utilitários gerais do dashboard
+// 11. Utilitários gerais do dashboard
 // ══════════════════════════════════════════════════════════════════
 
 // Formata data/hora em pt-AO: "13 mar. 2026 às 14:30"

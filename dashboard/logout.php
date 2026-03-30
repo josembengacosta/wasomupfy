@@ -1,10 +1,14 @@
 <?php
 // dashboard/logout.php
 require_once __DIR__ . '/../authentic/include/functions.php';
+require_once __DIR__ . '/include/platform.php';
 startSecureSession();
 
 if (isLoggedIn()) {
     $id_users = (int)$_SESSION['id_users'];
+
+    // Marcar presença offline antes de destruir a sessão.
+    markUserOffline($id_users);
 
     // Desactivar sessao activa na BD
     destroyUserSession($id_users);
@@ -15,7 +19,7 @@ if (isLoggedIn()) {
     // Invalidar cookie remember-me
     if (!empty($_COOKIE['wuf_remember'])) {
         getDB()->prepare("UPDATE _users_security SET remember_token = NULL WHERE id_users = ?")
-               ->execute([$id_users]);
+            ->execute([$id_users]);
         setcookie('wuf_remember', '', ['expires' => 1, 'path' => '/']);
     }
 }

@@ -235,104 +235,195 @@ function getPostBySlug(string $slug): ?array {
 // ── 9. Rastreio de visitantes ─────────────────
 // Guarda IP, país, cidade, browser, OS, device na _visitor
 // e cada pageview em _visitor_pageview
-function trackVisitor(string $page_url, ?string $page_title = null): void {
+function getVisitorSessionId(): string {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    if (empty($_SESSION['_visitor_session_id'])) {
+        $_SESSION['_visitor_session_id'] = session_id() ?: bin2hex(random_bytes(16));
+    }
+
+    return (string)$_SESSION['_visitor_session_id'];
+}
+
+function cleanupStaleVisitors(int $idle_minutes = 5): void {
+    $idle_minutes = max(1, min(120, $idle_minutes));
+
     try {
-        $db         = getSiteDB();
-        $ip         = getVisitorIp();
-        $session_id = session_id() ?: bin2hex(random_bytes(16));
-        $ua         = $_SERVER['HTTP_USER_AGENT'] ?? '';
-        $referrer   = $_SERVER['HTTP_REFERER'] ?? null;
+        getSiteDB()->exec("
+            UPDATE _visitor
+            SET is_online = 0,
+                modif_visitor = NOW()
+            WHERE is_online = 1
+              AND last_seen < DATE_SUB(NOW(), INTERVAL {$idle_minutes} MINUTE)
+        ");
+    } catch (Throwable $e) {
+        if (APP_ENV === 'development') {
+            error_log('[cleanupStaleVisitors] ' . $e->getMessage());
+        }
+    }
+}
 
-        // Detectar bot
-        $is_bot  = detectBot($ua);
-        $bot_name = $is_bot ? extractBotName($ua) : null;
-
-        // Geolocalização via ip-api.com (gratuito, sem chave, 45 req/min)
-        $geo = getGeoData($ip);
-
-        // Parse browser e OS
+function updateVisitorPresence(
+    string $page_url,
+    ?string $page_title = null,
+    bool $register_pageview = false,
+    ?int $time_on_page = null,
+    string $status = 'online'
+): ?int {
+    try {
+        $db           = getSiteDB();
+        $ip           = getVisitorIp();
+        $session_id   = getVisitorSessionId();
+        $ua           = $_SERVER['HTTP_USER_AGENT'] ?? '';
+        $referrer     = $_SERVER['HTTP_REFERER'] ?? null;
         $browser_info = parseBrowser($ua);
+        $is_bot       = detectBot($ua);
+        $bot_name     = $is_bot ? extractBotName($ua) : null;
+        $page_url     = substr(trim($page_url), 0, 500);
+        $page_title   = $page_title !== null ? substr(trim($page_title), 0, 255) : null;
+        $time_on_page = $time_on_page !== null ? max(0, min(86400, $time_on_page)) : null;
+        $is_online    = $status === 'offline' ? 0 : 1;
 
-        // Verificar se já existe sessão activa (últimas 30 min)
+        cleanupStaleVisitors();
+
         $existing = $db->prepare("
-            SELECT id_visitor FROM _visitor
-            WHERE session_id = ? AND ip_address = ?
-            AND creat_visitor > DATE_SUB(NOW(), INTERVAL 30 MINUTE)
+            SELECT id_visitor
+            FROM _visitor
+            WHERE session_id = ?
             LIMIT 1
         ");
-        $existing->execute([$session_id, $ip]);
+        $existing->execute([$session_id]);
         $visitor_row = $existing->fetch();
 
         if ($visitor_row) {
-            // Actualizar sessão existente
-            $id_visitor = $visitor_row['id_visitor'];
+            $id_visitor = (int)$visitor_row['id_visitor'];
             $db->prepare("
                 UPDATE _visitor
-                SET pages_viewed = pages_viewed + 1,
-                    page_exit = ?,
-                    modif_visitor = NOW()
+                SET page_exit        = ?,
+                    pages_viewed     = CASE WHEN ? = 1 THEN pages_viewed + 1 ELSE pages_viewed END,
+                    user_agent       = ?,
+                    browser          = ?,
+                    browser_version  = ?,
+                    os               = ?,
+                    os_version       = ?,
+                    device_type      = ?,
+                    is_bot           = ?,
+                    bot_name         = ?,
+                    referrer         = COALESCE(referrer, ?),
+                    ip_address       = ?,
+                    ip_version       = ?,
+                    is_online        = ?,
+                    last_seen        = NOW(),
+                    session_duration = GREATEST(0, TIMESTAMPDIFF(SECOND, creat_visitor, NOW())),
+                    modif_visitor    = NOW()
                 WHERE id_visitor = ?
-            ")->execute([$page_url, $id_visitor]);
+            ")->execute([
+                $page_url,
+                $register_pageview ? 1 : 0,
+                $ua ?: null,
+                $browser_info['browser'] ?? null,
+                $browser_info['browser_version'] ?? null,
+                $browser_info['os'] ?? null,
+                $browser_info['os_version'] ?? null,
+                $browser_info['device_type'] ?? 'unknown',
+                $is_bot ? 1 : 0,
+                $bot_name,
+                $referrer,
+                $ip,
+                strpos($ip, ':') !== false ? 'v6' : 'v4',
+                $is_online,
+                $id_visitor,
+            ]);
         } else {
-            // Nova visita
+            if ($status === 'offline') {
+                return null;
+            }
+
+            $geo = getGeoData($ip);
+            $visit_count_stmt = $db->prepare("SELECT COUNT(*) FROM _visitor WHERE ip_address = ?");
+            $visit_count_stmt->execute([$ip]);
+            $visit_count = (int)$visit_count_stmt->fetchColumn() + 1;
+
             $db->prepare("
                 INSERT INTO _visitor (
                     ip_address, ip_version, country_code, country_name,
                     city, region, latitude, longitude, timezone, isp,
                     user_agent, browser, browser_version, os, os_version,
                     device_type, is_bot, bot_name,
-                    page_entry, page_exit, pages_viewed,
+                    page_entry, page_exit, pages_viewed, session_duration,
                     referrer, utm_source, utm_medium, utm_campaign,
-                    session_id, creat_visitor, modif_visitor
+                    session_id, is_online, last_seen, visit_count,
+                    creat_visitor, modif_visitor
                 ) VALUES (
                     ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
                     ?, ?, ?, ?, ?,
                     ?, ?, ?,
-                    ?, ?, 1,
+                    ?, ?, ?, 0,
                     ?, ?, ?, ?,
-                    ?, NOW(), NOW()
+                    ?, ?, NOW(), ?,
+                    NOW(), NOW()
                 )
             ")->execute([
                 $ip,
                 strpos($ip, ':') !== false ? 'v6' : 'v4',
                 $geo['countryCode'] ?? null,
-                $geo['country']     ?? null,
-                $geo['city']        ?? null,
-                $geo['regionName']  ?? null,
-                $geo['lat']         ?? null,
-                $geo['lon']         ?? null,
-                $geo['timezone']    ?? null,
-                $geo['isp']         ?? null,
-                $ua,
-                $browser_info['browser']         ?? null,
+                $geo['country'] ?? null,
+                $geo['city'] ?? null,
+                $geo['regionName'] ?? null,
+                $geo['lat'] ?? null,
+                $geo['lon'] ?? null,
+                $geo['timezone'] ?? null,
+                $geo['isp'] ?? null,
+                $ua ?: null,
+                $browser_info['browser'] ?? null,
                 $browser_info['browser_version'] ?? null,
-                $browser_info['os']              ?? null,
-                $browser_info['os_version']      ?? null,
-                $browser_info['device_type']     ?? 'unknown',
+                $browser_info['os'] ?? null,
+                $browser_info['os_version'] ?? null,
+                $browser_info['device_type'] ?? 'unknown',
                 $is_bot ? 1 : 0,
                 $bot_name,
-                $page_url, $page_url,
+                $page_url,
+                $page_url,
+                $register_pageview ? 1 : 0,
                 $referrer,
-                $_GET['utm_source']   ?? null,
-                $_GET['utm_medium']   ?? null,
+                $_GET['utm_source'] ?? null,
+                $_GET['utm_medium'] ?? null,
                 $_GET['utm_campaign'] ?? null,
                 $session_id,
+                $is_online,
+                $visit_count,
             ]);
             $id_visitor = (int)$db->lastInsertId();
         }
 
-        // Registar pageview
-        $db->prepare("
-            INSERT INTO _visitor_pageview (id_visitor, page_url, page_title)
-            VALUES (?, ?, ?)
-        ")->execute([$id_visitor, $page_url, $page_title]);
-
-    } catch (Throwable $e) {
-        // Tracking nunca deve quebrar a página
-        if (APP_ENV === 'development') {
-            error_log('[trackVisitor] ' . $e->getMessage());
+        if ($register_pageview && $id_visitor > 0) {
+            $db->prepare("
+                INSERT INTO _visitor_pageview (id_visitor, page_url, page_title, time_on_page)
+                VALUES (?, ?, ?, ?)
+            ")->execute([$id_visitor, $page_url, $page_title, $time_on_page]);
+        } elseif ($time_on_page !== null && $id_visitor > 0) {
+            $db->prepare("
+                UPDATE _visitor_pageview
+                SET time_on_page = ?
+                WHERE id_visitor = ? AND page_url = ?
+                ORDER BY id_pageview DESC
+                LIMIT 1
+            ")->execute([$time_on_page, $id_visitor, $page_url]);
         }
+
+        return $id_visitor;
+    } catch (Throwable $e) {
+        if (APP_ENV === 'development') {
+            error_log('[updateVisitorPresence] ' . $e->getMessage());
+        }
+        return null;
     }
+}
+
+function trackVisitor(string $page_url, ?string $page_title = null): void {
+    updateVisitorPresence($page_url, $page_title, true, null, 'online');
 }
 
 function getVisitorIp(): string {

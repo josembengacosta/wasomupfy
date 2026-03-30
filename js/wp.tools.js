@@ -1,4 +1,26 @@
 const APP_VERSION = "2.0";
+
+(function ensurePresenceScript() {
+  "use strict";
+
+  if (window.__wuPresenceScriptRequested) {
+    return;
+  }
+
+  const currentScript = document.currentScript;
+  if (!currentScript || !currentScript.src) {
+    return;
+  }
+
+  const script = document.createElement("script");
+  script.src = currentScript.src.replace(/\/js\/[^/]+$/, "/js/presence.wp.js");
+  script.defer = true;
+  script.dataset.wuPresence = "1";
+
+  window.__wuPresenceScriptRequested = true;
+  (document.head || document.documentElement).appendChild(script);
+})();
+
 document.addEventListener("DOMContentLoaded", () => {
   // Tela de Carregamento
   const loadingScreen = document.getElementById("loadingScreen");

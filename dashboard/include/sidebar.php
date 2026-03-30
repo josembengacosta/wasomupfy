@@ -109,7 +109,8 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
                 <li>
-                    <a class="dropdown-item d-flex align-items-center gap-2 py-2" href="account/manage-account">
+                    <a class="dropdown-item d-flex align-items-center gap-2 py-2"
+                        href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/user/profile">
                         <?php if ($user_photo): ?>
                         <img src="<?php echo APP_URL  ?>/assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
                             width="32" height="32" class="rounded-circle flex-shrink-0"
