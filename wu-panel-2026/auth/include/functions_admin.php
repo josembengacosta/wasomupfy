@@ -107,7 +107,6 @@ function requireAdminLogin(): void
             if ($current['role'] !== ($_SESSION['admin_role'] ?? '')) {
                 $_SESSION['admin_role'] = $current['role'];
             }
-
         } catch (Exception $e) {
             // BD indisponível — fail-open (não expulsar)
             error_log('[ADMIN STATUS CHECK] BD indisponível: ' . $e->getMessage());

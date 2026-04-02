@@ -168,7 +168,7 @@ function apply_htaccess_section(string $htaccess_path, string $admin_section): b
 // ════════════════════════════════════════════
 function update_admin_path_in_config(string $new_path): bool
 {
-    $config_path = dirname(__DIR__, 4) . '/authentic/include/config.php';
+    $config_path = dirname(__DIR__, 3) . '/authentic/include/config.php';
     if (!file_exists($config_path) || !is_writable($config_path)) return false;
 
     $content = file_get_contents($config_path);

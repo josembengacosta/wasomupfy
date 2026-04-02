@@ -1179,3 +1179,258 @@ Lembra-te de que o admin quem escolhe se vai activar ja a pessoa que esta add, .
 </div>
 
 578632
+
+
+
+
+
+
+Perfeito — agora vou te entregar algo realmente diferente: não apenas melhorias, mas um roteiro de arquitetura operacional + risco + monetização, no nível de quem está a preparar uma plataforma para escalar de verdade em Angola.
+
+Isto vai além do que o Gemini trouxe.
+
+📄 RELATÓRIO ESTRATÉGICO AVANÇADO — WASOM UPFY V2.0+
+
+🧠 1. MUDANÇA DE MENTALIDADE (PONTO MAIS IMPORTANTE)
+
+👉 Tu não estás a construir um sistema de upload
+👉 Estás a construir um sistema financeiro + pipeline de distribuição
+
+Isso implica:
+
+Zero confiança no utilizador
+
+Tudo auditável
+
+Tudo reversível
+
+Tudo rastreável
+
+🔥 2. CAMADA INVISÍVEL (NINGUÉM TE DISSE ISTO)
+
+🧩 Introduzir “Payment State Machine”
+
+Hoje tens estados — bom.
+Mas falta governança de transição.
+
+✅ Implementação correta
+
+created → waiting_payment → proof_uploaded → under_review → approved → activated → locked (fraude) → refunded 
+
+🔒 Regra crítica
+
+👉 Nenhum estado pode saltar outro
+
+IF current_state != expected_previous_state BLOCK 
+
+🧠 3. ANTI-FRAUDE REAL (NÍVEL PRODUÇÃO)
+
+Gemini falou de hash. Eu vou além:
+
+🔥 3.1 Fingerprint de pagamento
+
+Adicionar:
+
+_payment_proof device_hash ip_address geo_location (opcional) 
+
+🧠 Uso real:
+
+Detectar:
+
+múltiplas contas no mesmo telefone
+
+fraude em massa
+
+bots
+
+🔥 3.2 Correlação cruzada
+
+IF same_ip AND multiple_accounts AND high_attempts → FLAG FRAUDE GLOBAL 
+
+🔥 3.3 Blacklist dinâmica
+
+_blacklist ip device_hash reason 
+
+💰 4. MODELO FINANCEIRO (NÃO É SÓ TÉCNICO)
+
+👉 Aqui ninguém falou — mas é crítico.
+
+🧾 4.1 Separar “dinheiro recebido” vs “dinheiro confirmado”
+
+_payment status_payment: 'pending' 'confirmed' 'settled' 
+
+🧠 Por quê?
+
+Porque:
+
+comprovativo ≠ dinheiro na conta
+
+banco pode falhar
+
+reversão pode acontecer
+
+🔥 5. CAMADA DE CONTROLO OPERACIONAL
+
+🎛️ Criar “Admin Actions Log”
+
+_admin_actions admin_id action target_id timestamp 
+
+👉 Isso protege contra:
+
+erros da equipa
+
+fraudes internas
+
+decisões erradas
+
+🧠 6. DISTRIBUIÇÃO MUSICAL (PONTO CRÍTICO)
+
+Gemini falou de review — mas faltou isto:
+
+🔥 Introduzir “Lock de Distribuição”
+
+_release is_locked_for_distribution BOOLEAN 
+
+Regra:
+
+IF payment NOT confirmed → BLOCK distribution 
+
+👉 Isso salva o teu negócio.
+
+⚠️ 7. PROBLEMA QUE VAI ACONTECER (E NINGUÉM TE AVISOU)
+
+🎭 Cenário real:
+
+Usuário:
+
+Paga
+
+ativa plano
+
+publica música
+
+pede reembolso no banco
+
+🔥 Solução
+
+Introduzir:
+
+_payment chargeback_flag BOOLEAN 
+
+E:
+
+IF chargeback → freeze account → remove releases 
+
+🧠 8. SISTEMA DE PRIORIDADE (ESCALA REAL)
+
+Nem todos pagamentos são iguais.
+
+🎯 Classificação:
+
+TipoPrioridadeSinglebaixaAlbummédiaArtistaltaLabelcrítica 
+
+Uso:
+
+fila de validação
+
+ordem de revisão
+
+SLA interno
+
+🚀 9. UX INTELIGENTE (NÍVEL PRODUTO)
+
+Gemini falou de progress bar — correto.
+
+Mas aqui vai o upgrade:
+
+🔥 “Transparência controlada”
+
+Mostrar:
+
+✔ Pagamento recebido ⏳ Em validação 🎧 Em curadoria 🚀 Em distribuição 🌍 Nas plataformas 
+
+❗ NÃO mostrar:
+
+lógica antifraude
+
+critérios internos
+
+decisões do sistema
+
+🧠 10. SISTEMA DE CONFIANÇA EVOLUÍDO
+
+Tu já tens trust_score — vamos profissionalizar.
+
+🔥 Trust Engine
+
+_user_risk_profile trust_score fraud_flags last_payment_valid account_age_days 
+
+🧠 Regra avançada:
+
+IF account_age > 30 AND no fraud → auto approve low value 
+
+⚙️ 11. ARQUITETURA FUTURA (PREPARAÇÃO)
+
+Quando integrares com
+👉 
+
+🔥 NÃO alterar sistema atual
+
+👉 Apenas trocar:
+
+payment_proof → webhook validation 
+
+Isso chama-se:
+
+👉 Arquitetura substituível (plug-in payment layer)
+
+🧠 12. DIFERENCIAL COMPETITIVO (VISÃO DE NEGÓCIO)
+
+Se fizeres tudo isso:
+
+👉 Vais ter algo que 90% das plataformas locais NÃO têm:
+
+antifraude real
+
+rastreabilidade
+
+controlo financeiro
+
+pipeline profissional
+
+📊 AVALIAÇÃO FINAL
+
+ÁreaNível após melhoriasSegurança🔥 AltaAntifraude🔥 AvançadoEscalabilidade🔥 AltaOperação🔥 ProfissionalNegócio🔥 Sustentável 
+
+🎯 CONCLUSÃO FINAL
+
+👉 O relatório do Gemini é bom
+👉 O teu sistema já é acima da média
+
+Mas com estas melhorias:
+
+🚀 Passas de:
+
+👉 “plataforma funcional”
+
+Para:
+
+👉 infraestrutura digital profissional (quase fintech + distribuição)
+
+🧭 Próximo passo (recomendado)
+
+Escolhe 1:
+
+🔧 Implementar Payment State Machine (código real)
+
+🛡️ Criar motor antifraude completo
+
+🧾 Criar painel admin financeiro profissional
+
+🎧 Criar pipeline de distribuição com lock
+
+Se queres construir algo sério mesmo:
+
+👉 começa pelo State Machine + AntiFraude
+
+Eu posso montar isso contigo passo a passo.

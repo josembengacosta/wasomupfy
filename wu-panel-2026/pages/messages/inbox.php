@@ -1,806 +1,1394 @@
+<?php
+// ══════════════════════════════════════════════════════════════
+// WASOM UPFY v2.0 — Caixa de Entrada de Suporte
+// Arquivo: wu-panel-2026/pages/messages/inbox.php
+// Rota:    wu-panel-2026/messages/inbox
+// ══════════════════════════════════════════════════════════════
+require_once __DIR__ . '/../../include/platform_admin.php';
+requirePermission($admin_id, 'support.view');
+
+if (!isset($_SESSION['admin_csrf_token'])) {
+    $_SESSION['admin_csrf_token'] = bin2hex(random_bytes(32));
+}
+
+// ── Garantir colunas is_starred (executar uma vez) ────────────
+foreach (['_support_ticket','_contact_message','_feedback'] as $tbl) {
+    try {
+        $db->exec("ALTER TABLE `$tbl` ADD COLUMN IF NOT EXISTS `is_starred` TINYINT(1) NOT NULL DEFAULT 0");
+    } catch (Exception $e) { /* já existe — ignorar */ }
+}
+
+// ── Filtros / aba activa ──────────────────────────────────────
+$tab      = in_array($_GET['tab'] ?? '', ['tickets','contact','feedback','starred','archived']) ? $_GET['tab'] : 'all';
+$page     = max(1, (int)($_GET['page'] ?? 1));
+$per_page = 25;
+$f_search = trim($_GET['q'] ?? '');
+$selected = (int)($_GET['open'] ?? 0);  // ID da mensagem aberta
+$sel_src  = trim($_GET['src'] ?? '');   // fonte da mensagem aberta
+
+// ── Funções de normalização ───────────────────────────────────
+// Cada fonte → estrutura unificada para a lista
+function inbox_source_label(string $src): array // [label, color, icon]
+{
+    return match ($src) {
+        'ticket_auth'    => ['Suporte (Auth)',    '#8b5cf6', 'bi-shield-lock'],
+        'ticket_public'  => ['Suporte (Site)',    '#3b82f6', 'bi-globe2'],
+        'ticket_dash'    => ['Suporte (Painel)',  '#FF0089', 'bi-person-fill'],
+        'contact'        => ['Contacto Site',     '#f97316', 'bi-envelope'],
+        'feedback'       => ['Feedback',          '#22c55e', 'bi-chat-square-text'],
+        default          => ['Mensagem',          '#6b7280', 'bi-chat'],
+    };
+}
+
+function inbox_priority_label(string $p): string
+{
+    return match ($p) {
+        'high'   => '<span class="badge inbox-p-high">Alta</span>',
+        'low'    => '<span class="badge inbox-p-low">Baixa</span>',
+        default  => '',
+    };
+}
+
+function inbox_status_badge(string $s): string
+{
+    return match ($s) {
+        'new','open'       => '<span class="inbox-s-new"></span>',
+        'in_progress'      => '<span class="inbox-s-progress"></span>',
+        'read'             => '',
+        'replied','resolved'=> '<span class="inbox-s-replied">✓</span>',
+        'archived','closed'=> '<span class="inbox-s-archived">—</span>',
+        default            => '',
+    };
+}
+
+function inbox_relative(string $dt): string
+{
+    $ts   = strtotime($dt);
+    $diff = time() - $ts;
+    if ($diff < 60)       return 'agora';
+    if ($diff < 3600)     return floor($diff/60).'min';
+    if ($diff < 86400)    return floor($diff/3600).'h';
+    if ($diff < 604800)   return date('d/m', $ts);
+    return date('d/m/Y', $ts);
+}
+
+// ── Construir query UNION normalizada ─────────────────────────
+// tickets de suporte
+$ticket_where  = [];
+$ticket_params = [];
+$contact_where  = [];
+$contact_params = [];
+$feedback_where  = [];
+$feedback_params = [];
+
+$search_like = $f_search !== '' ? '%' . $f_search . '%' : null;
+
+// -- tickets
+$tw = ["st.status_ticket != 'deleted'"];
+if ($tab === 'tickets')  {} // sem filtro extra
+if ($tab === 'starred')  $tw[] = "st.is_starred = 1";
+if ($tab === 'archived') $tw[] = "st.status_ticket IN ('closed','archived')";
+if ($tab === 'contact' || $tab === 'feedback') $tw[] = "1=0"; // esconder
+if ($search_like) {
+    $tw[] = "(st.subject LIKE ? OR st.body LIKE ? OR st.name_contact LIKE ? OR st.email_contact LIKE ?)";
+    array_push($ticket_params, $search_like, $search_like, $search_like, $search_like);
+}
+if ($tab === 'all' || $tab === 'tickets' || $tab === 'starred' || $tab === 'archived' || $f_search !== '') {
+    // ok
+}
+$tw_str = 'WHERE ' . implode(' AND ', $tw);
+
+// -- contact_message
+$cw = ["cm.status_msg != 'deleted'"];
+if ($tab === 'contact')  {} // ok
+if ($tab === 'starred')  $cw[] = "cm.is_starred = 1";
+if ($tab === 'archived') $cw[] = "cm.status_msg = 'archived'";
+if ($tab === 'tickets' || $tab === 'feedback') $cw[] = "1=0";
+if ($search_like) {
+    $cw[] = "(cm.subject_msg LIKE ? OR cm.message_msg LIKE ? OR cm.name_msg LIKE ? OR cm.email_msg LIKE ?)";
+    array_push($contact_params, $search_like, $search_like, $search_like, $search_like);
+}
+$cw_str = 'WHERE ' . implode(' AND ', $cw);
+
+// -- feedback
+$fw = ["fb.status_fb != 'deleted'"];
+if ($tab === 'feedback') {}
+if ($tab === 'starred')  $fw[] = "fb.is_starred = 1";
+if ($tab === 'archived') $fw[] = "fb.status_fb = 'archived'";
+if ($tab === 'tickets' || $tab === 'contact') $fw[] = "1=0";
+if ($search_like) {
+    $fw[] = "(fb.subject_fb LIKE ? OR fb.message_fb LIKE ? OR fb.name_fb LIKE ?)";
+    array_push($feedback_params, $search_like, $search_like, $search_like);
+}
+$fw_str = 'WHERE ' . implode(' AND ', $fw);
+
+// UNION query para contagem e listagem
+$union_sql = "
+    (SELECT
+        st.id_ticket        AS msg_id,
+        CASE st.source_ticket
+            WHEN 'auth_modal'    THEN 'ticket_auth'
+            WHEN 'public_form'   THEN 'ticket_public'
+            WHEN 'dashboard_form' THEN 'ticket_dash'
+            ELSE 'ticket_auth' END   AS source,
+        st.name_contact     AS sender_name,
+        st.email_contact    AS sender_email,
+        st.id_users         AS sender_user_id,
+        u.photo_user        AS sender_photo,
+        st.subject          AS subject,
+        LEFT(st.body, 120)  AS body_preview,
+        st.status_ticket    AS msg_status,
+        st.priority         AS priority,
+        st.is_starred       AS is_starred,
+        st.assigned_to      AS assigned_to,
+        st.creat_ticket     AS created_at
+    FROM _support_ticket st
+    LEFT JOIN _users u ON u.id_users = st.id_users
+    $tw_str)
+    UNION ALL
+    (SELECT
+        cm.id               AS msg_id,
+        'contact'           AS source,
+        cm.name_msg         AS sender_name,
+        cm.email_msg        AS sender_email,
+        NULL                AS sender_user_id,
+        NULL                AS sender_photo,
+        cm.subject_msg      AS subject,
+        LEFT(cm.message_msg, 120) AS body_preview,
+        cm.status_msg       AS msg_status,
+        'normal'            AS priority,
+        cm.is_starred       AS is_starred,
+        NULL                AS assigned_to,
+        cm.created_at       AS created_at
+    FROM _contact_message cm
+    $cw_str)
+    UNION ALL
+    (SELECT
+        fb.id               AS msg_id,
+        'feedback'          AS source,
+        fb.name_fb          AS sender_name,
+        ''                  AS sender_email,
+        NULL                AS sender_user_id,
+        NULL                AS sender_photo,
+        fb.subject_fb       AS subject,
+        LEFT(fb.message_fb, 120) AS body_preview,
+        fb.status_fb        AS msg_status,
+        'low'               AS priority,
+        fb.is_starred       AS is_starred,
+        NULL                AS assigned_to,
+        fb.created_at       AS created_at
+    FROM _feedback fb
+    $fw_str)
+";
+
+$all_params = array_merge($ticket_params, $contact_params, $feedback_params);
+
+// Contagem
+$count_stmt = $db->prepare("SELECT COUNT(*) FROM ($union_sql) AS t");
+$count_stmt->execute($all_params);
+$total       = (int)$count_stmt->fetchColumn();
+$total_pages = max(1, (int)ceil($total / $per_page));
+$page        = min($page, $total_pages);
+$offset      = ($page - 1) * $per_page;
+
+// Listagem ordenada
+$list_stmt = $db->prepare(
+    "SELECT * FROM ($union_sql) AS t ORDER BY is_starred DESC, created_at DESC LIMIT $per_page OFFSET $offset"
+);
+$list_stmt->execute($all_params);
+$messages = $list_stmt->fetchAll();
+
+// ── Badge counts para as abas ─────────────────────────────────
+$unread_tickets  = (int)$db->query("SELECT COUNT(*) FROM _support_ticket WHERE status_ticket='open'")->fetchColumn();
+$unread_contact  = (int)$db->query("SELECT COUNT(*) FROM _contact_message WHERE status_msg='new'")->fetchColumn();
+$unread_feedback = (int)$db->query("SELECT COUNT(*) FROM _feedback WHERE status_fb='new'")->fetchColumn();
+$total_unread    = $unread_tickets + $unread_contact + $unread_feedback;
+$total_starred   = (int)$db->query("SELECT (SELECT COUNT(*) FROM _support_ticket WHERE is_starred=1) + (SELECT COUNT(*) FROM _contact_message WHERE is_starred=1) + (SELECT COUNT(*) FROM _feedback WHERE is_starred=1)")->fetchColumn();
+
+// ── Admins para atribuição ────────────────────────────────────
+$admins = $db->query("SELECT id_employees, CONCAT(first_name,' ',COALESCE(second_name,'')) AS name FROM _employees WHERE status_employees='active' ORDER BY first_name")->fetchAll();
+
+$base_url = APP_URL . '/' . ADMIN_PATH;
+$csrf     = $_SESSION['admin_csrf_token'];
+$proc_url = $base_url . '/messages/inbox-process';
+?>
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-ao">
 
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="robots" content="noindex, nofollow" />
-  <meta name="author" content="José Mbenga da Costa" />
-  <meta name="theme-color" content="#FF0089" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="#FF0089" />
-  <link rel="apple-touch-icon" href="../../../assets/img/icones/wasomupfy_fiv_512.png" />
-  <link rel="apple-touch-startup-image" href="../../../assets/img/screenshots/splash.png" />
-  <link rel="manifest" href="../../manifest.json" />
-  <title>Caixa de entrada — <?php echo APP_NAME; ?></title>
-  <link rel="shortcut icon" href="../../../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon" />
-  <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/libs/plugins.css" />
-  <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/libs/scrollue.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
-  <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/lastest-style.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
-  <!-- Google Fonts - Poppins -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  <!-- DataTables CSS -->
-  <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap5.min.css" />
-  <!-- Flag Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css" />
-  <style>
-    .fade-in-custom {
-      animation: fadeIn 0.5s ease-in-out;
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="csrf-token" content="<?php echo htmlspecialchars($csrf); ?>">
+    <title>Caixa de Entrada — Wasom Upfy Admin</title>
+    <link rel="shortcut icon" href="<?php echo APP_URL; ?>/assets/img/icones/wasomupfy_fiv.png" type="image/x-icon" />
+    <link rel="stylesheet" href="<?php echo APP_URL; ?>/css/libs/plugins.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL; ?>/css/lastest-style.css" />
+    <style>
+    /* ══════════════════════════════════════════════
+       Inbox layout — 3 colunas tipo Gmail
+       ══════════════════════════════════════════════ */
+    .inbox-wrap {
+        display: flex;
+        height: calc(100vh - 64px);
+        /* 64px = navbar */
+        overflow: hidden;
+        background: var(--card-bg, #fff);
+        border-radius: 14px;
+        border: 1px solid var(--border-color, #e8e8f0);
     }
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    /* ── Sidebar ── */
+    .inbox-sidebar {
+        width: 220px;
+        flex-shrink: 0;
+        border-right: 1px solid var(--border-color, #e8e8f0);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
     }
 
-    .email-card {
-      border-left: 4px solid;
-      border-radius: 8px;
-      transition: all 0.3s ease;
-      cursor: pointer;
+    .inbox-sidebar-head {
+        padding: 14px 16px 10px;
+        font-size: .88rem;
+        font-weight: 800;
+        border-bottom: 1px solid var(--border-color, #e8e8f0);
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
 
-    .email-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    .inbox-compose-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 10px 12px;
+        padding: 9px 14px;
+        background: linear-gradient(135deg, #FF0089, #f97316);
+        color: #fff;
+        border-radius: 10px;
+        font-size: .8rem;
+        font-weight: 700;
+        cursor: pointer;
+        border: none;
+        text-decoration: none;
+        transition: all .2s;
+        box-shadow: 0 4px 12px rgba(255, 0, 137, .25);
     }
 
-    .email-card.unread {
-      background-color: #f0f9ff;
-      border-left-color: #007bff;
+    .inbox-compose-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(255, 0, 137, .35);
+        color: #fff;
     }
 
-    .email-card.important {
-      border-left-color: #dc3545;
+    .inbox-nav {
+        flex: 1;
+        overflow-y: auto;
+        padding: 6px 0;
     }
 
-    .email-card.starred {
-      border-left-color: #ffc107;
+    .inbox-nav-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 16px;
+        font-size: .8rem;
+        font-weight: 500;
+        cursor: pointer;
+        border-radius: 0;
+        text-decoration: none;
+        color: var(--bs-body-color);
+        transition: all .15s;
+        position: relative;
     }
 
-    .email-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-      color: white;
-      flex-shrink: 0;
+    .inbox-nav-item:hover {
+        background: rgba(255, 0, 137, .07);
+        color: #FF0089;
     }
 
-    .email-preview {
-      color: #6c757d;
-      font-size: 0.875rem;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
+    .inbox-nav-item.active {
+        background: rgba(255, 0, 137, .12);
+        color: #FF0089;
+        font-weight: 700;
+        border-right: 3px solid #FF0089;
     }
 
-    .email-tags {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
+    .inbox-nav-item i {
+        font-size: .95rem;
+        width: 18px;
+        text-align: center;
+        flex-shrink: 0;
     }
 
-    .email-tag {
-      padding: 0.125rem 0.5rem;
-      border-radius: 50rem;
-      font-size: 0.75rem;
-      background-color: #e9ecef;
-      color: #495057;
+    .inbox-nav-badge {
+        margin-left: auto;
+        background: #FF0089;
+        color: #fff;
+        font-size: .58rem;
+        font-weight: 800;
+        padding: 1px 6px;
+        border-radius: 20px;
+        min-width: 18px;
+        text-align: center;
     }
 
-    .email-actions {
-      opacity: 0;
-      transition: opacity 0.3s;
+    .inbox-nav-sep {
+        padding: 6px 16px 3px;
+        font-size: .62rem;
+        text-transform: uppercase;
+        letter-spacing: .8px;
+        opacity: .45;
+        font-weight: 700;
     }
 
-    .email-card:hover .email-actions {
-      opacity: 1;
+    /* ── Lista de mensagens ── */
+    .inbox-list-col {
+        width: 340px;
+        flex-shrink: 0;
+        border-right: 1px solid var(--border-color, #e8e8f0);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
     }
 
-    .folder-sidebar {
-      border-right: 1px solid #dee2e6;
+    .inbox-list-head {
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--border-color, #e8e8f0);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
     }
 
-    .folder-item {
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      margin-bottom: 0.25rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
+    .inbox-search {
+        flex: 1;
+        border: 1px solid var(--border-color, #e8e8f0);
+        border-radius: 8px;
+        padding: 6px 12px 6px 32px;
+        font-size: .8rem;
+        background: transparent;
+        color: inherit;
+        outline: none;
+        transition: border-color .2s;
     }
 
-    .folder-item:hover {
-      background-color: #f8f9fa;
+    .inbox-search:focus {
+        border-color: #FF0089;
     }
 
-    .folder-item.active {
-      background-color: #007bff;
-      color: white;
+    .inbox-search-wrap {
+        position: relative;
+        flex: 1;
     }
 
-    .folder-item .badge {
-      float: right;
+    .inbox-search-wrap i {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        opacity: .4;
+        font-size: .8rem;
     }
-  </style>
+
+    .inbox-list-scroll {
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    .inbox-msg-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--border-color, #e8e8f0);
+        cursor: pointer;
+        transition: background .12s;
+        position: relative;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .inbox-msg-item:hover {
+        background: rgba(255, 0, 137, .04);
+    }
+
+    .inbox-msg-item.active {
+        background: rgba(255, 0, 137, .09);
+        border-right: 3px solid #FF0089;
+    }
+
+    .inbox-msg-item.unread .inbox-sender {
+        font-weight: 800;
+    }
+
+    .inbox-msg-item.unread .inbox-subject {
+        font-weight: 700;
+    }
+
+    .inbox-msg-item.starred .inbox-star-btn {
+        color: #f59e0b !important;
+    }
+
+    .inbox-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        object-fit: cover;
+        flex-shrink: 0;
+        border: 2px solid transparent;
+    }
+
+    .inbox-avatar-ini {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: .68rem;
+        color: #fff;
+        flex-shrink: 0;
+    }
+
+    .inbox-msg-body {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .inbox-msg-top {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 2px;
+    }
+
+    .inbox-sender {
+        font-size: .8rem;
+        font-weight: 500;
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .inbox-time {
+        font-size: .68rem;
+        opacity: .5;
+        flex-shrink: 0;
+    }
+
+    .inbox-subject {
+        font-size: .77rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin-bottom: 2px;
+    }
+
+    .inbox-preview {
+        font-size: .72rem;
+        opacity: .5;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .inbox-source-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        padding: 1px 6px;
+        border-radius: 10px;
+        font-size: .6rem;
+        font-weight: 700;
+    }
+
+    .inbox-star-btn {
+        background: none;
+        border: none;
+        padding: 2px;
+        color: rgba(0, 0, 0, .25);
+        cursor: pointer;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+    .inbox-star-btn:hover {
+        color: #f59e0b;
+    }
+
+    .dark-mode .inbox-star-btn {
+        color: rgba(255, 255, 255, .25);
+    }
+
+    /* Status dots */
+    .inbox-s-new {
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #3b82f6;
+        flex-shrink: 0;
+        margin-right: 2px;
+    }
+
+    .inbox-s-progress {
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #f97316;
+        flex-shrink: 0;
+        margin-right: 2px;
+    }
+
+    .inbox-s-replied {
+        font-size: .65rem;
+        color: #22c55e;
+        font-weight: 700;
+        flex-shrink: 0;
+        margin-right: 2px;
+    }
+
+    .inbox-s-archived {
+        font-size: .65rem;
+        color: #9ca3af;
+        flex-shrink: 0;
+        margin-right: 2px;
+    }
+
+    /* Priority badges */
+    .inbox-p-high {
+        background: rgba(239, 68, 68, .15);
+        color: #991b1b;
+        font-size: .6rem;
+        padding: 1px 5px;
+    }
+
+    .inbox-p-low {
+        background: rgba(107, 114, 128, .15);
+        color: #374151;
+        font-size: .6rem;
+        padding: 1px 5px;
+    }
+
+    /* List empty */
+    .inbox-empty {
+        text-align: center;
+        padding: 40px 20px;
+        opacity: .4;
+    }
+
+    .inbox-empty i {
+        font-size: 2.5rem;
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    /* ── Painel de leitura ── */
+    .inbox-read-col {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        min-width: 0;
+    }
+
+    .inbox-read-toolbar {
+        padding: 10px 20px;
+        border-bottom: 1px solid var(--border-color, #e8e8f0);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+    }
+
+    .inbox-read-scroll {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+    }
+
+    .inbox-msg-header {
+        margin-bottom: 20px;
+    }
+
+    .inbox-msg-title {
+        font-size: 1.1rem;
+        font-weight: 800;
+        margin-bottom: 12px;
+    }
+
+    .inbox-msg-from {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 14px;
+        background: var(--table-stripe, rgba(0, 0, 0, .02));
+        border-radius: 10px;
+        margin-bottom: 16px;
+    }
+
+    .inbox-msg-meta {
+        font-size: .76rem;
+        opacity: .6;
+        margin-top: 2px;
+    }
+
+    .inbox-msg-content {
+        font-size: .88rem;
+        line-height: 1.7;
+        padding: 16px 0;
+        border-top: 1px solid var(--border-color, #e8e8f0);
+        border-bottom: 1px solid var(--border-color, #e8e8f0);
+        margin-bottom: 20px;
+        word-break: break-word;
+        white-space: pre-wrap;
+    }
+
+    /* Thread de respostas */
+    .inbox-replies {
+        margin-bottom: 20px;
+    }
+
+    .inbox-reply-item {
+        padding: 12px 16px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        border: 1px solid var(--border-color, #e8e8f0);
+    }
+
+    .inbox-reply-item.from-admin {
+        border-left: 3px solid #FF0089;
+        background: rgba(255, 0, 137, .03);
+    }
+
+    .inbox-reply-item.from-user {
+        border-left: 3px solid #3b82f6;
+        background: rgba(59, 130, 246, .03);
+    }
+
+    .inbox-reply-meta {
+        font-size: .72rem;
+        opacity: .55;
+        margin-bottom: 6px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .inbox-reply-body {
+        font-size: .84rem;
+        line-height: 1.65;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    /* Caixa de resposta */
+    .inbox-reply-box {
+        background: var(--card-bg, #fff);
+        border: 1px solid var(--border-color, #e8e8f0);
+        border-radius: 12px;
+        padding: 14px;
+        margin-top: 10px;
+    }
+
+    .inbox-reply-box textarea {
+        width: 100%;
+        border: 1px solid var(--border-color, #e8e8f0);
+        border-radius: 8px;
+        padding: 10px;
+        font-size: .84rem;
+        resize: vertical;
+        min-height: 100px;
+        background: transparent;
+        color: inherit;
+        outline: none;
+        font-family: inherit;
+        transition: border-color .2s;
+    }
+
+    .inbox-reply-box textarea:focus {
+        border-color: #FF0089;
+    }
+
+    /* Welcome/empty state */
+    .inbox-welcome {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        opacity: .35;
+        padding: 40px;
+        text-align: center;
+    }
+
+    /* Paginação */
+    .inbox-pag {
+        padding: 8px 14px;
+        border-top: 1px solid var(--border-color, #e8e8f0);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+    }
+
+    .inbox-pag .page-link {
+        border-radius: 6px !important;
+        font-size: .75rem;
+        margin: 0 1px;
+    }
+
+    /* Status badge na toolbar */
+    .status-select-sm {
+        font-size: .75rem;
+        padding: 3px 8px;
+        border-radius: 7px;
+        border: 1px solid var(--border-color, #e8e8f0);
+        background: transparent;
+        color: inherit;
+    }
+
+    /* ── Responsivo ── */
+    @media (max-width: 991px) {
+        .inbox-sidebar {
+            display: none;
+        }
+
+        .inbox-list-col {
+            width: 100%;
+            border-right: none;
+        }
+
+        .inbox-list-col.reading-mode {
+            display: none;
+        }
+
+        .inbox-read-col {
+            display: none;
+        }
+
+        .inbox-read-col.reading-mode {
+            display: flex;
+        }
+
+        .inbox-back-btn {
+            display: flex !important;
+        }
+    }
+
+    .inbox-back-btn {
+        display: none;
+    }
+    </style>
 </head>
 
 <body>
-  <div class="wrapper">
-    <!-- Sidebar Overlay -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-      <div class="sidebar-header">
-        <div class="d-flex align-items-center">
-          <img src="../../../assets/img/brand/wasomupfy_brand.png" alt="Logo Wasom Upfy" class="rounded-circle me-2"
-            style="height: 40px" />
-          <span class="brand-text"><?php echo APP_NAME; ?></span>
-        </div>
-        <i class="bi bi-chevron-left toggle-icon" id="sidebarCollapse" title="Colapsar/Expandir Menu"
-          aria-label="Colapsar/Expandir Menu"></i>
-      </div>
-      <ul class="nav flex-column mt-3">
-        <li class="nav-item">
-          <a href="../../home" class="nav-link">
-            <i class="bi bi-speedometer2"></i>
-            <span>Painel de Controle</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="#collapseAnalytics" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-            aria-controls="collapseAnalytics">
-            <i class="bi bi-graph-up"></i>
-            <span>Estatísticas e Análises</span>
-            <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem"></i>
-          </a>
-          <div class="collapse" id="collapseAnalytics">
-            <a href="../analytics/home" class="nav-link">
-              <i class="bi bi-bar-chart-line"></i>
-              <span>Visão Geral</span>
-            </a>
-            <a href="../analytics/artists" class="nav-link">
-              <i class="bi bi-person-lines-fill"></i>
-              <span>Desempenho por Artista</span>
-            </a>
-            <a href="../analytics/stores" class="nav-link">
-              <i class="bi bi-shop"></i>
-              <span>Desempenho por Loja Digital</span>
-            </a>
-            <a href="../analytics/reports" class="nav-link">
-              <i class="bi bi-file-earmark-bar-graph"></i>
-              <span>Relatórios Personalizados</span>
-            </a>
-          </div>
-        </li>
+    <div class="wrapper">
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        <?php require_once __DIR__ . '/../../include/sidebar.php'; ?>
 
-        <li class="nav-item">
-          <a href="#collapseAdmins" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-            aria-controls="collapseAdmins">
-            <i class="bi bi-person-gear"></i>
-            <span>Gestão de Admins</span>
-            <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem"></i>
-          </a>
-          <div class="collapse" id="collapseAdmins">
-            <a href="../employees/all-employees" class="nav-link">
-              <i class="bi bi-people"></i>
-              <span>Listar Admins</span>
-            </a>
-            <a href="../employees/add" class="nav-link">
-              <i class="bi bi-person-plus"></i>
-              <span>Adicionar</span>
-            </a>
-            <a href="../employees/edit" class="nav-link">
-              <i class="bi bi-person-gear"></i>
-              <span>Editar</span>
-            </a>
-            <a href="../employees/delete" class="nav-link">
-              <i class="bi bi-person-x"></i>
-              <span>Excluir</span>
-            </a>
-          </div>
-        </li>
-        <li class="nav-item">
-          <a href="#collapseUsers" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-            aria-controls="collapseUsers">
-            <i class="bi bi-person-gear"></i>
-            <span>Gestão de Usuários</span>
-            <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem"></i>
-          </a>
-          <div class="collapse" id="collapseUsers">
-            <a href="../users/all-users" class="nav-link">
-              <i class="bi bi-people"></i>
-              <span>Todos Usuários</span>
-            </a>
-            <a href="../users/add" class="nav-link">
-              <i class="bi bi-person-plus"></i>
-              <span>Adicionar</span>
-            </a>
-            <a href="../users/edit" class="nav-link">
-              <i class="bi bi-person-gear"></i>
-              <span>Editar</span>
-            </a>
-            <a href="../users/delete" class="nav-link">
-              <i class="bi bi-person-x"></i>
-              <span>Excluir</span>
-            </a>
-            <a href="../users/available-account" class="nav-link">
-              <i class="bi bi-person-check"></i>
-              <span>Contas Disponíveis</span>
-            </a>
-            <a href="../users/unavailable-account" class="nav-link">
-              <i class="bi bi-person-exclamation"></i>
-              <span>Contas Indisponíveis</span>
-            </a>
-          </div>
-        </li>
-        <li class="nav-item">
-          <a href="#collapseSongs" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-            aria-controls="collapseSongs">
-            <i class="bi bi-music-note-list"></i>
-            <span>Gestão de Músicas</span>
-            <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem"></i>
-          </a>
-          <div class="collapse" id="collapseSongs">
-            <a href="../music/revise" class="nav-link">
-              <i class="bi bi-eye"></i>
-              <span>Revisar Envios</span>
-            </a>
-            <a href="../music/approve" class="nav-link">
-              <i class="bi bi-check-circle"></i>
-              <span>Aprovar</span>
-            </a>
-            <a href="../music/reject" class="nav-link">
-              <i class="bi bi-x-circle"></i>
-              <span>Rejeitar</span>
-            </a>
-          </div>
-        </li>
-        <li class="nav-item">
-          <a href="../artist/accounts-users" class="nav-link">
-            <i class="bi bi-person-check"></i>
-            <span>Contas e Usuários</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="../artist/collaborators-artist" class="nav-link">
-            <i class="bi bi-people"></i>
-            <span>Artistas e Colaboradores</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="#collapseDistribution" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-            aria-controls="collapseDistribution">
-            <i class="bi bi-globe"></i>
-            <span>Distribuição</span>
-            <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem"></i>
-          </a>
-          <div class="collapse" id="collapseDistribution">
-            <a href="../distribution/releases" class="nav-link">
-              <i class="bi bi-rocket-takeoff"></i>
-              <span>Lançamentos</span>
-            </a>
-            <a href="../distribution/store" class="nav-link">
-              <i class="bi bi-shop"></i>
-              <span>Lojas Digitais</span>
-            </a>
-            <a href="../distribution/schedule" class="nav-link">
-              <i class="bi bi-calendar-event"></i>
-              <span>Agendar Lançamento</span>
-            </a>
-          </div>
-        </li>
-        <li class="nav-item">
-          <a href="../manager/gestion" class="nav-link">
-            <i class="bi bi-star"></i>
-            <span>Gestão Geral</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="../finances/payments" class="nav-link">
-            <i class="bi bi-wallet2"></i>
-            <span>Pagamentos</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="../finances/earnings" class="nav-link">
-            <i class="bi bi-currency-dollar"></i>
-            <span>Finanças e Rendimentos</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="#collapseIntegration" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-            aria-controls="collapseIntegration">
-            <i class="bi bi-youtube"></i>
-            <span>Unificação e V. Youtube</span>
-            <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem"></i>
-          </a>
-          <div class="collapse" id="collapseIntegration">
-            <a href="../integration/youtube" class="nav-link">
-              <i class="bi bi-gear"></i>
-              <span>Configurar Integração</span>
-            </a>
-            <a href="../integration/verify" class="nav-link">
-              <i class="bi bi-check2-all"></i>
-              <span>Verificar Canais</span>
-            </a>
-            <a href="../integration/monetization" class="nav-link">
-              <i class="bi bi-youtube"></i>
-              <span>Gerenciamento de Conteúdo Monetizado</span>
-            </a>
-          </div>
-        </li>
+        <div class="content w-100" id="mainContent" style="padding:0">
+            <?php require_once __DIR__ . '/../../include/navbar.php'; ?>
 
-        <li class="nav-item">
-          <a href="#collapseSupport" class="nav-link active" data-bs-toggle="collapse" aria-expanded="false"
-            aria-controls="collapseSupport">
-            <i class="bi bi-headset"></i>
-            <span>Suporte</span>
-            <span class="badge bg-danger badge-notification">3</span>
-            <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem"></i>
-          </a>
-          <div class="collapse" id="collapseSupport">
-            <a href="../messages/inbox" class="nav-link active">
-              <i class="bi bi-envelope"></i>
-              <span>Caixa de entrada</span>
-            </a>
-            <a href="../messages/compose" class="nav-link">
-              <i class="bi bi-pencil"></i>
-              <span>Enviar mensagens</span>
-            </a>
-          </div>
-        </li>
-
-        <li class="nav-item">
-          <a href="#collapseHelp" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-            aria-controls="collapseHelp">
-            <i class="bi bi-question-circle"></i>
-            <span>Ajuda</span>
-            <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem"></i>
-          </a>
-          <div class="collapse" id="collapseHelp">
-            <a href="../help/faqs" class="nav-link">
-              <i class="bi bi-messenger"></i>
-              <span>FAQs</span>
-            </a>
-            <a href="../help/tutorials" class="nav-link">
-              <i class="bi bi-book"></i>
-              <span>Tutoriais</span>
-            </a>
-            <a href="../help/contact" class="nav-link">
-              <i class="bi bi-telephone"></i>
-              <span>Contacto com suporte</span>
-            </a>
-          </div>
-        </li>
-        <li class="nav-item">
-          <a href="../settings/config" class="nav-link">
-            <i class="bi bi-sliders"></i>
-            <span>Configurações</span>
-          </a>
-        </li>
-        <li class="nav-item mt-4">
-          <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#logoutwasomupfy">
-            <i class="bi bi-box-arrow-right"></i>
-            <span>Logout</span>
-          </a>
-        </li>
-        <li class="nav-item mt-4">
-          <a href="http://localhost:5500/home" target="_blank" class="nav-link">
-            <i class="bi bi-box-arrow-in-up-right"></i>
-            <span>Visitar Site</span>
-          </a>
-        </li>
-      </ul>
-    </div>
-
-    <div class="content w-100" id="mainContent">
-      <nav class="navbar navbar-expand-lg">
-        <button class="navbar-toggler" type="button" id="sidebarToggle" aria-label="Abrir/Fechar Menu">
-          <i class="bi bi-list text-white"></i>
-        </button>
-        <div class="ms-auto d-flex align-items-center">
-          <button class="btn btn-outline-light btn-sm me-2" onclick="toggleDarkMode()"
-            aria-label="Alternar Modo Escuro">
-            <i class="bi bi-moon"></i>
-          </button>
-          <div class="dropdown me-2 position-relative">
-            <button class="btn btn-outline-light btn-sm position-relative" type="button" data-bs-toggle="dropdown"
-              aria-label="Notificações">
-              <i class="bi bi-bell"></i>
-              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">5</span>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-start p-0" style="min-width: 250px">
-              <li class="dropdown-header bg-dark text-white p-2">
-                Notificações (5)
-              </li>
-              <li>
-                <a class="dropdown-item p-2" href="#">Novo artista registrado</a>
-              </li>
-              <li>
-                <a class="dropdown-item p-2" href="#">Música atingiu 1000 plays</a>
-              </li>
-              <li>
-                <a class="dropdown-item p-2" href="#">Atualização do sistema disponível</a>
-              </li>
-              <li class="dropdown-footer text-center p-2">
-                <a href="#" class="text-primary">Ver todas</a>
-              </li>
-            </ul>
-          </div>
-          <div class="dropdown me-2 position-relative">
-            <button class="btn btn-outline-light btn-sm position-relative" type="button" data-bs-toggle="dropdown"
-              aria-label="Mensagens">
-              <i class="bi bi-envelope"></i>
-              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">2</span>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-start p-0" style="min-width: 250px">
-              <li class="dropdown-header bg-dark text-white p-2">
-                Mensagens (2)
-              </li>
-              <li>
-                <a class="dropdown-item p-2" href="#">Suporte #4521 - Novo ticket</a>
-              </li>
-              <li>
-                <a class="dropdown-item p-2" href="#">Mensagem de artista</a>
-              </li>
-              <li class="dropdown-footer text-center p-2">
-                <a href="#" class="text-primary">Ver todas</a>
-              </li>
-            </ul>
-          </div>
-          <div class="dropdown">
-            <button class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center" type="button"
-              data-bs-toggle="dropdown" aria-label="Menu do Usuário">
-              <img src="../../../assets/img/avatar/avatar.png" alt="Usuário" class="rounded-circle me-1"
-                style="height: 24px" />
-              <span>Cristiano Amadeu</span>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end">
-              <li>
-                <a class="dropdown-item" href="../user/profile"><i class="bi bi-person me-2"></i>Perfil</a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="../settings/config"><i class="bi bi-sliders me-2"></i>Configurações</a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="../help/help"><i class="bi bi-question-circle me-2"></i>Ajuda</a>
-              </li>
-              <li>
-                <hr class="dropdown-divider" />
-              </li>
-              <li>
-                <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutwasomupfy" href="#"><i
-                    class="bi bi-box-arrow-right me-2"></i>Sair</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-
-      <!-- Adicione isso dentro da tag <nav class="bottom-nav"> -->
-      <div class="connection-status" id="connectionStatus"></div>
-      <div class="status-notification" id="statusNotification"></div>
-
-      <!-- ════ MODAL — Logout ════ -->
-      <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content modal-bottom">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">
-                Terminar sessão
-              </h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <div class="container">
-                <div class="row justify-content-center text-center">
-                  <div class="col-md-12 content-center justify-center text-center">
-                    <p class="text-center text-dark">
-                      @josembengadacosta você tem certeza de que desejas
-                      terminar sessão?
-                    </p>
-                  </div>
+            <!-- Título e breadcrumb acima do inbox -->
+            <div class="d-flex align-items-center gap-3 px-3 py-2"
+                style="border-bottom:1px solid var(--border-color,#e8e8f0)">
+                <div>
+                    <span style="font-size:.95rem;font-weight:800"><i class="bi bi-inbox me-2"></i>Caixa de
+                        Entrada</span>
+                    <span style="font-size:.75rem;opacity:.5;margin-left:8px"><?php echo number_format($total); ?>
+                        mensage<?php echo $total !== 1 ? 'ns' : 'm'; ?></span>
                 </div>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <div>
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
-                  Não, continuar
-                </button>
-              </div>
-              <div>
-                <button class="btn btn-danger" type="button" name="logout_wasomupfy" onclick="logout_wasomupfy()">
-                  Sim, terminar
-                </button>
-              </div>
-              <script type="text/javascript">
-                function logout_wasomupfy() {
-                  window.location = "logout";
-                }
-              </script>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- ════ MODAL — Logout  FIM ════ -->
-
-      <div class="container-fluid py-0">
-        <div class="row mb-3 mt-2">
-          <div class="welcome-text col-auto d-sm-block">
-            <h2 class="mb-3">
-              <i class="bi bi-envelope me-2"></i> Caixa de Entrada
-            </h2>
-            <nav aria-label="breadcrumb">
-              <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item">
-                  <a href="../../home" class="text-secondary">Dashboard</a>
-                </li>
-                <li class="breadcrumb-item">
-                  <a href="tickets" class="text-secondary">Suporte</a>
-                </li>
-                <li class="breadcrumb-item active text-white-stable" aria-current="page">
-                  Caixa de Entrada
-                </li>
-              </ol>
-            </nav>
-          </div>
-          <div class="col-auto ms-auto text-end mt-n1 mt-3 mb-2">
-            <div class="d-flex gap-2">
-              <button class="btn btn-wasomupfy text-white shadow-sm" onclick="window.location.href='compose'">
-                <i class="bi bi-pencil me-1"></i> Nova Mensagem
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-3">
-            <!-- Pastas -->
-            <div class="card">
-              <div class="card-body folder-sidebar">
-                <div class="mb-3">
-                  <button class="btn btn-primary w-100" onclick="window.location.href='compose'">
-                    <i class="bi bi-pencil-square me-1"></i> Escrever
-                  </button>
-                </div>
-
-                <div class="folder-item active">
-                  <i class="bi bi-inbox me-2"></i> Caixa de Entrada
-                  <span class="badge bg-primary float-end">12</span>
-                </div>
-                <div class="folder-item">
-                  <i class="bi bi-star me-2"></i> Favoritos
-                  <span class="badge bg-warning float-end">3</span>
-                </div>
-                <div class="folder-item">
-                  <i class="bi bi-send me-2"></i> Enviadas
-                  <span class="badge bg-success float-end">24</span>
-                </div>
-                <div class="folder-item">
-                  <i class="bi bi-clock me-2"></i> Rascunhos
-                  <span class="badge bg-secondary float-end">2</span>
-                </div>
-                <div class="folder-item">
-                  <i class="bi bi-trash me-2"></i> Lixeira
-                  <span class="badge bg-danger float-end">15</span>
-                </div>
-                <div class="folder-item">
-                  <i class="bi bi-exclamation-circle me-2"></i> Importantes
-                </div>
-                <div class="folder-item">
-                  <i class="bi bi-chat me-2"></i> Tickets
-                </div>
-
-                <hr />
-
-                <h6 class="mb-2">Etiquetas</h6>
-                <div class="folder-item">
-                  <i class="bi bi-circle-fill me-2" style="color: #28a745"></i>
-                  Suporte
-                </div>
-                <div class="folder-item">
-                  <i class="bi bi-circle-fill me-2" style="color: #007bff"></i>
-                  Financeiro
-                </div>
-                <div class="folder-item">
-                  <i class="bi bi-circle-fill me-2" style="color: #ffc107"></i>
-                  Artistas
-                </div>
-                <div class="folder-item">
-                  <i class="bi bi-circle-fill me-2" style="color: #dc3545"></i>
-                  Urgente
-                </div>
-              </div>
+                <?php if ($total_unread > 0): ?>
+                <span class="badge" style="background:#FF0089;font-size:.7rem"><?php echo $total_unread; ?> não
+                    lida<?php echo $total_unread !== 1 ? 's' : ''; ?></span>
+                <?php endif; ?>
             </div>
 
-            <!-- Filtros Rápidos -->
-            <div class="card mt-3">
-              <div class="card-header">
-                <h6 class="mb-0">Filtrar por</h6>
-              </div>
-              <div class="card-body">
-                <div class="form-check mb-2">
-                  <input class="form-check-input" type="checkbox" id="filterUnread" />
-                  <label class="form-check-label" for="filterUnread">
-                    Não lidas
-                  </label>
-                </div>
-                <div class="form-check mb-2">
-                  <input class="form-check-input" type="checkbox" id="filterStarred" />
-                  <label class="form-check-label" for="filterStarred">
-                    Com estrela
-                  </label>
-                </div>
-                <div class="form-check mb-2">
-                  <input class="form-check-input" type="checkbox" id="filterImportant" />
-                  <label class="form-check-label" for="filterImportant">
-                    Importantes
-                  </label>
-                </div>
-                <div class="form-check mb-2">
-                  <input class="form-check-input" type="checkbox" id="filterAttachments" />
-                  <label class="form-check-label" for="filterAttachments">
-                    Com anexos
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
+            <!-- Inbox layout -->
+            <div class="inbox-wrap">
 
-          <div class="col-md-9">
-            <!-- Barra de Ferramentas -->
-            <div class="card mb-3">
-              <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                  <div class="d-flex align-items-center">
-                    <div class="form-check me-3">
-                      <input class="form-check-input" type="checkbox" id="selectAll" />
-                      <label class="form-check-label" for="selectAll">
-                        Selecionar todas
-                      </label>
-                    </div>
-                    <div class="dropdown">
-                      <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button"
-                        data-bs-toggle="dropdown">
-                        Ações
-                      </button>
-                      <ul class="dropdown-menu">
-                        <li>
-                          <a class="dropdown-item" href="#"><i class="bi bi-check2-square me-2"></i> Marcar
-                            como lida</a>
-                        </li>
-                        <li>
-                          <a class="dropdown-item" href="#"><i class="bi bi-star me-2"></i> Adicionar
-                            estrela</a>
-                        </li>
-                        <li>
-                          <a class="dropdown-item" href="#"><i class="bi bi-exclamation-circle me-2"></i>
-                            Marcar como importante</a>
-                        </li>
-                        <li>
-                          <hr class="dropdown-divider" />
-                        </li>
-                        <li>
-                          <a class="dropdown-item text-danger" href="#"><i class="bi bi-trash me-2"></i> Mover para
-                            lixeira</a>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                  <div class="d-flex align-items-center">
-                    <div class="input-group input-group-sm me-2" style="width: 200px">
-                      <input type="text" class="form-control" placeholder="Buscar mensagens..." />
-                      <button class="btn btn-outline-secondary">
-                        <i class="bi bi-search"></i>
-                      </button>
-                    </div>
-                    <button class="btn btn-outline-secondary btn-sm">
-                      <i class="bi bi-arrow-clockwise"></i>
+                <!-- ── SIDEBAR ── -->
+                <div class="inbox-sidebar">
+                    <button class="inbox-compose-btn" data-bs-toggle="modal" data-bs-target="#modalCompose">
+                        <i class="bi bi-pencil-square"></i> Nova Mensagem
                     </button>
-                  </div>
+
+                    <nav class="inbox-nav">
+                        <div class="inbox-nav-sep">Caixa</div>
+                        <?php
+                    $tabs = [
+                        ['all',      'bi-inbox',           'Todas',        $total_unread],
+                        ['tickets',  'bi-headset',         'Suporte',      $unread_tickets],
+                        ['contact',  'bi-envelope-open',   'Contacto Site',$unread_contact],
+                        ['feedback', 'bi-chat-square-text','Feedbacks',    $unread_feedback],
+                    ];
+                    foreach ($tabs as [$t, $icon, $label, $badge]):
+                        $is_active = $tab === $t;
+                        $q = array_merge($_GET, ['tab' => $t, 'page' => 1, 'open' => '', 'src' => '']);
+                        unset($q['open'],$q['src']);
+                    ?>
+                        <a href="?<?php echo http_build_query($q); ?>"
+                            class="inbox-nav-item <?php echo $is_active?'active':''; ?>">
+                            <i class="bi <?php echo $icon; ?>"></i>
+                            <?php echo $label; ?>
+                            <?php if ($badge > 0): ?>
+                            <span class="inbox-nav-badge"><?php echo $badge > 99 ? '99+' : $badge; ?></span>
+                            <?php endif; ?>
+                        </a>
+                        <?php endforeach; ?>
+
+                        <div class="inbox-nav-sep" style="margin-top:10px">Organizar</div>
+                        <?php
+                    $tabs2 = [
+                        ['starred',  'bi-star-fill',  'Importantes',  $total_starred],
+                        ['archived', 'bi-archive',    'Arquivadas',   0],
+                    ];
+                    foreach ($tabs2 as [$t, $icon, $label, $badge]):
+                        $is_active = $tab === $t;
+                        $q = array_merge($_GET, ['tab' => $t, 'page' => 1]);
+                        unset($q['open'],$q['src']);
+                    ?>
+                        <a href="?<?php echo http_build_query($q); ?>"
+                            class="inbox-nav-item <?php echo $is_active?'active':''; ?>">
+                            <i class="bi <?php echo $icon; ?>"
+                                style="<?php echo $t==='starred'?'color:#f59e0b':''; ?>"></i>
+                            <?php echo $label; ?>
+                            <?php if ($badge > 0): ?>
+                            <span class="inbox-nav-badge" style="background:#f59e0b"><?php echo $badge; ?></span>
+                            <?php endif; ?>
+                        </a>
+                        <?php endforeach; ?>
+                    </nav>
                 </div>
-              </div>
-            </div>
 
-            <!-- Lista de Emails -->
-            <div id="emailsList">
-              <!-- Emails serão carregados via JavaScript -->
-              <div class="text-center py-5">
-                <div class="spinner-border text-primary" role="status">
-                  <span class="visually-hidden">Carregando...</span>
+                <!-- ── LISTA DE MENSAGENS ── -->
+                <div class="inbox-list-col" id="listCol"
+                    <?php echo ($selected && $sel_src) ? 'class="inbox-list-col"' : ''; ?>>
+                    <!-- Search bar -->
+                    <div class="inbox-list-head">
+                        <form method="GET" style="display:contents" id="search-form">
+                            <input type="hidden" name="tab" value="<?php echo htmlspecialchars($tab); ?>">
+                            <div class="inbox-search-wrap">
+                                <i class="bi bi-search"></i>
+                                <input type="text" name="q" class="inbox-search" placeholder="Pesquisar mensagens..."
+                                    value="<?php echo htmlspecialchars($f_search); ?>" id="inbox-search-input">
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Lista -->
+                    <div class="inbox-list-scroll" id="msgList">
+                        <?php if (empty($messages)): ?>
+                        <div class="inbox-empty">
+                            <i class="bi bi-inbox"></i>
+                            <p class="mb-0">Nenhuma mensagem encontrada.</p>
+                        </div>
+                        <?php else: ?>
+                        <?php foreach ($messages as $msg):
+                        [$src_label, $src_color, $src_icon] = inbox_source_label($msg['source']);
+                        $is_unread  = in_array($msg['msg_status'], ['new','open']);
+                        $is_starred = (bool)$msg['is_starred'];
+                        $is_active  = ($selected == $msg['msg_id'] && $sel_src === $msg['source']);
+
+                        // Avatar
+                        $name  = $msg['sender_name'] ?: 'Visitante';
+                        $parts = explode(' ', trim($name), 2);
+                        $ini   = mb_strtoupper(mb_substr($parts[0]??'',0,1,'UTF-8'),'UTF-8')
+                               . mb_strtoupper(mb_substr($parts[1]??'',0,1,'UTF-8'),'UTF-8');
+                        $colors= ['#FF0089','#f97316','#8b5cf6','#06b6d4','#22c55e','#eab308','#3b82f6','#ef4444'];
+                        $avc   = $colors[abs(crc32($name)) % count($colors)];
+
+                        $open_url = '?' . http_build_query(array_merge($_GET, ['open'=>$msg['msg_id'],'src'=>$msg['source'],'page'=>$page]));
+                    ?>
+                        <a href="<?php echo $open_url; ?>"
+                            class="inbox-msg-item <?php echo $is_unread?'unread':''; ?> <?php echo $is_starred?'starred':''; ?> <?php echo $is_active?'active':''; ?>"
+                            data-id="<?php echo (int)$msg['msg_id']; ?>"
+                            data-source="<?php echo htmlspecialchars($msg['source']); ?>"
+                            onclick="loadMessage(<?php echo (int)$msg['msg_id']; ?>,'<?php echo htmlspecialchars($msg['source']); ?>',this);return false">
+
+                            <!-- Unread dot -->
+                            <div style="width:6px;flex-shrink:0;padding-top:16px">
+                                <?php if ($is_unread): ?>
+                                <div style="width:6px;height:6px;border-radius:50%;background:#FF0089"></div>
+                                <?php endif; ?>
+                            </div>
+
+                            <!-- Avatar -->
+                            <?php if ($msg['sender_photo']): ?>
+                            <img src="<?php echo APP_URL; ?>/assets/comprovantes/uploads/users/<?php echo htmlspecialchars($msg['sender_photo']); ?>"
+                                class="inbox-avatar" alt=""
+                                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                            <div class="inbox-avatar-ini" style="background:<?php echo $avc; ?>;display:none">
+                                <?php echo $ini; ?></div>
+                            <?php else: ?>
+                            <div class="inbox-avatar-ini" style="background:<?php echo $avc; ?>"><?php echo $ini; ?>
+                            </div>
+                            <?php endif; ?>
+
+                            <!-- Corpo -->
+                            <div class="inbox-msg-body">
+                                <div class="inbox-msg-top">
+                                    <span class="inbox-sender"><?php echo htmlspecialchars($name); ?></span>
+                                    <span class="inbox-time"><?php echo inbox_relative($msg['created_at']); ?></span>
+                                </div>
+                                <div class="inbox-subject">
+                                    <?php echo inbox_status_badge($msg['msg_status']); ?>
+                                    <?php echo htmlspecialchars($msg['subject']); ?>
+                                </div>
+                                <div class="inbox-preview"><?php echo htmlspecialchars($msg['body_preview']); ?></div>
+                                <div class="mt-1 d-flex align-items-center gap-1">
+                                    <span class="inbox-source-pill"
+                                        style="background:<?php echo $src_color; ?>1a;color:<?php echo $src_color; ?>">
+                                        <i class="bi <?php echo $src_icon; ?>" style="font-size:.55rem"></i>
+                                        <?php echo $src_label; ?>
+                                    </span>
+                                    <?php echo inbox_priority_label($msg['priority']); ?>
+                                </div>
+                            </div>
+
+                            <!-- Estrela -->
+                            <button class="inbox-star-btn"
+                                onclick="toggleStar(event, <?php echo (int)$msg['msg_id']; ?>,'<?php echo htmlspecialchars($msg['source']); ?>',this)"
+                                title="<?php echo $is_starred?'Remover importância':'Marcar como importante'; ?>">
+                                <i class="bi <?php echo $is_starred?'bi-star-fill':'bi-star'; ?>"></i>
+                            </button>
+                        </a>
+                        <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+
+                    <!-- Paginação da lista -->
+                    <?php if ($total_pages > 1): ?>
+                    <div class="inbox-pag">
+                        <span style="font-size:.72rem;opacity:.5"><?php echo number_format($total); ?> total</span>
+                        <nav>
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item <?php echo $page<=1?'disabled':''; ?>">
+                                    <a class="page-link"
+                                        href="?<?php echo http_build_query(array_merge($_GET,['page'=>$page-1])); ?>">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item disabled"><span class="page-link"
+                                        style="font-size:.72rem"><?php echo $page; ?>/<?php echo $total_pages; ?></span>
+                                </li>
+                                <li class="page-item <?php echo $page>=$total_pages?'disabled':''; ?>">
+                                    <a class="page-link"
+                                        href="?<?php echo http_build_query(array_merge($_GET,['page'=>$page+1])); ?>">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <?php endif; ?>
                 </div>
-                <p class="mt-2">Carregando mensagens...</p>
-              </div>
+
+                <!-- ── PAINEL DE LEITURA ── -->
+                <div class="inbox-read-col" id="readCol">
+
+                    <!-- Estado vazio / welcome -->
+                    <div class="inbox-welcome" id="readWelcome"
+                        <?php echo ($selected && $sel_src) ? 'style="display:none"' : ''; ?>>
+                        <i class="bi bi-inbox" style="font-size:3.5rem;margin-bottom:14px"></i>
+                        <p style="font-weight:700;font-size:.95rem">Selecciona uma mensagem</p>
+                        <p style="font-size:.8rem">Clica numa mensagem na lista para a ler aqui.</p>
+                    </div>
+
+                    <!-- Loading spinner -->
+                    <div id="readLoading" style="display:none;flex:1;align-items:center;justify-content:center">
+                        <div class="spinner-border" style="color:#FF0089"></div>
+                    </div>
+
+                    <!-- Conteúdo da mensagem (carregado via AJAX) -->
+                    <div id="readContent"
+                        style="display:<?php echo ($selected && $sel_src) ? 'flex' : 'none'; ?>;flex-direction:column;height:100%;overflow:hidden">
+
+                        <!-- Toolbar acções -->
+                        <div class="inbox-read-toolbar" id="readToolbar">
+                            <button class="btn btn-sm btn-outline-secondary inbox-back-btn" id="btnBack"
+                                onclick="closeRead()">
+                                <i class="bi bi-arrow-left"></i>
+                            </button>
+                            <div id="toolbarActions" class="d-flex gap-2 align-items-center flex-wrap flex-fill">
+                                <!-- Preenchido via JS -->
+                            </div>
+                        </div>
+
+                        <!-- Scroll do conteúdo -->
+                        <div class="inbox-read-scroll" id="readBody">
+                            <!-- Preenchido via AJAX -->
+                            <?php if ($selected && $sel_src): ?>
+                            <div class="text-center py-5">
+                                <div class="spinner-border" style="color:#FF0089"></div>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div><!-- /inbox-wrap -->
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════
+     MODAL — Nova Mensagem (Compose)
+════════════════════════════════════════════════════════════ -->
+    <div class="modal fade" id="modalCompose" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header" style="background:#FF0089">
+                    <h5 class="modal-title text-white fw-bold">
+                        <i class="bi bi-pencil-square me-2"></i>Nova Mensagem
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Para <span class="text-danger">*</span></label>
+                        <input type="email" class="form-control" id="compose_to" placeholder="email@destinatario.com">
+                        <div class="form-text">Podes escrever directamente para qualquer email.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Assunto <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="compose_subject" placeholder="Assunto da mensagem">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Mensagem <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="compose_body" rows="6"
+                            placeholder="Escreve a tua mensagem..."></textarea>
+                    </div>
+                    <div class="alert alert-danger d-none" id="compose_error" style="font-size:.78rem"></div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-outline-secondary btn-sm"
+                        data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-sm text-white" style="background:#FF0089"
+                        id="btn_send_compose">
+                        <span class="normal-lbl"><i class="bi bi-send me-1"></i>Enviar Email</span>
+                        <span class="loading-lbl d-none"><span class="spinner-border spinner-border-sm me-1"></span>A
+                            enviar…</span>
+                    </button>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
 
-  <!-- Footer -->
-  <footer>
-    <div class="container">
-      <div class="row">
-        <div class="col-12 text-center">
-          <p class="mb-2">© 2026 Wasom Upfy. Todos os direitos reservados.</p>
-          <a href="#" class="me-2">Termos de Uso</a>
-          <a href="#" class="me-2">Privacidade</a>
-          <a href="#">Suporte</a>
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-content">
+            <img src="<?php echo APP_URL; ?>/assets/img/brand/wasomupfy_brand.png" class="loader-image" alt="" />
+            <div class="loader-progress"></div>
         </div>
-      </div>
     </div>
-  </footer>
 
-  <!-- Bottom Navigation -->
-  <!-- <nav class="bottom-nav">
-    <ul>
-        <li>
-            <a href="home" class="active">
-                <i class="bi bi-speedometer2"></i>
-                <span>Dashboard</span>
-            </a>
-        </li>
-        <li>
-            <a href="pages/music/approve">
-                <i class="bi bi-music-note-list"></i>
-                <span>Músicas</span>
-            </a>
-        </li>
-        <li>
-            <a href="pages/users/all-users">
-                <i class="bi bi-people"></i>
-                <span>Usuários</span>
-            </a>
-        </li>
-        <li>
-            <a href="pages/finances/earnings">
-                <i class="bi bi-currency-dollar"></i>
-                <span>Finanças</span>
-            </a>
-        </li>
-        <li>
-            <a href="pages/settings/config">
-                <i class="bi bi-sliders"></i>
-                <span>Config</span>
-            </a>
-        </li>
-    </ul>
-</nav> -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="<?php echo APP_URL; ?>/js/lastest.js"></script>
+    <script>
+    (function() {
+        'use strict';
 
-  <div class="page-loader" id="pageLoader">
-    <div class="loader-content">
-      <!-- Sua imagem pulsante -->
-      <img src="../../../assets/img/brand/wasomupfy_brand.png" class="loader-image" alt="Carregando" />
-      <!-- Barra de progresso agora perfeitamente centralizada -->
-      <div class="loader-progress"></div>
-    </div>
-  </div>
+        window.__BASE_URL__ = '<?php echo APP_URL; ?>';
+        window.__ADMIN_PATH__ = '<?php echo ADMIN_PATH; ?>';
 
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="<?php echo APP_URL  ?>/js/lastest.js"></script>
-  <script src="js/inbox.js"></script>
+        const CSRF = document.querySelector('meta[name="csrf-token"]').content;
+        const PROCESS = '<?php echo $proc_url; ?>';
+
+        // ── AJAX helper ──────────────────────────────────────
+        async function post(payload) {
+            const fd = new FormData();
+            Object.entries(payload).forEach(([k, v]) => fd.append(k, v));
+            fd.append('csrf_token', CSRF);
+            const r = await fetch(PROCESS, {
+                method: 'POST',
+                credentials: 'same-origin',
+                body: fd
+            });
+            return r.json();
+        }
+
+        function setLoad(btn, state) {
+            btn.querySelector('.normal-lbl').classList.toggle('d-none', state);
+            btn.querySelector('.loading-lbl').classList.toggle('d-none', !state);
+            btn.disabled = state;
+        }
+
+        // ── Carregar mensagem no painel direito ──────────────
+        let currentId = <?php echo $selected ?: 0; ?>;
+        let currentSrc = '<?php echo htmlspecialchars($sel_src); ?>';
+
+        window.loadMessage = async function(id, src, el) {
+            // Actualizar URL sem reload
+            const url = new URL(window.location);
+            url.searchParams.set('open', id);
+            url.searchParams.set('src', src);
+            history.pushState({}, '', url);
+
+            // Highlight na lista
+            document.querySelectorAll('.inbox-msg-item').forEach(i => i.classList.remove('active'));
+            if (el) el.classList.add('active');
+
+            // Mostrar loading
+            document.getElementById('readWelcome').style.display = 'none';
+            document.getElementById('readLoading').style.display = 'flex';
+            document.getElementById('readContent').style.display = 'none';
+
+            // Mobile: esconder lista
+            if (window.innerWidth <= 991) {
+                document.getElementById('listCol').classList.add('reading-mode');
+                document.getElementById('readCol').classList.add('reading-mode');
+            }
+
+            currentId = id;
+            currentSrc = src;
+
+            try {
+                const data = await post({
+                    action: 'load_message',
+                    msg_id: id,
+                    source: src
+                });
+                if (data.ok) {
+                    document.getElementById('readBody').innerHTML = data.html;
+                    document.getElementById('toolbarActions').innerHTML = data.toolbar_html;
+                    document.getElementById('readLoading').style.display = 'none';
+                    document.getElementById('readContent').style.display = 'flex';
+
+                    // Marcar não-lida como lida automaticamente
+                    if (data.was_unread) {
+                        if (el) el.classList.remove('unread');
+                        const dot = el?.querySelector('[style*="border-radius:50%"]');
+                        if (dot) dot.remove();
+                    }
+
+                    // Focar reply se existir
+                    setTimeout(() => {
+                        const ta = document.getElementById('reply_textarea');
+                        // não focar automaticamente
+                    }, 200);
+                } else {
+                    document.getElementById('readBody').innerHTML = '<div class="alert alert-danger m-3">' +
+                        data.message + '</div>';
+                    document.getElementById('readLoading').style.display = 'none';
+                    document.getElementById('readContent').style.display = 'flex';
+                }
+            } catch {
+                document.getElementById('readBody').innerHTML =
+                    '<div class="alert alert-danger m-3">Erro de ligação.</div>';
+                document.getElementById('readLoading').style.display = 'none';
+                document.getElementById('readContent').style.display = 'flex';
+            }
+        };
+
+        function closeRead() {
+            document.getElementById('listCol').classList.remove('reading-mode');
+            document.getElementById('readCol').classList.remove('reading-mode');
+            document.getElementById('readWelcome').style.display = 'flex';
+            document.getElementById('readContent').style.display = 'none';
+        }
+
+        // ── Estrelar/Desestrelar ──────────────────────────────
+        window.toggleStar = async function(e, id, src, btn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const icon = btn.querySelector('i');
+            const item = btn.closest('.inbox-msg-item');
+            const isStar = icon.classList.contains('bi-star-fill');
+            icon.className = isStar ? 'bi bi-star' : 'bi bi-star-fill';
+            btn.style.color = isStar ? '' : '#f59e0b';
+            item?.classList.toggle('starred', !isStar);
+            await post({
+                action: 'toggle_star',
+                msg_id: id,
+                source: src
+            });
+        };
+
+        // ── Responder (delegado ao body — o HTML do painel tem os handlers) ──
+        document.addEventListener('click', async function(e) {
+            // Botão de enviar resposta
+            if (e.target.closest('#btn_send_reply')) {
+                const btn = e.target.closest('#btn_send_reply');
+                const ta = document.getElementById('reply_textarea');
+                const errEl = document.getElementById('reply_error');
+                if (errEl) errEl.classList.add('d-none');
+
+                const body = ta?.value.trim();
+                if (!body || body.length < 3) {
+                    if (errEl) {
+                        errEl.textContent = 'Escreve uma resposta.';
+                        errEl.classList.remove('d-none');
+                    }
+                    return;
+                }
+
+                setLoad(btn, true);
+                try {
+                    const data = await post({
+                        action: 'reply',
+                        msg_id: currentId,
+                        source: currentSrc,
+                        body: body,
+                    });
+                    if (data.ok) {
+                        ta.value = '';
+                        await loadMessage(currentId, currentSrc, null);
+                    } else {
+                        if (errEl) {
+                            errEl.textContent = data.message;
+                            errEl.classList.remove('d-none');
+                        }
+                    }
+                } catch {
+                    if (errEl) {
+                        errEl.textContent = 'Erro de ligação.';
+                        errEl.classList.remove('d-none');
+                    }
+                }
+                setLoad(btn, false);
+            }
+
+            // Botão arquivar
+            if (e.target.closest('#btn_archive')) {
+                const btn = e.target.closest('#btn_archive');
+                const {
+                    isConfirmed
+                } = await Swal.fire({
+                    title: 'Arquivar mensagem?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#FF0089',
+                    confirmButtonText: 'Sim',
+                    cancelButtonText: 'Cancelar'
+                });
+                if (!isConfirmed) return;
+                btn.disabled = true;
+                await post({
+                    action: 'archive',
+                    msg_id: currentId,
+                    source: currentSrc
+                });
+                window.location.reload();
+            }
+
+            // Botão eliminar
+            if (e.target.closest('#btn_delete')) {
+                const {
+                    isConfirmed
+                } = await Swal.fire({
+                    title: 'Eliminar mensagem?',
+                    text: 'Esta acção é irreversível.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    confirmButtonText: 'Eliminar',
+                    cancelButtonText: 'Cancelar'
+                });
+                if (!isConfirmed) return;
+                await post({
+                    action: 'delete_msg',
+                    msg_id: currentId,
+                    source: currentSrc
+                });
+                window.location.reload();
+            }
+
+            // Mudar status (select)
+            if (e.target.id === 'status_select') {
+                await post({
+                    action: 'change_status',
+                    msg_id: currentId,
+                    source: currentSrc,
+                    new_status: e.target.value
+                });
+            }
+
+            // Atribuir a admin
+            if (e.target.id === 'assign_select') {
+                await post({
+                    action: 'assign',
+                    msg_id: currentId,
+                    source: currentSrc,
+                    assigned_to: e.target.value
+                });
+            }
+        });
+
+        // ── Compose ──────────────────────────────────────────
+        document.getElementById('btn_send_compose')?.addEventListener('click', async function() {
+            const to = document.getElementById('compose_to').value.trim();
+            const subject = document.getElementById('compose_subject').value.trim();
+            const body = document.getElementById('compose_body').value.trim();
+            const errEl = document.getElementById('compose_error');
+            errEl.classList.add('d-none');
+
+            if (!to || !subject || !body) {
+                errEl.textContent = 'Preenche todos os campos.';
+                errEl.classList.remove('d-none');
+                return;
+            }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)) {
+                errEl.textContent = 'Email inválido.';
+                errEl.classList.remove('d-none');
+                return;
+            }
+
+            setLoad(this, true);
+            try {
+                const data = await post({
+                    action: 'compose_email',
+                    to,
+                    subject,
+                    body
+                });
+                if (data.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('modalCompose')).hide();
+                    document.getElementById('compose_to').value = '';
+                    document.getElementById('compose_subject').value = '';
+                    document.getElementById('compose_body').value = '';
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Enviado!',
+                        text: 'Email enviado com sucesso.',
+                        confirmButtonColor: '#FF0089'
+                    });
+                } else {
+                    errEl.textContent = data.message;
+                    errEl.classList.remove('d-none');
+                }
+            } catch {
+                errEl.textContent = 'Erro de ligação.';
+                errEl.classList.remove('d-none');
+            }
+            setLoad(this, false);
+        });
+
+        // ── Pesquisa com debounce ─────────────────────────────
+        let dbt;
+        document.getElementById('inbox-search-input')?.addEventListener('input', function() {
+            clearTimeout(dbt);
+            dbt = setTimeout(() => document.getElementById('search-form').submit(), 500);
+        });
+
+        // ── Auto-carregar mensagem se vier via URL ────────────
+        document.addEventListener('DOMContentLoaded', function() {
+            if (<?php echo $selected ? 'true' : 'false'; ?>) {
+                loadMessage(<?php echo $selected ?: 0; ?>, '<?php echo htmlspecialchars($sel_src); ?>',
+                    null);
+            }
+        });
+
+    })();
+    </script>
 </body>
 
 </html>

@@ -339,6 +339,9 @@ RewriteRule ^wu-panel-2026/music/reject/?$                  wu-panel-2026/pages/
 # ── Distribuição ──
 RewriteRule ^wu-panel-2026/releases/?$                      wu-panel-2026/pages/distribution/releases.php [L]
 RewriteRule ^wu-panel-2026/monetization/?$                  wu-panel-2026/pages/distribution/monetization.php [L]
+RewriteRule ^wu-panel-2026/releases/view/?$                 wu-panel-2026/pages/distribution/view.php [L]
+RewriteRule ^wu-panel-2026/releases/view-process/?$         wu-panel-2026/pages/distribution/view-process.php [L]
+RewriteRule ^wu-panel-2026/releases/download-zip/?$         wu-panel-2026/pages/distribution/download-zip.php [L,QSA] 
 
 # ── Manager ──
 RewriteRule ^wu-panel-2026/manager/gestion/?$               wu-panel-2026/pages/manager/gestion.php [L]
@@ -384,7 +387,7 @@ RewriteRule ^wu-panel-2026/integration/verify-channel/?$    wu-panel-2026/pages/
 
 # ── Mensagens ──
 RewriteRule ^wu-panel-2026/messages/inbox/?$                wu-panel-2026/pages/messages/inbox.php [L]
-RewriteRule ^wu-panel-2026/messages/compose/?$              wu-panel-2026/pages/messages/compose.php [L]
+RewriteRule ^wu-panel-2026/messages/inbox-process/?$        wu-panel-2026/pages/messages/inbox-process.php [L]
 
 # ── Ajuda ──
 RewriteRule ^wu-panel-2026/help/contact/?$                  wu-panel-2026/pages/help/contact.php [L]

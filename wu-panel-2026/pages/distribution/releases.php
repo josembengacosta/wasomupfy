@@ -1,627 +1,787 @@
+<?php
+// ══════════════════════════════════════════════════════════════
+// WASOM UPFY v2.0 — Gestão de Lançamentos (Álbuns)
+// Arquivo: wu-panel-2026/pages/distribution/releases.php
+// Rota:    wu-panel-2026/releases
+// ══════════════════════════════════════════════════════════════
+require_once __DIR__ . '/../../include/platform_admin.php';
+requirePermission($admin_id, 'music.view');
+
+if (!isset($_SESSION['admin_csrf_token'])) {
+    $_SESSION['admin_csrf_token'] = bin2hex(random_bytes(32));
+}
+
+// ── Stats globais ────────────────────────────────────────────
+$stats = $db->query("
+    SELECT
+        COUNT(*)                               AS total,
+        SUM(status_album = 'pending')          AS pending,
+        SUM(status_album = 'under_review')     AS under_review,
+        SUM(status_album = 'approved')         AS approved,
+        SUM(status_album = 'rejected')         AS rejected,
+        SUM(status_album = 'draft')            AS draft,
+        SUM(status_album = 'deleting')         AS deleting
+    FROM _album
+")->fetch();
+
+// ── Filtros ──────────────────────────────────────────────────
+$per_page  = 15;
+$page      = max(1, (int)($_GET['page']   ?? 1));
+$f_status  = trim($_GET['status']  ?? '');
+$f_type    = trim($_GET['type']    ?? '');
+$f_plan    = trim($_GET['plan']    ?? '');
+$f_search  = trim($_GET['search']  ?? '');
+$sort_col  = in_array($_GET['sort'] ?? '', ['al.creat_album', 'al.title_album', 'al.status_album', 'al.release_date'])
+    ? $_GET['sort'] : 'al.creat_album';
+$sort_dir  = ($_GET['dir'] ?? 'desc') === 'asc' ? 'ASC' : 'DESC';
+
+$where  = [];
+$params = [];
+
+if ($f_status !== '') {
+    $where[]  = 'al.status_album = ?';
+    $params[] = $f_status;
+}
+if ($f_type !== '') {
+    $where[]  = 'al.type_album = ?';
+    $params[] = $f_type;
+}
+if ($f_plan !== '') {
+    $where[]  = 'up.id_plan = ?';
+    $params[] = (int)$f_plan;
+}
+if ($f_search !== '') {
+    $like     = '%' . $f_search . '%';
+    $where[]  = "(al.title_album LIKE ? OR ar.stage_name LIKE ? OR CONCAT(u.first_name,' ',COALESCE(u.second_name,'')) LIKE ? OR al.upc LIKE ?)";
+    array_push($params, $like, $like, $like, $like);
+}
+
+$sql_where = $where ? 'WHERE ' . implode(' AND ', $where) : '';
+
+$base_join = "
+    FROM _album al
+    LEFT JOIN _artist ar ON ar.id_artist = al.id_artist
+    LEFT JOIN _users u ON u.id_users = al.id_users
+    LEFT JOIN _user_plan up ON up.id_users = al.id_users AND up.status_plan = 'active'
+    LEFT JOIN _plans pl ON pl.id_plan = up.id_plan
+";
+
+// Contagem
+$cnt_stmt = $db->prepare("SELECT COUNT(DISTINCT al.id_album) $base_join $sql_where");
+$cnt_stmt->execute($params);
+$total_filtered = (int)$cnt_stmt->fetchColumn();
+$total_pages    = max(1, (int)ceil($total_filtered / $per_page));
+$page           = min($page, $total_pages);
+$offset         = ($page - 1) * $per_page;
+
+// Dados
+$stmt = $db->prepare("
+    SELECT
+        al.id_album, al.title_album, al.type_album, al.status_album,
+        al.upc, al.img_cover, al.genre_main, al.language,
+        al.release_date, al.creat_album, al.rejection_reason,
+        ar.id_artist, ar.stage_name, ar.photo_artist,
+        u.id_users, u.first_name, u.second_name, u.email_user, u.photo_user,
+        pl.name_plan, pl.slug_plan,
+        up.releases_used, up.releases_limit,
+        (SELECT COUNT(*) FROM _track t WHERE t.id_album = al.id_album) AS track_count
+    $base_join
+    $sql_where
+    GROUP BY al.id_album
+    ORDER BY $sort_col $sort_dir
+    LIMIT $per_page OFFSET $offset
+");
+$stmt->execute($params);
+$albums = $stmt->fetchAll();
+
+// Planos para filtro
+$plans = $db->query("SELECT id_plan, name_plan FROM _plans WHERE is_active=1 ORDER BY name_plan")->fetchAll();
+
+// ── Helpers ──────────────────────────────────────────────────
+function rel_status_badge(string $s): string
+{
+    return match ($s) {
+        'pending'      => '<span class="badge rel-s-pending">Pendente</span>',
+        'under_review' => '<span class="badge rel-s-review">Em Revisão</span>',
+        'approved'     => '<span class="badge rel-s-approved">Aprovado</span>',
+        'rejected'     => '<span class="badge rel-s-rejected">Rejeitado</span>',
+        'draft'        => '<span class="badge rel-s-draft">Rascunho</span>',
+        'deleting'     => '<span class="badge rel-s-deleting">A eliminar</span>',
+        default        => '<span class="badge bg-secondary">' . ucfirst($s) . '</span>',
+    };
+}
+function rel_type_label(string $t): string
+{
+    return match ($t) {
+        'single'  => '<span style="font-size:.7rem;background:rgba(255,0,137,.1);color:#FF0089;padding:2px 8px;border-radius:20px;font-weight:700">Single</span>',
+        'EP'      => '<span style="font-size:.7rem;background:rgba(59,130,246,.1);color:#3b82f6;padding:2px 8px;border-radius:20px;font-weight:700">EP</span>',
+        'album'   => '<span style="font-size:.7rem;background:rgba(139,92,246,.1);color:#8b5cf6;padding:2px 8px;border-radius:20px;font-weight:700">Álbum</span>',
+        'mixtape' => '<span style="font-size:.7rem;background:rgba(249,115,22,.1);color:#f97316;padding:2px 8px;border-radius:20px;font-weight:700">Mixtape</span>',
+        default   => '<span style="font-size:.7rem;background:#f0f0f0;color:#666;padding:2px 8px;border-radius:20px">' . htmlspecialchars($t) . '</span>',
+    };
+}
+function rel_avatar(string $name, ?string $photo, string $path, int $s = 32): string
+{
+    $p   = explode(' ', trim($name), 2);
+    $ini = mb_strtoupper(mb_substr($p[0] ?? '', 0, 1, 'UTF-8'), 'UTF-8')
+        . mb_strtoupper(mb_substr($p[1] ?? '', 0, 1, 'UTF-8'), 'UTF-8');
+    $cl  = ['#FF0089', '#f97316', '#8b5cf6', '#06b6d4', '#22c55e', '#eab308', '#3b82f6', '#ef4444'];
+    $c   = $cl[abs(crc32($name)) % count($cl)];
+    $fs  = round($s * 0.32);
+    if ($photo) {
+        return '<img src="' . APP_URL . '/' . $path . '/' . htmlspecialchars($photo) . '"
+                     width="' . $s . '" height="' . $s . '"
+                     style="border-radius:50%;object-fit:cover;border:2px solid rgba(255,0,137,.15);flex-shrink:0"
+                     onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'" alt="">
+                <div style="width:' . $s . 'px;height:' . $s . 'px;border-radius:50%;background:' . $c . ';
+                            display:none;align-items:center;justify-content:center;
+                            font-weight:700;font-size:' . $fs . 'px;color:#fff;flex-shrink:0">' . $ini . '</div>';
+    }
+    return '<div style="width:' . $s . 'px;height:' . $s . 'px;border-radius:50%;background:' . $c . ';
+                         display:flex;align-items:center;justify-content:center;
+                         font-weight:700;font-size:' . $fs . 'px;color:#fff;flex-shrink:0">' . $ini . '</div>';
+}
+function rel_sort_url(string $col, string $cur_col, string $cur_dir, array $get): string
+{
+    $dir = ($col === $cur_col && $cur_dir === 'ASC') ? 'desc' : 'asc';
+    return '?' . http_build_query(array_merge($get, ['sort' => $col, 'dir' => $dir, 'page' => 1]));
+}
+function rel_sort_icon(string $col, string $cur_col, string $cur_dir): string
+{
+    if ($col !== $cur_col) return '';
+    return $cur_dir === 'ASC' ? ' ▲' : ' ▼';
+}
+$base_url = APP_URL . '/' . ADMIN_PATH;
+?>
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-ao">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="robots" content="noindex, nofollow">
-    <meta name="author" content="José Mbenga da Costa" />
-    <meta name="theme-color" content="#FF0089">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="#FF0089">
-    <link rel="apple-touch-icon" href="../../../assets/img/icones/wasomupfy_fiv_512.png">
-    <link rel="apple-touch-startup-image" href="../../../assets/img/screenshots/splash.png">
-    <link rel="manifest" href="manifest.json">
-    <title>Todos lançamentos — <?php echo APP_NAME; ?></title>
-    <link rel="shortcut icon" href="../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon">
-    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/libs/plugins.css">
-    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/libs/scrollue.css">
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="csrf-token" content="<?php echo htmlspecialchars($_SESSION['admin_csrf_token']); ?>">
+    <title>Lançamentos — Wasom Upfy Admin</title>
+    <link rel="shortcut icon" href="<?php echo APP_URL; ?>/assets/img/icones/wasomupfy_fiv.png" type="image/x-icon" />
+    <link rel="stylesheet" href="<?php echo APP_URL; ?>/css/libs/plugins.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
-    <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/lastest-style.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <!-- Google Fonts - Poppins -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="<?php echo APP_URL; ?>/css/lastest-style.css" />
+    <style>
+        /* ── Status badges ── */
+        .rel-s-pending {
+            background: rgba(234, 179, 8, .15);
+            color: #92400e;
+        }
+
+        .rel-s-review {
+            background: rgba(59, 130, 246, .15);
+            color: #1e40af;
+        }
+
+        .rel-s-approved {
+            background: rgba(34, 197, 94, .15);
+            color: #166534;
+        }
+
+        .rel-s-rejected {
+            background: rgba(239, 68, 68, .15);
+            color: #991b1b;
+        }
+
+        .rel-s-draft {
+            background: rgba(107, 114, 128, .15);
+            color: #374151;
+        }
+
+        .rel-s-deleting {
+            background: rgba(249, 115, 22, .15);
+            color: #92400e;
+        }
+
+        .dark-mode .rel-s-pending {
+            background: rgba(234, 179, 8, .2);
+            color: #facc15;
+        }
+
+        .dark-mode .rel-s-review {
+            background: rgba(59, 130, 246, .2);
+            color: #60a5fa;
+        }
+
+        .dark-mode .rel-s-approved {
+            background: rgba(34, 197, 94, .2);
+            color: #4ade80;
+        }
+
+        .dark-mode .rel-s-rejected {
+            background: rgba(239, 68, 68, .2);
+            color: #f87171;
+        }
+
+        .dark-mode .rel-s-draft {
+            background: rgba(107, 114, 128, .2);
+            color: #9ca3af;
+        }
+
+        .dark-mode .rel-s-deleting {
+            background: rgba(249, 115, 22, .2);
+            color: #fb923c;
+        }
+
+        /* ── Stat cards ── */
+        .rel-stat {
+            background: var(--card-bg, #fff);
+            border: 1px solid var(--border-color, #e8e8f0);
+            border-radius: 12px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: transform .2s, box-shadow .2s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .rel-stat:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, .07);
+            color: inherit;
+        }
+
+        .rel-stat-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .rel-stat-val {
+            font-size: 1.3rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .rel-stat-lbl {
+            font-size: .68rem;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            opacity: .6;
+            margin-top: 2px;
+        }
+
+        /* ── Filtros ── */
+        .rel-filter {
+            background: var(--card-bg, #fff);
+            border: 1px solid var(--border-color, #e8e8f0);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+        }
+
+        .rel-filter .form-label {
+            font-size: .74rem;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        /* ── Tabela ── */
+        #rel-table th {
+            font-size: .76rem;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            font-weight: 700;
+            white-space: nowrap;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        #rel-table th:hover {
+            opacity: .75;
+        }
+
+        #rel-table td {
+            font-size: .83rem;
+            vertical-align: middle;
+        }
+
+        /* ── Capa ── */
+        .album-cover {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            object-fit: cover;
+            border: 1px solid rgba(0, 0, 0, .1);
+            flex-shrink: 0;
+        }
+
+        .album-cover-ph {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            background: rgba(255, 0, 137, .08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* ── Dropdown anti-tremor ── */
+        .actions-dropdown .dropdown-menu {
+            position: fixed !important;
+            z-index: 9999;
+            min-width: 180px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .15);
+            padding: 6px;
+        }
+
+        .actions-dropdown .dropdown-menu {
+            position: absolute !important;
+            z-index: 1060;
+            min-width: 200px;
+            margin-top: 8px;
+        }
+
+
+        .actions-dropdown .dropdown-item {
+            font-size: .82rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 14px;
+            border-radius: 8px;
+        }
+
+        /* ── Paginação ── */
+        .rel-pag .page-link {
+            border-radius: 8px !important;
+            margin: 0 2px;
+            font-size: .8rem;
+        }
+
+        /* ── Empty ── */
+        .rel-empty {
+            text-align: center;
+            padding: 48px 24px;
+            opacity: .4;
+        }
+
+        .rel-empty i {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 12px;
+        }
+    </style>
 </head>
 
 <body>
     <div class="wrapper">
-        <!-- Sidebar Overlay -->
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        <?php require_once __DIR__ . '/../../include/sidebar.php'; ?>
 
-        <!-- Sidebar -->
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="d-flex align-items-center">
-                    <img src="../../../assets/img/brand/wasomupfy_brand.png" alt="Logo Wasom Upfy"
-                        class="rounded-circle me-2" style="height: 40px;">
-                    <span class="brand-text"><?php echo APP_NAME; ?></span>
-                </div>
-                <i class="bi bi-chevron-left toggle-icon" id="sidebarCollapse" title="Colapsar/Expandir Menu"
-                    aria-label="Colapsar/Expandir Menu"></i>
-            </div>
-            <ul class="nav flex-column mt-3">
-                <li class="nav-item">
-                    <a href="../../home" class="nav-link">
-                        <i class="bi bi-speedometer2"></i>
-                        <span>Painel de Controle</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseAnalytics" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseAnalytics">
-                        <i class="bi bi-graph-up"></i>
-                        <span>Estatísticas e Análises</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseAnalytics">
-                        <a href="../analytics/home" class="nav-link">
-                            <i class="bi bi-bar-chart-line"></i>
-                            <span>Visão Geral</span>
-                        </a>
-                        <a href="../analytics/artists" class="nav-link">
-                            <i class="bi bi-person-lines-fill"></i>
-                            <span>Desempenho por Artista</span>
-                        </a>
-                        <a href="../analytics/stores" class="nav-link">
-                            <i class="bi bi-shop"></i>
-                            <span>Desempenho por Loja Digital</span>
-                        </a>
-                        <a href="../analytics/reports" class="nav-link">
-                            <i class="bi bi-file-earmark-bar-graph"></i>
-                            <span>Relatórios Personalizados</span>
-                        </a>
-                    </div>
-                </li>
-
-                <li class="nav-item">
-                    <a href="#collapseAdmins" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseAdmins">
-                        <i class="bi bi-person-gear"></i>
-                        <span>Gestão de Admins</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseAdmins">
-                        <a href="../employees/all-employees" class="nav-link">
-                            <i class="bi bi-people"></i>
-                            <span>Listar Admins</span>
-                        </a>
-                        <a href="../employees/add" class="nav-link">
-                            <i class="bi bi-person-plus"></i>
-                            <span>Adicionar</span>
-                        </a>
-                        <a href="../employees/edit" class="nav-link">
-                            <i class="bi bi-person-gear"></i>
-                            <span>Editar</span>
-                        </a>
-                        <a href="../employees/delete" class="nav-link">
-                            <i class="bi bi-person-x"></i>
-                            <span>Excluir</span>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseUsers" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseUsers">
-                        <i class="bi bi-person-gear"></i>
-                        <span>Gestão de Usuários</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseUsers">
-                        <a href="../users/all-users" class="nav-link">
-                            <i class="bi bi-people"></i>
-                            <span>Listar Usuários</span>
-                        </a>
-                        <a href="../users/add" class="nav-link">
-                            <i class="bi bi-person-plus"></i>
-                            <span>Adicionar</span>
-                        </a>
-                        <a href="../users/edit" class="nav-link">
-                            <i class="bi bi-person-gear"></i>
-                            <span>Editar</span>
-                        </a>
-                        <a href="../users/delete" class="nav-link">
-                            <i class="bi bi-person-x"></i>
-                            <span>Excluir</span>
-                        </a>
-                        <a href="../users/available-account" class="nav-link">
-                            <i class="bi bi-person-check"></i>
-                            <span>Contas Disponíveis</span>
-                        </a>
-                        <a href="../users/unavailable-account" class="nav-link">
-                            <i class="bi bi-person-exclamation"></i>
-                            <span>Contas Indisponíveis</span>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseSongs" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseSongs">
-                        <i class="bi bi-music-note-list"></i>
-                        <span>Gestão de Músicas</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseSongs">
-                        <a href="../music/revise" class="nav-link">
-                            <i class="bi bi-eye"></i>
-                            <span>Revisar Envios</span>
-                        </a>
-                        <a href="../music/approve" class="nav-link">
-                            <i class="bi bi-check-circle"></i>
-                            <span>Aprovar</span>
-                        </a>
-                        <a href="../music/reject" class="nav-link">
-                            <i class="bi bi-x-circle"></i>
-                            <span>Rejeitar</span>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="../artist/accounts-users" class="nav-link">
-                        <i class="bi bi-person-check"></i>
-                        <span>Contas e Usuários</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="../artist/collaborators-artist" class="nav-link">
-                        <i class="bi bi-people"></i>
-                        <span>Artistas e Colaboradores</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseDistribution" class="nav-link active" data-bs-toggle="collapse"
-                        aria-expanded="false" aria-controls="collapseDistribution">
-                        <i class="bi bi-globe"></i>
-                        <span>Distribuição</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseDistribution">
-                        <a href="releases" class="nav-link active">
-                            <i class="bi bi-rocket-takeoff"></i>
-                            <span>Lançamentos</span>
-                        </a>
-                        <a href="store" class="nav-link">
-                            <i class="bi bi-shop"></i>
-                            <span>Lojas Digitais</span>
-                        </a>
-                        <a href="schedule" class="nav-link">
-                            <i class="bi bi-calendar-event"></i>
-                            <span>Agendar Lançamento</span>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="../manager/gestion" class="nav-link">
-                        <i class="bi bi-star"></i>
-                        <span>Gestão Geral</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="../finances/payments" class="nav-link">
-                        <i class="bi bi-wallet2"></i>
-                        <span>Pagamentos</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="../finances/earnings" class="nav-link">
-                        <i class="bi bi-currency-dollar"></i>
-                        <span>Finanças e Rendimentos</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#collapseIntegration" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseIntegration">
-                        <i class="bi bi-youtube"></i>
-                        <span>Unificação e V. Youtube</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseIntegration">
-                        <a href="../integration/youtube" class="nav-link">
-                            <i class="bi bi-gear"></i>
-                            <span>Configurar Integração</span>
-                        </a>
-                        <a href="../integration/verify" class="nav-link">
-                            <i class="bi bi-check2-all"></i>
-                            <span>Verificar Canais</span>
-                        </a>
-                        <a href="../distribution/monetization" class="nav-link">
-                            <i class="bi bi-youtube"></i>
-                            <span>Gerenciamento de Conteúdo Monetizado</span>
-                        </a>
-                    </div>
-                </li>
-
-                <li class="nav-item">
-                    <a href="#collapseSupport" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseSupport">
-                        <i class="bi bi-headset"></i>
-                        <span>Suporte</span>
-                        <span class="badge bg-danger badge-notification">3</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseSupport">
-                        <a href="../messages/inbox" class="nav-link">
-                            <i class="bi bi-envelope"></i>
-                            <span>Caixa de entrada</span>
-                        </a>
-                        <a href="../messages/compose" class="nav-link">
-                            <i class="bi bi-pencil"></i>
-                            <span>Enviar mensagens</span>
-                        </a>
-                    </div>
-                </li>
-
-                <li class="nav-item">
-                    <a href="#collapseHelp" class="nav-link" data-bs-toggle="collapse" aria-expanded="false"
-                        aria-controls="collapseHelp">
-                        <i class="bi bi-question-circle"></i>
-                        <span>Ajuda</span>
-                        <i class="bi bi-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <div class="collapse" id="collapseHelp">
-                        <a href="../help/faqs" class="nav-link">
-                            <i class="bi bi-messenger"></i>
-                            <span>FAQs</span>
-                        </a>
-                        <a href="../help/tutorials" class="nav-link">
-                            <i class="bi bi-book"></i>
-                            <span>Tutoriais</span>
-                        </a>
-                        <a href="../help/contact" class="nav-link">
-                            <i class="bi bi-telephone"></i>
-                            <span>Contacto com suporte</span>
-                        </a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a href="../settings/config" class="nav-link">
-                        <i class="bi bi-sliders"></i>
-                        <span>Configurações</span>
-                    </a>
-                </li>
-                <li class="nav-item mt-4">
-                    <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#logoutwasomupfy">
-                        <i class="bi bi-box-arrow-right"></i>
-                        <span>Logout</span>
-                    </a>
-                </li>
-                <li class="nav-item mt-4">
-                    <a href="http://localhost:5500/home" target="_blank" class="nav-link">
-                        <i class="bi bi-box-arrow-in-up-right"></i>
-                        <span>Visitar Site</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-        <!-- Content -->
         <div class="content w-100" id="mainContent">
-            <nav class="navbar navbar-expand-lg">
-                <button class="navbar-toggler" type="button" id="sidebarToggle" aria-label="Abrir/Fechar Menu">
-                    <i class="bi bi-list text-white"></i>
-                </button>
-                <div class="ms-auto d-flex align-items-center">
-                    <button class="btn btn-outline-light btn-sm me-2" onclick="toggleDarkMode()"
-                        aria-label="Alternar Modo Escuro">
-                        <i class="bi bi-moon"></i>
-                    </button>
-                    <div class="dropdown me-2 position-relative">
-                        <button class="btn btn-outline-light btn-sm position-relative" type="button"
-                            data-bs-toggle="dropdown" aria-label="Notificações">
-                            <i class="bi bi-bell"></i>
-                            <span
-                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">5</span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-start p-0" style="min-width: 250px;">
-                            <li class="dropdown-header bg-dark text-white p-2">Notificações (5)</li>
-                            <li><a class="dropdown-item p-2" href="#">Novo artista registrado</a></li>
-                            <li><a class="dropdown-item p-2" href="#">Música atingiu 1000 plays</a></li>
-                            <li><a class="dropdown-item p-2" href="#">Atualização do sistema disponível</a></li>
-                            <li class="dropdown-footer text-center p-2"><a href="#" class="text-primary">Ver todas</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="dropdown me-2 position-relative">
-                        <button class="btn btn-outline-light btn-sm position-relative" type="button"
-                            data-bs-toggle="dropdown" aria-label="Mensagens">
-                            <i class="bi bi-envelope"></i>
-                            <span
-                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">2</span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-start p-0" style="min-width: 250px;">
-                            <li class="dropdown-header bg-dark text-white p-2">Mensagens (2)</li>
-                            <li><a class="dropdown-item p-2" href="#">Suporte #4521 - Novo ticket</a></li>
-                            <li><a class="dropdown-item p-2" href="#">Mensagem de artista</a></li>
-                            <li class="dropdown-footer text-center p-2"><a href="#" class="text-primary">Ver todas</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="dropdown">
-                        <button class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center"
-                            type="button" data-bs-toggle="dropdown" aria-label="Menu do Usuário">
-                            <img src="../../../assets/img/avatar/avatar.png" alt="Usuário" class="rounded-circle me-1"
-                                style="height: 24px;">
-                            <span>Cristiano Amadeu</span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="../user/profile"><i
-                                        class="bi bi-person me-2"></i>Perfil</a></li>
-                            <li><a class="dropdown-item" href="../settings/config"><i
-                                        class="bi bi-sliders me-2"></i>Configurações</a></li>
-                            <li><a class="dropdown-item" href="../help/help"><i
-                                        class="bi bi-question-circle me-2"></i>Ajuda</a>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutwasomupfy"
-                                    href="#"><i class="bi bi-box-arrow-right me-2"></i>Sair</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-
-            <!-- Adicione isso dentro da tag <nav class="bottom-nav"> -->
-            <div class="connection-status" id="connectionStatus"></div>
-            <div class="status-notification" id="statusNotification"></div>
-
-            <!-- ════ MODAL — Logout ════ -->
-            <div class="modal fade" id="logoutwasomupfy" data-bs-backdrop="static" data-bs-keyboard="false"
-                tabindex="-1" aria-labelledby="logoutwasomupfyLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content modal-bottom">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5 text-dark" id="logoutwasomupfyLabel">Terminar sessão</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="container">
-                                <div class="row justify-content-center text-center">
-                                    <div class="col-md-12 content-center justify-center text-center">
-                                        <p class="text-center text-dark">@josembengadacosta você tem
-                                            certeza
-                                            de que desejas terminar
-                                            sessão?</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <div>
-                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Não,
-                                    continuar</button>
-                            </div>
-                            <div>
-                                <button class="btn btn-danger" type="button" name="logout_wasomupfy"
-                                    onclick="logout_wasomupfy()">Sim, terminar</button>
-                            </div>
-                            <script type="text/javascript">
-                                function logout_wasomupfy() {
-                                    window.location = 'logout';
-                                }
-                            </script>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- ════ MODAL — Logout  FIM ════ -->
+            <?php require_once __DIR__ . '/../../include/navbar.php'; ?>
 
             <div class="container-fluid p-0">
-                <div class="row mb-3 mt-2">
-                    <div class="welcome-text col-auto d-sm-block">
-                        <h2 class="h4 mb-2">Todos lançamentos</span></h2>
+
+                <!-- Cabeçalho -->
+                <div class="row mb-3 mt-2 align-items-center">
+                    <div class="welcome-text col-auto">
+                        <h2 class="h4 mb-1"><i class="bi bi-vinyl me-2"></i>Lançamentos</h2>
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb mb-0">
-                                <li class="breadcrumb-item"><a href="releases" class="text-secondary">Distribuição</a>
+                                <li class="breadcrumb-item">
+                                    <a href="<?php echo $base_url; ?>" class="text-secondary">Home</a>
                                 </li>
-                                <li class="breadcrumb-item active text-secondary" aria-current="page">Lançamentos</li>
+                                <li class="breadcrumb-item active text-white-stable">Lançamentos</li>
                             </ol>
                         </nav>
                     </div>
-                    <div class="col-auto ms-auto text-end mt-n1 mt-3 mb-2">
-                        <a class="text-secondary shadow-sm me-2" href="">Pedidos de alteração
-                        </a>
-                        <a class="text-secondary shadow-sm" href="">Pedidos de eliminação</a>
-                        <button class="btn btn-wasomupfy text-white shadow-sm">
-                            <i class="align-middle bi bi-plus" onclick=""></i> Novo lançamento</button>
-                    </div>
-                    <!-- Stats Description -->
-                    <p class="stats-description mt-2">
-                        Encontras aqui o lançamento de todas as contas da plataforma, mais poderá depender se és
-                        administrador regional ou glboal para veres alguns lançamentos disponíveis. Caso tenhas dúvidas
-                        em
-                        alguns lançamentos faça a pesquisa do mesmo através do seu <strong>Título</strong>,
-                        <strong>Artista</strong> ou <strong>UPC</strong>.
-                    </p>
-                    <div class="search-container date-range fade-in-custom">
-                        <div class="row g-3">
-                            <div class="col-md-2">
-                                <label for="dateRange">ID:</label>
-                                <input type="number" class="form-control" min="1" id="search-id" placeholder="ID">
+                </div>
+
+                <!-- Stat cards (clicáveis como filtros) -->
+                <div class="row g-3 mb-4">
+                    <?php
+                    $stat_cards = [
+                        ['',             '#FF0089', 'bi-vinyl',           'Total',        $stats['total']],
+                        ['pending',      '#eab308', 'bi-hourglass-split', 'Pendentes',    $stats['pending']],
+                        ['under_review', '#3b82f6', 'bi-search',          'Em Revisão',   $stats['under_review']],
+                        ['approved',     '#22c55e', 'bi-check-circle',    'Aprovados',    $stats['approved']],
+                        ['rejected',     '#ef4444', 'bi-x-circle',        'Rejeitados',   $stats['rejected']],
+                        ['draft',        '#6b7280', 'bi-file-earmark',    'Rascunhos',    $stats['draft']],
+                    ];
+                    foreach ($stat_cards as [$sv, $color, $icon, $lbl, $val]):
+                        $is_active = $f_status === $sv;
+                        $link = $sv ? '?' . http_build_query(array_merge($_GET, ['status' => $sv, 'page' => 1])) : '?' . http_build_query(array_merge($_GET, ['status' => '', 'page' => 1]));
+                    ?>
+                        <div class="col-6 col-md-4 col-xl-2">
+                            <a href="<?php echo $link; ?>" class="rel-stat <?php echo $is_active ? 'border-2' : ''; ?>"
+                                style="<?php echo $is_active ? "border-color:$color!important;box-shadow:0 0 0 3px {$color}22" : ''; ?>">
+                                <div class="rel-stat-icon" style="background:<?php echo $color; ?>1a">
+                                    <i class="bi <?php echo $icon; ?>" style="color:<?php echo $color; ?>"></i>
+                                </div>
+                                <div>
+                                    <div class="rel-stat-val"><?php echo number_format((int)$val); ?></div>
+                                    <div class="rel-stat-lbl"><?php echo $lbl; ?></div>
+                                </div>
+                            </a>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+
+                <!-- Filtros -->
+                <div class="rel-filter">
+                    <form method="GET" action="<?php echo $base_url; ?>/releases" id="filter-form">
+                        <div class="row g-2 align-items-end">
+                            <div class="col-md-3">
+                                <label class="form-label">Pesquisar</label>
+                                <input type="text" name="search" class="form-control form-control-sm"
+                                    value="<?php echo htmlspecialchars($f_search); ?>"
+                                    placeholder="Título, artista, utilizador, UPC...">
                             </div>
                             <div class="col-md-2">
-                                <label for="dateRange">Título do Álbum:</label>
-                                <input type="text" class="form-control" id="search-title" placeholder="Título do Álbum">
-                            </div>
-                            <div class="col-md-2">
-                                <label for="dateRange">Artista:</label>
-                                <input type="text" class="form-control" id="search-artist" placeholder="Artista">
-                            </div>
-                            <div class="col-md-2">
-                                <label for="dateRange">Ano:</label>
-                                <input type="number" class="form-control" min="1" id="search-year" placeholder="Ano">
-                            </div>
-                            <div class="col-md-2">
-                                <label for="dateRange">UPC:</label>
-                                <input type="text" class="form-control" id="search-upc" placeholder="UPC">
-                            </div>
-                            <div class="col-md-2">
-                                <label for="dateRange">Filtrar estado</label>
-                                <select class="form-select" id="search-status">
-                                    <option value="">Todos os Status</option>
-                                    <option value="approved">Aprovado</option>
-                                    <option value="rejected">Reprovado</option>
-                                    <option value="pending">Pendente</option>
-                                    <option value="draft">Rascunho</option>
+                                <label class="form-label">Estado</label>
+                                <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                                    <option value="">Todos</option>
+                                    <?php foreach (['pending' => 'Pendente', 'under_review' => 'Em Revisão', 'approved' => 'Aprovado', 'rejected' => 'Rejeitado', 'draft' => 'Rascunho', 'deleting' => 'A eliminar'] as $v => $l): ?>
+                                        <option value="<?php echo $v; ?>" <?php echo $f_status === $v ? 'selected' : ''; ?>>
+                                            <?php echo $l; ?></option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Tipo</label>
+                                <select name="type" class="form-select form-select-sm" onchange="this.form.submit()">
+                                    <option value="">Todos</option>
+                                    <?php foreach (['single' => 'Single', 'EP' => 'EP', 'album' => 'Álbum', 'mixtape' => 'Mixtape'] as $v => $l): ?>
+                                        <option value="<?php echo $v; ?>" <?php echo $f_type === $v ? 'selected' : ''; ?>>
+                                            <?php echo $l; ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Plano</label>
+                                <select name="plan" class="form-select form-select-sm" onchange="this.form.submit()">
+                                    <option value="">Todos</option>
+                                    <?php foreach ($plans as $pl): ?>
+                                        <option value="<?php echo (int)$pl['id_plan']; ?>"
+                                            <?php echo $f_plan == (string)$pl['id_plan'] ? 'selected' : ''; ?>>
+                                            <?php echo htmlspecialchars($pl['name_plan']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="col-md-3 d-flex gap-1">
+                                <button type="submit" class="btn btn-sm text-white flex-fill"
+                                    style="background:#FF0089;border-color:#FF0089">
+                                    <i class="bi bi-search me-1"></i> Pesquisar
+                                </button>
+                                <a href="<?php echo $base_url; ?>/releases" class="btn btn-sm btn-outline-secondary"
+                                    title="Limpar">
+                                    <i class="bi bi-x"></i>
+                                </a>
+                            </div>
                         </div>
-                    </div>
-
-                    <div class="d-flex justify-content-between align-items-center mt-2 mb-2">
-                        <button class="btn btn-wasomupfy text-white" id="clear-filters"><i
-                                class="bi bi-eraser me-2"></i> Limpar
-                            Filtros</button>
-                        <span id="result-count">0 álbuns encontrados</span>
-                    </div>
+                    </form>
                 </div>
-
 
                 <!-- Tabela -->
-                <div class="card fade-in-custom">
-                    <div class="table-responsive">
-                        <table class="table table-striped table-hover">
+                <div class="card p-0" style="border-radius:14px;overflow:hidden">
+                    <div class="d-flex align-items-center justify-content-between px-3 py-2"
+                        style="border-bottom:1px solid var(--border-color,#e8e8f0)">
+                        <span style="font-size:.82rem;font-weight:600">
+                            <?php if ($total_filtered !== (int)$stats['total']): ?>
+                                <span style="color:#FF0089"><?php echo number_format($total_filtered); ?></span>
+                                de <?php echo number_format((int)$stats['total']); ?> lançamentos
+                            <?php else: ?>
+                                <?php echo number_format($total_filtered); ?> lançamentos
+                            <?php endif; ?>
+                        </span>
+                        <span style="font-size:.75rem;opacity:.5">Pág.
+                            <?php echo $page; ?>/<?php echo $total_pages; ?></span>
+                    </div>
+
+                    <div class="table-responsive" style="overflow-x: auto; overflow-y: visible !important;">
+                        <table class="table table-hover mb-0" id="rel-table" style="overflow: visible !important;">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Título</th>
+                                    <th style="width:50px">#</th>
+                                    <th style="width:48px">Capa</th>
+                                    <th>
+                                        <a href="<?php echo rel_sort_url('al.title_album', $sort_col, $sort_dir, $_GET); ?>"
+                                            class="text-inherit text-decoration-none">
+                                            Título<?php echo rel_sort_icon('al.title_album', $sort_col, $sort_dir); ?>
+                                        </a>
+                                    </th>
                                     <th>Artista</th>
-                                    <th>UPC</th>
-                                    <th>Estado</th>
-                                    <th>Género Principal</th>
-                                    <th>Data de lançamento</th>
-                                    <th>Arte da Capa</th>
-                                    <th>Acções</th>
+                                    <th>Utilizador</th>
+                                    <th>Plano</th>
+                                    <th>Tipo</th>
+                                    <th>Faixas</th>
+                                    <th>
+                                        <a href="<?php echo rel_sort_url('al.status_album', $sort_col, $sort_dir, $_GET); ?>"
+                                            class="text-inherit text-decoration-none">
+                                            Estado<?php echo rel_sort_icon('al.status_album', $sort_col, $sort_dir); ?>
+                                        </a>
+                                    </th>
+                                    <th>
+                                        <a href="<?php echo rel_sort_url('al.creat_album', $sort_col, $sort_dir, $_GET); ?>"
+                                            class="text-inherit text-decoration-none">
+                                            Enviado<?php echo rel_sort_icon('al.creat_album', $sort_col, $sort_dir); ?>
+                                        </a>
+                                    </th>
+                                    <th style="text-align:center;width:80px">Acções</th>
                                 </tr>
                             </thead>
-                            <tbody id="album-list">
-                                <!-- Linhas serão geradas dinamicamente via JavaScript -->
+                            <tbody>
+                                <?php if (empty($albums)): ?>
+                                    <tr>
+                                        <td colspan="11">
+                                            <div class="rel-empty">
+                                                <i class="bi bi-vinyl"></i>
+                                                <p class="mb-0">Nenhum lançamento encontrado para os filtros aplicados.</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php else: ?>
+                                    <?php foreach ($albums as $i => $alb):
+                                        $user_name  = trim($alb['first_name'] . ' ' . ($alb['second_name'] ?? ''));
+                                        $artist_name = $alb['stage_name'] ?: $user_name;
+                                        $cover_url  = $alb['img_cover']
+                                            ? APP_URL . '/assets/comprovantes/uploads/covers/' . $alb['img_cover']
+                                            : null;
+                                        $is_even = $i % 2 === 1;
+                                    ?>
+                                        <tr
+                                            <?php echo $is_even ? 'style="background:var(--table-stripe,rgba(0,0,0,.013))"' : ''; ?>>
+                                            <!-- ID -->
+                                            <td>
+                                                <span style="font-family:monospace;font-size:.72rem;opacity:.5">
+                                                    #<?php echo (int)$alb['id_album']; ?>
+                                                </span>
+                                            </td>
+                                            <!-- Capa -->
+                                            <td>
+                                                <?php if ($cover_url): ?>
+                                                    <img src="<?php echo $cover_url; ?>" class="album-cover" alt=""
+                                                        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                                                    <div class="album-cover-ph" style="display:none">
+                                                        <i class="bi bi-music-note" style="color:#FF0089;font-size:.85rem"></i>
+                                                    </div>
+                                                <?php else: ?>
+                                                    <div class="album-cover-ph">
+                                                        <i class="bi bi-music-note" style="color:#FF0089;font-size:.85rem"></i>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </td>
+                                            <!-- Título -->
+                                            <td>
+                                                <a href="<?php echo $base_url; ?>/releases/view?id=<?php echo (int)$alb['id_album']; ?>"
+                                                    class="text-inherit text-decoration-none"
+                                                    style="font-weight:700;font-size:.83rem">
+                                                    <?php echo htmlspecialchars($alb['title_album']); ?>
+                                                </a>
+                                                <?php if ($alb['upc']): ?>
+                                                    <div style="font-size:.68rem;font-family:monospace;opacity:.5">
+                                                        UPC: <?php echo htmlspecialchars($alb['upc']); ?>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </td>
+                                            <!-- Artista -->
+                                            <td>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <?php if ($alb['photo_artist']): ?>
+                                                        <?php echo rel_avatar($artist_name, $alb['photo_artist'], 'assets/comprovantes/uploads/artists', 26); ?>
+                                                    <?php else: ?>
+                                                        <?php echo rel_avatar($artist_name, null, '', 26); ?>
+                                                    <?php endif; ?>
+                                                    <span
+                                                        style="font-size:.79rem"><?php echo htmlspecialchars($artist_name); ?></span>
+                                                </div>
+                                            </td>
+                                            <!-- Utilizador -->
+                                            <td>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <?php echo rel_avatar($user_name, $alb['photo_user'], 'assets/comprovantes/uploads/users', 26); ?>
+                                                    <div>
+                                                        <div style="font-size:.79rem;font-weight:600">
+                                                            <?php echo htmlspecialchars($user_name); ?>
+                                                        </div>
+                                                        <div style="font-size:.68rem;opacity:.5">
+                                                            <?php echo htmlspecialchars($alb['email_user']); ?>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <!-- Plano -->
+                                            <td>
+                                                <span style="font-size:.75rem">
+                                                    <?php echo htmlspecialchars($alb['name_plan'] ?? '—'); ?>
+                                                </span>
+                                                <?php if ($alb['releases_limit']): ?>
+                                                    <div style="font-size:.68rem;opacity:.5">
+                                                        <?php echo (int)$alb['releases_used']; ?>/<?php echo (int)$alb['releases_limit']; ?>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </td>
+                                            <!-- Tipo -->
+                                            <td><?php echo rel_type_label($alb['type_album']); ?></td>
+                                            <!-- Faixas -->
+                                            <td style="text-align:center">
+                                                <span style="font-size:.78rem;font-weight:700;color:#FF0089">
+                                                    <?php echo (int)$alb['track_count']; ?>
+                                                </span>
+                                            </td>
+                                            <!-- Estado -->
+                                            <td><?php echo rel_status_badge($alb['status_album']); ?></td>
+                                            <!-- Data -->
+                                            <td style="font-size:.75rem;white-space:nowrap;opacity:.7">
+                                                <?php echo date('d/m/Y', strtotime($alb['creat_album'])); ?>
+                                            </td>
+                                            <!-- Acções -->
+                                            <td>
+                                                <div class="actions-dropdown dropdown">
+                                                    <button class="btn btn-sm btn-outline-secondary" type="button"
+                                                        data-bs-toggle="dropdown" data-bs-reference="toggle"
+                                                        aria-expanded="false">
+                                                        <i class="bi bi-three-dots-vertical"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu dropdown-menu-end">
+                                                        <li>
+                                                            <a class="dropdown-item"
+                                                                href="<?php echo $base_url; ?>/releases/view?id=<?php echo (int)$alb['id_album']; ?>">
+                                                                <i class="bi bi-eye text-info"></i> Ver Detalhes
+                                                            </a>
+                                                        </li>
+                                                        <?php if (hasPermission($admin_id, 'music.approve') && $alb['status_album'] === 'pending'): ?>
+                                                            <li>
+                                                                <a class="dropdown-item text-warning"
+                                                                    href="<?php echo $base_url; ?>/releases/view?id=<?php echo (int)$alb['id_album']; ?>#actions">
+                                                                    <i class="bi bi-arrow-repeat text-primary"></i> Colocar em
+                                                                    Revisão
+                                                                </a>
+                                                            </li>
+                                                        <?php endif; ?>
+                                                        <?php if (hasPermission($admin_id, 'music.edit') && !in_array($alb['status_album'], ['approved', 'deleting'])): ?>
+                                                            <li>
+                                                                <a class="dropdown-item text-primary"
+                                                                    href="<?php echo $base_url; ?>/releases/view?id=<?php echo (int)$alb['id_album']; ?>#edit-actions">
+                                                                    <i class="bi bi-pencil text-primary"></i> Editar Álbum
+                                                                </a>
+                                                            </li>
+                                                        <?php endif; ?>
+                                                        <?php if (hasPermission($admin_id, 'music.delete') && !in_array($alb['status_album'], ['approved', 'deleting'])): ?>
+                                                            <li>
+                                                                <a class="dropdown-item text-danger"
+                                                                    href="<?php echo $base_url; ?>/releases/view?id=<?php echo (int)$alb['id_album']; ?>#edit-actions">
+                                                                    <i class="bi bi-trash text-danger"></i> Eliminar Álbum
+                                                                </a>
+                                                            </li>
+                                                        <?php endif; ?>
+                                                        <?php if (hasPermission($admin_id, 'music.view')): ?>
+                                                            <li>
+                                                                <a class="dropdown-item"
+                                                                    href="<?php echo $base_url; ?>/releases/download-zip?id=<?php echo (int)$alb['id_album']; ?>">
+                                                                    <i class="bi bi-file-zip text-secondary"></i> Download ZIP
+                                                                </a>
+                                                            </li>
+                                                        <?php endif; ?>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </tbody>
                         </table>
+                        <?php if ($total_pages > 1): ?>
+                            <div class="d-flex justify-content-center py-3">
+                                <nav>
+                                    <ul class="pagination pagination-sm rel-pag mb-0">
+                                        <li class="page-item <?php echo $page <= 1 ? 'disabled' : ''; ?>">
+                                            <a class="page-link"
+                                                href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page - 1])); ?>">
+                                                <i class="bi bi-chevron-left"></i>
+                                            </a>
+                                        </li>
+                                        <?php
+                                        $ps = max(1, $page - 2);
+                                        $pe = min($total_pages, $page + 2);
+                                        if ($ps > 1): ?>
+                                            <li class="page-item"><a class="page-link"
+                                                    href="?<?php echo http_build_query(array_merge($_GET, ['page' => 1])); ?>">1</a>
+                                            </li>
+                                            <?php if ($ps > 2): ?><li class="page-item disabled">
+                                                    <span class="page-link">…</span>
+                                                </li>
+                                            <?php endif; ?>
+                                        <?php endif; ?>
+                                        <?php for ($pi = $ps; $pi <= $pe; $pi++): ?>
+                                            <li class="page-item <?php echo $pi === $page ? 'active' : ''; ?>">
+                                                <a class="page-link"
+                                                    href="?<?php echo http_build_query(array_merge($_GET, ['page' => $pi])); ?>">
+                                                    <?php echo $pi; ?>
+                                                </a>
+                                            </li>
+                                        <?php endfor; ?>
+                                        <?php if ($pe < $total_pages): ?>
+                                            <?php if ($pe < $total_pages - 1): ?><li class="page-item disabled">
+                                                    <span class="page-link">…</span>
+                                                </li><?php endif; ?>
+                                            <li class="page-item"><a class="page-link"
+                                                    href="?<?php echo http_build_query(array_merge($_GET, ['page' => $total_pages])); ?>"><?php echo $total_pages; ?></a>
+                                            </li>
+                                        <?php endif; ?>
+                                        <li class="page-item <?php echo $page >= $total_pages ? 'disabled' : ''; ?>">
+                                            <a class="page-link"
+                                                href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page + 1])); ?>">
+                                                <i class="bi bi-chevron-right"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        <?php endif; ?>
                     </div>
 
-                    <!-- Paginação -->
-                    <nav aria-label="Navegação de páginas">
-                        <ul class="pagination" id="pagination"></ul>
-                    </nav>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Modal para Edição -->
-    <div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Editar Lançamento</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" id="edit-modal-body">
-                    <!-- Formulário será preenchido via JS -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="save-changes">Salvar Alterações</button>
-                </div>
+        <div class="page-loader" id="pageLoader">
+            <div class="loader-content">
+                <img src="<?php echo APP_URL; ?>/assets/img/brand/wasomupfy_brand.png" class="loader-image" alt="" />
+                <div class="loader-progress"></div>
             </div>
         </div>
-    </div>
 
-    <!-- Modal para Exclusão -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Confirmar Exclusão</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Tem certeza que deseja excluir este lançamento?</p>
-                    <div class="mb-3">
-                        <label for="delete-password" class="form-label">Digite sua senha para confirmar:</label>
-                        <input type="password" class="form-control" id="delete-password" required>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger" id="confirm-delete">Excluir</button>
-                </div>
-            </div>
-        </div>
-    </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="<?php echo APP_URL; ?>/js/lastest.js"></script>
+        <script>
+            window.__BASE_URL__ = '<?php echo APP_URL; ?>';
+            window.__ADMIN_PATH__ = '<?php echo ADMIN_PATH; ?>';
 
-    <!-- Floating Action Button -->
-    <div class="fab" onclick="showQuickAction()" aria-label="Ações Rápidas">
-        <i class="bi bi-plus-lg"></i>
-    </div>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-12 text-center">
-                    <p class="mb-2">© 2026 Wasom Upfy. Todos os direitos reservados.</p>
-                    <a href="#" class="me-2">Termos de Uso</a>
-                    <a href="#" class="me-2">Privacidade</a>
-                    <a href="#">Suporte</a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Bottom Navigation -->
-    <!-- <nav class="bottom-nav">
-    <ul>
-        <li>
-            <a href="home" class="active">
-                <i class="bi bi-speedometer2"></i>
-                <span>Dashboard</span>
-            </a>
-        </li>
-        <li>
-            <a href="../music/approve">
-                <i class="bi bi-music-note-list"></i>
-                <span>Músicas</span>
-            </a>
-        </li>
-        <li>
-            <a href="../users/all-users">
-                <i class="bi bi-people"></i>
-                <span>Usuários</span>
-            </a>
-        </li>
-        <li>
-            <a href="../finances/earnings">
-                <i class="bi bi-currency-dollar"></i>
-                <span>Finanças</span>
-            </a>
-        </li>
-        <li>
-            <a href="../settings/config">
-                <i class="bi bi-sliders"></i>
-                <span>Config</span>
-            </a>
-        </li>
-    </ul>
-</nav> -->
-
-
-    <div class="page-loader" id="pageLoader">
-        <div class="loader-content">
-            <!-- Sua imagem pulsante -->
-            <img src="../../../assets/img/brand/wasomupfy_brand.png" class="loader-image" alt="Carregando">
-            <!-- Barra de progresso agora perfeitamente centralizada -->
-            <div class="loader-progress"></div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="<?php echo APP_URL  ?>/js/lastest.js"></script>
-    <script src="data/database.albums.js"></script>
-    <script src="js/releases.js" type="module"></script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Debounce na pesquisa de texto
+                let dbt;
+                const searchInput = document.querySelector('input[name="search"]');
+                if (searchInput) {
+                    searchInput.addEventListener('input', function() {
+                        clearTimeout(dbt);
+                        dbt = setTimeout(function() {
+                            document.getElementById('filter-form').submit();
+                        }, 500);
+                    });
+                }
+            });
+        </script>
 </body>
 
 </html>

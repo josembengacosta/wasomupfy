@@ -222,7 +222,7 @@ if ($action === 'set_processing_withdrawal') {
             'payment',
             'Saque em Processamento 🔄',
             'O teu saque de ' . biz_fmt_d((float)$wd['amount_net']) . ' está a ser processado. Serás notificado quando concluído.',
-            APP_URL . '/dashboard/withdraw'
+            APP_URL . '/' . APP_URL_PANEL . '/withdraw'
         );
         biz_mail($wd['email_user'], 'Saque em processamento — ' . APP_NAME, wd_email($wd, 'processing'));
         logAudit(
@@ -262,7 +262,7 @@ if ($action === 'approve_withdrawal') {
         $f = $_FILES['comprovante'];
         if (!in_array($f['type'], ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'])) jOut(false, 'Tipo de ficheiro não permitido.');
         if ($f['size'] > 5 * 1024 * 1024) jOut(false, 'Ficheiro excede 5MB.');
-        $dir = dirname(__DIR__, 4) . '/assets/payment/uploads/withdrawals/';
+        $dir = dirname(__DIR__, 3) . '/assets/payment/uploads/withdrawals/';
         if (!is_dir($dir)) @mkdir($dir, 0755, true);
         $ext  = pathinfo($f['name'], PATHINFO_EXTENSION);
         $comp = 'wd_' . $id . '_' . time() . '.' . $ext;
@@ -293,8 +293,8 @@ if ($action === 'approve_withdrawal') {
             $admin_id,
             'payment',
             'Saque Aprovado ✅',
-            'O teu saque de ' . biz_fmt_d((float)$wd['amount_net']) . ' foi aprovado e o pagamento efectuado.',
-            APP_URL . '/dashboard/withdraw'
+            'O teu saque de ' . biz_fmt_d((float)$wd['amount_net']) . ' foi aprovado e o pagamento efectuado com sucesso.',
+            APP_URL . '/' . APP_URL_PANEL . '/withdraw'
         );
         biz_mail($wd['email_user'], 'Saque aprovado — ' . APP_NAME, wd_email($wd, 'approved', '', $pu));
         logAudit(
@@ -340,7 +340,7 @@ if ($action === 'reject_withdrawal') {
             'warning',
             'Saque Rejeitado ❌',
             'O teu saque foi rejeitado. Motivo: ' . $reason,
-            APP_URL . '/dashboard/withdraw'
+            APP_URL . '/' . APP_URL_PANEL . '/withdraw'
         );
         biz_mail($wd['email_user'], 'Saque rejeitado — ' . APP_NAME, wd_email($wd, 'rejected', $reason));
         logAudit(
@@ -428,7 +428,7 @@ if ($action === 'pay_royalty') {
         if ($file['size'] > 5 * 1024 * 1024) {
             jOut(false, 'Ficheiro excede 5MB.');
         }
-        $dir = dirname(__DIR__, 4) . '/assets/payment/uploads/royalties/';
+        $dir = dirname(__DIR__, 3) . '/assets/payment/uploads/royalties/';
         if (!is_dir($dir)) mkdir($dir, 0755, true);
         $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
         $report_file = 'royalty_' . $id . '_' . time() . '.' . $ext;
@@ -500,7 +500,7 @@ if ($action === 'pay_royalty') {
             'payment',
             'Royalty Creditado 🎵',
             'O royalty de ' . biz_fmt_d((float)$roy['net_royalty_aoa']) . ' foi creditado na tua carteira.',
-            APP_URL . '/dashboard/transactions'
+            APP_URL . '/' . APP_URL_PANEL . '/transactions'
         );
         logAudit(
             $admin_id,
@@ -541,9 +541,9 @@ if ($action === 'validate_proof') {
             ->execute([$ns, $reason ?: null, $admin_id, $id]);
         if ($ns === 'validated') {
             $db->prepare("UPDATE _payment_intent SET status='approved',approved_by=?,approved_at=NOW() WHERE id_intent=?")->execute([$admin_id, $proof['id_intent']]);
-            notifyUser($db, $proof['id_users'], $admin_id, 'payment', 'Comprovativo Validado ✅', 'O teu comprovativo foi validado. O teu plano será activado em breve.', APP_URL . '/dashboard');
+            notifyUser($db, $proof['id_users'], $admin_id, 'payment', 'Comprovativo Validado ✅', 'O teu comprovativo foi validado. O teu plano será activado em breve.', APP_URL . '/' . APP_URL_PANEL . '');
         } else {
-            notifyUser($db, $proof['id_users'], $admin_id, 'warning', 'Comprovativo Rejeitado ❌', 'O comprovativo foi rejeitado. Motivo: ' . $reason, APP_URL . '/dashboard/payment/pay');
+            notifyUser($db, $proof['id_users'], $admin_id, 'warning', 'Comprovativo Rejeitado ❌', 'O comprovativo foi rejeitado. Motivo: ' . $reason, APP_URL . '/' . APP_URL_PANEL . '/payment/pay');
         }
         logAudit($admin_id, $proof['id_users'], 'proof.' . $ns, '_payment_proof', $id, json_encode(['status' => 'pending']), json_encode(['status' => $ns]));
         jOut(true, 'Comprovativo ' . ($ns === 'validated' ? 'validado' : 'rejeitado') . '!');
@@ -709,7 +709,7 @@ if ($action === 'manual_deposit') {
         if ($file['size'] > 5 * 1024 * 1024) {
             jOut(false, 'Ficheiro excede 5MB.');
         }
-        $dir = dirname(__DIR__, 4) . '/assets/payment/uploads/royalties/';
+        $dir = dirname(__DIR__, 3) . '/assets/payment/uploads/royalties/';
         if (!is_dir($dir)) {
             if (!@mkdir($dir, 0755, true)) {
                 jOut(false, 'Não foi possível criar o diretório de uploads.');
@@ -793,8 +793,8 @@ if ($action === 'manual_deposit') {
                 $admin_id,
                 'payment',
                 'Royalty Creditado 🎵',
-                "Foi creditado Kz " . number_format($net_aoa, 2, ',', '.') . " na tua wallet.",
-                APP_URL . '/dashboard/analytics/report'
+                "Foi creditado Kz " . number_format($net_aoa, 2, ',', '.') . " na tua conta digital Wasom Upfy.",
+                APP_URL . '/' . APP_URL_PANEL . '/report'
             );
         }
 

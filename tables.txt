@@ -1,4 +1,3 @@
-
 Tabela	Criar tabela
 _account	CREATE TABLE `_account` (
  `id_account` int(11) NOT NULL AUTO_INCREMENT,
@@ -78,6 +77,8 @@ _album	CREATE TABLE `_album` (
  `copyright_p` varchar(255) DEFAULT NULL COMMENT '℗ Copyright (fonograma)',
  `img_cover` varchar(255) DEFAULT NULL,
  `status_album` enum('draft','pending','under_review','approved','rejected','deleting') NOT NULL DEFAULT 'draft',
+ `is_locked_for_distribution` tinyint(1) NOT NULL DEFAULT 0,
+ `lock_reason` varchar(255) DEFAULT NULL,
  `previous_status` enum('draft','pending','under_review','approved','rejected') DEFAULT NULL,
  `rejection_reason` text DEFAULT NULL,
  `approved_by` int(11) DEFAULT NULL COMMENT 'id_employees que aprovou',
@@ -188,7 +189,18 @@ _audit_log	CREATE TABLE `_audit_log` (
  KEY `idx_creat_log` (`creat_log`),
  CONSTRAINT `fk_al_emp` FOREIGN KEY (`id_employees`) REFERENCES `_employees` (`id_employees`) ON DELETE SET NULL ON UPDATE CASCADE,
  CONSTRAINT `fk_al_users` FOREIGN KEY (`id_users`) REFERENCES `_users` (`id_users`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=268 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+) ENGINE=InnoDB AUTO_INCREMENT=288 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+_blacklist	CREATE TABLE `_blacklist` (
+ `id_blacklist` int(11) NOT NULL AUTO_INCREMENT,
+ `type` enum('ip','device','email') NOT NULL,
+ `value` varchar(255) NOT NULL,
+ `reason` varchar(255) NOT NULL,
+ `created_by` int(11) DEFAULT NULL,
+ `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+ PRIMARY KEY (`id_blacklist`),
+ UNIQUE KEY `uq_blacklist` (`type`,`value`),
+ KEY `idx_bl_type` (`type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 _blog_category	CREATE TABLE `_blog_category` (
  `id_category` int(11) NOT NULL AUTO_INCREMENT,
  `name_category` varchar(100) NOT NULL,
@@ -288,7 +300,7 @@ _collab_activity	CREATE TABLE `_collab_activity` (
  PRIMARY KEY (`id_activity`),
  KEY `idx_collab_activity` (`id_collab`),
  CONSTRAINT `fk_activity_collab` FOREIGN KEY (`id_collab`) REFERENCES `_collaborators` (`id_collab`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 _collab_sessions	CREATE TABLE `_collab_sessions` (
  `id_csession` int(11) NOT NULL AUTO_INCREMENT,
  `id_collab` int(11) NOT NULL,
@@ -512,7 +524,7 @@ _notification	CREATE TABLE `_notification` (
  KEY `idx_is_read` (`is_read`),
  CONSTRAINT `fk_notif_emp` FOREIGN KEY (`id_employees`) REFERENCES `_employees` (`id_employees`) ON DELETE SET NULL ON UPDATE CASCADE,
  CONSTRAINT `fk_notif_users` FOREIGN KEY (`id_users`) REFERENCES `_users` (`id_users`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 _payment	CREATE TABLE `_payment` (
  `id_payment` int(11) NOT NULL AUTO_INCREMENT,
  `id_users` int(11) NOT NULL,
@@ -522,7 +534,10 @@ _payment	CREATE TABLE `_payment` (
  `currency` enum('AOA','USD','EUR') NOT NULL DEFAULT 'AOA',
  `payment_method` enum('bank_transfer','multicaixa','paypal','card','other') NOT NULL DEFAULT 'bank_transfer',
  `comprovante` varchar(255) DEFAULT NULL COMMENT 'Caminho do ficheiro de comprovante',
- `status_payment` enum('pending','approved','rejected','refunded') NOT NULL DEFAULT 'pending',
+ `status_payment` enum('pending','approved','rejected','refunded','settled','chargeback') NOT NULL DEFAULT 'pending',
+ `chargeback_flag` tinyint(1) NOT NULL DEFAULT 0,
+ `chargeback_at` datetime DEFAULT NULL,
+ `settled_at` datetime DEFAULT NULL,
  `rejection_reason` text DEFAULT NULL,
  `reviewed_by` int(11) DEFAULT NULL COMMENT 'id_employees que aprovou/rejeitou',
  `reviewed_at` datetime DEFAULT NULL,
@@ -539,16 +554,19 @@ _payment	CREATE TABLE `_payment` (
  CONSTRAINT `fk_pay_emp` FOREIGN KEY (`reviewed_by`) REFERENCES `_employees` (`id_employees`) ON DELETE SET NULL ON UPDATE CASCADE,
  CONSTRAINT `fk_pay_plan` FOREIGN KEY (`id_plan`) REFERENCES `_plans` (`id_plan`) ON UPDATE CASCADE,
  CONSTRAINT `fk_pay_users` FOREIGN KEY (`id_users`) REFERENCES `_users` (`id_users`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 _payment_intent	CREATE TABLE `_payment_intent` (
  `id_intent` int(11) NOT NULL AUTO_INCREMENT,
  `id_users` int(11) NOT NULL,
  `id_plan` int(11) NOT NULL,
  `reference_code` varchar(20) NOT NULL COMMENT 'Ex: WUF-8F3K9X2L (interno, não EMIS)',
  `amount_expected` decimal(10,2) NOT NULL COMMENT 'Valor em AOA no momento da criação',
- `status` enum('created','waiting_payment','under_review','approved','rejected','expired') NOT NULL DEFAULT 'created',
+ `status` enum('created','waiting_payment','proof_uploaded','under_review','approved','rejected','expired','refunded') NOT NULL DEFAULT 'created',
  `attempts` tinyint(3) NOT NULL DEFAULT 0 COMMENT 'Tentativas de upload falhadas',
  `expires_at` datetime NOT NULL COMMENT 'Expira 60 min após criação',
+ `auto_approve_at` datetime DEFAULT NULL,
+ `review_required` tinyint(1) NOT NULL DEFAULT 0,
+ `review_reason` varchar(255) DEFAULT NULL,
  `approved_at` datetime DEFAULT NULL,
  `approved_by` int(11) DEFAULT NULL COMMENT 'FK _employees.id_employees',
  `ip_address` varchar(45) DEFAULT NULL,
@@ -560,9 +578,11 @@ _payment_intent	CREATE TABLE `_payment_intent` (
  KEY `idx_intent_user` (`id_users`),
  KEY `idx_intent_status` (`status`),
  KEY `fk_intent_plan` (`id_plan`),
+ KEY `idx_pi_auto_approve` (`auto_approve_at`,`status`),
+ KEY `idx_pi_review` (`review_required`,`status`),
  CONSTRAINT `fk_intent_plan` FOREIGN KEY (`id_plan`) REFERENCES `_plans` (`id_plan`),
  CONSTRAINT `fk_intent_user` FOREIGN KEY (`id_users`) REFERENCES `_users` (`id_users`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 _payment_proof	CREATE TABLE `_payment_proof` (
  `id_proof` int(11) NOT NULL AUTO_INCREMENT,
  `id_intent` int(11) NOT NULL,
@@ -572,6 +592,9 @@ _payment_proof	CREATE TABLE `_payment_proof` (
  `method` enum('express','iban') NOT NULL COMMENT 'Método de pagamento usado',
  `file_path` varchar(255) NOT NULL COMMENT 'Caminho relativo do ficheiro',
  `file_hash` char(64) NOT NULL COMMENT 'SHA256 — detecta reutilização',
+ `device_hash` varchar(64) DEFAULT NULL,
+ `ip_proof` varchar(45) DEFAULT NULL,
+ `geo_country` varchar(2) DEFAULT NULL,
  `file_size` int(11) DEFAULT NULL COMMENT 'Bytes',
  `file_type` varchar(50) DEFAULT NULL COMMENT 'image/jpeg, image/png, application/pdf',
  `status` enum('pending','validated','rejected') NOT NULL DEFAULT 'pending',
@@ -587,7 +610,7 @@ _payment_proof	CREATE TABLE `_payment_proof` (
  KEY `fk_proof_user` (`id_users`),
  CONSTRAINT `fk_proof_intent` FOREIGN KEY (`id_intent`) REFERENCES `_payment_intent` (`id_intent`) ON DELETE CASCADE,
  CONSTRAINT `fk_proof_user` FOREIGN KEY (`id_users`) REFERENCES `_users` (`id_users`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 _plans	CREATE TABLE `_plans` (
  `id_plan` int(11) NOT NULL AUTO_INCREMENT,
  `slug_plan` varchar(50) NOT NULL COMMENT 'single, album, artist, label',
@@ -765,7 +788,7 @@ _royalty	CREATE TABLE `_royalty` (
  CONSTRAINT `fk_roy_track` FOREIGN KEY (`id_track`) REFERENCES `_track` (`id_track`) ON DELETE CASCADE ON UPDATE CASCADE,
  CONSTRAINT `fk_roy_tx` FOREIGN KEY (`id_transaction`) REFERENCES `_transaction` (`id_transaction`) ON DELETE SET NULL ON UPDATE CASCADE,
  CONSTRAINT `fk_roy_users` FOREIGN KEY (`id_users`) REFERENCES `_users` (`id_users`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 _service_contacts	CREATE TABLE `_service_contacts` (
  `id_contact` int(10) unsigned NOT NULL AUTO_INCREMENT,
  `mode` enum('free_analysis','consultant_initial','consultant_talk','meeting_schedule','general') NOT NULL DEFAULT 'general',
@@ -959,7 +982,7 @@ _transaction	CREATE TABLE `_transaction` (
  KEY `idx_type_transaction` (`type_transaction`),
  CONSTRAINT `fk_tx_emp` FOREIGN KEY (`id_employees`) REFERENCES `_employees` (`id_employees`) ON DELETE SET NULL ON UPDATE CASCADE,
  CONSTRAINT `fk_tx_users` FOREIGN KEY (`id_users`) REFERENCES `_users` (`id_users`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 _users	CREATE TABLE `_users` (
  `id_users` int(11) NOT NULL AUTO_INCREMENT,
  `ip_register` varchar(45) DEFAULT NULL COMMENT 'IP no momento do cadastro',
@@ -1046,7 +1069,7 @@ _users_sessions	CREATE TABLE `_users_sessions` (
  UNIQUE KEY `session_token` (`session_token`),
  KEY `id_users` (`id_users`),
  CONSTRAINT `fk_usess_users` FOREIGN KEY (`id_users`) REFERENCES `_users` (`id_users`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 _users_tokens	CREATE TABLE `_users_tokens` (
  `id_token` int(11) NOT NULL AUTO_INCREMENT,
  `id_users` int(11) NOT NULL,
@@ -1077,7 +1100,7 @@ _user_activity_log	CREATE TABLE `_user_activity_log` (
  KEY `idx_activity_type` (`activity_type`),
  KEY `idx_creat_activity` (`creat_activity`),
  CONSTRAINT `fk_ual_users` FOREIGN KEY (`id_users`) REFERENCES `_users` (`id_users`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=70 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+) ENGINE=InnoDB AUTO_INCREMENT=80 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 _user_plan	CREATE TABLE `_user_plan` (
  `id_user_plan` int(11) NOT NULL AUTO_INCREMENT,
  `id_users` int(11) NOT NULL,
@@ -1099,7 +1122,7 @@ _user_plan	CREATE TABLE `_user_plan` (
  CONSTRAINT `fk_uplan_pay` FOREIGN KEY (`id_payment`) REFERENCES `_payment` (`id_payment`) ON DELETE SET NULL ON UPDATE CASCADE,
  CONSTRAINT `fk_uplan_plan` FOREIGN KEY (`id_plan`) REFERENCES `_plans` (`id_plan`) ON UPDATE CASCADE,
  CONSTRAINT `fk_uplan_users` FOREIGN KEY (`id_users`) REFERENCES `_users` (`id_users`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 _user_presence	CREATE TABLE `_user_presence` (
  `id_presence` int(11) NOT NULL AUTO_INCREMENT,
  `id_users` int(11) NOT NULL,
@@ -1124,7 +1147,7 @@ _user_presence	CREATE TABLE `_user_presence` (
  KEY `idx_last_activity` (`last_activity`),
  KEY `idx_presence_status_activity` (`online_status`,`last_activity`),
  CONSTRAINT `fk_up_users` FOREIGN KEY (`id_users`) REFERENCES `_users` (`id_users`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=268 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+) ENGINE=InnoDB AUTO_INCREMENT=450 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 _user_settings	CREATE TABLE `_user_settings` (
  `id_settings` int(11) NOT NULL AUTO_INCREMENT,
  `id_users` int(11) NOT NULL,
@@ -1272,7 +1295,7 @@ _withdrawal	CREATE TABLE `_withdrawal` (
  CONSTRAINT `fk_wd_emp` FOREIGN KEY (`reviewed_by`) REFERENCES `_employees` (`id_employees`) ON DELETE SET NULL ON UPDATE CASCADE,
  CONSTRAINT `fk_wd_tx` FOREIGN KEY (`id_transaction`) REFERENCES `_transaction` (`id_transaction`) ON DELETE SET NULL ON UPDATE CASCADE,
  CONSTRAINT `fk_wd_users` FOREIGN KEY (`id_users`) REFERENCES `_users` (`id_users`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 _withdrawal_requests	CREATE TABLE `_withdrawal_requests` (
  `id_withdrawal` int(11) NOT NULL AUTO_INCREMENT,
  `id_users` int(11) NOT NULL,
