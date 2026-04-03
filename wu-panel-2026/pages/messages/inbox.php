@@ -10,16 +10,16 @@ requirePermission($admin_id, 'support.view');
 if (!isset($_SESSION['admin_csrf_token'])) {
     $_SESSION['admin_csrf_token'] = bin2hex(random_bytes(32));
 }
-
 // ── Garantir colunas is_starred (executar uma vez) ────────────
-foreach (['_support_ticket','_contact_message','_feedback'] as $tbl) {
+foreach (['_support_ticket', '_contact_message', '_feedback'] as $tbl) {
     try {
         $db->exec("ALTER TABLE `$tbl` ADD COLUMN IF NOT EXISTS `is_starred` TINYINT(1) NOT NULL DEFAULT 0");
-    } catch (Exception $e) { /* já existe — ignorar */ }
+    } catch (Exception $e) { /* já existe — ignorar */
+    }
 }
 
 // ── Filtros / aba activa ──────────────────────────────────────
-$tab      = in_array($_GET['tab'] ?? '', ['tickets','contact','feedback','starred','archived']) ? $_GET['tab'] : 'all';
+$tab      = in_array($_GET['tab'] ?? '', ['tickets', 'contact', 'feedback', 'starred', 'archived']) ? $_GET['tab'] : 'all';
 $page     = max(1, (int)($_GET['page'] ?? 1));
 $per_page = 25;
 $f_search = trim($_GET['q'] ?? '');
@@ -52,11 +52,11 @@ function inbox_priority_label(string $p): string
 function inbox_status_badge(string $s): string
 {
     return match ($s) {
-        'new','open'       => '<span class="inbox-s-new"></span>',
+        'new', 'open'       => '<span class="inbox-s-new"></span>',
         'in_progress'      => '<span class="inbox-s-progress"></span>',
         'read'             => '',
-        'replied','resolved'=> '<span class="inbox-s-replied">✓</span>',
-        'archived','closed'=> '<span class="inbox-s-archived">—</span>',
+        'replied', 'resolved' => '<span class="inbox-s-replied">✓</span>',
+        'archived', 'closed' => '<span class="inbox-s-archived">—</span>',
         default            => '',
     };
 }
@@ -66,8 +66,8 @@ function inbox_relative(string $dt): string
     $ts   = strtotime($dt);
     $diff = time() - $ts;
     if ($diff < 60)       return 'agora';
-    if ($diff < 3600)     return floor($diff/60).'min';
-    if ($diff < 86400)    return floor($diff/3600).'h';
+    if ($diff < 3600)     return floor($diff / 60) . 'min';
+    if ($diff < 86400)    return floor($diff / 3600) . 'h';
     if ($diff < 604800)   return date('d/m', $ts);
     return date('d/m/Y', $ts);
 }
@@ -85,7 +85,8 @@ $search_like = $f_search !== '' ? '%' . $f_search . '%' : null;
 
 // -- tickets
 $tw = ["st.status_ticket != 'deleted'"];
-if ($tab === 'tickets')  {} // sem filtro extra
+if ($tab === 'tickets') {
+} // sem filtro extra
 if ($tab === 'starred')  $tw[] = "st.is_starred = 1";
 if ($tab === 'archived') $tw[] = "st.status_ticket IN ('closed','archived')";
 if ($tab === 'contact' || $tab === 'feedback') $tw[] = "1=0"; // esconder
@@ -100,7 +101,8 @@ $tw_str = 'WHERE ' . implode(' AND ', $tw);
 
 // -- contact_message
 $cw = ["cm.status_msg != 'deleted'"];
-if ($tab === 'contact')  {} // ok
+if ($tab === 'contact') {
+} // ok
 if ($tab === 'starred')  $cw[] = "cm.is_starred = 1";
 if ($tab === 'archived') $cw[] = "cm.status_msg = 'archived'";
 if ($tab === 'tickets' || $tab === 'feedback') $cw[] = "1=0";
@@ -112,7 +114,8 @@ $cw_str = 'WHERE ' . implode(' AND ', $cw);
 
 // -- feedback
 $fw = ["fb.status_fb != 'deleted'"];
-if ($tab === 'feedback') {}
+if ($tab === 'feedback') {
+}
 if ($tab === 'starred')  $fw[] = "fb.is_starred = 1";
 if ($tab === 'archived') $fw[] = "fb.status_fb = 'archived'";
 if ($tab === 'tickets' || $tab === 'contact') $fw[] = "1=0";
@@ -824,19 +827,19 @@ $proc_url = $base_url . '/messages/inbox-process';
                     <nav class="inbox-nav">
                         <div class="inbox-nav-sep">Caixa</div>
                         <?php
-                    $tabs = [
-                        ['all',      'bi-inbox',           'Todas',        $total_unread],
-                        ['tickets',  'bi-headset',         'Suporte',      $unread_tickets],
-                        ['contact',  'bi-envelope-open',   'Contacto Site',$unread_contact],
-                        ['feedback', 'bi-chat-square-text','Feedbacks',    $unread_feedback],
-                    ];
-                    foreach ($tabs as [$t, $icon, $label, $badge]):
-                        $is_active = $tab === $t;
-                        $q = array_merge($_GET, ['tab' => $t, 'page' => 1, 'open' => '', 'src' => '']);
-                        unset($q['open'],$q['src']);
-                    ?>
+                        $tabs = [
+                            ['all',      'bi-inbox',           'Todas',        $total_unread],
+                            ['tickets',  'bi-headset',         'Suporte',      $unread_tickets],
+                            ['contact',  'bi-envelope-open',   'Contacto Site', $unread_contact],
+                            ['feedback', 'bi-chat-square-text', 'Feedbacks',    $unread_feedback],
+                        ];
+                        foreach ($tabs as [$t, $icon, $label, $badge]):
+                            $is_active = $tab === $t;
+                            $q = array_merge($_GET, ['tab' => $t, 'page' => 1, 'open' => '', 'src' => '']);
+                            unset($q['open'], $q['src']);
+                        ?>
                         <a href="?<?php echo http_build_query($q); ?>"
-                            class="inbox-nav-item <?php echo $is_active?'active':''; ?>">
+                            class="inbox-nav-item <?php echo $is_active ? 'active' : ''; ?>">
                             <i class="bi <?php echo $icon; ?>"></i>
                             <?php echo $label; ?>
                             <?php if ($badge > 0): ?>
@@ -847,19 +850,19 @@ $proc_url = $base_url . '/messages/inbox-process';
 
                         <div class="inbox-nav-sep" style="margin-top:10px">Organizar</div>
                         <?php
-                    $tabs2 = [
-                        ['starred',  'bi-star-fill',  'Importantes',  $total_starred],
-                        ['archived', 'bi-archive',    'Arquivadas',   0],
-                    ];
-                    foreach ($tabs2 as [$t, $icon, $label, $badge]):
-                        $is_active = $tab === $t;
-                        $q = array_merge($_GET, ['tab' => $t, 'page' => 1]);
-                        unset($q['open'],$q['src']);
-                    ?>
+                        $tabs2 = [
+                            ['starred',  'bi-star-fill',  'Importantes',  $total_starred],
+                            ['archived', 'bi-archive',    'Arquivadas',   0],
+                        ];
+                        foreach ($tabs2 as [$t, $icon, $label, $badge]):
+                            $is_active = $tab === $t;
+                            $q = array_merge($_GET, ['tab' => $t, 'page' => 1]);
+                            unset($q['open'], $q['src']);
+                        ?>
                         <a href="?<?php echo http_build_query($q); ?>"
-                            class="inbox-nav-item <?php echo $is_active?'active':''; ?>">
+                            class="inbox-nav-item <?php echo $is_active ? 'active' : ''; ?>">
                             <i class="bi <?php echo $icon; ?>"
-                                style="<?php echo $t==='starred'?'color:#f59e0b':''; ?>"></i>
+                                style="<?php echo $t === 'starred' ? 'color:#f59e0b' : ''; ?>"></i>
                             <?php echo $label; ?>
                             <?php if ($badge > 0): ?>
                             <span class="inbox-nav-badge" style="background:#f59e0b"><?php echo $badge; ?></span>
@@ -893,23 +896,23 @@ $proc_url = $base_url . '/messages/inbox-process';
                         </div>
                         <?php else: ?>
                         <?php foreach ($messages as $msg):
-                        [$src_label, $src_color, $src_icon] = inbox_source_label($msg['source']);
-                        $is_unread  = in_array($msg['msg_status'], ['new','open']);
-                        $is_starred = (bool)$msg['is_starred'];
-                        $is_active  = ($selected == $msg['msg_id'] && $sel_src === $msg['source']);
+                                [$src_label, $src_color, $src_icon] = inbox_source_label($msg['source']);
+                                $is_unread  = in_array($msg['msg_status'], ['new', 'open']);
+                                $is_starred = (bool)$msg['is_starred'];
+                                $is_active  = ($selected == $msg['msg_id'] && $sel_src === $msg['source']);
 
-                        // Avatar
-                        $name  = $msg['sender_name'] ?: 'Visitante';
-                        $parts = explode(' ', trim($name), 2);
-                        $ini   = mb_strtoupper(mb_substr($parts[0]??'',0,1,'UTF-8'),'UTF-8')
-                               . mb_strtoupper(mb_substr($parts[1]??'',0,1,'UTF-8'),'UTF-8');
-                        $colors= ['#FF0089','#f97316','#8b5cf6','#06b6d4','#22c55e','#eab308','#3b82f6','#ef4444'];
-                        $avc   = $colors[abs(crc32($name)) % count($colors)];
+                                // Avatar
+                                $name  = $msg['sender_name'] ?: 'Visitante';
+                                $parts = explode(' ', trim($name), 2);
+                                $ini   = mb_strtoupper(mb_substr($parts[0] ?? '', 0, 1, 'UTF-8'), 'UTF-8')
+                                    . mb_strtoupper(mb_substr($parts[1] ?? '', 0, 1, 'UTF-8'), 'UTF-8');
+                                $colors = ['#FF0089', '#f97316', '#8b5cf6', '#06b6d4', '#22c55e', '#eab308', '#3b82f6', '#ef4444'];
+                                $avc   = $colors[abs(crc32($name)) % count($colors)];
 
-                        $open_url = '?' . http_build_query(array_merge($_GET, ['open'=>$msg['msg_id'],'src'=>$msg['source'],'page'=>$page]));
-                    ?>
+                                $open_url = '?' . http_build_query(array_merge($_GET, ['open' => $msg['msg_id'], 'src' => $msg['source'], 'page' => $page]));
+                            ?>
                         <a href="<?php echo $open_url; ?>"
-                            class="inbox-msg-item <?php echo $is_unread?'unread':''; ?> <?php echo $is_starred?'starred':''; ?> <?php echo $is_active?'active':''; ?>"
+                            class="inbox-msg-item <?php echo $is_unread ? 'unread' : ''; ?> <?php echo $is_starred ? 'starred' : ''; ?> <?php echo $is_active ? 'active' : ''; ?>"
                             data-id="<?php echo (int)$msg['msg_id']; ?>"
                             data-source="<?php echo htmlspecialchars($msg['source']); ?>"
                             onclick="loadMessage(<?php echo (int)$msg['msg_id']; ?>,'<?php echo htmlspecialchars($msg['source']); ?>',this);return false">
@@ -957,8 +960,8 @@ $proc_url = $base_url . '/messages/inbox-process';
                             <!-- Estrela -->
                             <button class="inbox-star-btn"
                                 onclick="toggleStar(event, <?php echo (int)$msg['msg_id']; ?>,'<?php echo htmlspecialchars($msg['source']); ?>',this)"
-                                title="<?php echo $is_starred?'Remover importância':'Marcar como importante'; ?>">
-                                <i class="bi <?php echo $is_starred?'bi-star-fill':'bi-star'; ?>"></i>
+                                title="<?php echo $is_starred ? 'Remover importância' : 'Marcar como importante'; ?>">
+                                <i class="bi <?php echo $is_starred ? 'bi-star-fill' : 'bi-star'; ?>"></i>
                             </button>
                         </a>
                         <?php endforeach; ?>
@@ -971,18 +974,18 @@ $proc_url = $base_url . '/messages/inbox-process';
                         <span style="font-size:.72rem;opacity:.5"><?php echo number_format($total); ?> total</span>
                         <nav>
                             <ul class="pagination pagination-sm mb-0">
-                                <li class="page-item <?php echo $page<=1?'disabled':''; ?>">
+                                <li class="page-item <?php echo $page <= 1 ? 'disabled' : ''; ?>">
                                     <a class="page-link"
-                                        href="?<?php echo http_build_query(array_merge($_GET,['page'=>$page-1])); ?>">
+                                        href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page - 1])); ?>">
                                         <i class="bi bi-chevron-left"></i>
                                     </a>
                                 </li>
                                 <li class="page-item disabled"><span class="page-link"
                                         style="font-size:.72rem"><?php echo $page; ?>/<?php echo $total_pages; ?></span>
                                 </li>
-                                <li class="page-item <?php echo $page>=$total_pages?'disabled':''; ?>">
+                                <li class="page-item <?php echo $page >= $total_pages ? 'disabled' : ''; ?>">
                                     <a class="page-link"
-                                        href="?<?php echo http_build_query(array_merge($_GET,['page'=>$page+1])); ?>">
+                                        href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page + 1])); ?>">
                                         <i class="bi bi-chevron-right"></i>
                                     </a>
                                 </li>
@@ -1108,12 +1111,27 @@ $proc_url = $base_url . '/messages/inbox-process';
             const fd = new FormData();
             Object.entries(payload).forEach(([k, v]) => fd.append(k, v));
             fd.append('csrf_token', CSRF);
-            const r = await fetch(PROCESS, {
-                method: 'POST',
-                credentials: 'same-origin',
-                body: fd
-            });
-            return r.json();
+            try {
+                const r = await fetch(PROCESS, {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    body: fd
+                });
+                if (!r.ok) throw new Error('Erro de servidor: ' + r.status);
+                const text = await r.text();
+                try {
+                    return JSON.parse(text);
+                } catch (e) {
+                    console.error("Erro ao processar JSON. Resposta do servidor:", text);
+                    throw new Error('Resposta inválida do servidor');
+                }
+            } catch (e) {
+                console.error("Erro na requisição AJAX:", e);
+                return {
+                    ok: false,
+                    message: 'Erro de ligação ao servidor.'
+                };
+            }
         }
 
         function setLoad(btn, state) {
@@ -1189,12 +1207,12 @@ $proc_url = $base_url . '/messages/inbox-process';
             }
         };
 
-        function closeRead() {
+        window.closeRead = function() {
             document.getElementById('listCol').classList.remove('reading-mode');
             document.getElementById('readCol').classList.remove('reading-mode');
             document.getElementById('readWelcome').style.display = 'flex';
             document.getElementById('readContent').style.display = 'none';
-        }
+        };
 
         // ── Estrelar/Desestrelar ──────────────────────────────
         window.toggleStar = async function(e, id, src, btn) {

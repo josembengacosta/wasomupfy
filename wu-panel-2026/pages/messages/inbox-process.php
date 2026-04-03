@@ -35,31 +35,31 @@ function ib_relative(string $dt): string
     $ts   = strtotime($dt);
     $diff = time() - $ts;
     if ($diff < 60)     return 'agora';
-    if ($diff < 3600)   return floor($diff/60).'min atrás';
-    if ($diff < 86400)  return floor($diff/3600).'h atrás';
-    if ($diff < 604800) return date('d/m', $ts).' às '.date('H:i', $ts);
+    if ($diff < 3600)   return floor($diff / 60) . 'min atrás';
+    if ($diff < 86400)  return floor($diff / 3600) . 'h atrás';
+    if ($diff < 604800) return date('d/m', $ts) . ' às ' . date('H:i', $ts);
     return date('d/m/Y H:i', $ts);
 }
 function ib_avatar(string $name, ?string $photo, int $s = 40): string
 {
     $p   = explode(' ', trim($name), 2);
-    $ini = mb_strtoupper(mb_substr($p[0]??'',0,1,'UTF-8'),'UTF-8')
-         . mb_strtoupper(mb_substr($p[1]??'',0,1,'UTF-8'),'UTF-8');
-    $cl  = ['#FF0089','#f97316','#8b5cf6','#06b6d4','#22c55e','#eab308','#3b82f6','#ef4444'];
+    $ini = mb_strtoupper(mb_substr($p[0] ?? '', 0, 1, 'UTF-8'), 'UTF-8')
+        . mb_strtoupper(mb_substr($p[1] ?? '', 0, 1, 'UTF-8'), 'UTF-8');
+    $cl  = ['#FF0089', '#f97316', '#8b5cf6', '#06b6d4', '#22c55e', '#eab308', '#3b82f6', '#ef4444'];
     $c   = $cl[abs(crc32($name)) % count($cl)];
     $fs  = round($s * 0.3);
     if ($photo) {
-        return '<img src="' . APP_URL . '/assets/comprovantes/uploads/users/' . htmlspecialchars($photo) . '"
-                     width="' . $s . '" height="' . $s . '"
-                     style="border-radius:50%;object-fit:cover;flex-shrink:0"
-                     onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'" alt="">
-                <div style="width:'.$s.'px;height:'.$s.'px;border-radius:50%;background:'.$c.';
+        return "<img src=\"" . APP_URL . "/assets/comprovantes/uploads/users/" . htmlspecialchars($photo) . "\"
+                     width=\"$s\" height=\"$s\"
+                     style=\"border-radius:50%;object-fit:cover;flex-shrink:0\"
+                     onerror=\"this.style.display='none';this.nextElementSibling.style.display='flex'\" alt=\"\">
+                <div style=\"width:{$s}px;height:{$s}px;border-radius:50%;background:{$c};
                             display:none;align-items:center;justify-content:center;
-                            font-weight:700;font-size:'.$fs.'px;color:#fff;flex-shrink:0">'.$ini.'</div>';
+                            font-weight:700;font-size:{$fs}px;color:#fff;flex-shrink:0\">{$ini}</div>";
     }
-    return '<div style="width:'.$s.'px;height:'.$s.'px;border-radius:50%;background:'.$c.';
+    return "<div style=\"width:{$s}px;height:{$s}px;border-radius:50%;background:{$c};
                          display:flex;align-items:center;justify-content:center;
-                         font-weight:700;font-size:'.$fs.'px;color:#fff;flex-shrink:0">'.$ini.'</div>';
+                         font-weight:700;font-size:{$fs}px;color:#fff;flex-shrink:0\">{$ini}</div>";
 }
 
 function ib_send_email(string $to, string $subject, string $body): bool
@@ -69,12 +69,19 @@ function ib_send_email(string $to, string $subject, string $body): bool
     if (!class_exists('\Wasom\Mailer')) require_once $p;
     try {
         $wm = new \Wasom\Mailer();
-        $wm->host=MAIL_HOST; $wm->port=MAIL_PORT;
+        $wm->host = MAIL_HOST;
+        $wm->port = MAIL_PORT;
         $wm->secure = defined('MAIL_SECURE') ? MAIL_SECURE : 'tls';
-        $wm->username=MAIL_USER; $wm->password=MAIL_PASS; $wm->debug=0;
+        $wm->username = MAIL_USER;
+        $wm->password = MAIL_PASS;
+        $wm->debug = 0;
         $wm->setFrom(MAIL_FROM, MAIL_FROM_NAME)->addAddress($to)->setSubject($subject)->setBody($body, strip_tags($body));
-        $wm->send(); return true;
-    } catch (\Wasom\MailerException $e) { error_log('[INBOX_MAIL] '.$e->getMessage()); return false; }
+        $wm->send();
+        return true;
+    } catch (\Wasom\MailerException $e) {
+        error_log('[INBOX_MAIL] ' . $e->getMessage());
+        return false;
+    }
 }
 
 function ib_email_template(string $subject, string $content, string $color = '#FF0089'): string
@@ -98,8 +105,10 @@ function ib_notifyUser(PDO $db, int $id_users, int $id_emp, string $title, strin
 {
     try {
         $db->prepare("INSERT INTO _notification (id_users,id_employees,type,title,body,action_url) VALUES (?,?,'info',?,?,?)")
-           ->execute([$id_users, $id_emp, $title, $body, $url]);
-    } catch (Exception $e) { error_log('[INBOX_NOTIFY] '.$e->getMessage()); }
+            ->execute([$id_users, $id_emp, $title, $body, $url]);
+    } catch (Exception $e) {
+        error_log('[INBOX_NOTIFY] ' . $e->getMessage());
+    }
 }
 
 // ── Construir o HTML completo de uma mensagem ─────────────────
@@ -112,27 +121,27 @@ function buildMessageHTML(array $msg, array $replies, ?array $user, ?array $assi
         'contact'       => ['Contacto Site',    '#f97316', 'bi-envelope'],
         'feedback'      => ['Feedback',         '#22c55e', 'bi-chat-square-text'],
     ];
-    [$src_label, $src_color, $src_icon] = $src_map[$msg['source']] ?? ['Mensagem','#6b7280','bi-chat'];
+    [$src_label, $src_color, $src_icon] = $src_map[$msg['source']] ?? ['Mensagem', '#6b7280', 'bi-chat'];
 
     $can_approve = hasPermission($GLOBALS['admin_id'], 'support.edit') || hasPermission($GLOBALS['admin_id'], 'support.view');
     $has_user    = !empty($msg['id_users']);
 
     // Status options por tipo de fonte
     if (str_starts_with($msg['source'], 'ticket_')) {
-        $status_options = ['open'=>'Aberto','in_progress'=>'Em Progresso','resolved'=>'Resolvido','closed'=>'Fechado'];
+        $status_options = ['open' => 'Aberto', 'in_progress' => 'Em Progresso', 'resolved' => 'Resolvido', 'closed' => 'Fechado'];
         $cur_status     = $msg['status_ticket'];
     } elseif ($msg['source'] === 'contact') {
-        $status_options = ['new'=>'Novo','read'=>'Lido','replied'=>'Respondido','archived'=>'Arquivado'];
+        $status_options = ['new' => 'Novo', 'read' => 'Lido', 'replied' => 'Respondido', 'archived' => 'Arquivado'];
         $cur_status     = $msg['status_msg'];
     } else {
-        $status_options = ['new'=>'Novo','read'=>'Lido','archived'=>'Arquivado'];
+        $status_options = ['new' => 'Novo', 'read' => 'Lido', 'archived' => 'Arquivado'];
         $cur_status     = $msg['status_fb'];
     }
 
-    $priority_label = match($msg['priority']??'normal') {
+    $priority_label = match ($msg['priority'] ?? 'normal') {
         'high' => '<span class="badge" style="background:rgba(239,68,68,.15);color:#991b1b;font-size:.68rem">Prioridade Alta</span>',
         'low'  => '<span class="badge" style="background:rgba(107,114,128,.12);color:#374151;font-size:.68rem">Prioridade Baixa</span>',
-        default=> '',
+        default => '',
     };
 
     // ── Header do email
@@ -140,7 +149,7 @@ function buildMessageHTML(array $msg, array $replies, ?array $user, ?array $assi
     $html .= '<div class="d-flex align-items-start justify-content-between gap-3 mb-3">';
     $html .= '<h4 class="inbox-msg-title mb-0">' . htmlspecialchars($msg['subject']) . '</h4>';
     $html .= '<div class="d-flex gap-2 align-items-center flex-shrink-0">';
-    $html .= '<span style="background:'.$src_color.'1a;color:'.$src_color.';padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700"><i class="bi '.$src_icon.' me-1"></i>'.$src_label.'</span>';
+    $html .= '<span style="background:' . $src_color . '1a;color:' . $src_color . ';padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700"><i class="bi ' . $src_icon . ' me-1"></i>' . $src_label . '</span>';
     if ($priority_label) $html .= $priority_label;
     $html .= '</div></div>';
 
@@ -148,24 +157,24 @@ function buildMessageHTML(array $msg, array $replies, ?array $user, ?array $assi
     $sender_name = $msg['sender_name'] ?: 'Visitante';
     $html .= '<div class="inbox-msg-from">';
     $html .= ib_avatar($sender_name, $msg['sender_photo'] ?? null, 42);
-    $html .= '<div><div style="font-weight:700;font-size:.88rem">'.htmlspecialchars($sender_name).'</div>';
+    $html .= '<div><div style="font-weight:700;font-size:.88rem">' . htmlspecialchars($sender_name) . '</div>';
     $html .= '<div class="inbox-msg-meta">';
     $html .= htmlspecialchars($msg['sender_email'] ?? '');
     if ($has_user && $user) {
-        $html .= ' · <a href="'.APP_URL.'/'.ADMIN_PATH.'/users/view?id='.(int)$msg['id_users'].'" style="color:#FF0089;font-size:.72rem" target="_blank">Ver perfil</a>';
-        if (!empty($user['name_plan'])) $html .= ' · <span style="font-size:.72rem;color:#8b5cf6">'.$user['name_plan'].'</span>';
+        $html .= ' · <a href="' . APP_URL . '/' . ADMIN_PATH . '/users/view?id=' . (int)$msg['id_users'] . '" style="color:#FF0089;font-size:.72rem" target="_blank">Ver perfil</a>';
+        if (!empty($user['name_plan'])) $html .= ' · <span style="font-size:.72rem;color:#8b5cf6">' . $user['name_plan'] . '</span>';
     }
     $html .= '<br><span style="font-size:.7rem">' . ib_fmt_date($msg['created_at']) . '</span>';
-    if ($msg['ip_address'] ?? '') $html .= ' · <span style="font-size:.68rem;font-family:monospace;opacity:.5">'.htmlspecialchars($msg['ip_address']).'</span>';
+    if ($msg['ip_address'] ?? '') $html .= ' · <span style="font-size:.68rem;font-family:monospace;opacity:.5">' . htmlspecialchars($msg['ip_address']) . '</span>';
     $html .= '</div></div>';
     $html .= '</div>'; // from
 
     // Campos extras (tickets)
     if (str_starts_with($msg['source'], 'ticket_') && (!empty($msg['urgency_ticket']) || !empty($msg['issue_type_ticket']))) {
         $html .= '<div class="d-flex gap-2 mb-3 flex-wrap">';
-        if (!empty($msg['urgency_ticket']))    $html .= '<span style="font-size:.72rem;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:6px">Urgência: '.ucfirst($msg['urgency_ticket']).'</span>';
-        if (!empty($msg['issue_type_ticket'])) $html .= '<span style="font-size:.72rem;background:#e0f2fe;color:#1e40af;padding:2px 8px;border-radius:6px">Tipo: '.ucfirst($msg['issue_type_ticket']).'</span>';
-        if (!empty($msg['phone_msg'] ?? $msg['phone_contact'] ?? '')) $html .= '<span style="font-size:.72rem;background:#f0fdf4;color:#166534;padding:2px 8px;border-radius:6px"><i class="bi bi-telephone me-1"></i>'.htmlspecialchars($msg['phone_msg'] ?? $msg['phone_contact']).'</span>';
+        if (!empty($msg['urgency_ticket']))    $html .= '<span style="font-size:.72rem;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:6px">Urgência: ' . ucfirst($msg['urgency_ticket']) . '</span>';
+        if (!empty($msg['issue_type_ticket'])) $html .= '<span style="font-size:.72rem;background:#e0f2fe;color:#1e40af;padding:2px 8px;border-radius:6px">Tipo: ' . ucfirst($msg['issue_type_ticket']) . '</span>';
+        if (!empty($msg['phone_msg'] ?? $msg['phone_contact'] ?? '')) $html .= '<span style="font-size:.72rem;background:#f0fdf4;color:#166534;padding:2px 8px;border-radius:6px"><i class="bi bi-telephone me-1"></i>' . htmlspecialchars($msg['phone_msg'] ?? $msg['phone_contact']) . '</span>';
         $html .= '</div>';
     }
 
@@ -178,18 +187,18 @@ function buildMessageHTML(array $msg, array $replies, ?array $user, ?array $assi
     // ── Thread de respostas
     if (!empty($replies)) {
         $html .= '<div class="inbox-replies">';
-        $html .= '<h6 style="font-size:.8rem;font-weight:700;margin-bottom:12px;opacity:.7"><i class="bi bi-chat-left-dots me-2"></i>'.count($replies).' resposta'.((count($replies)>1)?'s':'').'</h6>';
+        $html .= '<h6 style="font-size:.8rem;font-weight:700;margin-bottom:12px;opacity:.7"><i class="bi bi-chat-left-dots me-2"></i>' . count($replies) . ' resposta' . ((count($replies) > 1) ? 's' : '') . '</h6>';
         foreach ($replies as $rep) {
             $is_admin = !empty($rep['from_employee']);
             $rep_name = $is_admin
-                ? (trim(($rep['emp_first']??'').(' '.($rep['emp_second']??''))) ?: 'Admin')
-                : (trim(($rep['usr_first']??'').(' '.($rep['usr_second']??''))) ?: 'Utilizador');
-            $html .= '<div class="inbox-reply-item '.($is_admin ? 'from-admin' : 'from-user').'">';
+                ? (trim(($rep['emp_first'] ?? '') . (' ' . ($rep['emp_second'] ?? ''))) ?: 'Admin')
+                : (trim(($rep['usr_first'] ?? '') . (' ' . ($rep['usr_second'] ?? ''))) ?: 'Utilizador');
+            $html .= '<div class="inbox-reply-item ' . ($is_admin ? 'from-admin' : 'from-user') . '">';
             $html .= '<div class="inbox-reply-meta">';
-            $html .= '<span><strong>'.htmlspecialchars($rep_name).'</strong>'.($is_admin?' (Admin)':'').'</span>';
-            $html .= '<span>'.ib_relative($rep['creat_reply']).'</span>';
+            $html .= '<span><strong>' . htmlspecialchars($rep_name) . '</strong>' . ($is_admin ? ' (Admin)' : '') . '</span>';
+            $html .= '<span>' . ib_relative($rep['creat_reply']) . '</span>';
             $html .= '</div>';
-            $html .= '<div class="inbox-reply-body">'.nl2br(htmlspecialchars($rep['body'])).'</div>';
+            $html .= '<div class="inbox-reply-body">' . nl2br(htmlspecialchars($rep['body'])) . '</div>';
             $html .= '</div>';
         }
         $html .= '</div>';
@@ -201,7 +210,7 @@ function buildMessageHTML(array $msg, array $replies, ?array $user, ?array $assi
         $html .= '
         <div class="inbox-reply-box">
             <div style="font-size:.78rem;font-weight:700;margin-bottom:8px;opacity:.7">
-                <i class="bi bi-reply me-1"></i>'.$btn_label.'
+                <i class="bi bi-reply me-1"></i>' . $btn_label . '
             </div>
             <textarea id="reply_textarea" rows="4" placeholder="Escreve a tua resposta..."></textarea>
             <div class="d-flex gap-2 mt-2 align-items-center">
@@ -228,16 +237,16 @@ function buildMessageHTML(array $msg, array $replies, ?array $user, ?array $assi
     $assign_select .= '<option value="">Sem atribuição</option>';
     foreach ($all_admins as $a) {
         $sel = ($assigned_emp && $assigned_emp['id_employees'] == $a['id_employees']) ? ' selected' : '';
-        $assign_select .= '<option value="'.(int)$a['id_employees'].'"'.$sel.'>'.htmlspecialchars($a['name']).'</option>';
+        $assign_select .= '<option value="' . (int)$a['id_employees'] . '"' . $sel . '>' . htmlspecialchars($a['name']) . '</option>';
     }
     $assign_select .= '</select>';
 
     $toolbar = '
-        <button class="btn btn-sm btn-outline-secondary" onclick="toggleStar(event,'.($msg['msg_id']).',\''.htmlspecialchars($source).'\',this)" title="'.($msg['is_starred']?'Remover':'Importante').'">
-            <i class="bi '.($msg['is_starred']?'bi-star-fill text-warning':'bi-star').'"></i>
+        <button class="btn btn-sm btn-outline-secondary" onclick="toggleStar(event,' . ($msg['msg_id']) . ',\'' . htmlspecialchars($source) . '\',this)" title="' . ($msg['is_starred'] ? 'Remover' : 'Importante') . '">
+            <i class="bi ' . ($msg['is_starred'] ? 'bi-star-fill text-warning' : 'bi-star') . '"></i>
         </button>
-        '.$status_select.'
-        '.$assign_select.'
+        ' . $status_select . '
+        ' . $assign_select . '
         <button class="btn btn-sm btn-outline-secondary" id="btn_archive" title="Arquivar">
             <i class="bi bi-archive"></i>
         </button>
@@ -264,7 +273,6 @@ if ($action === 'load_message') {
     if (str_starts_with($source, 'ticket_')) {
         $stmt = $db->prepare("
             SELECT st.*, st.id_users, st.email_contact AS sender_email, st.name_contact AS sender_name,
-                   'ticket_'.st.source_ticket AS src_computed,
                    u.photo_user AS sender_photo, u.name_artist_band,
                    pl.name_plan
             FROM _support_ticket st
@@ -278,7 +286,12 @@ if ($action === 'load_message') {
         if (!$msg) jOut(false, 'Mensagem não encontrada.');
 
         // Normalizar source
-        $msg['source']     = match($msg['source_ticket']) { 'auth_modal'=>'ticket_auth','public_form'=>'ticket_public','dashboard_form'=>'ticket_dash', default=>'ticket_auth' };
+        $msg['source']     = match ($msg['source_ticket']) {
+            'auth_modal' => 'ticket_auth',
+            'public_form' => 'ticket_public',
+            'dashboard_form' => 'ticket_dash',
+            default => 'ticket_auth'
+        };
         $msg['created_at'] = $msg['creat_ticket'];
         $msg['is_starred'] = $msg['is_starred'] ?? 0;
         $msg['priority']   = $msg['priority'] ?? 'normal';
@@ -305,10 +318,15 @@ if ($action === 'load_message') {
 
         // Utilizador
         if (!empty($msg['id_users'])) {
-            $user = $db->prepare("SELECT u.*, pl.name_plan FROM _users u LEFT JOIN _user_plan up ON up.id_users=u.id_users AND up.status_plan='active' LEFT JOIN _plans pl ON pl.id_plan=up.id_plan WHERE u.id_users=?")->execute([$msg['id_users']]) ? null : null;
-            $us = $db->prepare("SELECT u.*, pl.name_plan FROM _users u LEFT JOIN _user_plan up ON up.id_users=u.id_users AND up.status_plan='active' LEFT JOIN _plans pl ON pl.id_plan=up.id_plan WHERE u.id_users=?");
-            $us->execute([$msg['id_users']]);
-            $user = $us->fetch() ?: null;
+            $user_stmt = $db->prepare("
+                SELECT u.*, pl.name_plan 
+                FROM _users u 
+                LEFT JOIN _user_plan up ON up.id_users=u.id_users AND up.status_plan='active' 
+                LEFT JOIN _plans pl ON pl.id_plan=up.id_plan 
+                WHERE u.id_users=?
+            ");
+            $user_stmt->execute([$msg['id_users']]);
+            $user = $user_stmt->fetch() ?: null;
         }
         $assigned_emp = null;
         if (!empty($msg['assigned_to'])) {
@@ -316,7 +334,6 @@ if ($action === 'load_message') {
             $ae->execute([$msg['assigned_to']]);
             $assigned_emp = $ae->fetch() ?: null;
         }
-
     } elseif ($source === 'contact') {
         $stmt = $db->prepare("SELECT *, email_msg AS sender_email, name_msg AS sender_name FROM _contact_message WHERE id=?");
         $stmt->execute([$msg_id]);
@@ -335,7 +352,6 @@ if ($action === 'load_message') {
             $db->prepare("UPDATE _contact_message SET status_msg='read' WHERE id=? AND status_msg='new'")->execute([$msg_id]);
         }
         $assigned_emp = null;
-
     } elseif ($source === 'feedback') {
         $stmt = $db->prepare("SELECT *, '' AS sender_email, name_fb AS sender_name FROM _feedback WHERE id=?");
         $stmt->execute([$msg_id]);
@@ -390,7 +406,7 @@ if ($action === 'toggle_star') {
         }
         jOut(true, 'OK', ['starred' => $new ?? 0]);
     } catch (Exception $e) {
-        error_log('[INBOX STAR] '.$e->getMessage());
+        error_log('[INBOX STAR] ' . $e->getMessage());
         jOut(false, 'Erro.');
     }
 }
@@ -436,17 +452,19 @@ if ($action === 'reply') {
 
             // Notificação no painel (se tem conta)
             if ($orig_user) {
-                ib_notifyUser($db, (int)$orig_user['id_users'], $admin_id,
+                ib_notifyUser(
+                    $db,
+                    (int)$orig_user['id_users'],
+                    $admin_id,
                     'Resposta ao teu ticket de suporte',
                     'A equipa da Wasom Upfy respondeu ao teu pedido: "' . mb_substr($orig_subject, 0, 60, 'UTF-8') . '"',
                     APP_URL . '/dashboard/page/support'
                 );
             }
         } catch (Exception $e) {
-            error_log('[INBOX REPLY DB] '.$e->getMessage());
+            error_log('[INBOX REPLY DB] ' . $e->getMessage());
             jOut(false, 'Erro ao guardar resposta.');
         }
-
     } elseif ($source === 'contact') {
         $cm = $db->prepare("SELECT * FROM _contact_message WHERE id=?");
         $cm->execute([$msg_id]);
@@ -455,7 +473,6 @@ if ($action === 'reply') {
         $orig_email   = $contact['email_msg'];
         $orig_subject = $contact['subject_msg'];
         $db->prepare("UPDATE _contact_message SET status_msg='replied', replied_at=NOW() WHERE id=?")->execute([$msg_id]);
-
     } elseif ($source === 'feedback') {
         $fb = $db->prepare("SELECT * FROM _feedback WHERE id=?");
         $fb->execute([$msg_id]);
@@ -470,9 +487,10 @@ if ($action === 'reply') {
     // Enviar email de resposta
     if ($orig_email && filter_var($orig_email, FILTER_VALIDATE_EMAIL)) {
         $re_subject = 'Re: ' . $orig_subject;
-        $email_html = ib_email_template($re_subject,
+        $email_html = ib_email_template(
+            $re_subject,
             nl2br(htmlspecialchars($body)) .
-            '<br><br><span style="font-size:.78rem;color:#888">Esta mensagem foi enviada pela equipa da Wasom Upfy em resposta ao teu contacto.</span>'
+                '<br><br><span style="font-size:.78rem;color:#888">Esta mensagem foi enviada pela equipa da Wasom Upfy em resposta ao teu contacto.</span>'
         );
         $sent = ib_send_email($orig_email, $re_subject . ' — ' . APP_NAME, $email_html);
     } else {
@@ -493,22 +511,22 @@ if ($action === 'change_status') {
 
     try {
         if (str_starts_with($source, 'ticket_')) {
-            $allowed = ['open','in_progress','resolved','closed'];
+            $allowed = ['open', 'in_progress', 'resolved', 'closed'];
             if (!in_array($new_status, $allowed, true)) jOut(false, 'Estado inválido.');
-            $resolved = in_array($new_status, ['resolved','closed']) ? ', resolved_at=NOW()' : '';
+            $resolved = in_array($new_status, ['resolved', 'closed']) ? ', resolved_at=NOW()' : '';
             $db->prepare("UPDATE _support_ticket SET status_ticket=? $resolved WHERE id_ticket=?")->execute([$new_status, $msg_id]);
         } elseif ($source === 'contact') {
-            $allowed = ['new','read','replied','archived'];
+            $allowed = ['new', 'read', 'replied', 'archived'];
             if (!in_array($new_status, $allowed, true)) jOut(false, 'Estado inválido.');
             $db->prepare("UPDATE _contact_message SET status_msg=? WHERE id=?")->execute([$new_status, $msg_id]);
         } elseif ($source === 'feedback') {
-            $allowed = ['new','read','archived'];
+            $allowed = ['new', 'read', 'archived'];
             if (!in_array($new_status, $allowed, true)) jOut(false, 'Estado inválido.');
             $db->prepare("UPDATE _feedback SET status_fb=? WHERE id=?")->execute([$new_status, $msg_id]);
         }
         jOut(true, 'Estado actualizado.');
     } catch (Exception $e) {
-        error_log('[INBOX STATUS] '.$e->getMessage());
+        error_log('[INBOX STATUS] ' . $e->getMessage());
         jOut(false, 'Erro ao actualizar estado.');
     }
 }
@@ -569,7 +587,7 @@ if ($action === 'delete_msg') {
         logAudit($admin_id, null, 'support.message_deleted', '_support', $msg_id);
         jOut(true, 'Mensagem eliminada.');
     } catch (Exception $e) {
-        error_log('[INBOX DELETE] '.$e->getMessage());
+        error_log('[INBOX DELETE] ' . $e->getMessage());
         jOut(false, 'Erro ao eliminar.');
     }
 }
@@ -591,12 +609,12 @@ if ($action === 'compose_email') {
     $html = ib_email_template(
         htmlspecialchars($subject),
         nl2br(htmlspecialchars($body)) .
-        '<br><br><small style="color:#9ca3af">Esta mensagem foi enviada pela equipa da Wasom Upfy.</small>'
+            '<br><br><small style="color:#9ca3af">Esta mensagem foi enviada pela equipa da Wasom Upfy.</small>'
     );
 
     $sent = ib_send_email($to, $subject . ' — ' . APP_NAME, $html);
 
-    logAudit($admin_id, null, 'support.email_sent', 'outbox', 0, null, json_encode(['to'=>$to,'subject'=>$subject]));
+    logAudit($admin_id, null, 'support.email_sent', 'outbox', 0, null, json_encode(['to' => $to, 'subject' => $subject]));
 
     if ($sent) {
         jOut(true, 'Email enviado com sucesso para ' . $to . '.');
