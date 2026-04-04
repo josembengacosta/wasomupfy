@@ -1,31 +1,141 @@
-# =========================
-#   SISTEMA / EDITORES
-# =========================
-.vscode/
-*.code-workspace
-.DS_Store
-Thumbs.db
-*.log
+# ═══════════════════════════════════════════════════════════════
+# .gitignore — WASOMUPFY v2.0
+# ═══════════════════════════════════════════════════════════════
 
 # =========================
-#   DEPENDÊNCIAS (Composer)
+#   ROTEIRO SENSÍVEL
+# =========================
+.htaccess
+.htpasswd
+.htaccess.bak
+config.php
+config.local.php
+settings.php
+database.php
+connection.php
+
+# =========================
+#   AMBIENTE & CREDENCIAIS
+# =========================
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+secrets.php
+credentials.php
+
+# =========================
+#   CERTIFICADOS & CHAVES
+# =========================
+*.pem
+*.crt
+*.key
+*.p12
+*.pfx
+*.jks
+*.csr
+
+# =========================
+#   DEPENDÊNCIAS
 # =========================
 /vendor/
 /composer.lock
+/node_modules/
+package-lock.json
+yarn.lock
 
 # =========================
-#   CACHE / TEMP
+#   BANCO DE DADOS
+# =========================
+*.sql
+*.sql.gz
+*.sql.bak
+*.sqlite
+*.sqlite3
+*.db
+backups/
+database-backups/
+
+# =========================
+#   UPLOADS & ASSETS
+# =========================
+/assets/uploads/
+/uploads/
+/downloads/
+/files/
+user_uploads/
+temp_uploads/
+*.tmp
+
+# =========================
+#   STORAGE / CACHE
 # =========================
 /cache/
 /tmp/
 /storage/
 /sessions/
 /logs/
-/uploads/
+/runtime/
+/build/
+/dist/
 
 # =========================
-#   AMBIENTE
+#   SISTEMA OPERACIONAL
 # =========================
-.env
-.env.local
-.env.*.local
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+*.exe
+.AppleDouble
+.LSOverride
+
+# =========================
+#   IDE & EDITORES
+# =========================
+.vscode/
+.idea/
+*.code-workspace
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+.netbeans/
+*.iml
+.eclipse/
+
+# =========================
+#   TESTING & LOGS
+# =========================
+*.log
+*.log.*
+error_log
+access_log
+debug_log
+/phpunit.xml
+/test_*.php
+coverage/
+.phpunit.result.cache
+
+# =========================
+#   SYSTEM & MISC
+# =========================
+.git/
+.gitignore.bak
+.sync*
+*.bak
+*.backup
+*.orig
+.bash_history
+.zsh_history
+.profile
+.bash_profile
