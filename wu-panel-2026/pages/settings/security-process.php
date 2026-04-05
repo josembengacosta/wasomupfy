@@ -1,14 +1,8 @@
 <?php
-// ══════════════════════════════════════════════
-// WASOM UPFY v2.0 — Processar Segurança Avançada
-// Arquivo: admin/pages/settings/security-process.php
-// Rota: admin/settings/security-process (POST only)
-// Só super_admin
-// ══════════════════════════════════════════════
 require_once __DIR__ . '/../../include/platform_admin.php';
 
 if ($admin_role !== 'super_admin') {
-    adminRedirect('/' . ADMIN_PATH . '');
+    adminRedirect('/' . ADMIN_PATH);
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -18,385 +12,328 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 if (!validateAdminCsrf($_POST['csrf_token'] ?? '')) {
     adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'error']);
 }
+
 $_SESSION['admin_csrf_token'] = bin2hex(random_bytes(32));
 
-$action = $_POST['action'] ?? '';
+$db = getDB();
+$action = trim((string)($_POST['action'] ?? ''));
 
-// ════════════════════════════════════════════
-// Helper — Gerar secção admin do .htaccess
-// NÃO sobrescreve o ficheiro inteiro.
-// Usa marcadores para identificar a secção admin
-// e substitui APENAS esse bloco, preservando
-// todas as outras regras do site.
-// ════════════════════════════════════════════
-function generate_htaccess(string $admin_path): string
+function adminConfigUpsert(PDO $db, string $key, string|int $value, int $adminId): void
 {
-    $base = rtrim(parse_url(APP_URL, PHP_URL_PATH), '/');
-    $date = date('Y-m-d H:i:s');
-
-    // Secção admin entre marcadores — TUDO entre eles é substituído
-    return "
-# ##WASOM_ADMIN_START## — NÃO remover esta linha
-# Secção do painel admin — gerada automaticamente
-# Última actualização: {$date} | Caminho: {$admin_path}
-
-# ── Auth ──
-RewriteRule ^{$admin_path}/login/?$                         {$admin_path}/auth/login.php [L]
-RewriteRule ^{$admin_path}/login-process/?$                 {$admin_path}/auth/login-process.php [L]
-RewriteRule ^{$admin_path}/logout/?$                        {$admin_path}/auth/logout.php [L]
-RewriteRule ^{$admin_path}/forgot-password/?$               {$admin_path}/auth/forgot-password.php [L]
-RewriteRule ^{$admin_path}/forgot-password-process/?$       {$admin_path}/auth/forgot-password-process.php [L]
-RewriteRule ^{$admin_path}/reset-password/?$                {$admin_path}/auth/reset-password.php [L,QSA]
-RewriteRule ^{$admin_path}/reset-password-process/?$        {$admin_path}/auth/reset-password-process.php [L,QSA]
-RewriteRule ^{$admin_path}/confirm-code/?$                  {$admin_path}/auth/confirm-email-code.php [L,QSA]
-RewriteRule ^{$admin_path}/lockscreen/?$                    {$admin_path}/auth/lockscreen.php [L]
-RewriteRule ^{$admin_path}/lockscreen-process/?$            {$admin_path}/auth/lockscreen-process.php [L]
-RewriteRule ^{$admin_path}/invite/accept/?$                 {$admin_path}/auth/invite-accept.php [L,QSA]
-
-# ── Home ──
-RewriteRule ^{$admin_path}/?$                               {$admin_path}/home.php [L]
-
-# ── Perfil ──
-RewriteRule ^{$admin_path}/profile/?$                       {$admin_path}/pages/user/profile.php [L]
-RewriteRule ^{$admin_path}/profile-process/?$               {$admin_path}/pages/user/profile-process.php [L]
-
-# ── Analytics ──
-RewriteRule ^{$admin_path}/analytics/?$                     {$admin_path}/pages/analytics/home.php [L]
-RewriteRule ^{$admin_path}/analytics/artists/?$             {$admin_path}/pages/analytics/artists.php [L]
-RewriteRule ^{$admin_path}/analytics/stores/?$              {$admin_path}/pages/analytics/stores.php [L]
-RewriteRule ^{$admin_path}/analytics/online-users/?$        {$admin_path}/pages/analytics/online-users.php [L]
-RewriteRule ^{$admin_path}/analytics/reports/?$             {$admin_path}/pages/analytics/reports.php [L]
-RewriteRule ^{$admin_path}/analytics/visitors/?$            {$admin_path}/pages/analytics/visites.php [L]
-
-# ── Funcionários ──
-RewriteRule ^{$admin_path}/employees/?$                     {$admin_path}/pages/employees/all-employees.php [L]
-RewriteRule ^{$admin_path}/employees/add/?$                 {$admin_path}/pages/employees/add.php [L]
-RewriteRule ^{$admin_path}/employees/add-process/?$         {$admin_path}/pages/employees/add-process.php [L]
-RewriteRule ^{$admin_path}/employees/edit/?$                {$admin_path}/pages/employees/edit.php [L,QSA]
-RewriteRule ^{$admin_path}/employees/delete/?$              {$admin_path}/pages/employees/delete.php [L,QSA]
-RewriteRule ^{$admin_path}/employees/view/?$                {$admin_path}/pages/employees/view.php [L,QSA]
-
-# ── Utilizadores ──
-RewriteRule ^{$admin_path}/users/?$                         {$admin_path}/pages/users/all-users.php [L]
-RewriteRule ^{$admin_path}/users/add/?$                     {$admin_path}/pages/users/add.php [L]
-RewriteRule ^{$admin_path}/users/edit/?$                    {$admin_path}/pages/users/edit.php [L,QSA]
-RewriteRule ^{$admin_path}/users/delete/?$                  {$admin_path}/pages/users/delete.php [L,QSA]
-RewriteRule ^{$admin_path}/users/available-account/?$       {$admin_path}/pages/users/available-account.php [L]
-RewriteRule ^{$admin_path}/users/unavailable-account/?$     {$admin_path}/pages/users/unavailable-account.php [L]
-
-# ── Artistas ──
-RewriteRule ^{$admin_path}/accounts-users/?$                {$admin_path}/pages/artist/accounts-users.php [L]
-RewriteRule ^{$admin_path}/collaborators/?$                 {$admin_path}/pages/artist/collaborators-artist.php [L]
-
-# ── Músicas ──
-RewriteRule ^{$admin_path}/music/revise/?$                  {$admin_path}/pages/distribution/releases.php?filter=pending [L,QSA]
-RewriteRule ^{$admin_path}/music/approve/?$                 {$admin_path}/pages/distribution/releases.php?filter=pending [L,QSA]
-RewriteRule ^{$admin_path}/music/reject/?$                  {$admin_path}/pages/distribution/releases.php?filter=rejected [L,QSA]
-
-# ── Distribuição ──
-RewriteRule ^{$admin_path}/releases/?$                      {$admin_path}/pages/distribution/releases.php [L]
-RewriteRule ^{$admin_path}/monetization/?$                  {$admin_path}/pages/distribution/monetization.php [L]
-
-# ── Manager ──
-RewriteRule ^{$admin_path}/manager/gestion/?$               {$admin_path}/pages/manager/gestion.php [L]
-RewriteRule ^{$admin_path}/manager/activity/?$              {$admin_path}/pages/manager/activity.php [L]
-RewriteRule ^{$admin_path}/manager/timeline/?$              {$admin_path}/pages/manager/timeline.php [L]
-RewriteRule ^{$admin_path}/manager/top-music/?$             {$admin_path}/pages/manager/top-music.php [L]
-
-# ── Finanças ──
-RewriteRule ^{$admin_path}/finances/?$                      {$admin_path}/pages/finances/earnings.php [L]
-RewriteRule ^{$admin_path}/finances/payments/?$             {$admin_path}/pages/finances/payments.php [L]
-
-# ── Integração ──
-RewriteRule ^{$admin_path}/integration/verify/?$            {$admin_path}/pages/integration/verify.php [L]
-RewriteRule ^{$admin_path}/integration/verify-channel/?$    {$admin_path}/pages/integration/verify-channel.php [L]
-
-# ── Mensagens ──
-RewriteRule ^{$admin_path}/messages/inbox/?$                {$admin_path}/pages/messages/inbox.php [L]
-RewriteRule ^{$admin_path}/messages/compose/?$              {$admin_path}/pages/messages/compose.php [L]
-
-# ── Ajuda ──
-RewriteRule ^{$admin_path}/help/contact/?$                  {$admin_path}/pages/help/contact.php [L]
-
-# ── Configurações + Segurança ──
-RewriteRule ^{$admin_path}/settings/?$                      {$admin_path}/pages/settings/index.php [L]
-RewriteRule ^{$admin_path}/settings/security/?$             {$admin_path}/pages/settings/security.php [L]
-RewriteRule ^{$admin_path}/settings/security-process/?$     {$admin_path}/pages/settings/security-process.php [L]
-
-# ##WASOM_ADMIN_END## — NÃO remover esta linha
-";
+    $db->prepare("
+        INSERT INTO _admin_config (config_key, config_value, updated_by, updated_at)
+        VALUES (?, ?, ?, NOW())
+        ON DUPLICATE KEY UPDATE
+            config_value = VALUES(config_value),
+            updated_by = VALUES(updated_by),
+            updated_at = NOW()
+    ")->execute([$key, (string)$value, $adminId]);
 }
 
-/**
- * Aplica a secção admin no .htaccess existente.
- * Se os marcadores já existem → substitui apenas essa secção.
- * Se não existem → acrescenta no final do ficheiro.
- * O resto do .htaccess (rotas do site, dashboard, etc.) é preservado intacto.
- */
-function apply_htaccess_section(string $htaccess_path, string $admin_section): bool
+function getAdminConfig(PDO $db, string $key, ?string $default = null): ?string
 {
-    $marker_start = '# ##WASOM_ADMIN_START##';
-    $marker_end   = '# ##WASOM_ADMIN_END##';
-
-    if (!file_exists($htaccess_path)) {
-        // Ficheiro não existe — criar com a secção admin
-        return file_put_contents($htaccess_path, $admin_section) !== false;
-    }
-
-    $existing = file_get_contents($htaccess_path);
-    if ($existing === false) return false;
-
-    if (str_contains($existing, $marker_start) && str_contains($existing, $marker_end)) {
-        // Substituir APENAS a secção entre marcadores
-        $pattern = '/' . preg_quote($marker_start, '/') . '.*?' . preg_quote($marker_end, '/') . '[^\n]*/s';
-        $new_content = preg_replace($pattern, trim($admin_section), $existing);
-    } else {
-        // Marcadores não existem — acrescentar no final, separado por linha em branco
-        $new_content = rtrim($existing) . "
-
-" . trim($admin_section) . "
-";
-    }
-
-    // Backup de segurança antes de escrever
-    file_put_contents($htaccess_path . '.bak', $existing);
-
-    return file_put_contents($htaccess_path, $new_content) !== false;
+    $stmt = $db->prepare("SELECT config_value FROM _admin_config WHERE config_key = ? LIMIT 1");
+    $stmt->execute([$key]);
+    $value = $stmt->fetchColumn();
+    return $value === false ? $default : (string)$value;
 }
-// ════════════════════════════════════════════
-// Helper — Actualizar config.php
-// ════════════════════════════════════════════
-function update_admin_path_in_config(string $new_path): bool
-{
-    $config_path = dirname(__DIR__, 3) . '/authentic/include/config.php';
-    if (!file_exists($config_path) || !is_writable($config_path)) return false;
 
-    $content = file_get_contents($config_path);
-    // Substituir a linha define('ADMIN_PATH', ...)
-    $new_content = preg_replace(
+function getAdminSection(string $htaccess): ?string
+{
+    if (preg_match('/# ##WASOM_ADMIN_START##.*?# ##WASOM_ADMIN_END##[^\r\n]*/s', $htaccess, $matches)) {
+        return $matches[0];
+    }
+    return null;
+}
+
+function buildAdminSection(string $currentSection, string $fromPath, string $toPath): string
+{
+    $updated = $fromPath === $toPath ? $currentSection : str_replace($fromPath, $toPath, $currentSection);
+    $header = '# Ultima actualizacao: ' . date('Y-m-d H:i:s') . ' | Caminho: ' . $toPath;
+    $updated = preg_replace('/^# .*Caminho: .*$/m', $header, $updated, 1);
+    return $updated ?? $currentSection;
+}
+
+function applyAdminSection(string $existing, string $newSection): string
+{
+    if (preg_match('/# ##WASOM_ADMIN_START##.*?# ##WASOM_ADMIN_END##[^\r\n]*/s', $existing)) {
+        return (string)preg_replace('/# ##WASOM_ADMIN_START##.*?# ##WASOM_ADMIN_END##[^\r\n]*/s', trim($newSection), $existing, 1);
+    }
+    return rtrim($existing) . PHP_EOL . PHP_EOL . trim($newSection) . PHP_EOL;
+}
+
+function updateAdminPathInConfigContents(string $configContents, string $newPath): ?string
+{
+    $updated = preg_replace(
         "/define\('ADMIN_PATH',\s*'[^']*'\);/",
-        "define('ADMIN_PATH', '" . addslashes($new_path) . "');",
-        $content
+        "define('ADMIN_PATH', '" . addslashes($newPath) . "');",
+        $configContents,
+        1
     );
 
-    if ($new_content === $content) return false; // Nada mudou
-    return file_put_contents($config_path, $new_content) !== false;
+    if (!is_string($updated) || $updated === $configContents) {
+        return null;
+    }
+
+    return $updated;
+}
+
+function ensureWhitelistHasActiveIp(PDO $db, int $adminId): void
+{
+    $activeCount = (int)$db->query("SELECT COUNT(*) FROM _admin_ip_whitelist WHERE active = 1")->fetchColumn();
+    if ($activeCount > 0) {
+        return;
+    }
+
+    $myIp = $_SERVER['REMOTE_ADDR'] ?? '';
+    if ($myIp === '' || !filter_var($myIp, FILTER_VALIDATE_IP)) {
+        adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'wl_no_ip']);
+    }
+
+    $db->prepare("
+        INSERT INTO _admin_ip_whitelist (ip_address, label, added_by, active)
+        VALUES (?, 'Auto-adicionado ao activar', ?, 1)
+        ON DUPLICATE KEY UPDATE
+            active = 1,
+            label = VALUES(label),
+            added_by = VALUES(added_by)
+    ")->execute([$myIp, $adminId]);
 }
 
 switch ($action) {
-
-    // ══════════════════════════════════════════
-    // RODAR CAMINHO DO PAINEL
-    // ══════════════════════════════════════════
     case 'change_path':
-        $new_path = trim($_POST['new_path'] ?? '');
-
-        // Validar formato
-        if (!preg_match('/^[a-z0-9\-]{3,40}$/', $new_path)) {
+        $newPath = trim((string)($_POST['new_path'] ?? ''));
+        if (!preg_match('/^[a-z0-9\-]{3,40}$/', $newPath)) {
             adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'path_invalid']);
         }
 
-        $current_path = ADMIN_PATH;
-
-        if ($new_path === $current_path) {
+        $currentPath = ADMIN_PATH;
+        if ($newPath === $currentPath) {
             adminRedirect('/' . ADMIN_PATH . '/settings/security');
         }
 
-        // Caminhos físicos no servidor
-        $base_dir    = dirname(__DIR__, 3); // raiz do projecto (ex: htdocs/wasomupfy)
-        $current_dir = $base_dir . '/' . $current_path;
-        $new_dir     = $base_dir . '/' . $new_path;
+        $baseDir = dirname(__DIR__, 3);
+        $currentDir = $baseDir . DIRECTORY_SEPARATOR . $currentPath;
+        $newDir = $baseDir . DIRECTORY_SEPARATOR . $newPath;
+        $htaccessPath = $baseDir . DIRECTORY_SEPARATOR . '.htaccess';
+        $configPath = $baseDir . DIRECTORY_SEPARATOR . 'authentic' . DIRECTORY_SEPARATOR . 'include' . DIRECTORY_SEPARATOR . 'config.php';
 
-        // Verificar se o novo caminho já existe
-        if (file_exists($new_dir)) {
+        if (file_exists($newDir)) {
             adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'path_exists']);
         }
-
-        // Verificar se temos permissão de escrita
-        if (!is_writable($base_dir)) {
+        if (!is_dir($currentDir) || !is_writable($baseDir) || !is_writable($htaccessPath) || !is_writable($configPath)) {
             adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'no_write']);
         }
 
-        // 1. Actualizar APENAS a secção admin no .htaccess (preserva o resto do site)
-        $htaccess_path   = $base_dir . '/.htaccess';
-        $admin_section   = generate_htaccess($new_path);
-        if (!apply_htaccess_section($htaccess_path, $admin_section)) {
-            adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'no_write']);
+        $originalHtaccess = @file_get_contents($htaccessPath);
+        $originalConfig = @file_get_contents($configPath);
+        if ($originalHtaccess === false || $originalConfig === false) {
+            adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'error']);
         }
 
-        // 2. Actualizar config.php
-        update_admin_path_in_config($new_path);
-
-        // 3. Actualizar BD
-        $db->prepare("
-            UPDATE _admin_config SET config_value=?, updated_by=?, updated_at=NOW()
-            WHERE config_key='admin_path'
-        ")->execute([$new_path, $admin_id]);
-
-        $db->prepare("
-            UPDATE _admin_config SET config_value=?, updated_by=?, updated_at=NOW()
-            WHERE config_key='path_prev'
-        ")->execute([$current_path, $admin_id]);
-
-        $db->prepare("
-            UPDATE _admin_config SET config_value=NOW(), updated_by=?, updated_at=NOW()
-            WHERE config_key='path_last_changed'
-        ")->execute([$admin_id]);
-
-        // 4. Tentar renomear a pasta (pode falhar se não tiver permissão)
-        $rename_ok = false;
-        if (is_dir($current_dir)) {
-            $rename_ok = rename($current_dir, $new_dir);
+        $currentSection = getAdminSection($originalHtaccess);
+        if ($currentSection === null) {
+            adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'error']);
         }
 
-        // Log de auditoria
-        logAudit(
-            $admin_id,
-            null,
-            'security.path_changed',
-            'admin_config',
-            null,
-            ['path' => $current_path],
-            ['path' => $new_path, 'rename_ok' => $rename_ok]
-        );
-
-        // Redirecionar para o novo URL
-        $new_url = APP_URL . '/' . $new_path . '/settings/security?msg=path_changed';
-        if (!$rename_ok) {
-            $new_url .= '&warn=rename_failed';
-        }
-        header('Location: ' . $new_url);
-        exit;
-
-        // ══════════════════════════════════════════
-        // REGENERAR .htaccess SEM MUDAR CAMINHO
-        // ══════════════════════════════════════════
-    case 'regen_htaccess':
-        $base_dir     = dirname(__DIR__, 3);
-        $htaccess_path = $base_dir . '/.htaccess';
-        $current_path = ADMIN_PATH;
-
-        if (!is_writable($htaccess_path) && !is_writable($base_dir)) {
-            adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'no_write']);
+        $newSection = buildAdminSection($currentSection, $currentPath, $newPath);
+        $newHtaccess = applyAdminSection($originalHtaccess, $newSection);
+        $newConfig = updateAdminPathInConfigContents($originalConfig, $newPath);
+        if ($newConfig === null) {
+            adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'error']);
         }
 
-        $admin_section = generate_htaccess($current_path);
-        if (apply_htaccess_section($htaccess_path, $admin_section)) {
-            logAudit($admin_id, null, 'security.htaccess_regenerated', 'admin_config', null, null, null);
-            adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'htaccess_ok']);
-        } else {
-            adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'no_write']);
+        if (!@rename($currentDir, $newDir)) {
+            adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'rename_failed']);
         }
 
-        // ══════════════════════════════════════════
-        // TOGGLE WHITELIST ON/OFF
-        // ══════════════════════════════════════════
-    case 'toggle_whitelist':
-        $current = $db->query(
-            "SELECT config_value FROM _admin_config WHERE config_key='ip_whitelist_on' LIMIT 1"
-        )->fetchColumn();
-        $new_val = ($current === '1') ? '0' : '1';
-
-        // Segurança: não activar se não há IPs na lista
-        if ($new_val === '1') {
-            $count = (int)$db->query("SELECT COUNT(*) FROM _admin_ip_whitelist WHERE active=1")->fetchColumn();
-            if ($count === 0) {
-                // Adicionar o IP actual automaticamente
-                $my_ip = $_SERVER['REMOTE_ADDR'] ?? '';
-                if ($my_ip) {
-                    $db->prepare("
-                        INSERT IGNORE INTO _admin_ip_whitelist (ip_address, label, added_by)
-                        VALUES (?, 'Auto-adicionado ao activar', ?)
-                    ")->execute([$my_ip, $admin_id]);
-                }
+        try {
+            if (@file_put_contents($configPath, $newConfig) === false) {
+                throw new RuntimeException('config_write_failed');
             }
+            if (@file_put_contents($htaccessPath, $newHtaccess) === false) {
+                throw new RuntimeException('htaccess_write_failed');
+            }
+
+            $db->beginTransaction();
+            adminConfigUpsert($db, 'admin_path', $newPath, $admin_id);
+            adminConfigUpsert($db, 'admin_path_prev', $currentPath, $admin_id);
+            adminConfigUpsert($db, 'path_last_changed', date('Y-m-d H:i:s'), $admin_id);
+            $db->commit();
+
+            logAudit(
+                $admin_id,
+                null,
+                'security.path_changed',
+                '_admin_config',
+                null,
+                ['path' => $currentPath],
+                ['path' => $newPath]
+            );
+
+            header('Location: ' . APP_URL . '/' . $newPath . '/settings/security?msg=path_changed');
+            exit;
+        } catch (Throwable $e) {
+            if ($db->inTransaction()) {
+                $db->rollBack();
+            }
+
+            @file_put_contents($configPath, $originalConfig);
+            @file_put_contents($htaccessPath, $originalHtaccess);
+            if (is_dir($newDir) && !is_dir($currentDir)) {
+                @rename($newDir, $currentDir);
+            }
+
+            error_log('[SECURITY PATH CHANGE] ' . $e->getMessage());
+            adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'error']);
         }
 
-        $db->prepare("
-            UPDATE _admin_config SET config_value=?, updated_by=?, updated_at=NOW()
-            WHERE config_key='ip_whitelist_on'
-        ")->execute([$new_val, $admin_id]);
+    case 'regen_htaccess':
+        $baseDir = dirname(__DIR__, 3);
+        $htaccessPath = $baseDir . DIRECTORY_SEPARATOR . '.htaccess';
+        if (!is_writable($htaccessPath)) {
+            adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'no_write']);
+        }
 
+        $originalHtaccess = @file_get_contents($htaccessPath);
+        if ($originalHtaccess === false) {
+            adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'error']);
+        }
+
+        $currentSection = getAdminSection($originalHtaccess);
+        if ($currentSection === null) {
+            adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'error']);
+        }
+
+        $newSection = buildAdminSection($currentSection, ADMIN_PATH, ADMIN_PATH);
+        $newHtaccess = applyAdminSection($originalHtaccess, $newSection);
+
+        if (@file_put_contents($htaccessPath, $newHtaccess) === false) {
+            adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'no_write']);
+        }
+
+        logAudit($admin_id, null, 'security.htaccess_regenerated', '_admin_config', null, null, null);
+        adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'htaccess_ok']);
+
+    case 'toggle_whitelist':
+        $currentValue = getAdminConfig($db, 'ip_whitelist_on', '0') === '1' ? '1' : '0';
+        $newValue = $currentValue === '1' ? '0' : '1';
+
+        if ($newValue === '1') {
+            ensureWhitelistHasActiveIp($db, $admin_id);
+        }
+
+        adminConfigUpsert($db, 'ip_whitelist_on', $newValue, $admin_id);
         logAudit(
             $admin_id,
             null,
             'security.whitelist_toggled',
-            'admin_config',
+            '_admin_config',
             null,
-            ['wl_on' => $current],
-            ['wl_on' => $new_val]
+            ['ip_whitelist_on' => $currentValue],
+            ['ip_whitelist_on' => $newValue]
         );
 
         adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'wl_saved']);
 
-        // ══════════════════════════════════════════
-        // ADICIONAR IP
-        // ══════════════════════════════════════════
     case 'add_ip':
-        $ip_address = trim($_POST['ip_address'] ?? '');
-        $label      = trim($_POST['label']      ?? '') ?: null;
+        $ipAddress = trim((string)($_POST['ip_address'] ?? ''));
+        $label = trim((string)($_POST['label'] ?? ''));
 
-        // Validar IP (IPv4 ou IPv6)
-        if (!filter_var($ip_address, FILTER_VALIDATE_IP)) {
+        if (!filter_var($ipAddress, FILTER_VALIDATE_IP)) {
             adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'error']);
         }
 
         $db->prepare("
-            INSERT IGNORE INTO _admin_ip_whitelist (ip_address, label, added_by)
-            VALUES (?, ?, ?)
-        ")->execute([$ip_address, $label, $admin_id]);
+            INSERT INTO _admin_ip_whitelist (ip_address, label, added_by, active)
+            VALUES (?, ?, ?, 1)
+            ON DUPLICATE KEY UPDATE
+                label = VALUES(label),
+                added_by = VALUES(added_by),
+                active = 1
+        ")->execute([$ipAddress, $label !== '' ? $label : null, $admin_id]);
 
         logAudit(
             $admin_id,
             null,
             'security.ip_added',
-            'admin_ip_whitelist',
+            '_admin_ip_whitelist',
             null,
             null,
-            ['ip' => $ip_address, 'label' => $label]
+            ['ip' => $ipAddress, 'label' => $label]
         );
 
         adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'ip_added']);
 
-        // ══════════════════════════════════════════
-        // REMOVER IP
-        // ══════════════════════════════════════════
     case 'remove_ip':
-        $ip_id = (int)($_POST['ip_id'] ?? 0);
-        if (!$ip_id) adminRedirect('/' . ADMIN_PATH . '/settings/security');
+        $ipId = (int)($_POST['ip_id'] ?? 0);
+        if ($ipId <= 0) {
+            adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'error']);
+        }
 
-        // Não remover o próprio IP se a whitelist está activa
-        $wl_on = $db->query(
-            "SELECT config_value FROM _admin_config WHERE config_key='ip_whitelist_on' LIMIT 1"
-        )->fetchColumn();
+        $stmt = $db->prepare("SELECT ip_address, active FROM _admin_ip_whitelist WHERE id_ip = ? LIMIT 1");
+        $stmt->execute([$ipId]);
+        $ipRow = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$ipRow) {
+            adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'error']);
+        }
 
-        if ($wl_on === '1') {
-            $my_ip = $_SERVER['REMOTE_ADDR'] ?? '';
-            $this_ip = $db->prepare("SELECT ip_address FROM _admin_ip_whitelist WHERE id_ip=? LIMIT 1");
-            $this_ip->execute([$ip_id]);
-            $ip_row = $this_ip->fetchColumn();
-            if ($ip_row === $my_ip) {
-                // Não pode remover o próprio IP enquanto a whitelist está activa
-                adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'error']);
+        $whitelistOn = getAdminConfig($db, 'ip_whitelist_on', '0') === '1';
+        $myIp = $_SERVER['REMOTE_ADDR'] ?? '';
+        if ($whitelistOn && $ipRow['ip_address'] === $myIp) {
+            adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'self_ip_blocked']);
+        }
+
+        if ($whitelistOn && (int)$ipRow['active'] === 1) {
+            $activeCount = (int)$db->query("SELECT COUNT(*) FROM _admin_ip_whitelist WHERE active = 1")->fetchColumn();
+            if ($activeCount <= 1) {
+                adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'last_ip_blocked']);
             }
         }
 
-        $db->prepare("DELETE FROM _admin_ip_whitelist WHERE id_ip=?")->execute([$ip_id]);
-
-        logAudit($admin_id, null, 'security.ip_removed', 'admin_ip_whitelist', $ip_id, null, null);
-
+        $db->prepare("DELETE FROM _admin_ip_whitelist WHERE id_ip = ?")->execute([$ipId]);
+        logAudit($admin_id, null, 'security.ip_removed', '_admin_ip_whitelist', $ipId, ['ip' => $ipRow['ip_address']], null);
         adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'ip_removed']);
 
-        // ══════════════════════════════════════════
-        // TOGGLE IP ACTIVO/INACTIVO
-        // ══════════════════════════════════════════
     case 'toggle_ip':
-        $ip_id = (int)($_POST['ip_id'] ?? 0);
-        if (!$ip_id) adminRedirect('/' . ADMIN_PATH . '/settings/security');
+        $ipId = (int)($_POST['ip_id'] ?? 0);
+        if ($ipId <= 0) {
+            adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'error']);
+        }
 
-        $db->prepare("
-            UPDATE _admin_ip_whitelist SET active = 1 - active WHERE id_ip=?
-        ")->execute([$ip_id]);
+        $stmt = $db->prepare("SELECT ip_address, active FROM _admin_ip_whitelist WHERE id_ip = ? LIMIT 1");
+        $stmt->execute([$ipId]);
+        $ipRow = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$ipRow) {
+            adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'error']);
+        }
+
+        $currentActive = (int)$ipRow['active'];
+        $nextActive = $currentActive === 1 ? 0 : 1;
+        $whitelistOn = getAdminConfig($db, 'ip_whitelist_on', '0') === '1';
+        $myIp = $_SERVER['REMOTE_ADDR'] ?? '';
+
+        if ($whitelistOn && $nextActive === 0 && $ipRow['ip_address'] === $myIp) {
+            adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'self_ip_blocked']);
+        }
+
+        if ($whitelistOn && $nextActive === 0) {
+            $activeCount = (int)$db->query("SELECT COUNT(*) FROM _admin_ip_whitelist WHERE active = 1")->fetchColumn();
+            if ($activeCount <= 1) {
+                adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'last_ip_blocked']);
+            }
+        }
+
+        $db->prepare("UPDATE _admin_ip_whitelist SET active = ? WHERE id_ip = ?")->execute([$nextActive, $ipId]);
+        logAudit(
+            $admin_id,
+            null,
+            'security.ip_toggled',
+            '_admin_ip_whitelist',
+            $ipId,
+            ['active' => $currentActive],
+            ['active' => $nextActive]
+        );
 
         adminRedirect('/' . ADMIN_PATH . '/settings/security', ['msg' => 'ip_toggled']);
 

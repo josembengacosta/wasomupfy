@@ -5,179 +5,154 @@
 // .htaccess: ^admin/?$ → admin/home.php
 // ══════════════════════════════════════════════
 
-require_once __DIR__ . '/auth/include/functions_admin.php';
 require_once __DIR__ . '/include/platform_admin.php';
-startAdminSession();
-checkAdminRememberMe();
-requireAdminLogin();
-requireNoLockscreen();
-
-$db = getDB();
-
-// ── Dados da sessão ──
-$admin_id       = (int)$_SESSION['admin_id'];
-$admin_name     = $_SESSION['admin_name']      ?? '';
-$admin_fullname = $_SESSION['admin_full_name'] ?? $admin_name;
-$admin_role     = $_SESSION['admin_role']      ?? '';
-$admin_photo    = $_SESSION['admin_photo']     ?? null;
-$admin_email    = $_SESSION['admin_email']     ?? '';
-
-// ── Helpers ──
-function adm_initials(string $f, string $s = ''): string
-{
-    return mb_strtoupper(mb_substr(trim($f), 0, 1, 'UTF-8'), 'UTF-8')
-        . mb_strtoupper(mb_substr(trim($s), 0, 1, 'UTF-8'), 'UTF-8');
+if (!function_exists('adm_fmt_action')) {
+    function adm_fmt_action(string $a): string
+    {
+        $m = [
+            'auth.login'               => 'Início de sessão',
+            'auth.logout'              => 'Fim de sessão',
+            'auth.failed_login'        => 'Tentativa de login falhada',
+            'auth.password_changed'    => 'Senha alterada',
+            'auth.reset_requested'     => 'Reset de senha solicitado',
+            'auth.lockscreen_unlocked' => 'Ecrã desbloqueado',
+            'auth.auto_login'          => 'Login automático (cookie)',
+            'auth.ip_rate_limit'       => 'Bloqueio por tentativas (IP)',
+            'auth.csrf_fail'           => 'Falha CSRF detectada',
+        ];
+        return $m[$a] ?? str_replace(['.', '_'], [' → ', ' '], $a);
+    }
 }
 
-function adm_avatar_color(string $n): string
-{
-    $c = ['#FF0089', '#f97316', '#8b5cf6', '#06b6d4', '#22c55e', '#eab308', '#ec4899', '#14b8a6', '#3b82f6', '#ef4444'];
-    return $c[abs(crc32($n)) % count($c)];
-}
-
-function adm_fmt_aoa(float $v): string
-{
-    if ($v >= 1_000_000) return 'Kz ' . number_format($v / 1_000_000, 1, ',', '.') . 'M';
-    if ($v >= 1_000)     return 'Kz ' . number_format($v / 1_000, 1, ',', '.') . 'mil';
-    return 'Kz ' . number_format($v, 2, ',', '.');
-}
-
-function adm_fmt_date(string $dt): string
-{
-    $ts = strtotime($dt);
-    if (!$ts) return '—';
-    $d = time() - $ts;
-    if ($d < 60)     return 'agora';
-    if ($d < 3600)   return floor($d / 60) . 'min atrás';
-    if ($d < 86400)  return floor($d / 3600) . 'h atrás';
-    if ($d < 604800) return floor($d / 86400) . 'd atrás';
-    $months = ['', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-    return date('d', $ts) . ' ' . $months[(int)date('n', $ts)] . ' ' . date('Y', $ts);
-}
-
-function adm_fmt_action(string $a): string
-{
-    $m = [
-        'auth.login'               => 'Início de sessão',
-        'auth.logout'              => 'Fim de sessão',
-        'auth.failed_login'        => 'Tentativa de login falhada',
-        'auth.password_changed'    => 'Senha alterada',
-        'auth.reset_requested'     => 'Reset de senha solicitado',
-        'auth.lockscreen_unlocked' => 'Ecrã desbloqueado',
-        'auth.auto_login'          => 'Login automático (cookie)',
-        'auth.ip_rate_limit'       => 'Bloqueio por tentativas (IP)',
-        'auth.csrf_fail'           => 'Falha CSRF detectada',
-    ];
-    return $m[$a] ?? str_replace(['.', '_'], [' → ', ' '], $a);
-}
+$canUsersView     = hasPermission($admin_id, 'users.view');
+$canEmployeesView = hasPermission($admin_id, 'employees.view');
+$canEmployeesEdit = hasPermission($admin_id, 'employees.edit');
+$canMusicView     = hasPermission($admin_id, 'music.view');
+$canMusicApprove  = hasPermission($admin_id, 'music.approve');
+$canFinancesView  = hasPermission($admin_id, 'finances.view');
+$canAnalyticsView = hasPermission($admin_id, 'analytics.view');
+$canSupportView   = hasPermission($admin_id, 'support.view');
+$canAuditView     = hasPermission($admin_id, 'audit.view');
+$canSettingsView  = hasPermission($admin_id, 'settings.view');
 
 // ── Queries — Stats cards ──
-$total_users      = (int)$db->query("SELECT COUNT(*) FROM _users")->fetchColumn();
-$total_emp        = (int)$db->query("SELECT COUNT(*) FROM _employees")->fetchColumn();
-$total_releases   = (int)$db->query("SELECT COUNT(*) FROM _album")->fetchColumn();
-$total_artists    = (int)$db->query("SELECT COUNT(*) FROM _artist")->fetchColumn();
-// Visitantes do site público (_visitor = quem visita o site)
-$total_visitors   = (int)$db->query("SELECT COUNT(*) FROM _visitor WHERE is_bot=0")->fetchColumn();
-
-// Usuários online = utilizadores que fizeram login nos últimos 5 minutos
-$online_now = (int)$db->query("
+$total_users        = $canUsersView ? (int)$db->query("SELECT COUNT(*) FROM _users")->fetchColumn() : 0;
+$total_emp          = $canEmployeesView ? (int)$db->query("SELECT COUNT(*) FROM _employees")->fetchColumn() : 0;
+$total_releases     = $canMusicView ? (int)$db->query("SELECT COUNT(*) FROM _album")->fetchColumn() : 0;
+$total_visitors     = $canAnalyticsView ? (int)$db->query("SELECT COUNT(*) FROM _visitor WHERE is_bot=0")->fetchColumn() : 0;
+$online_now         = $canAnalyticsView ? (int)$db->query("
     SELECT COUNT(*)
     FROM _user_presence
     WHERE online_status != 'offline'
       AND last_activity >= DATE_SUB(NOW(), INTERVAL 5 MINUTE)
-")->fetchColumn();
-
-$revenue_today    = (float)$db->query("SELECT COALESCE(SUM(amount),0) FROM _payment WHERE status_payment='approved' AND DATE(creat_payment)=CURDATE()")->fetchColumn();
-
-// Contas disponíveis = utilizadores com status activo
-$accounts_ok      = (int)$db->query("SELECT COUNT(*) FROM _users WHERE status_user='active'")->fetchColumn();
-
-// Contas indisponíveis = utilizadores bloqueados, inactivos, suspensos, etc.
-$accounts_pend    = (int)$db->query("SELECT COUNT(*) FROM _users WHERE status_user NOT IN ('active')")->fetchColumn();
-
-// NOVOS cards
-$total_bank_accounts = (int)$db->query("SELECT COUNT(DISTINCT id_users) FROM _account")->fetchColumn();
-$total_collabs       = (int)$db->query("SELECT COUNT(*) FROM _collaborators")->fetchColumn();
-$revenue_total       = (float)$db->query("SELECT COALESCE(SUM(amount),0) FROM _payment WHERE status_payment='approved'")->fetchColumn();
-$pending_releases = (int)$db->query("SELECT COUNT(*) FROM _album WHERE status_album IN ('pending','under_review')")->fetchColumn();
-$pending_payments = (int)$db->query("SELECT COUNT(*) FROM _payment WHERE status_payment='pending'")->fetchColumn();
-$open_tickets     = (int)$db->query("SELECT COUNT(*) FROM _support_ticket WHERE status_ticket NOT IN ('closed','resolved')")->fetchColumn();
-$total_notifs     = $pending_releases + $pending_payments + $open_tickets;
+")->fetchColumn() : 0;
+$revenue_today      = $canFinancesView ? (float)$db->query("SELECT COALESCE(SUM(amount),0) FROM _payment WHERE status_payment='approved' AND DATE(creat_payment)=CURDATE()")->fetchColumn() : 0.0;
+$accounts_ok        = $canUsersView ? (int)$db->query("SELECT COUNT(*) FROM _users WHERE status_user='active'")->fetchColumn() : 0;
+$accounts_pend      = $canUsersView ? (int)$db->query("SELECT COUNT(*) FROM _users WHERE status_user NOT IN ('active')")->fetchColumn() : 0;
+$total_bank_accounts = $canUsersView ? (int)$db->query("SELECT COUNT(DISTINCT id_users) FROM _account")->fetchColumn() : 0;
+$total_collabs      = $canUsersView ? (int)$db->query("SELECT COUNT(*) FROM _collaborators")->fetchColumn() : 0;
+$revenue_total      = $canFinancesView ? (float)$db->query("SELECT COALESCE(SUM(amount),0) FROM _payment WHERE status_payment='approved'")->fetchColumn() : 0.0;
+$pending_releases   = $canMusicApprove ? (int)$db->query("SELECT COUNT(*) FROM _album WHERE status_album IN ('pending','under_review')")->fetchColumn() : 0;
+$open_tickets       = $canSupportView ? (int)$db->query("SELECT COUNT(*) FROM _support_ticket WHERE status_ticket NOT IN ('closed','resolved')")->fetchColumn() : 0;
 
 // ── Queries — Streams reais por período ──
-// Hoje (por hora)
-$streams_today_rows = $db->query("
-    SELECT HOUR(v.creat_visitor) as hora, COUNT(v.id_visitor) as total
-    FROM _visitor v
-    WHERE DATE(v.creat_visitor) = CURDATE() AND v.is_bot=0
-    GROUP BY hora ORDER BY hora ASC
-")->fetchAll();
-$streams_today_labels = array_map(fn($r) => str_pad($r['hora'], 2, '0', STR_PAD_LEFT) . ':00', $streams_today_rows);
-$streams_today_data   = array_map(fn($r) => (int)$r['total'], $streams_today_rows);
-if (empty($streams_today_labels)) {
-    $streams_today_labels = array_map(fn($h) => str_pad($h, 2, '0', STR_PAD_LEFT) . ':00', range(0, 23));
-    $streams_today_data   = array_fill(0, 24, 0);
-}
-
-// Últimos 7 dias
-$streams_7d_rows = $db->query("
-    SELECT DAYNAME(creat_visitor) as dia, DATE(creat_visitor) as dt, COUNT(*) as total
-    FROM _visitor WHERE creat_visitor >= DATE_SUB(NOW(), INTERVAL 7 DAY) AND is_bot=0
-    GROUP BY dt ORDER BY dt ASC
-")->fetchAll();
 $pt_days = ['Monday' => 'Seg', 'Tuesday' => 'Ter', 'Wednesday' => 'Qua', 'Thursday' => 'Qui', 'Friday' => 'Sex', 'Saturday' => 'Sáb', 'Sunday' => 'Dom'];
-$streams_7d_labels = array_map(fn($r) => $pt_days[$r['dia']] ?? $r['dia'], $streams_7d_rows);
-$streams_7d_data   = array_map(fn($r) => (int)$r['total'], $streams_7d_rows);
-if (empty($streams_7d_labels)) {
-    $streams_7d_labels = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
-    $streams_7d_data = array_fill(0, 7, 0);
+$streams_today_labels = array_map(fn($h) => str_pad($h, 2, '0', STR_PAD_LEFT) . ':00', range(0, 23));
+$streams_today_data   = array_fill(0, 24, 0);
+$streams_7d_labels    = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+$streams_7d_data      = array_fill(0, 7, 0);
+$streams_30d_labels   = array_map(fn($i) => "Dia $i", range(1, 30));
+$streams_30d_data     = array_fill(0, 30, 0);
+$streams_month_labels = ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'];
+$streams_month_data   = array_fill(0, 4, 0);
+$streams_total_today  = 0;
+$streams_total_7d     = 0;
+$streams_total_30d    = 0;
+$streams_total_month  = 0;
+$new_listeners_today  = 0;
+$new_listeners_7d     = 0;
+$new_listeners_30d    = 0;
+$new_listeners_month  = 0;
+$rev_today            = 0.0;
+$rev_7d               = 0.0;
+$rev_30d              = 0.0;
+$rev_month            = 0.0;
+
+if ($canAnalyticsView) {
+    $streams_today_rows = $db->query("
+        SELECT HOUR(v.creat_visitor) as hora, COUNT(v.id_visitor) as total
+        FROM _visitor v
+        WHERE DATE(v.creat_visitor) = CURDATE() AND v.is_bot=0
+        GROUP BY hora ORDER BY hora ASC
+    ")->fetchAll();
+    $streams_today_labels = array_map(fn($r) => str_pad($r['hora'], 2, '0', STR_PAD_LEFT) . ':00', $streams_today_rows);
+    $streams_today_data   = array_map(fn($r) => (int)$r['total'], $streams_today_rows);
+    if (empty($streams_today_labels)) {
+        $streams_today_labels = array_map(fn($h) => str_pad($h, 2, '0', STR_PAD_LEFT) . ':00', range(0, 23));
+        $streams_today_data   = array_fill(0, 24, 0);
+    }
+
+    $streams_7d_rows = $db->query("
+        SELECT DAYNAME(creat_visitor) as dia, DATE(creat_visitor) as dt, COUNT(*) as total
+        FROM _visitor WHERE creat_visitor >= DATE_SUB(NOW(), INTERVAL 7 DAY) AND is_bot=0
+        GROUP BY dt ORDER BY dt ASC
+    ")->fetchAll();
+    $streams_7d_labels = array_map(fn($r) => $pt_days[$r['dia']] ?? $r['dia'], $streams_7d_rows);
+    $streams_7d_data   = array_map(fn($r) => (int)$r['total'], $streams_7d_rows);
+    if (empty($streams_7d_labels)) {
+        $streams_7d_labels = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+        $streams_7d_data   = array_fill(0, 7, 0);
+    }
+
+    $streams_30d_rows = $db->query("
+        SELECT DAY(creat_visitor) as dia, COUNT(*) as total
+        FROM _visitor WHERE creat_visitor >= DATE_SUB(NOW(), INTERVAL 30 DAY) AND is_bot=0
+        GROUP BY DATE(creat_visitor) ORDER BY creat_visitor ASC
+    ")->fetchAll();
+    $streams_30d_labels = array_map(fn($r) => 'Dia ' . $r['dia'], $streams_30d_rows);
+    $streams_30d_data   = array_map(fn($r) => (int)$r['total'], $streams_30d_rows);
+    if (empty($streams_30d_labels)) {
+        $streams_30d_labels = array_map(fn($i) => "Dia $i", range(1, 30));
+        $streams_30d_data   = array_fill(0, 30, 0);
+    }
+
+    $streams_month_rows = $db->query("
+        SELECT WEEK(creat_visitor) as sem, COUNT(*) as total
+        FROM _visitor WHERE MONTH(creat_visitor)=MONTH(NOW()) AND YEAR(creat_visitor)=YEAR(NOW()) AND is_bot=0
+        GROUP BY sem ORDER BY sem ASC
+    ")->fetchAll();
+    $streams_month_labels = array_map(fn($i) => "Semana $i", range(1, count($streams_month_rows)));
+    $streams_month_data   = array_map(fn($r) => (int)$r['total'], $streams_month_rows);
+    if (empty($streams_month_labels)) {
+        $streams_month_labels = ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'];
+        $streams_month_data   = array_fill(0, 4, 0);
+    }
+
+    $streams_total_today  = (int)array_sum($streams_today_data);
+    $streams_total_7d     = (int)array_sum($streams_7d_data);
+    $streams_total_30d    = (int)array_sum($streams_30d_data);
+    $streams_total_month  = (int)array_sum($streams_month_data);
+    $new_listeners_today  = (int)$db->query("SELECT COUNT(*) FROM _visitor WHERE DATE(creat_visitor)=CURDATE() AND visit_count=1 AND is_bot=0")->fetchColumn();
+    $new_listeners_7d     = (int)$db->query("SELECT COUNT(*) FROM _visitor WHERE creat_visitor>=DATE_SUB(NOW(),INTERVAL 7 DAY) AND visit_count=1 AND is_bot=0")->fetchColumn();
+    $new_listeners_30d    = (int)$db->query("SELECT COUNT(*) FROM _visitor WHERE creat_visitor>=DATE_SUB(NOW(),INTERVAL 30 DAY) AND visit_count=1 AND is_bot=0")->fetchColumn();
+    $new_listeners_month  = (int)$db->query("SELECT COUNT(*) FROM _visitor WHERE MONTH(creat_visitor)=MONTH(NOW()) AND YEAR(creat_visitor)=YEAR(NOW()) AND visit_count=1 AND is_bot=0")->fetchColumn();
+    $country_stats        = $db->query("
+        SELECT country_code, COUNT(*) as total
+        FROM _visitor WHERE is_bot=0 AND country_code IS NOT NULL
+        GROUP BY country_code ORDER BY total DESC LIMIT 3
+    ")->fetchAll();
+} else {
+    $country_stats = [];
 }
 
-// Últimos 30 dias
-$streams_30d_rows = $db->query("
-    SELECT DAY(creat_visitor) as dia, COUNT(*) as total
-    FROM _visitor WHERE creat_visitor >= DATE_SUB(NOW(), INTERVAL 30 DAY) AND is_bot=0
-    GROUP BY DATE(creat_visitor) ORDER BY creat_visitor ASC
-")->fetchAll();
-$streams_30d_labels = array_map(fn($r) => 'Dia ' . $r['dia'], $streams_30d_rows);
-$streams_30d_data   = array_map(fn($r) => (int)$r['total'], $streams_30d_rows);
-if (empty($streams_30d_labels)) {
-    $streams_30d_labels = array_map(fn($i) => "Dia $i", range(1, 30));
-    $streams_30d_data = array_fill(0, 30, 0);
+if ($canAnalyticsView || $canFinancesView) {
+    $rev_today = (float)$db->query("SELECT COALESCE(SUM(amount),0) FROM _payment WHERE status_payment='approved' AND DATE(creat_payment)=CURDATE()")->fetchColumn();
+    $rev_7d    = (float)$db->query("SELECT COALESCE(SUM(amount),0) FROM _payment WHERE status_payment='approved' AND creat_payment>=DATE_SUB(NOW(),INTERVAL 7 DAY)")->fetchColumn();
+    $rev_30d   = (float)$db->query("SELECT COALESCE(SUM(amount),0) FROM _payment WHERE status_payment='approved' AND creat_payment>=DATE_SUB(NOW(),INTERVAL 30 DAY)")->fetchColumn();
+    $rev_month = (float)$db->query("SELECT COALESCE(SUM(amount),0) FROM _payment WHERE status_payment='approved' AND MONTH(creat_payment)=MONTH(NOW()) AND YEAR(creat_payment)=YEAR(NOW())")->fetchColumn();
 }
 
-// Este mês (por semana)
-$streams_month_rows = $db->query("
-    SELECT WEEK(creat_visitor) as sem, COUNT(*) as total
-    FROM _visitor WHERE MONTH(creat_visitor)=MONTH(NOW()) AND YEAR(creat_visitor)=YEAR(NOW()) AND is_bot=0
-    GROUP BY sem ORDER BY sem ASC
-")->fetchAll();
-$streams_month_labels = array_map(fn($i) => "Semana $i", range(1, count($streams_month_rows)));
-$streams_month_data   = array_map(fn($r) => (int)$r['total'], $streams_month_rows);
-if (empty($streams_month_labels)) {
-    $streams_month_labels = ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'];
-    $streams_month_data = array_fill(0, 4, 0);
-}
-
-// Totais reais para os cards abaixo do gráfico
-$streams_total_today  = (int)array_sum($streams_today_data);
-$streams_total_7d     = (int)array_sum($streams_7d_data);
-$streams_total_30d    = (int)array_sum($streams_30d_data);
-$streams_total_month  = (int)array_sum($streams_month_data);
-
-// Novos utilizadores por período (ouvintes únicos aproximados)
-$new_listeners_today = (int)$db->query("SELECT COUNT(*) FROM _visitor WHERE DATE(creat_visitor)=CURDATE() AND visit_count=1 AND is_bot=0")->fetchColumn();
-$new_listeners_7d    = (int)$db->query("SELECT COUNT(*) FROM _visitor WHERE creat_visitor>=DATE_SUB(NOW(),INTERVAL 7 DAY) AND visit_count=1 AND is_bot=0")->fetchColumn();
-$new_listeners_30d   = (int)$db->query("SELECT COUNT(*) FROM _visitor WHERE creat_visitor>=DATE_SUB(NOW(),INTERVAL 30 DAY) AND visit_count=1 AND is_bot=0")->fetchColumn();
-
-// Receita por período
-$rev_today  = (float)$db->query("SELECT COALESCE(SUM(amount),0) FROM _payment WHERE status_payment='approved' AND DATE(creat_payment)=CURDATE()")->fetchColumn();
-$rev_7d     = (float)$db->query("SELECT COALESCE(SUM(amount),0) FROM _payment WHERE status_payment='approved' AND creat_payment>=DATE_SUB(NOW(),INTERVAL 7 DAY)")->fetchColumn();
-$rev_30d    = (float)$db->query("SELECT COALESCE(SUM(amount),0) FROM _payment WHERE status_payment='approved' AND creat_payment>=DATE_SUB(NOW(),INTERVAL 30 DAY)")->fetchColumn();
-$rev_month  = (float)$db->query("SELECT COALESCE(SUM(amount),0) FROM _payment WHERE status_payment='approved' AND MONTH(creat_payment)=MONTH(NOW()) AND YEAR(creat_payment)=YEAR(NOW())")->fetchColumn();
-
-// ── Queries — Top músicas reais ──
-$top_tracks = $db->query("
+$top_tracks = $canMusicView ? $db->query("
     SELECT t.title_track,
            COALESCE(ar.stage_name, u.first_name) AS artist_name,
            SUM(s.streams) AS total_streams
@@ -189,10 +164,9 @@ $top_tracks = $db->query("
     GROUP BY t.id_track
     ORDER BY total_streams DESC
     LIMIT 5
-")->fetchAll();
+")->fetchAll() : [];
 
-// ── Queries — Novos utilizadores (para secção Nossos Clientes melhorada) ──
-$recent_users_full = $db->query("
+$recent_users_full = $canUsersView ? $db->query("
     SELECT u.id_users, u.first_name, u.second_name, u.email_user,
            u.photo_user, u.status_user, u.plan_activated_at,
            p.name_plan
@@ -200,20 +174,18 @@ $recent_users_full = $db->query("
     LEFT JOIN _plans p ON p.id_plan = u.plan_selected
     ORDER BY u.id_users DESC
     LIMIT 8
-")->fetchAll();
+")->fetchAll() : [];
 
-// ── Queries — Atividade recente real ──
-$audit_list = $db->query("
+$audit_list = $canAuditView ? $db->query("
     SELECT al.action, al.creat_log, al.ip_address, al.entity,
            e.first_name, e.second_name, e.photo_employees, e.role
     FROM _audit_log al
     LEFT JOIN _employees e ON e.id_employees = al.id_employees
     ORDER BY al.creat_log DESC
     LIMIT 5
-")->fetchAll();
+")->fetchAll() : [];
 
-// ── Queries — Lançamentos nas últimas 24h ──
-$releases_24h = $db->query("
+$releases_24h = $canMusicView ? $db->query("
     SELECT a.title_album, a.type_album, a.status_album, a.img_cover, a.creat_album,
            u.first_name, u.second_name, u.email_user
     FROM _album a
@@ -221,56 +193,44 @@ $releases_24h = $db->query("
     WHERE a.creat_album >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
     ORDER BY a.creat_album DESC
     LIMIT 8
-")->fetchAll();
+")->fetchAll() : [];
 
-// ── Queries — Pedidos de Suporte últimas 24h ──
-$tickets_24h = $db->query("
-    SELECT st.id_ticket, st.subject, st.body, st.status_ticket,
-           st.priority, st.creat_ticket,
-           u.first_name, u.second_name, u.email_user, u.photo_user
+$tickets_24h = $canSupportView ? $db->query("
+    SELECT st.id_ticket, st.subject, st.body, st.status_ticket, st.name_contact, st.email_contact,
+           st.priority, st.creat_ticket, u.first_name, u.second_name, u.email_user, u.photo_user
     FROM _support_ticket st
-    JOIN _users u ON u.id_users = st.id_users
+    LEFT JOIN _users u ON u.id_users = st.id_users
     WHERE st.creat_ticket >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
     ORDER BY st.creat_ticket DESC
     LIMIT 8
-")->fetchAll();
+")->fetchAll() : [];
 
-// ── Queries — Planos activos (para donut) ──
-$plans_dist = $db->query("
+$plans_dist = $canFinancesView ? $db->query("
     SELECT p.name_plan, COUNT(u.id_users) as total
     FROM _users u JOIN _plans p ON p.id_plan = u.plan_selected
     WHERE u.plan_selected IS NOT NULL
     GROUP BY u.plan_selected, p.name_plan ORDER BY total DESC
-")->fetchAll();
-$plans_labels_json = json_encode(array_column($plans_dist, 'name_plan'));
+")->fetchAll() : [];
+$plans_labels_json = json_encode(array_column($plans_dist, 'name_plan'), JSON_UNESCAPED_UNICODE);
 $plans_data_json   = json_encode(array_column($plans_dist, 'total'));
 
-// ── Queries — Lançamentos por rever ──
-$pending_rel = $db->query("
+$pending_rel = $canMusicApprove ? $db->query("
     SELECT a.id_album, a.title_album, a.type_album, a.status_album,
            a.img_cover, a.creat_album,
            u.first_name, u.second_name
     FROM _album a JOIN _users u ON u.id_users=a.id_users
     WHERE a.status_album IN ('pending','under_review')
     ORDER BY a.creat_album ASC LIMIT 5
-")->fetchAll();
+")->fetchAll() : [];
 
-// ── Queries — Pagamentos recentes ──
-$recent_pays = $db->query("
+$recent_pays = $canFinancesView ? $db->query("
     SELECT p.payment_ref, p.amount, p.status_payment, p.payment_method, p.creat_payment,
            u.first_name, u.second_name, u.photo_user, pl.name_plan
     FROM _payment p
     JOIN _users u ON u.id_users=p.id_users
     JOIN _plans pl ON pl.id_plan=p.id_plan
     ORDER BY p.creat_payment DESC LIMIT 8
-")->fetchAll();
-
-// ── Queries — Países por visitantes ──
-$country_stats = $db->query("
-    SELECT country_code, COUNT(*) as total
-    FROM _visitor WHERE is_bot=0 AND country_code IS NOT NULL
-    GROUP BY country_code ORDER BY total DESC LIMIT 3
-")->fetchAll();
+")->fetchAll() : [];
 
 // ── Helpers de status ──
 function rel_status(string $s): array
@@ -306,29 +266,6 @@ function pay_status_label(string $s): string
     };
 }
 
-// ── Info da sessão para modal de logout ──
-$session_start  = $_SESSION['_start_time'] ?? time();
-if (!isset($_SESSION['_start_time'])) $_SESSION['_start_time'] = time();
-$session_mins   = max(0, (int)floor((time() - $session_start) / 60));
-$client_ip      = $_SERVER['REMOTE_ADDR'] ?? '—';
-$user_agent_raw = $_SERVER['HTTP_USER_AGENT'] ?? '';
-
-// Detectar browser
-$browser = 'Desconhecido';
-if (str_contains($user_agent_raw, 'Edg'))        $browser = 'Microsoft Edge';
-elseif (str_contains($user_agent_raw, 'Chrome'))  $browser = 'Google Chrome';
-elseif (str_contains($user_agent_raw, 'Firefox')) $browser = 'Firefox';
-elseif (str_contains($user_agent_raw, 'Safari'))  $browser = 'Safari';
-elseif (str_contains($user_agent_raw, 'Opera'))   $browser = 'Opera';
-
-// Detectar OS
-$os = 'Desconhecido';
-if (str_contains($user_agent_raw, 'Windows NT 10')) $os = 'Windows 10/11';
-elseif (str_contains($user_agent_raw, 'Windows'))   $os = 'Windows';
-elseif (str_contains($user_agent_raw, 'Mac OS'))    $os = 'macOS';
-elseif (str_contains($user_agent_raw, 'Android'))   $os = 'Android';
-elseif (str_contains($user_agent_raw, 'iPhone'))    $os = 'iOS';
-elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
 ?>
 <!DOCTYPE html>
 <html lang="pt-ao">
@@ -673,27 +610,27 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end">
                                     <h6 class="dropdown-header">Opções rápidas</h6>
-                                    <?php if (hasPermission($admin_id, 'music.approve')): ?>
+                                    <?php if ($canMusicApprove): ?>
                                     <a class="dropdown-item"
                                         href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/releases/pending">Aprovar
                                         Lançamentos</a>
                                     <?php endif; ?>
-                                    <?php if (hasPermission($admin_id, 'finances.view')): ?>
+                                    <?php if ($canFinancesView): ?>
                                     <a class="dropdown-item"
                                         href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/finances/payments">Aprovar
                                         Pagamentos</a>
                                     <?php endif; ?>
-                                    <?php if (hasPermission($admin_id, 'employees.edit')): ?>
+                                    <?php if ($canEmployeesEdit): ?>
                                     <a class="dropdown-item"
                                         href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees">Novo
                                         funcionário</a>
                                     <?php endif; ?>
-                                    <?php if (hasPermission($admin_id, 'settings.view')): ?>
+                                    <?php if ($canSettingsView): ?>
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item"
                                         href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/settings">Configurações</a>
                                     <?php endif; ?>
-                                    <?php if (hasPermission($admin_id, 'audit.view')): ?>
+                                    <?php if ($canAuditView): ?>
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/audit">Log
                                         de
@@ -711,6 +648,7 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
 
                 <!-- ══ STATS CARDS — DADOS REAIS ══ -->
                 <div class="row">
+                    <?php if ($canUsersView): ?>
                     <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
                         <div class="card stats-card-primary flex-fill">
                             <div class="card-body">
@@ -739,8 +677,9 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                             </div>
                         </div>
                     </div>
+                    <?php endif; ?>
 
-                    <?php if (hasPermission($admin_id, 'employees.view')): ?>
+                    <?php if ($canEmployeesView): ?>
                     <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
                         <div class="card stats-card-primary flex-fill">
                             <div class="card-body">
@@ -771,7 +710,7 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                     </div>
                     <?php endif; ?>
 
-                    <?php if (hasPermission($admin_id, 'music.view')): ?>
+                    <?php if ($canMusicView): ?>
                     <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
                         <div class="card stats-card-primary flex-fill">
                             <div class="card-body">
@@ -804,7 +743,7 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                     </div>
                     <?php endif; ?>
 
-                    <?php if (hasPermission($admin_id, 'analytics.view')): ?>
+                    <?php if ($canAnalyticsView): ?>
                     <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
                         <div class="card stats-card-primary flex-fill">
                             <div class="card-body">
@@ -864,7 +803,7 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                     </div>
                     <?php endif; ?>
 
-                    <?php if (hasPermission($admin_id, 'finances.view')): ?>
+                    <?php if ($canFinancesView): ?>
                     <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
                         <div class="card stats-card-primary flex-fill">
                             <div class="card-body">
@@ -895,7 +834,7 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                     </div>
                     <?php endif; ?>
 
-                    <?php if (hasPermission($admin_id, 'users.view')): ?>
+                    <?php if ($canUsersView): ?>
                     <div class="col-12 col-sm-6 col-xxl-3 mb-3 d-flex">
                         <div class="card stats-card-primary flex-fill">
                             <div class="card-body">
@@ -957,7 +896,7 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                     </div>
                     <?php endif; ?>
 
-                    <?php if (hasPermission($admin_id, 'music.approve')): ?>
+                    <?php if ($canMusicApprove): ?>
                     <!-- NOVO CARD — Lançamentos Pendentes -->
                     <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
                         <div class="card stats-card-primary flex-fill">
@@ -990,7 +929,7 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                     </div>
                     <?php endif; ?>
 
-                    <?php if (hasPermission($admin_id, 'users.view')): ?>
+                    <?php if ($canUsersView): ?>
                     <!-- NOVO — Total com Conta Bancária -->
                     <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
                         <div class="card stats-card-primary flex-fill">
@@ -1023,7 +962,7 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                     </div>
                     <?php endif; ?>
 
-                    <?php if (hasPermission($admin_id, 'users.view')): ?>
+                    <?php if ($canUsersView): ?>
                     <!-- NOVO — Total Colaboradores -->
                     <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
                         <div class="card stats-card-primary flex-fill">
@@ -1056,7 +995,7 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                     </div>
                     <?php endif; ?>
 
-                    <?php if (hasPermission($admin_id, 'finances.view')): ?>
+                    <?php if ($canFinancesView): ?>
                     <!-- NOVO — Receita Total Acumulada -->
                     <div class="col-12 col-sm-4 col-xxl-3 mb-3 d-flex">
                         <div class="card stats-card-primary flex-fill">
@@ -1093,9 +1032,9 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
 
                 <!-- ══ SUPORTE + MAPA + STREAMS ══ -->
                 <div class="row">
-                    <?php if (hasPermission($admin_id, 'support.view') || hasPermission($admin_id, 'analytics.view')): ?>
+                    <?php if ($canSupportView || $canAnalyticsView): ?>
                     <div class="col-md-6 mb-3">
-                        <?php if (hasPermission($admin_id, 'support.view')): ?>
+                        <?php if ($canSupportView): ?>
                         <div class="card stats-card-primary flex-fill">
                             <div class="card-body">
                                 <div class="d-flex align-items-start">
@@ -1124,7 +1063,7 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                             </div>
                         </div>
                         <?php endif; ?>
-                        <?php if (hasPermission($admin_id, 'analytics.view')): ?>
+                        <?php if ($canAnalyticsView): ?>
                         <div class="card stats-card-primary flex-fill">
                             <h5 class="card-title">Países que usam a Wasom Upfy</h5>
                             <div id="clientMap"></div>
@@ -1162,7 +1101,7 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                     </div>
                     <?php endif; ?>
 
-                    <?php if (hasPermission($admin_id, 'analytics.view')): ?>
+                    <?php if ($canAnalyticsView): ?>
                     <div class="col-md-6 mb-3 d-flex">
                         <div class="card stats-card-primary flex-fill">
                             <div class="d-flex justify-content-between align-items-center mb-3">
@@ -1207,7 +1146,7 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
 
                 <!-- ══ TOP MÚSICAS (reais) + ATIVIDADE RECENTE (real) ══ -->
                 <div class="row">
-                    <?php if (hasPermission($admin_id, 'music.view')): ?>
+                    <?php if ($canMusicView): ?>
                     <div class="col-md-6 mb-3 d-flex">
                         <div class="card stats-card-primary flex-fill">
                             <h5 class="card-title">Top Músicas</h5>
@@ -1246,7 +1185,7 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                     </div>
                     <?php endif; ?>
 
-                    <?php if (hasPermission($admin_id, 'audit.view')): ?>
+                    <?php if ($canAuditView): ?>
                     <!-- Atividade Recente REAL -->
                     <div class="col-12 col-md-6 mb-3">
                         <div class="card stats-card-primary flex-fill">
@@ -1298,7 +1237,7 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
 
                 <!-- ══ NOSSOS CLIENTES MELHORADO + PLANOS ACTIVOS ══ -->
                 <div class="row">
-                    <?php if (hasPermission($admin_id, 'users.view')): ?>
+                    <?php if ($canUsersView): ?>
                     <!-- Nossos Clientes — cards com foto/nome/email/plano/data -->
                     <div class="col-md-7 mb-3 d-flex">
                         <div class="card stats-card-primary flex-fill">
@@ -1347,7 +1286,7 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                     </div>
                     <?php endif; ?>
 
-                    <?php if (hasPermission($admin_id, 'finances.view')): ?>
+                    <?php if ($canFinancesView): ?>
                     <!-- Planos Activos — donut + lista -->
                     <div class="col-md-5 mb-3 d-flex">
                         <div class="card stats-card-primary flex-fill">
@@ -1380,11 +1319,12 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                 utilizadores <i class="bi bi-arrow-right"></i></a>
                         </div>
                     </div>
+                    <?php endif; ?>
                 </div>
 
                 <!-- ══ LANÇAMENTOS POR REVER + TIMELINE ══ -->
                 <div class="row">
-                    <?php if (hasPermission($admin_id, 'music.approve')): ?>
+                    <?php if ($canMusicApprove): ?>
                     <div class="col-md-6 mb-3 d-flex">
                         <div class="card stats-card-primary flex-fill">
                             <div class="section-card-header">
@@ -1458,6 +1398,7 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                 </div>
 
                 <!-- ══ PAGAMENTOS RECENTES ══ -->
+                <?php if ($canFinancesView): ?>
                 <div class="row">
                     <div class="col-12 mb-3">
                         <div class="card stats-card-primary flex-fill">
@@ -1531,7 +1472,7 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                 <?php endif; ?>
 
                 <!-- ══ LANÇAMENTOS NAS ÚLTIMAS 24H ══ -->
-                <?php if (hasPermission($admin_id, 'music.view')): ?>
+                <?php if ($canMusicView): ?>
                 <div class="row">
                     <div class="col-12 mb-3">
                         <div class="card stats-card-primary flex-fill">
@@ -1605,7 +1546,7 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
             </div>
             <?php endif; ?>
 
-            <?php if (hasPermission($admin_id, 'support.view')): ?>
+            <?php if ($canSupportView): ?>
             <!-- ══ PEDIDOS DE SUPORTE NAS ÚLTIMAS 24H ══ -->
             <div class="row">
                 <div class="col-12 mb-3">
@@ -1629,8 +1570,14 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                         </div>
                         <?php else: ?>
                         <?php foreach ($tickets_24h as $tk):
-                                $ini   = adm_initials($tk['first_name'], $tk['second_name'] ?? '');
-                                $color = adm_avatar_color($tk['first_name'] . ($tk['second_name'] ?? ''));
+                                $ticket_name  = trim(($tk['first_name'] ?? '') . ' ' . ($tk['second_name'] ?? ''));
+                                $ticket_name  = $ticket_name !== '' ? $ticket_name : trim((string)($tk['name_contact'] ?? ''));
+                                $ticket_name  = $ticket_name !== '' ? $ticket_name : 'Visitante';
+                                $ticket_email = trim((string)($tk['email_user'] ?? ''));
+                                $ticket_email = $ticket_email !== '' ? $ticket_email : trim((string)($tk['email_contact'] ?? ''));
+                                $parts        = preg_split('/\s+/', $ticket_name, 2);
+                                $ini          = adm_initials($parts[0] ?? 'V', $parts[1] ?? '');
+                                $color        = adm_avatar_color($ticket_name);
                                 $preview = mb_substr(strip_tags($tk['body']), 0, 120, 'UTF-8');
                                 if (mb_strlen(strip_tags($tk['body']), 'UTF-8') > 120) $preview .= '…';
                                 $tk_sc = match ($tk['status_ticket']) {
@@ -1651,12 +1598,14 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                 };
                                 $pr_sc = match ($tk['priority'] ?? '') {
                                     'high'   => 'danger',
+                                    'normal' => 'warning',
                                     'medium' => 'warning',
                                     'low'    => 'secondary',
                                     default  => 'secondary',
                                 };
                                 $pr_sl = match ($tk['priority'] ?? '') {
                                     'high'   => 'Alta',
+                                    'normal' => 'Média',
                                     'medium' => 'Média',
                                     'low'    => 'Baixa',
                                     default  => '—',
@@ -1673,7 +1622,7 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                         alt="" style="width:100%;height:100%;object-fit:cover"
                                         onerror="this.style.display='none';this.parentElement.textContent='<?php echo $ini; ?>'" />
                                     <?php else: ?>
-                                    <?php echo adm_initials($tk['first_name'], $tk['second_name'] ?? ''); ?>
+                                    <?php echo $ini; ?>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -1683,8 +1632,10 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                                         <h6 class="mb-0" style="font-size:.88rem">
                                             <?php echo htmlspecialchars($tk['subject']); ?></h6>
                                         <small class="text-white-stable" style="opacity:.6">
-                                            <?php echo htmlspecialchars($tk['first_name'] . ' ' . ($tk['second_name'] ?? '')); ?>
-                                            · <?php echo htmlspecialchars($tk['email_user']); ?>
+                                            <?php echo htmlspecialchars($ticket_name); ?>
+                                            <?php if ($ticket_email !== ''): ?>
+                                            · <?php echo htmlspecialchars($ticket_email); ?>
+                                            <?php endif; ?>
                                         </small>
                                     </div>
                                     <div class="d-flex gap-1 flex-shrink-0">
@@ -1754,7 +1705,11 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
     <script>
     // ── Mapa — centrado em Angola ──────────────
     function initClientMap() {
-        const map = L.map("clientMap").setView([-8.8372, 13.2343], 3);
+        const mapHost = document.getElementById("clientMap");
+        if (!mapHost || typeof L === "undefined") return;
+        if (mapHost._leaflet_map) return;
+
+        const map = L.map(mapHost).setView([-8.8372, 13.2343], 3);
         const tileUrl = document.body.classList.contains("dark-mode") ?
             "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" :
             "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
@@ -1763,7 +1718,7 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
             attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         }).addTo(map);
 
-        document.getElementById("clientMap")._leaflet_map = map;
+        mapHost._leaflet_map = map;
 
         [{
                 name: "Luanda, Angola",
@@ -1818,15 +1773,18 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
             labels: <?php echo json_encode($streams_month_labels); ?>,
             streams: <?php echo json_encode($streams_month_data); ?>,
             totalStreams: <?php echo $streams_total_month; ?>,
-            newListeners: <?php echo $new_listeners_7d; ?>,
+            newListeners: <?php echo $new_listeners_month; ?>,
             revenue: <?php echo $rev_month; ?>,
         },
     };
 
+    const streamsCanvas = document.getElementById("streamsChart");
     let streamsChart = null;
-    const ctx = document.getElementById("streamsChart").getContext("2d");
+    const ctx = streamsCanvas ? streamsCanvas.getContext("2d") : null;
 
     function updateChart(period) {
+        if (!ctx || !streamData[period]) return;
+
         const data = streamData[period];
         const dark = document.body.classList.contains("dark-mode");
         const lineColor = dark ? "#ff0088" : "#ff4d94";
@@ -1879,8 +1837,8 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                 },
             },
         });
-        document.getElementById("totalStreams").textContent = data.totalStreams.toLocaleString("pt-AO");
-        document.getElementById("newListeners").textContent = data.newListeners.toLocaleString("pt-AO");
+        const totalStreamsEl = document.getElementById("totalStreams");
+        const newListenersEl = document.getElementById("newListeners");
         // Formatar receita em AOA
         const rev = data.revenue;
         let revFmt;
@@ -1889,10 +1847,14 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
         else revFmt = 'Kz ' + rev.toLocaleString("pt-AO", {
             minimumFractionDigits: 2
         });
-        document.getElementById("revenue").textContent = revFmt;
+        const revenueEl = document.getElementById("revenue");
+        if (totalStreamsEl) totalStreamsEl.textContent = data.totalStreams.toLocaleString("pt-AO");
+        if (newListenersEl) newListenersEl.textContent = data.newListeners.toLocaleString("pt-AO");
+        if (revenueEl) revenueEl.textContent = revFmt;
     }
 
-    updateChart("7days");
+    if (ctx) {
+        updateChart("7days");
 
     document.querySelectorAll(".dropdown-menu a[data-period]").forEach(item => {
         item.addEventListener("click", e => {
@@ -1902,10 +1864,9 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
                 .textContent;
         });
     });
-
-    document.querySelector('[onclick="toggleDarkMode()"]').addEventListener("click", () => {
-        const cur = document.querySelector(".dropdown-toggle").textContent.trim();
-        const map = {
+        document.querySelector('[onclick="toggleDarkMode()"]').addEventListener("click", () => {
+            const cur = (document.querySelector('[aria-label="Selecionar PerÃ­odo"]')?.textContent || "").trim();
+            const map = {
             "Hoje": "today",
             "Últimos 7 dias": "7days",
             "Últimos 30 dias": "30days",
@@ -1913,6 +1874,7 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
         };
         updateChart(map[cur] || "7days");
     });
+    }
 
     // ── Relógio em tempo real ───────────────────
     function updateClock() {
@@ -1931,10 +1893,12 @@ elseif (str_contains($user_agent_raw, 'Linux'))     $os = 'Linux';
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
             updateClock();
+            initClientMap();
             setInterval(updateClock, 30000);
         });
     } else {
         updateClock();
+        initClientMap();
         setInterval(updateClock, 30000);
     }
 

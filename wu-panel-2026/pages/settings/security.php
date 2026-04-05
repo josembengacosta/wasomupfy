@@ -16,11 +16,11 @@ $cfg = [];
 $rows = $db->query("SELECT config_key, config_value FROM _admin_config")->fetchAll();
 foreach ($rows as $r) $cfg[$r['config_key']] = $r['config_value'];
 
-$current_path  = $cfg['admin_path']       ?? 'admin';
+$current_path  = $cfg['admin_path']       ?? ADMIN_PATH;
 $wl_on         = ($cfg['ip_whitelist_on'] ?? '0') === '1';
 $basic_on      = ($cfg['basic_auth_on']   ?? '0') === '1';
 $path_changed  = $cfg['path_last_changed'] ?? '—';
-$path_prev     = $cfg['admin_path_prev']   ?? '';
+$path_prev     = $cfg['admin_path_prev']   ?? ($cfg['path_prev'] ?? '');
 
 // ── IPs da whitelist ──
 $ips = $db->query("
@@ -29,6 +29,7 @@ $ips = $db->query("
     LEFT JOIN _employees e ON e.id_employees = i.added_by
     ORDER BY i.active DESC, i.creat_ip DESC
 ")->fetchAll();
+$active_ips = count(array_filter($ips, static fn(array $row): bool => (int)($row['active'] ?? 0) === 1));
 
 // ── Tentativas bloqueadas (últimas 20) ──
 $blocked_log = $db->query("
@@ -50,6 +51,10 @@ $feedback = match ($msg) {
     'no_write'      => ['danger',  'bi-x-circle',     'Sem permissão de escrita no servidor. Verifica as permissões da pasta.'],
     'path_exists'   => ['danger',  'bi-x-circle',     'Esse caminho já existe no servidor. Escolhe outro.'],
     'path_invalid'  => ['danger',  'bi-x-circle',     'Caminho inválido. Usa apenas letras, números e hífen.'],
+    'rename_failed' => ['danger',  'bi-x-circle',     'Nao foi possivel renomear a pasta do painel. Nada foi alterado.'],
+    'wl_no_ip'      => ['danger',  'bi-x-circle',     'Nao foi possivel activar a whitelist sem um IP valido.'],
+    'self_ip_blocked' => ['warning', 'bi-shield-exclamation', 'Nao podes desactivar ou remover o teu proprio IP enquanto a whitelist esta activa.'],
+    'last_ip_blocked' => ['warning', 'bi-shield-fill-exclamation', 'A whitelist precisa de pelo menos um IP activo.'],
     default         => null,
 };
 
@@ -293,7 +298,7 @@ $my_ip = $_SERVER['REMOTE_ADDR'] ?? '—';
                             <p class="sec-desc">
                                 O caminho da URL do painel. Mudar para algo imprevisível elimina
                                 ~95% dos ataques automatizados que procuram
-                                <code><?php '/' . ADMIN_PATH . '/'; ?></code>.
+                                <code><?php echo '/' . ADMIN_PATH . '/'; ?></code>.
                             </p>
 
                             <div class="d-flex align-items-center gap-3 mb-3 flex-wrap">
@@ -399,7 +404,7 @@ $my_ip = $_SERVER['REMOTE_ADDR'] ?? '—';
                                 </form>
                             </div>
 
-                            <?php if ($wl_on && count($ips) === 0): ?>
+                            <?php if ($wl_on && $active_ips === 0): ?>
                             <div class="danger-box">
                                 <i class="bi bi-exclamation-octagon me-1"></i>
                                 <strong>Atenção:</strong> A whitelist está activa mas não tem nenhum IP registado.

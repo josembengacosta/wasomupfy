@@ -10,13 +10,37 @@ requirePermission($admin_id, 'support.view');
 if (!isset($_SESSION['admin_csrf_token'])) {
     $_SESSION['admin_csrf_token'] = bin2hex(random_bytes(32));
 }
-// ── Garantir colunas is_starred (executar uma vez) ────────────
-foreach (['_support_ticket', '_contact_message', '_feedback'] as $tbl) {
-    try {
-        $db->exec("ALTER TABLE `$tbl` ADD COLUMN IF NOT EXISTS `is_starred` TINYINT(1) NOT NULL DEFAULT 0");
-    } catch (Exception $e) { /* já existe — ignorar */
+
+function inbox_has_column(PDO $db, string $table, string $column): bool
+{
+    static $cache = [];
+
+    $key = $table . '.' . $column;
+    if (array_key_exists($key, $cache)) {
+        return $cache[$key];
     }
+
+    $stmt = $db->prepare("
+        SELECT COUNT(*)
+        FROM information_schema.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = ?
+          AND COLUMN_NAME = ?
+    ");
+    $stmt->execute([$table, $column]);
+
+    return $cache[$key] = ((int)$stmt->fetchColumn() > 0);
 }
+
+$ticket_star_enabled   = inbox_has_column($db, '_support_ticket', 'is_starred');
+$contact_star_enabled  = inbox_has_column($db, '_contact_message', 'is_starred');
+$feedback_star_enabled = inbox_has_column($db, '_feedback', 'is_starred');
+$ticket_star_sql       = $ticket_star_enabled ? 'st.is_starred' : '0';
+$contact_star_sql      = $contact_star_enabled ? 'cm.is_starred' : '0';
+$feedback_star_sql     = $feedback_star_enabled ? 'fb.is_starred' : '0';
+$ticket_can_star_sql   = $ticket_star_enabled ? '1' : '0';
+$contact_can_star_sql  = $contact_star_enabled ? '1' : '0';
+$feedback_can_star_sql = $feedback_star_enabled ? '1' : '0';
 
 // ── Filtros / aba activa ──────────────────────────────────────
 $tab      = in_array($_GET['tab'] ?? '', ['tickets', 'contact', 'feedback', 'starred', 'archived']) ? $_GET['tab'] : 'all';
@@ -87,7 +111,7 @@ $search_like = $f_search !== '' ? '%' . $f_search . '%' : null;
 $tw = ["st.status_ticket != 'deleted'"];
 if ($tab === 'tickets') {
 } // sem filtro extra
-if ($tab === 'starred')  $tw[] = "st.is_starred = 1";
+if ($tab === 'starred')  $tw[] = $ticket_star_enabled ? "st.is_starred = 1" : "1=0";
 if ($tab === 'archived') $tw[] = "st.status_ticket IN ('closed','archived')";
 if ($tab === 'contact' || $tab === 'feedback') $tw[] = "1=0"; // esconder
 if ($search_like) {
@@ -103,7 +127,7 @@ $tw_str = 'WHERE ' . implode(' AND ', $tw);
 $cw = ["cm.status_msg != 'deleted'"];
 if ($tab === 'contact') {
 } // ok
-if ($tab === 'starred')  $cw[] = "cm.is_starred = 1";
+if ($tab === 'starred')  $cw[] = $contact_star_enabled ? "cm.is_starred = 1" : "1=0";
 if ($tab === 'archived') $cw[] = "cm.status_msg = 'archived'";
 if ($tab === 'tickets' || $tab === 'feedback') $cw[] = "1=0";
 if ($search_like) {
@@ -116,7 +140,7 @@ $cw_str = 'WHERE ' . implode(' AND ', $cw);
 $fw = ["fb.status_fb != 'deleted'"];
 if ($tab === 'feedback') {
 }
-if ($tab === 'starred')  $fw[] = "fb.is_starred = 1";
+if ($tab === 'starred')  $fw[] = $feedback_star_enabled ? "fb.is_starred = 1" : "1=0";
 if ($tab === 'archived') $fw[] = "fb.status_fb = 'archived'";
 if ($tab === 'tickets' || $tab === 'contact') $fw[] = "1=0";
 if ($search_like) {
@@ -142,7 +166,8 @@ $union_sql = "
         LEFT(st.body, 120)  AS body_preview,
         st.status_ticket    AS msg_status,
         st.priority         AS priority,
-        st.is_starred       AS is_starred,
+        $ticket_star_sql    AS is_starred,
+        $ticket_can_star_sql AS can_star,
         st.assigned_to      AS assigned_to,
         st.creat_ticket     AS created_at
     FROM _support_ticket st
@@ -160,7 +185,8 @@ $union_sql = "
         LEFT(cm.message_msg, 120) AS body_preview,
         cm.status_msg       AS msg_status,
         'normal'            AS priority,
-        cm.is_starred       AS is_starred,
+        $contact_star_sql   AS is_starred,
+        $contact_can_star_sql AS can_star,
         NULL                AS assigned_to,
         cm.created_at       AS created_at
     FROM _contact_message cm
@@ -177,7 +203,8 @@ $union_sql = "
         LEFT(fb.message_fb, 120) AS body_preview,
         fb.status_fb        AS msg_status,
         'low'               AS priority,
-        fb.is_starred       AS is_starred,
+        $feedback_star_sql  AS is_starred,
+        $feedback_can_star_sql AS can_star,
         NULL                AS assigned_to,
         fb.created_at       AS created_at
     FROM _feedback fb
@@ -206,7 +233,19 @@ $unread_tickets  = (int)$db->query("SELECT COUNT(*) FROM _support_ticket WHERE s
 $unread_contact  = (int)$db->query("SELECT COUNT(*) FROM _contact_message WHERE status_msg='new'")->fetchColumn();
 $unread_feedback = (int)$db->query("SELECT COUNT(*) FROM _feedback WHERE status_fb='new'")->fetchColumn();
 $total_unread    = $unread_tickets + $unread_contact + $unread_feedback;
-$total_starred   = (int)$db->query("SELECT (SELECT COUNT(*) FROM _support_ticket WHERE is_starred=1) + (SELECT COUNT(*) FROM _contact_message WHERE is_starred=1) + (SELECT COUNT(*) FROM _feedback WHERE is_starred=1)")->fetchColumn();
+$starred_count_sql = [];
+if ($ticket_star_enabled) {
+    $starred_count_sql[] = "(SELECT COUNT(*) FROM _support_ticket WHERE is_starred=1)";
+}
+if ($contact_star_enabled) {
+    $starred_count_sql[] = "(SELECT COUNT(*) FROM _contact_message WHERE is_starred=1)";
+}
+if ($feedback_star_enabled) {
+    $starred_count_sql[] = "(SELECT COUNT(*) FROM _feedback WHERE is_starred=1)";
+}
+$total_starred = $starred_count_sql
+    ? (int)$db->query("SELECT " . implode(' + ', $starred_count_sql))->fetchColumn()
+    : 0;
 
 // ── Admins para atribuição ────────────────────────────────────
 $admins = $db->query("SELECT id_employees, CONCAT(first_name,' ',COALESCE(second_name,'')) AS name FROM _employees WHERE status_employees='active' ORDER BY first_name")->fetchAll();
@@ -899,6 +938,7 @@ $proc_url = $base_url . '/messages/inbox-process';
                                 [$src_label, $src_color, $src_icon] = inbox_source_label($msg['source']);
                                 $is_unread  = in_array($msg['msg_status'], ['new', 'open']);
                                 $is_starred = (bool)$msg['is_starred'];
+                                $can_star   = (bool)($msg['can_star'] ?? 0);
                                 $is_active  = ($selected == $msg['msg_id'] && $sel_src === $msg['source']);
 
                                 // Avatar
@@ -959,8 +999,10 @@ $proc_url = $base_url . '/messages/inbox-process';
 
                             <!-- Estrela -->
                             <button class="inbox-star-btn"
+                                data-can-star="<?php echo $can_star ? '1' : '0'; ?>"
                                 onclick="toggleStar(event, <?php echo (int)$msg['msg_id']; ?>,'<?php echo htmlspecialchars($msg['source']); ?>',this)"
-                                title="<?php echo $is_starred ? 'Remover importância' : 'Marcar como importante'; ?>">
+                                title="<?php echo $can_star ? ($is_starred ? 'Remover importância' : 'Marcar como importante') : 'Favoritos indisponíveis nesta instalação'; ?>"
+                                style="<?php echo $can_star ? '' : 'opacity:.45;cursor:not-allowed'; ?>">
                                 <i class="bi <?php echo $is_starred ? 'bi-star-fill' : 'bi-star'; ?>"></i>
                             </button>
                         </a>
@@ -1218,17 +1260,39 @@ $proc_url = $base_url . '/messages/inbox-process';
         window.toggleStar = async function(e, id, src, btn) {
             e.preventDefault();
             e.stopPropagation();
+            if (btn?.dataset?.canStar !== '1') {
+                return;
+            }
+
             const icon = btn.querySelector('i');
             const item = btn.closest('.inbox-msg-item');
-            const isStar = icon.classList.contains('bi-star-fill');
-            icon.className = isStar ? 'bi bi-star' : 'bi bi-star-fill';
-            btn.style.color = isStar ? '' : '#f59e0b';
-            item?.classList.toggle('starred', !isStar);
-            await post({
+            btn.disabled = true;
+
+            const data = await post({
                 action: 'toggle_star',
                 msg_id: id,
                 source: src
             });
+
+            btn.disabled = false;
+            if (!data.ok) {
+                await Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'error',
+                    title: data.message || 'Não foi possível actualizar o favorito.',
+                    showConfirmButton: false,
+                    timer: 2600,
+                    timerProgressBar: true
+                });
+                return;
+            }
+
+            const starred = !!data.starred;
+            icon.className = starred ? 'bi bi-star-fill' : 'bi bi-star';
+            btn.style.color = starred ? '#f59e0b' : '';
+            btn.title = starred ? 'Remover importância' : 'Marcar como importante';
+            item?.classList.toggle('starred', starred);
         };
 
         // ── Responder (delegado ao body — o HTML do painel tem os handlers) ──

@@ -32,9 +32,11 @@ document.addEventListener("DOMContentLoaded", () => {
   };
   setTimeout(hideLoadingScreen, 3000);
   window.addEventListener("load", hideLoadingScreen);
-  document.getElementById(
-    "versionDropdown"
-  ).textContent = `Versão ${APP_VERSION} (2026)`;
+const versionDropdown = document.getElementById("versionDropdown");
+  if (versionDropdown) {
+    versionDropdown.textContent = `Versão ${APP_VERSION} (2026)`;
+  }
+
 
   // Gerenciar Status de Conexão
   const connectionStatus = document.getElementById("connectionStatus");
@@ -121,12 +123,19 @@ document.addEventListener("DOMContentLoaded", () => {
   );
   const currentPath = window.location.pathname;
 
-  // Normalizar o caminho atual para o último segmento relevante
-  const currentPage =
-    currentPath
-      .split("/")
-      .filter((segment) => segment)
-      .pop() || "painel";
+  // Detecta página actual para active nav
+  const pathParts = currentPath.split("/").filter(Boolean);
+  
+  // Regra 1: últimas 2 partes = página pai (ex: /dashboard/artists/add-artist → "add-artist")
+  let currentPage = pathParts.slice(-2)[0] || pathParts[pathParts.length - 1] || "painel";
+  
+  // Regra 2: Subpáginas de artists → ativa artists-list
+  if (currentPath.includes('/artists/')) {
+    currentPage = 'artists-list';
+  }
+
+
+
 
   navLinks.forEach((link) => {
     // Remover a classe active de todos os links

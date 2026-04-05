@@ -1,349 +1,253 @@
 <?php
-// ══════════════════════════════════════════════════════
-// WASOM UPFY v2.0 — Processar Pagamento
-// Arquivo: dashboard/payment_process.php
-// Aceita: POST (JSON para 'seen') + POST (multipart para upload)
-// ══════════════════════════════════════════════════════
+
 require_once __DIR__ . '/../../authentic/include/functions.php';
+require_once __DIR__ . '/../../authentic/include/payment_workflow.php';
+
 startSecureSession();
 requireLogin();
 
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=utf-8');
+
+function paymentJsonError(string $message, int $status = 400): never
+{
+    http_response_code($status);
+    echo json_encode([
+        'ok'      => false,
+        'message' => $message,
+    ]);
+    exit;
+}
+
+function paymentJsonOk(array $payload = []): never
+{
+    echo json_encode(array_merge(['ok' => true], $payload));
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    paymentJsonError('Metodo nao permitido.', 405);
+}
+
+$db       = getDB();
 $id_users = (int)$_SESSION['id_users'];
+$isJson   = str_contains($_SERVER['CONTENT_TYPE'] ?? '', 'application/json');
+$body     = [];
 
-// ─── Detectar tipo de requisição ──────────────────────
-$is_json = str_contains($_SERVER['CONTENT_TYPE'] ?? '', 'application/json');
+if ($isJson) {
+    $body   = json_decode(file_get_contents('php://input'), true) ?: [];
+    $action = trim((string)($body['action'] ?? ''));
+    $csrf   = (string)($body['csrf'] ?? '');
+} else {
+    $action = trim((string)($_POST['action'] ?? 'upload'));
+    $csrf   = (string)($_POST['csrf_token'] ?? '');
+}
 
-if ($is_json) {
-    // ══════════════════════════════════════════════════
-    // ACÇÃO: 'seen' — utilizador viu as instruções
-    // Actualiza status para 'waiting_payment'
-    // ══════════════════════════════════════════════════
-    $body = json_decode(file_get_contents('php://input'), true);
+if (!validateCsrf($csrf)) {
+    paymentJsonError('Sessao expirada. Recarrega a pagina.', 403);
+}
 
-    if (!validateCsrf($body['csrf'] ?? '')) {
-        http_response_code(403);
-        echo json_encode(['ok' => false, 'message' => 'CSRF inválido.']);
-        exit;
+if ($action === 'seen') {
+    $intentId = (int)($body['intent_id'] ?? 0);
+    if (!$intentId) {
+        paymentJsonError('Intent invalido.');
     }
 
-    if (($body['action'] ?? '') === 'seen') {
-        $intent_id = (int)($body['intent_id'] ?? 0);
+    $stmt = $db->prepare("
+        SELECT id_intent, status
+        FROM _payment_intent
+        WHERE id_intent = ?
+          AND id_users = ?
+          AND expires_at > NOW()
+        LIMIT 1
+    ");
+    $stmt->execute([$intentId, $id_users]);
+    $intent = $stmt->fetch();
 
-        // Confirmar que o intent pertence ao utilizador e está válido
-        $stmt = getDB()->prepare("
-            SELECT id_intent FROM _payment_intent
-            WHERE id_intent = ? AND id_users = ?
-            AND status = 'created' AND expires_at > NOW()
-        ");
-        $stmt->execute([$intent_id, $id_users]);
-
-        if ($stmt->fetch()) {
-            getDB()->prepare("
-                UPDATE _payment_intent SET status = 'waiting_payment' WHERE id_intent = ?
-            ")->execute([$intent_id]);
-        }
-
-        echo json_encode(['ok' => true]);
-        exit;
+    if (!$intent) {
+        paymentJsonError('Referencia nao encontrada ou expirada.');
     }
 
-    echo json_encode(['ok' => false, 'message' => 'Acção desconhecida.']);
-    exit;
+    if ($intent['status'] === 'created') {
+        $db->prepare("UPDATE _payment_intent SET status = 'waiting_payment' WHERE id_intent = ?")
+            ->execute([$intentId]);
+    }
+
+    paymentJsonOk();
 }
 
-// ══════════════════════════════════════════════════════
-// ACÇÃO: Upload de comprovativo
-// ══════════════════════════════════════════════════════
-
-if (!validateCsrf($_POST['csrf_token'] ?? '')) {
-    echo json_encode(['ok' => false, 'message' => 'Sessão expirada. Recarrega a página.']);
-    exit;
+if (!in_array($action, ['', 'upload'], true)) {
+    paymentJsonError('Accao desconhecida.');
 }
 
-$intent_id = (int)($_POST['intent_id'] ?? 0);
-$full_name = sanitize($_POST['full_name'] ?? '');
-$phone     = sanitize($_POST['phone']     ?? '');
-$method    = sanitize($_POST['method']    ?? '');
-
-// ─── Validações básicas ───────────────────────────────
-if (!in_array($method, ['express', 'iban'])) {
-    echo json_encode(['ok' => false, 'message' => 'Método de pagamento inválido.']);
-    exit;
-}
-if (strlen($full_name) < 4) {
-    echo json_encode(['ok' => false, 'message' => 'Indica o nome completo do titular.']);
-    exit;
+$intentId = (int)($_POST['intent_id'] ?? 0);
+if (!$intentId) {
+    paymentJsonError('Referencia de pagamento em falta.');
 }
 
-// ─── Verificar Payment Intent ─────────────────────────
-$stmt = getDB()->prepare("
-    SELECT * FROM _payment_intent
-    WHERE id_intent = ? AND id_users = ?
-    AND status IN ('created','waiting_payment')
-    AND expires_at > NOW()
+$fullName = sanitize(trim((string)($_POST['full_name'] ?? '')));
+$phone    = sanitize(trim((string)($_POST['phone'] ?? '')));
+$method   = trim((string)($_POST['method'] ?? $_POST['method_used'] ?? ''));
+
+if (!in_array($method, ['express', 'iban'], true)) {
+    paymentJsonError('Metodo de pagamento invalido.');
+}
+
+if (strlen($fullName) < 4) {
+    paymentJsonError('Indica o nome completo do titular.');
+}
+
+$intentStmt = $db->prepare("
+    SELECT pi.*, pl.name_plan, pl.slug_plan, pl.type_plan, pl.validity_days, pl.max_releases
+    FROM _payment_intent pi
+    JOIN _plans pl ON pl.id_plan = pi.id_plan
+    WHERE pi.id_intent = ?
+      AND pi.id_users = ?
+      AND pi.status IN ('created', 'waiting_payment')
+      AND pi.expires_at > NOW()
+    LIMIT 1
 ");
-$stmt->execute([$intent_id, $id_users]);
-$intent = $stmt->fetch();
+$intentStmt->execute([$intentId, $id_users]);
+$intent = $intentStmt->fetch();
 
 if (!$intent) {
-    echo json_encode(['ok' => false, 'message' => 'A tua referência de pagamento expirou ou é inválida. Volta atrás e gera uma nova.']);
-    exit;
+    paymentJsonError('A tua referencia expirou, ja foi usada ou nao pertence a esta conta.');
 }
 
-// ─── Verificar limite de tentativas ──────────────────
 if ((int)$intent['attempts'] >= 3) {
-    echo json_encode(['ok' => false, 'message' => 'Excedeste o número máximo de tentativas para este pagamento. Contacta o suporte.']);
-    exit;
+    paymentJsonError('Excedeste o numero maximo de tentativas para este pagamento. Contacta o suporte.');
 }
 
-// ─── Validar ficheiro ─────────────────────────────────
-if (empty($_FILES['comprovativo']) || $_FILES['comprovativo']['error'] !== UPLOAD_ERR_OK) {
-    echo json_encode(['ok' => false, 'message' => 'Erro ao receber o ficheiro. Tenta novamente.']);
-    exit;
+if (empty($_FILES['comprovativo']) || ($_FILES['comprovativo']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+    $uploadErrors = [
+        UPLOAD_ERR_INI_SIZE   => 'Ficheiro demasiado grande para o servidor.',
+        UPLOAD_ERR_FORM_SIZE  => 'Ficheiro demasiado grande.',
+        UPLOAD_ERR_PARTIAL    => 'Upload incompleto. Tenta novamente.',
+        UPLOAD_ERR_NO_FILE    => 'Selecciona um comprovativo antes de enviar.',
+        UPLOAD_ERR_NO_TMP_DIR => 'Erro interno do servidor.',
+        UPLOAD_ERR_CANT_WRITE => 'Erro ao guardar o ficheiro.',
+    ];
+    $errorCode = (int)($_FILES['comprovativo']['error'] ?? UPLOAD_ERR_NO_FILE);
+    paymentJsonError($uploadErrors[$errorCode] ?? 'Erro desconhecido no upload.');
 }
 
 $file     = $_FILES['comprovativo'];
-$allowed  = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
-$max_size = 5 * 1024 * 1024; // 5 MB
-
-// Verificar MIME real (não só extensão)
-$finfo     = new finfo(FILEINFO_MIME_TYPE);
-$real_mime = $finfo->file($file['tmp_name']);
-
-if (!in_array($real_mime, $allowed)) {
-    echo json_encode(['ok' => false, 'message' => 'Tipo de ficheiro não permitido. Usa JPG, PNG, WebP ou PDF.']);
-    exit;
-}
-if ($file['size'] > $max_size) {
-    echo json_encode(['ok' => false, 'message' => 'O ficheiro é muito grande. Máximo 5 MB.']);
-    exit;
-}
-
-// ─── Hash SHA256 do ficheiro ──────────────────────────
-$file_hash = hash_file('sha256', $file['tmp_name']);
-
-// Verificar se este comprovativo já foi usado antes (anti-fraude)
-$hash_check = getDB()->prepare("SELECT id_proof FROM _payment_proof WHERE file_hash = ?");
-$hash_check->execute([$file_hash]);
-if ($hash_check->fetch()) {
-    // Penalizar trust score
-    getDB()->prepare("UPDATE _users SET trust_score = GREATEST(0, trust_score - 20) WHERE id_users = ?")
-        ->execute([$id_users]);
-    logActivity($id_users, 'payment_fraud_attempt', 'Comprovativo duplicado detectado', 'payment_intent', $intent_id);
-    echo json_encode(['ok' => false, 'message' => 'Este comprovativo já foi utilizado. Envia o comprovativo original do teu pagamento.']);
-    exit;
-}
-
-// ─── Guardar ficheiro ─────────────────────────────────
-$upload_dir = __DIR__ . '/../../assets/payment/uploads/proofs';
-if (!is_dir($upload_dir)) {
-    mkdir($upload_dir, 0750, true);
-}
-
-$ext       = match ($real_mime) {
+$maxSize  = 5 * 1024 * 1024;
+$minSize  = 10 * 1024;
+$mimeInfo = new finfo(FILEINFO_MIME_TYPE);
+$mime     = (string)$mimeInfo->file($file['tmp_name']);
+$allowed  = [
     'image/jpeg'      => 'jpg',
     'image/png'       => 'png',
     'image/webp'      => 'webp',
     'application/pdf' => 'pdf',
-    default           => 'bin',
-};
-$filename  = 'proof_' . $id_users . '_' . $intent_id . '_' . time() . '.' . $ext;
-$file_path = 'assets/payment/uploads/proofs/' . $filename;
-$dest      = $upload_dir . '/' . $filename;
+];
 
-if (!move_uploaded_file($file['tmp_name'], $dest)) {
-    echo json_encode(['ok' => false, 'message' => 'Erro ao guardar o ficheiro. Tenta novamente.']);
-    exit;
+if ((int)$file['size'] < $minSize) {
+    paymentJsonError('Ficheiro muito pequeno. Envia um comprovativo valido.');
 }
 
-// ─── Inserir comprovativo na BD ───────────────────────
-$db = getDB();
-$db->beginTransaction();
+if ((int)$file['size'] > $maxSize) {
+    paymentJsonError('O ficheiro e muito grande. Maximo 5 MB.');
+}
+
+if (!isset($allowed[$mime])) {
+    paymentJsonError('Tipo de ficheiro nao permitido. Usa JPG, PNG, WebP ou PDF.');
+}
+
+$fileHash = hash_file('sha256', $file['tmp_name']);
+$hashStmt = $db->prepare("SELECT id_proof FROM _payment_proof WHERE file_hash = ? LIMIT 1");
+$hashStmt->execute([$fileHash]);
+if ($hashStmt->fetch()) {
+    $db->prepare("UPDATE _users SET trust_score = GREATEST(0, trust_score - 20) WHERE id_users = ?")
+        ->execute([$id_users]);
+    logActivity($id_users, 'payment_fraud_attempt', 'Comprovativo duplicado detectado', 'payment_intent', $intentId);
+    paymentJsonError('Este comprovativo ja foi utilizado. Envia o comprovativo original do teu pagamento.');
+}
+
+$uploadDir = __DIR__ . '/../../assets/payment/uploads/proofs';
+if (!is_dir($uploadDir) && !mkdir($uploadDir, 0750, true) && !is_dir($uploadDir)) {
+    paymentJsonError('Nao foi possivel preparar o directorio de uploads.');
+}
+
+$filename = 'proof_' . $id_users . '_' . $intentId . '_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $allowed[$mime];
+$filePath = 'assets/payment/uploads/proofs/' . $filename;
+$destPath = $uploadDir . '/' . $filename;
+
+if (!move_uploaded_file($file['tmp_name'], $destPath)) {
+    paymentJsonError('Erro ao guardar o ficheiro. Tenta novamente.');
+}
+
+$trustStmt = $db->prepare("SELECT trust_score FROM _users WHERE id_users = ? LIMIT 1");
+$trustStmt->execute([$id_users]);
+$trustScore        = (int)$trustStmt->fetchColumn();
+$needsManualReview = ($intent['slug_plan'] === 'label') || ($trustScore < 30);
+$autoApproveTs     = time() + 1800;
 
 try {
+    $db->beginTransaction();
+
     $db->prepare("
         INSERT INTO _payment_proof
-        (id_intent, id_users, full_name, phone, method, file_path, file_hash, file_size, file_type, status, ip_address)
+            (id_intent, id_users, full_name, phone, method, file_path, file_hash, file_size, file_type, status, ip_address)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)
     ")->execute([
-        $intent_id,
+        $intentId,
         $id_users,
-        $full_name,
+        $fullName,
         $phone ?: null,
         $method,
-        $file_path,
-        $file_hash,
-        $file['size'],
-        $real_mime,
+        $filePath,
+        $fileHash,
+        (int)$file['size'],
+        $mime,
         $_SERVER['REMOTE_ADDR'] ?? null,
     ]);
 
-    // Actualizar status do intent
+    $proofId = (int)$db->lastInsertId();
+
     $db->prepare("
         UPDATE _payment_intent
-        SET status = 'under_review', attempts = attempts + 1
+        SET status = 'under_review',
+            attempts = attempts + 1
         WHERE id_intent = ?
-    ")->execute([$intent_id]);
+    ")->execute([$intentId]);
 
-    // Aprovação automática para todos os pagamentos (fase sem API EMIS)
-    // Quando a API EMIS estiver integrada, esta lógica será substituída por webhook
-    $db->prepare("UPDATE _payment_intent SET status = 'approved', approved_at = NOW() WHERE id_intent = ?")
-        ->execute([$intent_id]);
-    $db->prepare("UPDATE _payment_proof SET status = 'validated' WHERE id_intent = ?")
-        ->execute([$intent_id]);
-
-    // activatePlan escreve em _payment, _user_plan, _transaction, _users
-    activatePlan($id_users, (int)$intent['id_plan'], $intent_id, $db);
-
-    // Actualizar _payment com o caminho do comprovante (agora que temos o id_payment)
-    $db->prepare("
-        UPDATE _payment SET comprovante = ?
-        WHERE payment_ref = ?
-    ")->execute([$file_path, $intent['reference_code']]);
-
-    logActivity(
-        $id_users,
-        'payment_auto_approved',
-        'Plano activado automaticamente após upload de comprovativo',
-        'payment_intent',
-        $intent_id
-    );
+    if (!$needsManualReview) {
+        paymentWorkflowCreatePendingActivation($db, $intent, [
+            'id_proof'   => $proofId,
+            'method'     => $method,
+            'file_path'  => $filePath,
+        ]);
+    }
 
     $db->commit();
-    echo json_encode(['ok' => true, 'auto_approved' => true]);
-} catch (Exception $e) {
-    $db->rollBack();
-    error_log('[PAYMENT ERROR] ' . $e->getMessage());
-    // Remover ficheiro guardado se a BD falhou
-    if (file_exists($dest)) unlink($dest);
-    echo json_encode(['ok' => false, 'message' => 'Erro interno. Tenta novamente.']);
+} catch (Throwable $e) {
+    if ($db->inTransaction()) {
+        $db->rollBack();
+    }
+    if (file_exists($destPath)) {
+        unlink($destPath);
+    }
+    error_log('[PAYMENT_PROCESS] ' . $e->getMessage());
+    paymentJsonError('Erro interno ao processar o pagamento. Tenta novamente.', 500);
 }
 
-// ══════════════════════════════════════════════════════
-// ACTIVAR PLANO — fluxo completo
-// Escreve em: _payment, _user_plan, _transaction, _users
-// Actualiza:  _payment_intent, _payment_proof
-// ══════════════════════════════════════════════════════
-function activatePlan(int $id_users, int $id_plan, int $intent_id, PDO $db): void
-{
+logActivity($id_users, 'payment_proof_uploaded', 'Comprovativo enviado para o plano ' . $intent['slug_plan'], 'payment_intent', $intentId);
 
-    // ── 1. Dados do plano ─────────────────────────────────────────
-    $plan_stmt = $db->prepare("SELECT * FROM _plans WHERE id_plan = ?");
-    $plan_stmt->execute([$id_plan]);
-    $plan = $plan_stmt->fetch();
+if ($needsManualReview) {
+    $message = $intent['slug_plan'] === 'label'
+        ? 'O plano Label requer validacao manual da nossa equipa. Entraremos em contacto assim que a analise for concluida.'
+        : 'O teu comprovativo foi recebido e esta em revisao manual. Vais receber uma notificacao assim que a validacao terminar.';
 
-    if (!$plan) {
-        throw new Exception("Plano {$id_plan} não encontrado.");
-    }
-
-    // ── 2. Dados do intent (referência + valor) ───────────────────
-    $intent_stmt = $db->prepare("SELECT * FROM _payment_intent WHERE id_intent = ?");
-    $intent_stmt->execute([$intent_id]);
-    $intent = $intent_stmt->fetch();
-
-    if (!$intent) {
-        throw new Exception("Payment intent {$intent_id} não encontrado.");
-    }
-
-    // ── 3. Datas de activação e expiração ─────────────────────────
-    $activated_at = date('Y-m-d H:i:s');
-    $expires_at   = null;
-
-    if ($plan['type_plan'] === 'subscription' && !empty($plan['validity_days'])) {
-        $expires_at = date('Y-m-d H:i:s', strtotime('+' . (int)$plan['validity_days'] . ' days'));
-    }
-
-    // ── 4. Criar registo em _payment (recibo oficial) ─────────────
-    // Mapear método do proof → enum de _payment
-    $proof_stmt = $db->prepare("SELECT method FROM _payment_proof WHERE id_intent = ? LIMIT 1");
-    $proof_stmt->execute([$intent_id]);
-    $proof_row = $proof_stmt->fetch();
-    $pay_method = match ($proof_row['method'] ?? 'express') {
-        'iban'    => 'bank_transfer',
-        'express' => 'multicaixa',
-        default   => 'other',
-    };
-
-    $db->prepare("
-        INSERT INTO _payment
-            (id_users, id_plan, payment_ref, amount, currency,
-             payment_method, status_payment, is_renewal,
-             reviewed_at, creat_payment)
-        VALUES (?, ?, ?, ?, 'AOA', ?, 'approved', ?, NOW(), NOW())
-    ")->execute([
-        $id_users,
-        $id_plan,
-        $intent['reference_code'],
-        $intent['amount_expected'],
-        $pay_method,
-        // is_renewal: 1 se o utilizador já tinha este plano antes
-        (int)($db->query("
-            SELECT COUNT(*) FROM _user_plan
-            WHERE id_users = {$id_users} AND id_plan = {$id_plan}
-        ")->fetchColumn() > 0),
+    paymentJsonOk([
+        'state'   => 'under_review',
+        'message' => $message,
     ]);
-    $id_payment = (int)$db->lastInsertId();
-
-    // ── 5. Criar/actualizar registo em _user_plan ─────────────────
-    // Expirar plano anterior (se existir) antes de criar novo
-    $db->prepare("
-        UPDATE _user_plan
-        SET status_plan = 'expired', modif_user_plan = NOW()
-        WHERE id_users = ? AND status_plan = 'active'
-    ")->execute([$id_users]);
-
-    $releases_limit = $plan['max_releases'] ?? null; // NULL = ilimitado
-
-    $db->prepare("
-        INSERT INTO _user_plan
-            (id_users, id_plan, id_payment, status_plan,
-             releases_used, releases_limit,
-             started_at, expires_at, auto_renew)
-        VALUES (?, ?, ?, 'active', 0, ?, ?, ?, 0)
-    ")->execute([
-        $id_users,
-        $id_plan,
-        $id_payment,
-        $releases_limit,
-        $activated_at,
-        $expires_at,
-    ]);
-
-    // ── 6. Registar em _transaction (ledger financeiro) ───────────
-    // Obter saldo actual da wallet para balance_before/after
-    $wallet_stmt = $db->prepare("SELECT balance_aoa FROM _wallet WHERE id_users = ?");
-    $wallet_stmt->execute([$id_users]);
-    $wallet = $wallet_stmt->fetch();
-    $balance_now = (float)($wallet['balance_aoa'] ?? 0);
-
-    $db->prepare("
-        INSERT INTO _transaction
-            (id_users, type_transaction, amount, currency,
-             balance_before, balance_after, reference, description)
-        VALUES (?, 'plan_payment', ?, 'AOA', ?, ?, ?, ?)
-    ")->execute([
-        $id_users,
-        $intent['amount_expected'],
-        $balance_now,
-        $balance_now, // pagamento de plano não altera saldo da wallet
-        $intent['reference_code'],
-        'Activação de plano: ' . $plan['name_plan'],
-    ]);
-
-    // ── 7. Actualizar _users ──────────────────────────────────────
-    $db->prepare("
-        UPDATE _users
-        SET status_user       = 'active',
-            plan_selected     = ?,
-            plan_activated_at = ?,
-            plan_expires_at   = ?,
-            trust_score       = LEAST(100, trust_score + 10),
-            modif_user        = NOW()
-        WHERE id_users = ?
-    ")->execute([$id_plan, $activated_at, $expires_at, $id_users]);
-
-    // ── 8. Actualizar sessão PHP ──────────────────────────────────
-    $_SESSION['status']        = 'active';
-    $_SESSION['plan_selected'] = $id_plan;
 }
+
+paymentJsonOk([
+    'state'           => 'processing',
+    'message'         => 'Comprovativo recebido. O teu plano entra agora em processamento e sera activado automaticamente em cerca de 30 minutos.',
+    'auto_approve_at' => date('Y-m-d H:i:s', $autoApproveTs),
+    'auto_approve_ts' => $autoApproveTs,
+]);

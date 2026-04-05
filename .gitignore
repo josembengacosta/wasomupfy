@@ -8,7 +8,6 @@
 .htaccess
 .htpasswd
 .htaccess.bak
-config.php
 config.local.php
 settings.php
 database.php
@@ -56,6 +55,7 @@ yarn.lock
 *.db
 backups/
 database-backups/
+*tables.txt
 
 # =========================
 #   UPLOADS & ASSETS

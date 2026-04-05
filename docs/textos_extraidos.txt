@@ -1,0 +1,902 @@
+/../../../authentic/include/functions.php
+/../../include/platform.php
+id_users
+first_name
+user_name
+
+email_verified
+plan_selected
+onboarding_done
+photo_user
+name_artist_band
+Cria Perfil Artístico
+SELECT balance_aoa FROM _wallet WHERE id_users = ?
+balance_aoa
+SELECT * FROM _plans WHERE id_plan = ?
+max_artists
+name_plan
+Sem plano
+status_user
+active
+plan_activated_at
+plan_expires_at
+SELECT COUNT(*) AS total FROM _artist WHERE id_users = ?
+total
+SELECT id_account FROM _account WHERE id_users = ? AND status_account = 'verified' LIMIT 1
+SELECT type_account, reject_reason FROM _account WHERE id_users = ? AND status_account = 'rejected' LIMIT 1
+SELECT last_login_at, last_login_ip FROM _users_security WHERE id_users = ?
+
+    SELECT ip_address, user_agent, country, city, creat_session, last_activity
+    FROM _users_sessions WHERE id_users = ? AND is_active = 1
+    ORDER BY last_activity DESC LIMIT 1
+
+—
+creat_session
+s
+min
+h 
+d 
+h
+creat_user
+d/m/Y
+last_login_at
+d/m/Y H:i
+user_agent
+Desconhecido
+Edg
+Microsoft Edge
+Chrome
+Google Chrome
+Firefox
+Mozilla Firefox
+Safari
+Opera
+city
+, 
+country
+Desconhecida
+ip_address
+last_login_ip
+pt-ao
+/../../include/head.php
+\F4BC
+bootstrap-icons
+›
+read-progress
+read-progress-fill
+progressBar
+/../../include/sidebar.php
+container my-4
+danger
+bg
+rgba(239,68,68,.08)
+border
+rgba(239,68,68,.25)
+text
+#ef4444
+warning
+rgba(234,179,8,.08)
+rgba(234,179,8,.25)
+#eab308
+info
+rgba(99,102,241,.08)
+rgba(99,102,241,.25)
+#6366f1
+wuPanelAlert_
+<div id=\
+ style=\
+
+                . 
+>
+<i class=\
+></i>
+<span class="wu-alert-msg">
+ <a href=\
+url
+
+                    . 
+>{$action['label']} &rarr;</a>
+</span>
+<button type=\
+ class=\
+ aria-label=\
+ onclick=\
+0
+none
+{$eid}
+&times;</button>
+</div>
+bi-envelope-exclamation-fill
+<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta e receber notificações de pagamentos.
+label
+Verificar agora
+/
+/user/profile#perfil
+banner-email
+bi-clock-history
+<strong>Pagamento pendente — 
+.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados até confirmação.
+Finalizar pagamento
+/payment/pay
+banner-plan-pending
+bi-credit-card-fill
+<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir a tua música para +150 plataformas.
+Ver planos
+/all-plans
+banner-plan
+bi-person-plus-fill
+<strong>Cria o teu perfil de artista.</strong> Tens plano activo mas ainda não criaste um perfil. Precisas de um para poder lançar música.
+Criar agora
+/add-artist
+banner-artist
+bi-bank
+<strong>Conta bancária não registada.</strong> Para poder sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.
+Registar agora
+/withdraw
+banner-bank
+<strong>Conta 
+type_account
+ rejeitada.</strong>
+reject_reason
+ Motivo: <em>
+</em>.
+ Actualiza os dados e submete novamente.
+bi-x-circle-fill
+Corrigir agora
+banner-account-rejected
+terms-hero
+version-badge
+bi bi-file-earmark-check-fill
+bi bi-file-text-fill me-3
+color:#FF0089
+hero-meta
+bi bi-geo-alt-fill
+bi bi-calendar3
+bi bi-translate
+bi bi-shield-lock-fill
+action-btns
+terms.pdf
+bi bi-file-earmark-pdf
+btnPrint
+bi bi-printer
+privacy
+bi bi-shield-check
+terms-layout
+terms-index d-none d-lg-block
+bi bi-list-ol me-2
+#s1
+num
+#s2
+#s3
+#s4
+#s5
+#s6
+#s7
+#s8
+#s9
+#s10
+#s11
+#s12
+#s13
+#s14
+#s15
+#s16
+#s17
+#s18
+terms-content
+term-section
+s1
+sec-num
+s2
+term-box warning
+bi bi-exclamation-triangle-fill me-2
+<?php echo http://localhost/wasomupfy . '/' . http://localhost/wasomupfy_PANEL ?>/page/support
+s3
+s4
+plan-table
+s5
+term-box danger
+bi bi-x-circle-fill me-2
+term-box info
+bi bi-info-circle-fill me-2
+../services/available-services
+s6
+s7
+term-box success
+bi bi-check-circle-fill me-2
+s8
+s9
+bi bi-x-octagon-fill me-2
+s10
+stream farming
+s11
+s12
+s13
+s14
+settings
+s15
+s16
+s17
+s18
+<?php echo http://localhost/wasomupfy . '/' . http://localhost/wasomupfy_PANEL ?>/page/faq
+margin-top:1.5rem
+color:#198754
+text-center mt-4 mb-5
+font-size:.78rem;color:var(--text-muted,#6c757d)
+text-secondary
+Y
+backToTop
+Voltar ao topo
+bi bi-chevron-up
+https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js
+<?php echo http://localhost/wasomupfy  ?>/js/theme.wp.js
+<?php echo http://localhost/wasomupfy  ?>/js/wp.tools.js
+DOMContentLoaded
+%
+visible
+scroll
+click
+smooth
+.term-section
+.terms-index a
+id
+href
+#
+-20% 0px -70% 0px
+Termos de Uso e Condições —
+/* ══ Progress bar de leitura ══ */
+.read-progress {
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+height: 3px;
+z-index: 9999;
+background: rgba(0, 0, 0, .08);
+}
+.read-progress-fill {
+height: 100%;
+width: 0%;
+background: linear-gradient(90deg, #FF0089, #FF4D4D);
+transition: width .1s linear;
+/* ══ Hero ══ */
+.terms-hero {
+background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+border-radius: 22px;
+padding: 3rem 2.4rem 2.4rem;
+margin-bottom: 2rem;
+color: #fff;
+position: relative;
+overflow: hidden;
+.terms-hero::before {
+content: '\F4BC';
+font-family: 'bootstrap-icons';
+position: absolute;
+right: -20px;
+bottom: -30px;
+font-size: 11rem;
+opacity: .06;
+.terms-hero .version-badge {
+display: inline-flex;
+align-items: center;
+gap: 6px;
+background: rgba(255, 0, 137, .25);
+border: 1px solid rgba(255, 0, 137, .4);
+border-radius: 999px;
+padding: 4px 14px;
+font-size: .75rem;
+font-weight: 700;
+margin-bottom: .8rem;
+.terms-hero h1 {
+font-size: 2.2rem;
+font-weight: 900;
+margin-bottom: .4rem;
+.terms-hero p {
+opacity: .8;
+font-size: .92rem;
+max-width: 640px;
+margin-bottom: 0;
+.terms-hero .hero-meta {
+display: flex;
+gap: 1.5rem;
+flex-wrap: wrap;
+margin-top: 1.2rem;
+.terms-hero .hero-meta span {
+font-size: .78rem;
+opacity: .7;
+/* ══ Action buttons ══ */
+.action-btns {
+gap: 8px;
+justify-content: center;
+.action-btns a,
+.action-btns button {
+padding: .42rem 1.2rem;
+font-size: .8rem;
+border: 1.5px solid rgba(255, 0, 137, .35);
+color: #FF0089;
+background: transparent;
+text-decoration: none;
+transition: all .2s;
+cursor: pointer;
+.action-btns a:hover,
+.action-btns button:hover {
+background: #FF0089;
+border-color: #FF0089;
+/* ══ Layout ══ */
+.terms-layout {
+display: grid;
+grid-template-columns: 260px 1fr;
+gap: 2rem;
+align-items: start;
+@media(max-width:991px) {
+grid-template-columns: 1fr;
+/* ══ Index sidebar ══ */
+.terms-index {
+background: var(--card-bg, #fff);
+border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
+border-radius: 18px;
+padding: 1.5rem;
+position: sticky;
+top: 80px;
+.terms-index h3 {
+font-size: .9rem;
+margin-bottom: 1rem;
+.terms-index ul {
+list-style: none;
+padding: 0;
+margin: 0;
+.terms-index li {
+margin-bottom: .35rem;
+.terms-index a {
+color: var(--text-muted, #6c757d);
+align-items: flex-start;
+line-height: 1.4;
+padding: .25rem .4rem;
+border-radius: 7px;
+transition: all .15s;
+.terms-index a .num {
+font-weight: 800;
+flex-shrink: 0;
+min-width: 18px;
+.terms-index a:hover,
+.terms-index a.active {
+background: rgba(255, 0, 137, .07);
+/* ══ Terms content ══ */
+.terms-content {
+padding: 2.5rem;
+@media(max-width:576px) {
+padding: 1.4rem;
+.term-section {
+margin-bottom: 2.5rem;
+padding-bottom: 2rem;
+border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .06));
+.term-section:last-child {
+border-bottom: none;
+padding-bottom: 0;
+.term-section h2 {
+font-size: 1.1rem;
+padding-bottom: .5rem;
+border-bottom: 2px solid rgba(255, 0, 137, .12);
+gap: 10px;
+.term-section h2 .sec-num {
+background: rgba(255, 0, 137, .1);
+width: 28px;
+height: 28px;
+border-radius: 8px;
+font-size: .82rem;
+.term-section h3 {
+margin: 1.2rem 0 .6rem;
+color: var(--heading-color, #222);
+.term-section p {
+font-size: .87rem;
+line-height: 1.8;
+color: var(--text-body, #444);
+.term-section ul {
+padding-left: 0;
+.term-section ul li {
+line-height: 1.7;
+padding: .3rem 0 .3rem 1.3rem;
+.term-section ul li::before {
+content: '›';
+/* ══ Highlight boxes ══ */
+.term-box {
+border-radius: 12px;
+padding: 1rem 1.2rem;
+margin: 1rem 0;
+font-size: .84rem;
+.term-box.warning {
+background: rgba(255, 193, 7, .1);
+border-left: 4px solid #ffc107;
+.term-box.danger {
+background: rgba(220, 53, 69, .08);
+border-left: 4px solid #dc3545;
+.term-box.info {
+background: rgba(13, 110, 253, .08);
+border-left: 4px solid #0d6efd;
+.term-box.success {
+background: rgba(25, 135, 84, .08);
+border-left: 4px solid #198754;
+.term-box strong {
+display: block;
+margin-bottom: .3rem;
+/* ══ Planos tabela ══ */
+.plan-table {
+width: 100%;
+border-collapse: collapse;
+.plan-table th {
+background: rgba(255, 0, 137, .08);
+padding: .65rem 1rem;
+text-align: left;
+border-bottom: 2px solid rgba(255, 0, 137, .2);
+.plan-table td {
+padding: .6rem 1rem;
+border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .07));
+.plan-table tr:last-child td {
+.plan-table tr:hover td {
+background: rgba(255, 0, 137, .03);
+/* ══ Back to top ══ */
+#backToTop {
+bottom: 80px;
+right: 20px;
+width: 42px;
+height: 42px;
+border-radius: 50%;
+border: none;
+box-shadow: 0 4px 14px rgba(255, 0, 137, .4);
+opacity: 0;
+pointer-events: none;
+transition: opacity .25s;
+z-index: 1000;
+#backToTop.visible {
+opacity: 1;
+pointer-events: auto;
+/* ══ Print ══ */
+@media print {
+.navbar,
+.offcanvas,
+.bottom-nav,
+.action-btns,
+.terms-index,
+#backToTop,
+.read-progress,
+nav {
+display: none !important;
+grid-template-columns: 1fr !important;
+border: none !important;
+padding: 0 !important;
+color: #000 !important;
+Versão  · Em vigor desde
+Termos de Uso e Condições
+Ao criar uma conta e aceder à plataforma , confirmaste que leste, compreendeste e
+concordaste na íntegra com os presentes Termos de Uso. A utilização contínua da plataforma implica
+a aceitação de todas as condições aqui estabelecidas.
+Luanda, Angola
+Última actualização:
+Língua oficial: Português (Angola)
+Versão
+Descarregar em PDF
+Imprimir
+Política de Privacidade
+Índice
+1.Identificação e Serviços
+2.Aceitação e Elegibilidade
+3.Registo de Conta
+4.Planos e Condições de Pagamento
+5.Política de Não Reembolso
+6.Distribuição Musical
+7.Royalties e Pagamentos
+8.Propriedade Intelectual
+9.Conteúdo Proibido
+10.Uso Aceitável da Plataforma
+11.Suspensão e Encerramento
+12.Limitação de Responsabilidade
+13.Privacidade e Dados
+14.Cookies
+15.Serviços de Terceiros
+16.Actualizações dos Termos
+17.Lei Aplicável
+18.Contacto
+1Identificação e Descrição dos Serviços
+A  é uma plataforma digital de distribuição musical e
+gestão de
+direitos
+autorais, desenvolvida e operada em Angola. A plataforma permite a artistas, produtores
+musicais,
+bandas e selos discográficos distribuir as suas obras para mais de 150 plataformas
+digitais
+em todo o mundo, incluindo, entre outras: Spotify, Apple Music, YouTube Music, Deezer, Tidal,
+Amazon Music, Boomplay, TikTok, iTunes e outras lojas de música.
+Os serviços disponibilizados pela plataforma incluem, mas não se limitam a:
+Distribuição de singles, EPs e álbuns para plataformas de streaming e lojas digitais;
+Geração automática de códigos UPC (Universal Product Code) e
+ISRC (International Standard Recording Code);
+Painel analítico de streams, receitas, países e playlists em tempo real;
+Gestão financeira com carteira digital, histórico de transacções e levantamentos;
+Divisão automática de royalties entre colaboradores e co-artistas;
+Unificação e gestão de canal YouTube (Art Tracks e monetização);
+Sistema de suporte por tickets com acompanhamento de estado;
+Notificações em tempo real via plataforma, e-mail e push notifications;
+Relatórios mensais de receitas e estatísticas de desempenho.
+2Aceitação dos Termos e Elegibilidade
+Ao criar uma conta na plataforma , o utilizador declara expressamente que:
+Leu, compreendeu e aceita na íntegra os presentes Termos de Uso;
+Tem idade igual ou superior a 18 anos, ou age com o consentimento expresso
+do seu representante legal;
+As informações prestadas no registo são verdadeiras, completas e actualizadas;
+Tem capacidade legal para celebrar contratos vinculativos ao abrigo da legislação angolana;
+Aceita a Política de Privacidade da plataforma.
+Atenção
+Se não concordar com qualquer parte destes Termos, deverá cessar imediatamente o uso da
+plataforma e contactar o suporte para encerrar a
+sua
+conta.
+3Registo de Conta e Segurança
+Para utilizar os serviços da , é obrigatório criar uma conta pessoal. Cada
+utilizador
+pode manter apenas uma conta activa na plataforma.
+3.1 Responsabilidade do Utilizador
+O utilizador é o único responsável pela confidencialidade das suas credenciais de acesso
+(e-mail e palavra-passe);
+Qualquer actividade realizada na conta é da inteira responsabilidade do titular;
+Em caso de acesso não autorizado, o utilizador deve notificar imediatamente a equipa via pedido de suporte;
+A partilha de credenciais de acesso com terceiros é estritamente proibida.
+3.2 Dados do Perfil
+O utilizador compromete-se a manter os seus dados de perfil actualizados e verdadeiros;
+A utilização de identidades falsas, nomes artísticos que violem direitos de terceiros ou
+imagens de perfil inapropriadas é proibida e pode resultar na suspensão imediata da conta.
+4Planos de Serviço e Condições de Pagamento
+A  oferece quatro planos de serviço, cada um com características e
+condições
+específicas.
+O utilizador deve escolher o plano adequado às suas necessidades antes de efectuar qualquer
+lançamento.
+Plano
+Preço
+Tipo
+Cobertura
+Single
+2.000 AOA
+Por lançamento
+1 faixa por lançamento
+Album
+5.000 AOA
+Até 20 faixas por lançamento
+Artist
+11.400 AOA/mês
+Subscrição mensal
+Lançamentos ilimitados, 1 artista
+Label
+70.000 AOA/mês
+Lançamentos ilimitados, artistas ilimitados
+4.1 Forma de Pagamento
+Os pagamentos são efectuados por transferência bancária ou outro método disponibilizado pela
+plataforma. Após o pagamento, o utilizador deve submeter o comprovante na secção
+Conta → Activar Plano. A activação ocorre em até 24 horas
+úteis
+após verificação pela equipa administrativa.
+4.2 Renovação de Planos por Subscrição
+Os planos Artist e Label são de subscrição mensal. A renovação
+não é automática — o utilizador deve efectuar o pagamento e submeter o comprovante antes do
+vencimento para garantir a continuidade do serviço sem interrupção. A
+enviará uma
+notificação com 7 dias de antecedência do vencimento.
+4.3 Plano Inactivo
+Caso o plano expire sem renovação, os lançamentos existentes nas plataformas permanecerão
+activos, mas o utilizador não poderá submeter novos lançamentos até renovar o plano.
+5Política de Não Reembolso
+Política de Não Reembolso — Leitura
+Obrigatória
+Todos os pagamentos efectuados à  são definitivos e não
+reembolsáveis,
+independentemente da circunstância. Ao efectuar o pagamento, o utilizador declara ter
+compreendido
+e aceite esta condição de forma irrevogável.
+A política de não reembolso aplica-se em todos os casos, incluindo:
+Pagamentos de activação de plano (Single, Album, Artist, Label);
+Pagamentos de renovação de planos de subscrição;
+Pagamentos efectuados por erro do utilizador (valor errado, plano errado);
+Situações em que o utilizador decida não utilizar o serviço após pagamento;
+Casos em que a conta seja suspensa ou encerrada por violação dos presentes Termos;
+Pagamentos relativos a lançamentos que sejam posteriormente rejeitados por incumprimento dos
+requisitos técnicos ou de conteúdo;
+Indisponibilidade temporária da plataforma por manutenção ou causas de força maior.
+5.1 Excepção Única
+A única situação em que poderá ser analisado um pedido de crédito de conta (e não reembolso
+monetário) é quando a  cometa um erro técnico comprovável que resulte na
+cobrança
+duplicada pelo mesmo serviço. Nesse caso, o utilizador deve abrir um
+pedido de suporte com o
+comprovante das duas cobranças no prazo de
+72 horas após a ocorrência. A análise não garante resultado favorável.
+Recomendação
+Antes de efectuar qualquer pagamento, certifica-te de que escolheste o plano correcto e que
+compreendeste as condições de cada plano na secção
+Conta e serviços disponíveis.
+6Distribuição Musical — Requisitos e Prazos
+6.1 Requisitos Técnicos de Áudio
+Formatos aceites: WAV (recomendado, 16 ou 24 bits, 44,1 kHz),
+FLAC (sem perdas), AIFF e MP3 a 320 kbps;
+Tamanho máximo por ficheiro de áudio: 1 GB;
+A qualidade de áudio deve ser adequada para distribuição profissional — ficheiros com ruído
+excessivo, cortes abruptos ou qualidade inferior a 128 kbps podem ser rejeitados.
+6.2 Requisitos da Capa
+Dimensão mínima: 3.000 × 3.000 pixels, formato quadrado (proporção 1:1);
+Formato: JPG ou PNG com qualidade máxima;
+A capa não pode conter: logótipos ou marcas de lojas digitais (Spotify,
+Apple, etc.), URLs, endereços de e-mail, informações de contacto, conteúdo explícito sem
+marcação adequada, ou materiais que violem direitos de autor de terceiros.
+6.3 Prazos de Distribuição
+Revisão interna pela equipa : até 72 horas úteis após
+a
+submissão;
+Spotify e Apple Music: disponibilização em 3 a 7 dias após aprovação;
+Outras plataformas: até 14 dias após aprovação;
+Recomendamos submeter lançamentos com pelo menos 2 semanas de antecedência
+em relação à data desejada de disponibilização.
+6.4 Rejeição de Lançamentos
+A  reserva-se o direito de rejeitar qualquer lançamento que não cumpra os
+requisitos
+técnicos, de conteúdo ou legais. Em caso de rejeição, o utilizador será notificado com o motivo.
+O pagamento do plano não é reembolsável em caso de rejeição por não conformidade.
+6.5 Remoção de Lançamentos
+O utilizador pode solicitar a remoção de um lançamento das plataformas a qualquer momento.
+A remoção efectiva pode demorar até 30 dias dependendo de cada plataforma. A
+não se responsabiliza por streams ou receitas geradas durante o período de processamento da
+remoção.
+7Royalties, Receitas e Levantamentos
+7.1 Distribuição de Royalties
+A  distribui 90% dos royalties gerados pelos lançamentos
+directamente
+ao artista. Os restantes 10% destinam-se à cobertura dos custos operacionais da
+plataforma, incluindo licenças de distribuição, infraestrutura técnica e suporte administrativo.
+Taxa de royalties
+90% para o artista · 10% para operação da plataforma — sem custos ocultos ou taxas adicionais.
+7.2 Ciclo de Pagamento
+Os royalties são processados e creditados na carteira digital do utilizador até ao
+dia 15 de cada mês, referentes ao mês anterior. Algumas plataformas de
+distribuição como o Spotify e o Apple Music têm um atraso natural de 2 a 3
+meses
+nos seus relatórios de receitas, o que pode influenciar os valores visíveis na plataforma.
+7.3 Levantamentos
+Valor mínimo para levantamento: 1.000 AOA;
+Métodos disponíveis: transferência bancária (IBAN), Express e outros métodos listados na
+plataforma;
+Prazo de processamento: 3 a 5 dias úteis após confirmação;
+O utilizador é responsável pela veracidade dos dados bancários fornecidos. Pagamentos
+efectuados para contas erradas por dados fornecidos incorrectamente pelo utilizador não são
+da responsabilidade da .
+7.4 Divisão de Royalties entre Colaboradores
+O utilizador pode configurar a divisão de royalties entre colaboradores directamente na
+plataforma, em Finanças → Divisão de Royalties. A soma das percentagens deve
+ser sempre 100%. Cada colaborador convidado terá acesso à sua parte conforme as permissões
+definidas pelo titular da conta.
+7.5 Retenção por Suspeita de Fraude
+A  reserva-se o direito de reter temporariamente pagamentos de royalties
+quando
+existir suspeita fundada de manipulação de streams, fraude ou actividade irregular detectada
+pelas plataformas de distribuição. O utilizador será notificado e terá direito a apresentar
+esclarecimentos no prazo de 15 dias úteis.
+8Propriedade Intelectual
+8.1 Propriedade do Conteúdo
+O utilizador mantém a totalidade dos direitos de propriedade intelectual sobre as suas obras
+musicais. A  não reivindica qualquer direito de propriedade sobre as
+músicas,
+letras, capas ou qualquer outro conteúdo submetido pelo utilizador.
+8.2 Licença de Distribuição
+Ao submeter um lançamento, o utilizador concede à  uma
+licença não exclusiva, mundial e revogável para distribuir, reproduzir,
+disponibilizar e promover as obras nas plataformas parceiras, em seu nome, pelo período em
+que o lançamento estiver activo na plataforma.
+8.3 Garantia de Titularidade
+O utilizador declara e garante que:
+É o titular legítimo ou detentor de licença válida para todos os conteúdos submetidos;
+Os conteúdos submetidos não violam direitos de autor, marcas registadas ou quaisquer outros
+direitos de terceiros;
+Não submete conteúdo que seja objecto de litígio, embargo ou decisão judicial que impeça a
+sua distribuição.
+O utilizador será o único responsável por qualquer reclamação, litígio ou indemnização
+resultante
+da violação desta garantia. A  reserva-se o direito de remover
+imediatamente qualquer
+conteúdo que seja objecto de reclamação fundamentada de violação de direitos de terceiros.
+8.4 Propriedade da Plataforma
+Todos os elementos da plataforma  — incluindo o design, código-fonte,
+logótipos,
+marcas, textos, relatórios e funcionalidades — são propriedade exclusiva da
+e estão
+protegidos pelas leis de propriedade intelectual aplicáveis. É expressamente proibida a
+reprodução, cópia, modificação ou distribuição de qualquer elemento da plataforma sem
+autorização
+escrita prévia.
+9Conteúdo Proibido
+É estritamente proibido submeter à plataforma qualquer conteúdo que:
+Viole direitos de autor, direitos conexos ou direitos de imagem de terceiros;
+Contenha ou promova discurso de ódio, racismo, xenofobia, discriminação ou incitamento à
+violência;
+Seja de natureza pornográfica, obscena ou sexualmente explícita sem as devidas marcações de
+conteúdo adulto;
+Envolva ou promova actividades ilegais, incluindo o consumo ou tráfico de substâncias
+ilícitas;
+Contenha ameaças, difamação ou calúnia dirigidas a indivíduos ou grupos;
+Reproduza sem autorização gravações de terceiros, samples não licenciados ou remisturas não
+autorizadas;
+Seja gerado por inteligência artificial sem a devida declaração nos metadados do lançamento,
+nos casos em que as plataformas de destino o exijam.
+Consequências
+A submissão de conteúdo proibido resultará na remoção imediata do lançamento, possível
+suspensão ou encerramento permanente da conta, sem direito a reembolso, e eventual
+responsabilização legal pelo utilizador.
+10Uso Aceitável da Plataforma
+O utilizador compromete-se a não:
+Tentar aceder a áreas restritas da plataforma sem autorização;
+Utilizar ferramentas automatizadas (bots, scrapers, crawlers) para extrair dados da
+Realizar ataques de negação de serviço (DoS/DDoS) ou qualquer tentativa de comprometer a
+segurança da plataforma;
+Criar ou utilizar mais de uma conta por utilizador — contas duplicadas serão encerradas sem
+aviso prévio;
+Manipular artificialmente o número de streams ou reproduções de qualquer lançamento,
+incluindo através de serviços de "stream farming" ou bots;
+Partilhar, vender ou transferir a sua conta a terceiros;
+Utilizar a plataforma para fins comerciais não autorizados, incluindo a revenda de serviços
+sem acordo escrito prévio com a .
+11Suspensão e Encerramento de Contas
+11.1 Suspensão Temporária
+A conta pode ser suspensa temporariamente nos seguintes casos:
+Detecção de actividade suspeita ou acesso de localização não reconhecida;
+Submissão de comprovantes de pagamento falsos ou adulterados;
+Múltiplos pedidos de levantamento em períodos anormalmente curtos;
+Reclamações de violação de direitos de autor recebidas pelas plataformas de distribuição;
+Violação de qualquer disposição dos presentes Termos, passível de correcção;
+Não pagamento de quantias devidas à plataforma.
+11.2 Encerramento Permanente
+A conta pode ser encerrada definitivamente nos seguintes casos:
+Criação de contas duplicadas ou clonadas;
+Fraude comprovada, incluindo manipulação de streams;
+Violações graves e repetidas dos Termos de Uso;
+Determinação judicial ou ordem de autoridade competente;
+Actividade que cause dano reputacional ou financeiro à plataforma ou a terceiros.
+Consequências do
+Encerramento
+Em caso de encerramento por violação dos Termos, o utilizador perde o acesso a todos os dados,
+lançamentos e saldo da carteira, sem direito a reembolso. Os lançamentos distribuídos poderão
+ser removidos das plataformas.
+11.3 Encerramento Voluntário
+O utilizador pode solicitar o encerramento voluntário da sua conta através de um
+pedido de suporte. Antes
+do
+encerramento, todos os levantamentos
+pendentes devem ser processados e todos os lançamentos activos serão mantidos ou removidos
+conforme instrução do utilizador. O saldo remanescente na carteira após o encerramento
+voluntário pode ser levantado no prazo de 30 dias após o pedido.
+12Limitação de Responsabilidade
+A  não se responsabiliza por:
+Falhas técnicas, indisponibilidade ou atrasos causados por plataformas de distribuição
+terceiras (Spotify, Apple Music, etc.);
+Perdas de receitas resultantes de decisões unilaterais das plataformas de distribuição
+parceiras;
+Alterações nas políticas de remuneração das plataformas de streaming que afectem os valores
+de royalties;
+Danos indirectos, incidentais ou consequenciais resultantes do uso ou incapacidade de uso da
+Interrupções de serviço causadas por casos de força maior, incluindo falhas de energia,
+desastres naturais, guerras, pandemias ou ordens governamentais;
+Perdas ou danos resultantes de acesso não autorizado à conta por falha do utilizador em
+proteger as suas credenciais.
+A responsabilidade total da  perante o utilizador, em qualquer
+circunstância,
+está limitada ao valor pago pelo utilizador pelo plano activo no momento do evento gerador
+do dano, referente ao último ciclo de facturação.
+13Privacidade e Tratamento de Dados
+O tratamento dos dados pessoais dos utilizadores é regido pela
+Política de Privacidade da , que
+constitui
+parte integrante dos presentes Termos de Uso. Ao aceitar estes Termos, o utilizador aceita
+igualmente a Política de Privacidade.
+A  não partilha dados pessoais dos utilizadores com terceiros para fins
+comerciais
+ou publicitários. Os dados são utilizados exclusivamente para a prestação dos serviços
+contratados e para o cumprimento de obrigações legais.
+Cada utilizador pode visualizar apenas os seus próprios dados, lançamentos e informações
+financeiras. O acesso a dados de outros utilizadores é estritamente proibido e tecnicamente
+impedido pela plataforma.
+14Cookies e Tecnologias de Rastreamento
+A  utiliza cookies e tecnologias similares para:
+Manter a sessão de utilizador activa e segura;
+Guardar preferências de tema, idioma e interface;
+Analisar o comportamento de utilização para melhoria contínua da plataforma;
+Detectar e prevenir actividades fraudulentas ou não autorizadas.
+O utilizador pode gerir as preferências de cookies nas
+Configurações da conta. A desactivação de cookies essenciais pode
+afectar o funcionamento correcto da plataforma, incluindo a manutenção da sessão de login.
+15Serviços e Plataformas de Terceiros
+A  distribui conteúdo para plataformas de terceiros (Spotify, Apple Music,
+YouTube
+Music, Deezer, etc.) que possuem os seus próprios Termos de Uso e Políticas de Privacidade
+independentes. A  não controla nem se responsabiliza pelas políticas,
+decisões
+ou alterações efectuadas por essas plataformas.
+A integração com o YouTube para unificação de canal e gestão de Art Tracks
+está sujeita aos Termos de Serviço do YouTube e às políticas do YouTube Partner Program.
+A  não garante a aprovação pelo YouTube da monetização de qualquer canal.
+16Actualizações dos Termos de Uso
+A  reserva-se o direito de actualizar os presentes Termos de Uso a
+qualquer momento,
+mediante notificação prévia ao utilizador com pelo menos 15 dias de
+antecedência
+através de:
+Notificação na plataforma (painel de notificações);
+Notificação por e-mail para o endereço registado na conta;
+Aviso em destaque na página de login.
+O uso contínuo da plataforma após a entrada em vigor da nova versão dos Termos constitui
+aceitação tácita das alterações. Se o utilizador não concordar com as alterações, deve
+cessar o uso da plataforma e solicitar o encerramento da conta antes da data de entrada
+em vigor da nova versão.
+17Lei Aplicável e Resolução de Litígios
+Os presentes Termos de Uso são regidos e interpretados de acordo com a legislação da
+República de Angola, em especial a Lei n.º 22/11 de 17 de Junho (Lei das
+Comunicações Electrónicas e dos Serviços da Sociedade da Informação) e demais legislação
+aplicável em matéria de propriedade intelectual, protecção de dados e direito do
+consumidor.
+Qualquer litígio decorrente da interpretação ou execução dos presentes Termos será
+submetido à jurisdição exclusiva dos tribunais competentes de Luanda, Angola,
+com renúncia expressa a qualquer outro foro que possa ser competente.
+Antes de recorrer a qualquer instância judicial, as partes comprometem-se a tentar
+resolver o litígio de forma amigável, através do sistema de suporte
+da plataforma, num prazo de 30 dias a contar da notificação da reclamação.
+18Contacto
+Para questões, dúvidas ou reclamações relativas aos presentes Termos de Uso, o utilizador
+pode contactar a equipa  através dos seguintes meios:
+Suporte na plataforma: Enviar pedido de
+suporte
+resposta em até 48 horas úteis;
+E-mail: suporte@wasomupfy.com;
+FAQ: Perguntas Frequentes —
+para questões comuns sobre a
+Horário de atendimento: Segunda a Sexta, das 09h00 às 18h00 (WAT), Sábado
+das 09h00 às 13h00.
+Aceitação Confirmada
+no Registo
+Ao criares a tua conta na , confirmaste a leitura e aceitação integral
+destes
+Termos de Uso e da Política de Privacidade. A data e IP do teu
+registo foram registados como prova de aceitação.
+· Termos de Uso versão  ·
+Em vigor desde  ·
+©  . Todos os direitos reservados.
+document.addEventListener('DOMContentLoaded', function() {
+// ── Barra de progresso de leitura + back to top ──
+var fill = document.getElementById('progressBar');
+var backToTop = document.getElementById('backToTop');
+function updateProgress() {
+var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+var scrollH = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+var pct = scrollH > 0 ? (scrollTop / scrollH) * 100 : 0;
+if (fill) fill.style.width = pct + '%';
+if (backToTop) backToTop.classList.toggle('visible', scrollTop > 300);
+window.addEventListener('scroll', updateProgress);
+updateProgress();
+// ── Back to top ───────────────────────────────────
+if (backToTop) {
+backToTop.addEventListener('click', function() {
+window.scrollTo({
+top: 0,
+behavior: 'smooth'
+});
+// ── Imprimir ──────────────────────────────────────
+var btnPrint = document.getElementById('btnPrint');
+if (btnPrint) {
+btnPrint.addEventListener('click', function() {
+window.print();
+// ── Highlight activo do índice ao scroll ─────────
+var sections = document.querySelectorAll('.term-section');
+var indexLinks = document.querySelectorAll('.terms-index a');
+var observer = new IntersectionObserver(function(entries) {
+entries.forEach(function(entry) {
+if (entry.isIntersecting) {
+var id = entry.target.getAttribute('id');
+indexLinks.forEach(function(link) {
+link.classList.toggle('active', link.getAttribute('href') ===
+'#' + id);
+}, {
+rootMargin: '-20% 0px -70% 0px'
+sections.forEach(function(sec) {
+observer.observe(sec);

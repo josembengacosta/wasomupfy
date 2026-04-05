@@ -111,6 +111,42 @@ function ib_notifyUser(PDO $db, int $id_users, int $id_emp, string $title, strin
     }
 }
 
+function ib_has_column(PDO $db, string $table, string $column): bool
+{
+    static $cache = [];
+
+    $key = $table . '.' . $column;
+    if (array_key_exists($key, $cache)) {
+        return $cache[$key];
+    }
+
+    $stmt = $db->prepare("
+        SELECT COUNT(*)
+        FROM information_schema.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = ?
+          AND COLUMN_NAME = ?
+    ");
+    $stmt->execute([$table, $column]);
+
+    return $cache[$key] = ((int)$stmt->fetchColumn() > 0);
+}
+
+function ib_can_star(PDO $db, string $source): bool
+{
+    if (str_starts_with($source, 'ticket_')) {
+        return ib_has_column($db, '_support_ticket', 'is_starred');
+    }
+    if ($source === 'contact') {
+        return ib_has_column($db, '_contact_message', 'is_starred');
+    }
+    if ($source === 'feedback') {
+        return ib_has_column($db, '_feedback', 'is_starred');
+    }
+
+    return false;
+}
+
 // ── Construir o HTML completo de uma mensagem ─────────────────
 function buildMessageHTML(array $msg, array $replies, ?array $user, ?array $assigned_emp, array $all_admins, PDO $db, string $source): array
 {
@@ -125,6 +161,7 @@ function buildMessageHTML(array $msg, array $replies, ?array $user, ?array $assi
 
     $can_approve = hasPermission($GLOBALS['admin_id'], 'support.edit') || hasPermission($GLOBALS['admin_id'], 'support.view');
     $has_user    = !empty($msg['id_users']);
+    $can_star    = !empty($msg['can_star']);
 
     // Status options por tipo de fonte
     if (str_starts_with($msg['source'], 'ticket_')) {
@@ -241,9 +278,18 @@ function buildMessageHTML(array $msg, array $replies, ?array $user, ?array $assi
     }
     $assign_select .= '</select>';
 
+    $star_title = $can_star
+        ? ($msg['is_starred'] ? 'Remover importância' : 'Marcar como importante')
+        : 'Favoritos indisponíveis nesta instalação';
+    $star_state = $msg['is_starred'] ? 'bi-star-fill text-warning' : 'bi-star';
+
     $toolbar = '
-        <button class="btn btn-sm btn-outline-secondary" onclick="toggleStar(event,' . ($msg['msg_id']) . ',\'' . htmlspecialchars($source) . '\',this)" title="' . ($msg['is_starred'] ? 'Remover' : 'Importante') . '">
-            <i class="bi ' . ($msg['is_starred'] ? 'bi-star-fill text-warning' : 'bi-star') . '"></i>
+        <button class="btn btn-sm btn-outline-secondary"
+            data-can-star="' . ($can_star ? '1' : '0') . '"
+            onclick="toggleStar(event,' . ($msg['msg_id']) . ',\'' . htmlspecialchars($source) . '\',this)"
+            title="' . htmlspecialchars($star_title, ENT_QUOTES, 'UTF-8') . '"'
+            . ($can_star ? '' : ' style="opacity:.45;cursor:not-allowed" aria-disabled="true"') . '>
+            <i class="bi ' . $star_state . '"></i>
         </button>
         ' . $status_select . '
         ' . $assign_select . '
@@ -293,6 +339,7 @@ if ($action === 'load_message') {
             default => 'ticket_auth'
         };
         $msg['created_at'] = $msg['creat_ticket'];
+        $msg['can_star']   = ib_can_star($db, $msg['source']);
         $msg['is_starred'] = $msg['is_starred'] ?? 0;
         $msg['priority']   = $msg['priority'] ?? 'normal';
         $msg['msg_id']     = $msg['id_ticket'];
@@ -340,6 +387,7 @@ if ($action === 'load_message') {
         $msg = $stmt->fetch();
         if (!$msg) jOut(false, 'Mensagem não encontrada.');
         $msg['source']     = 'contact';
+        $msg['can_star']   = ib_can_star($db, $msg['source']);
         $msg['is_starred'] = $msg['is_starred'] ?? 0;
         $msg['priority']   = 'normal';
         $msg['body']       = $msg['message_msg'];
@@ -358,6 +406,7 @@ if ($action === 'load_message') {
         $msg = $stmt->fetch();
         if (!$msg) jOut(false, 'Mensagem não encontrada.');
         $msg['source']     = 'feedback';
+        $msg['can_star']   = ib_can_star($db, $msg['source']);
         $msg['is_starred'] = $msg['is_starred'] ?? 0;
         $msg['priority']   = 'low';
         $msg['body']       = $msg['message_fb'];
@@ -374,8 +423,8 @@ if ($action === 'load_message') {
         jOut(false, 'Fonte desconhecida.');
     }
 
-    [$html, $toolbar] = buildMessageHTML($msg, $replies, $user, $assigned_emp, $admins, $db, $source);
-    jOut(true, '', ['html' => $html, 'toolbar_html' => $toolbar, 'was_unread' => $was_unread]);
+    $rendered = buildMessageHTML($msg, $replies, $user, $assigned_emp, $admins, $db, $source);
+    jOut(true, '', ['html' => $rendered['html'], 'toolbar_html' => $rendered['toolbar_html'], 'was_unread' => $was_unread]);
 }
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -383,6 +432,10 @@ if ($action === 'load_message') {
 // ════════════════════════════════════════════════════════════════════════════
 if ($action === 'toggle_star') {
     if ($msg_id <= 0 || !$source) jOut(false, 'Dados inválidos.');
+
+    if (!ib_can_star($db, $source)) {
+        jOut(false, 'Favoritos indisponíveis nesta instalação.', ['can_star' => false, 'starred' => 0]);
+    }
 
     try {
         if (str_starts_with($source, 'ticket_')) {

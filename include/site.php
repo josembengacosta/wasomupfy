@@ -16,7 +16,8 @@ define('DB_CHARSET', 'utf8mb4');
 define('APP_URL', 'http://localhost/wasomupfy'); // sem barra no fim
 
 // ── 2. Ligação à BD (singleton) ───────────────
-function getSiteDB(): PDO {
+function getSiteDB(): PDO
+{
     static $pdo = null;
     if ($pdo === null) {
         $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=' . DB_CHARSET;
@@ -37,7 +38,8 @@ function getSiteDB(): PDO {
 //   email   : support_email, info_email
 //   payment : min_withdrawal
 
-function getSiteConfig(): array {
+function getSiteConfig(): array
+{
     static $cfg = null;
     if ($cfg === null) {
         $stmt = getSiteDB()->query("
@@ -53,7 +55,8 @@ function getSiteConfig(): array {
     return $cfg;
 }
 
-function cfg(string $key, string $default = ''): string {
+function cfg(string $key, string $default = ''): string
+{
     return getSiteConfig()[$key] ?? $default;
 }
 
@@ -65,7 +68,8 @@ function cfg(string $key, string $default = ''): string {
 //
 // Auto-expiry: se site_status é 'maintenance'/'blocked' e site_maintenance_end
 // já passou, restaura automaticamente para 'active' sem intervenção do admin.
-function getPlatform(): array {
+function getPlatform(): array
+{
     static $p = null;
     if ($p === null) {
         $db = getSiteDB();
@@ -113,7 +117,6 @@ function getPlatform(): array {
                 $p['site_maintenance_services'] = null;
 
                 error_log('[getPlatform] Auto-expiry site: site_status restaurado para active.');
-
             } catch (Throwable $e) {
                 error_log('[getPlatform] Auto-expiry site falhou: ' . $e->getMessage());
             }
@@ -123,7 +126,8 @@ function getPlatform(): array {
 }
 
 // ── 5. _plans + _plan_features ────────────────
-function getPlans(): array {
+function getPlans(): array
+{
     $db   = getSiteDB();
     $plans = $db->query("
         SELECT * FROM _plans
@@ -145,7 +149,8 @@ function getPlans(): array {
     return $plans;
 }
 
-function getPlanBySlug(string $slug): ?array {
+function getPlanBySlug(string $slug): ?array
+{
     $stmt = getSiteDB()->prepare("
         SELECT * FROM _plans WHERE slug_plan = ? AND is_active = 1 LIMIT 1
     ");
@@ -165,12 +170,14 @@ function getPlanBySlug(string $slug): ?array {
 }
 
 // Formatar preço em AOA: 2000 → "2.000 Kz"
-function formatAOA(float $value): string {
+function formatAOA(float $value): string
+{
     return number_format($value, 0, ',', '.') . ' Kz';
 }
 
 // ── 6. _faq ───────────────────────────────────
-function getFaqs(?string $category = null): array {
+function getFaqs(?string $category = null): array
+{
     $db  = getSiteDB();
     $sql = "SELECT * FROM _faq WHERE status_faq = 'visible'";
     $params = [];
@@ -184,7 +191,8 @@ function getFaqs(?string $category = null): array {
     return $stmt->fetchAll();
 }
 
-function getFaqCategories(): array {
+function getFaqCategories(): array
+{
     return getSiteDB()->query("
         SELECT DISTINCT category_faq
         FROM _faq
@@ -194,14 +202,16 @@ function getFaqCategories(): array {
 }
 
 // ── 7. _store — lojas de distribuição ─────────
-function getStores(int $limit = 0): array {
+function getStores(int $limit = 0): array
+{
     $sql  = "SELECT * FROM _store WHERE is_active = 1 ORDER BY display_order ASC";
     if ($limit > 0) $sql .= " LIMIT $limit";
     return getSiteDB()->query($sql)->fetchAll();
 }
 
 // ── 8. _blog_post — últimos artigos ──────────
-function getLatestPosts(int $limit = 3): array {
+function getLatestPosts(int $limit = 3): array
+{
     $stmt = getSiteDB()->prepare("
         SELECT p.*, c.name_category
         FROM _blog_post p
@@ -214,7 +224,8 @@ function getLatestPosts(int $limit = 3): array {
     return $stmt->fetchAll();
 }
 
-function getPostBySlug(string $slug): ?array {
+function getPostBySlug(string $slug): ?array
+{
     $stmt = getSiteDB()->prepare("
         SELECT p.*, c.name_category
         FROM _blog_post p
@@ -227,7 +238,7 @@ function getPostBySlug(string $slug): ?array {
     if ($post) {
         // Incrementar views
         getSiteDB()->prepare("UPDATE _blog_post SET views_post = views_post + 1 WHERE id_post = ?")
-                   ->execute([$post['id_post']]);
+            ->execute([$post['id_post']]);
     }
     return $post ?: null;
 }
@@ -235,7 +246,8 @@ function getPostBySlug(string $slug): ?array {
 // ── 9. Rastreio de visitantes ─────────────────
 // Guarda IP, país, cidade, browser, OS, device na _visitor
 // e cada pageview em _visitor_pageview
-function getVisitorSessionId(): string {
+function getVisitorSessionId(): string
+{
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
@@ -247,7 +259,8 @@ function getVisitorSessionId(): string {
     return (string)$_SESSION['_visitor_session_id'];
 }
 
-function cleanupStaleVisitors(int $idle_minutes = 5): void {
+function cleanupStaleVisitors(int $idle_minutes = 5): void
+{
     $idle_minutes = max(1, min(120, $idle_minutes));
 
     try {
@@ -422,12 +435,14 @@ function updateVisitorPresence(
     }
 }
 
-function trackVisitor(string $page_url, ?string $page_title = null): void {
+function trackVisitor(string $page_url, ?string $page_title = null): void
+{
     updateVisitorPresence($page_url, $page_title, true, null, 'online');
 }
 
-function getVisitorIp(): string {
-    foreach (['HTTP_CF_CONNECTING_IP','HTTP_X_FORWARDED_FOR','HTTP_X_REAL_IP','REMOTE_ADDR'] as $key) {
+function getVisitorIp(): string
+{
+    foreach (['HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_REAL_IP', 'REMOTE_ADDR'] as $key) {
         $val = $_SERVER[$key] ?? null;
         if ($val) {
             // Pode ter lista separada por vírgula — pegar o primeiro
@@ -438,10 +453,13 @@ function getVisitorIp(): string {
     return '0.0.0.0';
 }
 
-function getGeoData(string $ip): array {
+function getGeoData(string $ip): array
+{
     // Localhost/privado — sem geolocalização
-    if (in_array($ip, ['127.0.0.1', '::1', '0.0.0.0']) ||
-        !filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+    if (
+        in_array($ip, ['127.0.0.1', '::1', '0.0.0.0']) ||
+        !filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)
+    ) {
         return ['country' => 'Local', 'city' => 'Localhost', 'countryCode' => 'XX'];
     }
 
@@ -459,9 +477,24 @@ function getGeoData(string $ip): array {
     return $geo;
 }
 
-function detectBot(string $ua): bool {
-    $bots = ['bot','crawl','spider','slurp','mediapartners','facebookexternalhit',
-             'twitterbot','linkedinbot','whatsapp','telegram','curl','wget','python','java'];
+function detectBot(string $ua): bool
+{
+    $bots = [
+        'bot',
+        'crawl',
+        'spider',
+        'slurp',
+        'mediapartners',
+        'facebookexternalhit',
+        'twitterbot',
+        'linkedinbot',
+        'whatsapp',
+        'telegram',
+        'curl',
+        'wget',
+        'python',
+        'java'
+    ];
     $ua_lower = strtolower($ua);
     foreach ($bots as $b) {
         if (strpos($ua_lower, $b) !== false) return true;
@@ -469,14 +502,16 @@ function detectBot(string $ua): bool {
     return false;
 }
 
-function extractBotName(string $ua): ?string {
+function extractBotName(string $ua): ?string
+{
     if (preg_match('/(Googlebot|Bingbot|Slurp|DuckDuckBot|Baiduspider|facebookexternalhit|Twitterbot|LinkedInBot)/i', $ua, $m)) {
         return $m[1];
     }
     return 'Unknown Bot';
 }
 
-function parseBrowser(string $ua): array {
+function parseBrowser(string $ua): array
+{
     $result = ['browser' => null, 'browser_version' => null, 'os' => null, 'os_version' => null, 'device_type' => 'desktop'];
 
     // Device type
@@ -504,17 +539,28 @@ function parseBrowser(string $ua): array {
     }
 
     // OS
-    if      (preg_match('/Windows NT ([0-9.]+)/i', $ua, $m)) { $result['os'] = 'Windows'; $result['os_version'] = $m[1]; }
-    elseif  (preg_match('/Mac OS X ([0-9_]+)/i', $ua, $m))   { $result['os'] = 'macOS';   $result['os_version'] = str_replace('_','.',$m[1]); }
-    elseif  (preg_match('/Android ([0-9.]+)/i', $ua, $m))    { $result['os'] = 'Android'; $result['os_version'] = $m[1]; }
-    elseif  (preg_match('/iPhone OS ([0-9_]+)/i', $ua, $m))  { $result['os'] = 'iOS';     $result['os_version'] = str_replace('_','.',$m[1]); }
-    elseif  (preg_match('/Linux/i', $ua))                     { $result['os'] = 'Linux';   }
+    if (preg_match('/Windows NT ([0-9.]+)/i', $ua, $m)) {
+        $result['os'] = 'Windows';
+        $result['os_version'] = $m[1];
+    } elseif (preg_match('/Mac OS X ([0-9_]+)/i', $ua, $m)) {
+        $result['os'] = 'macOS';
+        $result['os_version'] = str_replace('_', '.', $m[1]);
+    } elseif (preg_match('/Android ([0-9.]+)/i', $ua, $m)) {
+        $result['os'] = 'Android';
+        $result['os_version'] = $m[1];
+    } elseif (preg_match('/iPhone OS ([0-9_]+)/i', $ua, $m)) {
+        $result['os'] = 'iOS';
+        $result['os_version'] = str_replace('_', '.', $m[1]);
+    } elseif (preg_match('/Linux/i', $ua)) {
+        $result['os'] = 'Linux';
+    }
 
     return $result;
 }
 
 // ── 10. Contact form → _support_ticket ────────
-function submitContactForm(array $data): array {
+function submitContactForm(array $data): array
+{
     $name    = trim($data['name']    ?? '');
     $email   = trim($data['email']   ?? '');
     $subject = trim($data['subject'] ?? '');
@@ -552,7 +598,8 @@ function submitContactForm(array $data): array {
 //
 // $current_page: identificador da página actual (ex: 'home', 'terms').
 //   Usar sempre que se chama checkPlatformStatus() — evita loops.
-function checkPlatformStatus(string $current_page = ''): void {
+function checkPlatformStatus(string $current_page = ''): void
+{
 
     // ── Páginas de status — nunca redireccionam (evita loops) ────────
     $status_pages = ['maintenance', '403', '404', '500', '503', 'offline'];
@@ -562,9 +609,14 @@ function checkPlatformStatus(string $current_page = ''): void {
     // Visitantes bloqueados por IP também podem aceder às páginas legais.
     $free_pages = [
         // Suporte e ajuda
-        'support', 'faq', 'help', 'tutorial',
+        'support',
+        'faq',
+        'help',
+        'tutorial',
         // Políticas legais (direito do utilizador)
-        'terms', 'privacy', 'cookies',
+        'terms',
+        'privacy',
+        'cookies',
         // Contacto (pode ser necessário mesmo em manutenção)
         'contact',
     ];
@@ -583,19 +635,19 @@ function checkPlatformStatus(string $current_page = ''): void {
     $site_st = $p['site_status'] ?? 'active';
 
     if ($site_st === 'maintenance') {
-        header('Location: ' . APP_URL . '/status/maintenance.php');
+        header('Location: ' . APP_URL . '/status/maintenance');
         exit;
     }
 
     if ($site_st === 'blocked') {
         header('HTTP/1.1 503 Service Unavailable');
-        header('Location: ' . APP_URL . '/status/503.php');
+        header('Location: ' . APP_URL . '/status/503');
         exit;
     }
 
     if ($site_st === 'unauthorized') {
         header('HTTP/1.1 403 Forbidden');
-        header('Location: ' . APP_URL . '/status/403.php');
+        header('Location: ' . APP_URL . '/status/403');
         exit;
     }
 
@@ -607,7 +659,8 @@ function checkPlatformStatus(string $current_page = ''): void {
 
 // Verifica se o IP actual está bloqueado na tabela _visitor.
 // Em caso de bloco temporário já expirado, faz o UPDATE automático.
-function checkVisitorStatus(): void {
+function checkVisitorStatus(): void
+{
     try {
         $ip  = getVisitorIp();
         $db  = getSiteDB();
@@ -645,7 +698,7 @@ function checkVisitorStatus(): void {
 
             // Ainda bloqueado → 403
             header('HTTP/1.1 403 Forbidden');
-            header('Location: ' . APP_URL . '/status/403.php');
+            header('Location: ' . APP_URL . '/status/403');
             exit;
         }
 
@@ -653,7 +706,6 @@ function checkVisitorStatus(): void {
             // Suspeito: registar nos logs mas não bloquear
             error_log('[checkVisitorStatus] Suspicious IP: ' . $ip);
         }
-
     } catch (Throwable $e) {
         if (APP_ENV === 'development') {
             error_log('[checkVisitorStatus] ' . $e->getMessage());
@@ -663,7 +715,8 @@ function checkVisitorStatus(): void {
 
 
 // ── 12. Contar estatísticas públicas ──────────
-function getPublicStats(): array {
+function getPublicStats(): array
+{
     $db = getSiteDB();
     return [
         'artists'  => (int)$db->query("SELECT COUNT(*) FROM _artist WHERE status_artist = 'active'")->fetchColumn(),
@@ -681,14 +734,16 @@ if (session_status() === PHP_SESSION_NONE) {
 // ── 14. CSRF simples para formulários públicos ──
 // ── CSRF ──────────────────────────────────────────────────────
 // $force = true → gera sempre um token novo (usar após POST)
-function getSiteCsrf(bool $force = false): string {
+function getSiteCsrf(bool $force = false): string
+{
     if (!isset($_SESSION['_site_csrf']) || $force) {
         $_SESSION['_site_csrf'] = bin2hex(random_bytes(32));
     }
     return $_SESSION['_site_csrf'];
 }
 
-function validateSiteCsrf(string $token): bool {
+function validateSiteCsrf(string $token): bool
+{
     if (empty($token) || empty($_SESSION['_site_csrf'])) return false;
     return hash_equals($_SESSION['_site_csrf'], $token);
 }

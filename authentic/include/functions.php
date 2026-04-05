@@ -48,8 +48,100 @@ function requireLogin(): void
 }
 
 // ════════════════════════════════════════════════
+// ─── LOGIN DISABLE (GLOBAL) ─────────────────────
+// ════════════════════════════════════════════════
+
+function isLoginAllowed(): bool
+{
+    static $allowed = null;
+    if ($allowed !== null) {
+        return $allowed;
+    }
+
+    // 1. Check APP_ENV maintenance mode
+    if (defined('APP_ENV') && APP_ENV === 'maintenance') {
+        $allowed = false;
+        return $allowed;
+    }
+
+    // 2. Check _platform.allow_login
+    try {
+        $db = getDB();
+        $stmt = $db->query("SELECT allow_login FROM _platform LIMIT 1");
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $allowed = !empty($row) && (int)$row['allow_login'] === 1;
+    } catch (Exception $e) {
+        error_log('[isLoginAllowed] Platform check failed: ' . $e->getMessage());
+        $allowed = true; // Default: ALLOW login
+    }
+
+    return $allowed;
+}
+
+// ════════════════════════════════════════════════
+// SESSION TIMEOUT — _admin_config.session_timeout
+// ════════════════════════════════════════════════
+
+function getSessionTimeout(): int
+{
+    static $timeout = null;
+    if ($timeout !== null) return $timeout;
+
+    try {
+        $db = getDB();
+        $stmt = $db->query("SELECT config_value FROM _admin_config WHERE config_key = 'session_timeout' LIMIT 1");
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $timeout = !empty($row) ? (int)$row['config_value'] : 60;
+    } catch (Exception $e) {
+        error_log('[getSessionTimeout] Config check failed: ' . $e->getMessage());
+        $timeout = 60; // Default 1h
+    }
+
+    return $timeout * 60; // Return in seconds
+}
+
+function validateSessionTimeout(int $id_users): bool
+{
+    $timeout_seconds = getSessionTimeout();
+    if ($timeout_seconds <= 0) return true; // Disabled
+
+    try {
+        $db = getDB();
+        // For new logins, last_login_at is NULL until AFTER login, so skip for new
+        $stmt = $db->prepare("SELECT last_login_at FROM _users_security WHERE id_users = ? AND last_login_at IS NOT NULL LIMIT 1");
+        $stmt->execute([$id_users]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($row && $row['last_login_at']) {
+            $last_login = strtotime($row['last_login_at']);
+            if (time() - $last_login > $timeout_seconds) {
+                return false; // Expired
+            }
+        }
+    } catch (Exception $e) {
+        error_log('[validateSessionTimeout] Check failed: ' . $e->getMessage());
+    }
+
+    return true;
+}
+
+
+function getPlatformMaintenanceMsg(): ?string
+{
+    try {
+        $db = getDB();
+        $stmt = $db->query("SELECT maintenance_msg FROM _platform LIMIT 1");
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return !empty($row['maintenance_msg']) ? $row['maintenance_msg'] : null;
+    } catch (Exception $e) {
+        return null;
+    }
+}
+
+// ════════════════════════════════════════════════
 // UTILIZADORES
 // ════════════════════════════════════════════════
+
 
 function getUserByEmail(string $email): ?array
 {
@@ -812,6 +904,8 @@ function checkRememberMe(): void
 {
     if (isLoggedIn()) return; // Ja esta logado
 
+    if (!isLoginAllowed()) return; // Global login disabled
+
     $cookie = $_COOKIE['wuf_remember'] ?? null;
     if (!$cookie) return;
 
@@ -833,6 +927,13 @@ function checkRememberMe(): void
         setcookie('wuf_remember', '', ['expires' => 1, 'path' => '/']);
         return;
     }
+
+    // Validate session timeout for remember-me
+    if (!validateSessionTimeout((int)$user['id_users'])) {
+        setcookie('wuf_remember', '', ['expires' => 1, 'path' => '/']);
+        return;
+    }
+
 
     // Restaurar sessao
     session_regenerate_id(true);

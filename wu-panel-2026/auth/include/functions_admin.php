@@ -420,18 +420,27 @@ function _populateAdminSession(array $admin): void
 
 /**
  * Activa o lockscreen para o admin actual.
- * A sessão é mantida mas o acesso fica bloqueado até introduzir o access_code.
+ * Preserva o access_code existente; só gera um novo se não houver nenhum.
  */
 function activateLockscreen(int $id): void
 {
-    $code = str_pad((string)random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+    $db = getDB();
 
-    getDB()->prepare("
-        UPDATE _employees_security
-        SET lockscreen  = 1,
-            access_code = ?
-        WHERE id_employees = ?
-    ")->execute([$code, $id]);
+    // Verificar se já existe access_code
+    $stmt = $db->prepare("SELECT access_code FROM _employees_security WHERE id_employees = ?");
+    $stmt->execute([$id]);
+    $existing_code = $stmt->fetchColumn();
+
+    if (!$existing_code) {
+        // Só gera um novo código se não existir nenhum
+        $code = str_pad((string)random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $db->prepare("UPDATE _employees_security SET access_code = ? WHERE id_employees = ?")
+            ->execute([$code, $id]);
+    }
+
+    // Activar lockscreen (sem alterar o access_code)
+    $db->prepare("UPDATE _employees_security SET lockscreen = 1 WHERE id_employees = ?")
+        ->execute([$id]);
 
     $_SESSION['admin_lockscreen'] = true;
 }
@@ -455,17 +464,16 @@ function validateAndUnlock(int $id, string $code): bool
         return false;
     }
 
+    // Apenas desactiva o lockscreen, NÃO apaga o access_code
     $db->prepare("
         UPDATE _employees_security
-        SET lockscreen  = 0,
-            access_code = NULL
+        SET lockscreen = 0
         WHERE id_employees = ?
     ")->execute([$id]);
 
     $_SESSION['admin_lockscreen'] = false;
     return true;
 }
-
 
 // ════════════════════════════════════════════════
 // PERMISSÕES

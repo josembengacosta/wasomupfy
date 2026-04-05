@@ -27,7 +27,7 @@
     <meta name="theme-color" content="#FF0089" />
     <link rel="shortcut icon" href="../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon" />
     <link rel="apple-touch-icon" href="../assets/img/icones/wasomupfy_fiv_512.png" />
-    <title>Sem Ligação — <?php echo APP_NAME; ?></title>
+    <title>Sem Ligação — Wasom Upfy</title>
     <!-- Sem CDN — tudo inline obrigatoriamente -->
     <style>
         *,

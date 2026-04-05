@@ -1,8 +1,8 @@
 <?php
 // ══════════════════════════════════════════════
 // WASOM UPFY v2.0 — Processar Lockscreen Admin
-// Arquivo: admin/auth/lockscreen-process.php
-// .htaccess: ^admin/lockscreen-process/?$ → este ficheiro
+// Arquivo: wu-panel-2026/auth/lockscreen-process.php
+// .htaccess: ^wu-panel-2026/lockscreen-process/?$ → este ficheiro
 // Método: POST único
 // ══════════════════════════════════════════════
 

@@ -17,9 +17,19 @@ if (!validateCsrf($_POST['csrf_token'] ?? '')) {
     redirect('/register', ['error' => 'csrf']);
 }
 
+if (!isLoginAllowed()) {
+    redirect('/register', ['error' => 'global_disabled']);
+}
+
+if (!getPlatformConfig()['allow_register']) {
+    redirect('/register', ['error' => 'register_disabled']);
+}
+
 // ══════════════════════════════════════════════
 // 1. RECOLHER E SANITIZAR
 // ══════════════════════════════════════════════
+
+
 
 $email        = strtolower(trim($_POST['email_user']  ?? ''));
 $full_name    = sanitize(trim($_POST['fullname_user'] ?? ''));

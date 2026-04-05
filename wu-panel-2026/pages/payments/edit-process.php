@@ -5,6 +5,7 @@
 // Rota:    wu-panel-2026/payments/edit-process (POST only)
 // ═══════════════════════════════════════════════════════════════════════════════
 require_once __DIR__ . '/../../include/platform_admin.php';
+require_once dirname(__DIR__, 3) . '/authentic/include/payment_workflow.php';
 requirePermission($admin_id, 'finances.edit');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -76,7 +77,7 @@ if ($action === 'update_payment') {
         if ($needs_activation) {
             // Recuperar intent associado
             $intent_stmt = $db->prepare("
-                SELECT id_intent FROM _payment_intent WHERE reference_code = ?
+                SELECT * FROM _payment_intent WHERE reference_code = ? LIMIT 1
             ");
             $intent_stmt->execute([$old['payment_ref']]);
             $intent = $intent_stmt->fetch();
@@ -85,8 +86,7 @@ if ($action === 'update_payment') {
                 // Incluir a função activatePlan do payment_process (deve estar disponível)
                 // Ou reimplementar aqui a lógica
                 // Para evitar duplicação, incluímos o arquivo que contém a função
-                require_once __DIR__ . '/../../../../dashboard/payment_process.php'; // ajustar caminho
-                activatePlan($old['id_users'], $old['id_plan'], $intent['id_intent'], $db);
+                paymentWorkflowActivatePlan($db, $intent, null, $admin_id);
             }
         }
 

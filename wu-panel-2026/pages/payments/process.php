@@ -5,6 +5,7 @@
 // Rota:    wu-panel-2026/payments/process (POST only)
 // ═══════════════════════════════════════════════════════════════════════════════
 require_once __DIR__ . '/../../include/platform_admin.php';
+require_once dirname(__DIR__, 3) . '/authentic/include/payment_workflow.php';
 requirePermission($admin_id, 'finances.view');
 
 $receipts_dir = $_SERVER['DOCUMENT_ROOT'] . '/assets/payment/uploads/receipts';
@@ -80,13 +81,12 @@ if ($action === 'update_status') {
         // Se aprovado, activar plano (se ainda não estiver activo)
         if ($new_status === 'approved' && $pay['status_payment'] !== 'approved') {
             // Recuperar intent associado
-            $intent_stmt = $db->prepare("SELECT id_intent FROM _payment_intent WHERE reference_code = ?");
+            $intent_stmt = $db->prepare("SELECT * FROM _payment_intent WHERE reference_code = ? LIMIT 1");
             $intent_stmt->execute([$pay['payment_ref']]);
             $intent = $intent_stmt->fetch();
             if ($intent) {
                 // Incluir função activatePlan
-                require_once __DIR__ . '/../../../../dashboard/payment_process.php';
-                activatePlan($pay['id_users'], $pay['id_plan'], $intent['id_intent'], $db);
+                paymentWorkflowActivatePlan($db, $intent, null, $admin_id);
             }
         }
 

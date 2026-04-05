@@ -217,12 +217,12 @@ switch ($action) {
     // DESACTIVAR LOCKSCREEN
     // ══════════════════════════════════════════
     case 'disable_lockscreen':
-        $db->prepare("UPDATE _employees_security SET lockscreen=0, access_code=NULL WHERE id_employees=?")
-            ->execute([$admin_id]);
-        $_SESSION['admin_lockscreen'] = false;
-        logAudit($admin_id, null, 'profile.lockscreen_disabled', 'employees', $admin_id, null, null);
-        adminRedirect('/' . ADMIN_PATH . '/profile', ['tab' => 'security']);
-        break;
+    $db->prepare("UPDATE _employees_security SET lockscreen = 0 WHERE id_employees = ?")
+        ->execute([$admin_id]);
+    $_SESSION['admin_lockscreen'] = false;
+    logAudit($admin_id, null, 'profile.lockscreen_disabled', 'employees', $admin_id, null, null);
+    adminRedirect('/' . ADMIN_PATH . '/profile', ['tab' => 'security']);
+    break;
 
     // ══════════════════════════════════════════
     // REMOVER FOTO DE PERFIL
@@ -240,6 +240,34 @@ switch ($action) {
         $_SESSION['admin_photo'] = null;
         logAudit($admin_id, null, 'profile.photo_removed', 'employees', $admin_id, null, null);
         adminRedirect('/' . ADMIN_PATH . '/profile', ['msg' => 'photo_ok', 'tab' => 'settings']);
+        break;
+
+    // ══════════════════════════════════════════
+    // REGENERAR ACCESS CODE (Manager/Lockscreen)
+    // ══════════════════════════════════════════
+    case 'regenerate_access_code':
+        $current_password = $_POST['current_password'] ?? '';
+        if (empty($current_password)) {
+            adminRedirect('/' . ADMIN_PATH . '/profile', ['msg' => 'error', 'tab' => 'security']);
+        }
+
+        // Verificar senha actual
+        $admin = $db->prepare("SELECT password_employees FROM _employees WHERE id_employees=? LIMIT 1");
+        $admin->execute([$admin_id]);
+        $hash = $admin->fetchColumn();
+
+        if (!$hash || !password_verify($current_password, $hash)) {
+            adminRedirect('/' . ADMIN_PATH . '/profile', ['msg' => 'password_err', 'tab' => 'security']);
+        }
+
+        // Gerar novo código de 6 dígitos
+        $new_code = sprintf("%06d", random_int(0, 999999));
+        $db->prepare("UPDATE _employees_security SET access_code = ? WHERE id_employees = ?")
+            ->execute([$new_code, $admin_id]);
+
+        logAudit($admin_id, null, 'security.access_code_regenerated', 'employees', $admin_id, null, null);
+
+        adminRedirect('/' . ADMIN_PATH . '/profile', ['msg' => 'access_code_ok', 'tab' => 'security']);
         break;
 
     default:

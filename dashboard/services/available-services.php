@@ -781,29 +781,32 @@ $plan_colors = [
         <script src="<?php echo APP_URL  ?>/js/theme.wp.js"></script>
         <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
         <script>
-        // Tema toggle navbar
-        const themeToggle = document.getElementById('themeToggle');
-        const themeIcon = document.getElementById('themeIcon');
+        // ── Badge de notificações — polling leve a cada 60s ──────────
         (function() {
-            const saved = localStorage.getItem('theme') || 'dark';
-            if (saved === 'dark') {
-                document.body.classList.add('dark-mode');
-                themeIcon.className = 'bi bi-moon';
-            } else {
-                document.body.classList.add('light-mode');
-                themeIcon.className = 'bi bi-sun';
+            function refreshNotifBadge() {
+                fetch('http://localhost/wasomupfy/dashboard/ajax/notifications_api.php?action=count', {
+                        credentials: 'same-origin'
+                    })
+                    .then(r => r.json())
+                    .then(data => {
+                        var badge = document.getElementById('navNotifBadge');
+                        if (!badge) return;
+                        var count = parseInt(data.unread || 0);
+                        if (count > 0) {
+                            badge.textContent = count > 99 ? '99+' : count;
+                            badge.style.display = '';
+                        } else {
+                            badge.style.display = 'none';
+                        }
+                    })
+                    .catch(function() {});
             }
+            // Primeira actualização após 30s para não sobrecarregar o load inicial
+            setTimeout(function() {
+                refreshNotifBadge();
+                setInterval(refreshNotifBadge, 60000);
+            }, 30000);
         })();
-        if (themeToggle) {
-            themeToggle.addEventListener('click', function() {
-                const isDark = document.body.classList.contains('dark-mode');
-                const next = isDark ? 'light' : 'dark';
-                document.body.classList.toggle('dark-mode', next === 'dark');
-                document.body.classList.toggle('light-mode', next === 'light');
-                themeIcon.className = next === 'dark' ? 'bi bi-moon' : 'bi bi-sun';
-                localStorage.setItem('theme', next);
-            });
-        }
         </script>
 </body>
 

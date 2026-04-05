@@ -225,8 +225,8 @@ RewriteRule ^dashboard/finances/account_process/?$              dashboard/financ
 
 # ─── Lançamentos ──────────────────────────────
 RewriteRule ^dashboard/releases/?$                       dashboard/launch/releases.php [L]
-RewriteRule ^dashboard/launch/releases_process/?$               dashboard/launch/releases_process.php [L]
-RewriteRule ^dashboard/launch/creat_release_process/?$          dashboard/launch/creat_release_process.php [L]
+RewriteRule ^dashboard/release_process/?$               dashboard/launch/release_process.php [L]
+RewriteRule ^dashboard/creat_release_process/?$             dashboard/launch/creat_release_process.php [L]
 RewriteRule ^dashboard/creat-release/?$                  dashboard/launch/creat-release.php [L]
 RewriteRule ^dashboard/draft-release/?$                  dashboard/launch/draft-release.php [L]
 RewriteRule ^dashboard/edit-release/?$                   dashboard/launch/edit-release.php [L]
@@ -384,6 +384,10 @@ RewriteRule ^wu-panel-2026/manager/payment-guard/?$       wu-panel-2026/pages/ma
 # ── Integração ──
 RewriteRule ^wu-panel-2026/integration/verify/?$            wu-panel-2026/pages/integration/verify.php [L]
 RewriteRule ^wu-panel-2026/integration/verify-channel/?$    wu-panel-2026/pages/integration/verify-channel.php [L]
+RewriteRule ^wu-panel-2026/integration/edit/?$               wu-panel-2026/pages/integration/edit.php [L,QSA]
+RewriteRule ^wu-panel-2026/integration/edit-process/?$       wu-panel-2026/pages/integration/edit-process.php [L]
+RewriteRule ^wu-panel-2026/integration/verify-process/?$    wu-panel-2026/pages/integration/verify-process.php [L]
+
 
 # ── Mensagens ──
 RewriteRule ^wu-panel-2026/messages/inbox/?$                wu-panel-2026/pages/messages/inbox.php [L]
@@ -394,6 +398,7 @@ RewriteRule ^wu-panel-2026/help/contact/?$                  wu-panel-2026/pages/
 
 # ── Configurações + Segurança ──
 RewriteRule ^wu-panel-2026/settings/?$                      wu-panel-2026/pages/settings/config.php [L]
+RewriteRule ^wu-panel-2026/settings/config-process/?$       wu-panel-2026/pages/settings/config-process.php [L]
 RewriteRule ^wu-panel-2026/settings/security/?$             wu-panel-2026/pages/settings/security.php [L]
 RewriteRule ^wu-panel-2026/settings/security-process/?$     wu-panel-2026/pages/settings/security-process.php [L]
 RewriteRule ^wu-panel-2026/audit/?$                         wu-panel-2026/pages/manager/audit.php [L,QSA]

@@ -76,11 +76,14 @@ if (isset($_POST['action']) && $_POST['action'] === 'confirm_reactivate') {
         $remember_token = bin2hex(random_bytes(32));
         $expires = time() + (30 * 24 * 3600);
         setcookie('wuf_remember', $remember_token, [
-            'expires' => $expires, 'path' => '/', 'secure' => (APP_ENV === 'production'),
-            'httponly' => true, 'samesite' => 'Strict',
+            'expires' => $expires,
+            'path' => '/',
+            'secure' => (APP_ENV === 'production'),
+            'httponly' => true,
+            'samesite' => 'Strict',
         ]);
         getDB()->prepare("UPDATE _users_security SET remember_token = ? WHERE id_users = ?")
-               ->execute([$remember_token, $uid]);
+            ->execute([$remember_token, $uid]);
     }
 
     resetLoginAttempts($uid);
@@ -91,6 +94,11 @@ if (isset($_POST['action']) && $_POST['action'] === 'confirm_reactivate') {
 }
 
 // ══════════════════════════════════════════════
+// ─── Global login allowed? ─────────────────────
+if (!isLoginAllowed()) {
+    redirect('/login', ['error' => 'disabled']);
+}
+
 // FLUXO NORMAL DE LOGIN
 // ══════════════════════════════════════════════
 
@@ -167,6 +175,7 @@ if (!password_verify($password, $user['password_user'])) {
 
 // ─── Verificar 2FA antes de criar sessão ─────
 if (!empty($user['two_factor_enabled'])) {
+
     $_SESSION['pending_2fa'] = [
         'id_users' => $uid,
         'remember' => $remember,
@@ -174,6 +183,7 @@ if (!empty($user['two_factor_enabled'])) {
     ];
     redirect('/2fa-verify');
 }
+
 
 // Regenerar sessão (previne session fixation)
 session_regenerate_id(true);

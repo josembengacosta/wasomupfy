@@ -559,12 +559,15 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
                 <div class="col-md-2 col-6">
                     <label class="form-label small mb-1">Status</label>
                     <select class="form-select form-select-sm" id="f-status">
+
                         <option value="">Todos</option>
                         <option value="approved">Aprovado</option>
                         <option value="pending">Pendente</option>
+                        <option value="under_review">Em revisão</option>
                         <option value="rejected">Reprovado</option>
                         <option value="draft">Rascunho</option>
                         <option value="deleting">A eliminar...</option>
+
                     </select>
                 </div>
                 <div class="col-md-1 col-6">
@@ -579,11 +582,14 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
                 <!-- Tabs de status rápidos -->
                 <div class="d-flex gap-1" id="status-tabs">
                     <button class="btn btn-sm btn-outline-secondary" data-tab="">Todos</button>
+
                     <button class="btn btn-sm btn-outline-success" data-tab="approved">Aprovados</button>
                     <button class="btn btn-sm btn-outline-warning" data-tab="pending">Pendentes</button>
+                    <button class="btn btn-sm btn-outline-warning" data-tab="under_review">Em revisão</button>
                     <button class="btn btn-sm btn-outline-danger" data-tab="rejected">Reprovados</button>
                     <button class="btn btn-sm btn-outline-secondary" data-tab="draft">Rascunho</button>
                     <button class="btn btn-sm btn-outline-secondary" data-tab="deleting">A eliminar...</button>
+
                 </div>
             </div>
         </div>
@@ -736,7 +742,8 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
                 <div class="modal-body pt-1">
                     <div class="alert alert-warning small d-flex gap-2">
                         <i class="bi bi-info-circle-fill flex-shrink-0 mt-1"></i>
-                        <div>A equipa da <?php echo APP_NAME ?> irá rever o lançamento novamente. Indica o motivo da solicitação
+                        <div>A equipa da <?php echo APP_NAME ?> irá rever o lançamento novamente. Indica o motivo da
+                            solicitação
                             para acelerar o processo.</div>
                     </div>
                     <div id="rev-reject-display" class="alert alert-danger small d-none">
@@ -996,7 +1003,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
     // DADOS DA BD (PHP → JS)
     // ════════════════════════════════════════════════
     const CSRF = '<?php echo $csrf; ?>';
-    const BASE_URL = '<?php echo rtrim(APP_URL, '/'); ?>';
+    const BASE_URL = '<?php echo APP_URL; ?>';
     const ALBUMS_DB = <?php echo $albums_json; ?>;
     const COVER_BASE = BASE_URL + '/assets/comprovantes/uploads/covers/';
 
@@ -1042,6 +1049,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
     const STATUS_LABEL = {
         approved: 'Aprovado',
         pending: 'Pendente',
+        under_review: 'Em revisão',
         rejected: 'Reprovado',
         draft: 'Rascunho',
         deleting: 'A eliminar...'
@@ -1049,6 +1057,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
     const STATUS_CLASS = {
         approved: 'approved',
         pending: 'pending',
+        under_review: 'warning',
         rejected: 'rejected',
         draft: 'draft',
         deleting: 'warning'
@@ -1145,7 +1154,8 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
         }
 
         // Botão Editar (para todos exceto 'deleting')
-        if (alb.status_album !== 'deleting') {
+
+        if (['draft', 'pending', 'rejected', 'under_review'].includes(alb.status_album)) {
             actionBtns += `
             <a href="${BASE_URL}/dashboard/edit-release?id=${alb.id_album}" 
                class="btn btn-outline-secondary btn-sm" title="Editar">
@@ -1153,12 +1163,13 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
             </a>`;
         }
 
-        // BOTÃO ELIMINAR - PARA TODOS OS STATUS (exceto 'deleting')
-        if (alb.status_album !== 'deleting') {
+
+        // BOTÃO ELIMINAR - APENAS approved, draft, rejected
+        if (['approved', 'pending', 'rejected', 'draft'].includes(alb.status_album)) {
             // Determinar o tipo para o modal
-            let deleteType = 'published'; // padrão para approved/pending/rejected
+            let deleteType = 'published';
             if (alb.status_album === 'draft') {
-                deleteType = 'draft'; // rascunho usa o mesmo fluxo (com senha)
+                deleteType = 'draft';
             }
 
             actionBtns += `
@@ -1172,14 +1183,14 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
                     title="Eliminar lançamento">
                 <i class="bi bi-trash"></i>
             </button>`;
-        } else {
+        } else if (alb.status_album === 'deleting') {
             // Status 'deleting' - botão especial
             actionBtns = `
-            <button class="btn btn-sm flex-fill" style="background:#17a2b8;color:#fff" 
-                    onclick="openDeleteStatusModal(${alb.id_album})">
-                <i class="bi bi-hourglass-split me-1"></i>Ver estado
+            <button class="btn btn-warning btn-sm flex-fill" onclick="openDeleteStatusModal(${alb.id_album})">
+                <i class="bi bi-hourglass-split me-1"></i>Pedido pendente
             </button>`;
         }
+
 
         return `
     <div class="col-xl-2 col-lg-3 col-md-4 col-6">
@@ -1491,7 +1502,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
         document.getElementById('rev-btn-load').classList.remove('d-none');
         this.disabled = true;
 
-        fetch(BASE_URL + '/dashboard/releases_process', {
+        fetch(BASE_URL + '/dashboard/release_process', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
@@ -1789,17 +1800,19 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
 
             // Verificar senha e criar pedido
             const formData = new FormData();
-            formData.append('action', itemType === 'draft' ? 'delete_draft_request' :
-                'delete_release_request');
+            formData.append('action', itemType === 'draft' ? 'delete_draft' :
+                (itemType === 'published' ? 'delete_release_request' : 'delete_draft_request'));
             formData.append('id_album', itemId);
-            formData.append('password', password);
+            if (itemType !== 'draft') {
+                formData.append('password', password);
+            }
             formData.append('csrf_token', CSRF);
 
-            console.log('A enviar pedido para:', BASE_URL + '/dashboard/creat_release_process');
+            console.log('A enviar pedido para:', BASE_URL + '/dashboard/launch/release_process.php');
             console.log('Action:', itemType === 'draft' ? 'delete_draft_request' :
                 'delete_release_request');
 
-            response = await fetch(BASE_URL + '/dashboard/creat_release_process', {
+            response = await fetch(BASE_URL + '/dashboard/release_process', {
                 method: 'POST',
                 body: formData
             });
@@ -1982,7 +1995,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
             formData.append('id_album', albumId);
             formData.append('csrf_token', CSRF);
 
-            const response = await fetch(BASE_URL + '/dashboard/creat_release_process', {
+            const response = await fetch(BASE_URL + '/dashboard/release_process', {
                 method: 'POST',
                 body: formData
             });
@@ -2089,7 +2102,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
     // ── Badge de notificações — polling 60s ──────────────────
     (function() {
         function refreshBadge() {
-            fetch('../ajax/notifications_api.php?action=count', {
+            fetch('./ajax/notifications_api.php?action=count', {
                     credentials: 'same-origin'
                 })
                 .then(r => r.json())

@@ -5,6 +5,7 @@
 // Rota:    wu-panel-2026/manager/process (POST only)
 // ══════════════════════════════════════════════════════════════
 require_once __DIR__ . '/../../include/platform_admin.php';
+require_once dirname(__DIR__, 3) . '/authentic/include/payment_workflow.php';
 requirePermission($admin_id, 'finances.view');
 
 function jOut(bool $ok, string $msg, array $extra = []): never
@@ -523,6 +524,117 @@ if ($action === 'pay_royalty') {
 // VALIDAR COMPROVATIVO (payment_proof)
 // ════════════════════════════════════════════════════════════════════════════
 if ($action === 'validate_proof') {
+    requirePermission($admin_id, 'finances.edit');
+    $id     = (int)($_POST['id_proof'] ?? 0);
+    $ns     = trim($_POST['new_status'] ?? '');
+    $reason = trim($_POST['reject_reason'] ?? '');
+    if (!$id || !in_array($ns, ['validated', 'rejected'], true)) jOut(false, 'Dados invalidos.');
+    if ($ns === 'rejected' && !$reason) jOut(false, 'Motivo obrigatorio na rejeicao.');
+
+    $p = $db->prepare("
+        SELECT pp.*, pi.id_intent, pi.id_users, pi.id_plan, pi.reference_code, pi.amount_expected,
+               pl.name_plan, pl.slug_plan,
+               u.email_user, u.first_name, u.second_name
+        FROM _payment_proof pp
+        JOIN _payment_intent pi ON pi.id_intent = pp.id_intent
+        JOIN _users u ON u.id_users = pi.id_users
+        JOIN _plans pl ON pl.id_plan = pi.id_plan
+        WHERE pp.id_proof = ?
+        LIMIT 1
+    ");
+    $p->execute([$id]);
+    $proof = $p->fetch();
+    if (!$proof) jOut(false, 'Comprovativo nao encontrado.');
+    if ($proof['status'] !== 'pending') jOut(false, 'Ja foi processado.');
+
+    $retryUrl = APP_URL . '/' . APP_URL_PANEL . '/payment/pay?plan=' . urlencode((string)$proof['slug_plan']);
+    $panelUrl = APP_URL . '/' . APP_URL_PANEL . '/painel';
+    $userName = trim(($proof['first_name'] ?? '') . ' ' . ($proof['second_name'] ?? ''));
+
+    try {
+        $db->beginTransaction();
+
+        if ($ns === 'validated') {
+            paymentWorkflowActivatePlan($db, $proof, $proof, $admin_id);
+            $db->commit();
+
+            notifyUser(
+                $db,
+                (int)$proof['id_users'],
+                $admin_id,
+                'payment',
+                'Comprovativo Validado',
+                'O teu comprovativo foi validado e o plano ' . $proof['name_plan'] . ' ja esta activo.',
+                $panelUrl
+            );
+
+            biz_mail(
+                $proof['email_user'],
+                'Plano ' . $proof['name_plan'] . ' activado - ' . APP_NAME,
+                '<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto">' .
+                '<h2>Plano activado</h2>' .
+                '<p>Ola ' . htmlspecialchars($userName) . ',</p>' .
+                '<p>O teu comprovativo foi validado e o plano <strong>' . htmlspecialchars($proof['name_plan']) . '</strong> ja esta activo.</p>' .
+                '<p><strong>Referencia:</strong> ' . htmlspecialchars($proof['reference_code']) . '</p>' .
+                '<p><a href="' . $panelUrl . '">Ir ao painel</a></p>' .
+                '</div>'
+            );
+        } else {
+            $db->prepare("
+                UPDATE _payment_proof
+                SET status = 'rejected',
+                    reject_reason = ?,
+                    reviewer_id = ?,
+                    reviewed_at = NOW()
+                WHERE id_proof = ?
+            ")->execute([$reason, $admin_id, $id]);
+
+            paymentWorkflowRejectPendingActivation($db, $proof, $admin_id, $reason);
+            $db->commit();
+
+            notifyUser(
+                $db,
+                (int)$proof['id_users'],
+                $admin_id,
+                'warning',
+                'Comprovativo Rejeitado',
+                'O comprovativo foi rejeitado. Motivo: ' . $reason,
+                $retryUrl
+            );
+
+            biz_mail(
+                $proof['email_user'],
+                'Comprovativo rejeitado - ' . APP_NAME,
+                '<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto">' .
+                '<h2>Comprovativo rejeitado</h2>' .
+                '<p>Ola ' . htmlspecialchars($userName) . ',</p>' .
+                '<p>O comprovativo do plano <strong>' . htmlspecialchars($proof['name_plan']) . '</strong> foi rejeitado.</p>' .
+                '<p><strong>Motivo:</strong> ' . htmlspecialchars($reason) . '</p>' .
+                '<p><a href="' . $retryUrl . '">Gerar uma nova referencia</a></p>' .
+                '</div>'
+            );
+        }
+
+        logAudit(
+            $admin_id,
+            (int)$proof['id_users'],
+            'proof.' . $ns,
+            '_payment_proof',
+            $id,
+            json_encode(['status' => 'pending']),
+            json_encode(['status' => $ns, 'reason' => $reason ?: null])
+        );
+        jOut(true, 'Comprovativo ' . ($ns === 'validated' ? 'validado' : 'rejeitado') . '!');
+    } catch (Exception $e) {
+        if ($db->inTransaction()) {
+            $db->rollBack();
+        }
+        error_log('[PROOF_V2] ' . $e->getMessage());
+        jOut(false, 'Erro ao processar.');
+    }
+}
+
+if ($action === 'validate_proof_legacy') {
     requirePermission($admin_id, 'finances.edit');
     $id    = (int)($_POST['id_proof'] ?? 0);
     $ns    = trim($_POST['new_status'] ?? '');

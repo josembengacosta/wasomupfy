@@ -13,8 +13,9 @@ $user     = getUserById($id_users);
 
 // ─── Determinar plano ──────────────────────────────────
 // Aceita ?plan=single|album|artist|label ou usa o plano guardado no utilizador
-$plan_slug = $_GET['plan'] ?? null;
-$plan      = null;
+$plan_slug           = $_GET['plan'] ?? null;
+$requested_intent_id = (int)($_GET['intent'] ?? 0);
+$plan                = null;
 
 if ($plan_slug) {
     $plan = getPlanBySlug($plan_slug);
@@ -30,15 +31,35 @@ if (!$plan) {
 }
 
 // ─── Verificar se já tem pagamento pendente para este plano ─
-$existing = getDB()->prepare("
-    SELECT * FROM _payment_intent
-    WHERE id_users = ? AND id_plan = ?
-    AND status IN ('created','waiting_payment','under_review')
-    AND expires_at > NOW()
-    ORDER BY creat_intent DESC LIMIT 1
-");
-$existing->execute([$id_users, $plan['id_plan']]);
-$intent = $existing->fetch();
+$intent = null;
+
+if ($requested_intent_id > 0) {
+    $by_id = getDB()->prepare("
+        SELECT *
+        FROM _payment_intent
+        WHERE id_intent = ? AND id_users = ? AND id_plan = ?
+        LIMIT 1
+    ");
+    $by_id->execute([$requested_intent_id, $id_users, $plan['id_plan']]);
+    $intent = $by_id->fetch() ?: null;
+
+    if ($intent && $intent['status'] === 'expired') {
+        $intent = null;
+    }
+}
+
+if (!$intent) {
+    $existing = getDB()->prepare("
+        SELECT *
+        FROM _payment_intent
+        WHERE id_users = ? AND id_plan = ?
+        AND status IN ('created','waiting_payment','under_review')
+        AND expires_at > NOW()
+        ORDER BY creat_intent DESC LIMIT 1
+    ");
+    $existing->execute([$id_users, $plan['id_plan']]);
+    $intent = $existing->fetch() ?: null;
+}
 
 // ─── Criar novo Payment Intent se não existir ────────────
 if (!$intent) {
@@ -70,6 +91,8 @@ if (!$intent) {
 
     $intent = [
         'id_intent'       => $intent_id,
+        'id_users'        => $id_users,
+        'id_plan'         => $plan['id_plan'],
         'reference_code'  => $ref_code,
         'amount_expected' => $plan['price_plan'],
         'expires_at'      => $expires,
@@ -84,6 +107,17 @@ $proof_stmt = getDB()->prepare("
 $proof_stmt->execute([$intent['id_intent']]);
 $proof = $proof_stmt->fetch();
 
+$payment_stmt = getDB()->prepare("
+    SELECT p.*, up.status_plan
+    FROM _payment p
+    LEFT JOIN _user_plan up ON up.id_payment = p.id_payment AND up.id_users = p.id_users
+    WHERE p.payment_ref = ? AND p.id_users = ?
+    ORDER BY p.id_payment DESC
+    LIMIT 1
+");
+$payment_stmt->execute([$intent['reference_code'], $id_users]);
+$payment_row = $payment_stmt->fetch() ?: null;
+
 // ─── Dados para a página ────────────────────────────────
 $reference     = $intent['reference_code'];
 $amount        = number_format($intent['amount_expected'], 2, ',', '.');
@@ -96,6 +130,27 @@ $max_releases  = $plan['max_releases'] ?? 'Ilimitado';
 $max_tracks    = $plan['max_tracks_per_release'] ?? 'Ilimitado';
 $max_artists   = $plan['max_artists'] ?? 1;
 $intent_id     = $intent['id_intent'];
+$trust_score   = (int)($user['trust_score'] ?? 50);
+$proof_status  = $proof['status'] ?? null;
+$is_processing = $proof
+    && $proof_status === 'pending'
+    && $payment_row
+    && $payment_row['status_payment'] === 'pending';
+$auto_approve_ts = $is_processing ? (strtotime($proof['uploaded_at']) + 1800) : null;
+$pay_page_url    = APP_URL . '/' . APP_URL_PANEL . '/payment/pay?plan=' . urlencode((string)$plan['slug_plan']);
+$intent_page_url = $pay_page_url . '&intent=' . $intent_id;
+
+if ($plan['slug_plan'] === 'label') {
+    $review_notice = 'O teu plano so sera activado apos validacao manual da nossa equipa.';
+} elseif ($trust_score < 30) {
+    $review_notice = 'Depois de enviares o comprovativo, este pagamento passara por validacao manual antes da activacao.';
+} else {
+    $review_notice = 'Depois de enviares o comprovativo, o pagamento entra em processamento e a activacao costuma acontecer em cerca de 30 minutos.';
+}
+
+$proof_notice = ($plan['slug_plan'] === 'label' || $trust_score < 30)
+    ? 'O comprovativo sera analisado pela nossa equipa antes da activacao do plano.'
+    : 'O comprovativo pode ser validado automaticamente ou encaminhado para revisao manual, conforme o plano e o historico da conta.';
 
 // Ícone por plano
 $plan_icons = [
@@ -108,7 +163,7 @@ $plan_icon = $plan_icons[$plan_slug_] ?? 'bi-star';
 
 // Determinar step inicial
 $initial_step = 1;
-if ($proof) {
+if ($proof || in_array($intent['status'], ['approved', 'rejected'], true)) {
     $initial_step = 4; // Já enviou comprovativo
 } elseif ($intent['status'] === 'waiting_payment') {
     $initial_step = 3; // Já viu as instruções
@@ -1078,12 +1133,24 @@ if ($proof) {
         // ══════════════════════════════════════════════
         // CONFIG
         // ══════════════════════════════════════════════
-        const EXPIRES_AT = <?php echo $expires_ts; ?> * 1000; // ms
-        const TOTAL_SECS = 3600; // 60 min
-        const BASE_URL = '<?php echo (APP_URL . '/' . APP_URL_PANEL); ?>';
+        const EXPIRES_AT = <?php echo $expires_ts; ?> * 1000;
+        const TOTAL_SECS = 3600;
+        const AUTO_APPROVE_WINDOW_SECS = 1800;
+        const BASE_URL = <?php echo json_encode(APP_URL . '/' . APP_URL_PANEL); ?>;
+        const PAY_PAGE_URL = <?php echo json_encode($pay_page_url); ?>;
+        const INTENT_PAGE_URL = <?php echo json_encode($intent_page_url); ?>;
         const INTENT_ID = <?php echo $intent_id; ?>;
-        const CSRF = '<?php echo $_SESSION['csrf_token']; ?>';
+        const CSRF = <?php echo json_encode($_SESSION['csrf_token']); ?>;
+        const PLAN_NAME = <?php echo json_encode($plan_name); ?>;
+        const REFERENCE_CODE = <?php echo json_encode($reference); ?>;
+        const AMOUNT_LABEL = <?php echo json_encode($amount . ' AOA'); ?>;
+        const PROOF_STATUS = <?php echo json_encode($proof_status); ?>;
+        const INTENT_STATUS = <?php echo json_encode($intent['status']); ?>;
+        const REJECT_REASON = <?php echo json_encode($proof['reject_reason'] ?? ''); ?>;
+        const IS_PROCESSING = <?php echo $is_processing ? 'true' : 'false'; ?>;
+        const INITIAL_AUTO_APPROVE_TS = <?php echo $auto_approve_ts ?: 'null'; ?>;
         let currentStep = <?php echo $initial_step; ?>;
+        let autoApproveInterval = null;
 
         // ══════════════════════════════════════════════
         // NAVEGAÇÃO ENTRE STEPS
@@ -1114,6 +1181,169 @@ if ($proof) {
                     circle.textContent = s;
                 }
             });
+        }
+
+        function statusCard() {
+            const step4 = document.getElementById('step-4');
+            return step4 ? step4.querySelector('.pay-card') : null;
+        }
+
+        function syncIntentUrl() {
+            window.history.replaceState({}, '', INTENT_PAGE_URL);
+        }
+
+        function stopAutoApproveCountdown() {
+            if (autoApproveInterval) {
+                clearInterval(autoApproveInterval);
+                autoApproveInterval = null;
+            }
+        }
+
+        function renderRejectedStatus(message = REJECT_REASON) {
+            const card = statusCard();
+            if (!card) return;
+
+            card.innerHTML = `
+                <div class="status-icon-wrap status-rejected">
+                    <i class="bi bi-x-circle-fill"></i>
+                </div>
+                <h4 class="fw-bold mb-2">Comprovativo Rejeitado</h4>
+                ${message ? `
+                    <div class="alert-dark-warn mb-3" style="text-align:left">
+                        <i class="bi bi-chat-left-text me-2"></i>
+                        <strong>Motivo:</strong> ${message}
+                    </div>
+                ` : ''}
+                <p class="text-muted mb-3">Cria uma nova referencia e envia um novo comprovativo correcto.</p>
+                <a href="${PAY_PAGE_URL}" class="btn-pay d-block">
+                    <i class="bi bi-arrow-repeat me-2"></i>Tentar Novamente
+                </a>`;
+        }
+
+        function renderReviewStatus(message) {
+            const card = statusCard();
+            if (!card) return;
+
+            card.innerHTML = `
+                <div class="status-icon-wrap status-pending">
+                    <i class="bi bi-person-check-fill"></i>
+                </div>
+                <h4 class="fw-bold mb-2">Em Revisao</h4>
+                <p class="text-muted mb-3">${message}</p>
+                <div class="info-row text-start mb-2">
+                    <div>
+                        <div class="info-row-label">Plano</div>
+                        <div class="info-row-value">${PLAN_NAME}</div>
+                    </div>
+                </div>
+                <div class="info-row text-start mb-3">
+                    <div>
+                        <div class="info-row-label">Referencia</div>
+                        <div class="info-row-value">${REFERENCE_CODE}</div>
+                    </div>
+                </div>
+                <a href="${BASE_URL}/painel" class="btn-outline-pay d-block" style="text-align:center">
+                    <i class="bi bi-house me-2"></i>Voltar ao Painel
+                </a>`;
+        }
+
+        function renderProcessingStatus(message, autoApproveTs) {
+            const card = statusCard();
+            if (!card) return;
+
+            card.innerHTML = `
+                <div class="status-icon-wrap" style="background:rgba(99,102,241,.1);border:2px solid #6366f1;color:#6366f1">
+                    <i class="bi bi-hourglass-split"></i>
+                </div>
+                <h4 class="fw-bold mb-2">A processar pagamento</h4>
+                <p class="text-muted mb-3">${message}</p>
+                <div id="processing-timer" style="background:rgba(99,102,241,.07);border:1px solid rgba(99,102,241,.25);border-radius:10px;padding:.875rem 1rem;margin-bottom:1.25rem">
+                    <div style="font-size:.78rem;color:#818cf8;margin-bottom:.35rem">Activacao automatica em</div>
+                    <div id="auto-approve-countdown" style="font-size:1.4rem;font-weight:700;color:#a5b4fc;font-variant-numeric:tabular-nums">--:--</div>
+                    <div class="countdown-bar mt-2">
+                        <div id="auto-approve-fill" class="countdown-fill" style="background:linear-gradient(90deg,#6366f1,#818cf8);width:100%"></div>
+                    </div>
+                </div>
+                <div class="info-row text-start mb-2">
+                    <div>
+                        <div class="info-row-label">Plano</div>
+                        <div class="info-row-value">${PLAN_NAME}</div>
+                    </div>
+                </div>
+                <div class="info-row text-start mb-2">
+                    <div>
+                        <div class="info-row-label">Referencia</div>
+                        <div class="info-row-value">${REFERENCE_CODE}</div>
+                    </div>
+                </div>
+                <div class="info-row text-start mb-3">
+                    <div>
+                        <div class="info-row-label">Valor</div>
+                        <div class="info-row-value" style="color:var(--pink)">${AMOUNT_LABEL}</div>
+                    </div>
+                </div>
+                <p style="font-size:.8rem;color:var(--muted);margin-top:1rem">
+                    Vais receber uma notificacao e um email quando o plano for activado.
+                </p>
+                <a href="${BASE_URL}/painel" class="btn-outline-pay d-block" style="text-align:center">
+                    <i class="bi bi-house me-2"></i>Voltar ao Painel
+                </a>`;
+
+            startAutoApproveCountdown(autoApproveTs);
+        }
+
+        function startAutoApproveCountdown(autoApproveTs) {
+            stopAutoApproveCountdown();
+            if (!autoApproveTs) return;
+
+            const timerEl = document.getElementById('auto-approve-countdown');
+            const fillEl = document.getElementById('auto-approve-fill');
+            if (!timerEl || !fillEl) return;
+
+            const tick = () => {
+                const remaining = Math.max(0, autoApproveTs - Math.floor(Date.now() / 1000));
+                const minutes = Math.floor(remaining / 60);
+                const seconds = remaining % 60;
+                const percentage = Math.max(0, Math.min(100, (remaining / AUTO_APPROVE_WINDOW_SECS) * 100));
+
+                timerEl.textContent = remaining > 0
+                    ? `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+                    : 'A verificar...';
+                fillEl.style.width = `${percentage}%`;
+
+                if (remaining === 0) {
+                    stopAutoApproveCountdown();
+                    setTimeout(() => {
+                        window.location.href = INTENT_PAGE_URL;
+                    }, 3000);
+                }
+            };
+
+            tick();
+            autoApproveInterval = setInterval(tick, 1000);
+        }
+
+        function syncInitialStep4State() {
+            if (currentStep !== 4) return;
+
+            syncIntentUrl();
+
+            if (PROOF_STATUS === 'rejected' || INTENT_STATUS === 'rejected') {
+                renderRejectedStatus(REJECT_REASON);
+                return;
+            }
+
+            if (IS_PROCESSING) {
+                renderProcessingStatus(
+                    'O teu comprovativo foi recebido. O plano sera activado automaticamente assim que a validacao terminar, normalmente em cerca de 30 minutos.',
+                    INITIAL_AUTO_APPROVE_TS
+                );
+                return;
+            }
+
+            if (PROOF_STATUS === 'pending' || INTENT_STATUS === 'under_review') {
+                renderReviewStatus('O teu comprovativo foi recebido e esta em validacao manual. Vais receber uma notificacao assim que o processo estiver concluido.');
+            }
         }
 
         // ══════════════════════════════════════════════
@@ -1174,6 +1404,7 @@ if ($proof) {
             const iv = setInterval(tick, 1000);
         }
         startCountdown();
+        syncInitialStep4State();
 
         // ══════════════════════════════════════════════
         // CONFIRMAR QUE VIU AS INSTRUÇÕES
@@ -1285,6 +1516,69 @@ if ($proof) {
                     btn.innerHTML = '<i class="bi bi-send me-2"></i>Enviar Comprovativo';
                 });
         });
+
+        document.getElementById('proof-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            const btn = document.getElementById('submit-proof');
+            const err = document.getElementById('upload-error');
+            err.style.display = 'none';
+
+            const file = fileInput.files[0];
+            if (!file) {
+                err.style.display = 'block';
+                err.textContent = 'Selecciona um comprovativo antes de enviar.';
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                err.style.display = 'block';
+                err.textContent = 'O ficheiro e muito grande. Maximo 5 MB.';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>A enviar...';
+
+            fetch('payment_process', {
+                method: 'POST',
+                body: new FormData(this)
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (!data.ok) {
+                    err.style.display = 'block';
+                    err.textContent = data.message || 'Erro ao enviar. Tenta novamente.';
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-send me-2"></i>Enviar Comprovativo';
+                    return;
+                }
+
+                syncIntentUrl();
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-send me-2"></i>Enviar Comprovativo';
+
+                if (data.state === 'processing') {
+                    renderProcessingStatus(
+                        data.message || 'Comprovativo recebido. O teu plano esta em processamento.',
+                        data.auto_approve_ts || null
+                    );
+                } else {
+                    renderReviewStatus(
+                        data.message || 'O teu comprovativo foi recebido e esta em validacao manual.'
+                    );
+                }
+
+                goStep(4);
+            })
+            .catch(() => {
+                err.style.display = 'block';
+                err.textContent = 'Erro de ligacao. Verifica a tua internet e tenta novamente.';
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-send me-2"></i>Enviar Comprovativo';
+            });
+        }, true);
     </script>
 </body>
 
