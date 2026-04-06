@@ -1,4 +1,8 @@
 <?php
+// ══════════════════════════════════════════════════════════════
+// WASOM UPFY for Business — Payment Panel Guard
+// Arquivo: wu-panel-2026/pages/manager/include/payment-guard.php
+// ══════════════════════════════════════════════════════════════
 
 if (!function_exists('paymentPanelBaseUrl')) {
     function paymentPanelBaseUrl(): string
@@ -19,7 +23,11 @@ if (!function_exists('paymentPanelEnsureCsrf')) {
 if (!function_exists('paymentPanelLogout')) {
     function paymentPanelLogout(): void
     {
-        unset($_SESSION['payment_control_auth'], $_SESSION['biz_auth_time'], $_SESSION['biz_attempts']);
+        unset(
+            $_SESSION['payment_control_auth'],
+            $_SESSION['biz_auth_time'],
+            $_SESSION['biz_attempts']
+        );
     }
 }
 
@@ -39,10 +47,14 @@ if (!function_exists('paymentPanelTouch')) {
     }
 }
 
+/**
+ * URL de destino padrão quando o utilizador não está autenticado no painel financeiro.
+ * Aponta para /login — separado do dashboard /gestion.
+ */
 if (!function_exists('paymentPanelDefaultTarget')) {
     function paymentPanelDefaultTarget(): string
     {
-        return paymentPanelBaseUrl() . '/gestion';
+        return paymentPanelBaseUrl() . '/login';
     }
 }
 
@@ -54,7 +66,8 @@ if (!function_exists('paymentPanelSanitizeReturnTarget')) {
             return paymentPanelDefaultTarget();
         }
 
-        $basePath = rtrim((string)parse_url(APP_URL, PHP_URL_PATH), '/');
+        // Validar que o destino pertence ao sub-caminho /manager/
+        $basePath       = rtrim((string)parse_url(APP_URL, PHP_URL_PATH), '/');
         $expectedPrefix = $basePath . '/' . ADMIN_PATH . '/manager/';
         if (str_starts_with($target, $expectedPrefix)) {
             return $target;
@@ -96,6 +109,10 @@ if (!function_exists('paymentPanelVerifyAccessCode')) {
     }
 }
 
+/**
+ * Exige autenticação no painel financeiro para páginas HTML normais.
+ * Se não autenticado, redireciona para /login com o destino actual como return_to.
+ */
 if (!function_exists('paymentPanelRequireAccess')) {
     function paymentPanelRequireAccess(): void
     {
@@ -103,7 +120,8 @@ if (!function_exists('paymentPanelRequireAccess')) {
         paymentPanelExpireIfIdle();
 
         if (empty($_SESSION['payment_control_auth'])) {
-            header('Location: ' . paymentPanelDefaultTarget());
+            $returnTo = urlencode(paymentPanelCurrentTarget());
+            header('Location: ' . paymentPanelDefaultTarget() . '?return_to=' . $returnTo);
             exit;
         }
 
@@ -111,6 +129,10 @@ if (!function_exists('paymentPanelRequireAccess')) {
     }
 }
 
+/**
+ * Exige autenticação para endpoints AJAX (process.php).
+ * Retorna false em vez de redirecionar — o chamador emite o JSON de erro.
+ */
 if (!function_exists('paymentPanelRequireAccessJson')) {
     function paymentPanelRequireAccessJson(): bool
     {

@@ -814,18 +814,11 @@ function pay_status_label(string $s): string
                                             <span
                                                 class="badge badge-soft-pink"><?php echo adm_fmt_aoa($revenue_today); ?></span>
                                         </h5>
-                                        <p class="mb-2">Vê relatórios sobre a receita de hoje</p>
-                                        <div class="mb-0">
-                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/finances/payments"
-                                                class="card-link">Ver
-                                                relatório <i class="bi bi-arrow-right"></i></a>
-                                        </div>
+                                        <p class="mb-2">Acompanhe relatórios sobre a receita de hoje</p>
                                     </div>
                                     <div class="d-inline-block ms-3">
                                         <div class="stat">
-                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/finances/payments"
-                                                title="Receita hoje"><i
-                                                    class="align-middle bi-cash-coin card-icon"></i></a>
+                                            <i class="align-middle bi-cash-coin card-icon"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -845,19 +838,14 @@ function pay_status_label(string $s): string
                                             <span class="badge badge-soft-pink counter"
                                                 data-valor="<?php echo $accounts_ok; ?>" data-tipo="contagem">0</span>
                                         </h5>
-                                        <p class="mb-2">Vê agora todas as Contas Disponíveis na <strong>Wasom
-                                                Upfy</strong></p>
-                                        <div class="mb-0">
-                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users/available-account"
-                                                class="card-link">Ver
-                                                as Contas Disponíveis <i class="bi bi-arrow-right"></i></a>
-                                        </div>
+                                        <p class="mb-2">Contas Disponíveis na <strong>Wasom
+                                                Upfy</strong><a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users"
+                                                class="card-link">Ver usuários
+                                                <i class="bi bi-arrow-right"></i></a></p>
                                     </div>
                                     <div class="d-inline-block ms-3">
                                         <div class="stat">
-                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users/available-account"
-                                                title="Contas disponíveis"><i
-                                                    class="align-middle bi-person-check card-icon"></i></a>
+                                            <i class="align-middle bi-person-check card-icon"></i></a>
                                         </div>
                                     </div>
                                 </div>
@@ -875,19 +863,14 @@ function pay_status_label(string $s): string
                                             <span class="badge badge-soft-pink counter"
                                                 data-valor="<?php echo $accounts_pend; ?>" data-tipo="contagem">0</span>
                                         </h5>
-                                        <p class="mb-2">Vê agora todas as contas indisponível na <strong>Wasom
-                                                Upfy</strong></p>
-                                        <div class="mb-0">
-                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users/unavailable-account"
-                                                class="card-link">Ver as Contas Indisponíveis <i
-                                                    class="bi bi-arrow-right"></i></a>
-                                        </div>
+                                        <p class="mb-2">Contas Indisponível na <strong>Wasom
+                                                Upfy</strong><a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users"
+                                                class="card-link">Ver usuários
+                                                <i class="bi bi-arrow-right"></i></a></p>
                                     </div>
                                     <div class="d-inline-block ms-3">
                                         <div class="stat">
-                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users/unavailable-account"
-                                                title="Contas indisponíveis"><i
-                                                    class="align-middle bi-person-exclamation card-icon"></i></a>
+                                            <i class="align-middle bi-person-exclamation card-icon"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -911,14 +894,14 @@ function pay_status_label(string $s): string
                                         </h5>
                                         <p class="mb-2">Lançamentos aguardando revisão e aprovação</p>
                                         <div class="mb-0">
-                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/releases/pending"
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/releases/"
                                                 class="card-link">Rever
                                                 agora <i class="bi bi-arrow-right"></i></a>
                                         </div>
                                     </div>
                                     <div class="d-inline-block ms-3">
                                         <div class="stat">
-                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/releases/pending"
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/releases/"
                                                 title="Lançamentos pendentes"><i
                                                     class="align-middle bi-hourglass-split card-icon"></i></a>
                                         </div>
@@ -945,13 +928,13 @@ function pay_status_label(string $s): string
                                         <p class="mb-2">Utilizadores com conta bancária registada na <strong>Wasom
                                                 Upfy</strong></p>
                                         <div class="mb-0">
-                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users"
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/accounts/"
                                                 class="card-link">Ver contas <i class="bi bi-arrow-right"></i></a>
                                         </div>
                                     </div>
                                     <div class="d-inline-block ms-3">
                                         <div class="stat">
-                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users"
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/accounts/"
                                                 title="Contas bancárias"><i
                                                     class="align-middle bi-bank card-icon"></i></a>
                                         </div>
@@ -977,14 +960,14 @@ function pay_status_label(string $s): string
                                         <p class="mb-2">Colaboradores registados pelos artistas da <strong>Wasom
                                                 Upfy</strong></p>
                                         <div class="mb-0">
-                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users"
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/collab/"
                                                 class="card-link">Ver
                                                 colaboradores <i class="bi bi-arrow-right"></i></a>
                                         </div>
                                     </div>
                                     <div class="d-inline-block ms-3">
                                         <div class="stat">
-                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users"
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/collab/"
                                                 title="Colaboradores"><i
                                                     class="align-middle bi-people-fill card-icon"></i></a>
                                         </div>
@@ -1048,14 +1031,14 @@ function pay_status_label(string $s): string
                                         <p class="mb-2">Todos os pedidos de suporte da <strong>Wasom Upfy</strong> estão
                                             disponíveis aqui.</p>
                                         <div class="mb-0">
-                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/support"
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/messages/inbox"
                                                 class="card-link">Ver pedidos
                                                 de suporte <i class="bi bi-arrow-right"></i></a>
                                         </div>
                                     </div>
                                     <div class="d-inline-block ms-3">
                                         <div class="stat">
-                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/support"
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/messages/inbox"
                                                 title="Suporte"><i class="align-middle bi-headset card-icon"></i></a>
                                         </div>
                                     </div>
@@ -1179,8 +1162,8 @@ function pay_status_label(string $s): string
                                     </tbody>
                                 </table>
                             </div>
-                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/analytics" class="card-link">Ver todas <i
-                                    class="bi bi-arrow-right"></i></a>
+                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/manager/top-tracks" class="card-link">Ver
+                                todas <i class="bi bi-arrow-right"></i></a>
                         </div>
                     </div>
                     <?php endif; ?>
@@ -1329,7 +1312,7 @@ function pay_status_label(string $s): string
                         <div class="card stats-card-primary flex-fill">
                             <div class="section-card-header">
                                 <h5 class="card-title mb-0">Lançamentos por Rever</h5>
-                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/releases/pending" class="card-link"
+                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/releases" class="card-link"
                                     style="font-size:.8rem">Ver todos <i class="bi bi-arrow-right"></i></a>
                             </div>
                             <?php if (empty($pending_rel)): ?>
@@ -1428,11 +1411,11 @@ function pay_status_label(string $s): string
                                     </thead>
                                     <tbody>
                                         <?php foreach ($recent_pays as $pay):
-                                                $ini   = adm_initials($pay['first_name'], $pay['second_name'] ?? '');
-                                                $color = adm_avatar_color($pay['first_name']);
-                                                $sc    = pay_status_class($pay['status_payment']);
-                                                $sl    = pay_status_label($pay['status_payment']);
-                                            ?>
+                                                    $ini   = adm_initials($pay['first_name'], $pay['second_name'] ?? '');
+                                                    $color = adm_avatar_color($pay['first_name']);
+                                                    $sc    = pay_status_class($pay['status_payment']);
+                                                    $sl    = pay_status_label($pay['status_payment']);
+                                                ?>
                                         <tr>
                                             <td>
                                                 <div class="d-flex align-items-center gap-2">
@@ -1441,7 +1424,7 @@ function pay_status_label(string $s): string
                                                         <img src="../assets/comprovantes/uploads/users/<?php echo htmlspecialchars($pay['photo_user']); ?>"
                                                             alt="" onerror="this.style.display='none'" />
                                                         <?php else: echo $ini;
-                                                                endif; ?>
+                                                                    endif; ?>
                                                     </div>
                                                     <span
                                                         style="font-size:.82rem"><?php echo htmlspecialchars($pay['first_name'] . ' ' . ($pay['second_name'] ?? '')); ?></span>
@@ -1508,8 +1491,8 @@ function pay_status_label(string $s): string
                                     </thead>
                                     <tbody>
                                         <?php foreach ($releases_24h as $rel):
-                                                [$sc, $sl] = rel_status($rel['status_album']);
-                                            ?>
+                                                    [$sc, $sl] = rel_status($rel['status_album']);
+                                                ?>
                                         <tr>
                                             <td>
                                                 <?php if (!empty($rel['img_cover'])): ?>
@@ -1556,7 +1539,7 @@ function pay_status_label(string $s): string
                                 <i class="bi bi-headset me-2" style="color:#FF0089"></i>
                                 Pedidos de Suporte nas Últimas 24h
                             </h5>
-                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/support" class="card-link"
+                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/messages/inbox" class="card-link"
                                 style="font-size:.8rem">
                                 Ver todos <i class="bi bi-arrow-right"></i>
                             </a>
@@ -1653,7 +1636,7 @@ function pay_status_label(string $s): string
                                 <div class="mt-1">
                                     <small class="text-white-stable"
                                         style="opacity:.5"><?php echo adm_fmt_date($tk['creat_ticket']); ?></small>
-                                    <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/support/<?php echo (int)$tk['id_ticket']; ?>"
+                                    <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/messages/inbox/<?php echo (int)$tk['id_ticket']; ?>"
                                         class="card-link ms-3" style="font-size:.75rem">
                                         Ver ticket <i class="bi bi-arrow-right"></i>
                                     </a>
@@ -1681,10 +1664,8 @@ function pay_status_label(string $s): string
         <div class="container">
             <div class="row">
                 <div class="col-12 text-center">
-                    <p class="mb-2">© 2026 Wasom Upfy. Todos os direitos reservados.</p>
-                    <a href="<?php echo APP_URL; ?>/page/politicies/terms" class="me-2">Termos de Uso</a>
-                    <a href="<?php echo APP_URL; ?>/page/politicies/privacy" class="me-2">Privacidade</a>
-                    <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/support">Suporte</a>
+                    <p class="mb-2">© <?php echo date('Y'); ?> <?php echo APP_NAME; ?>. Todos os direitos reservados.
+                    </p>
                 </div>
             </div>
         </div>
@@ -1856,24 +1837,25 @@ function pay_status_label(string $s): string
     if (ctx) {
         updateChart("7days");
 
-    document.querySelectorAll(".dropdown-menu a[data-period]").forEach(item => {
-        item.addEventListener("click", e => {
-            e.preventDefault();
-            updateChart(e.target.getAttribute("data-period"));
-            e.target.closest(".dropdown").querySelector(".dropdown-toggle").textContent = e.target
-                .textContent;
+        document.querySelectorAll(".dropdown-menu a[data-period]").forEach(item => {
+            item.addEventListener("click", e => {
+                e.preventDefault();
+                updateChart(e.target.getAttribute("data-period"));
+                e.target.closest(".dropdown").querySelector(".dropdown-toggle").textContent = e.target
+                    .textContent;
+            });
         });
-    });
         document.querySelector('[onclick="toggleDarkMode()"]').addEventListener("click", () => {
-            const cur = (document.querySelector('[aria-label="Selecionar PerÃ­odo"]')?.textContent || "").trim();
+            const cur = (document.querySelector('[aria-label="Selecionar PerÃ­odo"]')?.textContent || "")
+                .trim();
             const map = {
-            "Hoje": "today",
-            "Últimos 7 dias": "7days",
-            "Últimos 30 dias": "30days",
-            "Este mês": "month"
-        };
-        updateChart(map[cur] || "7days");
-    });
+                "Hoje": "today",
+                "Últimos 7 dias": "7days",
+                "Últimos 30 dias": "30days",
+                "Este mês": "month"
+            };
+            updateChart(map[cur] || "7days");
+        });
     }
 
     // ── Relógio em tempo real ───────────────────

@@ -670,10 +670,10 @@ body {
     $sb_adm = $db->prepare("SELECT first_name,second_name,role,photo_employees FROM _employees WHERE id_employees=?");
     $sb_adm->execute([$admin_id]);
     $sb_a   = $sb_adm->fetch() ?: [];
-    $sb_nm  = trim(($sb_a['first_name']??'').(' '.($sb_a['second_name']??'')));
-    $sb_ini = mb_strtoupper(mb_substr($sb_a['first_name']??'A',0,1,'UTF-8'),'UTF-8')
-            . mb_strtoupper(mb_substr($sb_a['second_name']??'',0,1,'UTF-8'),'UTF-8');
-    $sb_rl  = ['super_admin'=>'Super Admin','admin'=>'Administrador','editor'=>'Editor','support'=>'Suporte'];
+    $sb_nm  = trim(($sb_a['first_name'] ?? '') . (' ' . ($sb_a['second_name'] ?? '')));
+    $sb_ini = mb_strtoupper(mb_substr($sb_a['first_name'] ?? 'A', 0, 1, 'UTF-8'), 'UTF-8')
+        . mb_strtoupper(mb_substr($sb_a['second_name'] ?? '', 0, 1, 'UTF-8'), 'UTF-8');
+    $sb_rl  = ['super_admin' => 'Super Admin', 'admin' => 'Administrador', 'editor' => 'Editor', 'support' => 'Suporte'];
     ?>
     <div class="sb-admin-pill">
         <?php if (!empty($sb_a['photo_employees'])): ?>
@@ -686,23 +686,24 @@ body {
         <?php endif; ?>
         <div>
             <div class="sb-admin-name"><?php echo htmlspecialchars($sb_nm); ?></div>
-            <div class="sb-admin-role"><?php echo $sb_rl[$sb_a['role']??'']??ucfirst($sb_a['role']??'Admin'); ?></div>
+            <div class="sb-admin-role"><?php echo $sb_rl[$sb_a['role'] ?? ''] ?? ucfirst($sb_a['role'] ?? 'Admin'); ?>
+            </div>
         </div>
     </div>
 
     <div class="biz-sidebar-scroll">
         <div class="sb-section">Visão Geral</div>
-        <?php echo _sb_item($_sb_base.'/gestion',       'bi-speedometer2',        'Dashboard',          'dashboard',      $_sb_active); ?>
+        <?php echo _sb_item($_sb_base . '/gestion',       'bi-speedometer2',        'Dashboard',          'dashboard',      $_sb_active); ?>
 
         <div class="sb-section">Pagamentos</div>
-        <?php echo _sb_item($_sb_base.'/withdrawals',   'bi-arrow-up-circle',     'Pedidos de Saque',   'withdrawals',    $_sb_active, $_sb_pending_wd); ?>
-        <?php echo _sb_item($_sb_base.'/proofs',        'bi-file-earmark-check',  'Comprovativos',      'proofs',         $_sb_active, $_sb_pending_proof); ?>
+        <?php echo _sb_item($_sb_base . '/withdrawals',   'bi-arrow-up-circle',     'Pedidos de Saque',   'withdrawals',    $_sb_active, $_sb_pending_wd); ?>
+        <?php echo _sb_item($_sb_base . '/proofs',        'bi-file-earmark-check',  'Comprovativos',      'proofs',         $_sb_active, $_sb_pending_proof); ?>
 
         <div class="sb-section">Royalties</div>
-        <?php echo _sb_item($_sb_base.'/royalty-splits','bi-cash-coin',            'Pagar Royalties',    'royalty-splits', $_sb_active, $_sb_pending_roy); ?>
+        <?php echo _sb_item($_sb_base . '/royalty-splits', 'bi-cash-coin',            'Pagar Royalties',    'royalty-splits', $_sb_active, $_sb_pending_roy); ?>
 
         <div class="sb-section">Histórico</div>
-        <?php echo _sb_item($_sb_base.'/transactions',  'bi-arrow-left-right',    'Transacções',        'transactions',   $_sb_active); ?>
+        <?php echo _sb_item($_sb_base . '/transactions',  'bi-arrow-left-right',    'Transacções',        'transactions',   $_sb_active); ?>
     </div>
 
     <div class="sb-footer">
@@ -727,15 +728,34 @@ function closeSidebar() {
 }
 
 function logoutBusiness() {
+    const btn = event?.target;
+    if (btn) btn.disabled = true;
+
+    Swal.fire({
+        title: 'A fazer logout...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+    });
+
     const fd = new FormData();
     fd.append('action', 'logout_payment_panel');
     fd.append('csrf_token', document.querySelector('meta[name="csrf-token"]')?.content || '');
+
     fetch('<?php echo paymentPanelBaseUrl(); ?>/process', {
             method: 'POST',
-            body: fd
+            body: fd,
+            credentials: 'same-origin',
+            redirect: 'manual' //  impede o fetch de seguir o redirect do servidor
         })
-        .finally(() => {
-            window.location.href = '<?php echo paymentPanelBaseUrl(); ?>/gestion';
+        .then(() => {
+            // Independentemente da resposta, navega para /login no cliente
+            // O servidor já destruiu a sessão — só precisamos de ir para lá
+            window.location.replace('<?php echo paymentPanelBaseUrl(); ?>/login');
+        })
+        .catch(() => {
+            // Mesmo em caso de erro de rede, tenta o redirect
+            // (a sessão pode já ter sido destruída no servidor)
+            window.location.replace('<?php echo paymentPanelBaseUrl(); ?>/login');
         });
 }
 

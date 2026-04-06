@@ -5,7 +5,7 @@
 // Rota:    wu-panel-2026/manager/process (POST only)
 // ══════════════════════════════════════════════════════════════
 require_once __DIR__ . '/../../include/platform_admin.php';
-require_once dirname(__DIR__, 3) . '/authentic/include/payment_workflow.php';
+require_once __DIR__ . '/include/payment-guard.php';
 requirePermission($admin_id, 'finances.view');
 
 function jOut(bool $ok, string $msg, array $extra = []): never
@@ -26,12 +26,11 @@ $action = trim($_POST['action'] ?? '');
 
 // ── Logout ────────────────────────────────────────────────────────────────
 if ($action === 'logout_payment_panel') {
-    unset($_SESSION['payment_control_auth'], $_SESSION['biz_auth_time'], $_SESSION['biz_attempts']);
+    paymentPanelLogout();
     jOut(true, 'Sessão encerrada.');
 }
 
-if (empty($_SESSION['payment_control_auth'])) jOut(false, 'Acesso não autorizado.');
-$_SESSION['biz_auth_time'] = time();
+if (!paymentPanelRequireAccessJson()) jOut(false, 'Acesso não autorizado.');
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 function notifyUser(PDO $db, int $id_users, int $id_emp, string $type, string $title, string $body, string $url = ''): void
@@ -133,7 +132,7 @@ if ($action === 'get_withdrawal_details') {
 
     $uname  = trim($wd['first_name'] . ' ' . ($wd['second_name'] ?? ''));
     $smap   = ['pending' => 'Pendente', 'processing' => 'A processar', 'approved' => 'Aprovado', 'rejected' => 'Rejeitado', 'cancelled' => 'Cancelado'];
-    $ab     = APP_URL . '/assets/comprovantes/uploads/';
+    $ab     = APP_URL . '/assets/comprovantes/uploads/bi/id_' . $wd['id_users'] . '';
     $is_act = in_array($wd['status_withdrawal'], ['pending', 'processing']);
 
     $h  = '<div class="row g-4">';
@@ -155,11 +154,11 @@ if ($action === 'get_withdrawal_details') {
         $h .= '<h6 class="fw-bold mb-2 mt-4" style="color:#1a1a2e"><i class="bi bi-person-vcard me-2"></i>Documento BI</h6>';
         $h .= '<div class="row g-2">';
         if ($wd['bi_front_path']) {
-            $u = $ab . 'bi/' . $wd['bi_front_path'];
+            $u = $ab . $wd['bi_front_path'];
             $h .= '<div class="col-6"><small class="text-muted d-block mb-1 text-center">Frente</small><a href="' . $u . '" target="_blank"><img src="' . $u . '" class="bi-doc-img" alt="BI Frente"></a></div>';
         }
         if ($wd['bi_back_path']) {
-            $u = $ab . 'bi/' . $wd['bi_back_path'];
+            $u = $ab . $wd['bi_back_path'];
             $h .= '<div class="col-6"><small class="text-muted d-block mb-1 text-center">Verso</small><a href="' . $u . '" target="_blank"><img src="' . $u . '" class="bi-doc-img" alt="BI Verso"></a></div>';
         }
         $h .= '</div>';
@@ -191,12 +190,10 @@ if ($action === 'get_withdrawal_details') {
     }
     $h .= '</div></div>'; // col + row
 
+    $controlUrl = APP_URL . '/' . ADMIN_PATH . '/manager/gestion?withdrawal=' . (int)$wd['id_withdrawal'];
     $footer = '';
     if ($is_act) {
-        if ($wd['status_withdrawal'] === 'pending')
-            $footer .= '<button class="btn btn-sm btn-outline-primary" onclick="setProcessing(' . (int)$wd['id_withdrawal'] . ');bootstrap.Modal.getInstance(document.getElementById(\'viewModal\')).hide()"><i class="bi bi-arrow-repeat me-1"></i>A processar</button>';
-        $footer .= '<button class="btn btn-sm btn-success" onclick="approveWithdrawal(' . (int)$wd['id_withdrawal'] . ');bootstrap.Modal.getInstance(document.getElementById(\'viewModal\')).hide()"><i class="bi bi-check-lg me-1"></i>Aprovar</button>';
-        $footer .= '<button class="btn btn-sm btn-danger" onclick="rejectWithdrawal(' . (int)$wd['id_withdrawal'] . ');bootstrap.Modal.getInstance(document.getElementById(\'viewModal\')).hide()"><i class="bi bi-x-lg me-1"></i>Rejeitar</button>';
+        $footer .= '<a href="' . htmlspecialchars($controlUrl, ENT_QUOTES, 'UTF-8') . '" class="btn btn-sm btn-dark"><i class="bi bi-box-arrow-up-right me-1"></i>Abrir Treasury Desk</a>';
     }
     $footer .= '<button class="btn btn-sm btn-outline-secondary ms-auto" data-bs-dismiss="modal">Fechar</button>';
     jOut(true, '', ['html' => $h, 'footer_html' => $footer]);
@@ -223,7 +220,7 @@ if ($action === 'set_processing_withdrawal') {
             'payment',
             'Saque em Processamento 🔄',
             'O teu saque de ' . biz_fmt_d((float)$wd['amount_net']) . ' está a ser processado. Serás notificado quando concluído.',
-            APP_URL . '/' . APP_URL_PANEL . '/withdraw'
+            APP_URL . '/dashboard/withdraw'
         );
         biz_mail($wd['email_user'], 'Saque em processamento — ' . APP_NAME, wd_email($wd, 'processing'));
         logAudit(
@@ -263,7 +260,7 @@ if ($action === 'approve_withdrawal') {
         $f = $_FILES['comprovante'];
         if (!in_array($f['type'], ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'])) jOut(false, 'Tipo de ficheiro não permitido.');
         if ($f['size'] > 5 * 1024 * 1024) jOut(false, 'Ficheiro excede 5MB.');
-        $dir = dirname(__DIR__, 3) . '/assets/payment/uploads/withdrawals/';
+        $dir = dirname(__DIR__, 4) . '/assets/comprovantes/saques/';
         if (!is_dir($dir)) @mkdir($dir, 0755, true);
         $ext  = pathinfo($f['name'], PATHINFO_EXTENSION);
         $comp = 'wd_' . $id . '_' . time() . '.' . $ext;
@@ -287,15 +284,15 @@ if ($action === 'approve_withdrawal') {
         $db->prepare("UPDATE _withdrawal SET id_transaction=? WHERE id_withdrawal=?")->execute([$tx_id, $id]);
         $db->commit();
 
-        $pu = $comp ? APP_URL . '/assets/payment/uploads/withdrawals/' . $comp : '';
+        $pu = $comp ? APP_URL . '/assets/comprovantes/saques/' . $comp : '';
         notifyUser(
             $db,
             $wd['id_users'],
             $admin_id,
             'payment',
             'Saque Aprovado ✅',
-            'O teu saque de ' . biz_fmt_d((float)$wd['amount_net']) . ' foi aprovado e o pagamento efectuado com sucesso.',
-            APP_URL . '/' . APP_URL_PANEL . '/withdraw'
+            'O teu saque de ' . biz_fmt_d((float)$wd['amount_net']) . ' foi aprovado e o pagamento efectuado.',
+            APP_URL . '/dashboard/withdraw'
         );
         biz_mail($wd['email_user'], 'Saque aprovado — ' . APP_NAME, wd_email($wd, 'approved', '', $pu));
         logAudit(
@@ -341,7 +338,7 @@ if ($action === 'reject_withdrawal') {
             'warning',
             'Saque Rejeitado ❌',
             'O teu saque foi rejeitado. Motivo: ' . $reason,
-            APP_URL . '/' . APP_URL_PANEL . '/withdraw'
+            APP_URL . '/dashboard/withdraw'
         );
         biz_mail($wd['email_user'], 'Saque rejeitado — ' . APP_NAME, wd_email($wd, 'rejected', $reason));
         logAudit(
@@ -410,39 +407,12 @@ if ($action === 'get_royalty_details') {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// PAGAR ROYALTY (com suporte a ficheiro e notas)
+// PAGAR ROYALTY
 // ════════════════════════════════════════════════════════════════════════════
 if ($action === 'pay_royalty') {
     requirePermission($admin_id, 'finances.edit');
     $id = (int)($_POST['id_royalty'] ?? 0);
     if (!$id) jOut(false, 'ID inválido.');
-
-    $notes = trim($_POST['admin_note'] ?? '');
-
-    // Upload do relatório (opcional)
-    $report_file = null;
-    if (!empty($_FILES['report_file']['name'])) {
-        $file = $_FILES['report_file'];
-        if (!in_array($file['type'], ['image/jpeg', 'image/png', 'application/pdf'])) {
-            jOut(false, 'Tipo de ficheiro não permitido (apenas JPEG, PNG, PDF).');
-        }
-        if ($file['size'] > 5 * 1024 * 1024) {
-            jOut(false, 'Ficheiro excede 5MB.');
-        }
-        $dir = dirname(__DIR__, 3) . '/assets/payment/uploads/royalties/';
-        if (!is_dir($dir)) mkdir($dir, 0755, true);
-        $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-        $report_file = 'royalty_' . $id . '_' . time() . '.' . $ext;
-        if (!is_dir($dir)) {
-            if (!mkdir($dir, 0755, true)) {
-                jOut(false, 'Não foi possível criar o diretório de uploads. Contacte o suporte.');
-            }
-        }
-        if (!move_uploaded_file($file['tmp_name'], $dir . $report_file)) {
-            jOut(false, 'Erro ao guardar ficheiro.');
-        }
-        $report_file = 'assets/payment/uploads/royalties/' . $report_file;
-    }
 
     $r = $db->prepare("SELECT r.*,u.email_user,u.first_name,u.second_name,t.title_track,wl.id_wallet,wl.balance_aoa,wl.total_earned FROM _royalty r JOIN _users u ON u.id_users=r.id_users LEFT JOIN _track t ON t.id_track=r.id_track LEFT JOIN _wallet wl ON wl.id_users=r.id_users WHERE r.id_royalty=?");
     $r->execute([$id]);
@@ -451,48 +421,40 @@ if ($action === 'pay_royalty') {
     if ($roy['status_royalty'] !== 'pending') jOut(false, 'Este royalty não está pendente.');
 
     try {
-        $db->beginTransaction();
-
-        // Actualizar royalty
-        $sql = "UPDATE _royalty SET status_royalty='paid', paid_by=?, paid_at=NOW()";
-        $params = [$admin_id];
-        if ($report_file) {
-            $sql .= ", report_file = ?";
-            $params[] = $report_file;
+        $report_path = null;
+        if (!empty($_FILES['report_file']['tmp_name']) && is_uploaded_file($_FILES['report_file']['tmp_name'])) {
+            $uploadDir = dirname(__DIR__, 2) . '/assets/comprovantes/uploads/royalty_reports';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+            $origName = basename($_FILES['report_file']['name']);
+            $ext = strtolower(pathinfo($origName, PATHINFO_EXTENSION));
+            $safeName = 'royalty_' . $id . '_' . time() . '_' . bin2hex(random_bytes(6)) . ($ext ? '.' . $ext : '');
+            $dest = $uploadDir . '/' . $safeName;
+            if (!move_uploaded_file($_FILES['report_file']['tmp_name'], $dest)) {
+                throw new Exception('Falha ao enviar ficheiro de relatório.');
+            }
+            $report_path = 'assets/comprovantes/uploads/royalty_reports/' . $safeName;
         }
-        $sql .= " WHERE id_royalty=?";
-        $params[] = $id;
-        $db->prepare($sql)->execute($params);
 
-        // Atualizar wallet
+        $db->beginTransaction();
+        if ($report_path) {
+            $db->prepare("UPDATE _royalty SET status_royalty='paid',paid_by=?,paid_at=NOW(),report_file=? WHERE id_royalty=?")->execute([$admin_id, $report_path, $id]);
+        } else {
+            $db->prepare("UPDATE _royalty SET status_royalty='paid',paid_by=?,paid_at=NOW() WHERE id_royalty=?")->execute([$admin_id, $id]);
+        }
+
         $bb = (float)($roy['balance_aoa'] ?? 0);
         $ba = $bb + (float)$roy['net_royalty_aoa'];
         $te = (float)($roy['total_earned'] ?? 0) + (float)$roy['net_royalty_aoa'];
         if ($roy['id_wallet'])
             $db->prepare("UPDATE _wallet SET balance_aoa=?,total_earned=?,modif_wallet=NOW() WHERE id_wallet=?")->execute([$ba, $te, $roy['id_wallet']]);
 
-        // Inserir transacção
         $tx = $db->prepare("INSERT INTO _transaction (id_users,id_employees,type_transaction,amount,currency,balance_before,balance_after,reference,description) VALUES (?,?,'royalty_credit',?,'AOA',?,?,?,?)");
-        $ref = 'ROY-' . str_pad($id, 6, '0', STR_PAD_LEFT);
-        $desc = 'Royalty creditado — ' . ($roy['title_track'] ?? 'Faixa');
-        $tx->execute([$roy['id_users'], $admin_id, (float)$roy['net_royalty_aoa'], $bb, $ba, $ref, $desc]);
+        $tx->execute([$roy['id_users'], $admin_id, (float)$roy['net_royalty_aoa'], $bb, $ba, 'ROY-' . str_pad($id, 6, '0', STR_PAD_LEFT), 'Royalty creditado — ' . ($roy['title_track'] ?? 'Faixa')]);
         $tx_id = $db->lastInsertId();
         $db->prepare("UPDATE _royalty SET id_transaction=? WHERE id_royalty=?")->execute([$tx_id, $id]);
-
         $db->commit();
-
-        // Guardar notas em log de auditoria
-        if ($notes) {
-            logAudit(
-                $admin_id,
-                $roy['id_users'],
-                'royalty.paid_notes',
-                '_royalty',
-                $id,
-                null,
-                json_encode(['notes' => $notes])
-            );
-        }
 
         notifyUser(
             $db,
@@ -501,7 +463,7 @@ if ($action === 'pay_royalty') {
             'payment',
             'Royalty Creditado 🎵',
             'O royalty de ' . biz_fmt_d((float)$roy['net_royalty_aoa']) . ' foi creditado na tua carteira.',
-            APP_URL . '/' . APP_URL_PANEL . '/transactions'
+            APP_URL . '/dashboard/transactions'
         );
         logAudit(
             $admin_id,
@@ -525,117 +487,6 @@ if ($action === 'pay_royalty') {
 // ════════════════════════════════════════════════════════════════════════════
 if ($action === 'validate_proof') {
     requirePermission($admin_id, 'finances.edit');
-    $id     = (int)($_POST['id_proof'] ?? 0);
-    $ns     = trim($_POST['new_status'] ?? '');
-    $reason = trim($_POST['reject_reason'] ?? '');
-    if (!$id || !in_array($ns, ['validated', 'rejected'], true)) jOut(false, 'Dados invalidos.');
-    if ($ns === 'rejected' && !$reason) jOut(false, 'Motivo obrigatorio na rejeicao.');
-
-    $p = $db->prepare("
-        SELECT pp.*, pi.id_intent, pi.id_users, pi.id_plan, pi.reference_code, pi.amount_expected,
-               pl.name_plan, pl.slug_plan,
-               u.email_user, u.first_name, u.second_name
-        FROM _payment_proof pp
-        JOIN _payment_intent pi ON pi.id_intent = pp.id_intent
-        JOIN _users u ON u.id_users = pi.id_users
-        JOIN _plans pl ON pl.id_plan = pi.id_plan
-        WHERE pp.id_proof = ?
-        LIMIT 1
-    ");
-    $p->execute([$id]);
-    $proof = $p->fetch();
-    if (!$proof) jOut(false, 'Comprovativo nao encontrado.');
-    if ($proof['status'] !== 'pending') jOut(false, 'Ja foi processado.');
-
-    $retryUrl = APP_URL . '/' . APP_URL_PANEL . '/payment/pay?plan=' . urlencode((string)$proof['slug_plan']);
-    $panelUrl = APP_URL . '/' . APP_URL_PANEL . '/painel';
-    $userName = trim(($proof['first_name'] ?? '') . ' ' . ($proof['second_name'] ?? ''));
-
-    try {
-        $db->beginTransaction();
-
-        if ($ns === 'validated') {
-            paymentWorkflowActivatePlan($db, $proof, $proof, $admin_id);
-            $db->commit();
-
-            notifyUser(
-                $db,
-                (int)$proof['id_users'],
-                $admin_id,
-                'payment',
-                'Comprovativo Validado',
-                'O teu comprovativo foi validado e o plano ' . $proof['name_plan'] . ' ja esta activo.',
-                $panelUrl
-            );
-
-            biz_mail(
-                $proof['email_user'],
-                'Plano ' . $proof['name_plan'] . ' activado - ' . APP_NAME,
-                '<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto">' .
-                '<h2>Plano activado</h2>' .
-                '<p>Ola ' . htmlspecialchars($userName) . ',</p>' .
-                '<p>O teu comprovativo foi validado e o plano <strong>' . htmlspecialchars($proof['name_plan']) . '</strong> ja esta activo.</p>' .
-                '<p><strong>Referencia:</strong> ' . htmlspecialchars($proof['reference_code']) . '</p>' .
-                '<p><a href="' . $panelUrl . '">Ir ao painel</a></p>' .
-                '</div>'
-            );
-        } else {
-            $db->prepare("
-                UPDATE _payment_proof
-                SET status = 'rejected',
-                    reject_reason = ?,
-                    reviewer_id = ?,
-                    reviewed_at = NOW()
-                WHERE id_proof = ?
-            ")->execute([$reason, $admin_id, $id]);
-
-            paymentWorkflowRejectPendingActivation($db, $proof, $admin_id, $reason);
-            $db->commit();
-
-            notifyUser(
-                $db,
-                (int)$proof['id_users'],
-                $admin_id,
-                'warning',
-                'Comprovativo Rejeitado',
-                'O comprovativo foi rejeitado. Motivo: ' . $reason,
-                $retryUrl
-            );
-
-            biz_mail(
-                $proof['email_user'],
-                'Comprovativo rejeitado - ' . APP_NAME,
-                '<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto">' .
-                '<h2>Comprovativo rejeitado</h2>' .
-                '<p>Ola ' . htmlspecialchars($userName) . ',</p>' .
-                '<p>O comprovativo do plano <strong>' . htmlspecialchars($proof['name_plan']) . '</strong> foi rejeitado.</p>' .
-                '<p><strong>Motivo:</strong> ' . htmlspecialchars($reason) . '</p>' .
-                '<p><a href="' . $retryUrl . '">Gerar uma nova referencia</a></p>' .
-                '</div>'
-            );
-        }
-
-        logAudit(
-            $admin_id,
-            (int)$proof['id_users'],
-            'proof.' . $ns,
-            '_payment_proof',
-            $id,
-            json_encode(['status' => 'pending']),
-            json_encode(['status' => $ns, 'reason' => $reason ?: null])
-        );
-        jOut(true, 'Comprovativo ' . ($ns === 'validated' ? 'validado' : 'rejeitado') . '!');
-    } catch (Exception $e) {
-        if ($db->inTransaction()) {
-            $db->rollBack();
-        }
-        error_log('[PROOF_V2] ' . $e->getMessage());
-        jOut(false, 'Erro ao processar.');
-    }
-}
-
-if ($action === 'validate_proof_legacy') {
-    requirePermission($admin_id, 'finances.edit');
     $id    = (int)($_POST['id_proof'] ?? 0);
     $ns    = trim($_POST['new_status'] ?? '');
     $reason = trim($_POST['reject_reason'] ?? '');
@@ -653,9 +504,9 @@ if ($action === 'validate_proof_legacy') {
             ->execute([$ns, $reason ?: null, $admin_id, $id]);
         if ($ns === 'validated') {
             $db->prepare("UPDATE _payment_intent SET status='approved',approved_by=?,approved_at=NOW() WHERE id_intent=?")->execute([$admin_id, $proof['id_intent']]);
-            notifyUser($db, $proof['id_users'], $admin_id, 'payment', 'Comprovativo Validado ✅', 'O teu comprovativo foi validado. O teu plano será activado em breve.', APP_URL . '/' . APP_URL_PANEL . '');
+            notifyUser($db, $proof['id_users'], $admin_id, 'payment', 'Comprovativo Validado ✅', 'O teu comprovativo foi validado. O teu plano será activado em breve.', APP_URL . '/dashboard');
         } else {
-            notifyUser($db, $proof['id_users'], $admin_id, 'warning', 'Comprovativo Rejeitado ❌', 'O comprovativo foi rejeitado. Motivo: ' . $reason, APP_URL . '/' . APP_URL_PANEL . '/payment/pay');
+            notifyUser($db, $proof['id_users'], $admin_id, 'warning', 'Comprovativo Rejeitado ❌', 'O comprovativo foi rejeitado. Motivo: ' . $reason, APP_URL . '/dashboard/payment/pay');
         }
         logAudit($admin_id, $proof['id_users'], 'proof.' . $ns, '_payment_proof', $id, json_encode(['status' => 'pending']), json_encode(['status' => $ns]));
         jOut(true, 'Comprovativo ' . ($ns === 'validated' ? 'validado' : 'rejeitado') . '!');
@@ -690,257 +541,151 @@ if ($action === 'toggle_store') {
     jOut(true, 'Loja ' . ($na ? 'activada' : 'desactivada') . ' com sucesso.');
 }
 
+jOut(false, 'Acção desconhecida.');
 // ════════════════════════════════════════════════════════════════════════════
-// NOVAS AÇÕES PARA O MODAL NOVO DEPÓSITO
+// GET USER ACCOUNT INFO
 // ════════════════════════════════════════════════════════════════════════════
-
-// 1. Obter conta bancária do utilizador (para exibir no modal)
 if ($action === 'get_user_account') {
-    $id = (int)($_POST['id_users'] ?? 0);
-    if (!$id) jOut(false, 'ID inválido.');
+    $id_users = (int)($_POST['id_users'] ?? 0);
+    if (!$id_users) jOut(false, 'ID inválido.');
 
-    $stmt = $db->prepare("
-        SELECT full_name_account, tel_account, email_account, iban, express_number,
-               type_account, status_account
-        FROM _account
-        WHERE id_users = ? AND is_default = 1
-        LIMIT 1
-    ");
-    $stmt->execute([$id]);
-    $acc = $stmt->fetch();
+    $acc = $db->prepare("SELECT a.*, u.first_name, u.second_name, u.email_user FROM _account a JOIN _users u ON u.id_users=a.id_users WHERE a.id_users=? AND a.is_default=1 LIMIT 1");
+    $acc->execute([$id_users]);
+    $account = $acc->fetch(PDO::FETCH_ASSOC);
 
-    if (!$acc) {
-        jOut(false, 'Utilizador não possui conta bancária cadastrada.');
+    if (!$account) {
+        jOut(false, 'Usuário não tem conta bancária padrão.');
     }
 
-    $status_class = match ($acc['status_account']) {
-        'verified' => 'verified',
-        'pending'  => 'pending',
-        default    => 'empty'
-    };
-
-    $iban_display = $acc['iban'] ? '...' . substr($acc['iban'], -6) : '';
-    $express_display = $acc['express_number'] ?: '';
-
-    $html = "
-        <div class='account-info-box {$status_class}'>
-            <div class='ai-row'><span class='ai-lbl'>Titular</span><span class='ai-val'>" . htmlspecialchars($acc['full_name_account']) . "</span></div>
-            <div class='ai-row'><span class='ai-lbl'>Tipo</span><span class='ai-val'>" . htmlspecialchars($acc['type_account']) . "</span></div>
-            <div class='ai-row'><span class='ai-lbl'>IBAN</span><span class='ai-val' style='font-family:monospace'>" . htmlspecialchars($iban_display ?: '—') . "</span></div>
-            <div class='ai-row'><span class='ai-lbl'>Express</span><span class='ai-val'>" . htmlspecialchars($express_display ?: '—') . "</span></div>
-            <div class='ai-row'><span class='ai-lbl'>Estado</span><span class='ai-val'>" . ucfirst($acc['status_account']) . "</span></div>
-        </div>";
+    $html = '<div class="row g-2">';
+    $html .= '<div class="col-md-6"><strong>Tipo:</strong> ' . htmlspecialchars($account['type_account']) . '</div>';
+    $html .= '<div class="col-md-6"><strong>Titular:</strong> ' . htmlspecialchars($account['full_name_account']) . '</div>';
+    if ($account['iban']) $html .= '<div class="col-md-6"><strong>IBAN:</strong> ' . htmlspecialchars($account['iban']) . '</div>';
+    if ($account['express_number']) $html .= '<div class="col-md-6"><strong>Express:</strong> ' . htmlspecialchars($account['express_number']) . '</div>';
+    $html .= '<div class="col-md-6"><strong>Estado:</strong> ' . ($account['status_account'] === 'verified' ? 'Verificada' : 'Pendente') . '</div>';
+    $html .= '</div>';
 
     jOut(true, '', ['account_html' => $html]);
 }
 
-// 2. Obter álbuns do utilizador (apenas aprovados)
+// ════════════════════════════════════════════════════════════════════════════
+// GET USER ALBUMS
+// ════════════════════════════════════════════════════════════════════════════
 if ($action === 'get_user_albums') {
-    $id = (int)($_POST['id_users'] ?? 0);
-    if (!$id) jOut(false, 'ID inválido.');
+    $id_users = (int)($_POST['id_users'] ?? 0);
+    if (!$id_users) jOut(false, 'ID inválido.');
 
-    $stmt = $db->prepare("
-        SELECT id_album, title_album, type_album
-        FROM _album
-        WHERE id_users = ? AND status_album = 'approved'
-        ORDER BY creat_album DESC
-    ");
-    $stmt->execute([$id]);
-    $albums = $stmt->fetchAll();
-
+    $albums = $db->prepare("SELECT id_album, title_album FROM _album WHERE id_users=? ORDER BY title_album");
+    $albums->execute([$id_users]);
     $html = '';
-    foreach ($albums as $album) {
-        $html .= '<option value="' . (int)$album['id_album'] . '">'
-            . htmlspecialchars($album['title_album']) . ' (' . $album['type_album'] . ')'
-            . '</option>';
+    while ($alb = $albums->fetch(PDO::FETCH_ASSOC)) {
+        $html .= '<option value="' . (int)$alb['id_album'] . '">' . htmlspecialchars($alb['title_album']) . '</option>';
     }
-
     jOut(true, '', ['albums_html' => $html]);
 }
 
-// 3. Obter faixas de um álbum (apenas activas)
+// ════════════════════════════════════════════════════════════════════════════
+// GET ALBUM TRACKS
+// ════════════════════════════════════════════════════════════════════════════
 if ($action === 'get_album_tracks') {
-    $id = (int)($_POST['id_album'] ?? 0);
-    if (!$id) jOut(false, 'ID inválido.');
+    $id_album = (int)($_POST['id_album'] ?? 0);
+    if (!$id_album) jOut(false, 'ID inválido.');
 
-    $stmt = $db->prepare("
-        SELECT id_track, title_track, track_number
-        FROM _track
-        WHERE id_album = ? AND status_track = 'active'
-        ORDER BY track_number ASC
-    ");
-    $stmt->execute([$id]);
-    $tracks = $stmt->fetchAll();
-
+    $tracks = $db->prepare("SELECT id_track, title_track FROM _track WHERE id_album=? ORDER BY title_track");
+    $tracks->execute([$id_album]);
     $html = '';
-    foreach ($tracks as $track) {
-        $html .= '<option value="' . (int)$track['id_track'] . '">'
-            . htmlspecialchars($track['title_track'])
-            . ($track['track_number'] ? ' (#' . $track['track_number'] . ')' : '')
-            . '</option>';
+    while ($trk = $tracks->fetch(PDO::FETCH_ASSOC)) {
+        $html .= '<option value="' . (int)$trk['id_track'] . '">' . htmlspecialchars($trk['title_track']) . '</option>';
     }
-
     jOut(true, '', ['tracks_html' => $html]);
 }
 
-// 4. Depósito manual de royalty (cria registo e credita wallet)
+// ════════════════════════════════════════════════════════════════════════════
+// MANUAL DEPOSIT
+// ════════════════════════════════════════════════════════════════════════════
 if ($action === 'manual_deposit') {
     requirePermission($admin_id, 'finances.edit');
 
-    $id_users   = (int)($_POST['id_users'] ?? 0);
-    $id_track   = (int)($_POST['id_track'] ?? 0);
-    $year       = (int)($_POST['year_royalty'] ?? 0);
-    $month      = (int)($_POST['month_royalty'] ?? 0);
-    $gross      = (float)($_POST['gross_revenue'] ?? 0);
-    $fee_usd    = (float)($_POST['platform_fee'] ?? 0);
-    $net_aoa    = (float)($_POST['net_royalty_aoa'] ?? 0);
-    $rate       = (float)($_POST['exchange_rate'] ?? 0);
-    $notes      = trim($_POST['admin_note'] ?? '');
+    $id_users = (int)($_POST['id_users'] ?? 0);
+    $id_album = (int)($_POST['id_album'] ?? 0);
+    $id_track = (int)($_POST['id_track'] ?? 0);
+    $year = (int)($_POST['year_royalty'] ?? 0);
+    $month = (int)($_POST['month_royalty'] ?? 0);
+    $gross = (float)($_POST['gross_revenue'] ?? 0);
+    $fee = (float)($_POST['platform_fee'] ?? 0);
+    $net_aoa = (float)($_POST['net_royalty_aoa'] ?? 0);
+    $rate = (float)($_POST['exchange_rate'] ?? 0);
+    $note = trim($_POST['admin_note'] ?? '');
 
-    if (!$id_users || !$id_track || !$year || !$month || $gross <= 0 || $net_aoa <= 0) {
-        jOut(false, 'Dados incompletos ou inválidos.');
+    if (!$id_users || !$id_album || !$id_track || !$year || !$month || $gross <= 0 || $fee < 0 || $net_aoa <= 0 || $rate <= 0) {
+        jOut(false, 'Dados inválidos. Verifique todos os campos.');
     }
 
-    // Verificar se já existe royalty para este período
-    $check = $db->prepare("
-        SELECT id_royalty FROM _royalty
-        WHERE id_users = ? AND id_track = ? AND year_royalty = ? AND month_royalty = ?
-    ");
+    // Check if royalty already exists
+    $check = $db->prepare("SELECT id_royalty FROM _royalty WHERE id_users=? AND id_track=? AND year_royalty=? AND month_royalty=?");
     $check->execute([$id_users, $id_track, $year, $month]);
-    if ($check->rowCount()) {
-        jOut(false, 'Já existe um royalty registado para este utilizador, faixa e período.');
+    if ($check->fetch()) {
+        jOut(false, 'Já existe royalty para este usuário/faixa/mês.');
     }
 
-    // Upload do relatório (opcional)
-    $report_file = null;
-    if (!empty($_FILES['report_file']['name'])) {
-        $file = $_FILES['report_file'];
-        if (!in_array($file['type'], ['image/jpeg', 'image/png', 'application/pdf'])) {
-            jOut(false, 'Tipo de ficheiro não permitido (apenas JPEG, PNG, PDF).');
+    $report_path = null;
+    if (!empty($_FILES['report_file']['tmp_name']) && is_uploaded_file($_FILES['report_file']['tmp_name'])) {
+        $uploadDir = dirname(__DIR__, 2) . '/assets/comprovantes/uploads/royalty_reports';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0755, true);
         }
-        if ($file['size'] > 5 * 1024 * 1024) {
-            jOut(false, 'Ficheiro excede 5MB.');
+        $origName = basename($_FILES['report_file']['name']);
+        $ext = strtolower(pathinfo($origName, PATHINFO_EXTENSION));
+        $safeName = 'royalty_' . time() . '_' . bin2hex(random_bytes(6)) . ($ext ? '.' . $ext : '');
+        $dest = $uploadDir . '/' . $safeName;
+        if (!move_uploaded_file($_FILES['report_file']['tmp_name'], $dest)) {
+            jOut(false, 'Falha ao enviar ficheiro de relatório.');
         }
-        $dir = dirname(__DIR__, 3) . '/assets/payment/uploads/royalties/';
-        if (!is_dir($dir)) {
-            if (!@mkdir($dir, 0755, true)) {
-                jOut(false, 'Não foi possível criar o diretório de uploads.');
-            }
-        }
-        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-        $report_file = 'royalty_' . $id_users . '_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
-        if (!@move_uploaded_file($file['tmp_name'], $dir . $report_file)) {
-            jOut(false, 'Erro ao guardar ficheiro.');
-        }
-        $report_file = 'assets/payment/uploads/royalties/' . $report_file;
+        $report_path = 'assets/comprovantes/uploads/royalty_reports/' . $safeName;
     }
 
     try {
         $db->beginTransaction();
 
-        // 1. Inserir royalty (já pago)
-        $stmt = $db->prepare("
-            INSERT INTO _royalty
-            (id_users, id_track, year_royalty, month_royalty,
-             gross_revenue, platform_fee, net_royalty, currency, exchange_rate,
-             net_royalty_aoa, status_royalty, report_file, paid_by, paid_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'USD', ?, ?, 'paid', ?, ?, NOW())
-        ");
-        $net_usd = $gross - $fee_usd;
-        $stmt->execute([
-            $id_users,
-            $id_track,
-            $year,
-            $month,
-            $gross,
-            $fee_usd,
-            $net_usd,
-            $rate,
-            $net_aoa,
-            $report_file,
-            $admin_id
-        ]);
+        // Insert royalty
+        $net_usd = $gross - $fee;
+        $stmt = $db->prepare("INSERT INTO _royalty (id_users, id_track, year_royalty, month_royalty, gross_revenue, platform_fee, net_royalty, currency, exchange_rate, net_royalty_aoa, status_royalty, report_file, paid_by, paid_at, creat_royalty) VALUES (?, ?, ?, ?, ?, ?, ?, 'USD', ?, ?, 'paid', ?, ?, NOW(), NOW())");
+        $stmt->execute([$id_users, $id_track, $year, $month, $gross, $fee, $net_usd, $rate, $net_aoa, $report_path, $admin_id]);
         $royalty_id = $db->lastInsertId();
 
-        // 2. Atualizar wallet
-        $wallet = $db->prepare("
-            SELECT id_wallet, balance_aoa, total_earned
-            FROM _wallet WHERE id_users = ?
-        ");
+        // Credit wallet
+        $wallet = $db->prepare("SELECT id_wallet, balance_aoa, total_earned FROM _wallet WHERE id_users=?");
         $wallet->execute([$id_users]);
-        $w = $wallet->fetch();
-        if (!$w) {
-            $db->prepare("INSERT INTO _wallet (id_users) VALUES (?)")->execute([$id_users]);
-            $w = ['id_wallet' => $db->lastInsertId(), 'balance_aoa' => 0, 'total_earned' => 0];
+        $wl = $wallet->fetch(PDO::FETCH_ASSOC);
+        if ($wl) {
+            $new_balance = (float)$wl['balance_aoa'] + $net_aoa;
+            $new_earned = (float)$wl['total_earned'] + $net_aoa;
+            $db->prepare("UPDATE _wallet SET balance_aoa=?, total_earned=?, modif_wallet=NOW() WHERE id_wallet=?")->execute([$new_balance, $new_earned, $wl['id_wallet']]);
         }
-        $new_balance = (float)$w['balance_aoa'] + $net_aoa;
-        $new_total   = (float)$w['total_earned'] + $net_aoa;
-        $db->prepare("UPDATE _wallet SET balance_aoa = ?, total_earned = ? WHERE id_wallet = ?")
-            ->execute([$new_balance, $new_total, $w['id_wallet']]);
 
-        // 3. Inserir transacção
-        $tx = $db->prepare("
-            INSERT INTO _transaction
-            (id_users, id_employees, type_transaction, amount, currency,
-             balance_before, balance_after, reference, description)
-            VALUES (?, ?, 'royalty_credit', ?, 'AOA', ?, ?, ?, ?)
-        ");
-        $ref = 'ROY-MAN-' . str_pad($royalty_id, 6, '0', STR_PAD_LEFT);
-        $desc = "Royalty manual — mês " . str_pad($month, 2, '0', STR_PAD_LEFT) . "/$year";
-        $tx->execute([$id_users, $admin_id, $net_aoa, $w['balance_aoa'], $new_balance, $ref, $desc]);
+        // Create transaction
+        $track = $db->prepare("SELECT title_track FROM _track WHERE id_track=?");
+        $track->execute([$id_track]);
+        $trk = $track->fetch(PDO::FETCH_ASSOC);
+        $tx = $db->prepare("INSERT INTO _transaction (id_users, id_employees, type_transaction, amount, currency, balance_before, balance_after, reference, description) VALUES (?, ?, 'royalty_credit', ?, 'AOA', ?, ?, ?, ?)");
+        $tx->execute([$id_users, $admin_id, $net_aoa, $wl ? $wl['balance_aoa'] : 0, $new_balance ?? 0, 'ROY-' . str_pad($royalty_id, 6, '0', STR_PAD_LEFT), 'Royalty depositado — ' . ($trk['title_track'] ?? 'Faixa')]);
         $tx_id = $db->lastInsertId();
+        $db->prepare("UPDATE _royalty SET id_transaction=? WHERE id_royalty=?")->execute([$tx_id, $royalty_id]);
 
-        // Ligar transacção ao royalty
-        $db->prepare("UPDATE _royalty SET id_transaction = ? WHERE id_royalty = ?")
-            ->execute([$tx_id, $royalty_id]);
+        // Notify user
+        $user = $db->prepare("SELECT first_name, second_name, email_user FROM _users WHERE id_users=?");
+        $user->execute([$id_users]);
+        $usr = $user->fetch(PDO::FETCH_ASSOC);
+        notifyUser($db, $id_users, $admin_id, 'payment', 'Royalty Depositado 🎵', 'Foi depositado ' . biz_fmt_d($net_aoa) . ' na sua carteira por royalties.', APP_URL . '/dashboard/analytics/report');
 
-        // 4. Notificar utilizador
-        $u_stmt = $db->prepare("SELECT email_user, first_name, second_name FROM _users WHERE id_users = ?");
-        $u_stmt->execute([$id_users]);
-        $user = $u_stmt->fetch();
-        if ($user) {
-            notifyUser(
-                $db,
-                $id_users,
-                $admin_id,
-                'payment',
-                'Royalty Creditado 🎵',
-                "Foi creditado Kz " . number_format($net_aoa, 2, ',', '.') . " na tua conta digital Wasom Upfy.",
-                APP_URL . '/' . APP_URL_PANEL . '/report'
-            );
-        }
+        // Log audit
+        logAudit($admin_id, $id_users, 'royalty.manual_deposit', '_royalty', $royalty_id, null, json_encode(['amount_aoa' => $net_aoa, 'note' => $note]));
 
         $db->commit();
-
-        // Guardar notas em log de auditoria
-        if ($notes) {
-            logAudit(
-                $admin_id,
-                $id_users,
-                'royalty.manual_notes',
-                '_royalty',
-                $royalty_id,
-                null,
-                json_encode(['notes' => $notes])
-            );
-        }
-
-        logAudit(
-            $admin_id,
-            $id_users,
-            'royalty.manual_deposit',
-            '_royalty',
-            $royalty_id,
-            null,
-            json_encode(['gross' => $gross, 'net_aoa' => $net_aoa])
-        );
-
-        jOut(true, 'Royalty depositado com sucesso! Wallet actualizada.');
+        jOut(true, 'Depósito manual criado com sucesso. Usuário notificado.');
     } catch (Exception $e) {
         $db->rollBack();
         error_log('[MANUAL DEPOSIT] ' . $e->getMessage());
-        jOut(false, 'Erro ao processar: ' . $e->getMessage());
+        jOut(false, 'Erro ao processar depósito.');
     }
 }
-
-jOut(false, 'Acção desconhecida.');

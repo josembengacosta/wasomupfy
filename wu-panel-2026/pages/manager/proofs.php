@@ -5,25 +5,40 @@
 // ══════════════════════════════════════════════════════════════
 require_once __DIR__ . '/../../include/platform_admin.php';
 requirePermission($admin_id, 'finances.edit');
-if (empty($_SESSION['payment_control_auth'])) { header('Location: '.APP_URL.'/'.ADMIN_PATH.'/manager/gestion'); exit; }
+if (empty($_SESSION['payment_control_auth'])) {
+    header('Location: ' . APP_URL . '/' . ADMIN_PATH . '/manager/gestion');
+    exit;
+}
 $_SESSION['biz_auth_time'] = time();
 if (!isset($_SESSION['admin_csrf_token'])) $_SESSION['admin_csrf_token'] = bin2hex(random_bytes(32));
 
 $per_page = 15;
-$page     = max(1,(int)($_GET['page']??1));
-$f_status = trim($_GET['status']??'');
-$f_user   = trim($_GET['user']??'');
+$page     = max(1, (int)($_GET['page'] ?? 1));
+$f_status = trim($_GET['status'] ?? '');
+$f_user   = trim($_GET['user'] ?? '');
 
-$where=[]; $params=[];
-if ($f_status) { $where[]='pp.status=?'; $params[]=$f_status; }
-if ($f_user)   { $where[]='(u.first_name LIKE ? OR u.second_name LIKE ? OR u.email_user LIKE ?)'; $params[]="%$f_user%";$params[]="%$f_user%";$params[]="%$f_user%"; }
-$sw = $where?'WHERE '.implode(' AND ',$where):'';
+$where = [];
+$params = [];
+if ($f_status) {
+    $where[] = 'pp.status=?';
+    $params[] = $f_status;
+}
+if ($f_user) {
+    $where[] = '(u.first_name LIKE ? OR u.second_name LIKE ? OR u.email_user LIKE ?)';
+    $params[] = "%$f_user%";
+    $params[] = "%$f_user%";
+    $params[] = "%$f_user%";
+}
+$sw = $where ? 'WHERE ' . implode(' AND ', $where) : '';
 
-$cnt=$db->prepare("SELECT COUNT(*) FROM _payment_proof pp JOIN _payment_intent pi ON pi.id_intent=pp.id_intent JOIN _users u ON u.id_users=pi.id_users $sw");
-$cnt->execute($params); $total=(int)$cnt->fetchColumn();
-$total_pages=max(1,(int)ceil($total/$per_page)); $page=min($page,$total_pages); $offset=($page-1)*$per_page;
+$cnt = $db->prepare("SELECT COUNT(*) FROM _payment_proof pp JOIN _payment_intent pi ON pi.id_intent=pp.id_intent JOIN _users u ON u.id_users=pi.id_users $sw");
+$cnt->execute($params);
+$total = (int)$cnt->fetchColumn();
+$total_pages = max(1, (int)ceil($total / $per_page));
+$page = min($page, $total_pages);
+$offset = ($page - 1) * $per_page;
 
-$stmt=$db->prepare("
+$stmt = $db->prepare("
     SELECT pp.*,pi.id_users,pi.amount_expected,
            pl.name_plan,
            CONCAT(u.first_name,' ',COALESCE(u.second_name,'')) AS user_name,
@@ -35,15 +50,22 @@ $stmt=$db->prepare("
     $sw ORDER BY CASE pp.status WHEN 'pending' THEN 0 ELSE 1 END, pp.uploaded_at DESC
     LIMIT $per_page OFFSET $offset
 ");
-$stmt->execute($params); $proofs=$stmt->fetchAll();
+$stmt->execute($params);
+$proofs = $stmt->fetchAll();
 
-$stats_p=$db->query("SELECT SUM(status='pending') AS pending, SUM(status='validated') AS validated, SUM(status='rejected') AS rejected FROM _payment_proof")->fetch();
+$stats_p = $db->query("SELECT SUM(status='pending') AS pending, SUM(status='validated') AS validated, SUM(status='rejected') AS rejected FROM _payment_proof")->fetch();
 
-$payment_sidebar_active='proofs';
-require_once __DIR__.'/include/payment-sidebar.php';
-$csrf=$_SESSION['admin_csrf_token'];
-function proof_badge(string $s): string {
-    return match($s){'pending'=>'<span class="biz-s-pending">Pendente</span>','validated'=>'<span class="biz-s-approved">Validado</span>','rejected'=>'<span class="biz-s-rejected">Rejeitado</span>',default=>'<span class="biz-s-pending">'.ucfirst($s).'</span>'};
+$payment_sidebar_active = 'proofs';
+require_once __DIR__ . '/include/payment-sidebar.php';
+$csrf = $_SESSION['admin_csrf_token'];
+function proof_badge(string $s): string
+{
+    return match ($s) {
+        'pending' => '<span class="biz-s-pending">Pendente</span>',
+        'validated' => '<span class="biz-s-approved">Validado</span>',
+        'rejected' => '<span class="biz-s-rejected">Rejeitado</span>',
+        default => '<span class="biz-s-pending">' . ucfirst($s) . '</span>'
+    };
 }
 ?>
 <!DOCTYPE html>
@@ -117,7 +139,7 @@ function proof_badge(string $s): string {
                 <button class="biz-hamburger" onclick="openSidebar()"><i class="bi bi-list fs-5"></i></button>
                 <div>
                     <div class="biz-topbar-title">Comprovativos de Pagamento</div>
-                    <div class="biz-topbar-sub"><a href="<?php echo APP_URL.'/'.ADMIN_PATH; ?>/manager/gestion"
+                    <div class="biz-topbar-sub"><a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/manager/gestion"
                             style="color:#888;text-decoration:none">Dashboard</a> → Comprovativos</div>
                 </div>
             </div>
@@ -127,7 +149,7 @@ function proof_badge(string $s): string {
 
             <!-- Mini stats -->
             <div class="row g-3 mb-4">
-                <?php foreach([['pending','Pendentes','#f97316','bi-hourglass-split'],['validated','Validados','#22c55e','bi-check-circle'],['rejected','Rejeitados','#ef4444','bi-x-circle']] as [$k,$l,$c,$i]): ?>
+                <?php foreach ([['pending', 'Pendentes', '#f97316', 'bi-hourglass-split'], ['validated', 'Validados', '#22c55e', 'bi-check-circle'], ['rejected', 'Rejeitados', '#ef4444', 'bi-x-circle']] as [$k, $l, $c, $i]): ?>
                 <div class="col-md-4">
                     <div class="biz-stat" style="padding:14px 16px">
                         <div class="d-flex align-items-center gap-3">
@@ -135,7 +157,7 @@ function proof_badge(string $s): string {
                                     class="bi <?php echo $i; ?>" style="color:<?php echo $c; ?>"></i></div>
                             <div>
                                 <div style="font-size:1.3rem;font-weight:800;color:#1a1a2e">
-                                    <?php echo (int)($stats_p[$k]??0); ?></div>
+                                    <?php echo (int)($stats_p[$k] ?? 0); ?></div>
                                 <div class="biz-stat-lbl"><?php echo $l; ?></div>
                             </div>
                         </div>
@@ -155,19 +177,22 @@ function proof_badge(string $s): string {
                         <div class="col-md-3"><label class="form-label">Estado</label>
                             <select name="status" class="form-select form-select-sm">
                                 <option value="">Todos</option>
-                                <option value="pending" <?php echo $f_status==='pending'?'selected':''; ?>>Pendente
+                                <option value="pending" <?php echo $f_status === 'pending' ? 'selected' : ''; ?>>
+                                    Pendente
                                 </option>
-                                <option value="validated" <?php echo $f_status==='validated'?'selected':''; ?>>Validado
+                                <option value="validated" <?php echo $f_status === 'validated' ? 'selected' : ''; ?>>
+                                    Validado
                                 </option>
-                                <option value="rejected" <?php echo $f_status==='rejected'?'selected':''; ?>>Rejeitado
+                                <option value="rejected" <?php echo $f_status === 'rejected' ? 'selected' : ''; ?>>
+                                    Rejeitado
                                 </option>
                             </select>
                         </div>
                         <div class="col-md-2 d-flex gap-1">
-                            <button type="submit" class="btn btn-sm text-white flex-fill" style="background:#FF0089"><i
+                            <button type="submit" class="btn btn-md text-white flex-fill" style="background:#FF0089"><i
                                     class="bi bi-search"></i></button>
-                            <a href="<?php echo APP_URL.'/'.ADMIN_PATH; ?>/manager/proofs"
-                                class="btn btn-sm btn-outline-secondary"><i class="bi bi-x"></i></a>
+                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/manager/proofs"
+                                class="btn btn-md btn-outline-secondary"><i class="bi bi-x"></i></a>
                         </div>
                     </div>
                 </form>
@@ -196,17 +221,17 @@ function proof_badge(string $s): string {
                             </tr>
                         </thead>
                         <tbody>
-                            <?php if(empty($proofs)): ?>
+                            <?php if (empty($proofs)): ?>
                             <tr>
                                 <td colspan="9" class="text-center py-5 text-muted"><i
                                         class="bi bi-file-earmark-x fs-1 d-block mb-2"></i>Nenhum comprovativo
                                     encontrado</td>
                             </tr>
-                            <?php else: foreach($proofs as $p):
-    $is_img = preg_match('/\.(jpg|jpeg|png|webp)$/i',$p['file_path']);
-    $file_url = APP_URL.'/'.$p['file_path'];
-?>
-                            <tr class="<?php echo $p['status']==='pending'?'table-warning':''; ?>">
+                            <?php else: foreach ($proofs as $p):
+                                    $is_img = preg_match('/\.(jpg|jpeg|png|webp)$/i', $p['file_path']);
+                                    $file_url = APP_URL . '/' . $p['file_path'];
+                                ?>
+                            <tr class="<?php echo $p['status'] === 'pending' ? 'table-warning' : ''; ?>">
                                 <td><span
                                         style="font-family:monospace;font-size:.73rem;opacity:.55">#<?php echo $p['id_proof']; ?></span>
                                 </td>
@@ -216,14 +241,15 @@ function proof_badge(string $s): string {
                                     <div style="font-size:.72rem;color:#888">
                                         <?php echo htmlspecialchars($p['email_user']); ?></div>
                                 </td>
-                                <td style="font-size:.78rem"><?php echo htmlspecialchars($p['name_plan']??'—'); ?></td>
+                                <td style="font-size:.78rem"><?php echo htmlspecialchars($p['name_plan'] ?? '—'); ?>
+                                </td>
                                 <td><span
                                         style="font-size:.76rem;text-transform:uppercase;font-weight:700;color:#888"><?php echo htmlspecialchars($p['method']); ?></span>
                                 </td>
                                 <td style="font-weight:700;color:#FF0089;white-space:nowrap">Kz
-                                    <?php echo number_format((float)$p['amount_expected'],2,',','.'); ?></td>
+                                    <?php echo number_format((float)$p['amount_expected'], 2, ',', '.'); ?></td>
                                 <td>
-                                    <?php if($is_img): ?>
+                                    <?php if ($is_img): ?>
                                     <a href="<?php echo $file_url; ?>" target="_blank"><img
                                             src="<?php echo $file_url; ?>" class="proof-thumb" alt="Comprovativo"></a>
                                     <?php else: ?>
@@ -234,13 +260,13 @@ function proof_badge(string $s): string {
                                 </td>
                                 <td><?php echo proof_badge($p['status']); ?></td>
                                 <td style="font-size:.76rem;white-space:nowrap">
-                                    <?php echo date('d/m/Y',strtotime($p['uploaded_at'])); ?>
-                                    <div style="color:#aaa"><?php echo date('H:i',strtotime($p['uploaded_at'])); ?>
+                                    <?php echo date('d/m/Y', strtotime($p['uploaded_at'])); ?>
+                                    <div style="color:#aaa"><?php echo date('H:i', strtotime($p['uploaded_at'])); ?>
                                     </div>
                                 </td>
                                 <td>
                                     <div class="d-flex gap-1 justify-content-center">
-                                        <?php if($p['status']==='pending'): ?>
+                                        <?php if ($p['status'] === 'pending'): ?>
                                         <button class="btn btn-sm btn-outline-success" title="Validar"
                                             onclick="validateProof(<?php echo (int)$p['id_proof']; ?>,'validated')"><i
                                                 class="bi bi-check-lg"></i></button>
@@ -254,25 +280,28 @@ function proof_badge(string $s): string {
                                     </div>
                                 </td>
                             </tr>
-                            <?php endforeach; endif; ?>
+                            <?php endforeach;
+                            endif; ?>
                         </tbody>
                     </table>
                 </div>
-                <?php if($total_pages>1): ?>
+                <?php if ($total_pages > 1): ?>
                 <div class="d-flex justify-content-center py-3">
                     <nav>
                         <ul class="pagination pagination-sm mb-0">
-                            <li class="page-item <?php echo $page<=1?'disabled':''; ?>"><a class="page-link pag-link"
-                                    href="?page=<?php echo $page-1; ?>&status=<?php echo urlencode($f_status); ?>&user=<?php echo urlencode($f_user); ?>"><i
+                            <li class="page-item <?php echo $page <= 1 ? 'disabled' : ''; ?>"><a
+                                    class="page-link pag-link"
+                                    href="?page=<?php echo $page - 1; ?>&status=<?php echo urlencode($f_status); ?>&user=<?php echo urlencode($f_user); ?>"><i
                                         class="bi bi-chevron-left"></i></a></li>
-                            <?php for($pi=max(1,$page-2);$pi<=min($total_pages,$page+2);$pi++): ?>
-                            <li class="page-item <?php echo $pi===$page?'active':''; ?>"><a class="page-link pag-link"
+                            <?php for ($pi = max(1, $page - 2); $pi <= min($total_pages, $page + 2); $pi++): ?>
+                            <li class="page-item <?php echo $pi === $page ? 'active' : ''; ?>"><a
+                                    class="page-link pag-link"
                                     href="?page=<?php echo $pi; ?>&status=<?php echo urlencode($f_status); ?>&user=<?php echo urlencode($f_user); ?>"><?php echo $pi; ?></a>
                             </li>
                             <?php endfor; ?>
-                            <li class="page-item <?php echo $page>=$total_pages?'disabled':''; ?>"><a
+                            <li class="page-item <?php echo $page >= $total_pages ? 'disabled' : ''; ?>"><a
                                     class="page-link pag-link"
-                                    href="?page=<?php echo $page+1; ?>&status=<?php echo urlencode($f_status); ?>&user=<?php echo urlencode($f_user); ?>"><i
+                                    href="?page=<?php echo $page + 1; ?>&status=<?php echo urlencode($f_status); ?>&user=<?php echo urlencode($f_user); ?>"><i
                                         class="bi bi-chevron-right"></i></a></li>
                         </ul>
                     </nav>
@@ -285,7 +314,7 @@ function proof_badge(string $s): string {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
     const CSRF2 = '<?php echo $csrf; ?>';
-    const PROC2 = '<?php echo APP_URL.'/'.ADMIN_PATH; ?>/manager/process';
+    const PROC2 = '<?php echo APP_URL . '/' . ADMIN_PATH; ?>/manager/process';
     async function validateProof(id, status) {
         const reject = status === 'rejected';
         let reason = '';

@@ -372,6 +372,7 @@ RewriteRule ^wu-panel-2026/payments/export/?$               wu-panel-2026/pages/
 RewriteRule ^wu-panel-2026/payments/print/?$                wu-panel-2026/pages/payments/print-payments.php [L,QSA]
 
 # ── Pagamentos (Painel de Controlo) ──
+RewriteRule ^wu-panel-2026/manager/login/?$               wu-panel-2026/pages/manager/login.php [L]
 RewriteRule ^wu-panel-2026/manager/gestion/?$             wu-panel-2026/pages/manager/gestion.php [L]
 RewriteRule ^wu-panel-2026/manager/transactions/?$        wu-panel-2026/pages/manager/transactions.php [L]
 RewriteRule ^wu-panel-2026/manager/withdrawals/?$         wu-panel-2026/pages/manager/withdrawals.php [L]
@@ -380,6 +381,8 @@ RewriteRule ^wu-panel-2026/manager/royalty-splits/?$      wu-panel-2026/pages/ma
 RewriteRule ^wu-panel-2026/manager/process/?$             wu-panel-2026/pages/manager/process.php [L]
 RewriteRule ^wu-panel-2026/manager/royalty-payments/?$    wu-panel-2026/pages/manager/royalty-payments.php [L]
 RewriteRule ^wu-panel-2026/manager/payment-guard/?$       wu-panel-2026/pages/manager/include/payment-guard.php [L]
+
+
 
 # ── Integração ──
 RewriteRule ^wu-panel-2026/integration/verify/?$            wu-panel-2026/pages/integration/verify.php [L]

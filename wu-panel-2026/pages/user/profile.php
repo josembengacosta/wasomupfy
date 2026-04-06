@@ -176,376 +176,376 @@ function role_badge(string $r): string
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
 
     <style>
-    /* ── Profile Header ── */
-    .profile-header {
-        background: linear-gradient(135deg, #FF0089 0%, #6c63ff 100%);
-        color: white;
-        padding: 2rem 0 0;
-        margin-bottom: 0;
-        border-radius: 0;
-        position: relative;
-        overflow: hidden;
-    }
+        /* ── Profile Header ── */
+        .profile-header {
+            background: linear-gradient(135deg, #FF0089 0%, #6c63ff 100%);
+            color: white;
+            padding: 2rem 0 0;
+            margin-bottom: 0;
+            border-radius: 0;
+            position: relative;
+            overflow: hidden;
+        }
 
-    .profile-header::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background-image:
-            linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px);
-        background-size: 32px 32px;
-        pointer-events: none;
-    }
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px);
+            background-size: 32px 32px;
+            pointer-events: none;
+        }
 
-    .profile-avatar-wrap {
-        position: relative;
-        display: inline-block;
-    }
+        .profile-avatar-wrap {
+            position: relative;
+            display: inline-block;
+        }
 
-    .profile-avatar {
-        width: 110px;
-        height: 110px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 4px solid rgba(255, 255, 255, .3);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, .3);
-    }
+        .profile-avatar {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid rgba(255, 255, 255, .3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, .3);
+        }
 
-    .profile-avatar-initials {
-        width: 110px;
-        height: 110px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, .2);
-        border: 4px solid rgba(255, 255, 255, .3);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2rem;
-        font-weight: 800;
-        color: #fff;
-    }
+        .profile-avatar-initials {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .2);
+            border: 4px solid rgba(255, 255, 255, .3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 800;
+            color: #fff;
+        }
 
-    .avatar-upload-btn {
-        position: absolute;
-        bottom: 4px;
-        right: 4px;
-        width: 28px;
-        height: 28px;
-        border-radius: 50%;
-        background: #fff;
-        border: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        font-size: .75rem;
-        color: #FF0089;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
-        transition: transform .2s;
-    }
+        .avatar-upload-btn {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #fff;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: .75rem;
+            color: #FF0089;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
+            transition: transform .2s;
+        }
 
-    .avatar-upload-btn:hover {
-        transform: scale(1.1);
-    }
+        .avatar-upload-btn:hover {
+            transform: scale(1.1);
+        }
 
-    /* ── Nav pills ── */
-    .profile-tabs {
-        border-bottom: 2px solid rgba(255, 255, 255, .2);
-        margin-top: 16px;
-    }
+        /* ── Nav pills ── */
+        .profile-tabs {
+            border-bottom: 2px solid rgba(255, 255, 255, .2);
+            margin-top: 16px;
+        }
 
-    .profile-tabs .nav-link {
-        color: rgba(255, 255, 255, .7);
-        border-radius: 0;
-        padding: 10px 20px;
-        font-size: .88rem;
-        font-weight: 500;
-        border: none;
-        background: none;
-        transition: color .2s, border-bottom .2s;
-        border-bottom: 2px solid transparent;
-        margin-bottom: -2px;
-    }
+        .profile-tabs .nav-link {
+            color: rgba(255, 255, 255, .7);
+            border-radius: 0;
+            padding: 10px 20px;
+            font-size: .88rem;
+            font-weight: 500;
+            border: none;
+            background: none;
+            transition: color .2s, border-bottom .2s;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+        }
 
-    .profile-tabs .nav-link:hover {
-        color: #fff;
-    }
+        .profile-tabs .nav-link:hover {
+            color: #fff;
+        }
 
-    .profile-tabs .nav-link.active {
-        color: #fff;
-        border-bottom-color: #fff;
-    }
+        .profile-tabs .nav-link.active {
+            color: #fff;
+            border-bottom-color: #fff;
+        }
 
-    /* ── Info card lateral ── */
-    .info-sidebar-card {
-        background: var(--card-bg, #fff);
-        border-radius: 12px;
-        border: 1px solid var(--border-color, #e8e8f0);
-        padding: 18px;
-        margin-bottom: 16px;
-    }
+        /* ── Info card lateral ── */
+        .info-sidebar-card {
+            background: var(--card-bg, #fff);
+            border-radius: 12px;
+            border: 1px solid var(--border-color, #e8e8f0);
+            padding: 18px;
+            margin-bottom: 16px;
+        }
 
-    .info-sidebar-card .info-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 8px 0;
-        border-bottom: 1px solid var(--border-color, #f0f0f8);
-        font-size: .83rem;
-    }
+        .info-sidebar-card .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color, #f0f0f8);
+            font-size: .83rem;
+        }
 
-    .info-sidebar-card .info-row:last-child {
-        border-bottom: none;
-    }
+        .info-sidebar-card .info-row:last-child {
+            border-bottom: none;
+        }
 
-    .info-sidebar-card .info-label {
-        opacity: .6;
-    }
+        .info-sidebar-card .info-label {
+            opacity: .6;
+        }
 
-    .info-sidebar-card .info-value {
-        font-weight: 600;
-        text-align: right;
-        max-width: 60%;
-        word-break: break-all;
-    }
+        .info-sidebar-card .info-value {
+            font-weight: 600;
+            text-align: right;
+            max-width: 60%;
+            word-break: break-all;
+        }
 
-    /* ── Security items ── */
-    .security-item {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 16px;
-        padding: 16px 0;
-        border-bottom: 1px solid var(--border-color, #f0f0f8);
-    }
+        /* ── Security items ── */
+        .security-item {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-color, #f0f0f8);
+        }
 
-    .security-item:last-child {
-        border-bottom: none;
-    }
+        .security-item:last-child {
+            border-bottom: none;
+        }
 
-    .security-item-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.1rem;
-        flex-shrink: 0;
-    }
+        .security-item-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
 
-    .security-item-body {
-        flex: 1;
-    }
+        .security-item-body {
+            flex: 1;
+        }
 
-    .security-item-title {
-        font-size: .9rem;
-        font-weight: 600;
-        margin-bottom: 3px;
-    }
+        .security-item-title {
+            font-size: .9rem;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
 
-    .security-item-desc {
-        font-size: .8rem;
-        opacity: .6;
-        line-height: 1.5;
-    }
+        .security-item-desc {
+            font-size: .8rem;
+            opacity: .6;
+            line-height: 1.5;
+        }
 
-    /* ── Recovery key ── */
-    .recovery-key-box {
-        background: rgba(255, 0, 137, .06);
-        border: 1px solid rgba(255, 0, 137, .2);
-        border-radius: 10px;
-        padding: 14px 18px;
-        font-family: 'Courier New', monospace;
-        font-size: 1rem;
-        font-weight: 700;
-        letter-spacing: 2px;
-        color: #FF0089;
-        text-align: center;
-        cursor: pointer;
-        user-select: all;
-        transition: background .2s;
-        position: relative;
-    }
+        /* ── Recovery key ── */
+        .recovery-key-box {
+            background: rgba(255, 0, 137, .06);
+            border: 1px solid rgba(255, 0, 137, .2);
+            border-radius: 10px;
+            padding: 14px 18px;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #FF0089;
+            text-align: center;
+            cursor: pointer;
+            user-select: all;
+            transition: background .2s;
+            position: relative;
+        }
 
-    .recovery-key-box:hover {
-        background: rgba(255, 0, 137, .1);
-    }
+        .recovery-key-box:hover {
+            background: rgba(255, 0, 137, .1);
+        }
 
-    .recovery-key-box .copy-hint {
-        font-size: .7rem;
-        font-weight: 400;
-        opacity: .6;
-        display: block;
-        margin-top: 4px;
-        letter-spacing: 0;
-        font-family: inherit;
-    }
+        .recovery-key-box .copy-hint {
+            font-size: .7rem;
+            font-weight: 400;
+            opacity: .6;
+            display: block;
+            margin-top: 4px;
+            letter-spacing: 0;
+            font-family: inherit;
+        }
 
-    /* ── Activity timeline ── */
-    .activity-item-adm {
-        display: flex;
-        align-items: flex-start;
-        gap: 14px;
-        padding: 12px 0;
-        border-bottom: 1px solid var(--border-color, #f0f0f8);
-    }
+        /* ── Activity timeline ── */
+        .activity-item-adm {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color, #f0f0f8);
+        }
 
-    .activity-item-adm:last-child {
-        border-bottom: none;
-    }
+        .activity-item-adm:last-child {
+            border-bottom: none;
+        }
 
-    .activity-icon-wrap {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        background: var(--bs-light, #f8f9fa);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        font-size: 1rem;
-    }
+        .activity-icon-wrap {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--bs-light, #f8f9fa);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1rem;
+        }
 
-    .activity-info-adm {
-        flex: 1;
-    }
+        .activity-info-adm {
+            flex: 1;
+        }
 
-    .activity-title-adm {
-        font-size: .85rem;
-        font-weight: 600;
-        margin-bottom: 2px;
-    }
+        .activity-title-adm {
+            font-size: .85rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
 
-    .activity-meta-adm {
-        font-size: .75rem;
-        opacity: .55;
-    }
+        .activity-meta-adm {
+            font-size: .75rem;
+            opacity: .55;
+        }
 
-    /* ── Permission badges ── */
-    .perm-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-        gap: 8px;
-    }
+        /* ── Permission badges ── */
+        .perm-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 8px;
+        }
 
-    .perm-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 12px;
-        border-radius: 8px;
-        font-size: .8rem;
-        border: 1px solid;
-    }
+        .perm-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: .8rem;
+            border: 1px solid;
+        }
 
-    .perm-item.granted {
-        background: rgba(34, 197, 94, .08);
-        border-color: rgba(34, 197, 94, .25);
-        color: #166534;
-    }
+        .perm-item.granted {
+            background: rgba(34, 197, 94, .08);
+            border-color: rgba(34, 197, 94, .25);
+            color: #166534;
+        }
 
-    .perm-item.denied {
-        background: rgba(239, 68, 68, .06);
-        border-color: rgba(239, 68, 68, .2);
-        color: #991b1b;
-        opacity: .6;
-    }
+        .perm-item.denied {
+            background: rgba(239, 68, 68, .06);
+            border-color: rgba(239, 68, 68, .2);
+            color: #991b1b;
+            opacity: .6;
+        }
 
-    .perm-item.default_ {
-        background: rgba(59, 130, 246, .08);
-        border-color: rgba(59, 130, 246, .2);
-        color: #1e40af;
-    }
+        .perm-item.default_ {
+            background: rgba(59, 130, 246, .08);
+            border-color: rgba(59, 130, 246, .2);
+            color: #1e40af;
+        }
 
-    /* ── Logout modal ── */
-    .logout-admin-card {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        padding: 14px 16px;
-        background: #f8f7fc;
-        border-radius: 12px;
-        margin-bottom: 14px;
-    }
+        /* ── Logout modal ── */
+        .logout-admin-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            background: #f8f7fc;
+            border-radius: 12px;
+            margin-bottom: 14px;
+        }
 
-    .logout-admin-avatar {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #FF0089, #ff6bb5);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 800;
-        font-size: .95rem;
-        color: #fff;
-        flex-shrink: 0;
-        overflow: hidden;
-    }
+        .logout-admin-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FF0089, #ff6bb5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: .95rem;
+            color: #fff;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
 
-    .logout-admin-avatar img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
+        .logout-admin-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
-    .logout-session-row {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 6px 0;
-        font-size: .84rem;
-        color: #555;
-        border-bottom: 1px solid rgba(0, 0, 0, .06);
-    }
+        .logout-session-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 0;
+            font-size: .84rem;
+            color: #555;
+            border-bottom: 1px solid rgba(0, 0, 0, .06);
+        }
 
-    .logout-session-row:last-child {
-        border-bottom: none;
-    }
+        .logout-session-row:last-child {
+            border-bottom: none;
+        }
 
-    .logout-session-row i {
-        color: #FF0089;
-        width: 16px;
-        flex-shrink: 0;
-    }
+        .logout-session-row i {
+            color: #FF0089;
+            width: 16px;
+            flex-shrink: 0;
+        }
 
-    .logout-session-row strong {
-        color: #222;
-        margin-left: auto;
-        text-align: right;
-        font-size: .82rem;
-    }
+        .logout-session-row strong {
+            color: #222;
+            margin-left: auto;
+            text-align: right;
+            font-size: .82rem;
+        }
 
-    .logout-modal-session {
-        background: rgba(0, 0, 0, .04);
-        border: 1px solid rgba(0, 0, 0, .08);
-        border-radius: 12px;
-        padding: 16px;
-        margin-bottom: 16px;
-    }
+        .logout-modal-session {
+            background: rgba(0, 0, 0, .04);
+            border: 1px solid rgba(0, 0, 0, .08);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
 
-    /* ── Password strength ── */
-    .strength-bar {
-        height: 4px;
-        border-radius: 2px;
-        background: #e8e8f0;
-        overflow: hidden;
-        margin: 8px 0 4px;
-    }
+        /* ── Password strength ── */
+        .strength-bar {
+            height: 4px;
+            border-radius: 2px;
+            background: #e8e8f0;
+            overflow: hidden;
+            margin: 8px 0 4px;
+        }
 
-    .strength-fill {
-        height: 100%;
-        border-radius: 2px;
-        width: 0;
-        transition: width .3s, background .3s;
-    }
+        .strength-fill {
+            height: 100%;
+            border-radius: 2px;
+            width: 0;
+            transition: width .3s, background .3s;
+        }
 
-    .strength-label {
-        font-size: .74rem;
-        color: #aaa;
-    }
+        .strength-label {
+            font-size: .74rem;
+            color: #aaa;
+        }
     </style>
 </head>
 
@@ -562,22 +562,22 @@ function role_badge(string $r): string
                 <div class="container-fluid px-4">
                     <!-- Feedback -->
                     <?php if ($feedback): ?>
-                    <div class="alert alert-<?php echo $feedback[0]; ?> alert-dismissible fade show mb-3" role="alert">
-                        <i class="bi <?php echo $feedback[1]; ?> me-2"></i><?php echo htmlspecialchars($feedback[2]); ?>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
+                        <div class="alert alert-<?php echo $feedback[0]; ?> alert-dismissible fade show mb-3" role="alert">
+                            <i class="bi <?php echo $feedback[1]; ?> me-2"></i><?php echo htmlspecialchars($feedback[2]); ?>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
                     <?php endif; ?>
 
                     <div class="row align-items-end">
                         <div class="col-auto">
                             <div class="profile-avatar-wrap">
                                 <?php if ($admin_photo): ?>
-                                <img src="<?php echo APP_URL; ?>/assets/comprovantes/uploads/employees/<?php echo htmlspecialchars($admin_photo); ?>"
-                                    alt="<?php echo htmlspecialchars($admin_fullname); ?>" class="profile-avatar" />
+                                    <img src="<?php echo APP_URL; ?>/assets/comprovantes/uploads/employees/<?php echo htmlspecialchars($admin_photo); ?>"
+                                        alt="<?php echo htmlspecialchars($admin_fullname); ?>" class="profile-avatar" />
                                 <?php else: ?>
-                                <div class="profile-avatar-initials">
-                                    <?php echo adm_initials_p($admin['first_name'], $admin['second_name'] ?? ''); ?>
-                                </div>
+                                    <div class="profile-avatar-initials">
+                                        <?php echo adm_initials_p($admin['first_name'], $admin['second_name'] ?? ''); ?>
+                                    </div>
                                 <?php endif; ?>
                                 <button class="avatar-upload-btn" type="button"
                                     onclick="document.getElementById('photo-input').click()" title="Alterar foto">
@@ -601,11 +601,11 @@ function role_badge(string $r): string
                                 <?php echo role_badge($admin_role); ?>
                                 &nbsp;
                                 <?php if ($admin['status_employees'] === 'active'): ?>
-                                <span class="badge bg-success">Activo</span>
+                                    <span class="badge bg-success">Activo</span>
                                 <?php elseif ($admin['status_employees'] === 'suspended'): ?>
-                                <span class="badge bg-warning text-dark">Suspenso</span>
+                                    <span class="badge bg-warning text-dark">Suspenso</span>
                                 <?php else: ?>
-                                <span class="badge bg-danger"><?php echo ucfirst($admin['status_employees']); ?></span>
+                                    <span class="badge bg-danger"><?php echo ucfirst($admin['status_employees']); ?></span>
                                 <?php endif; ?>
                             </p>
                         </div>
@@ -745,11 +745,11 @@ function role_badge(string $r): string
                                             </div>
                                         </div>
                                         <?php if (!empty($admin['about_employees'])): ?>
-                                        <div class="mt-2">
-                                            <p class="mb-1"><strong>Sobre mim:</strong></p>
-                                            <p class="text-muted">
-                                                <?php echo nl2br(htmlspecialchars($admin['about_employees'])); ?></p>
-                                        </div>
+                                            <div class="mt-2">
+                                                <p class="mb-1"><strong>Sobre mim:</strong></p>
+                                                <p class="text-muted">
+                                                    <?php echo nl2br(htmlspecialchars($admin['about_employees'])); ?></p>
+                                            </div>
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -764,10 +764,10 @@ function role_badge(string $r): string
                                                     <?php echo getRoleLabel($admin_role); ?></p>
                                                 <p><strong>Estado:</strong>
                                                     <?php if ($admin['status_employees'] === 'active'): ?>
-                                                    <span class="badge bg-success">Activo</span>
+                                                        <span class="badge bg-success">Activo</span>
                                                     <?php else: ?>
-                                                    <span
-                                                        class="badge bg-danger"><?php echo ucfirst($admin['status_employees']); ?></span>
+                                                        <span
+                                                            class="badge bg-danger"><?php echo ucfirst($admin['status_employees']); ?></span>
                                                     <?php endif; ?>
                                                 </p>
                                             </div>
@@ -792,39 +792,39 @@ function role_badge(string $r): string
                                             <h5 class="card-title mb-0"><i class="bi bi-activity me-2"
                                                     style="color:#FF0089"></i>Histórico de Actividades</h5>
                                             <?php if (hasPermission($admin_id, 'audit.view')): ?>
-                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/audit"
-                                                class="btn btn-sm btn-outline-secondary">
-                                                <i class="bi bi-journal-text me-1"></i>Log completo
-                                            </a>
+                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/audit"
+                                                    class="btn btn-sm btn-outline-secondary">
+                                                    <i class="bi bi-journal-text me-1"></i>Log completo
+                                                </a>
                                             <?php endif; ?>
                                         </div>
 
                                         <?php if (empty($activity_list)): ?>
-                                        <div class="text-center py-4 text-muted">
-                                            <i class="bi bi-inbox"
-                                                style="font-size:2rem;opacity:.3;display:block;margin-bottom:8px"></i>
-                                            Nenhuma actividade registada ainda.
-                                        </div>
+                                            <div class="text-center py-4 text-muted">
+                                                <i class="bi bi-inbox"
+                                                    style="font-size:2rem;opacity:.3;display:block;margin-bottom:8px"></i>
+                                                Nenhuma actividade registada ainda.
+                                            </div>
                                         <?php else: ?>
-                                        <?php foreach ($activity_list as $act): ?>
-                                        <div class="activity-item-adm">
-                                            <div class="activity-icon-wrap">
-                                                <?php echo action_icon($act['action']); ?>
-                                            </div>
-                                            <div class="activity-info-adm">
-                                                <div class="activity-title-adm">
-                                                    <?php echo htmlspecialchars(action_label($act['action'])); ?></div>
-                                                <div class="activity-meta-adm">
-                                                    <?php if ($act['entity']): ?><?php echo htmlspecialchars($act['entity']); ?>
-                                                    · <?php endif; ?>
-                                                    <?php if ($act['ip_address']): ?><code
-                                                        style="font-size:.72rem"><?php echo htmlspecialchars($act['ip_address']); ?></code>
-                                                    · <?php endif; ?>
-                                                    <?php echo adm_fmt_dt($act['creat_log']); ?>
+                                            <?php foreach ($activity_list as $act): ?>
+                                                <div class="activity-item-adm">
+                                                    <div class="activity-icon-wrap">
+                                                        <?php echo action_icon($act['action']); ?>
+                                                    </div>
+                                                    <div class="activity-info-adm">
+                                                        <div class="activity-title-adm">
+                                                            <?php echo htmlspecialchars(action_label($act['action'])); ?></div>
+                                                        <div class="activity-meta-adm">
+                                                            <?php if ($act['entity']): ?><?php echo htmlspecialchars($act['entity']); ?>
+                                                            · <?php endif; ?>
+                                                        <?php if ($act['ip_address']): ?><code
+                                                                style="font-size:.72rem"><?php echo htmlspecialchars($act['ip_address']); ?></code>
+                                                            · <?php endif; ?>
+                                                        <?php echo adm_fmt_dt($act['creat_log']); ?>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                        <?php endforeach; ?>
+                                            <?php endforeach; ?>
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -969,9 +969,9 @@ function role_badge(string $r): string
                                                         foreach ($countries as $code => $name):
                                                             $sel = (($admin['country_employees'] ?? '') === $code) ? 'selected' : '';
                                                         ?>
-                                                        <option value="<?php echo $code; ?>" <?php echo $sel; ?>>
-                                                            <?php echo htmlspecialchars($name); ?>
-                                                        </option>
+                                                            <option value="<?php echo $code; ?>" <?php echo $sel; ?>>
+                                                                <?php echo htmlspecialchars($name); ?>
+                                                            </option>
                                                         <?php endforeach; ?>
                                                     </select>
                                                 </div>
@@ -1029,16 +1029,16 @@ function role_badge(string $r): string
                                       border:3px solid rgba(255,0,137,.3);
                                       box-shadow:0 0 0 4px rgba(255,0,137,.08)">
                                                             <?php if ($admin_photo): ?>
-                                                            <img id="photo-preview"
-                                                                src="<?php echo APP_URL; ?>/assets/comprovantes/uploads/employees/<?php echo htmlspecialchars($admin_photo); ?>"
-                                                                alt=""
-                                                                style="width:100%;height:100%;object-fit:cover" />
+                                                                <img id="photo-preview"
+                                                                    src="<?php echo APP_URL; ?>/assets/comprovantes/uploads/employees/<?php echo htmlspecialchars($admin_photo); ?>"
+                                                                    alt=""
+                                                                    style="width:100%;height:100%;object-fit:cover" />
                                                             <?php else: ?>
-                                                            <div id="photo-preview-initials" style="width:100%;height:100%;background:#FF0089;display:flex;
+                                                                <div id="photo-preview-initials" style="width:100%;height:100%;background:#FF0089;display:flex;
                                           align-items:center;justify-content:center;
                                           font-weight:800;font-size:1.5rem;color:#fff">
-                                                                <?php echo adm_initials_p($admin['first_name'], $admin['second_name'] ?? ''); ?>
-                                                            </div>
+                                                                    <?php echo adm_initials_p($admin['first_name'], $admin['second_name'] ?? ''); ?>
+                                                                </div>
                                                             <?php endif; ?>
                                                         </div>
                                                         <!-- Badge de câmara sobre a foto -->
@@ -1082,17 +1082,17 @@ function role_badge(string $r): string
                                                             <i class="bi bi-upload me-1"></i>Guardar foto
                                                         </button>
                                                         <?php if ($admin_photo): ?>
-                                                        <form method="POST"
-                                                            action="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/profile-process"
-                                                            style="display:inline">
-                                                            <input type="hidden" name="csrf_token"
-                                                                value="<?php echo htmlspecialchars($_SESSION['admin_csrf_token']); ?>" />
-                                                            <input type="hidden" name="action" value="remove_photo" />
-                                                            <button type="submit" class="btn btn-outline-danger btn-sm"
-                                                                onclick="return confirm('Remover a foto de perfil?')">
-                                                                <i class="bi bi-trash me-1"></i>Remover foto
-                                                            </button>
-                                                        </form>
+                                                            <form method="POST"
+                                                                action="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/profile-process"
+                                                                style="display:inline">
+                                                                <input type="hidden" name="csrf_token"
+                                                                    value="<?php echo htmlspecialchars($_SESSION['admin_csrf_token']); ?>" />
+                                                                <input type="hidden" name="action" value="remove_photo" />
+                                                                <button type="submit" class="btn btn-outline-danger btn-sm"
+                                                                    onclick="return confirm('Remover a foto de perfil?')">
+                                                                    <i class="bi bi-trash me-1"></i>Remover foto
+                                                                </button>
+                                                            </form>
                                                         <?php endif; ?>
                                                     </div>
                                                 </div>
@@ -1254,10 +1254,10 @@ function role_badge(string $r): string
                                                     <div class="recovery-key-box" id="access-code-box"
                                                         style="font-family:monospace;letter-spacing:2px">
                                                         <?php $stmt = $db->prepare("SELECT access_code FROM _employees_security WHERE id_employees = ?");
-                        $stmt->execute([$admin_id]);
-                        $access_code = $stmt->fetchColumn();
-                        echo htmlspecialchars($access_code ?: '———');
-                        ?>
+                                                        $stmt->execute([$admin_id]);
+                                                        $access_code = $stmt->fetchColumn();
+                                                        echo htmlspecialchars($access_code ?: '———');
+                                                        ?>
                                                         <span class="copy-hint"><i
                                                                 class="bi bi-clipboard me-1"></i>Clicar para
                                                             copiar</span>
@@ -1306,27 +1306,27 @@ function role_badge(string $r): string
                                             </div>
                                             <div class="flex-shrink-0">
                                                 <?php if ($admin['lockscreen']): ?>
-                                                <form method="POST"
-                                                    action="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/profile-process"
-                                                    style="display:inline">
-                                                    <input type="hidden" name="csrf_token"
-                                                        value="<?php echo htmlspecialchars($_SESSION['admin_csrf_token']); ?>" />
-                                                    <input type="hidden" name="action" value="disable_lockscreen" />
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                        <i class="bi bi-unlock me-1"></i>Desactivar
-                                                    </button>
-                                                </form>
+                                                    <form method="POST"
+                                                        action="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/profile-process"
+                                                        style="display:inline">
+                                                        <input type="hidden" name="csrf_token"
+                                                            value="<?php echo htmlspecialchars($_SESSION['admin_csrf_token']); ?>" />
+                                                        <input type="hidden" name="action" value="disable_lockscreen" />
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                            <i class="bi bi-unlock me-1"></i>Desactivar
+                                                        </button>
+                                                    </form>
                                                 <?php else: ?>
-                                                <form method="POST"
-                                                    action="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/profile-process"
-                                                    style="display:inline">
-                                                    <input type="hidden" name="csrf_token"
-                                                        value="<?php echo htmlspecialchars($_SESSION['admin_csrf_token']); ?>" />
-                                                    <input type="hidden" name="action" value="enable_lockscreen" />
-                                                    <button type="submit" class="btn btn-sm btn-outline-primary">
-                                                        <i class="bi bi-lock me-1"></i>Activar
-                                                    </button>
-                                                </form>
+                                                    <form method="POST"
+                                                        action="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/profile-process"
+                                                        style="display:inline">
+                                                        <input type="hidden" name="csrf_token"
+                                                            value="<?php echo htmlspecialchars($_SESSION['admin_csrf_token']); ?>" />
+                                                        <input type="hidden" name="action" value="enable_lockscreen" />
+                                                        <button type="submit" class="btn btn-sm btn-outline-primary">
+                                                            <i class="bi bi-lock me-1"></i>Activar
+                                                        </button>
+                                                    </form>
                                                 <?php endif; ?>
                                             </div>
                                         </div>
@@ -1402,25 +1402,25 @@ function role_badge(string $r): string
                                         </div>
 
                                         <?php if ($admin_role === 'super_admin'): ?>
-                                        <div class="alert alert-success mb-4">
-                                            <i class="bi bi-shield-fill-check me-2"></i>
-                                            <strong>Super Administrador</strong> — Acesso total a todas as
-                                            funcionalidades da plataforma, sem restrições.
-                                        </div>
+                                            <div class="alert alert-success mb-4">
+                                                <i class="bi bi-shield-fill-check me-2"></i>
+                                                <strong>Super Administrador</strong> — Acesso total a todas as
+                                                funcionalidades da plataforma, sem restrições.
+                                            </div>
                                         <?php else: ?>
-                                        <p style="font-size:.84rem;opacity:.7;margin-bottom:20px">
-                                            As permissões assinaladas com <span class="badge"
-                                                style="background:rgba(59,130,246,.1);color:#1e40af">Padrão</span>
-                                            são as predefinidas para o teu role. As marcadas com
-                                            <span class="badge"
-                                                style="background:rgba(34,197,94,.1);color:#166534">Concedida</span>
-                                            foram atribuídas explicitamente. As
-                                            <span class="badge"
-                                                style="background:rgba(239,68,68,.08);color:#991b1b">Negada</span>
-                                            foram explicitamente revogadas.
-                                        </p>
+                                            <p style="font-size:.84rem;opacity:.7;margin-bottom:20px">
+                                                As permissões assinaladas com <span class="badge"
+                                                    style="background:rgba(59,130,246,.1);color:#1e40af">Padrão</span>
+                                                são as predefinidas para o teu role. As marcadas com
+                                                <span class="badge"
+                                                    style="background:rgba(34,197,94,.1);color:#166534">Concedida</span>
+                                                foram atribuídas explicitamente. As
+                                                <span class="badge"
+                                                    style="background:rgba(239,68,68,.08);color:#991b1b">Negada</span>
+                                                foram explicitamente revogadas.
+                                            </p>
 
-                                        <?php
+                                            <?php
                                             // Permissões padrão por role (espelha o functions_admin.php)
                                             $role_defaults = [
                                                 'admin'   => ['employees.view', 'employees.edit', 'users.view', 'users.edit', 'music.view', 'music.approve', 'finances.view', 'finances.edit', 'analytics.view', 'support.view', 'support.edit', 'audit.view', 'settings.view', 'settings.edit'],
@@ -1442,13 +1442,13 @@ function role_badge(string $r): string
                                             $defaults_for_role = $role_defaults[$admin_role] ?? [];
                                             ?>
 
-                                        <?php foreach ($all_permissions as $group => $perm_list): ?>
-                                        <div class="mb-4">
-                                            <h6 class="text-muted mb-2"
-                                                style="font-size:.78rem;text-transform:uppercase;letter-spacing:.5px">
-                                                <?php echo $group; ?></h6>
-                                            <div class="perm-grid">
-                                                <?php foreach ($perm_list as $perm):
+                                            <?php foreach ($all_permissions as $group => $perm_list): ?>
+                                                <div class="mb-4">
+                                                    <h6 class="text-muted mb-2"
+                                                        style="font-size:.78rem;text-transform:uppercase;letter-spacing:.5px">
+                                                        <?php echo $group; ?></h6>
+                                                    <div class="perm-grid">
+                                                        <?php foreach ($perm_list as $perm):
                                                             $explicit = $perms[$perm] ?? null; // null = sem regra na BD
                                                             if ($explicit === true) {
                                                                 $cls = 'granted';
@@ -1469,25 +1469,25 @@ function role_badge(string $r): string
                                                             }
                                                             $perm_name = str_replace(['.view', '.edit', '.approve'], [' — ver', ' — editar', ' — aprovar'], $perm);
                                                         ?>
-                                                <div class="perm-item <?php echo $cls; ?>">
-                                                    <i class="bi <?php echo $ico; ?>"></i>
-                                                    <span><?php echo htmlspecialchars($perm_name); ?></span>
-                                                    <small class="ms-auto opacity-75"><?php echo $lbl; ?></small>
+                                                            <div class="perm-item <?php echo $cls; ?>">
+                                                                <i class="bi <?php echo $ico; ?>"></i>
+                                                                <span><?php echo htmlspecialchars($perm_name); ?></span>
+                                                                <small class="ms-auto opacity-75"><?php echo $lbl; ?></small>
+                                                            </div>
+                                                        <?php endforeach; ?>
+                                                    </div>
                                                 </div>
-                                                <?php endforeach; ?>
-                                            </div>
-                                        </div>
-                                        <?php endforeach; ?>
+                                            <?php endforeach; ?>
 
-                                        <?php if (hasPermission($admin_id, 'employees.edit')): ?>
-                                        <div class="alert alert-info mt-3" style="font-size:.82rem">
-                                            <i class="bi bi-info-circle me-2"></i>
-                                            Para alterar as permissões de um funcionário, vai a
-                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees"
-                                                class="alert-link">Gestão
-                                                de Admins</a>.
-                                        </div>
-                                        <?php endif; ?>
+                                            <?php if (hasPermission($admin_id, 'employees.edit')): ?>
+                                                <div class="alert alert-info mt-3" style="font-size:.82rem">
+                                                    <i class="bi bi-info-circle me-2"></i>
+                                                    Para alterar as permissões de um funcionário, vai a
+                                                    <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees"
+                                                        class="alert-link">Gestão
+                                                        de Admins</a>.
+                                                </div>
+                                            <?php endif; ?>
                                         <?php endif; ?>
 
                                     </div>
@@ -1507,7 +1507,7 @@ function role_badge(string $r): string
         <div class="container">
             <div class="row">
                 <div class="col-12 text-center">
-                    <p class="mb-2">© 2026 Wasom Upfy. Todos os direitos reservados.</p>
+                    <p class="mb-2">© <?php echo date('Y'); ?> <?php echo APP_NAME; ?>. Todos os direitos reservados.</p>
                     <a href="<?php echo APP_URL; ?>/page/politicies/terms" class="me-2">Termos de Uso</a>
                     <a href="<?php echo APP_URL; ?>/page/politicies/privacy" class="me-2">Privacidade</a>
                     <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/support">Suporte</a>
@@ -1528,353 +1528,201 @@ function role_badge(string $r): string
     <script src="<?php echo APP_URL  ?>/js/lastest.js"></script>
     <script src="<?php echo APP_URL  ?>/js/lastest.min.js"></script>
     <script>
-    // Neutralizar o código legado do lastest.js que tenta aceder a
-    // modais/elementos que não existem nesta página (devicesModal, twoFAModal, etc.)
-    window.__profilePage = true;
+        // Neutralizar o código legado do lastest.js que tenta aceder a
+        // modais/elementos que não existem nesta página (devicesModal, twoFAModal, etc.)
+        window.__profilePage = true;
     </script>
     <script src="<?php echo APP_URL  ?>/js/lastest.js"></script>
     <script src="<?php echo APP_URL  ?>/js/lastest.min.js"></script>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function() {
 
-        // ── Toggle visibilidade de senha ──
-        window.togglePw = function(inputId, iconId) {
-            const inp = document.getElementById(inputId);
-            const ico = document.getElementById(iconId);
-            if (!inp || !ico) return;
-            inp.type = inp.type === 'password' ? 'text' : 'password';
-            ico.className = inp.type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
-            inp.focus();
-        };
+            // ── Toggle visibilidade de senha ──
+            window.togglePw = function(inputId, iconId) {
+                const inp = document.getElementById(inputId);
+                const ico = document.getElementById(iconId);
+                if (!inp || !ico) return;
+                inp.type = inp.type === 'password' ? 'text' : 'password';
+                ico.className = inp.type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+                inp.focus();
+            };
 
-        // ── Validação e força da senha ──
-        const newPwInp = document.getElementById('new_password');
-        const confPwInp = document.getElementById('confirm_password');
-        const strengthFl = document.getElementById('pw-strength-fill');
-        const strengthLb = document.getElementById('pw-strength-label');
-        const matchErr = document.getElementById('pw-match-err');
+            // ── Validação e força da senha ──
+            const newPwInp = document.getElementById('new_password');
+            const confPwInp = document.getElementById('confirm_password');
+            const strengthFl = document.getElementById('pw-strength-fill');
+            const strengthLb = document.getElementById('pw-strength-label');
+            const matchErr = document.getElementById('pw-match-err');
 
-        const reqs = {
-            len: {
-                el: document.getElementById('req-len'),
-                fn: v => v.length >= 8
-            },
-            up: {
-                el: document.getElementById('req-up'),
-                fn: v => /[A-Z]/.test(v)
-            },
-            low: {
-                el: document.getElementById('req-low'),
-                fn: v => /[a-z]/.test(v)
-            },
-            num: {
-                el: document.getElementById('req-num'),
-                fn: v => /[0-9]/.test(v)
-            },
-            sym: {
-                el: document.getElementById('req-sym'),
-                fn: v => /[!@#$%^&*\-_+=?]/.test(v)
-            },
-            match: {
-                el: document.getElementById('req-match'),
-                fn: (v, c) => v.length > 0 && v === c
-            },
-        };
+            const reqs = {
+                len: {
+                    el: document.getElementById('req-len'),
+                    fn: v => v.length >= 8
+                },
+                up: {
+                    el: document.getElementById('req-up'),
+                    fn: v => /[A-Z]/.test(v)
+                },
+                low: {
+                    el: document.getElementById('req-low'),
+                    fn: v => /[a-z]/.test(v)
+                },
+                num: {
+                    el: document.getElementById('req-num'),
+                    fn: v => /[0-9]/.test(v)
+                },
+                sym: {
+                    el: document.getElementById('req-sym'),
+                    fn: v => /[!@#$%^&*\-_+=?]/.test(v)
+                },
+                match: {
+                    el: document.getElementById('req-match'),
+                    fn: (v, c) => v.length > 0 && v === c
+                },
+            };
 
-        const levels = [{
-                w: '0%',
-                c: '#e8e8f0',
-                l: 'Escreve a nova senha'
-            },
-            {
-                w: '20%',
-                c: '#ef4444',
-                l: 'Muito fraca'
-            },
-            {
-                w: '40%',
-                c: '#f97316',
-                l: 'Fraca'
-            },
-            {
-                w: '60%',
-                c: '#eab308',
-                l: 'Razoável'
-            },
-            {
-                w: '80%',
-                c: '#22c55e',
-                l: 'Forte'
-            },
-            {
-                w: '100%',
-                c: '#16a34a',
-                l: 'Muito forte'
-            },
-        ];
+            const levels = [{
+                    w: '0%',
+                    c: '#e8e8f0',
+                    l: 'Escreve a nova senha'
+                },
+                {
+                    w: '20%',
+                    c: '#ef4444',
+                    l: 'Muito fraca'
+                },
+                {
+                    w: '40%',
+                    c: '#f97316',
+                    l: 'Fraca'
+                },
+                {
+                    w: '60%',
+                    c: '#eab308',
+                    l: 'Razoável'
+                },
+                {
+                    w: '80%',
+                    c: '#22c55e',
+                    l: 'Forte'
+                },
+                {
+                    w: '100%',
+                    c: '#16a34a',
+                    l: 'Muito forte'
+                },
+            ];
 
-        function updateReqs() {
-            const v = newPwInp ? newPwInp.value : '';
-            const c = confPwInp ? confPwInp.value : '';
-            let met = 0;
-
-            Object.entries(reqs).forEach(([k, r]) => {
-                const ok = k === 'match' ? r.fn(v, c) : r.fn(v);
-                if (r.el) {
-                    r.el.className = ok ? 'text-success' : 'text-muted';
-                    r.el.querySelector('i').className = ok ? 'bi bi-check-circle-fill me-1' :
-                        'bi bi-circle me-1';
-                }
-                if (ok && k !== 'match') met++;
-            });
-
-            const lvl = levels[met];
-            if (strengthFl) {
-                strengthFl.style.width = lvl.w;
-                strengthFl.style.background = lvl.c;
-            }
-            if (strengthLb) {
-                strengthLb.textContent = lvl.l;
-                strengthLb.style.color = met === 0 ? '#aaa' : lvl.c;
-            }
-            if (matchErr) matchErr.style.display = (c.length > 0 && v !== c) ? 'block' : 'none';
-        }
-
-        if (newPwInp) newPwInp.addEventListener('input', updateReqs);
-        if (confPwInp) confPwInp.addEventListener('input', updateReqs);
-
-        // ── Submeter alterar senha ──
-        const btnPw = document.getElementById('btn-change-pw');
-        const formPw = document.getElementById('form-password');
-        const spinPw = document.getElementById('spin-pw');
-
-        if (btnPw && formPw) {
-            btnPw.addEventListener('click', function() {
+            function updateReqs() {
                 const v = newPwInp ? newPwInp.value : '';
                 const c = confPwInp ? confPwInp.value : '';
-                const cur = document.getElementById('current_password');
+                let met = 0;
 
-                if (!cur || !cur.value) {
-                    cur && cur.classList.add('is-invalid');
-                    return;
-                }
-                if (!reqs.len.fn(v) || !reqs.up.fn(v) || !reqs.low.fn(v) || !reqs.num.fn(v) || !reqs.sym
-                    .fn(v)) {
-                    newPwInp && newPwInp.classList.add('is-invalid');
-                    return;
-                }
-                if (v !== c) {
-                    confPwInp && confPwInp.classList.add('is-invalid');
-                    if (matchErr) {
-                        matchErr.style.display = 'block';
+                Object.entries(reqs).forEach(([k, r]) => {
+                    const ok = k === 'match' ? r.fn(v, c) : r.fn(v);
+                    if (r.el) {
+                        r.el.className = ok ? 'text-success' : 'text-muted';
+                        r.el.querySelector('i').className = ok ? 'bi bi-check-circle-fill me-1' :
+                            'bi bi-circle me-1';
                     }
-                    return;
+                    if (ok && k !== 'match') met++;
+                });
+
+                const lvl = levels[met];
+                if (strengthFl) {
+                    strengthFl.style.width = lvl.w;
+                    strengthFl.style.background = lvl.c;
                 }
+                if (strengthLb) {
+                    strengthLb.textContent = lvl.l;
+                    strengthLb.style.color = met === 0 ? '#aaa' : lvl.c;
+                }
+                if (matchErr) matchErr.style.display = (c.length > 0 && v !== c) ? 'block' : 'none';
+            }
 
-                if (spinPw) spinPw.classList.remove('d-none');
-                btnPw.disabled = true;
-                formPw.submit();
-            });
-        }
+            if (newPwInp) newPwInp.addEventListener('input', updateReqs);
+            if (confPwInp) confPwInp.addEventListener('input', updateReqs);
 
-        // ── Submeter perfil ──
-        const btnPrf = document.getElementById('btn-save-profile');
-        const formPrf = document.getElementById('form-profile');
-        const spinPrf = document.getElementById('spin-profile');
+            // ── Submeter alterar senha ──
+            const btnPw = document.getElementById('btn-change-pw');
+            const formPw = document.getElementById('form-password');
+            const spinPw = document.getElementById('spin-pw');
 
-        if (btnPrf && formPrf) {
-            btnPrf.addEventListener('click', function() {
-                if (spinPrf) spinPrf.classList.remove('d-none');
-                btnPrf.disabled = true;
-                formPrf.submit();
-            });
-        }
+            if (btnPw && formPw) {
+                btnPw.addEventListener('click', function() {
+                    const v = newPwInp ? newPwInp.value : '';
+                    const c = confPwInp ? confPwInp.value : '';
+                    const cur = document.getElementById('current_password');
 
-        // ── Copiar chave de recuperação ──
-        window.copyRecoveryKey = function() {
-            const box = document.getElementById('recovery-key-box');
-            const txt = box ? box.childNodes[0].textContent.trim() : '';
-            const fb = document.getElementById('copy-feedback');
+                    if (!cur || !cur.value) {
+                        cur && cur.classList.add('is-invalid');
+                        return;
+                    }
+                    if (!reqs.len.fn(v) || !reqs.up.fn(v) || !reqs.low.fn(v) || !reqs.num.fn(v) || !reqs.sym
+                        .fn(v)) {
+                        newPwInp && newPwInp.classList.add('is-invalid');
+                        return;
+                    }
+                    if (v !== c) {
+                        confPwInp && confPwInp.classList.add('is-invalid');
+                        if (matchErr) {
+                            matchErr.style.display = 'block';
+                        }
+                        return;
+                    }
 
-            if (navigator.clipboard && txt) {
-                navigator.clipboard.writeText(txt).then(() => {
+                    if (spinPw) spinPw.classList.remove('d-none');
+                    btnPw.disabled = true;
+                    formPw.submit();
+                });
+            }
+
+            // ── Submeter perfil ──
+            const btnPrf = document.getElementById('btn-save-profile');
+            const formPrf = document.getElementById('form-profile');
+            const spinPrf = document.getElementById('spin-profile');
+
+            if (btnPrf && formPrf) {
+                btnPrf.addEventListener('click', function() {
+                    if (spinPrf) spinPrf.classList.remove('d-none');
+                    btnPrf.disabled = true;
+                    formPrf.submit();
+                });
+            }
+
+            // ── Copiar chave de recuperação ──
+            window.copyRecoveryKey = function() {
+                const box = document.getElementById('recovery-key-box');
+                const txt = box ? box.childNodes[0].textContent.trim() : '';
+                const fb = document.getElementById('copy-feedback');
+
+                if (navigator.clipboard && txt) {
+                    navigator.clipboard.writeText(txt).then(() => {
+                        if (fb) {
+                            fb.style.display = 'block';
+                            setTimeout(() => {
+                                fb.style.display = 'none';
+                            }, 3000);
+                        }
+                    });
+                } else {
+                    // Fallback
+                    const ta = document.createElement('textarea');
+                    ta.value = txt;
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
                     if (fb) {
                         fb.style.display = 'block';
                         setTimeout(() => {
                             fb.style.display = 'none';
                         }, 3000);
                     }
-                });
-            } else {
-                // Fallback
-                const ta = document.createElement('textarea');
-                ta.value = txt;
-                document.body.appendChild(ta);
-                ta.select();
-                document.execCommand('copy');
-                document.body.removeChild(ta);
-                if (fb) {
-                    fb.style.display = 'block';
-                    setTimeout(() => {
-                        fb.style.display = 'none';
-                    }, 3000);
                 }
-            }
-        };
-
-        // Copiar Access Code
-        const accessBox = document.getElementById('access-code-box');
-        const accessFeedback = document.getElementById('access-copy-feedback');
-        if (accessBox) {
-            accessBox.addEventListener('click', function() {
-                let code = this.childNodes[0]?.textContent.trim();
-                if (!code || code === '———') return;
-                navigator.clipboard.writeText(code).then(() => {
-                    if (accessFeedback) {
-                        accessFeedback.style.display = 'block';
-                        setTimeout(() => {
-                            accessFeedback.style.display = 'none';
-                        }, 3000);
-                    }
-                });
-            });
-        }
-
-        // Regenerar Access Code (SweetAlert + formulário)
-        const regenBtn = document.getElementById('regenerateAccessCodeBtn');
-        if (regenBtn) {
-            regenBtn.addEventListener('click', async () => {
-                const {
-                    value: password
-                } = await Swal.fire({
-                    title: 'Regenerar código de acesso',
-                    text: 'Confirma a tua senha actual para gerar um novo código de 6 dígitos.',
-                    input: 'password',
-                    inputPlaceholder: 'Senha do administrador',
-                    inputAttributes: {
-                        autocomplete: 'current-password'
-                    },
-                    showCancelButton: true,
-                    confirmButtonColor: '#ef4444',
-                    confirmButtonText: 'Regenerar',
-                    cancelButtonText: 'Cancelar'
-                });
-                if (password) {
-                    document.getElementById('regen_password_hidden').value = password;
-                    document.getElementById('form-regen-access').submit();
-                }
-            });
-        }
-
-        // ── Upload de foto — drop zone + preview ──
-        const photoInput = document.getElementById('photo-input');
-        const dropZone = document.getElementById('photo-drop-zone');
-        const previewWrap = document.getElementById('photo-preview-wrap');
-        const fileNameEl = document.getElementById('photo-filename');
-        const btnUpload = document.getElementById('btn-upload-photo');
-        const spinPhoto = document.getElementById('spin-photo');
-        const formPhoto = document.getElementById('form-photo');
-
-        function handlePhotoFile(file) {
-            if (!file) return;
-
-            // Validar tipo e tamanho no cliente
-            const allowed = ['image/jpeg', 'image/png', 'image/webp'];
-            if (!allowed.includes(file.type)) {
-                alert('Formato inválido. Usa JPG, PNG ou WebP.');
-                return;
-            }
-            if (file.size > 2 * 1024 * 1024) {
-                alert('Ficheiro demasiado grande. Máximo 2MB.');
-                return;
-            }
-
-            // Preview
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                previewWrap.innerHTML =
-                    `<img src="${e.target.result}" alt="" style="width:100%;height:100%;object-fit:cover" />`;
             };
-            reader.readAsDataURL(file);
 
-            // Mostrar nome do ficheiro
-            if (fileNameEl) {
-                fileNameEl.textContent = '✓ ' + file.name;
-                fileNameEl.style.display = 'block';
-            }
-
-            // Activar botão
-            if (btnUpload) btnUpload.disabled = false;
-        }
-
-        if (photoInput) {
-            photoInput.addEventListener('change', function() {
-                handlePhotoFile(this.files[0]);
-            });
-        }
-
-        // Drag & Drop
-        if (dropZone) {
-            dropZone.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                this.style.background = 'rgba(255,0,137,.08)';
-                this.style.borderColor = '#FF0089';
-            });
-            dropZone.addEventListener('dragleave', function() {
-                this.style.background = 'rgba(255,0,137,.03)';
-                this.style.borderColor = 'rgba(255,0,137,.3)';
-            });
-            dropZone.addEventListener('drop', function(e) {
-                e.preventDefault();
-                this.style.background = 'rgba(255,0,137,.03)';
-                this.style.borderColor = 'rgba(255,0,137,.3)';
-                const file = e.dataTransfer.files[0];
-                if (file && photoInput) {
-                    // Transferir para o input real
-                    const dt = new DataTransfer();
-                    dt.items.add(file);
-                    photoInput.files = dt.files;
-                    handlePhotoFile(file);
-                }
-            });
-        }
-
-        // Submit do form de foto com loading
-        if (formPhoto && btnUpload) {
-            btnUpload.addEventListener('click', function() {
-                if (spinPhoto) spinPhoto.classList.remove('d-none');
-                btnUpload.disabled = true;
-                formPhoto.submit();
-            });
-        }
-
-        // ── Links rápidos da coluna lateral → activar tab correcto ──
-        document.querySelectorAll('.tab-link[data-tab]').forEach(function(link) {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                const tabEl = document.querySelector('a[href="#' + this.dataset.tab + '"]');
-                if (tabEl) bootstrap.Tab.getOrCreateInstance(tabEl).show();
-                // Scroll suave para o conteúdo
-                const pane = document.getElementById(this.dataset.tab);
-                if (pane) setTimeout(() => pane.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                }), 150);
-            });
-        });
-
-        // ── Restaurar tab activa via URL param ──
-        const urlParams = new URLSearchParams(window.location.search);
-        const tab = urlParams.get('tab');
-        if (tab) {
-            const tabEl = document.querySelector(`a[href="#${tab}"]`);
-            if (tabEl) {
-                bootstrap.Tab.getOrCreateInstance(tabEl).show();
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
             // Copiar Access Code
             const accessBox = document.getElementById('access-code-box');
             const accessFeedback = document.getElementById('access-copy-feedback');
@@ -1893,16 +1741,10 @@ function role_badge(string $r): string
                 });
             }
 
-            // Regenerar Access Code (com SweetAlert)
+            // Regenerar Access Code (SweetAlert + formulário)
             const regenBtn = document.getElementById('regenerateAccessCodeBtn');
             if (regenBtn) {
-                regenBtn.addEventListener('click', async function() {
-                    // Verifica se o SweetAlert está disponível
-                    if (typeof Swal === 'undefined') {
-                        console.error('SweetAlert não carregado');
-                        alert('Erro: SweetAlert não carregado. Recarrega a página.');
-                        return;
-                    }
+                regenBtn.addEventListener('click', async () => {
                     const {
                         value: password
                     } = await Swal.fire({
@@ -1924,8 +1766,166 @@ function role_badge(string $r): string
                     }
                 });
             }
+
+            // ── Upload de foto — drop zone + preview ──
+            const photoInput = document.getElementById('photo-input');
+            const dropZone = document.getElementById('photo-drop-zone');
+            const previewWrap = document.getElementById('photo-preview-wrap');
+            const fileNameEl = document.getElementById('photo-filename');
+            const btnUpload = document.getElementById('btn-upload-photo');
+            const spinPhoto = document.getElementById('spin-photo');
+            const formPhoto = document.getElementById('form-photo');
+
+            function handlePhotoFile(file) {
+                if (!file) return;
+
+                // Validar tipo e tamanho no cliente
+                const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+                if (!allowed.includes(file.type)) {
+                    alert('Formato inválido. Usa JPG, PNG ou WebP.');
+                    return;
+                }
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('Ficheiro demasiado grande. Máximo 2MB.');
+                    return;
+                }
+
+                // Preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewWrap.innerHTML =
+                        `<img src="${e.target.result}" alt="" style="width:100%;height:100%;object-fit:cover" />`;
+                };
+                reader.readAsDataURL(file);
+
+                // Mostrar nome do ficheiro
+                if (fileNameEl) {
+                    fileNameEl.textContent = '✓ ' + file.name;
+                    fileNameEl.style.display = 'block';
+                }
+
+                // Activar botão
+                if (btnUpload) btnUpload.disabled = false;
+            }
+
+            if (photoInput) {
+                photoInput.addEventListener('change', function() {
+                    handlePhotoFile(this.files[0]);
+                });
+            }
+
+            // Drag & Drop
+            if (dropZone) {
+                dropZone.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    this.style.background = 'rgba(255,0,137,.08)';
+                    this.style.borderColor = '#FF0089';
+                });
+                dropZone.addEventListener('dragleave', function() {
+                    this.style.background = 'rgba(255,0,137,.03)';
+                    this.style.borderColor = 'rgba(255,0,137,.3)';
+                });
+                dropZone.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.style.background = 'rgba(255,0,137,.03)';
+                    this.style.borderColor = 'rgba(255,0,137,.3)';
+                    const file = e.dataTransfer.files[0];
+                    if (file && photoInput) {
+                        // Transferir para o input real
+                        const dt = new DataTransfer();
+                        dt.items.add(file);
+                        photoInput.files = dt.files;
+                        handlePhotoFile(file);
+                    }
+                });
+            }
+
+            // Submit do form de foto com loading
+            if (formPhoto && btnUpload) {
+                btnUpload.addEventListener('click', function() {
+                    if (spinPhoto) spinPhoto.classList.remove('d-none');
+                    btnUpload.disabled = true;
+                    formPhoto.submit();
+                });
+            }
+
+            // ── Links rápidos da coluna lateral → activar tab correcto ──
+            document.querySelectorAll('.tab-link[data-tab]').forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const tabEl = document.querySelector('a[href="#' + this.dataset.tab + '"]');
+                    if (tabEl) bootstrap.Tab.getOrCreateInstance(tabEl).show();
+                    // Scroll suave para o conteúdo
+                    const pane = document.getElementById(this.dataset.tab);
+                    if (pane) setTimeout(() => pane.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    }), 150);
+                });
+            });
+
+            // ── Restaurar tab activa via URL param ──
+            const urlParams = new URLSearchParams(window.location.search);
+            const tab = urlParams.get('tab');
+            if (tab) {
+                const tabEl = document.querySelector(`a[href="#${tab}"]`);
+                if (tabEl) {
+                    bootstrap.Tab.getOrCreateInstance(tabEl).show();
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                // Copiar Access Code
+                const accessBox = document.getElementById('access-code-box');
+                const accessFeedback = document.getElementById('access-copy-feedback');
+                if (accessBox) {
+                    accessBox.addEventListener('click', function() {
+                        let code = this.childNodes[0]?.textContent.trim();
+                        if (!code || code === '———') return;
+                        navigator.clipboard.writeText(code).then(() => {
+                            if (accessFeedback) {
+                                accessFeedback.style.display = 'block';
+                                setTimeout(() => {
+                                    accessFeedback.style.display = 'none';
+                                }, 3000);
+                            }
+                        });
+                    });
+                }
+
+                // Regenerar Access Code (com SweetAlert)
+                const regenBtn = document.getElementById('regenerateAccessCodeBtn');
+                if (regenBtn) {
+                    regenBtn.addEventListener('click', async function() {
+                        // Verifica se o SweetAlert está disponível
+                        if (typeof Swal === 'undefined') {
+                            console.error('SweetAlert não carregado');
+                            alert('Erro: SweetAlert não carregado. Recarrega a página.');
+                            return;
+                        }
+                        const {
+                            value: password
+                        } = await Swal.fire({
+                            title: 'Regenerar código de acesso',
+                            text: 'Confirma a tua senha actual para gerar um novo código de 6 dígitos.',
+                            input: 'password',
+                            inputPlaceholder: 'Senha do administrador',
+                            inputAttributes: {
+                                autocomplete: 'current-password'
+                            },
+                            showCancelButton: true,
+                            confirmButtonColor: '#ef4444',
+                            confirmButtonText: 'Regenerar',
+                            cancelButtonText: 'Cancelar'
+                        });
+                        if (password) {
+                            document.getElementById('regen_password_hidden').value = password;
+                            document.getElementById('form-regen-access').submit();
+                        }
+                    });
+                }
+            });
         });
-    });
     </script>
 </body>
 

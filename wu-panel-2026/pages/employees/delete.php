@@ -38,18 +38,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         case 'block':
             $db->prepare("UPDATE _employees SET status_employees='blocked' WHERE id_employees=?")
-               ->execute([$emp_id]);
+                ->execute([$emp_id]);
             // Invalidar sessões activas
             $db->prepare("UPDATE _employees_security SET remember_token=NULL WHERE id_employees=?")
-               ->execute([$emp_id]);
-            logAudit($admin_id, null, 'employees.blocked', 'employees', $emp_id, ['status'=>$target['status_employees']], ['status'=>'blocked']);
+                ->execute([$emp_id]);
+            logAudit($admin_id, null, 'employees.blocked', 'employees', $emp_id, ['status' => $target['status_employees']], ['status' => 'blocked']);
             adminRedirect($back_view . '&msg=blocked');
             break;
 
         case 'unblock':
             $db->prepare("UPDATE _employees SET status_employees='active' WHERE id_employees=?")
-               ->execute([$emp_id]);
-            logAudit($admin_id, null, 'employees.unblocked', 'employees', $emp_id, ['status'=>$target['status_employees']], ['status'=>'active']);
+                ->execute([$emp_id]);
+            logAudit($admin_id, null, 'employees.unblocked', 'employees', $emp_id, ['status' => $target['status_employees']], ['status' => 'active']);
             adminRedirect($back_view . '&msg=unblocked');
             break;
 
@@ -123,52 +123,52 @@ $color    = adm_avatar_color($fullname);
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
     <style>
-    .del-avatar {
-        width: 72px;
-        height: 72px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 800;
-        font-size: 1.5rem;
-        color: #fff;
-        flex-shrink: 0;
-    }
+        .del-avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: #fff;
+            flex-shrink: 0;
+        }
 
-    .del-avatar img {
-        width: 72px;
-        height: 72px;
-        border-radius: 50%;
-        object-fit: cover;
-    }
+        .del-avatar img {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
 
-    .danger-zone {
-        border: 2px solid rgba(239, 68, 68, .3);
-        border-radius: 12px;
-        padding: 20px;
-        background: rgba(239, 68, 68, .04);
-    }
+        .danger-zone {
+            border: 2px solid rgba(239, 68, 68, .3);
+            border-radius: 12px;
+            padding: 20px;
+            background: rgba(239, 68, 68, .04);
+        }
 
-    .checklist-del {
-        list-style: none;
-        padding: 0;
-        margin: 12px 0 0;
-    }
+        .checklist-del {
+            list-style: none;
+            padding: 0;
+            margin: 12px 0 0;
+        }
 
-    .checklist-del li {
-        display: flex;
-        align-items: flex-start;
-        gap: 8px;
-        font-size: .84rem;
-        margin-bottom: 6px;
-        color: #991b1b;
-    }
+        .checklist-del li {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: .84rem;
+            margin-bottom: 6px;
+            color: #991b1b;
+        }
 
-    .checklist-del li i {
-        margin-top: 2px;
-        flex-shrink: 0;
-    }
+        .checklist-del li i {
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
     </style>
 </head>
 
@@ -190,7 +190,7 @@ $color    = adm_avatar_color($fullname);
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb mb-0">
                                 <li class="breadcrumb-item">
-                                    <a href="<?php echo APP_URL.'/'.ADMIN_PATH; ?>/employees"
+                                    <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees"
                                         class="text-secondary">Funcionários</a>
                                 </li>
                                 <li class="breadcrumb-item active text-white-stable">Excluir</li>
@@ -203,12 +203,12 @@ $color    = adm_avatar_color($fullname);
                 <div class="card mb-4">
                     <div class="d-flex align-items-center gap-3 p-1">
                         <?php if (!empty($emp['photo_employees'])): ?>
-                        <img src="<?php echo APP_URL; ?>/assets/comprovantes/uploads/employees/<?php echo htmlspecialchars($emp['photo_employees']); ?>"
-                            class="del-avatar" alt="" style="border:2px solid var(--border-color)" />
+                            <img src="<?php echo APP_URL; ?>/assets/comprovantes/uploads/employees/<?php echo htmlspecialchars($emp['photo_employees']); ?>"
+                                class="del-avatar" alt="" style="border:2px solid var(--border-color)" />
                         <?php else: ?>
-                        <div class="del-avatar" style="background:<?php echo $color; ?>">
-                            <?php echo $ini; ?>
-                        </div>
+                            <div class="del-avatar" style="background:<?php echo $color; ?>">
+                                <?php echo $ini; ?>
+                            </div>
                         <?php endif; ?>
                         <div>
                             <div style="font-weight:700;font-size:1rem"><?php echo htmlspecialchars($fullname); ?></div>
@@ -218,14 +218,14 @@ $color    = adm_avatar_color($fullname);
                             </div>
                             <div class="mt-1">
                                 <?php
-                            $role_badge = match($emp['role']) {
-                                'admin'   => '<span class="badge bg-primary">Admin</span>',
-                                'editor'  => '<span class="badge bg-info text-dark">Editor</span>',
-                                'support' => '<span class="badge bg-secondary">Suporte</span>',
-                                default   => '<span class="badge bg-dark">' . htmlspecialchars($emp['role']) . '</span>',
-                            };
-                            echo $role_badge;
-                            ?>
+                                $role_badge = match ($emp['role']) {
+                                    'admin'   => '<span class="badge bg-primary">Admin</span>',
+                                    'editor'  => '<span class="badge bg-info text-dark">Editor</span>',
+                                    'support' => '<span class="badge bg-secondary">Suporte</span>',
+                                    default   => '<span class="badge bg-dark">' . htmlspecialchars($emp['role']) . '</span>',
+                                };
+                                echo $role_badge;
+                                ?>
                                 <span class="badge bg-secondary ms-1" style="font-size:.65rem">
                                     Membro desde <?php echo date('d/m/Y', strtotime($emp['creat_employees'])); ?>
                                 </span>
@@ -257,7 +257,7 @@ $color    = adm_avatar_color($fullname);
                 </div>
 
                 <!-- Formulário de confirmação -->
-                <form method="POST" action="<?php echo APP_URL.'/'.ADMIN_PATH; ?>/employees/delete" id="form-del"
+                <form method="POST" action="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees/delete" id="form-del"
                     onsubmit="return validateDel()">
                     <input type="hidden" name="csrf_token"
                         value="<?php echo htmlspecialchars($_SESSION['admin_csrf_token']); ?>" />
@@ -276,7 +276,7 @@ $color    = adm_avatar_color($fullname);
                     </div>
 
                     <div class="d-flex gap-2">
-                        <a href="<?php echo APP_URL.'/'.ADMIN_PATH; ?>/employees/view?id=<?php echo $id; ?>"
+                        <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees/view?id=<?php echo $id; ?>"
                             class="btn btn-outline-secondary flex-grow-1">
                             <i class="bi bi-arrow-left me-1"></i>Cancelar
                         </a>
@@ -296,7 +296,7 @@ $color    = adm_avatar_color($fullname);
         <div class="container">
             <div class="row">
                 <div class="col-12 text-center">
-                    <p class="mb-2">© 2026 Wasom Upfy. Todos os direitos reservados.</p>
+                    <p class="mb-2">© <?php echo date('Y'); ?> <?php echo APP_NAME; ?>. Todos os direitos reservados.</p>
                     <a href="<?php echo APP_URL; ?>/page/politicies/terms" class="me-2">Termos de Uso</a>
                     <a href="<?php echo APP_URL; ?>/page/politicies/privacy" class="me-2">Privacidade</a>
                     <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/support">Suporte</a>
@@ -315,26 +315,26 @@ $color    = adm_avatar_color($fullname);
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="<?php echo APP_URL; ?>/js/lastest.js"></script>
     <script>
-    var EXPECTED_NAME = <?php echo json_encode($fullname); ?>;
+        var EXPECTED_NAME = <?php echo json_encode($fullname); ?>;
 
-    document.getElementById('inp-confirm-name').addEventListener('input', function() {
-        var ok = this.value.trim().toLowerCase() === EXPECTED_NAME.toLowerCase();
-        document.getElementById('btn-del').disabled = !ok;
-        document.getElementById('name-err').style.display =
-            (this.value.length > 0 && !ok) ? 'block' : 'none';
-    });
+        document.getElementById('inp-confirm-name').addEventListener('input', function() {
+            var ok = this.value.trim().toLowerCase() === EXPECTED_NAME.toLowerCase();
+            document.getElementById('btn-del').disabled = !ok;
+            document.getElementById('name-err').style.display =
+                (this.value.length > 0 && !ok) ? 'block' : 'none';
+        });
 
-    function validateDel() {
-        var ok = document.getElementById('inp-confirm-name').value.trim().toLowerCase() ===
-            EXPECTED_NAME.toLowerCase();
-        if (!ok) {
-            document.getElementById('name-err').style.display = 'block';
-            return false;
+        function validateDel() {
+            var ok = document.getElementById('inp-confirm-name').value.trim().toLowerCase() ===
+                EXPECTED_NAME.toLowerCase();
+            if (!ok) {
+                document.getElementById('name-err').style.display = 'block';
+                return false;
+            }
+            document.getElementById('spin-del').classList.remove('d-none');
+            document.getElementById('btn-del').disabled = true;
+            return true;
         }
-        document.getElementById('spin-del').classList.remove('d-none');
-        document.getElementById('btn-del').disabled = true;
-        return true;
-    }
     </script>
 </body>
 

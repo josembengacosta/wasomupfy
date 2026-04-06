@@ -160,233 +160,233 @@ $emp_json = json_encode(array_map(function ($e) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
     <style>
-    .emp-s-active {
-        background: rgba(34, 197, 94, .15);
-        color: #166534;
-    }
+        .emp-s-active {
+            background: rgba(34, 197, 94, .15);
+            color: #166534;
+        }
 
-    .emp-s-inactive {
-        background: rgba(107, 114, 128, .15);
-        color: #374151;
-    }
+        .emp-s-inactive {
+            background: rgba(107, 114, 128, .15);
+            color: #374151;
+        }
 
-    .emp-s-blocked {
-        background: rgba(239, 68, 68, .15);
-        color: #991b1b;
-    }
+        .emp-s-blocked {
+            background: rgba(239, 68, 68, .15);
+            color: #991b1b;
+        }
 
-    .emp-s-suspended {
-        background: rgba(234, 179, 8, .15);
-        color: #92400e;
-    }
+        .emp-s-suspended {
+            background: rgba(234, 179, 8, .15);
+            color: #92400e;
+        }
 
-    .emp-s-processing {
-        background: rgba(59, 130, 246, .15);
-        color: #1e40af;
-    }
+        .emp-s-processing {
+            background: rgba(59, 130, 246, .15);
+            color: #1e40af;
+        }
 
-    .emp-stat-card {
-        background: var(--card-bg, #fff);
-        border: 1px solid var(--border-color, #e8e8f0);
-        border-radius: 12px;
-        padding: 14px 18px;
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        transition: transform .2s;
-    }
+        .emp-stat-card {
+            background: var(--card-bg, #fff);
+            border: 1px solid var(--border-color, #e8e8f0);
+            border-radius: 12px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: transform .2s;
+        }
 
-    .emp-stat-card:hover {
-        transform: translateY(-2px);
-    }
+        .emp-stat-card:hover {
+            transform: translateY(-2px);
+        }
 
-    .emp-stat-icon {
-        width: 42px;
-        height: 42px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.1rem;
-        flex-shrink: 0;
-    }
+        .emp-stat-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
 
-    .emp-stat-num {
-        font-size: 1.25rem;
-        font-weight: 800;
-        line-height: 1;
-    }
+        .emp-stat-num {
+            font-size: 1.25rem;
+            font-weight: 800;
+            line-height: 1;
+        }
 
-    .emp-stat-label {
-        font-size: .76rem;
-        opacity: .6;
-        margin-top: 2px;
-    }
+        .emp-stat-label {
+            font-size: .76rem;
+            opacity: .6;
+            margin-top: 2px;
+        }
 
-    .filter-card {
-        background: var(--card-bg, #fff);
-        border: 1px solid var(--border-color, #e8e8f0);
-        border-radius: 12px;
-        padding: 18px;
-        margin-bottom: 18px;
-    }
+        .filter-card {
+            background: var(--card-bg, #fff);
+            border: 1px solid var(--border-color, #e8e8f0);
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 18px;
+        }
 
-    .filter-card .form-label {
-        font-size: .78rem;
-        font-weight: 600;
-        margin-bottom: 4px;
-    }
+        .filter-card .form-label {
+            font-size: .78rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
 
-    .emp-avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 2px solid rgba(255, 0, 137, .2);
-    }
+        .emp-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(255, 0, 137, .2);
+        }
 
-    .emp-avatar-ini {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: .7rem;
-        color: #fff;
-        flex-shrink: 0;
-    }
+        .emp-avatar-ini {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: .7rem;
+            color: #fff;
+            flex-shrink: 0;
+        }
 
-    #employees-table th {
-        font-size: .76rem;
-        text-transform: uppercase;
-        letter-spacing: .4px;
-        font-weight: 700;
-        white-space: nowrap;
-        cursor: pointer;
-        user-select: none;
-    }
+        #employees-table th {
+            font-size: .76rem;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            font-weight: 700;
+            white-space: nowrap;
+            cursor: pointer;
+            user-select: none;
+        }
 
-    #employees-table th:hover {
-        opacity: .75;
-    }
+        #employees-table th:hover {
+            opacity: .75;
+        }
 
-    #employees-table th.sort-asc::after {
-        content: " ▲";
-        font-size: .6rem;
-    }
+        #employees-table th.sort-asc::after {
+            content: " ▲";
+            font-size: .6rem;
+        }
 
-    #employees-table th.sort-desc::after {
-        content: " ▼";
-        font-size: .6rem;
-    }
+        #employees-table th.sort-desc::after {
+            content: " ▼";
+            font-size: .6rem;
+        }
 
-    #employees-table td {
-        font-size: .83rem;
-        vertical-align: middle;
-    }
+        #employees-table td {
+            font-size: .83rem;
+            vertical-align: middle;
+        }
 
-    /* ── Dropdown acções (CORRIGIDO) ── */
-    .actions-dropdown {
-        position: relative;
-        display: inline-block;
-    }
+        /* ── Dropdown acções (CORRIGIDO) ── */
+        .actions-dropdown {
+            position: relative;
+            display: inline-block;
+        }
 
-    /* Botão de ações */
-    .btn-actions {
-        background: transparent;
-        border: 1px solid var(--border-color, #e8e8f0);
-        border-radius: 8px;
-        padding: 4px 10px;
-        color: var(--text-muted, #888);
-        transition: all .2s;
-        cursor: pointer;
-    }
+        /* Botão de ações */
+        .btn-actions {
+            background: transparent;
+            border: 1px solid var(--border-color, #e8e8f0);
+            border-radius: 8px;
+            padding: 4px 10px;
+            color: var(--text-muted, #888);
+            transition: all .2s;
+            cursor: pointer;
+        }
 
-    .btn-actions:hover {
-        background: rgba(255, 0, 137, .1);
-        border-color: #FF0089;
-        color: #FF0089;
-    }
+        .btn-actions:hover {
+            background: rgba(255, 0, 137, .1);
+            border-color: #FF0089;
+            color: #FF0089;
+        }
 
-    /* Menu dropdown — posicionado automaticamente pelo Bootstrap */
-    .actions-dropdown .dropdown-menu {
-        position: absolute;
-        z-index: 9999;
-        min-width: 180px;
-        background: var(--card-bg, #fff);
-        border: 1px solid var(--border-color, #e8e8f0);
-        border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        padding: 6px;
-        margin: 0;
-    }
+        /* Menu dropdown — posicionado automaticamente pelo Bootstrap */
+        .actions-dropdown .dropdown-menu {
+            position: absolute;
+            z-index: 9999;
+            min-width: 180px;
+            background: var(--card-bg, #fff);
+            border: 1px solid var(--border-color, #e8e8f0);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 6px;
+            margin: 0;
+        }
 
-    /* Itens do dropdown */
-    .actions-dropdown .dropdown-item {
-        font-size: .82rem;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 8px 14px;
-        border-radius: 8px;
-        transition: all .2s;
-        cursor: pointer;
-    }
+        /* Itens do dropdown */
+        .actions-dropdown .dropdown-item {
+            font-size: .82rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            transition: all .2s;
+            cursor: pointer;
+        }
 
-    .actions-dropdown .dropdown-item:hover {
-        background: rgba(255, 0, 137, .08);
-    }
+        .actions-dropdown .dropdown-item:hover {
+            background: rgba(255, 0, 137, .08);
+        }
 
-    .actions-dropdown .dropdown-item i {
-        width: 18px;
-        font-size: .9rem;
-    }
+        .actions-dropdown .dropdown-item i {
+            width: 18px;
+            font-size: .9rem;
+        }
 
-    /* Dark mode */
-    .dark-mode .actions-dropdown .dropdown-menu {
-        background: var(--dark-card, #1a1a27);
-        border-color: var(--dark-border, #2e2e42);
-    }
+        /* Dark mode */
+        .dark-mode .actions-dropdown .dropdown-menu {
+            background: var(--dark-card, #1a1a27);
+            border-color: var(--dark-border, #2e2e42);
+        }
 
-    .dark-mode .actions-dropdown .dropdown-item:hover {
-        background: rgba(255, 0, 137, .15);
-    }
+        .dark-mode .actions-dropdown .dropdown-item:hover {
+            background: rgba(255, 0, 137, .15);
+        }
 
-    .dark-mode .btn-actions {
-        border-color: var(--dark-border, #2e2e42);
-        color: #aaa;
-    }
+        .dark-mode .btn-actions {
+            border-color: var(--dark-border, #2e2e42);
+            color: #aaa;
+        }
 
-    .dark-mode .btn-actions:hover {
-        background: rgba(255, 0, 137, .2);
-        border-color: #FF0089;
-        color: #FF0089;
-    }
+        .dark-mode .btn-actions:hover {
+            background: rgba(255, 0, 137, .2);
+            border-color: #FF0089;
+            color: #FF0089;
+        }
 
-    /* Congela o hover da linha quando o dropdown está aberto — evita reflow */
-    #employees-table tbody tr:has(.dropdown.show) {
-        background: var(--card-bg, #fff) !important;
-    }
+        /* Congela o hover da linha quando o dropdown está aberto — evita reflow */
+        #employees-table tbody tr:has(.dropdown.show) {
+            background: var(--card-bg, #fff) !important;
+        }
 
-    .emp-pagination .page-link {
-        border-radius: 8px !important;
-        margin: 0 2px;
-        font-size: .82rem;
-    }
+        .emp-pagination .page-link {
+            border-radius: 8px !important;
+            margin: 0 2px;
+            font-size: .82rem;
+        }
 
-    .emp-empty {
-        text-align: center;
-        padding: 48px 24px;
-        opacity: .5;
-    }
+        .emp-empty {
+            text-align: center;
+            padding: 48px 24px;
+            opacity: .5;
+        }
 
-    .emp-empty i {
-        font-size: 2.5rem;
-        display: block;
-        margin-bottom: 12px;
-    }
+        .emp-empty i {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 12px;
+        }
     </style>
 </head>
 
@@ -419,20 +419,20 @@ $emp_json = json_encode(array_map(function ($e) {
                             <i class="bi bi-download me-1"></i>Exportar CSV
                         </button>
                         <?php if (hasPermission($admin_id, 'employees.edit')): ?>
-                        <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees/add" class="btn btn-sm text-white"
-                            style="background:#FF0089;border-color:#FF0089">
-                            <i class="bi bi-plus me-1"></i>Adicionar Funcionário
-                        </a>
+                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees/add" class="btn btn-sm text-white"
+                                style="background:#FF0089;border-color:#FF0089">
+                                <i class="bi bi-plus me-1"></i>Adicionar Funcionário
+                            </a>
                         <?php endif; ?>
                     </div>
                 </div>
 
                 <?php if ($feedback): ?>
-                <div class="alert alert-<?php echo $feedback[0]; ?> alert-dismissible fade show mb-3">
-                    <i class="bi <?php echo $feedback[1]; ?> me-2"></i>
-                    <?php echo htmlspecialchars($feedback[2]); ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
+                    <div class="alert alert-<?php echo $feedback[0]; ?> alert-dismissible fade show mb-3">
+                        <i class="bi <?php echo $feedback[1]; ?> me-2"></i>
+                        <?php echo htmlspecialchars($feedback[2]); ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
                 <?php endif; ?>
 
                 <!-- Stats -->
@@ -448,18 +448,18 @@ $emp_json = json_encode(array_map(function ($e) {
                     ];
                     foreach ($scards as [$ic, $col, $num, $lbl]):
                     ?>
-                    <div class="col-6 col-sm-4 col-lg-2">
-                        <div class="emp-stat-card">
-                            <div class="emp-stat-icon"
-                                style="background:<?php echo $col; ?>1a;color:<?php echo $col; ?>">
-                                <i class="bi <?php echo $ic; ?>"></i>
-                            </div>
-                            <div>
-                                <div class="emp-stat-num"><?php echo $num; ?></div>
-                                <div class="emp-stat-label"><?php echo $lbl; ?></div>
+                        <div class="col-6 col-sm-4 col-lg-2">
+                            <div class="emp-stat-card">
+                                <div class="emp-stat-icon"
+                                    style="background:<?php echo $col; ?>1a;color:<?php echo $col; ?>">
+                                    <i class="bi <?php echo $ic; ?>"></i>
+                                </div>
+                                <div>
+                                    <div class="emp-stat-num"><?php echo $num; ?></div>
+                                    <div class="emp-stat-label"><?php echo $lbl; ?></div>
+                                </div>
                             </div>
                         </div>
-                    </div>
                     <?php endforeach; ?>
                 </div>
 
@@ -562,135 +562,135 @@ $emp_json = json_encode(array_map(function ($e) {
                             </thead>
                             <tbody>
                                 <?php if (empty($employees_list)): ?>
-                                <tr>
-                                    <td colspan="11">
-                                        <div class="emp-empty">
-                                            <i class="bi bi-people"></i>
-                                            <p class="mb-0">
-                                                Nenhum funcionário encontrado
-                                                <?php if ($filter_name || $filter_email || $filter_role || $filter_status || $filter_id): ?>
-                                                com esses filtros.
-                                                <?php else: ?>
-                                                .
-                                                <?php endif; ?>
-                                            </p>
-                                        </div>
-                                    </td>
-                                </tr>
+                                    <tr>
+                                        <td colspan="11">
+                                            <div class="emp-empty">
+                                                <i class="bi bi-people"></i>
+                                                <p class="mb-0">
+                                                    Nenhum funcionário encontrado
+                                                    <?php if ($filter_name || $filter_email || $filter_role || $filter_status || $filter_id): ?>
+                                                        com esses filtros.
+                                                    <?php else: ?>
+                                                        .
+                                                    <?php endif; ?>
+                                                </p>
+                                            </div>
+                                        </td>
+                                    </tr>
                                 <?php else: ?>
-                                <?php foreach ($employees_list as $emp):
+                                    <?php foreach ($employees_list as $emp):
                                         $fullname = trim($emp['first_name'] . ' ' . ($emp['second_name'] ?? ''));
                                         $ini      = adm_initials($emp['first_name'], $emp['second_name'] ?? '');
                                         $color    = adm_avatar_color($fullname);
                                         $is_me    = (int)$emp['id_employees'] === $admin_id;
                                     ?>
-                                <tr>
-                                    <td style="font-family:monospace;font-size:.78rem;opacity:.6">
-                                        #<?php echo (int)$emp['id_employees']; ?>
-                                    </td>
-                                    <td>
-                                        <?php if (!empty($emp['photo_employees'])): ?>
-                                        <img src="<?php echo APP_URL; ?>/assets/comprovantes/uploads/employees/<?php echo htmlspecialchars($emp['photo_employees']); ?>"
-                                            alt="" class="emp-avatar"
-                                            onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
-                                        <div class="emp-avatar-ini"
-                                            style="background:<?php echo $color; ?>;display:none">
-                                            <?php echo $ini; ?>
-                                        </div>
-                                        <?php else: ?>
-                                        <div class="emp-avatar-ini" style="background:<?php echo $color; ?>">
-                                            <?php echo $ini; ?>
-                                        </div>
-                                        <?php endif; ?>
-                                    </td>
-                                    <td>
-                                        <div style="font-weight:600">
-                                            <?php echo htmlspecialchars($fullname); ?>
-                                            <?php if ($is_me): ?>
-                                            <span class="badge bg-primary ms-1" style="font-size:.6rem">Você</span>
-                                            <?php endif; ?>
-                                        </div>
-                                        <div style="font-size:.74rem;opacity:.5">
-                                            <?php echo emp_gender($emp['gender']); ?></div>
-                                    </td>
-                                    <td style="font-size:.78rem;opacity:.6">
-                                        @<?php echo htmlspecialchars($emp['user_employees'] ?? '—'); ?>
-                                    </td>
-                                    <td><?php echo emp_role_badge($emp['role']); ?></td>
-                                    <td style="font-size:.8rem">
-                                        <a href="mailto:<?php echo htmlspecialchars($emp['email_employees']); ?>"
-                                            class="text-decoration-none" style="color:inherit">
-                                            <?php echo htmlspecialchars($emp['email_employees']); ?>
-                                        </a>
-                                    </td>
-                                    <td style="font-size:.8rem;opacity:.7">
-                                        <?php echo htmlspecialchars($emp['tel_employees'] ?? '—'); ?>
-                                    </td>
-                                    <td><?php echo emp_status_badge($emp['status_employees']); ?></td>
-                                    <td style="font-size:.78rem;opacity:.6;white-space:nowrap">
-                                        <?php echo date('d/m/Y', strtotime($emp['creat_employees'])); ?>
-                                    </td>
-                                    <td style="font-size:.78rem;opacity:.6;white-space:nowrap">
-                                        <?php echo $emp['last_login_at'] ? adm_fmt_date($emp['last_login_at']) : '—'; ?>
-                                    </td>
-                                    <td>
-                                        <div class="dropdown actions-dropdown">
-                                            <button class="btn btn-sm btn-outline-secondary" type="button"
-                                                data-bs-toggle="dropdown" title="Acções">
-                                                <i class="bi bi-three-dots-vertical"></i>
-                                            </button>
-                                            <ul class="dropdown-menu dropdown-menu-end">
-                                                <li>
-                                                    <a class="dropdown-item"
-                                                        href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees/view?id=<?php echo (int)$emp['id_employees']; ?>">
-                                                        <i class="bi bi-eye text-info"></i>Visualizar
-                                                    </a>
-                                                </li>
-                                                <?php if (hasPermission($admin_id, 'employees.edit') && !$is_me): ?>
-                                                <li>
-                                                    <a class="dropdown-item"
-                                                        href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees/edit?id=<?php echo (int)$emp['id_employees']; ?>">
-                                                        <i class="bi bi-pencil text-warning"></i>Editar
-                                                    </a>
-                                                </li>
-                                                <?php if ($admin_role === 'super_admin' && $emp['role'] !== 'super_admin'): ?>
-                                                <li>
-                                                    <hr class="dropdown-divider my-1">
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item text-danger"
-                                                        href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees/delete?id=<?php echo (int)$emp['id_employees']; ?>">
-                                                        <i class="bi bi-trash text-danger"></i>Excluir
-                                                    </a>
-                                                </li>
+                                        <tr>
+                                            <td style="font-family:monospace;font-size:.78rem;opacity:.6">
+                                                #<?php echo (int)$emp['id_employees']; ?>
+                                            </td>
+                                            <td>
+                                                <?php if (!empty($emp['photo_employees'])): ?>
+                                                    <img src="<?php echo APP_URL; ?>/assets/comprovantes/uploads/employees/<?php echo htmlspecialchars($emp['photo_employees']); ?>"
+                                                        alt="" class="emp-avatar"
+                                                        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+                                                    <div class="emp-avatar-ini"
+                                                        style="background:<?php echo $color; ?>;display:none">
+                                                        <?php echo $ini; ?>
+                                                    </div>
+                                                <?php else: ?>
+                                                    <div class="emp-avatar-ini" style="background:<?php echo $color; ?>">
+                                                        <?php echo $ini; ?>
+                                                    </div>
                                                 <?php endif; ?>
-                                                <?php endif; ?>
-                                            </ul>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <?php endforeach; ?>
+                                            </td>
+                                            <td>
+                                                <div style="font-weight:600">
+                                                    <?php echo htmlspecialchars($fullname); ?>
+                                                    <?php if ($is_me): ?>
+                                                        <span class="badge bg-primary ms-1" style="font-size:.6rem">Você</span>
+                                                    <?php endif; ?>
+                                                </div>
+                                                <div style="font-size:.74rem;opacity:.5">
+                                                    <?php echo emp_gender($emp['gender']); ?></div>
+                                            </td>
+                                            <td style="font-size:.78rem;opacity:.6">
+                                                @<?php echo htmlspecialchars($emp['user_employees'] ?? '—'); ?>
+                                            </td>
+                                            <td><?php echo emp_role_badge($emp['role']); ?></td>
+                                            <td style="font-size:.8rem">
+                                                <a href="mailto:<?php echo htmlspecialchars($emp['email_employees']); ?>"
+                                                    class="text-decoration-none" style="color:inherit">
+                                                    <?php echo htmlspecialchars($emp['email_employees']); ?>
+                                                </a>
+                                            </td>
+                                            <td style="font-size:.8rem;opacity:.7">
+                                                <?php echo htmlspecialchars($emp['tel_employees'] ?? '—'); ?>
+                                            </td>
+                                            <td><?php echo emp_status_badge($emp['status_employees']); ?></td>
+                                            <td style="font-size:.78rem;opacity:.6;white-space:nowrap">
+                                                <?php echo date('d/m/Y', strtotime($emp['creat_employees'])); ?>
+                                            </td>
+                                            <td style="font-size:.78rem;opacity:.6;white-space:nowrap">
+                                                <?php echo $emp['last_login_at'] ? adm_fmt_date($emp['last_login_at']) : '—'; ?>
+                                            </td>
+                                            <td>
+                                                <div class="dropdown actions-dropdown">
+                                                    <button class="btn btn-sm btn-outline-secondary" type="button"
+                                                        data-bs-toggle="dropdown" title="Acções">
+                                                        <i class="bi bi-three-dots-vertical"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu dropdown-menu-end">
+                                                        <li>
+                                                            <a class="dropdown-item"
+                                                                href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees/view?id=<?php echo (int)$emp['id_employees']; ?>">
+                                                                <i class="bi bi-eye text-info"></i>Visualizar
+                                                            </a>
+                                                        </li>
+                                                        <?php if (hasPermission($admin_id, 'employees.edit') && !$is_me): ?>
+                                                            <li>
+                                                                <a class="dropdown-item"
+                                                                    href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees/edit?id=<?php echo (int)$emp['id_employees']; ?>">
+                                                                    <i class="bi bi-pencil text-warning"></i>Editar
+                                                                </a>
+                                                            </li>
+                                                            <?php if ($admin_role === 'super_admin' && $emp['role'] !== 'super_admin'): ?>
+                                                                <li>
+                                                                    <hr class="dropdown-divider my-1">
+                                                                </li>
+                                                                <li>
+                                                                    <a class="dropdown-item text-danger"
+                                                                        href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees/delete?id=<?php echo (int)$emp['id_employees']; ?>">
+                                                                        <i class="bi bi-trash text-danger"></i>Excluir
+                                                                    </a>
+                                                                </li>
+                                                            <?php endif; ?>
+                                                        <?php endif; ?>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
                                 <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
 
                     <?php if ($total_pages > 1): ?>
-                    <div class="p-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
-                        <span style="font-size:.8rem;opacity:.6">
-                            Página <?php echo $page; ?> de <?php echo $total_pages; ?>
-                            &nbsp;·&nbsp;
-                            <?php echo number_format($total_filtered, 0, ',', '.'); ?> resultado(s)
-                        </span>
-                        <nav>
-                            <ul class="pagination pagination-sm emp-pagination mb-0">
-                                <li class="page-item <?php echo $page <= 1 ? 'disabled' : ''; ?>">
-                                    <a class="page-link"
-                                        href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page - 1])); ?>">
-                                        <i class="bi bi-chevron-left"></i>
-                                    </a>
-                                </li>
-                                <?php
+                        <div class="p-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <span style="font-size:.8rem;opacity:.6">
+                                Página <?php echo $page; ?> de <?php echo $total_pages; ?>
+                                &nbsp;·&nbsp;
+                                <?php echo number_format($total_filtered, 0, ',', '.'); ?> resultado(s)
+                            </span>
+                            <nav>
+                                <ul class="pagination pagination-sm emp-pagination mb-0">
+                                    <li class="page-item <?php echo $page <= 1 ? 'disabled' : ''; ?>">
+                                        <a class="page-link"
+                                            href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page - 1])); ?>">
+                                            <i class="bi bi-chevron-left"></i>
+                                        </a>
+                                    </li>
+                                    <?php
                                     $rs = max(1, $page - 2);
                                     $re = min($total_pages, $page + 2);
                                     if ($rs > 1) {
@@ -706,15 +706,15 @@ $emp_json = json_encode(array_map(function ($e) {
                                         echo '<li class="page-item"><a class="page-link" href="?' . http_build_query(array_merge($_GET, ['page' => $total_pages])) . '">' . $total_pages . '</a></li>';
                                     }
                                     ?>
-                                <li class="page-item <?php echo $page >= $total_pages ? 'disabled' : ''; ?>">
-                                    <a class="page-link"
-                                        href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page + 1])); ?>">
-                                        <i class="bi bi-chevron-right"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
+                                    <li class="page-item <?php echo $page >= $total_pages ? 'disabled' : ''; ?>">
+                                        <a class="page-link"
+                                            href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page + 1])); ?>">
+                                            <i class="bi bi-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
                     <?php endif; ?>
                 </div>
 
@@ -726,7 +726,7 @@ $emp_json = json_encode(array_map(function ($e) {
         <div class="container">
             <div class="row">
                 <div class="col-12 text-center">
-                    <p class="mb-2">© 2026 Wasom Upfy. Todos os direitos reservados.</p>
+                    <p class="mb-2">© <?php echo date('Y'); ?> <?php echo APP_NAME; ?>. Todos os direitos reservados.</p>
                     <a href="<?php echo APP_URL; ?>/page/politicies/terms" class="me-2">Termos de Uso</a>
                     <a href="<?php echo APP_URL; ?>/page/politicies/privacy" class="me-2">Privacidade</a>
                     <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/messages/inbox">Suporte</a>
@@ -746,119 +746,119 @@ $emp_json = json_encode(array_map(function ($e) {
     <script src="<?php echo APP_URL; ?>/js/lastest.js"></script>
     <script src="<?php echo APP_URL; ?>/js/lastest.min.js"></script>
     <script>
-    window.__EMP_DATA__ = <?php echo $emp_json; ?>;
+        window.__EMP_DATA__ = <?php echo $emp_json; ?>;
 
-    document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function() {
 
-        // ── Auto-filtro com debounce 500ms ──
-        var debounceTimer;
-        document.querySelectorAll('.auto-filter').forEach(function(el) {
-            el.addEventListener('input', function() {
-                clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(function() {
+            // ── Auto-filtro com debounce 500ms ──
+            var debounceTimer;
+            document.querySelectorAll('.auto-filter').forEach(function(el) {
+                el.addEventListener('input', function() {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(function() {
+                        document.getElementById('filter-form').submit();
+                    }, 500);
+                });
+            });
+
+            // Selectores: filtro imediato
+            document.querySelectorAll('.instant-filter').forEach(function(el) {
+                el.addEventListener('change', function() {
                     document.getElementById('filter-form').submit();
-                }, 500);
-            });
-        });
-
-        // Selectores: filtro imediato
-        document.querySelectorAll('.instant-filter').forEach(function(el) {
-            el.addEventListener('change', function() {
-                document.getElementById('filter-form').submit();
-            });
-        });
-
-        // ── Ordenação client-side ──
-        var sortCol = null,
-            sortDir = 'asc';
-        document.querySelectorAll('#employees-table thead th[data-col]').forEach(function(th) {
-            th.addEventListener('click', function() {
-                var col = this.dataset.col;
-                sortDir = (sortCol === col && sortDir === 'asc') ? 'desc' : 'asc';
-                sortCol = col;
-                document.querySelectorAll('#employees-table thead th').forEach(function(h) {
-                    h.classList.remove('sort-asc', 'sort-desc');
                 });
-                this.classList.add(sortDir === 'asc' ? 'sort-asc' : 'sort-desc');
+            });
 
-                var tbody = document.querySelector('#employees-table tbody');
-                var rows = Array.from(tbody.querySelectorAll('tr'));
-                var data = window.__EMP_DATA__ || [];
+            // ── Ordenação client-side ──
+            var sortCol = null,
+                sortDir = 'asc';
+            document.querySelectorAll('#employees-table thead th[data-col]').forEach(function(th) {
+                th.addEventListener('click', function() {
+                    var col = this.dataset.col;
+                    sortDir = (sortCol === col && sortDir === 'asc') ? 'desc' : 'asc';
+                    sortCol = col;
+                    document.querySelectorAll('#employees-table thead th').forEach(function(h) {
+                        h.classList.remove('sort-asc', 'sort-desc');
+                    });
+                    this.classList.add(sortDir === 'asc' ? 'sort-asc' : 'sort-desc');
 
-                rows.sort(function(a, b) {
-                    var idA = parseInt((a.querySelector('td:first-child').textContent ||
-                        '').replace('#', '')) || 0;
-                    var idB = parseInt((b.querySelector('td:first-child').textContent ||
-                        '').replace('#', '')) || 0;
-                    var dA = data.find(function(e) {
-                        return e.id === idA;
+                    var tbody = document.querySelector('#employees-table tbody');
+                    var rows = Array.from(tbody.querySelectorAll('tr'));
+                    var data = window.__EMP_DATA__ || [];
+
+                    rows.sort(function(a, b) {
+                        var idA = parseInt((a.querySelector('td:first-child').textContent ||
+                            '').replace('#', '')) || 0;
+                        var idB = parseInt((b.querySelector('td:first-child').textContent ||
+                            '').replace('#', '')) || 0;
+                        var dA = data.find(function(e) {
+                            return e.id === idA;
+                        });
+                        var dB = data.find(function(e) {
+                            return e.id === idB;
+                        });
+                        if (!dA || !dB) return 0;
+                        var va = dA[col] || '',
+                            vb = dB[col] || '';
+                        if (col === 'id') {
+                            va = dA.id;
+                            vb = dB.id;
+                        }
+                        if (typeof va === 'number') return sortDir === 'asc' ? va - vb :
+                            vb - va;
+                        va = String(va).toLowerCase();
+                        vb = String(vb).toLowerCase();
+                        if (va < vb) return sortDir === 'asc' ? -1 : 1;
+                        if (va > vb) return sortDir === 'asc' ? 1 : -1;
+                        return 0;
                     });
-                    var dB = data.find(function(e) {
-                        return e.id === idB;
+                    rows.forEach(function(r) {
+                        tbody.appendChild(r);
                     });
-                    if (!dA || !dB) return 0;
-                    var va = dA[col] || '',
-                        vb = dB[col] || '';
-                    if (col === 'id') {
-                        va = dA.id;
-                        vb = dB.id;
+                });
+            });
+
+            // ── Exportar CSV ──
+            var btnCsv = document.getElementById('btn-export-csv');
+            if (btnCsv) {
+                btnCsv.addEventListener('click', function() {
+                    var data = window.__EMP_DATA__;
+                    if (!data || data.length === 0) {
+                        alert('Nenhum dado para exportar.');
+                        return;
                     }
-                    if (typeof va === 'number') return sortDir === 'asc' ? va - vb :
-                        vb - va;
-                    va = String(va).toLowerCase();
-                    vb = String(vb).toLowerCase();
-                    if (va < vb) return sortDir === 'asc' ? -1 : 1;
-                    if (va > vb) return sortDir === 'asc' ? 1 : -1;
-                    return 0;
-                });
-                rows.forEach(function(r) {
-                    tbody.appendChild(r);
-                });
-            });
-        });
 
-        // ── Exportar CSV ──
-        var btnCsv = document.getElementById('btn-export-csv');
-        if (btnCsv) {
-            btnCsv.addEventListener('click', function() {
-                var data = window.__EMP_DATA__;
-                if (!data || data.length === 0) {
-                    alert('Nenhum dado para exportar.');
-                    return;
-                }
-
-                var headers = ['ID', 'Nome', 'Username', 'E-mail', 'Telefone', 'Role', 'Estado',
-                    'Género', 'Membro desde', 'Último login'
-                ];
-                var rows = data.map(function(e) {
-                    return [e.id, e.nome, e.user, e.email, e.tel, e.role, e.status,
-                        e.gender === 'M' ? 'Masculino' : e.gender === 'F' ? 'Feminino' : '',
-                        e.created ? e.created.slice(0, 10) : '',
-                        e.login ? e.login.slice(0, 10) : ''
+                    var headers = ['ID', 'Nome', 'Username', 'E-mail', 'Telefone', 'Role', 'Estado',
+                        'Género', 'Membro desde', 'Último login'
                     ];
-                });
+                    var rows = data.map(function(e) {
+                        return [e.id, e.nome, e.user, e.email, e.tel, e.role, e.status,
+                            e.gender === 'M' ? 'Masculino' : e.gender === 'F' ? 'Feminino' : '',
+                            e.created ? e.created.slice(0, 10) : '',
+                            e.login ? e.login.slice(0, 10) : ''
+                        ];
+                    });
 
-                var csv = headers.join(';') + '\n';
-                rows.forEach(function(r) {
-                    csv += r.map(function(v) {
-                        return '"' + String(v || '').replace(/"/g, '""') + '"';
-                    }).join(';') + '\n';
-                });
+                    var csv = headers.join(';') + '\n';
+                    rows.forEach(function(r) {
+                        csv += r.map(function(v) {
+                            return '"' + String(v || '').replace(/"/g, '""') + '"';
+                        }).join(';') + '\n';
+                    });
 
-                var blob = new Blob(['\uFEFF' + csv], {
-                    type: 'text/csv;charset=utf-8;'
+                    var blob = new Blob(['\uFEFF' + csv], {
+                        type: 'text/csv;charset=utf-8;'
+                    });
+                    var url = URL.createObjectURL(blob);
+                    var a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'funcionarios_' + new Date().toISOString().slice(0, 10) + '.csv';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
                 });
-                var url = URL.createObjectURL(blob);
-                var a = document.createElement('a');
-                a.href = url;
-                a.download = 'funcionarios_' + new Date().toISOString().slice(0, 10) + '.csv';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            });
-        }
-    });
+            }
+        });
     </script>
 </body>
 

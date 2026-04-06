@@ -55,225 +55,225 @@ $old = [
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
     <style>
-    /* ── Secções do formulário ── */
-    .form-section {
-        padding: 22px;
-        border-radius: 12px;
-        border: 1px solid var(--border-color, #e8e8f0);
-        background: var(--card-bg, #fff);
-        margin-bottom: 20px;
-    }
+        /* ── Secções do formulário ── */
+        .form-section {
+            padding: 22px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color, #e8e8f0);
+            background: var(--card-bg, #fff);
+            margin-bottom: 20px;
+        }
 
-    .form-section h4 {
-        font-size: .95rem;
-        font-weight: 700;
-        margin-bottom: 0;
-        padding-bottom: 14px;
-        border-bottom: 1px solid var(--border-color, #f0f0f8);
-    }
+        .form-section h4 {
+            font-size: .95rem;
+            font-weight: 700;
+            margin-bottom: 0;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border-color, #f0f0f8);
+        }
 
-    .form-section h4 i {
-        color: #FF0089;
-    }
+        .form-section h4 i {
+            color: #FF0089;
+        }
 
-    /* ── Preview card ── */
-    .preview-card {
-        position: sticky;
-        top: 20px;
-        border-radius: 16px;
-        overflow: hidden;
-        border: 1px solid var(--border-color, #e8e8f0);
-        background: var(--card-bg, #fff);
-    }
+        /* ── Preview card ── */
+        .preview-card {
+            position: sticky;
+            top: 20px;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border-color, #e8e8f0);
+            background: var(--card-bg, #fff);
+        }
 
-    .preview-header {
-        background: linear-gradient(135deg, #FF0089, #6c63ff);
-        padding: 28px 20px 20px;
-        text-align: center;
-        color: #fff;
-    }
+        .preview-header {
+            background: linear-gradient(135deg, #FF0089, #6c63ff);
+            padding: 28px 20px 20px;
+            text-align: center;
+            color: #fff;
+        }
 
-    .preview-avatar {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, .2);
-        border: 3px solid rgba(255, 255, 255, .4);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2rem;
-        margin: 0 auto 12px;
-        overflow: hidden;
-    }
+        .preview-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .2);
+            border: 3px solid rgba(255, 255, 255, .4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 12px;
+            overflow: hidden;
+        }
 
-    .preview-avatar img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
+        .preview-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
-    .preview-name {
-        font-size: 1rem;
-        font-weight: 700;
-        margin-bottom: 4px;
-    }
+        .preview-name {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
 
-    .preview-role {
-        font-size: .78rem;
-        opacity: .8;
-    }
+        .preview-role {
+            font-size: .78rem;
+            opacity: .8;
+        }
 
-    .preview-body {
-        padding: 18px;
-    }
+        .preview-body {
+            padding: 18px;
+        }
 
-    .preview-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 8px 0;
-        border-bottom: 1px solid var(--border-color, #f0f0f8);
-        font-size: .83rem;
-    }
+        .preview-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color, #f0f0f8);
+            font-size: .83rem;
+        }
 
-    .preview-row:last-child {
-        border-bottom: none;
-    }
+        .preview-row:last-child {
+            border-bottom: none;
+        }
 
-    .preview-label {
-        opacity: .6;
-    }
+        .preview-label {
+            opacity: .6;
+        }
 
-    .preview-val {
-        font-weight: 600;
-        text-align: right;
-        max-width: 55%;
-        word-break: break-all;
-    }
+        .preview-val {
+            font-weight: 600;
+            text-align: right;
+            max-width: 55%;
+            word-break: break-all;
+        }
 
-    /* ── Força da senha ── */
-    .pw-strength-bar {
-        height: 4px;
-        border-radius: 2px;
-        background: #e8e8f0;
-        overflow: hidden;
-        margin: 8px 0 4px;
-    }
+        /* ── Força da senha ── */
+        .pw-strength-bar {
+            height: 4px;
+            border-radius: 2px;
+            background: #e8e8f0;
+            overflow: hidden;
+            margin: 8px 0 4px;
+        }
 
-    .pw-strength-fill {
-        height: 100%;
-        border-radius: 2px;
-        width: 0;
-        transition: width .3s, background .3s;
-    }
+        .pw-strength-fill {
+            height: 100%;
+            border-radius: 2px;
+            width: 0;
+            transition: width .3s, background .3s;
+        }
 
-    .pw-strength-label {
-        font-size: .74rem;
-        color: #aaa;
-    }
+        .pw-strength-label {
+            font-size: .74rem;
+            color: #aaa;
+        }
 
-    /* ── Checkbox de convite ── */
-    .invite-box {
-        border: 2px dashed rgba(255, 0, 137, .3);
-        border-radius: 12px;
-        padding: 16px 18px;
-        background: rgba(255, 0, 137, .03);
-        transition: border-color .2s, background .2s;
-    }
+        /* ── Checkbox de convite ── */
+        .invite-box {
+            border: 2px dashed rgba(255, 0, 137, .3);
+            border-radius: 12px;
+            padding: 16px 18px;
+            background: rgba(255, 0, 137, .03);
+            transition: border-color .2s, background .2s;
+        }
 
-    .invite-box.active {
-        border-color: rgba(255, 0, 137, .6);
-        background: rgba(255, 0, 137, .06);
-    }
+        .invite-box.active {
+            border-color: rgba(255, 0, 137, .6);
+            background: rgba(255, 0, 137, .06);
+        }
 
-    .invite-box .form-check-label {
-        font-size: .88rem;
-        font-weight: 600;
-        cursor: pointer;
-    }
+        .invite-box .form-check-label {
+            font-size: .88rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
 
-    .invite-detail {
-        display: none;
-        margin-top: 12px;
-        padding-top: 12px;
-        border-top: 1px solid rgba(255, 0, 137, .15);
-    }
+        .invite-detail {
+            display: none;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 0, 137, .15);
+        }
 
-    .invite-detail.show {
-        display: block;
-    }
+        .invite-detail.show {
+            display: block;
+        }
 
-    .invite-detail li {
-        font-size: .82rem;
-        margin-bottom: 4px;
-        opacity: .8;
-    }
+        .invite-detail li {
+            font-size: .82rem;
+            margin-bottom: 4px;
+            opacity: .8;
+        }
 
-    /* ── Status radio cards ── */
-    .status-options {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-        margin-top: 8px;
-    }
+        /* ── Status radio cards ── */
+        .status-options {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
 
-    .status-option {
-        flex: 1;
-        min-width: 140px;
-    }
+        .status-option {
+            flex: 1;
+            min-width: 140px;
+        }
 
-    .status-option input[type="radio"] {
-        display: none;
-    }
+        .status-option input[type="radio"] {
+            display: none;
+        }
 
-    .status-option label {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 14px 10px;
-        border-radius: 10px;
-        border: 2px solid var(--border-color, #e8e8f0);
-        cursor: pointer;
-        transition: all .2s;
-        text-align: center;
-        width: 100%;
-        font-size: .82rem;
-    }
+        .status-option label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 14px 10px;
+            border-radius: 10px;
+            border: 2px solid var(--border-color, #e8e8f0);
+            cursor: pointer;
+            transition: all .2s;
+            text-align: center;
+            width: 100%;
+            font-size: .82rem;
+        }
 
-    .status-option label i {
-        font-size: 1.3rem;
-        margin-bottom: 6px;
-    }
+        .status-option label i {
+            font-size: 1.3rem;
+            margin-bottom: 6px;
+        }
 
-    .status-option input:checked+label {
-        border-color: #FF0089;
-        background: rgba(255, 0, 137, .07);
-        color: #FF0089;
-    }
+        .status-option input:checked+label {
+            border-color: #FF0089;
+            background: rgba(255, 0, 137, .07);
+            color: #FF0089;
+        }
 
-    .status-option.s-active input:checked+label {
-        border-color: #22c55e;
-        background: rgba(34, 197, 94, .07);
-        color: #166534;
-    }
+        .status-option.s-active input:checked+label {
+            border-color: #22c55e;
+            background: rgba(34, 197, 94, .07);
+            color: #166534;
+        }
 
-    .status-option.s-process input:checked+label {
-        border-color: #3b82f6;
-        background: rgba(59, 130, 246, .07);
-        color: #1e40af;
-    }
+        .status-option.s-process input:checked+label {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, .07);
+            color: #1e40af;
+        }
 
-    /* ── Role select visual ── */
-    .role-select-wrap select {
-        font-size: .88rem;
-    }
+        /* ── Role select visual ── */
+        .role-select-wrap select {
+            font-size: .88rem;
+        }
 
-    .role-hint {
-        font-size: .76rem;
-        opacity: .6;
-        margin-top: 4px;
-    }
+        .role-hint {
+            font-size: .76rem;
+            opacity: .6;
+            margin-top: 4px;
+        }
     </style>
 </head>
 
@@ -316,10 +316,10 @@ $old = [
 
                 <!-- Feedback de erro -->
                 <?php if ($errors): ?>
-                <div class="alert alert-<?php echo $errors[0]; ?> alert-dismissible fade show mb-3">
-                    <i class="bi bi-exclamation-circle me-2"></i><?php echo htmlspecialchars($errors[1]); ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
+                    <div class="alert alert-<?php echo $errors[0]; ?> alert-dismissible fade show mb-3">
+                        <i class="bi bi-exclamation-circle me-2"></i><?php echo htmlspecialchars($errors[1]); ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
                 <?php endif; ?>
 
                 <form method="POST" action="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees/add-process"
@@ -397,18 +397,18 @@ $old = [
                                                 class="text-danger">*</span></label>
                                         <select class="form-select" name="role" id="inp-role" required>
                                             <?php if ($can_create_admin): ?>
-                                            <option value="super_admin"
-                                                <?php echo $old['role'] === 'super_admin' ? 'selected' : ''; ?>>
-                                                Super Administrador — acesso total à plataforma
-                                            </option>
-                                            <option value="admin"
-                                                <?php echo $old['role'] === 'admin' ? 'selected' : ''; ?>>
-                                                Administrador — gestão geral (sem acesso total)
-                                            </option>
+                                                <option value="super_admin"
+                                                    <?php echo $old['role'] === 'super_admin' ? 'selected' : ''; ?>>
+                                                    Super Administrador — acesso total à plataforma
+                                                </option>
+                                                <option value="admin"
+                                                    <?php echo $old['role'] === 'admin' ? 'selected' : ''; ?>>
+                                                    Administrador — gestão geral (sem acesso total)
+                                                </option>
                                             <?php else: ?>
-                                            <option value="admin" disabled title="Requer Super Admin">
-                                                Administrador (requer Super Admin)
-                                            </option>
+                                                <option value="admin" disabled title="Requer Super Admin">
+                                                    Administrador (requer Super Admin)
+                                                </option>
                                             <?php endif; ?>
                                             <option value="editor"
                                                 <?php echo $old['role'] === 'editor' ? 'selected' : ''; ?>>
@@ -586,9 +586,9 @@ $old = [
                                             foreach ($countries as $code => $name):
                                                 $sel = ($old['country'] === $code) ? 'selected' : '';
                                             ?>
-                                            <option value="<?php echo $code; ?>" <?php echo $sel; ?>>
-                                                <?php echo htmlspecialchars($name); ?>
-                                            </option>
+                                                <option value="<?php echo $code; ?>" <?php echo $sel; ?>>
+                                                    <?php echo htmlspecialchars($name); ?>
+                                                </option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -754,7 +754,7 @@ $old = [
         <div class="container">
             <div class="row">
                 <div class="col-12 text-center">
-                    <p class="mb-2">© 2026 Wasom Upfy. Todos os direitos reservados.</p>
+                    <p class="mb-2">© <?php echo date('Y'); ?> <?php echo APP_NAME; ?>. Todos os direitos reservados.</p>
                     <a href="<?php echo APP_URL; ?>/page/politicies/terms" class="me-2">Termos de Uso</a>
                     <a href="<?php echo APP_URL; ?>/page/politicies/privacy" class="me-2">Privacidade</a>
                     <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/messages/inbox">Suporte</a>
@@ -774,276 +774,276 @@ $old = [
     <script src="<?php echo APP_URL; ?>/js/lastest.js"></script>
     <script src="<?php echo APP_URL; ?>/js/lastest.min.js"></script>
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function() {
 
-        // ── Referências ──
-        var fName = document.getElementById('inp-fname');
-        var sName = document.getElementById('inp-sname');
-        var userInp = document.getElementById('inp-user');
-        var emailInp = document.getElementById('inp-email');
-        var telInp = document.getElementById('inp-tel');
-        var genderSel = document.getElementById('inp-gender');
-        var roleSel = document.getElementById('inp-role');
-        var countryS = document.getElementById('inp-country');
-        var cityInp = document.getElementById('inp-city');
-        var pwInp = document.getElementById('inp-pw');
-        var photoInp = document.getElementById('inp-photo');
-        var btnGenPw = document.getElementById('btn-gen-pw');
-        var btnCpPw = document.getElementById('btn-copy-pw');
-        var btnSubmit = document.getElementById('btn-submit');
-        var spinSub = document.getElementById('spin-submit');
-        var form = document.getElementById('form-add-emp');
+            // ── Referências ──
+            var fName = document.getElementById('inp-fname');
+            var sName = document.getElementById('inp-sname');
+            var userInp = document.getElementById('inp-user');
+            var emailInp = document.getElementById('inp-email');
+            var telInp = document.getElementById('inp-tel');
+            var genderSel = document.getElementById('inp-gender');
+            var roleSel = document.getElementById('inp-role');
+            var countryS = document.getElementById('inp-country');
+            var cityInp = document.getElementById('inp-city');
+            var pwInp = document.getElementById('inp-pw');
+            var photoInp = document.getElementById('inp-photo');
+            var btnGenPw = document.getElementById('btn-gen-pw');
+            var btnCpPw = document.getElementById('btn-copy-pw');
+            var btnSubmit = document.getElementById('btn-submit');
+            var spinSub = document.getElementById('spin-submit');
+            var form = document.getElementById('form-add-emp');
 
-        // Preview refs
-        var prevAvatar = document.getElementById('prev-avatar');
-        var prevName = document.getElementById('prev-name');
-        var prevRoleLbl = document.getElementById('prev-role-label');
-        var prevUser = document.getElementById('prev-user');
-        var prevEmail = document.getElementById('prev-email');
-        var prevTel = document.getElementById('prev-tel');
-        var prevLoc = document.getElementById('prev-loc');
-        var prevStatus = document.getElementById('prev-status');
-        var prevPw = document.getElementById('prev-pw');
-        var prevInvInfo = document.getElementById('prev-invite-info');
-        var pwFill = document.getElementById('pw-fill');
-        var pwLabel = document.getElementById('pw-strength-label') || document.getElementById('pw-label');
-        var pwStrTxt = document.getElementById('pw-strength-text');
-        var roleDesc = document.getElementById('role-desc');
-        var chkInvite = document.getElementById('chk-invite');
-        var inviteBox = document.getElementById('invite-box');
-        var inviteDetail = document.getElementById('invite-detail');
+            // Preview refs
+            var prevAvatar = document.getElementById('prev-avatar');
+            var prevName = document.getElementById('prev-name');
+            var prevRoleLbl = document.getElementById('prev-role-label');
+            var prevUser = document.getElementById('prev-user');
+            var prevEmail = document.getElementById('prev-email');
+            var prevTel = document.getElementById('prev-tel');
+            var prevLoc = document.getElementById('prev-loc');
+            var prevStatus = document.getElementById('prev-status');
+            var prevPw = document.getElementById('prev-pw');
+            var prevInvInfo = document.getElementById('prev-invite-info');
+            var pwFill = document.getElementById('pw-fill');
+            var pwLabel = document.getElementById('pw-strength-label') || document.getElementById('pw-label');
+            var pwStrTxt = document.getElementById('pw-strength-text');
+            var roleDesc = document.getElementById('role-desc');
+            var chkInvite = document.getElementById('chk-invite');
+            var inviteBox = document.getElementById('invite-box');
+            var inviteDetail = document.getElementById('invite-detail');
 
-        // ── Dados de roles ──
-        var roleData = {
-            'super_admin': {
-                label: 'Super Admin',
-                cls: 'bg-danger',
-                desc: '<strong>Super Administrador:</strong> Acesso total à plataforma sem qualquer restrição. Pode gerir funcionários, finanças, configurações e todos os dados.'
-            },
-            'admin': {
-                label: 'Admin',
-                cls: 'bg-primary',
-                desc: '<strong>Administrador:</strong> Gestão geral da plataforma. Pode gerir utilizadores, músicas, finanças e suporte. Sem acesso à gestão de Super Admins.'
-            },
-            'editor': {
-                label: 'Editor',
-                cls: 'bg-info text-dark',
-                desc: '<strong>Editor:</strong> Pode rever, aprovar e rejeitar músicas e lançamentos. Sem acesso a finanças, utilizadores ou configurações.'
-            },
-            'support': {
-                label: 'Suporte',
-                cls: 'bg-secondary',
-                desc: '<strong>Suporte:</strong> Gestão de tickets e suporte ao cliente. Acesso apenas a visualização de dados relevantes para o atendimento.'
+            // ── Dados de roles ──
+            var roleData = {
+                'super_admin': {
+                    label: 'Super Admin',
+                    cls: 'bg-danger',
+                    desc: '<strong>Super Administrador:</strong> Acesso total à plataforma sem qualquer restrição. Pode gerir funcionários, finanças, configurações e todos os dados.'
+                },
+                'admin': {
+                    label: 'Admin',
+                    cls: 'bg-primary',
+                    desc: '<strong>Administrador:</strong> Gestão geral da plataforma. Pode gerir utilizadores, músicas, finanças e suporte. Sem acesso à gestão de Super Admins.'
+                },
+                'editor': {
+                    label: 'Editor',
+                    cls: 'bg-info text-dark',
+                    desc: '<strong>Editor:</strong> Pode rever, aprovar e rejeitar músicas e lançamentos. Sem acesso a finanças, utilizadores ou configurações.'
+                },
+                'support': {
+                    label: 'Suporte',
+                    cls: 'bg-secondary',
+                    desc: '<strong>Suporte:</strong> Gestão de tickets e suporte ao cliente. Acesso apenas a visualização de dados relevantes para o atendimento.'
+                }
+            };
+
+            // ── Gerar username automático ──
+            function genUsername(first, second) {
+                var f = (first || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(
+                    /[^a-z0-9]/g, '');
+                var s = (second || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(
+                    /[^a-z0-9]/g, '');
+                return f + (s ? s.charAt(0) : '');
             }
-        };
 
-        // ── Gerar username automático ──
-        function genUsername(first, second) {
-            var f = (first || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(
-                /[^a-z0-9]/g, '');
-            var s = (second || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(
-                /[^a-z0-9]/g, '');
-            return f + (s ? s.charAt(0) : '');
-        }
-
-        fName.addEventListener('input', function() {
-            if (!userInp.dataset.manual) {
-                userInp.value = genUsername(this.value, sName.value);
-            }
-            updatePreview();
-        });
-        sName.addEventListener('input', function() {
-            if (!userInp.dataset.manual) {
-                userInp.value = genUsername(fName.value, this.value);
-            }
-            updatePreview();
-        });
-        userInp.addEventListener('input', function() {
-            this.dataset.manual = '1';
-            updatePreview();
-        });
-
-        // ── Gerar senha forte ──
-        function generatePassword() {
-            var upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            var lower = 'abcdefghijklmnopqrstuvwxyz';
-            var digits = '0123456789';
-            var syms = '!@#$%^&*-_+=?';
-            var all = upper + lower + digits + syms;
-            var pw = '';
-            // Garantir pelo menos 2 de cada
-            pw += upper[Math.floor(Math.random() * upper.length)];
-            pw += upper[Math.floor(Math.random() * upper.length)];
-            pw += lower[Math.floor(Math.random() * lower.length)];
-            pw += lower[Math.floor(Math.random() * lower.length)];
-            pw += digits[Math.floor(Math.random() * digits.length)];
-            pw += digits[Math.floor(Math.random() * digits.length)];
-            pw += syms[Math.floor(Math.random() * syms.length)];
-            pw += syms[Math.floor(Math.random() * syms.length)];
-            // Completar até 16
-            for (var i = pw.length; i < 16; i++) {
-                pw += all[Math.floor(Math.random() * all.length)];
-            }
-            // Embaralhar
-            pw = pw.split('').sort(function() {
-                return 0.5 - Math.random();
-            }).join('');
-            return pw;
-        }
-
-        function evalStrength(pw) {
-            var score = 0;
-            if (pw.length >= 12) score++;
-            if (pw.length >= 16) score++;
-            if (/[A-Z]/.test(pw)) score++;
-            if (/[a-z]/.test(pw)) score++;
-            if (/[0-9]/.test(pw)) score++;
-            if (/[^a-zA-Z0-9]/.test(pw)) score += 2;
-            return Math.min(score, 5);
-        }
-
-        function updateStrength(pw) {
-            var s = evalStrength(pw);
-            var colors = ['#e8e8f0', '#ef4444', '#f97316', '#eab308', '#22c55e', '#16a34a'];
-            var labels = ['—', 'Muito fraca', 'Fraca', 'Razoável', 'Forte', 'Muito forte'];
-            var classes = ['light', 'danger', 'warning', 'warning', 'success', 'success'];
-            pwFill.style.width = (s * 20) + '%';
-            pwFill.style.background = colors[s];
-            if (pwLabel) {
-                pwLabel.textContent = labels[s];
-                pwLabel.style.color = colors[s];
-            }
-            if (pwStrTxt) {
-                pwStrTxt.textContent = labels[s];
-                pwStrTxt.className = 'alert alert-' + classes[s] + ' py-2 text-center';
-                pwStrTxt.style.fontSize = '.82rem';
-                pwStrTxt.style.marginBottom = '0';
-            }
-        }
-
-        btnGenPw.addEventListener('click', function() {
-            var pw = generatePassword();
-            pwInp.value = pw;
-            updateStrength(pw);
-            prevPw.textContent = pw;
-            checkCanSubmit();
-        });
-
-        btnCpPw.addEventListener('click', function() {
-            if (!pwInp.value) return;
-            navigator.clipboard.writeText(pwInp.value).then(function() {
-                btnCpPw.innerHTML = '<i class="bi bi-check"></i>';
-                setTimeout(function() {
-                    btnCpPw.innerHTML = '<i class="bi bi-clipboard"></i>';
-                }, 2000);
+            fName.addEventListener('input', function() {
+                if (!userInp.dataset.manual) {
+                    userInp.value = genUsername(this.value, sName.value);
+                }
+                updatePreview();
             });
-        });
+            sName.addEventListener('input', function() {
+                if (!userInp.dataset.manual) {
+                    userInp.value = genUsername(fName.value, this.value);
+                }
+                updatePreview();
+            });
+            userInp.addEventListener('input', function() {
+                this.dataset.manual = '1';
+                updatePreview();
+            });
 
-        // ── Descrição do role ──
-        roleSel.addEventListener('change', function() {
-            var r = roleData[this.value];
-            if (r) {
-                roleDesc.innerHTML = r.desc;
+            // ── Gerar senha forte ──
+            function generatePassword() {
+                var upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                var lower = 'abcdefghijklmnopqrstuvwxyz';
+                var digits = '0123456789';
+                var syms = '!@#$%^&*-_+=?';
+                var all = upper + lower + digits + syms;
+                var pw = '';
+                // Garantir pelo menos 2 de cada
+                pw += upper[Math.floor(Math.random() * upper.length)];
+                pw += upper[Math.floor(Math.random() * upper.length)];
+                pw += lower[Math.floor(Math.random() * lower.length)];
+                pw += lower[Math.floor(Math.random() * lower.length)];
+                pw += digits[Math.floor(Math.random() * digits.length)];
+                pw += digits[Math.floor(Math.random() * digits.length)];
+                pw += syms[Math.floor(Math.random() * syms.length)];
+                pw += syms[Math.floor(Math.random() * syms.length)];
+                // Completar até 16
+                for (var i = pw.length; i < 16; i++) {
+                    pw += all[Math.floor(Math.random() * all.length)];
+                }
+                // Embaralhar
+                pw = pw.split('').sort(function() {
+                    return 0.5 - Math.random();
+                }).join('');
+                return pw;
             }
+
+            function evalStrength(pw) {
+                var score = 0;
+                if (pw.length >= 12) score++;
+                if (pw.length >= 16) score++;
+                if (/[A-Z]/.test(pw)) score++;
+                if (/[a-z]/.test(pw)) score++;
+                if (/[0-9]/.test(pw)) score++;
+                if (/[^a-zA-Z0-9]/.test(pw)) score += 2;
+                return Math.min(score, 5);
+            }
+
+            function updateStrength(pw) {
+                var s = evalStrength(pw);
+                var colors = ['#e8e8f0', '#ef4444', '#f97316', '#eab308', '#22c55e', '#16a34a'];
+                var labels = ['—', 'Muito fraca', 'Fraca', 'Razoável', 'Forte', 'Muito forte'];
+                var classes = ['light', 'danger', 'warning', 'warning', 'success', 'success'];
+                pwFill.style.width = (s * 20) + '%';
+                pwFill.style.background = colors[s];
+                if (pwLabel) {
+                    pwLabel.textContent = labels[s];
+                    pwLabel.style.color = colors[s];
+                }
+                if (pwStrTxt) {
+                    pwStrTxt.textContent = labels[s];
+                    pwStrTxt.className = 'alert alert-' + classes[s] + ' py-2 text-center';
+                    pwStrTxt.style.fontSize = '.82rem';
+                    pwStrTxt.style.marginBottom = '0';
+                }
+            }
+
+            btnGenPw.addEventListener('click', function() {
+                var pw = generatePassword();
+                pwInp.value = pw;
+                updateStrength(pw);
+                prevPw.textContent = pw;
+                checkCanSubmit();
+            });
+
+            btnCpPw.addEventListener('click', function() {
+                if (!pwInp.value) return;
+                navigator.clipboard.writeText(pwInp.value).then(function() {
+                    btnCpPw.innerHTML = '<i class="bi bi-check"></i>';
+                    setTimeout(function() {
+                        btnCpPw.innerHTML = '<i class="bi bi-clipboard"></i>';
+                    }, 2000);
+                });
+            });
+
+            // ── Descrição do role ──
+            roleSel.addEventListener('change', function() {
+                var r = roleData[this.value];
+                if (r) {
+                    roleDesc.innerHTML = r.desc;
+                }
+                updatePreview();
+            });
+            // Trigger inicial
+            roleSel.dispatchEvent(new Event('change'));
+
+            // ── Toggle convite ──
+            chkInvite.addEventListener('change', function() {
+                inviteDetail.classList.toggle('show', this.checked);
+                inviteBox.classList.toggle('active', this.checked);
+                prevInvInfo.style.display = this.checked ? '' : 'none';
+            });
+            // Estado inicial
+            inviteBox.classList.toggle('active', chkInvite.checked);
+
+            // ── Preview em tempo real ──
+            function updatePreview() {
+                var full = [fName.value.trim(), sName.value.trim()].filter(Boolean).join(' ');
+                prevName.textContent = full || 'Nome do Funcionário';
+
+                var r = roleData[roleSel.value] || roleData['editor'];
+                prevRoleLbl.innerHTML = '<span class="badge ' + r.cls + '">' + r.label + '</span>';
+
+                prevUser.textContent = userInp.value ? '@' + userInp.value : '—';
+                prevEmail.textContent = emailInp.value || '—';
+                prevTel.textContent = telInp.value || '—';
+
+                var country = countryS.options[countryS.selectedIndex]?.text || '';
+                var city = cityInp.value.trim();
+                prevLoc.textContent = (country && country !== 'Selecione um país') ?
+                    country + (city ? ', ' + city : '') :
+                    (city || '—');
+
+                // Status
+                var statusVal = document.querySelector('input[name="status"]:checked')?.value || 'processing';
+                var statusMap = {
+                    'active': '<span class="badge" style="background:rgba(34,197,94,.15);color:#166534">Activo</span>',
+                    'processing': '<span class="badge" style="background:rgba(59,130,246,.15);color:#1e40af">Em processo</span>',
+                };
+                prevStatus.innerHTML = statusMap[statusVal] || statusMap['processing'];
+
+                // Avatar com iniciais
+                if (!prevAvatar.querySelector('img')) {
+                    var ini = (fName.value[0] || '').toUpperCase() + (sName.value[0] || '').toUpperCase();
+                    prevAvatar.innerHTML = ini ?
+                        '<span style="font-size:1.8rem;font-weight:800;color:#fff">' + ini + '</span>' :
+                        '<i class="bi bi-person" style="color:rgba(255,255,255,.6)"></i>';
+                }
+            }
+
+            // Listeners de preview
+            [fName, sName, userInp, emailInp, telInp, cityInp].forEach(function(el) {
+                el.addEventListener('input', updatePreview);
+            });
+            [genderSel, roleSel, countryS].forEach(function(el) {
+                el.addEventListener('change', updatePreview);
+            });
+            document.querySelectorAll('input[name="status"]').forEach(function(el) {
+                el.addEventListener('change', updatePreview);
+            });
+
+            // ── Validação antes de submeter ──
+            function checkCanSubmit() {
+                var ok = fName.value.trim() !== '' &&
+                    emailInp.value.trim() !== '' &&
+                    userInp.value.trim() !== '' &&
+                    pwInp.value.trim() !== '';
+                btnSubmit.disabled = !ok;
+            }
+            [fName, emailInp, userInp].forEach(function(el) {
+                el.addEventListener('input', checkCanSubmit);
+            });
+
+            // ── Submit ──
+            form.addEventListener('submit', function(e) {
+                if (!pwInp.value.trim()) {
+                    e.preventDefault();
+                    alert('Gera uma senha antes de criar a conta.');
+                    return;
+                }
+                spinSub.classList.remove('d-none');
+                btnSubmit.disabled = true;
+                btnSubmit.querySelector('i').className = '';
+            });
+
+            // ── Upload de foto — preview ──
+            photoInp.addEventListener('change', function() {
+                var file = this.files[0];
+                if (!file) return;
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    prevAvatar.innerHTML = '<img src="' + e.target.result +
+                        '" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>';
+                };
+                reader.readAsDataURL(file);
+            });
+
+            // Trigger inicial
             updatePreview();
         });
-        // Trigger inicial
-        roleSel.dispatchEvent(new Event('change'));
-
-        // ── Toggle convite ──
-        chkInvite.addEventListener('change', function() {
-            inviteDetail.classList.toggle('show', this.checked);
-            inviteBox.classList.toggle('active', this.checked);
-            prevInvInfo.style.display = this.checked ? '' : 'none';
-        });
-        // Estado inicial
-        inviteBox.classList.toggle('active', chkInvite.checked);
-
-        // ── Preview em tempo real ──
-        function updatePreview() {
-            var full = [fName.value.trim(), sName.value.trim()].filter(Boolean).join(' ');
-            prevName.textContent = full || 'Nome do Funcionário';
-
-            var r = roleData[roleSel.value] || roleData['editor'];
-            prevRoleLbl.innerHTML = '<span class="badge ' + r.cls + '">' + r.label + '</span>';
-
-            prevUser.textContent = userInp.value ? '@' + userInp.value : '—';
-            prevEmail.textContent = emailInp.value || '—';
-            prevTel.textContent = telInp.value || '—';
-
-            var country = countryS.options[countryS.selectedIndex]?.text || '';
-            var city = cityInp.value.trim();
-            prevLoc.textContent = (country && country !== 'Selecione um país') ?
-                country + (city ? ', ' + city : '') :
-                (city || '—');
-
-            // Status
-            var statusVal = document.querySelector('input[name="status"]:checked')?.value || 'processing';
-            var statusMap = {
-                'active': '<span class="badge" style="background:rgba(34,197,94,.15);color:#166534">Activo</span>',
-                'processing': '<span class="badge" style="background:rgba(59,130,246,.15);color:#1e40af">Em processo</span>',
-            };
-            prevStatus.innerHTML = statusMap[statusVal] || statusMap['processing'];
-
-            // Avatar com iniciais
-            if (!prevAvatar.querySelector('img')) {
-                var ini = (fName.value[0] || '').toUpperCase() + (sName.value[0] || '').toUpperCase();
-                prevAvatar.innerHTML = ini ?
-                    '<span style="font-size:1.8rem;font-weight:800;color:#fff">' + ini + '</span>' :
-                    '<i class="bi bi-person" style="color:rgba(255,255,255,.6)"></i>';
-            }
-        }
-
-        // Listeners de preview
-        [fName, sName, userInp, emailInp, telInp, cityInp].forEach(function(el) {
-            el.addEventListener('input', updatePreview);
-        });
-        [genderSel, roleSel, countryS].forEach(function(el) {
-            el.addEventListener('change', updatePreview);
-        });
-        document.querySelectorAll('input[name="status"]').forEach(function(el) {
-            el.addEventListener('change', updatePreview);
-        });
-
-        // ── Validação antes de submeter ──
-        function checkCanSubmit() {
-            var ok = fName.value.trim() !== '' &&
-                emailInp.value.trim() !== '' &&
-                userInp.value.trim() !== '' &&
-                pwInp.value.trim() !== '';
-            btnSubmit.disabled = !ok;
-        }
-        [fName, emailInp, userInp].forEach(function(el) {
-            el.addEventListener('input', checkCanSubmit);
-        });
-
-        // ── Submit ──
-        form.addEventListener('submit', function(e) {
-            if (!pwInp.value.trim()) {
-                e.preventDefault();
-                alert('Gera uma senha antes de criar a conta.');
-                return;
-            }
-            spinSub.classList.remove('d-none');
-            btnSubmit.disabled = true;
-            btnSubmit.querySelector('i').className = '';
-        });
-
-        // ── Upload de foto — preview ──
-        photoInp.addEventListener('change', function() {
-            var file = this.files[0];
-            if (!file) return;
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                prevAvatar.innerHTML = '<img src="' + e.target.result +
-                    '" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>';
-            };
-            reader.readAsDataURL(file);
-        });
-
-        // Trigger inicial
-        updatePreview();
-    });
     </script>
 </body>
 

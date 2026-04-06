@@ -577,7 +577,7 @@ $csrf_export = $_SESSION['admin_csrf_token'];
                             </ul>
                         </div>
                         <?php endif; ?>
-                        <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/finances/payments"
+                        <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/manager/withdrawals" target="_blank"
                             class="btn btn-sm text-white" style="background:#FF0089;border-color:#FF0089">
                             <i class="bi bi-check2-circle me-1"></i> Aprovar Pagamentos
                             <?php if ($intents_under_review > 0): ?>
@@ -798,7 +798,7 @@ $csrf_export = $_SESSION['admin_csrf_token'];
                             <div class="d-flex justify-content-between align-items-center px-3 py-2"
                                 style="border-bottom:1px solid var(--border-color,#e8e8f0)">
                                 <span style="font-size:.78rem;opacity:.6">Últimos 8 pagamentos</span>
-                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/finances/payments"
+                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/payments"
                                     class="btn btn-sm btn-outline-secondary btn-export">
                                     Ver todos <i class="bi bi-arrow-right ms-1"></i>
                                 </a>
@@ -815,7 +815,6 @@ $csrf_export = $_SESSION['admin_csrf_token'];
                                             <th>Estado</th>
                                             <th>Data</th>
                                             <?php if (hasPermission($admin_id, 'finances.edit')): ?>
-                                            <th>Acção</th>
                                             <?php endif; ?>
                                         </tr>
                                     </thead>
@@ -885,7 +884,7 @@ $csrf_export = $_SESSION['admin_csrf_token'];
                             <div class="d-flex justify-content-between align-items-center px-3 py-2"
                                 style="border-bottom:1px solid var(--border-color,#e8e8f0)">
                                 <span style="font-size:.78rem;opacity:.6">Últimos 8 royalties</span>
-                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/royalties"
+                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/manager/royalties-splits"
                                     class="btn btn-sm btn-outline-secondary btn-export">
                                     Ver todos <i class="bi bi-arrow-right ms-1"></i>
                                 </a>
@@ -942,7 +941,7 @@ $csrf_export = $_SESSION['admin_csrf_token'];
                                             </td>
                                             <td><?php echo fin_status_badge($roy['status_royalty']); ?></td>
                                             <td style="font-size:.75rem;white-space:nowrap">
-                                                <?php echo $roy['paid_at'] ? date('d/m/Y', strtotime($roy['paid_at'])) : '—'; ?>
+                                                <?php echo $roy['paid_at'] ? date('d/m/Y', timestamp: strtotime($roy['paid_at'])) : '—'; ?>
                                             </td>
                                         </tr>
                                         <?php endforeach; ?>
@@ -957,7 +956,7 @@ $csrf_export = $_SESSION['admin_csrf_token'];
                             <div class="d-flex justify-content-between align-items-center px-3 py-2"
                                 style="border-bottom:1px solid var(--border-color,#e8e8f0)">
                                 <span style="font-size:.78rem;opacity:.6">Últimos 8 saques</span>
-                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/withdrawals"
+                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/manager/withdrawals"
                                     class="btn btn-sm btn-outline-secondary btn-export">
                                     Ver todos <i class="bi bi-arrow-right ms-1"></i>
                                 </a>
@@ -974,7 +973,6 @@ $csrf_export = $_SESSION['admin_csrf_token'];
                                             <th>Estado</th>
                                             <th>Data Pedido</th>
                                             <?php if (hasPermission($admin_id, 'finances.edit')): ?>
-                                            <th>Acção</th>
                                             <?php endif; ?>
                                         </tr>
                                     </thead>
@@ -1047,7 +1045,7 @@ $csrf_export = $_SESSION['admin_csrf_token'];
                             <div class="d-flex justify-content-between align-items-center px-3 py-2"
                                 style="border-bottom:1px solid var(--border-color,#e8e8f0)">
                                 <span style="font-size:.78rem;opacity:.6">Últimas 8 transacções</span>
-                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/transactions"
+                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/manager/transactions"
                                     class="btn btn-sm btn-outline-secondary btn-export">
                                     Ver todas <i class="bi bi-arrow-right ms-1"></i>
                                 </a>
@@ -1149,7 +1147,7 @@ $csrf_export = $_SESSION['admin_csrf_token'];
                             'color' => '#FF0089',
                             'title' => 'Aprovar Pagamentos',
                             'desc'  => 'Rever comprovativos e aprovar ou rejeitar pagamentos',
-                            'url'   => APP_URL . '/' . ADMIN_PATH . '/payments/payments',
+                            'url'   => APP_URL . '/' . ADMIN_PATH . '/manager/withdrawals?filter=pending',
                             'perm'  => 'finances.edit',
                         ],
                         [
@@ -1157,7 +1155,7 @@ $csrf_export = $_SESSION['admin_csrf_token'];
                             'color' => '#ef4444',
                             'title' => 'Processar Saques',
                             'desc'  => 'Aprovar ou rejeitar pedidos de levantamento',
-                            'url'   => APP_URL . '/' . ADMIN_PATH . '/finances/withdrawals',
+                            'url'   => APP_URL . '/' . ADMIN_PATH . '/manager/withdrawals',
                             'perm'  => 'finances.edit',
                         ],
                         [
@@ -1165,7 +1163,7 @@ $csrf_export = $_SESSION['admin_csrf_token'];
                             'color' => '#22c55e',
                             'title' => 'Gestão de Royalties',
                             'desc'  => 'Ver e processar royalties por artista e período',
-                            'url'   => APP_URL . '/' . ADMIN_PATH . '/finances/royalties',
+                            'url'   => APP_URL . '/' . ADMIN_PATH . '/manager/royalty-splits',
                             'perm'  => 'finances.view',
                         ],
                     ];
@@ -1173,7 +1171,7 @@ $csrf_export = $_SESSION['admin_csrf_token'];
                         if (!hasPermission($admin_id, $ql['perm'])) continue;
                     ?>
                     <div class="col-md-6 col-xl-3">
-                        <a href="<?php echo $ql['url']; ?>" class="text-decoration-none">
+                        <a href="<?php echo $ql['url']; ?>" class="text-decoration-none" target="_blank">
                             <div class="fin-stat" style="cursor:pointer">
                                 <div class="fin-stat-icon" style="background:<?php echo $ql['color']; ?>22">
                                     <i class="bi <?php echo $ql['icon']; ?>"

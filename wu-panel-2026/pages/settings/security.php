@@ -78,175 +78,175 @@ $my_ip = $_SERVER['REMOTE_ADDR'] ?? '—';
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
     <style>
-    .sec-card {
-        background: var(--card-bg, #fff);
-        border: 1px solid var(--border-color, #e8e8f0);
-        border-radius: 14px;
-        padding: 24px;
-        margin-bottom: 20px;
-    }
+        .sec-card {
+            background: var(--card-bg, #fff);
+            border: 1px solid var(--border-color, #e8e8f0);
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
 
-    .sec-card h5 {
-        font-size: .95rem;
-        font-weight: 700;
-        margin-bottom: 4px;
-    }
+        .sec-card h5 {
+            font-size: .95rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
 
-    .sec-card h5 i {
-        color: #FF0089;
-    }
+        .sec-card h5 i {
+            color: #FF0089;
+        }
 
-    .sec-desc {
-        font-size: .82rem;
-        opacity: .65;
-        margin-bottom: 16px;
-        line-height: 1.5;
-    }
+        .sec-desc {
+            font-size: .82rem;
+            opacity: .65;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
 
-    .path-display {
-        font-family: monospace;
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: #FF0089;
-        background: rgba(255, 0, 137, .08);
-        padding: 10px 16px;
-        border-radius: 10px;
-        border: 1px dashed rgba(255, 0, 137, .3);
-        display: inline-block;
-        letter-spacing: .5px;
-    }
+        .path-display {
+            font-family: monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #FF0089;
+            background: rgba(255, 0, 137, .08);
+            padding: 10px 16px;
+            border-radius: 10px;
+            border: 1px dashed rgba(255, 0, 137, .3);
+            display: inline-block;
+            letter-spacing: .5px;
+        }
 
-    .ip-row {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 10px 0;
-        border-bottom: 1px solid var(--border-color, #f0f0f8);
-        font-size: .84rem;
-    }
+        .ip-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color, #f0f0f8);
+            font-size: .84rem;
+        }
 
-    .ip-row:last-child {
-        border-bottom: none;
-    }
+        .ip-row:last-child {
+            border-bottom: none;
+        }
 
-    .ip-addr {
-        font-family: monospace;
-        font-weight: 600;
-    }
+        .ip-addr {
+            font-family: monospace;
+            font-weight: 600;
+        }
 
-    .ip-label {
-        opacity: .6;
-        font-size: .78rem;
-    }
+        .ip-label {
+            opacity: .6;
+            font-size: .78rem;
+        }
 
-    .ip-actions {
-        margin-left: auto;
-        display: flex;
-        gap: 6px;
-    }
+        .ip-actions {
+            margin-left: auto;
+            display: flex;
+            gap: 6px;
+        }
 
-    .warn-box {
-        background: rgba(234, 179, 8, .08);
-        border: 1px solid rgba(234, 179, 8, .3);
-        border-radius: 10px;
-        padding: 14px 16px;
-        font-size: .82rem;
-        color: #92400e;
-        margin-bottom: 16px;
-        line-height: 1.5;
-    }
+        .warn-box {
+            background: rgba(234, 179, 8, .08);
+            border: 1px solid rgba(234, 179, 8, .3);
+            border-radius: 10px;
+            padding: 14px 16px;
+            font-size: .82rem;
+            color: #92400e;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
 
-    .danger-box {
-        background: rgba(239, 68, 68, .06);
-        border: 1px solid rgba(239, 68, 68, .2);
-        border-radius: 10px;
-        padding: 14px 16px;
-        font-size: .82rem;
-        color: #991b1b;
-        margin-bottom: 16px;
-        line-height: 1.5;
-    }
+        .danger-box {
+            background: rgba(239, 68, 68, .06);
+            border: 1px solid rgba(239, 68, 68, .2);
+            border-radius: 10px;
+            padding: 14px 16px;
+            font-size: .82rem;
+            color: #991b1b;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
 
-    .checklist {
-        list-style: none;
-        padding: 0;
-        margin: 10px 0 0;
-    }
+        .checklist {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0 0;
+        }
 
-    .checklist li {
-        display: flex;
-        align-items: flex-start;
-        gap: 8px;
-        margin-bottom: 6px;
-        font-size: .82rem;
-    }
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 6px;
+            font-size: .82rem;
+        }
 
-    .checklist li i {
-        color: #eab308;
-        margin-top: 2px;
-        flex-shrink: 0;
-    }
+        .checklist li i {
+            color: #eab308;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
 
-    .log-row td {
-        font-size: .78rem;
-        vertical-align: middle;
-    }
+        .log-row td {
+            font-size: .78rem;
+            vertical-align: middle;
+        }
 
-    .toggle-switch {
-        position: relative;
-        display: inline-block;
-        width: 44px;
-        height: 24px;
-    }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
 
-    .toggle-switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-    }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
 
-    .toggle-slider {
-        position: absolute;
-        cursor: pointer;
-        inset: 0;
-        background: #e8e8f0;
-        border-radius: 24px;
-        transition: .3s;
-    }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background: #e8e8f0;
+            border-radius: 24px;
+            transition: .3s;
+        }
 
-    .toggle-slider:before {
-        position: absolute;
-        content: "";
-        height: 18px;
-        width: 18px;
-        left: 3px;
-        bottom: 3px;
-        background: #fff;
-        border-radius: 50%;
-        transition: .3s;
-    }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background: #fff;
+            border-radius: 50%;
+            transition: .3s;
+        }
 
-    .toggle-switch input:checked+.toggle-slider {
-        background: #FF0089;
-    }
+        .toggle-switch input:checked+.toggle-slider {
+            background: #FF0089;
+        }
 
-    .toggle-switch input:checked+.toggle-slider:before {
-        transform: translateX(20px);
-    }
+        .toggle-switch input:checked+.toggle-slider:before {
+            transform: translateX(20px);
+        }
 
-    .my-ip-chip {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        background: rgba(34, 197, 94, .1);
-        border: 1px solid rgba(34, 197, 94, .3);
-        border-radius: 20px;
-        padding: 4px 12px;
-        font-size: .78rem;
-        color: #166534;
-        font-family: monospace;
-        font-weight: 600;
-    }
+        .my-ip-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(34, 197, 94, .1);
+            border: 1px solid rgba(34, 197, 94, .3);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: .78rem;
+            color: #166534;
+            font-family: monospace;
+            font-weight: 600;
+        }
     </style>
 </head>
 
@@ -282,11 +282,11 @@ $my_ip = $_SERVER['REMOTE_ADDR'] ?? '—';
                 </div>
 
                 <?php if ($feedback): ?>
-                <div class="alert alert-<?php echo $feedback[0]; ?> alert-dismissible fade show mb-3">
-                    <i class="bi <?php echo $feedback[1]; ?> me-2"></i>
-                    <?php echo htmlspecialchars($feedback[2]); ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
+                    <div class="alert alert-<?php echo $feedback[0]; ?> alert-dismissible fade show mb-3">
+                        <i class="bi <?php echo $feedback[1]; ?> me-2"></i>
+                        <?php echo htmlspecialchars($feedback[2]); ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
                 <?php endif; ?>
 
                 <div class="row g-4">
@@ -307,11 +307,11 @@ $my_ip = $_SERVER['REMOTE_ADDR'] ?? '—';
                                     <div class="path-display">/<?php echo htmlspecialchars($current_path); ?>/</div>
                                 </div>
                                 <?php if ($path_changed && $path_changed !== '—' && $path_changed !== ''): ?>
-                                <div>
-                                    <div style="font-size:.74rem;opacity:.6;margin-bottom:4px">ÚLTIMA ALTERAÇÃO</div>
-                                    <div style="font-size:.84rem">
-                                        <?php echo htmlspecialchars(adm_fmt_date($path_changed)); ?></div>
-                                </div>
+                                    <div>
+                                        <div style="font-size:.74rem;opacity:.6;margin-bottom:4px">ÚLTIMA ALTERAÇÃO</div>
+                                        <div style="font-size:.84rem">
+                                            <?php echo htmlspecialchars(adm_fmt_date($path_changed)); ?></div>
+                                    </div>
                                 <?php endif; ?>
                             </div>
 
@@ -405,12 +405,12 @@ $my_ip = $_SERVER['REMOTE_ADDR'] ?? '—';
                             </div>
 
                             <?php if ($wl_on && $active_ips === 0): ?>
-                            <div class="danger-box">
-                                <i class="bi bi-exclamation-octagon me-1"></i>
-                                <strong>Atenção:</strong> A whitelist está activa mas não tem nenhum IP registado.
-                                Isso significa que <strong>ninguém consegue aceder ao painel</strong>, incluindo tu.
-                                Adiciona o teu IP abaixo imediatamente.
-                            </div>
+                                <div class="danger-box">
+                                    <i class="bi bi-exclamation-octagon me-1"></i>
+                                    <strong>Atenção:</strong> A whitelist está activa mas não tem nenhum IP registado.
+                                    Isso significa que <strong>ninguém consegue aceder ao painel</strong>, incluindo tu.
+                                    Adiciona o teu IP abaixo imediatamente.
+                                </div>
                             <?php endif; ?>
 
                             <!-- IP actual -->
@@ -437,60 +437,60 @@ $my_ip = $_SERVER['REMOTE_ADDR'] ?? '—';
 
                             <!-- Lista de IPs -->
                             <?php if (!empty($ips)): ?>
-                            <div class="mb-3">
-                                <?php foreach ($ips as $ip): ?>
-                                <div class="ip-row">
-                                    <div>
-                                        <div class="ip-addr"><?php echo htmlspecialchars($ip['ip_address']); ?></div>
-                                        <div class="ip-label">
-                                            <?php echo htmlspecialchars($ip['label'] ?? '—'); ?>
-                                            · adicionado por
-                                            <?php echo htmlspecialchars(trim(($ip['first_name'] ?? '') . ' ' . ($ip['second_name'] ?? '')) ?: 'sistema'); ?>
-                                            · <?php echo adm_fmt_date($ip['creat_ip']); ?>
-                                        </div>
-                                    </div>
-                                    <div class="ip-actions">
-                                        <?php if ($ip['active']): ?>
-                                        <span class="badge bg-success" style="font-size:.65rem">Activo</span>
-                                        <?php else: ?>
-                                        <span class="badge bg-secondary" style="font-size:.65rem">Inactivo</span>
-                                        <?php endif; ?>
+                                <div class="mb-3">
+                                    <?php foreach ($ips as $ip): ?>
+                                        <div class="ip-row">
+                                            <div>
+                                                <div class="ip-addr"><?php echo htmlspecialchars($ip['ip_address']); ?></div>
+                                                <div class="ip-label">
+                                                    <?php echo htmlspecialchars($ip['label'] ?? '—'); ?>
+                                                    · adicionado por
+                                                    <?php echo htmlspecialchars(trim(($ip['first_name'] ?? '') . ' ' . ($ip['second_name'] ?? '')) ?: 'sistema'); ?>
+                                                    · <?php echo adm_fmt_date($ip['creat_ip']); ?>
+                                                </div>
+                                            </div>
+                                            <div class="ip-actions">
+                                                <?php if ($ip['active']): ?>
+                                                    <span class="badge bg-success" style="font-size:.65rem">Activo</span>
+                                                <?php else: ?>
+                                                    <span class="badge bg-secondary" style="font-size:.65rem">Inactivo</span>
+                                                <?php endif; ?>
 
-                                        <form method="POST"
-                                            action="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/settings/security-process"
-                                            style="display:inline">
-                                            <input type="hidden" name="csrf_token"
-                                                value="<?php echo htmlspecialchars($_SESSION['admin_csrf_token']); ?>" />
-                                            <input type="hidden" name="action" value="toggle_ip" />
-                                            <input type="hidden" name="ip_id"
-                                                value="<?php echo (int)$ip['id_ip']; ?>" />
-                                            <button type="submit" class="btn btn-outline-secondary btn-sm"
-                                                style="font-size:.72rem;padding:2px 8px"
-                                                title="<?php echo $ip['active'] ? 'Desactivar' : 'Activar'; ?>">
-                                                <i
-                                                    class="bi bi-<?php echo $ip['active'] ? 'pause' : 'play'; ?>-fill"></i>
-                                            </button>
-                                        </form>
-                                        <form method="POST"
-                                            action="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/settings/security-process"
-                                            style="display:inline"
-                                            onsubmit="return confirm('Remover este IP da whitelist?')">
-                                            <input type="hidden" name="csrf_token"
-                                                value="<?php echo htmlspecialchars($_SESSION['admin_csrf_token']); ?>" />
-                                            <input type="hidden" name="action" value="remove_ip" />
-                                            <input type="hidden" name="ip_id"
-                                                value="<?php echo (int)$ip['id_ip']; ?>" />
-                                            <button type="submit" class="btn btn-outline-danger btn-sm"
-                                                style="font-size:.72rem;padding:2px 8px">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
+                                                <form method="POST"
+                                                    action="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/settings/security-process"
+                                                    style="display:inline">
+                                                    <input type="hidden" name="csrf_token"
+                                                        value="<?php echo htmlspecialchars($_SESSION['admin_csrf_token']); ?>" />
+                                                    <input type="hidden" name="action" value="toggle_ip" />
+                                                    <input type="hidden" name="ip_id"
+                                                        value="<?php echo (int)$ip['id_ip']; ?>" />
+                                                    <button type="submit" class="btn btn-outline-secondary btn-sm"
+                                                        style="font-size:.72rem;padding:2px 8px"
+                                                        title="<?php echo $ip['active'] ? 'Desactivar' : 'Activar'; ?>">
+                                                        <i
+                                                            class="bi bi-<?php echo $ip['active'] ? 'pause' : 'play'; ?>-fill"></i>
+                                                    </button>
+                                                </form>
+                                                <form method="POST"
+                                                    action="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/settings/security-process"
+                                                    style="display:inline"
+                                                    onsubmit="return confirm('Remover este IP da whitelist?')">
+                                                    <input type="hidden" name="csrf_token"
+                                                        value="<?php echo htmlspecialchars($_SESSION['admin_csrf_token']); ?>" />
+                                                    <input type="hidden" name="action" value="remove_ip" />
+                                                    <input type="hidden" name="ip_id"
+                                                        value="<?php echo (int)$ip['id_ip']; ?>" />
+                                                    <button type="submit" class="btn btn-outline-danger btn-sm"
+                                                        style="font-size:.72rem;padding:2px 8px">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
                                 </div>
-                                <?php endforeach; ?>
-                            </div>
                             <?php else: ?>
-                            <p style="font-size:.83rem;opacity:.5;margin-bottom:12px">Nenhum IP registado ainda.</p>
+                                <p style="font-size:.83rem;opacity:.5;margin-bottom:12px">Nenhum IP registado ainda.</p>
                             <?php endif; ?>
 
                             <!-- Adicionar novo IP -->
@@ -516,35 +516,35 @@ $my_ip = $_SERVER['REMOTE_ADDR'] ?? '—';
                             <p class="sec-desc">Últimas 20 tentativas de acesso por IPs não autorizados.</p>
 
                             <?php if (empty($blocked_log)): ?>
-                            <p style="font-size:.83rem;opacity:.5">Nenhuma tentativa registada.</p>
+                                <p style="font-size:.83rem;opacity:.5">Nenhuma tentativa registada.</p>
                             <?php else: ?>
-                            <div class="table-responsive">
-                                <table class="table table-hover mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th style="font-size:.72rem">IP</th>
-                                            <th style="font-size:.72rem">Caminho</th>
-                                            <th style="font-size:.72rem">Motivo</th>
-                                            <th style="font-size:.72rem">Data</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php foreach ($blocked_log as $log): ?>
-                                        <tr class="log-row">
-                                            <td><code><?php echo htmlspecialchars($log['ip_address']); ?></code></td>
-                                            <td
-                                                style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
-                                                <?php echo htmlspecialchars($log['path_tried'] ?? '—'); ?>
-                                            </td>
-                                            <td><span class="badge bg-danger"
-                                                    style="font-size:.65rem"><?php echo htmlspecialchars($log['reason'] ?? '—'); ?></span>
-                                            </td>
-                                            <td><?php echo adm_fmt_date($log['creat_log']); ?></td>
-                                        </tr>
-                                        <?php endforeach; ?>
-                                    </tbody>
-                                </table>
-                            </div>
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th style="font-size:.72rem">IP</th>
+                                                <th style="font-size:.72rem">Caminho</th>
+                                                <th style="font-size:.72rem">Motivo</th>
+                                                <th style="font-size:.72rem">Data</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($blocked_log as $log): ?>
+                                                <tr class="log-row">
+                                                    <td><code><?php echo htmlspecialchars($log['ip_address']); ?></code></td>
+                                                    <td
+                                                        style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+                                                        <?php echo htmlspecialchars($log['path_tried'] ?? '—'); ?>
+                                                    </td>
+                                                    <td><span class="badge bg-danger"
+                                                            style="font-size:.65rem"><?php echo htmlspecialchars($log['reason'] ?? '—'); ?></span>
+                                                    </td>
+                                                    <td><?php echo adm_fmt_date($log['creat_log']); ?></td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
                             <?php endif; ?>
                         </div>
 
@@ -609,7 +609,7 @@ $my_ip = $_SERVER['REMOTE_ADDR'] ?? '—';
         <div class="container">
             <div class="row">
                 <div class="col-12 text-center">
-                    <p class="mb-2">© 2026 Wasom Upfy. Todos os direitos reservados.</p>
+                    <p class="mb-2">© <?php echo date('Y'); ?> <?php echo APP_NAME; ?>. Todos os direitos reservados.</p>
                 </div>
             </div>
         </div>
@@ -626,21 +626,21 @@ $my_ip = $_SERVER['REMOTE_ADDR'] ?? '—';
     <script src="<?php echo APP_URL; ?>/js/lastest.js"></script>
     <script src="<?php echo APP_URL; ?>/js/lastest.min.js"></script>
     <script>
-    function confirmPathChange() {
-        var newPath = document.getElementById('inp-new-path').value.trim();
-        if (!newPath) return false;
-        return confirm(
-            '⚠ ATENÇÃO — Rotação do Caminho\n\n' +
-            'Novo caminho: /' + newPath + '/\n\n' +
-            'O sistema irá:\n' +
-            '1. Tentar renomear a pasta do servidor\n' +
-            '2. Actualizar o config.php\n' +
-            '3. Regenerar o .htaccess\n\n' +
-            'Após confirmar, serás redirecionado para o novo URL.\n' +
-            'Partilhaste o novo caminho com a equipa?\n\n' +
-            'Confirmar?'
-        );
-    }
+        function confirmPathChange() {
+            var newPath = document.getElementById('inp-new-path').value.trim();
+            if (!newPath) return false;
+            return confirm(
+                '⚠ ATENÇÃO — Rotação do Caminho\n\n' +
+                'Novo caminho: /' + newPath + '/\n\n' +
+                'O sistema irá:\n' +
+                '1. Tentar renomear a pasta do servidor\n' +
+                '2. Actualizar o config.php\n' +
+                '3. Regenerar o .htaccess\n\n' +
+                'Após confirmar, serás redirecionado para o novo URL.\n' +
+                'Partilhaste o novo caminho com a equipa?\n\n' +
+                'Confirmar?'
+            );
+        }
     </script>
 </body>
 

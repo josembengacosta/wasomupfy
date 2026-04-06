@@ -876,7 +876,7 @@ function usr_payment_status(string $s): string
     <footer>
         <div class="container">
             <div class="col-12 text-center py-2" style="font-size:.8rem">
-                <p class="mb-0">© 2026 Wasom Upfy. Todos os direitos reservados.</p>
+                <p class="mb-0">© <?php echo date('Y'); ?> <?php echo APP_NAME; ?>. Todos os direitos reservados.</p>
             </div>
         </div>
     </footer>

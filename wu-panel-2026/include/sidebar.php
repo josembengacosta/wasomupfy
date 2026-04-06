@@ -242,8 +242,8 @@ $pendingAccountsCount = $canFinancesView
 
         <?php if (in_array($admin_role, ['super_admin', 'admin'], true)): ?>
         <li class="nav-item">
-            <a target="_blank" href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/manager/gestion"
-                class="nav-link<?php echo adm_is_active('manager/gestion'); ?>">
+            <a target="_blank" href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/manager/login"
+                class="nav-link<?php echo adm_is_active('manager/login'); ?>">
                 <i class="bi bi-star"></i>
                 <span>Gestão Geral</span>
             </a>

@@ -55,7 +55,7 @@ yarn.lock
 *.db
 backups/
 database-backups/
-*tables.txt
+*.tables
 
 # =========================
 #   UPLOADS & ASSETS

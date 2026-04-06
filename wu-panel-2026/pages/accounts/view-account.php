@@ -59,16 +59,18 @@ $account_type_label = match ($account['type_account']) {
     'IBAN'      => 'IBAN (Transferência Bancária)',
     'Express'   => 'Multicaixa Express',
     'PayPal'    => 'PayPal',
-    'Multicaixa'=> 'Multicaixa',
+    'Multicaixa' => 'Multicaixa',
     'TPA'       => 'TPA',
     default     => ucfirst($account['type_account']),
 };
 
-function av_fmt_date($date): string {
+function av_fmt_date($date): string
+{
     return $date ? date('d/m/Y H:i', strtotime($date)) : '—';
 }
 
-function av_status_badge(string $s): string {
+function av_status_badge(string $s): string
+{
     return match ($s) {
         'verified' => '<span class="badge bg-success">Verificada</span>',
         'pending'  => '<span class="badge bg-warning text-dark">Pendente</span>',
@@ -328,7 +330,14 @@ function av_status_badge(string $s): string {
                                             <td>#<?php echo $w['id_withdrawal']; ?></td>
                                             <td><?php echo number_format($w['amount_requested'], 2); ?> AOA</td>
                                             <td><?php echo number_format($w['amount_net'], 2); ?> AOA</td>
-                                            <td><?php echo match($w['status_withdrawal']) { 'approved' => 'Aprovado', 'pending' => 'Pendente', 'processing' => 'Processando', 'rejected' => 'Rejeitado', 'cancelled' => 'Cancelado', default => ucfirst($w['status_withdrawal']) }; ?>
+                                            <td><?php echo match ($w['status_withdrawal']) {
+                                                            'approved' => 'Aprovado',
+                                                            'pending' => 'Pendente',
+                                                            'processing' => 'Processando',
+                                                            'rejected' => 'Rejeitado',
+                                                            'cancelled' => 'Cancelado',
+                                                            default => ucfirst($w['status_withdrawal'])
+                                                        }; ?>
                                             </td>
                                             <td><?php echo av_fmt_date($w['creat_withdrawal']); ?></td>
                                             <td><?php echo $w['reviewed_at'] ? av_fmt_date($w['reviewed_at']) : '—'; ?>
@@ -403,10 +412,11 @@ function av_status_badge(string $s): string {
     <footer>
         <div class="container">
             <div class="col-12 text-center py-2">
-                <p class="mb-0">© <?php echo date('Y'); ?> Wasom Upfy. Todos os direitos reservados.</p>
+                <p class="mb-0">© <?php echo date('Y'); ?> <?php echo APP_NAME; ?>. Todos os direitos reservados.</p>
             </div>
         </div>
     </footer>
+
     <div class="page-loader" id="pageLoader">
         <div class="loader-content"><img src="<?php echo APP_URL; ?>/assets/img/brand/wasomupfy_brand.png"
                 class="loader-image" alt="" />

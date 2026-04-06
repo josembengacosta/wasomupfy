@@ -8,7 +8,8 @@ require_once __DIR__ . '/../../include/platform_admin.php';
 requirePermission($admin_id, 'finances.edit');
 
 if (empty($_SESSION['payment_control_auth'])) {
-    header('Location: ' . APP_URL . '/' . ADMIN_PATH . '/manager/gestion'); exit;
+    header('Location: ' . APP_URL . '/' . ADMIN_PATH . '/manager/gestion');
+    exit;
 }
 $_SESSION['biz_auth_time'] = time();
 
@@ -27,7 +28,9 @@ $where  = [];
 $params = [];
 if ($f_user !== '') {
     $where[]  = "(u.first_name LIKE ? OR u.second_name LIKE ? OR u.email_user LIKE ?)";
-    $params[] = "%$f_user%"; $params[] = "%$f_user%"; $params[] = "%$f_user%";
+    $params[] = "%$f_user%";
+    $params[] = "%$f_user%";
+    $params[] = "%$f_user%";
 }
 if ($f_status !== '') {
     $where[]  = 'w.status_withdrawal = ?';
@@ -83,16 +86,17 @@ $csrf = $_SESSION['admin_csrf_token'];
 
 function wd_status_badge(string $s): string
 {
-    return match($s) {
+    return match ($s) {
         'pending'    => '<span class="biz-s-pending">Pendente</span>',
         'processing' => '<span class="biz-s-processing">A processar</span>',
         'approved'   => '<span class="biz-s-approved">Aprovado</span>',
         'rejected'   => '<span class="biz-s-rejected">Rejeitado</span>',
         'cancelled'  => '<span class="biz-s-rejected">Cancelado</span>',
-        default      => '<span class="biz-s-pending">'.ucfirst($s).'</span>',
+        default      => '<span class="biz-s-pending">' . ucfirst($s) . '</span>',
     };
 }
-function biz_fmt_w(float $v): string {
+function biz_fmt_w(float $v): string
+{
     return 'Kz ' . number_format($v, 2, ',', '.');
 }
 ?>
@@ -169,15 +173,15 @@ function biz_fmt_w(float $v): string {
             <!-- Mini stats -->
             <div class="row g-3 mb-4">
                 <?php
-            $mini = [
-                ['val'=>(int)$stats_wd['pending'],    'lbl'=>'Pendentes',    'color'=>'#f97316','icon'=>'bi-hourglass-split'],
-                ['val'=>(int)$stats_wd['processing'], 'lbl'=>'A processar', 'color'=>'#3b82f6','icon'=>'bi-arrow-repeat'],
-                ['val'=>(int)$stats_wd['approved'],   'lbl'=>'Aprovados',   'color'=>'#22c55e','icon'=>'bi-check-circle'],
-                ['val'=>(int)$stats_wd['rejected'],   'lbl'=>'Rejeitados',  'color'=>'#ef4444','icon'=>'bi-x-circle'],
-                ['val'=>biz_fmt_w((float)$stats_wd['total_paid']),'lbl'=>'Total Pago','color'=>'#FF0089','icon'=>'bi-cash-coin'],
-            ];
-            foreach ($mini as $m):
-            ?>
+                $mini = [
+                    ['val' => (int)$stats_wd['pending'],    'lbl' => 'Pendentes',    'color' => '#f97316', 'icon' => 'bi-hourglass-split'],
+                    ['val' => (int)$stats_wd['processing'], 'lbl' => 'A processar', 'color' => '#3b82f6', 'icon' => 'bi-arrow-repeat'],
+                    ['val' => (int)$stats_wd['approved'],   'lbl' => 'Aprovados',   'color' => '#22c55e', 'icon' => 'bi-check-circle'],
+                    ['val' => (int)$stats_wd['rejected'],   'lbl' => 'Rejeitados',  'color' => '#ef4444', 'icon' => 'bi-x-circle'],
+                    ['val' => biz_fmt_w((float)$stats_wd['total_paid']), 'lbl' => 'Total Pago', 'color' => '#FF0089', 'icon' => 'bi-cash-coin'],
+                ];
+                foreach ($mini as $m):
+                ?>
                 <div class="col-6 col-md-4 col-xl">
                     <div class="biz-stat" style="padding:14px 16px">
                         <div class="d-flex align-items-center gap-3">
@@ -209,8 +213,8 @@ function biz_fmt_w(float $v): string {
                             <label class="form-label">Estado</label>
                             <select name="status" class="form-select form-select-sm">
                                 <option value="">Todos</option>
-                                <?php foreach (['pending'=>'Pendente','processing'=>'A processar','approved'=>'Aprovado','rejected'=>'Rejeitado','cancelled'=>'Cancelado'] as $v=>$l): ?>
-                                <option value="<?php echo $v; ?>" <?php echo $f_status===$v?'selected':''; ?>>
+                                <?php foreach (['pending' => 'Pendente', 'processing' => 'A processar', 'approved' => 'Aprovado', 'rejected' => 'Rejeitado', 'cancelled' => 'Cancelado'] as $v => $l): ?>
+                                <option value="<?php echo $v; ?>" <?php echo $f_status === $v ? 'selected' : ''; ?>>
                                     <?php echo $l; ?></option>
                                 <?php endforeach; ?>
                             </select>
@@ -219,18 +223,18 @@ function biz_fmt_w(float $v): string {
                             <label class="form-label">Tipo de Conta</label>
                             <select name="type" class="form-select form-select-sm">
                                 <option value="">Todos</option>
-                                <?php foreach (['IBAN'=>'IBAN','Express'=>'Express','PayPal'=>'PayPal','Multicaixa'=>'Multicaixa','TPA'=>'TPA'] as $v=>$l): ?>
-                                <option value="<?php echo $v; ?>" <?php echo $f_type===$v?'selected':''; ?>>
+                                <?php foreach (['IBAN' => 'IBAN', 'Express' => 'Express', 'PayPal' => 'PayPal', 'Multicaixa' => 'Multicaixa', 'TPA' => 'TPA'] as $v => $l): ?>
+                                <option value="<?php echo $v; ?>" <?php echo $f_type === $v ? 'selected' : ''; ?>>
                                     <?php echo $l; ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="col-md-2 d-flex gap-1">
-                            <button type="submit" class="btn btn-sm text-white flex-fill" style="background:#FF0089">
+                            <button type="submit" class="btn btn-md text-white flex-fill" style="background:#FF0089">
                                 <i class="bi bi-search"></i>
                             </button>
                             <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/manager/withdrawals"
-                                class="btn btn-sm btn-outline-secondary">
+                                class="btn btn-md btn-outline-secondary">
                                 <i class="bi bi-x"></i>
                             </a>
                         </div>
@@ -270,10 +274,10 @@ function biz_fmt_w(float $v): string {
                             </tr>
                             <?php else: ?>
                             <?php foreach ($withdrawals as $w):
-                        $user_name = trim($w['first_name'].' '.($w['second_name']??''));
-                        $is_active = in_array($w['status_withdrawal'],['pending','processing']);
-                    ?>
-                            <tr class="<?php echo $w['status_withdrawal']==='pending' ? 'table-warning' : ''; ?>">
+                                    $user_name = trim($w['first_name'] . ' ' . ($w['second_name'] ?? ''));
+                                    $is_active = in_array($w['status_withdrawal'], ['pending', 'processing']);
+                                ?>
+                            <tr class="<?php echo $w['status_withdrawal'] === 'pending' ? 'table-warning' : ''; ?>">
                                 <td><span
                                         style="font-family:monospace;font-size:.73rem;opacity:.55">#<?php echo $w['id_withdrawal']; ?></span>
                                 </td>
@@ -290,11 +294,12 @@ function biz_fmt_w(float $v): string {
                                     <div style="font-size:.72rem;color:#888">
                                         <?php echo $w['type_account']; ?> ·
                                         <?php
-                                if ($w['type_account']==='IBAN' && $w['iban']) echo '···'.substr($w['iban'],-6);
-                                elseif ($w['express_number']) echo $w['express_number'];
-                                ?>
+                                                    if ($w['type_account'] === 'IBAN' && $w['iban']) echo '···' . substr($w['iban'], -6);
+                                                    elseif ($w['express_number']) echo $w['express_number'];
+                                                    ?>
                                     </div>
-                                    <?php else: echo '<span style="opacity:.4">—</span>'; endif; ?>
+                                    <?php else: echo '<span style="opacity:.4">—</span>';
+                                            endif; ?>
                                 </td>
                                 <td style="font-weight:700;white-space:nowrap;color:#FF0089">
                                     <?php echo biz_fmt_w((float)$w['amount_requested']); ?>
@@ -304,8 +309,9 @@ function biz_fmt_w(float $v): string {
                                 </td>
                                 <td><?php echo wd_status_badge($w['status_withdrawal']); ?></td>
                                 <td style="font-size:.76rem;white-space:nowrap">
-                                    <?php echo date('d/m/Y',strtotime($w['creat_withdrawal'])); ?>
-                                    <div style="color:#aaa"><?php echo date('H:i',strtotime($w['creat_withdrawal'])); ?>
+                                    <?php echo date('d/m/Y', strtotime($w['creat_withdrawal'])); ?>
+                                    <div style="color:#aaa">
+                                        <?php echo date('H:i', strtotime($w['creat_withdrawal'])); ?>
                                     </div>
                                 </td>
                                 <td>
@@ -317,7 +323,7 @@ function biz_fmt_w(float $v): string {
                                         </button>
                                         <?php if ($is_active): ?>
                                         <!-- Processar -->
-                                        <?php if ($w['status_withdrawal']==='pending'): ?>
+                                        <?php if ($w['status_withdrawal'] === 'pending'): ?>
                                         <button class="btn btn-sm btn-outline-primary" title="Marcar a processar"
                                             onclick="setProcessing(<?php echo (int)$w['id_withdrawal']; ?>)">
                                             <i class="bi bi-arrow-repeat"></i>
@@ -349,21 +355,21 @@ function biz_fmt_w(float $v): string {
                 <div class="d-flex justify-content-center py-3">
                     <nav>
                         <ul class="pagination pagination-sm mb-0">
-                            <li class="page-item <?php echo $page<=1?'disabled':''; ?>">
+                            <li class="page-item <?php echo $page <= 1 ? 'disabled' : ''; ?>">
                                 <a class="page-link pag-link"
-                                    href="?page=<?php echo $page-1; ?>&user=<?php echo urlencode($f_user); ?>&status=<?php echo urlencode($f_status); ?>">
+                                    href="?page=<?php echo $page - 1; ?>&user=<?php echo urlencode($f_user); ?>&status=<?php echo urlencode($f_status); ?>">
                                     <i class="bi bi-chevron-left"></i>
                                 </a>
                             </li>
-                            <?php for ($pi=max(1,$page-2);$pi<=min($total_pages,$page+2);$pi++): ?>
-                            <li class="page-item <?php echo $pi===$page?'active':''; ?>">
+                            <?php for ($pi = max(1, $page - 2); $pi <= min($total_pages, $page + 2); $pi++): ?>
+                            <li class="page-item <?php echo $pi === $page ? 'active' : ''; ?>">
                                 <a class="page-link pag-link"
                                     href="?page=<?php echo $pi; ?>&user=<?php echo urlencode($f_user); ?>&status=<?php echo urlencode($f_status); ?>"><?php echo $pi; ?></a>
                             </li>
                             <?php endfor; ?>
-                            <li class="page-item <?php echo $page>=$total_pages?'disabled':''; ?>">
+                            <li class="page-item <?php echo $page >= $total_pages ? 'disabled' : ''; ?>">
                                 <a class="page-link pag-link"
-                                    href="?page=<?php echo $page+1; ?>&user=<?php echo urlencode($f_user); ?>&status=<?php echo urlencode($f_status); ?>">
+                                    href="?page=<?php echo $page + 1; ?>&user=<?php echo urlencode($f_user); ?>&status=<?php echo urlencode($f_status); ?>">
                                     <i class="bi bi-chevron-right"></i>
                                 </a>
                             </li>
