@@ -972,6 +972,7 @@ $csrf_export = $_SESSION['admin_csrf_token'];
                                             <th>Valor Líq.</th>
                                             <th>Estado</th>
                                             <th>Data Pedido</th>
+                                            <th>Acções</th>
                                             <?php if (hasPermission($admin_id, 'finances.edit')): ?>
                                             <?php endif; ?>
                                         </tr>
@@ -1024,7 +1025,7 @@ $csrf_export = $_SESSION['admin_csrf_token'];
                                             <?php if (hasPermission($admin_id, 'finances.edit')): ?>
                                             <td>
                                                 <?php if (in_array($wd['status_withdrawal'], ['pending', 'processing'])): ?>
-                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/withdrawals?review=<?php echo (int)$wd['id_withdrawal']; ?>"
+                                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/manager/withdrawals?review=<?php echo (int)$wd['id_withdrawal']; ?>"
                                                     class="btn btn-sm"
                                                     style="background:#FF0089;color:#fff;font-size:.72rem;padding:3px 10px">
                                                     Processar

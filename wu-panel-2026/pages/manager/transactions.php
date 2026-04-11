@@ -133,10 +133,10 @@ function tx_icon2(string $t): string { return match($t){'royalty_credit'=>'<i cl
                                 value="<?php echo htmlspecialchars($f_to); ?>">
                         </div>
                         <div class="col-md-2 d-flex gap-1">
-                            <button type="submit" class="btn btn-sm text-white flex-fill" style="background:#FF0089"><i
+                            <button type="submit" class="btn btn-md text-white flex-fill" style="background:#FF0089"><i
                                     class="bi bi-search"></i></button>
                             <a href="<?php echo APP_URL.'/'.ADMIN_PATH; ?>/manager/transactions"
-                                class="btn btn-sm btn-outline-secondary"><i class="bi bi-x"></i></a>
+                                class="btn btn-md btn-outline-secondary"><i class="bi bi-x"></i></a>
                         </div>
                     </div>
                 </form>

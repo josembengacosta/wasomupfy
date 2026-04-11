@@ -10,7 +10,7 @@ requireLogin();
 
 // Só aceita POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    redirect('dashboard/finances/transactions');
+    redirect(APP_URL_PANEL . '/transactions');
 }
 
 $db       = getDB();
@@ -19,7 +19,7 @@ $id_users = (int)$_SESSION['id_users'];
 // ── CSRF ──────────────────────────────────────
 $csrf = $_POST['csrf_token'] ?? '';
 if (!validateCsrf($csrf)) {
-    redirect('dashboard/finances/transactions', ['error' => 'invalid']);
+    redirect(APP_URL_PANEL . '/transactions', ['error' => 'invalid']);
 }
 
 // ── Honeypot ──────────────────────────────────
@@ -38,17 +38,18 @@ if ($action === 'create') {
     $email_collab  = trim($_POST['email_collab']    ?? '');
     $royalty_share = (float)($_POST['royalty_share'] ?? 0);
 
-    $valid_roles = ['feat','producer','composer','lyricist','manager','label','other'];
+    $valid_roles = ['feat', 'producer', 'composer', 'lyricist', 'manager', 'label', 'other'];
 
     // Validação básica
-    if ($id_artist <= 0
+    if (
+        $id_artist <= 0
         || empty($name_collab)
         || !in_array($role_collab, $valid_roles)
         || $royalty_share < 0.1
         || $royalty_share > 100
         || mb_strlen($name_collab) > 150
     ) {
-        redirect('dashboard/finances/transactions', ['error' => 'invalid']);
+        redirect(APP_URL_PANEL . '/transactions', ['error' => 'invalid']);
     }
 
     // Verificar que o artista pertence ao utilizador
@@ -58,7 +59,7 @@ if ($action === 'create') {
     ");
     $art_q->execute([$id_artist, $id_users]);
     if (!$art_q->fetch()) {
-        redirect('dashboard/finances/transactions', ['error' => 'noartist']);
+        redirect(APP_URL_PANEL . '/transactions', ['error' => 'noartist']);
     }
 
     // Verificar soma total não excede 100%
@@ -70,7 +71,7 @@ if ($action === 'create') {
     $current_sum = (float)$sum_q->fetchColumn();
 
     if (($current_sum + $royalty_share) > 100.0) {
-        redirect('dashboard/finances/transactions', ['error' => 'over100']);
+        redirect(APP_URL_PANEL . '/transactions', ['error' => 'over100']);
     }
 
     // Verificar e-mail (se fornecido)
@@ -78,7 +79,7 @@ if ($action === 'create') {
     if (!empty($email_collab)) {
 
         if (!filter_var($email_collab, FILTER_VALIDATE_EMAIL)) {
-            redirect('dashboard/finances/transactions', ['error' => 'invalid']);
+            redirect(APP_URL_PANEL . '/transactions', ['error' => 'invalid']);
         }
 
         // Não pode ser a própria conta
@@ -86,7 +87,7 @@ if ($action === 'create') {
         $own_q->execute([$id_users]);
         $own_email = $own_q->fetchColumn();
         if (strtolower($email_collab) === strtolower($own_email)) {
-            redirect('dashboard/finances/transactions', ['error' => 'sameemail']);
+            redirect(APP_URL_PANEL . '/transactions', ['error' => 'sameemail']);
         }
 
         // Verificar se existe na plataforma
@@ -107,7 +108,7 @@ if ($action === 'create') {
         ");
         $dup_q->execute([$id_artist, $collab_user_id]);
         if ($dup_q->fetch()) {
-            redirect('dashboard/finances/transactions', ['error' => 'dupli']);
+            redirect(APP_URL_PANEL . '/transactions', ['error' => 'dupli']);
         }
     }
 
@@ -134,7 +135,7 @@ if ($action === 'create') {
         $id_artist
     );
 
-    redirect('dashboard/finances/transactions', ['success' => 'created']);
+    redirect(APP_URL_PANEL . '/transactions', ['success' => 'created']);
 }
 
 
@@ -147,7 +148,7 @@ if ($action === 'delete') {
     $id_artist = (int)($_POST['id_artist'] ?? 0);
 
     if ($id_collab <= 0 || $id_artist <= 0) {
-        redirect('dashboard/finances/transactions', ['error' => 'invalid']);
+        redirect(APP_URL_PANEL . '/transactions', ['error' => 'invalid']);
     }
 
     // Verificar que o artista pertence ao utilizador
@@ -157,7 +158,7 @@ if ($action === 'delete') {
     ");
     $art_q->execute([$id_artist, $id_users]);
     if (!$art_q->fetch()) {
-        redirect('dashboard/finances/transactions', ['error' => 'noartist']);
+        redirect(APP_URL_PANEL . '/transactions', ['error' => 'noartist']);
     }
 
     // Verificar que o split existe e pertence a este artista
@@ -168,7 +169,7 @@ if ($action === 'delete') {
     $chk->execute([$id_collab, $id_artist]);
     $split = $chk->fetch();
     if (!$split) {
-        redirect('dashboard/finances/transactions', ['error' => 'notfound']);
+        redirect(APP_URL_PANEL . '/transactions', ['error' => 'notfound']);
     }
 
     $db->prepare("
@@ -183,8 +184,8 @@ if ($action === 'delete') {
         $id_artist
     );
 
-    redirect('dashboard/finances/transactions', ['success' => 'deleted']);
+    redirect(APP_URL_PANEL . '/transactions', ['success' => 'deleted']);
 }
 
 // Acção inválida
-redirect('dashboard/finances/transactions', ['error' => 'invalid']);
+redirect(APP_URL_PANEL . '/transactions', ['error' => 'invalid']);

@@ -186,7 +186,6 @@ RewriteRule ^dashboard/collab/statistics/?$                     dashboard/collab
 RewriteRule ^dashboard/collab/finances/?$                       dashboard/collab/finances.php [L]
 RewriteRule ^dashboard/collab/logout/?$                         dashboard/collab/logout.php [L]
 RewriteRule ^dashboard/collab/ping/?$                           dashboard/collab/ping.php [L]
-
 RewriteRule ^dashboard/collab/middleware/?$                     dashboard/collab/middleware.php [L]
 RewriteRule ^dashboard/collab/artists-list/?$                   dashboard/collab/artists-list.php [L]
 RewriteRule ^dashboard/collab/blocked/?$                        dashboard/collab/blocked.php [L]
@@ -202,10 +201,9 @@ RewriteRule ^dashboard/statistics/?$                  dashboard/analytics/statis
 RewriteRule ^dashboard/export/?$                      dashboard/analytics/export.php [L]
 RewriteRule ^dashboard/report/?$                      dashboard/analytics/report.php [L]
 RewriteRule ^dashboard/compare/?$                     dashboard/analytics/compare.php [L]
-RewriteRule ^dashboard/launches/?$                    dashboard/analytics/launches.php [L]
-RewriteRule ^dashboard/artist-details/?$              dashboard/analytics/artist-details.php [L]
-RewriteRule ^dashboard/country-details/?$             dashboard/analytics/country-details.php [L]
-RewriteRule ^dashboard/playlist-details/?$            dashboard/analytics/playlist-details.php [L]
+RewriteRule ^dashboard/artist-details/?$              dashboard/analytics/artist-details.php [L,QSA]
+RewriteRule ^dashboard/country-details/?$             dashboard/analytics/country-details.php [L,QSA]
+RewriteRule ^dashboard/playlist-details/?$            dashboard/analytics/playlist-details.php [L,QSA]
 
 # ─── Artistas ─────────────────────────────────
 RewriteRule ^dashboard/artists-list/?$                  dashboard/artists/artists-list.php [L]
@@ -221,7 +219,9 @@ RewriteRule ^dashboard/transactions/?$                 dashboard/finances/transa
 RewriteRule ^dashboard/withdraw/?$                     dashboard/finances/withdraw.php [L]
 RewriteRule ^dashboard/finances/withdrawal_process/?$  dashboard/finances/withdrawal_process.php [L]
 RewriteRule ^dashboard/_modal_withdrawal/?$            dashboard/finances/_modal_withdrawal.php [L]
-RewriteRule ^dashboard/finances/account_process/?$              dashboard/finances/account_process.php [L]
+RewriteRule ^dashboard/finances/account_process/?$     dashboard/finances/account_process.php [L]
+RewriteRule ^dashboard/finances/split_process/?$     dashboard/finances/split_process.php [L]
+
 
 # ─── Lançamentos ──────────────────────────────
 RewriteRule ^dashboard/releases/?$                       dashboard/launch/releases.php [L]
@@ -230,6 +230,7 @@ RewriteRule ^dashboard/creat_release_process/?$             dashboard/launch/cre
 RewriteRule ^dashboard/creat-release/?$                  dashboard/launch/creat-release.php [L]
 RewriteRule ^dashboard/draft-release/?$                  dashboard/launch/draft-release.php [L]
 RewriteRule ^dashboard/edit-release/?$                   dashboard/launch/edit-release.php [L]
+RewriteRule ^dashboard/get_drafts/?$                   dashboard/launch/get_drafts.php [L]
 
 
 # ─── Páginas internas do painel ───────────────
@@ -292,6 +293,8 @@ RewriteRule ^wu-panel-2026/analytics/process-artists/?$     wu-panel-2026/pages/
 RewriteRule ^wu-panel-2026/analytics/process-stores/?$      wu-panel-2026/pages/analytics/process-stores.php [L,QSA]
 RewriteRule ^wu-panel-2026/analytics/process-reports/?$     wu-panel-2026/pages/analytics/process-reports.php [L]
 RewriteRule ^wu-panel-2026/analytics/get_report_data/?$      wu-panel-2026/pages/analytics/get_report_data.php [L,QSA]
+RewriteRule ^wu-panel-2026/analytics/process-import/?$      wu-panel-2026/pages/analytics/process-import.php [L]
+RewriteRule ^wu-panel-2026/analytics/import-streams/?$      wu-panel-2026/pages/analytics/import-streams.php [L,QSA]
 
 # ── Funcionários ──
 RewriteRule ^wu-panel-2026/employees/?$                     wu-panel-2026/pages/employees/all-employees.php [L]
@@ -343,12 +346,6 @@ RewriteRule ^wu-panel-2026/releases/view/?$                 wu-panel-2026/pages/
 RewriteRule ^wu-panel-2026/releases/view-process/?$         wu-panel-2026/pages/distribution/view-process.php [L]
 RewriteRule ^wu-panel-2026/releases/download-zip/?$         wu-panel-2026/pages/distribution/download-zip.php [L,QSA] 
 
-# ── Manager ──
-RewriteRule ^wu-panel-2026/manager/gestion/?$               wu-panel-2026/pages/manager/gestion.php [L]
-RewriteRule ^wu-panel-2026/manager/activity/?$              wu-panel-2026/pages/manager/activity.php [L]
-RewriteRule ^wu-panel-2026/manager/timeline/?$              wu-panel-2026/pages/manager/timeline.php [L]
-RewriteRule ^wu-panel-2026/manager/top-music/?$             wu-panel-2026/pages/manager/top-music.php [L]
-
 # ── Finanças ──
 RewriteRule ^wu-panel-2026/finances/?$                      wu-panel-2026/pages/finances/earnings.php [L]
 RewriteRule ^wu-panel-2026/finances/royalty-splits/?$       wu-panel-2026/pages/finances/royalty-splits.php [L]
@@ -378,9 +375,12 @@ RewriteRule ^wu-panel-2026/manager/transactions/?$        wu-panel-2026/pages/ma
 RewriteRule ^wu-panel-2026/manager/withdrawals/?$         wu-panel-2026/pages/manager/withdrawals.php [L]
 RewriteRule ^wu-panel-2026/manager/proofs/?$              wu-panel-2026/pages/manager/proofs.php [L]
 RewriteRule ^wu-panel-2026/manager/royalty-splits/?$      wu-panel-2026/pages/manager/royalty-splits.php [L]
-RewriteRule ^wu-panel-2026/manager/process/?$             wu-panel-2026/pages/manager/process.php [L]
+RewriteRule ^wu-panel-2026/manager/process/?$             wu-panel-2026/pages/manager/process.php [L,QSA]
 RewriteRule ^wu-panel-2026/manager/royalty-payments/?$    wu-panel-2026/pages/manager/royalty-payments.php [L]
 RewriteRule ^wu-panel-2026/manager/payment-guard/?$       wu-panel-2026/pages/manager/include/payment-guard.php [L]
+RewriteRule ^wu-panel-2026/manager/activity/?$              wu-panel-2026/pages/manager/activity.php [L]
+RewriteRule ^wu-panel-2026/manager/timeline/?$              wu-panel-2026/pages/manager/timeline.php [L]
+RewriteRule ^wu-panel-2026/manager/top-music/?$             wu-panel-2026/pages/manager/top-music.php [L]
 
 
 

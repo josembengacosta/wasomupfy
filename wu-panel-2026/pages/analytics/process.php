@@ -42,7 +42,7 @@ if ($action === 'add_stream') {
     $revenue   = (float)($_POST['revenue'] ?? 0);
 
     if (!$id_track || !$id_store || $year < 2020 || $year > 2099 || $month < 1 || $month > 12) {
-        jsonOut(false, 'Dados inválidos. Verifica faixa, plataforma, ano e mês.');
+        jsonOut(false, 'Dados inválidos. Verifica faixa, plataforma, aww e mês.');
     }
     if ($streams < 0) {
         jsonOut(false, 'O número de streams não pode ser negativo.');

@@ -58,7 +58,7 @@ $has_pending_withdrawal = (bool)$pending_stmt->fetch();
                         Já tens um pedido de saque pendente. Aguarda a conclusão antes de solicitar um novo.
                         Receberás uma notificação por e-mail quando estiver processado.
                     </p>
-                    <a href="finances/overview" class="btn btn-sm btn-outline-secondary mt-2">
+                    <a href="overview" class="btn btn-sm btn-outline-secondary mt-2">
                         <i class="bi bi-bar-chart me-1"></i>Ver estado em Finanças
                     </a>
                 </div>
@@ -80,7 +80,7 @@ $has_pending_withdrawal = (bool)$pending_stmt->fetch();
                     <p class="text-muted small">
                         Para sacar os teus royalties, primeiro regista uma conta bancária verificada.
                     </p>
-                    <a href="finances/withdraw" class="btn btn-pink btn-sm">
+                    <a href="withdraw" class="btn btn-pink btn-sm">
                         <i class="bi bi-plus me-1"></i>Registar Conta Bancária
                     </a>
                 </div>
@@ -165,7 +165,7 @@ $has_pending_withdrawal = (bool)$pending_stmt->fetch();
                         </div>
                     </div>
                     <?php endif; ?>
-                    <a href="finances/withdraw" class="btn btn-sm btn-outline-secondary ms-auto">
+                    <a href="withdraw" class="btn btn-sm btn-outline-secondary ms-auto">
                         <i class="bi bi-pencil"></i>
                     </a>
                 </div>

@@ -82,6 +82,11 @@ $pendingAccountsCount = $canFinancesView
                     <i class="bi bi-file-earmark-bar-graph"></i>
                     <span>Relatórios Personalizados</span>
                 </a>
+                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/analytics/import-streams"
+                    class="nav-link<?php echo adm_is_active('analytics/import-streams') ? ' active' : ''; ?>">
+                    <i class="bi bi-cloud-upload"></i>
+                    <span>Importar Streams</span>
+                </a>
             </div>
         </li>
         <?php endif; ?>

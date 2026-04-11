@@ -56,561 +56,561 @@ $feedback = match ($msg_type) {
         rel="stylesheet" />
 
     <style>
-        :root {
-            --pink: #FF0089;
-            --pink-dark: #cc006e;
-            --pink-glow: rgba(255, 0, 137, 0.22);
-            --dark: #0c0c0f;
-            --off-white: #f8f7fc;
-            --text-muted: #888;
-            --radius: 14px;
-            --font-display: 'Syne', sans-serif;
-            --font-body: 'DM Sans', sans-serif;
-        }
+    :root {
+        --pink: #FF0089;
+        --pink-dark: #cc006e;
+        --pink-glow: rgba(255, 0, 137, 0.22);
+        --dark: #0c0c0f;
+        --off-white: #f8f7fc;
+        --text-muted: #888;
+        --radius: 14px;
+        --font-display: 'Syne', sans-serif;
+        --font-body: 'DM Sans', sans-serif;
+    }
 
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
 
-        html,
-        body {
-            height: 100%;
-            font-family: var(--font-body);
-            font-size: 15px;
-            background: var(--off-white);
-            color: #1a1a1a;
-            -webkit-font-smoothing: antialiased;
-        }
+    html,
+    body {
+        height: 100%;
+        font-family: var(--font-body);
+        font-size: 15px;
+        background: var(--off-white);
+        color: #1a1a1a;
+        -webkit-font-smoothing: antialiased;
+    }
 
-        /* ── Layout split igual ao login ── */
+    /* ── Layout split igual ao login ── */
+    .auth-shell {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        min-height: 100vh;
+    }
+
+    @media (max-width: 900px) {
         .auth-shell {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            min-height: 100vh;
+            grid-template-columns: 1fr;
         }
 
-        @media (max-width: 900px) {
-            .auth-shell {
-                grid-template-columns: 1fr;
-            }
-
-            .auth-left {
-                display: none;
-            }
-
-            .auth-right {
-                padding: 40px 24px;
-            }
-        }
-
-        /* ── Painel esquerdo ── */
         .auth-left {
-            background: var(--dark);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 48px;
-        }
-
-        .auth-left::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background-image:
-                linear-gradient(rgba(255, 0, 137, .06) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 0, 137, .06) 1px, transparent 1px);
-            background-size: 48px 48px;
-            pointer-events: none;
-        }
-
-        /* Blob rosa posicionado diferente do login */
-        .auth-left::after {
-            content: '';
-            position: absolute;
-            bottom: 20%;
-            right: 10%;
-            width: 320px;
-            height: 320px;
-            background: radial-gradient(circle, rgba(255, 0, 137, .2) 0%, transparent 70%);
-            pointer-events: none;
-            animation: pulse-glow 6s ease-in-out infinite alternate;
-        }
-
-        @keyframes pulse-glow {
-            from {
-                transform: scale(1);
-                opacity: .6;
-            }
-
-            to {
-                transform: scale(1.2);
-                opacity: 1;
-            }
-        }
-
-        .brand-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 72px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .brand-logo img {
-            width: 44px;
-            height: 44px;
-            border-radius: 10px;
-        }
-
-        .brand-name {
-            font-family: var(--font-display);
-            font-size: 1.2rem;
-            font-weight: 800;
-            color: #fff;
-        }
-
-        .brand-badge {
-            font-size: .65rem;
-            font-weight: 600;
-            background: var(--pink);
-            color: #fff;
-            padding: 2px 8px;
-            border-radius: 20px;
-            letter-spacing: .5px;
-            text-transform: uppercase;
-        }
-
-        /* Ilustração central: ícone grande com anel animado */
-        .left-illustration {
-            position: relative;
-            z-index: 2;
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .illus-ring {
-            position: relative;
-            width: 180px;
-            height: 180px;
-        }
-
-        .illus-ring::before,
-        .illus-ring::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 50%;
-            border: 1.5px solid rgba(255, 0, 137, .3);
-            animation: ring-expand 3s ease-out infinite;
-        }
-
-        .illus-ring::after {
-            animation-delay: 1.5s;
-        }
-
-        @keyframes ring-expand {
-            0% {
-                transform: scale(.8);
-                opacity: .8;
-            }
-
-            100% {
-                transform: scale(1.6);
-                opacity: 0;
-            }
-        }
-
-        .illus-icon {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 4rem;
-            color: var(--pink);
-            filter: drop-shadow(0 0 24px var(--pink-glow));
-        }
-
-        /* Texto inferior esquerdo */
-        .left-footer {
-            position: relative;
-            z-index: 2;
-        }
-
-        .left-footer p {
-            font-size: .88rem;
-            color: #555;
-            line-height: 1.7;
-            max-width: 300px;
-        }
-
-        .left-footer strong {
-            color: #888;
-        }
-
-        /* ── Painel direito ── */
-        .auth-right {
-            background: var(--off-white);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 48px 40px;
-        }
-
-        .auth-form-wrap {
-            width: 100%;
-            max-width: 400px;
-        }
-
-        /* Botão voltar */
-        .btn-back {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: .83rem;
-            font-weight: 500;
-            color: #888;
-            text-decoration: none;
-            margin-bottom: 36px;
-            transition: color .2s;
-        }
-
-        .btn-back:hover {
-            color: var(--pink);
-        }
-
-        /* Header */
-        .form-header {
-            margin-bottom: 32px;
-        }
-
-        .form-header .access-label {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: .72rem;
-            font-weight: 600;
-            letter-spacing: 1.2px;
-            text-transform: uppercase;
-            color: var(--pink);
-            background: rgba(255, 0, 137, .08);
-            border: 1px solid rgba(255, 0, 137, .2);
-            padding: 4px 12px;
-            border-radius: 20px;
-            margin-bottom: 16px;
-        }
-
-        .form-header h1 {
-            font-family: var(--font-display);
-            font-size: 1.75rem;
-            font-weight: 800;
-            color: #111;
-            margin-bottom: 8px;
-        }
-
-        .form-header p {
-            font-size: .88rem;
-            color: var(--text-muted);
-            line-height: 1.6;
-        }
-
-        /* Tabs de método (e-mail / username) */
-        .method-tabs {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 28px;
-            background: #ededf5;
-            padding: 4px;
-            border-radius: 10px;
-        }
-
-        .method-tab {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 7px;
-            padding: 9px 12px;
-            border-radius: 8px;
-            font-size: .83rem;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            background: transparent;
-            color: #888;
-            transition: background .2s, color .2s, box-shadow .2s;
-        }
-
-        .method-tab.active {
-            background: #fff;
-            color: var(--pink);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
-        }
-
-        .method-tab i {
-            font-size: .9rem;
-        }
-
-        /* Inputs */
-        .form-label {
-            font-size: .82rem;
-            font-weight: 600;
-            color: #444;
-            margin-bottom: 6px;
-        }
-
-        .form-control {
-            border: 1.5px solid #e0e0e8;
-            border-radius: 10px;
-            padding: 12px 16px;
-            font-size: .9rem;
-            font-family: var(--font-body);
-            background: #fff;
-            color: #111;
-            transition: border-color .2s, box-shadow .2s;
-        }
-
-        .form-control:focus {
-            border-color: var(--pink);
-            box-shadow: 0 0 0 3px var(--pink-glow);
-            outline: none;
-        }
-
-        .form-control.is-invalid {
-            border-color: #ef4444;
-        }
-
-        .input-icon-wrap {
-            position: relative;
-        }
-
-        .input-icon-wrap .form-control {
-            padding-right: 44px;
-        }
-
-        .input-icon-wrap .field-icon {
-            position: absolute;
-            right: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #bbb;
-            font-size: .95rem;
-            pointer-events: none;
-            transition: color .2s;
-        }
-
-        .input-icon-wrap:focus-within .field-icon {
-            color: var(--pink);
-        }
-
-        /* Botão submit */
-        .btn-admin-submit {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            width: 100%;
-            padding: 13px 24px;
-            background: var(--pink);
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            font-family: var(--font-body);
-            font-size: .95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background .2s, transform .15s, box-shadow .2s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-admin-submit::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(255, 255, 255, .12) 0%, transparent 60%);
-        }
-
-        .btn-admin-submit:hover {
-            background: var(--pink-dark);
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px var(--pink-glow);
-        }
-
-        .btn-admin-submit:active {
-            transform: translateY(0);
-        }
-
-        .btn-admin-submit:disabled {
-            opacity: .7;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .spinner-btn {
             display: none;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255, 255, 255, .4);
-            border-top-color: #fff;
-            border-radius: 50%;
-            animation: spin .6s linear infinite;
         }
 
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+        .auth-right {
+            padding: 40px 24px;
+        }
+    }
+
+    /* ── Painel esquerdo ── */
+    .auth-left {
+        background: var(--dark);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 48px;
+    }
+
+    .auth-left::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image:
+            linear-gradient(rgba(255, 0, 137, .06) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 0, 137, .06) 1px, transparent 1px);
+        background-size: 48px 48px;
+        pointer-events: none;
+    }
+
+    /* Blob rosa posicionado diferente do login */
+    .auth-left::after {
+        content: '';
+        position: absolute;
+        bottom: 20%;
+        right: 10%;
+        width: 320px;
+        height: 320px;
+        background: radial-gradient(circle, rgba(255, 0, 137, .2) 0%, transparent 70%);
+        pointer-events: none;
+        animation: pulse-glow 6s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulse-glow {
+        from {
+            transform: scale(1);
+            opacity: .6;
         }
 
-        /* Info box */
-        .info-box {
-            background: #fff;
-            border: 1px solid #e8e8f0;
-            border-radius: 10px;
-            padding: 14px 16px;
-            margin-top: 20px;
-            display: flex;
-            gap: 10px;
-            align-items: flex-start;
+        to {
+            transform: scale(1.2);
+            opacity: 1;
+        }
+    }
+
+    .brand-logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 72px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .brand-logo img {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+    }
+
+    .brand-name {
+        font-family: var(--font-display);
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: #fff;
+    }
+
+    .brand-badge {
+        font-size: .65rem;
+        font-weight: 600;
+        background: var(--pink);
+        color: #fff;
+        padding: 2px 8px;
+        border-radius: 20px;
+        letter-spacing: .5px;
+        text-transform: uppercase;
+    }
+
+    /* Ilustração central: ícone grande com anel animado */
+    .left-illustration {
+        position: relative;
+        z-index: 2;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .illus-ring {
+        position: relative;
+        width: 180px;
+        height: 180px;
+    }
+
+    .illus-ring::before,
+    .illus-ring::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        border: 1.5px solid rgba(255, 0, 137, .3);
+        animation: ring-expand 3s ease-out infinite;
+    }
+
+    .illus-ring::after {
+        animation-delay: 1.5s;
+    }
+
+    @keyframes ring-expand {
+        0% {
+            transform: scale(.8);
+            opacity: .8;
         }
 
-        .info-box i {
-            color: var(--pink);
-            font-size: 1rem;
-            margin-top: 1px;
-            flex-shrink: 0;
-        }
-
-        .info-box p {
-            font-size: .82rem;
-            color: #666;
-            line-height: 1.6;
-            margin: 0;
-        }
-
-        .info-box strong {
-            color: #444;
-        }
-
-        /* Alertas */
-        .alert-admin {
-            border-radius: 10px;
-            border: none;
-            padding: 12px 16px;
-            font-size: .87rem;
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            margin-bottom: 24px;
-            animation: slideDown .3s ease;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-8px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .alert-admin.alert-danger {
-            background: #fff0f0;
-            color: #b91c1c;
-        }
-
-        .alert-admin.alert-warning {
-            background: #fffbeb;
-            color: #92400e;
-        }
-
-        .alert-admin.alert-success {
-            background: #f0fdf4;
-            color: #166534;
-        }
-
-        /* Animações entrada */
-        .fade-up {
+        100% {
+            transform: scale(1.6);
             opacity: 0;
-            transform: translateY(18px);
-            transition: opacity .45s ease, transform .45s ease;
+        }
+    }
+
+    .illus-icon {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+        color: var(--pink);
+        filter: drop-shadow(0 0 24px var(--pink-glow));
+    }
+
+    /* Texto inferior esquerdo */
+    .left-footer {
+        position: relative;
+        z-index: 2;
+    }
+
+    .left-footer p {
+        font-size: .88rem;
+        color: #555;
+        line-height: 1.7;
+        max-width: 300px;
+    }
+
+    .left-footer strong {
+        color: #888;
+    }
+
+    /* ── Painel direito ── */
+    .auth-right {
+        background: var(--off-white);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 48px 40px;
+    }
+
+    .auth-form-wrap {
+        width: 100%;
+        max-width: 400px;
+    }
+
+    /* Botão voltar */
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: .83rem;
+        font-weight: 500;
+        color: #888;
+        text-decoration: none;
+        margin-bottom: 36px;
+        transition: color .2s;
+    }
+
+    .btn-back:hover {
+        color: var(--pink);
+    }
+
+    /* Header */
+    .form-header {
+        margin-bottom: 32px;
+    }
+
+    .form-header .access-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: .72rem;
+        font-weight: 600;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        color: var(--pink);
+        background: rgba(255, 0, 137, .08);
+        border: 1px solid rgba(255, 0, 137, .2);
+        padding: 4px 12px;
+        border-radius: 20px;
+        margin-bottom: 16px;
+    }
+
+    .form-header h1 {
+        font-family: var(--font-display);
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: #111;
+        margin-bottom: 8px;
+    }
+
+    .form-header p {
+        font-size: .88rem;
+        color: var(--text-muted);
+        line-height: 1.6;
+    }
+
+    /* Tabs de método (e-mail / username) */
+    .method-tabs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 28px;
+        background: #ededf5;
+        padding: 4px;
+        border-radius: 10px;
+    }
+
+    .method-tab {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        padding: 9px 12px;
+        border-radius: 8px;
+        font-size: .83rem;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        background: transparent;
+        color: #888;
+        transition: background .2s, color .2s, box-shadow .2s;
+    }
+
+    .method-tab.active {
+        background: #fff;
+        color: var(--pink);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
+    }
+
+    .method-tab i {
+        font-size: .9rem;
+    }
+
+    /* Inputs */
+    .form-label {
+        font-size: .82rem;
+        font-weight: 600;
+        color: #444;
+        margin-bottom: 6px;
+    }
+
+    .form-control {
+        border: 1.5px solid #e0e0e8;
+        border-radius: 10px;
+        padding: 12px 16px;
+        font-size: .9rem;
+        font-family: var(--font-body);
+        background: #fff;
+        color: #111;
+        transition: border-color .2s, box-shadow .2s;
+    }
+
+    .form-control:focus {
+        border-color: var(--pink);
+        box-shadow: 0 0 0 3px var(--pink-glow);
+        outline: none;
+    }
+
+    .form-control.is-invalid {
+        border-color: #ef4444;
+    }
+
+    .input-icon-wrap {
+        position: relative;
+    }
+
+    .input-icon-wrap .form-control {
+        padding-right: 44px;
+    }
+
+    .input-icon-wrap .field-icon {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #bbb;
+        font-size: .95rem;
+        pointer-events: none;
+        transition: color .2s;
+    }
+
+    .input-icon-wrap:focus-within .field-icon {
+        color: var(--pink);
+    }
+
+    /* Botão submit */
+    .btn-admin-submit {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        padding: 13px 24px;
+        background: var(--pink);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        font-family: var(--font-body);
+        font-size: .95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background .2s, transform .15s, box-shadow .2s;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-admin-submit::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, .12) 0%, transparent 60%);
+    }
+
+    .btn-admin-submit:hover {
+        background: var(--pink-dark);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px var(--pink-glow);
+    }
+
+    .btn-admin-submit:active {
+        transform: translateY(0);
+    }
+
+    .btn-admin-submit:disabled {
+        opacity: .7;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .spinner-btn {
+        display: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255, 255, 255, .4);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin .6s linear infinite;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* Info box */
+    .info-box {
+        background: #fff;
+        border: 1px solid #e8e8f0;
+        border-radius: 10px;
+        padding: 14px 16px;
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+    }
+
+    .info-box i {
+        color: var(--pink);
+        font-size: 1rem;
+        margin-top: 1px;
+        flex-shrink: 0;
+    }
+
+    .info-box p {
+        font-size: .82rem;
+        color: #666;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    .info-box strong {
+        color: #444;
+    }
+
+    /* Alertas */
+    .alert-admin {
+        border-radius: 10px;
+        border: none;
+        padding: 12px 16px;
+        font-size: .87rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 24px;
+        animation: slideDown .3s ease;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-8px);
         }
 
-        .fade-up.visible {
+        to {
             opacity: 1;
             transform: translateY(0);
         }
+    }
 
-        .delay-1 {
-            transition-delay: .05s;
-        }
+    .alert-admin.alert-danger {
+        background: #fff0f0;
+        color: #b91c1c;
+    }
 
-        .delay-2 {
-            transition-delay: .12s;
-        }
+    .alert-admin.alert-warning {
+        background: #fffbeb;
+        color: #92400e;
+    }
 
-        .delay-3 {
-            transition-delay: .19s;
-        }
+    .alert-admin.alert-success {
+        background: #f0fdf4;
+        color: #166534;
+    }
 
-        .delay-4 {
-            transition-delay: .26s;
-        }
+    /* Animações entrada */
+    .fade-up {
+        opacity: 0;
+        transform: translateY(18px);
+        transition: opacity .45s ease, transform .45s ease;
+    }
 
-        .delay-5 {
-            transition-delay: .33s;
-        }
+    .fade-up.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
 
-        /* Preloader */
-        .preloader {
-            position: fixed;
-            inset: 0;
-            background: var(--off-white);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            transition: opacity .4s, visibility .4s;
-        }
+    .delay-1 {
+        transition-delay: .05s;
+    }
 
-        .preloader.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
+    .delay-2 {
+        transition-delay: .12s;
+    }
 
-        .preloader-ring {
-            width: 36px;
-            height: 36px;
-            border: 3px solid #eee;
-            border-top-color: var(--pink);
-            border-radius: 50%;
-            animation: spin .7s linear infinite;
-        }
+    .delay-3 {
+        transition-delay: .19s;
+    }
 
-        /* Link de registo */
-        .link-secondary {
-            font-size: .84rem;
-            color: #aaa;
-            text-decoration: none;
-            transition: color .2s;
-        }
+    .delay-4 {
+        transition-delay: .26s;
+    }
 
-        .link-secondary:hover {
-            color: var(--pink);
-        }
+    .delay-5 {
+        transition-delay: .33s;
+    }
+
+    /* Preloader */
+    .preloader {
+        position: fixed;
+        inset: 0;
+        background: var(--off-white);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity .4s, visibility .4s;
+    }
+
+    .preloader.hidden {
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    .preloader-ring {
+        width: 36px;
+        height: 36px;
+        border: 3px solid #eee;
+        border-top-color: var(--pink);
+        border-radius: 50%;
+        animation: spin .7s linear infinite;
+    }
+
+    /* Link de registo */
+    .link-secondary {
+        font-size: .84rem;
+        color: #aaa;
+        text-decoration: none;
+        transition: color .2s;
+    }
+
+    .link-secondary:hover {
+        color: var(--pink);
+    }
     </style>
 </head>
 
@@ -626,7 +626,7 @@ $feedback = match ($msg_type) {
         <!-- ══ Painel Esquerdo ══ -->
         <div class="auth-left">
             <div class="brand-logo">
-                <img src="../assets/img/brand/wasomupfy.png" alt="Wasom Upfy" />
+                <img src="<?php echo APP_URL  ?>/assets/img/brand/wasomupfy.png" alt="Wasom Upfy" />
                 <span class="brand-name"><?php echo APP_NAME; ?></span>
                 <span class="brand-badge">Admin</span>
             </div>
@@ -675,10 +675,10 @@ $feedback = match ($msg_type) {
 
                 <!-- Feedback -->
                 <?php if ($feedback): ?>
-                    <div class="alert-admin alert-<?php echo $feedback['type']; ?> fade-up delay-2" role="alert">
-                        <i class="bi <?php echo $feedback['icon']; ?>" style="margin-top:1px;flex-shrink:0"></i>
-                        <span><?php echo htmlspecialchars($feedback['text']); ?></span>
-                    </div>
+                <div class="alert-admin alert-<?php echo $feedback['type']; ?> fade-up delay-2" role="alert">
+                    <i class="bi <?php echo $feedback['icon']; ?>" style="margin-top:1px;flex-shrink:0"></i>
+                    <span><?php echo htmlspecialchars($feedback['text']); ?></span>
+                </div>
                 <?php endif; ?>
 
                 <!-- Tabs de método -->
@@ -768,124 +768,124 @@ $feedback = match ($msg_type) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
 
-            // ── Preloader ──────────────────────────────
-            window.addEventListener('load', function() {
-                document.getElementById('preloader').classList.add('hidden');
-                document.querySelectorAll('.fade-up').forEach(el => el.classList.add('visible'));
-            });
+        // ── Preloader ──────────────────────────────
+        window.addEventListener('load', function() {
+            document.getElementById('preloader').classList.add('hidden');
+            document.querySelectorAll('.fade-up').forEach(el => el.classList.add('visible'));
+        });
 
-            // ── Tabs de método ─────────────────────────
-            const tabEmail = document.getElementById('tab-email');
-            const tabUser = document.getElementById('tab-user');
-            const fieldEmail = document.getElementById('field-email');
-            const fieldUser = document.getElementById('field-user');
-            const inputEmail = document.getElementById('email_employees');
-            const inputUser = document.getElementById('user_employees');
-            const methodHid = document.getElementById('input-method');
+        // ── Tabs de método ─────────────────────────
+        const tabEmail = document.getElementById('tab-email');
+        const tabUser = document.getElementById('tab-user');
+        const fieldEmail = document.getElementById('field-email');
+        const fieldUser = document.getElementById('field-user');
+        const inputEmail = document.getElementById('email_employees');
+        const inputUser = document.getElementById('user_employees');
+        const methodHid = document.getElementById('input-method');
 
-            let activeMethod = 'email';
+        let activeMethod = 'email';
 
-            tabEmail.addEventListener('click', function() {
-                activeMethod = 'email';
-                methodHid.value = 'email';
+        tabEmail.addEventListener('click', function() {
+            activeMethod = 'email';
+            methodHid.value = 'email';
 
-                tabEmail.classList.add('active');
-                tabUser.classList.remove('active');
+            tabEmail.classList.add('active');
+            tabUser.classList.remove('active');
 
-                fieldEmail.style.display = 'block';
-                fieldUser.style.display = 'none';
+            fieldEmail.style.display = 'block';
+            fieldUser.style.display = 'none';
 
-                // Limpar campo anterior
-                inputUser.value = '';
-                inputUser.classList.remove('is-invalid');
-                inputEmail.focus();
-            });
+            // Limpar campo anterior
+            inputUser.value = '';
+            inputUser.classList.remove('is-invalid');
+            inputEmail.focus();
+        });
 
-            tabUser.addEventListener('click', function() {
-                activeMethod = 'user';
-                methodHid.value = 'user';
+        tabUser.addEventListener('click', function() {
+            activeMethod = 'user';
+            methodHid.value = 'user';
 
-                tabUser.classList.add('active');
-                tabEmail.classList.remove('active');
+            tabUser.classList.add('active');
+            tabEmail.classList.remove('active');
 
-                fieldUser.style.display = 'block';
-                fieldEmail.style.display = 'none';
+            fieldUser.style.display = 'block';
+            fieldEmail.style.display = 'none';
 
-                // Limpar campo anterior
-                inputEmail.value = '';
-                inputEmail.classList.remove('is-invalid');
-                inputUser.focus();
-            });
+            // Limpar campo anterior
+            inputEmail.value = '';
+            inputEmail.classList.remove('is-invalid');
+            inputUser.focus();
+        });
 
-            // ── Validação em tempo real ─────────────────
-            inputEmail.addEventListener('input', function() {
-                const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value);
-                this.classList.toggle('is-invalid', !valid && this.value.length > 4);
-                this.classList.toggle('is-valid', valid);
-            });
+        // ── Validação em tempo real ─────────────────
+        inputEmail.addEventListener('input', function() {
+            const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value);
+            this.classList.toggle('is-invalid', !valid && this.value.length > 4);
+            this.classList.toggle('is-valid', valid);
+        });
 
-            inputUser.addEventListener('input', function() {
-                const clean = this.value.replace(/^@/, '');
-                this.classList.toggle('is-invalid', clean.length > 0 && clean.length < 3);
-                this.classList.toggle('is-valid', clean.length >= 3);
-            });
+        inputUser.addEventListener('input', function() {
+            const clean = this.value.replace(/^@/, '');
+            this.classList.toggle('is-invalid', clean.length > 0 && clean.length < 3);
+            this.classList.toggle('is-valid', clean.length >= 3);
+        });
 
-            // ── Submit ─────────────────────────────────
-            const btnSubmit = document.getElementById('btn-submit');
-            const spinner = document.getElementById('spinner');
-            const btnIcon = document.getElementById('btn-icon');
-            const btnText = document.getElementById('btn-text');
-            const form = document.getElementById('form-forgot');
+        // ── Submit ─────────────────────────────────
+        const btnSubmit = document.getElementById('btn-submit');
+        const spinner = document.getElementById('spinner');
+        const btnIcon = document.getElementById('btn-icon');
+        const btnText = document.getElementById('btn-text');
+        const form = document.getElementById('form-forgot');
 
-            function doSubmit() {
-                let valid = true;
+        function doSubmit() {
+            let valid = true;
 
-                if (activeMethod === 'email') {
-                    const email = inputEmail.value.trim();
-                    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                        inputEmail.classList.add('is-invalid');
-                        inputEmail.focus();
-                        valid = false;
-                    }
-                } else {
-                    const user = inputUser.value.replace(/^@/, '').trim();
-                    if (!user || user.length < 3) {
-                        inputUser.classList.add('is-invalid');
-                        inputUser.focus();
-                        valid = false;
-                    }
+            if (activeMethod === 'email') {
+                const email = inputEmail.value.trim();
+                if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    inputEmail.classList.add('is-invalid');
+                    inputEmail.focus();
+                    valid = false;
                 }
-
-                if (!valid) return;
-
-                // Loading
-                spinner.style.display = 'block';
-                btnIcon.style.display = 'none';
-                btnText.textContent = 'A enviar...';
-                btnSubmit.disabled = true;
-
-                form.submit();
+            } else {
+                const user = inputUser.value.replace(/^@/, '').trim();
+                if (!user || user.length < 3) {
+                    inputUser.classList.add('is-invalid');
+                    inputUser.focus();
+                    valid = false;
+                }
             }
 
-            btnSubmit.addEventListener('click', doSubmit);
+            if (!valid) return;
 
-            // Enter nos campos → submit
-            [inputEmail, inputUser].forEach(function(inp) {
-                inp.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter') doSubmit();
-                });
+            // Loading
+            spinner.style.display = 'block';
+            btnIcon.style.display = 'none';
+            btnText.textContent = 'A enviar...';
+            btnSubmit.disabled = true;
+
+            form.submit();
+        }
+
+        btnSubmit.addEventListener('click', doSubmit);
+
+        // Enter nos campos → submit
+        [inputEmail, inputUser].forEach(function(inp) {
+            inp.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') doSubmit();
             });
-
-            // Remover is-invalid ao digitar
-            [inputEmail, inputUser].forEach(function(inp) {
-                inp.addEventListener('input', function() {
-                    this.classList.remove('is-invalid');
-                });
-            });
-
         });
+
+        // Remover is-invalid ao digitar
+        [inputEmail, inputUser].forEach(function(inp) {
+            inp.addEventListener('input', function() {
+                this.classList.remove('is-invalid');
+            });
+        });
+
+    });
     </script>
 </body>
 

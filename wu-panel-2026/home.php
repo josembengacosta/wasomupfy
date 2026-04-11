@@ -277,11 +277,8 @@ function pay_status_label(string $s): string
     <meta name="robots" content="noindex, nofollow" />
     <meta name="author" content="José Mbenga da Costa" />
     <meta name="theme-color" content="#FF0089" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="#FF0089" />
     <link rel="apple-touch-icon" href="../assets/img/icones/wasomupfy_fiv_512.png" />
-    <link rel="apple-touch-startup-image" href="../assets/img/screenshots/splash.png" />
-    <link rel="manifest" href="manifest.json" />
     <title>Painel Administrador — <?php echo APP_NAME; ?></title>
     <link rel="shortcut icon" href="../assets/img/icones/wasomupfy_fiv.png" type="image/x-icon" />
     <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/libs/plugins.css" />
@@ -1389,7 +1386,7 @@ function pay_status_label(string $s): string
                                 <h5 class="card-title mb-0"> <i class="bi-cash-coin me-2" style="color:#FF0089"></i>
                                     Pagamentos Recentes
                                 </h5>
-                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/finances/payments" class="card-link"
+                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/finances/" class="card-link"
                                     style="font-size:.8rem">Ver todos <i class="bi bi-arrow-right"></i></a>
                             </div>
                             <?php if (empty($recent_pays)): ?>

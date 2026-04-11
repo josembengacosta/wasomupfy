@@ -99,554 +99,554 @@ if (!$feedback && isset($_GET['return']) && !isset($_GET['msg'])) {
         rel="stylesheet" />
 
     <style>
-        /* ─── Variables ─────────────────────────────── */
-        :root {
-            --pink: #FF0089;
-            --pink-dark: #cc006e;
-            --pink-glow: rgba(255, 0, 137, 0.25);
-            --dark: #0c0c0f;
-            --dark-2: #141418;
-            --dark-3: #1c1c22;
-            --dark-border: #2a2a33;
-            --off-white: #f8f7fc;
-            --text-muted: #888;
-            --radius: 14px;
-            --font-display: 'Syne', sans-serif;
-            --font-body: 'DM Sans', sans-serif;
-        }
+    /* ─── Variables ─────────────────────────────── */
+    :root {
+        --pink: #FF0089;
+        --pink-dark: #cc006e;
+        --pink-glow: rgba(255, 0, 137, 0.25);
+        --dark: #0c0c0f;
+        --dark-2: #141418;
+        --dark-3: #1c1c22;
+        --dark-border: #2a2a33;
+        --off-white: #f8f7fc;
+        --text-muted: #888;
+        --radius: 14px;
+        --font-display: 'Syne', sans-serif;
+        --font-body: 'DM Sans', sans-serif;
+    }
 
-        /* ─── Reset & Base ──────────────────────────── */
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+    /* ─── Reset & Base ──────────────────────────── */
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
 
-        html,
-        body {
-            height: 100%;
-            font-family: var(--font-body);
-            font-size: 15px;
-            background: var(--off-white);
-            color: #1a1a1a;
-            -webkit-font-smoothing: antialiased;
-        }
+    html,
+    body {
+        height: 100%;
+        font-family: var(--font-body);
+        font-size: 15px;
+        background: var(--off-white);
+        color: #1a1a1a;
+        -webkit-font-smoothing: antialiased;
+    }
 
-        /* ─── Layout Principal ──────────────────────── */
+    /* ─── Layout Principal ──────────────────────── */
+    .auth-shell {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        min-height: 100vh;
+    }
+
+    @media (max-width: 900px) {
         .auth-shell {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            min-height: 100vh;
+            grid-template-columns: 1fr;
         }
 
-        @media (max-width: 900px) {
-            .auth-shell {
-                grid-template-columns: 1fr;
-            }
-
-            .auth-left {
-                display: none;
-            }
-        }
-
-        /* ─── Painel Esquerdo (Dark/Brand) ──────────── */
         .auth-left {
-            background: var(--dark);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 48px;
-        }
-
-        /* Grid pattern decorativo */
-        .auth-left::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background-image:
-                linear-gradient(rgba(255, 0, 137, .06) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 0, 137, .06) 1px, transparent 1px);
-            background-size: 48px 48px;
-            pointer-events: none;
-        }
-
-        /* Blob de luz rosa no centro */
-        .auth-left::after {
-            content: '';
-            position: absolute;
-            top: 30%;
-            left: 20%;
-            width: 380px;
-            height: 380px;
-            background: radial-gradient(circle, rgba(255, 0, 137, .18) 0%, transparent 70%);
-            pointer-events: none;
-            animation: pulse-glow 5s ease-in-out infinite alternate;
-        }
-
-        @keyframes pulse-glow {
-            from {
-                transform: scale(1);
-                opacity: .7;
-            }
-
-            to {
-                transform: scale(1.15);
-                opacity: 1;
-            }
-        }
-
-        /* Linha diagonal decorativa */
-        .auth-left .deco-line {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 60%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--pink), transparent);
-            opacity: .4;
-        }
-
-        .brand-area {
-            position: relative;
-            z-index: 2;
-        }
-
-        .brand-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 60px;
-        }
-
-        .brand-logo img {
-            width: 44px;
-            height: 44px;
-            border-radius: 10px;
-        }
-
-        .brand-logo .brand-name {
-            font-family: var(--font-display);
-            font-size: 1.2rem;
-            font-weight: 800;
-            color: #fff;
-            letter-spacing: .5px;
-        }
-
-        .brand-logo .brand-badge {
-            font-size: .65rem;
-            font-weight: 600;
-            background: var(--pink);
-            color: #fff;
-            padding: 2px 8px;
-            border-radius: 20px;
-            letter-spacing: .5px;
-            text-transform: uppercase;
-        }
-
-        .brand-headline {
-            font-family: var(--font-display);
-            font-size: 2.6rem;
-            font-weight: 800;
-            color: #fff;
-            line-height: 1.15;
-            margin-bottom: 20px;
-        }
-
-        .brand-headline span {
-            color: var(--pink);
-        }
-
-        .brand-sub {
-            font-size: .95rem;
-            color: #888;
-            line-height: 1.65;
-            max-width: 340px;
-        }
-
-        /* Stats inferiores */
-        .brand-stats {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            gap: 32px;
-        }
-
-        .stat-item {
-            border-left: 2px solid var(--pink);
-            padding-left: 14px;
-        }
-
-        .stat-value {
-            font-family: var(--font-display);
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: #fff;
-        }
-
-        .stat-label {
-            font-size: .78rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: .5px;
-        }
-
-        /* ─── Painel Direito (Form) ─────────────────── */
-        .auth-right {
-            background: var(--off-white);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 48px 40px;
-        }
-
-        .auth-form-wrap {
-            width: 100%;
-            max-width: 400px;
-        }
-
-        /* Header do form */
-        .form-header {
-            margin-bottom: 36px;
-        }
-
-        .form-header .access-label {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: .72rem;
-            font-weight: 600;
-            letter-spacing: 1.2px;
-            text-transform: uppercase;
-            color: var(--pink);
-            background: rgba(255, 0, 137, .08);
-            border: 1px solid rgba(255, 0, 137, .2);
-            padding: 4px 12px;
-            border-radius: 20px;
-            margin-bottom: 16px;
-        }
-
-        .form-header h1 {
-            font-family: var(--font-display);
-            font-size: 1.9rem;
-            font-weight: 800;
-            color: #111;
-            margin-bottom: 6px;
-        }
-
-        .form-header p {
-            font-size: .88rem;
-            color: var(--text-muted);
-            font-weight: 400;
-        }
-
-        /* Inputs */
-        .form-label {
-            font-size: .82rem;
-            font-weight: 600;
-            color: #444;
-            margin-bottom: 6px;
-        }
-
-        .form-control {
-            border: 1.5px solid #e0e0e8;
-            border-radius: 10px;
-            padding: 12px 16px;
-            font-size: .9rem;
-            font-family: var(--font-body);
-            background: #fff;
-            color: #111;
-            transition: border-color .2s, box-shadow .2s;
-        }
-
-        .form-control:focus {
-            border-color: var(--pink);
-            box-shadow: 0 0 0 3px var(--pink-glow);
-            outline: none;
-        }
-
-        .form-control.is-invalid {
-            border-color: #ef4444;
-            box-shadow: 0 0 0 3px rgba(239, 68, 68, .15);
-        }
-
-        .form-control.is-valid {
-            border-color: #22c55e;
-            box-shadow: none;
-        }
-
-        .input-group .form-control {
-            border-right: none;
-            border-radius: 10px 0 0 10px;
-        }
-
-        .input-group .btn-eye {
-            border: 1.5px solid #e0e0e8;
-            border-left: none;
-            border-radius: 0 10px 10px 0;
-            background: #fff;
-            color: #888;
-            padding: 0 16px;
-            transition: color .2s;
-            cursor: pointer;
-        }
-
-        .input-group .btn-eye:hover {
-            color: var(--pink);
-        }
-
-        .input-group:focus-within .btn-eye {
-            border-color: var(--pink);
-        }
-
-        .input-group:focus-within .form-control {
-            border-color: var(--pink);
-            box-shadow: 0 0 0 3px var(--pink-glow);
-        }
-
-        /* Checkbox */
-        .form-check-input:checked {
-            background-color: var(--pink);
-            border-color: var(--pink);
-        }
-
-        .form-check-input:focus {
-            box-shadow: 0 0 0 3px var(--pink-glow);
-        }
-
-        .form-check-label {
-            font-size: .85rem;
-            color: #555;
-        }
-
-        /* Link forgot password */
-        .link-forgot {
-            font-size: .85rem;
-            color: #555;
-            text-decoration: none;
-            transition: color .2s;
-        }
-
-        .link-forgot:hover {
-            color: var(--pink);
-        }
-
-        /* Botão submit */
-        .btn-admin-login {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            width: 100%;
-            padding: 13px 24px;
-            background: var(--pink);
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            font-family: var(--font-body);
-            font-size: .95rem;
-            font-weight: 600;
-            letter-spacing: .2px;
-            cursor: pointer;
-            transition: background .2s, transform .15s, box-shadow .2s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-admin-login::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(255, 255, 255, .12) 0%, transparent 60%);
-        }
-
-        .btn-admin-login:hover {
-            background: var(--pink-dark);
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px var(--pink-glow);
-        }
-
-        .btn-admin-login:active {
-            transform: translateY(0);
-        }
-
-        .btn-admin-login .spinner-btn {
             display: none;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255, 255, 255, .4);
-            border-top-color: #fff;
-            border-radius: 50%;
-            animation: spin .6s linear infinite;
+        }
+    }
+
+    /* ─── Painel Esquerdo (Dark/Brand) ──────────── */
+    .auth-left {
+        background: var(--dark);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 48px;
+    }
+
+    /* Grid pattern decorativo */
+    .auth-left::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image:
+            linear-gradient(rgba(255, 0, 137, .06) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 0, 137, .06) 1px, transparent 1px);
+        background-size: 48px 48px;
+        pointer-events: none;
+    }
+
+    /* Blob de luz rosa no centro */
+    .auth-left::after {
+        content: '';
+        position: absolute;
+        top: 30%;
+        left: 20%;
+        width: 380px;
+        height: 380px;
+        background: radial-gradient(circle, rgba(255, 0, 137, .18) 0%, transparent 70%);
+        pointer-events: none;
+        animation: pulse-glow 5s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulse-glow {
+        from {
+            transform: scale(1);
+            opacity: .7;
         }
 
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+        to {
+            transform: scale(1.15);
+            opacity: 1;
         }
+    }
 
-        /* Divider segurança */
-        .security-note {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 24px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
-            font-size: .78rem;
-            color: #aaa;
+    /* Linha diagonal decorativa */
+    .auth-left .deco-line {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 60%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--pink), transparent);
+        opacity: .4;
+    }
+
+    .brand-area {
+        position: relative;
+        z-index: 2;
+    }
+
+    .brand-logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 60px;
+    }
+
+    .brand-logo img {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+    }
+
+    .brand-logo .brand-name {
+        font-family: var(--font-display);
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: #fff;
+        letter-spacing: .5px;
+    }
+
+    .brand-logo .brand-badge {
+        font-size: .65rem;
+        font-weight: 600;
+        background: var(--pink);
+        color: #fff;
+        padding: 2px 8px;
+        border-radius: 20px;
+        letter-spacing: .5px;
+        text-transform: uppercase;
+    }
+
+    .brand-headline {
+        font-family: var(--font-display);
+        font-size: 2.6rem;
+        font-weight: 800;
+        color: #fff;
+        line-height: 1.15;
+        margin-bottom: 20px;
+    }
+
+    .brand-headline span {
+        color: var(--pink);
+    }
+
+    .brand-sub {
+        font-size: .95rem;
+        color: #888;
+        line-height: 1.65;
+        max-width: 340px;
+    }
+
+    /* Stats inferiores */
+    .brand-stats {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        gap: 32px;
+    }
+
+    .stat-item {
+        border-left: 2px solid var(--pink);
+        padding-left: 14px;
+    }
+
+    .stat-value {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #fff;
+    }
+
+    .stat-label {
+        font-size: .78rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: .5px;
+    }
+
+    /* ─── Painel Direito (Form) ─────────────────── */
+    .auth-right {
+        background: var(--off-white);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 48px 40px;
+    }
+
+    .auth-form-wrap {
+        width: 100%;
+        max-width: 400px;
+    }
+
+    /* Header do form */
+    .form-header {
+        margin-bottom: 36px;
+    }
+
+    .form-header .access-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: .72rem;
+        font-weight: 600;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        color: var(--pink);
+        background: rgba(255, 0, 137, .08);
+        border: 1px solid rgba(255, 0, 137, .2);
+        padding: 4px 12px;
+        border-radius: 20px;
+        margin-bottom: 16px;
+    }
+
+    .form-header h1 {
+        font-family: var(--font-display);
+        font-size: 1.9rem;
+        font-weight: 800;
+        color: #111;
+        margin-bottom: 6px;
+    }
+
+    .form-header p {
+        font-size: .88rem;
+        color: var(--text-muted);
+        font-weight: 400;
+    }
+
+    /* Inputs */
+    .form-label {
+        font-size: .82rem;
+        font-weight: 600;
+        color: #444;
+        margin-bottom: 6px;
+    }
+
+    .form-control {
+        border: 1.5px solid #e0e0e8;
+        border-radius: 10px;
+        padding: 12px 16px;
+        font-size: .9rem;
+        font-family: var(--font-body);
+        background: #fff;
+        color: #111;
+        transition: border-color .2s, box-shadow .2s;
+    }
+
+    .form-control:focus {
+        border-color: var(--pink);
+        box-shadow: 0 0 0 3px var(--pink-glow);
+        outline: none;
+    }
+
+    .form-control.is-invalid {
+        border-color: #ef4444;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, .15);
+    }
+
+    .form-control.is-valid {
+        border-color: #22c55e;
+        box-shadow: none;
+    }
+
+    .input-group .form-control {
+        border-right: none;
+        border-radius: 10px 0 0 10px;
+    }
+
+    .input-group .btn-eye {
+        border: 1.5px solid #e0e0e8;
+        border-left: none;
+        border-radius: 0 10px 10px 0;
+        background: #fff;
+        color: #888;
+        padding: 0 16px;
+        transition: color .2s;
+        cursor: pointer;
+    }
+
+    .input-group .btn-eye:hover {
+        color: var(--pink);
+    }
+
+    .input-group:focus-within .btn-eye {
+        border-color: var(--pink);
+    }
+
+    .input-group:focus-within .form-control {
+        border-color: var(--pink);
+        box-shadow: 0 0 0 3px var(--pink-glow);
+    }
+
+    /* Checkbox */
+    .form-check-input:checked {
+        background-color: var(--pink);
+        border-color: var(--pink);
+    }
+
+    .form-check-input:focus {
+        box-shadow: 0 0 0 3px var(--pink-glow);
+    }
+
+    .form-check-label {
+        font-size: .85rem;
+        color: #555;
+    }
+
+    /* Link forgot password */
+    .link-forgot {
+        font-size: .85rem;
+        color: #555;
+        text-decoration: none;
+        transition: color .2s;
+    }
+
+    .link-forgot:hover {
+        color: var(--pink);
+    }
+
+    /* Botão submit */
+    .btn-admin-login {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        padding: 13px 24px;
+        background: var(--pink);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        font-family: var(--font-body);
+        font-size: .95rem;
+        font-weight: 600;
+        letter-spacing: .2px;
+        cursor: pointer;
+        transition: background .2s, transform .15s, box-shadow .2s;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-admin-login::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, .12) 0%, transparent 60%);
+    }
+
+    .btn-admin-login:hover {
+        background: var(--pink-dark);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px var(--pink-glow);
+    }
+
+    .btn-admin-login:active {
+        transform: translateY(0);
+    }
+
+    .btn-admin-login .spinner-btn {
+        display: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255, 255, 255, .4);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin .6s linear infinite;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
         }
+    }
 
-        .security-note i {
-            color: #ccc;
-            font-size: .85rem;
-        }
+    /* Divider segurança */
+    .security-note {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 24px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+        font-size: .78rem;
+        color: #aaa;
+    }
 
-        /* Alertas de feedback */
-        .alert-admin {
-            border-radius: 10px;
-            border: none;
-            padding: 12px 16px;
-            font-size: .87rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 24px;
-            animation: slideDown .3s ease;
-        }
+    .security-note i {
+        color: #ccc;
+        font-size: .85rem;
+    }
 
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-8px);
-            }
+    /* Alertas de feedback */
+    .alert-admin {
+        border-radius: 10px;
+        border: none;
+        padding: 12px 16px;
+        font-size: .87rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 24px;
+        animation: slideDown .3s ease;
+    }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .alert-admin.alert-danger {
-            background: #fff0f0;
-            color: #b91c1c;
-        }
-
-        .alert-admin.alert-warning {
-            background: #fffbeb;
-            color: #92400e;
-        }
-
-        .alert-admin.alert-success {
-            background: #f0fdf4;
-            color: #166534;
-        }
-
-        /* ─── Preloader ─────────────────────────────── */
-        .preloader {
-            position: fixed;
-            inset: 0;
-            background: var(--off-white);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            transition: opacity .4s ease, visibility .4s;
-        }
-
-        .preloader.hidden {
+    @keyframes slideDown {
+        from {
             opacity: 0;
-            visibility: hidden;
+            transform: translateY(-8px);
         }
 
-        .preloader-inner {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .preloader-ring {
-            width: 36px;
-            height: 36px;
-            border: 3px solid #eee;
-            border-top-color: var(--pink);
-            border-radius: 50%;
-            animation: spin .7s linear infinite;
-        }
-
-        /* ─── Animações de entrada ──────────────────── */
-        .fade-up {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity .5s ease, transform .5s ease;
-        }
-
-        .fade-up.visible {
+        to {
             opacity: 1;
             transform: translateY(0);
         }
+    }
 
-        /* Delays escalonados */
-        .delay-1 {
-            transition-delay: .05s;
-        }
+    .alert-admin.alert-danger {
+        background: #fff0f0;
+        color: #b91c1c;
+    }
 
-        .delay-2 {
-            transition-delay: .12s;
-        }
+    .alert-admin.alert-warning {
+        background: #fffbeb;
+        color: #92400e;
+    }
 
-        .delay-3 {
-            transition-delay: .19s;
-        }
+    .alert-admin.alert-success {
+        background: #f0fdf4;
+        color: #166534;
+    }
 
-        .delay-4 {
-            transition-delay: .26s;
-        }
+    /* ─── Preloader ─────────────────────────────── */
+    .preloader {
+        position: fixed;
+        inset: 0;
+        background: var(--off-white);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity .4s ease, visibility .4s;
+    }
 
-        .delay-5 {
-            transition-delay: .33s;
-        }
+    .preloader.hidden {
+        opacity: 0;
+        visibility: hidden;
+    }
 
-        .delay-6 {
-            transition-delay: .40s;
-        }
+    .preloader-inner {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+    }
 
-        /* ─── Mobile logo ───────────────────────────── */
+    .preloader-ring {
+        width: 36px;
+        height: 36px;
+        border: 3px solid #eee;
+        border-top-color: var(--pink);
+        border-radius: 50%;
+        animation: spin .7s linear infinite;
+    }
+
+    /* ─── Animações de entrada ──────────────────── */
+    .fade-up {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity .5s ease, transform .5s ease;
+    }
+
+    .fade-up.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Delays escalonados */
+    .delay-1 {
+        transition-delay: .05s;
+    }
+
+    .delay-2 {
+        transition-delay: .12s;
+    }
+
+    .delay-3 {
+        transition-delay: .19s;
+    }
+
+    .delay-4 {
+        transition-delay: .26s;
+    }
+
+    .delay-5 {
+        transition-delay: .33s;
+    }
+
+    .delay-6 {
+        transition-delay: .40s;
+    }
+
+    /* ─── Mobile logo ───────────────────────────── */
+    .mobile-brand {
+        display: none;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 32px;
+    }
+
+    @media (max-width: 900px) {
         .mobile-brand {
-            display: none;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 32px;
+            display: flex;
         }
 
-        @media (max-width: 900px) {
-            .mobile-brand {
-                display: flex;
-            }
-
-            .auth-right {
-                padding: 40px 24px;
-            }
+        .auth-right {
+            padding: 40px 24px;
         }
+    }
 
-        /* ─── Scrollbar ─────────────────────────────── */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
+    /* ─── Scrollbar ─────────────────────────────── */
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
 
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
 
-        ::-webkit-scrollbar-thumb {
-            background: #ddd;
-            border-radius: 3px;
-        }
+    ::-webkit-scrollbar-thumb {
+        background: #ddd;
+        border-radius: 3px;
+    }
     </style>
 </head>
 
@@ -666,7 +666,7 @@ if (!$feedback && isset($_GET['return']) && !isset($_GET['msg'])) {
         <div class="auth-left">
             <div class="brand-area">
                 <div class="brand-logo">
-                    <img src="../assets/img/brand/wasomupfy.png" alt="Wasom Upfy" />
+                    <img src="<?php echo APP_URL  ?>/assets/img/brand/wasomupfy.png" alt="Wasom Upfy" />
                     <span class="brand-name"><?php echo APP_NAME; ?></span>
                     <span class="brand-badge">Admin</span>
                 </div>
@@ -707,8 +707,8 @@ if (!$feedback && isset($_GET['return']) && !isset($_GET['msg'])) {
 
                 <!-- Logo mobile -->
                 <div class="mobile-brand">
-                    <img src="../assets/img/brand/wasomupfy_authentic.png" alt="Wasom Upfy" width="36" height="36"
-                        style="border-radius:8px" />
+                    <img src="<?php echo APP_URL  ?>/assets/img/brand/wasomupfy_authentic.png" alt="Wasom Upfy"
+                        width="36" height="36" style="border-radius:8px" />
                     <span style="font-family:var(--font-display);font-weight:800;font-size:1.1rem">
                         Wasom Upfy
                     </span>
@@ -731,26 +731,26 @@ if (!$feedback && isset($_GET['return']) && !isset($_GET['msg'])) {
 
                 <!-- Alerta de feedback -->
                 <?php if ($feedback): ?>
-                    <div class="alert-admin alert-<?php echo $feedback['type']; ?> fade-up delay-2" role="alert">
-                        <i class="bi <?php echo $feedback['icon']; ?>"></i>
-                        <span><?php echo htmlspecialchars($feedback['text']); ?></span>
-                    </div>
+                <div class="alert-admin alert-<?php echo $feedback['type']; ?> fade-up delay-2" role="alert">
+                    <i class="bi <?php echo $feedback['icon']; ?>"></i>
+                    <span><?php echo htmlspecialchars($feedback['text']); ?></span>
+                </div>
                 <?php endif; ?>
                 <?php if (($_GET['invite'] ?? '') === 'done'): ?>
-                    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;
+                <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;
             padding:14px 18px;margin-bottom:20px;font-size:.84rem;color:#166534;
             display:flex;align-items:center;gap:10px">
-                        <i class="bi bi-check-circle-fill" style="font-size:1.1rem;flex-shrink:0"></i>
-                        <div>
-                            <strong>Conta activada com sucesso!</strong><br>
-                            <span style="opacity:.8">Já podes fazer login com as tuas credenciais.</span>
-                        </div>
+                    <i class="bi bi-check-circle-fill" style="font-size:1.1rem;flex-shrink:0"></i>
+                    <div>
+                        <strong>Conta activada com sucesso!</strong><br>
+                        <span style="opacity:.8">Já podes fazer login com as tuas credenciais.</span>
                     </div>
+                </div>
                 <?php endif; ?>
 
                 <!-- Formulário -->
-                <form method="POST" action="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/login-process" id="form-login" novalidate
-                    onsubmit="return false">
+                <form method="POST" action="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/login-process" id="form-login"
+                    novalidate onsubmit="return false">
 
                     <input type="hidden" name="csrf_token"
                         value="<?php echo htmlspecialchars($_SESSION['admin_csrf_token']); ?>" />
@@ -837,94 +837,94 @@ if (!$feedback && isset($_GET['return']) && !isset($_GET['msg'])) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
 
-            // ── Preloader ──────────────────────────────────
-            window.addEventListener('load', function() {
-                document.getElementById('preloader').classList.add('hidden');
-                // Activar animações de entrada
-                document.querySelectorAll('.fade-up').forEach(function(el) {
-                    el.classList.add('visible');
-                });
+        // ── Preloader ──────────────────────────────────
+        window.addEventListener('load', function() {
+            document.getElementById('preloader').classList.add('hidden');
+            // Activar animações de entrada
+            document.querySelectorAll('.fade-up').forEach(function(el) {
+                el.classList.add('visible');
             });
-
-            // ── Toggle visibilidade da senha ───────────────
-            const passInput = document.getElementById('password_admin');
-            const eyeIcon = document.getElementById('eye-icon');
-
-            document.getElementById('btn-toggle-pass').addEventListener('click', function() {
-                if (passInput.type === 'password') {
-                    passInput.type = 'text';
-                    eyeIcon.className = 'bi bi-eye-slash';
-                } else {
-                    passInput.type = 'password';
-                    eyeIcon.className = 'bi bi-eye';
-                }
-                passInput.focus();
-            });
-
-            // ── Validação em tempo real do e-mail ──────────
-            const emailInput = document.getElementById('email_admin');
-            emailInput.addEventListener('input', function() {
-                // Aceita email ou username — qualquer texto com 2+ chars é válido aqui
-                const v = this.value.trim();
-                const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-                const isUser = v.length >= 2;
-                this.classList.toggle('is-invalid', !isUser && v.length > 1);
-                this.classList.toggle('is-valid', isUser);
-            });
-
-            // ── Submit com loading ─────────────────────────
-            const btnSubmit = document.getElementById('btn-submit');
-            const spinner = document.getElementById('spinner');
-            const btnIcon = document.getElementById('btn-icon');
-            const btnText = document.getElementById('btn-text');
-            const form = document.getElementById('form-login');
-
-            btnSubmit.addEventListener('click', function() {
-                const email = emailInput.value.trim();
-                const password = passInput.value.trim();
-
-                // Validação básica antes do submit
-                let valid = true;
-
-                // Aceita email OU username (texto não vazio com pelo menos 2 chars)
-                if (!email || email.length < 2) {
-                    emailInput.classList.add('is-invalid');
-                    valid = false;
-                }
-
-                if (!password) {
-                    passInput.classList.add('is-invalid');
-                    valid = false;
-                }
-
-                if (!valid) return;
-
-                // Mostrar estado de loading
-                spinner.style.display = 'block';
-                btnIcon.style.display = 'none';
-                btnText.textContent = 'A verificar...';
-                btnSubmit.disabled = true;
-
-                // Submeter o form
-                form.submit();
-            });
-
-            // Limpar is-invalid ao digitar
-            passInput.addEventListener('input', function() {
-                this.classList.remove('is-invalid');
-            });
-
-            // ── Enter no campo de senha → submit ───────────
-            passInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') btnSubmit.click();
-            });
-            emailInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') btnSubmit.click();
-            });
-
         });
+
+        // ── Toggle visibilidade da senha ───────────────
+        const passInput = document.getElementById('password_admin');
+        const eyeIcon = document.getElementById('eye-icon');
+
+        document.getElementById('btn-toggle-pass').addEventListener('click', function() {
+            if (passInput.type === 'password') {
+                passInput.type = 'text';
+                eyeIcon.className = 'bi bi-eye-slash';
+            } else {
+                passInput.type = 'password';
+                eyeIcon.className = 'bi bi-eye';
+            }
+            passInput.focus();
+        });
+
+        // ── Validação em tempo real do e-mail ──────────
+        const emailInput = document.getElementById('email_admin');
+        emailInput.addEventListener('input', function() {
+            // Aceita email ou username — qualquer texto com 2+ chars é válido aqui
+            const v = this.value.trim();
+            const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+            const isUser = v.length >= 2;
+            this.classList.toggle('is-invalid', !isUser && v.length > 1);
+            this.classList.toggle('is-valid', isUser);
+        });
+
+        // ── Submit com loading ─────────────────────────
+        const btnSubmit = document.getElementById('btn-submit');
+        const spinner = document.getElementById('spinner');
+        const btnIcon = document.getElementById('btn-icon');
+        const btnText = document.getElementById('btn-text');
+        const form = document.getElementById('form-login');
+
+        btnSubmit.addEventListener('click', function() {
+            const email = emailInput.value.trim();
+            const password = passInput.value.trim();
+
+            // Validação básica antes do submit
+            let valid = true;
+
+            // Aceita email OU username (texto não vazio com pelo menos 2 chars)
+            if (!email || email.length < 2) {
+                emailInput.classList.add('is-invalid');
+                valid = false;
+            }
+
+            if (!password) {
+                passInput.classList.add('is-invalid');
+                valid = false;
+            }
+
+            if (!valid) return;
+
+            // Mostrar estado de loading
+            spinner.style.display = 'block';
+            btnIcon.style.display = 'none';
+            btnText.textContent = 'A verificar...';
+            btnSubmit.disabled = true;
+
+            // Submeter o form
+            form.submit();
+        });
+
+        // Limpar is-invalid ao digitar
+        passInput.addEventListener('input', function() {
+            this.classList.remove('is-invalid');
+        });
+
+        // ── Enter no campo de senha → submit ───────────
+        passInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') btnSubmit.click();
+        });
+        emailInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') btnSubmit.click();
+        });
+
+    });
     </script>
 </body>
 

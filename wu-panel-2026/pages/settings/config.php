@@ -321,7 +321,7 @@ function sel(string $name, array $options, $current, bool $disabled = false): st
 
     .cfg-nav-link .cfg-badge {
         margin-left: auto;
-        font-size: .65rem;
+        font-size: .65remw;
         padding: 2px 7px;
         border-radius: 10px;
         background: #FF0089;
@@ -585,19 +585,24 @@ function sel(string $name, array $options, $current, bool $disabled = false): st
         <div class="content w-100" id="mainContent">
             <?php require_once __DIR__ . '/../../include/navbar.php'; ?>
 
-            <div class="p-4">
+            <div class="container-fluid p-0">
 
                 <!-- ── Breadcrumb ── -->
-                <div class="d-flex align-items-center gap-3 mb-4">
-                    <a href="<?php echo $base_url; ?>" class="btn btn-sm btn-outline-secondary"
-                        style="border-radius:8px">
-                        <i class="bi bi-arrow-left me-1"></i>Dashboard
-                    </a>
-                    <div>
-                        <h4 class="mb-0 fw-bold">
-                            <i class="bi bi-gear-wide-connected me-2" style="color:#FF0089"></i>Configurações da
+                <div class="row mb-3 mt-2">
+                    <div class="welcome-text col-auto d-sm-block">
+
+                        <h2 class="h4 mb-2">
+                            <i class="bi bi-gear-wide-connected me-2"></i>Configurações da
                             Plataforma
-                        </h4>
+                        </h2>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb mb-0">
+                                <li class="breadcrumb-item">
+                                    <a href="#" class="text-secondary-emphasis">Home</a>
+                                </li>
+                                <li class="breadcrumb-item active text-white-stable" aria-current="page">Configurações</li>
+                            </ol>
+                        </nav>
                         <div style="font-size:.75rem;color:var(--text-muted,#888)">
                             Versão <?php echo htmlspecialchars($pl['version']); ?> &middot; Admin Path:
                             /<?php echo htmlspecialchars($ac['admin_path']); ?>

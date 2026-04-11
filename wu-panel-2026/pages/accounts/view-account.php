@@ -348,7 +348,7 @@ function av_status_badge(string $s): string
                                 </table>
                             </div>
                             <div class="text-end mt-2">
-                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/withdrawals?account=<?php echo $id; ?>"
+                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/manager/withdrawals?account=<?php echo $id; ?>"
                                     class="small text-decoration-none">Ver todos os saques desta conta</a>
                             </div>
                             <?php endif; ?>

@@ -132,7 +132,7 @@ if ($action === 'get_withdrawal_details') {
 
     $uname  = trim($wd['first_name'] . ' ' . ($wd['second_name'] ?? ''));
     $smap   = ['pending' => 'Pendente', 'processing' => 'A processar', 'approved' => 'Aprovado', 'rejected' => 'Rejeitado', 'cancelled' => 'Cancelado'];
-    $ab     = APP_URL . '/assets/comprovantes/uploads/bi/id_' . $wd['id_users'] . '';
+    $ab     = APP_URL . '/';
     $is_act = in_array($wd['status_withdrawal'], ['pending', 'processing']);
 
     $h  = '<div class="row g-4">';
@@ -154,7 +154,7 @@ if ($action === 'get_withdrawal_details') {
         $h .= '<h6 class="fw-bold mb-2 mt-4" style="color:#1a1a2e"><i class="bi bi-person-vcard me-2"></i>Documento BI</h6>';
         $h .= '<div class="row g-2">';
         if ($wd['bi_front_path']) {
-            $u = $ab . $wd['bi_front_path'];
+            $u = $ab . '/' . $wd['bi_front_path'];
             $h .= '<div class="col-6"><small class="text-muted d-block mb-1 text-center">Frente</small><a href="' . $u . '" target="_blank"><img src="' . $u . '" class="bi-doc-img" alt="BI Frente"></a></div>';
         }
         if ($wd['bi_back_path']) {
@@ -220,7 +220,7 @@ if ($action === 'set_processing_withdrawal') {
             'payment',
             'Saque em Processamento 🔄',
             'O teu saque de ' . biz_fmt_d((float)$wd['amount_net']) . ' está a ser processado. Serás notificado quando concluído.',
-            APP_URL . '/dashboard/withdraw'
+            APP_URL .'/'. APP_URL_PANEL . '/withdraw'
         );
         biz_mail($wd['email_user'], 'Saque em processamento — ' . APP_NAME, wd_email($wd, 'processing'));
         logAudit(
@@ -260,7 +260,7 @@ if ($action === 'approve_withdrawal') {
         $f = $_FILES['comprovante'];
         if (!in_array($f['type'], ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'])) jOut(false, 'Tipo de ficheiro não permitido.');
         if ($f['size'] > 5 * 1024 * 1024) jOut(false, 'Ficheiro excede 5MB.');
-        $dir = dirname(__DIR__, 4) . '/assets/comprovantes/saques/';
+        $dir = dirname(__DIR__, 4) . '/assets/payment/uploads/withdrawals/';
         if (!is_dir($dir)) @mkdir($dir, 0755, true);
         $ext  = pathinfo($f['name'], PATHINFO_EXTENSION);
         $comp = 'wd_' . $id . '_' . time() . '.' . $ext;
@@ -284,7 +284,7 @@ if ($action === 'approve_withdrawal') {
         $db->prepare("UPDATE _withdrawal SET id_transaction=? WHERE id_withdrawal=?")->execute([$tx_id, $id]);
         $db->commit();
 
-        $pu = $comp ? APP_URL . '/assets/comprovantes/saques/' . $comp : '';
+        $pu = $comp ? APP_URL . '/assets/payment/uploads/withdrawals/' . $comp : '';
         notifyUser(
             $db,
             $wd['id_users'],
@@ -292,7 +292,7 @@ if ($action === 'approve_withdrawal') {
             'payment',
             'Saque Aprovado ✅',
             'O teu saque de ' . biz_fmt_d((float)$wd['amount_net']) . ' foi aprovado e o pagamento efectuado.',
-            APP_URL . '/dashboard/withdraw'
+            APP_URL .'/'. APP_URL_PANEL . '/withdraw'
         );
         biz_mail($wd['email_user'], 'Saque aprovado — ' . APP_NAME, wd_email($wd, 'approved', '', $pu));
         logAudit(
@@ -338,7 +338,7 @@ if ($action === 'reject_withdrawal') {
             'warning',
             'Saque Rejeitado ❌',
             'O teu saque foi rejeitado. Motivo: ' . $reason,
-            APP_URL . '/dashboard/withdraw'
+            APP_URL .'/'. APP_URL_PANEL . '/withdraw'
         );
         biz_mail($wd['email_user'], 'Saque rejeitado — ' . APP_NAME, wd_email($wd, 'rejected', $reason));
         logAudit(
@@ -423,7 +423,7 @@ if ($action === 'pay_royalty') {
     try {
         $report_path = null;
         if (!empty($_FILES['report_file']['tmp_name']) && is_uploaded_file($_FILES['report_file']['tmp_name'])) {
-            $uploadDir = dirname(__DIR__, 2) . '/assets/comprovantes/uploads/royalty_reports';
+            $uploadDir = dirname(__DIR__, 2) . '/assets/payment/uploads/royalties';
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0755, true);
             }
@@ -434,7 +434,7 @@ if ($action === 'pay_royalty') {
             if (!move_uploaded_file($_FILES['report_file']['tmp_name'], $dest)) {
                 throw new Exception('Falha ao enviar ficheiro de relatório.');
             }
-            $report_path = 'assets/comprovantes/uploads/royalty_reports/' . $safeName;
+            $report_path = 'assets/payment/uploads/royalties/' . $safeName;
         }
 
         $db->beginTransaction();
@@ -463,7 +463,7 @@ if ($action === 'pay_royalty') {
             'payment',
             'Royalty Creditado 🎵',
             'O royalty de ' . biz_fmt_d((float)$roy['net_royalty_aoa']) . ' foi creditado na tua carteira.',
-            APP_URL . '/dashboard/transactions'
+            APP_URL .'/'. APP_URL_PANEL . '/transactions'
         );
         logAudit(
             $admin_id,
@@ -504,9 +504,9 @@ if ($action === 'validate_proof') {
             ->execute([$ns, $reason ?: null, $admin_id, $id]);
         if ($ns === 'validated') {
             $db->prepare("UPDATE _payment_intent SET status='approved',approved_by=?,approved_at=NOW() WHERE id_intent=?")->execute([$admin_id, $proof['id_intent']]);
-            notifyUser($db, $proof['id_users'], $admin_id, 'payment', 'Comprovativo Validado ✅', 'O teu comprovativo foi validado. O teu plano será activado em breve.', APP_URL . '/dashboard');
+            notifyUser($db, $proof['id_users'], $admin_id, 'payment', 'Comprovativo Validado ✅', 'O teu comprovativo foi validado. O teu plano será activado em breve.', APP_URL .'/'. APP_URL_PANEL . '/');
         } else {
-            notifyUser($db, $proof['id_users'], $admin_id, 'warning', 'Comprovativo Rejeitado ❌', 'O comprovativo foi rejeitado. Motivo: ' . $reason, APP_URL . '/dashboard/payment/pay');
+            notifyUser($db, $proof['id_users'], $admin_id, 'warning', 'Comprovativo Rejeitado ❌', 'O comprovativo foi rejeitado. Motivo: ' . $reason, APP_URL .'/'. APP_URL_PANEL . '/payment/pay');
         }
         logAudit($admin_id, $proof['id_users'], 'proof.' . $ns, '_payment_proof', $id, json_encode(['status' => 'pending']), json_encode(['status' => $ns]));
         jOut(true, 'Comprovativo ' . ($ns === 'validated' ? 'validado' : 'rejeitado') . '!');
@@ -516,32 +516,6 @@ if ($action === 'validate_proof') {
     }
 }
 
-// ════════════════════════════════════════════════════════════════════════════
-// TOGGLE STORE
-// ════════════════════════════════════════════════════════════════════════════
-if ($action === 'toggle_store') {
-    requirePermission($admin_id, 'analytics.edit');
-    $id = $db_id = (int)($_POST['id_store'] ?? 0);
-    $na = (int)($_POST['is_active'] ?? 0);
-    if (!$id) jOut(false, 'ID de loja inválido.');
-    $st = $db->prepare("SELECT id_store,name_store,is_active FROM _store WHERE id_store=?");
-    $st->execute([$id]);
-    $s = $st->fetch();
-    if (!$s) jOut(false, 'Loja não encontrada.');
-    $db->prepare("UPDATE _store SET is_active=? WHERE id_store=?")->execute([$na ? 1 : 0, $id]);
-    logAudit(
-        $admin_id,
-        null,
-        'store.' . ($na ? 'activated' : 'deactivated'),
-        '_store',
-        $id,
-        json_encode(['is_active' => $s['is_active']]),
-        json_encode(['is_active' => $na ? 1 : 0])
-    );
-    jOut(true, 'Loja ' . ($na ? 'activada' : 'desactivada') . ' com sucesso.');
-}
-
-jOut(false, 'Acção desconhecida.');
 // ════════════════════════════════════════════════════════════════════════════
 // GET USER ACCOUNT INFO
 // ════════════════════════════════════════════════════════════════════════════
@@ -630,7 +604,7 @@ if ($action === 'manual_deposit') {
 
     $report_path = null;
     if (!empty($_FILES['report_file']['tmp_name']) && is_uploaded_file($_FILES['report_file']['tmp_name'])) {
-        $uploadDir = dirname(__DIR__, 2) . '/assets/comprovantes/uploads/royalty_reports';
+        $uploadDir = dirname(__DIR__, 2) . '/assets/payment/uploads/royalties';
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0755, true);
         }
@@ -641,7 +615,7 @@ if ($action === 'manual_deposit') {
         if (!move_uploaded_file($_FILES['report_file']['tmp_name'], $dest)) {
             jOut(false, 'Falha ao enviar ficheiro de relatório.');
         }
-        $report_path = 'assets/comprovantes/uploads/royalty_reports/' . $safeName;
+        $report_path = 'assets/payment/uploads/royalties/' . $safeName;
     }
 
     try {
@@ -676,7 +650,7 @@ if ($action === 'manual_deposit') {
         $user = $db->prepare("SELECT first_name, second_name, email_user FROM _users WHERE id_users=?");
         $user->execute([$id_users]);
         $usr = $user->fetch(PDO::FETCH_ASSOC);
-        notifyUser($db, $id_users, $admin_id, 'payment', 'Royalty Depositado 🎵', 'Foi depositado ' . biz_fmt_d($net_aoa) . ' na sua carteira por royalties.', APP_URL . '/dashboard/analytics/report');
+        notifyUser($db, $id_users, $admin_id, 'payment', 'Royalty Depositado 🎵', 'Foi depositado ' . biz_fmt_d($net_aoa) . ' na sua carteira por royalties.', APP_URL . '/'. APP_URL_PANEL. '/report');
 
         // Log audit
         logAudit($admin_id, $id_users, 'royalty.manual_deposit', '_royalty', $royalty_id, null, json_encode(['amount_aoa' => $net_aoa, 'note' => $note]));

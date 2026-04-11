@@ -473,7 +473,7 @@ function r_avatar(string $name, ?string $photo, int $s = 32): string
                                 <th>Faixa / Álbum</th>
                                 <th>Período</th>
                                 <th>Receita Bruta</th>
-                                <th>Taxa Wasom (10%)</th>
+                                <th>Taxa Wasom Upfy (10%)</th>
                                 <th>Royalty Líq.</th>
                                 <th>Conta</th>
                                 <th>Estado</th>
@@ -495,7 +495,7 @@ function r_avatar(string $name, ?string $photo, int $s = 32): string
                                     $is_pending = in_array($r['status_royalty'], ['pending', 'processing']);
                                     $period     = str_pad((int)$r['month_royalty'], 2, '0', STR_PAD_LEFT) . '/' . $r['year_royalty'];
                                     $cover_url  = $r['img_cover']
-                                        ? APP_URL . '/assets/comprovantes/uploads/artists/' . $r['img_cover']
+                                        ? APP_URL . '/assets/comprovantes/uploads/covers/' . $r['img_cover']
                                         : null;
                                 ?>
                             <tr class="<?php echo $r['status_royalty'] === 'pending' ? 'highlight-pending' : ''; ?>">
@@ -876,7 +876,7 @@ function r_avatar(string $name, ?string $photo, int $s = 32): string
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold small">
                                     Taxa Plataforma (%) <span class="text-danger">*</span>
-                                    <span class="text-muted fw-normal ms-1">— Wasom retém</span>
+                                    <span class="text-muted fw-normal ms-1">— Wasom Upfy retém</span>
                                 </label>
                                 <div class="input-group">
                                     <input type="number" class="form-control" id="nd_fee_pct" min="0" max="100"
@@ -1238,7 +1238,7 @@ function r_avatar(string $name, ?string $photo, int $s = 32): string
                 <div class="ai-row"><span class="ai-lbl">Faixa</span><span class="ai-val">${tOpt.text}</span></div>
                 <div class="ai-row"><span class="ai-lbl">Período</span><span class="ai-val">${String(document.getElementById('nd_month').value).padStart(2,'0')}/${document.getElementById('nd_year').value}</span></div>
                 <div class="ai-row"><span class="ai-lbl">Receita Bruta</span><span class="ai-val">$ ${gross.toFixed(4)}</span></div>
-                <div class="ai-row"><span class="ai-lbl">Taxa Wasom (10%)</span><span class="ai-val" style="color:#ef4444">$ ${feeUsd.toFixed(4)}</span></div>
+                <div class="ai-row"><span class="ai-lbl">Taxa Wasom Upfy (10%)</span><span class="ai-val" style="color:#ef4444">$ ${feeUsd.toFixed(4)}</span></div>
                 <div class="ai-row"><span class="ai-lbl">Royalty Líq. USD</span><span class="ai-val">$ ${netUsd.toFixed(4)}</span></div>
                 <div class="ai-row"><span class="ai-lbl">Taxa Câmbio</span><span class="ai-val">1$ = Kz ${rate.toLocaleString('pt-AO')}</span></div>
                 <div class="ai-row"><span class="ai-lbl">Royalty Líq. AOA</span><span class="ai-val" style="color:#FF0089;font-weight:800;font-size:.95rem">Kz ${netAoa.toLocaleString('pt-AO',{minimumFractionDigits:2})}</span></div>
@@ -1400,7 +1400,7 @@ function r_avatar(string $name, ?string $photo, int $s = 32): string
             });
             document.getElementById('ap_breakdown').innerHTML =
                 `Receita bruta: <strong>$ ${gross.toFixed(4)}</strong> &nbsp;·&nbsp;` +
-                `Taxa Wasom (${feePct}%): <strong style="color:#ef4444">$ ${feeUsd.toFixed(4)}</strong><br>` +
+                `Taxa Wasom Upfy (${feePct}%): <strong style="color:#ef4444">$ ${feeUsd.toFixed(4)}</strong><br>` +
                 `Royalty líq. USD: <strong>$ ${netUsd.toFixed(4)}</strong> &nbsp;·&nbsp;` +
                 `Câmbio: <strong>1$ = Kz ${rate.toLocaleString('pt-AO')}</strong>`;
         }

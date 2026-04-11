@@ -55,7 +55,7 @@ try {
 
 // Teste 5: Criar directório de uploads
 echo "\n === TESTE 5: Directório de Uploads ===\n";
-$dir = dirname(__DIR__, 4) . '/assets/payment/uploads/royalties/';
+$dir = w . '/assets/payment/uploads/royalties/';
 echo "Caminho esperado: " . $dir . "\n";
 if (is_dir($dir)) {
     echo "✓ Directório existe\n";

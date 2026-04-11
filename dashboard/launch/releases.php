@@ -797,7 +797,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="local-drafts-tab" data-bs-toggle="tab"
                                 data-bs-target="#local-drafts" type="button" role="tab">
-                                <i class="bi bi-pc me-1"></i>Neste Computador
+                                <i class="bi bi-pc me-1"></i>Neste Dispositivo
                             </button>
                         </li>
                     </ul>
@@ -1565,7 +1565,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
             container.innerHTML = `
             <div class="text-center py-4 text-muted">
                 <i class="bi bi-pencil fs-1 d-block mb-3 opacity-25"></i>
-                <p>Não tens rascunhos guardados neste computador.</p>
+                <p>Não tens rascunhos guardados neste dispositivo.</p>
                 <p class="small">Os rascunhos locais são guardados quando começas a preencher um novo lançamento sem o terminar.</p>
             </div>`;
             return;
@@ -1597,7 +1597,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
         const container = document.getElementById('bd-drafts-list');
 
         try {
-            const res = await fetch(BASE_URL + '/dashboard/get_drafts.php', {
+            const res = await fetch(BASE_URL + '/dashboard/get_drafts', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
@@ -1691,13 +1691,13 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
 
         switch (itemType) {
             case 'local':
-                subtitle = 'Rascunho local (neste computador)';
+                subtitle = 'Rascunho local (neste dispositivo)';
                 warningHtml = `
                 <div class="d-flex gap-2">
                     <i class="bi bi-pc-display fs-4 flex-shrink-0"></i>
                     <div>
                         <strong>Rascunho local</strong>
-                        <p class="mb-0 small">Este rascunho está apenas neste computador. 
+                        <p class="mb-0 small">Este rascunho está apenas neste dispositivo. 
                         Ao eliminar, não poderás recuperá-lo.</p>
                     </div>
                 </div>`;
