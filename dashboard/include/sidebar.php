@@ -10,11 +10,11 @@
 ?>
 
 <!-- Tela de Carregamento -->
-<div class="loading-screen" id="loadingScreen">
+<!-- <div class="loading-screen" id="loadingScreen">
     <img src="<?php echo APP_URL  ?>/assets/img/brand/wasomupfy_loaading.png" class="img-fluid loading-logo" width="90"
         height="90" alt="Loading-wasomupfy">
     <div class="spinner"></div>
-</div>
+</div> -->
 
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg">
@@ -85,26 +85,26 @@
                 class="text-white me-2 position-relative" aria-label="Notificações" id="navNotifBtn">
                 <i class="bi bi-bell fs-4"></i>
                 <?php if ($notif_count > 0): ?>
-                <span id="navNotifBadge" class="position-absolute translate-middle badge rounded-pill" style="top:2px;left:calc(100% - 4px);background:#FF0089;font-size:.6rem;
+                    <span id="navNotifBadge" class="position-absolute translate-middle badge rounded-pill" style="top:2px;left:calc(100% - 4px);background:#FF0089;font-size:.6rem;
                                min-width:18px;height:18px;padding:0 5px;line-height:18px;
                                box-shadow:0 0 0 2px #1a1a2e;">
-                    <?php echo $notif_count > 99 ? '99+' : $notif_count; ?>
-                </span>
+                        <?php echo $notif_count > 99 ? '99+' : $notif_count; ?>
+                    </span>
                 <?php else: ?>
-                <span id="navNotifBadge" class="position-absolute translate-middle badge rounded-pill" style="top:2px;left:calc(100% - 4px);background:#FF0089;font-size:.6rem;
+                    <span id="navNotifBadge" class="position-absolute translate-middle badge rounded-pill" style="top:2px;left:calc(100% - 4px);background:#FF0089;font-size:.6rem;
                                min-width:18px;height:18px;padding:0 5px;line-height:18px;
                                box-shadow:0 0 0 2px #1a1a2e;display:none;">0</span>
                 <?php endif; ?>
             </a>
             <a href="#" class="text-white" data-bs-toggle="dropdown">
                 <?php if ($user_photo): ?>
-                <img src="<?php echo APP_URL  ?>/assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
-                    width="32" height="32" class="rounded-circle flex-shrink-0"
-                    style="object-fit:cover;border:2px solid #FF4D4D" alt="Foto conta"
-                    onerror="this.onerror=null;this.src='<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png'">
+                    <img src="<?php echo APP_URL  ?>/assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
+                        width="32" height="32" class="rounded-circle flex-shrink-0"
+                        style="object-fit:cover;border:2px solid #FF4D4D" alt="Foto conta"
+                        onerror="this.onerror=null;this.src='<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png'">
                 <?php else: ?>
-                <img src="<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png" width="32" height="32"
-                    class="rounded-circle flex-shrink-0" style="object-fit:cover;" alt="Avatar">
+                    <img src="<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png" width="32" height="32"
+                        class="rounded-circle flex-shrink-0" style="object-fit:cover;" alt="Avatar">
                 <?php endif; ?>
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
@@ -112,13 +112,13 @@
                     <a class="dropdown-item d-flex align-items-center gap-2 py-2"
                         href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/user/profile">
                         <?php if ($user_photo): ?>
-                        <img src="<?php echo APP_URL  ?>/assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
-                            width="32" height="32" class="rounded-circle flex-shrink-0"
-                            style="object-fit:cover;border:2px solid #FF4D4D" alt="Foto conta"
-                            onerror="this.onerror=null;this.src='<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png'">
+                            <img src="<?php echo APP_URL  ?>/assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
+                                width="32" height="32" class="rounded-circle flex-shrink-0"
+                                style="object-fit:cover;border:2px solid #FF4D4D" alt="Foto conta"
+                                onerror="this.onerror=null;this.src='<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png'">
                         <?php else: ?>
-                        <img src="<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png" width="32" height="32"
-                            class="rounded-circle flex-shrink-0" style="object-fit:cover;" alt="Avatar">
+                            <img src="<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png" width="32" height="32"
+                                class="rounded-circle flex-shrink-0" style="object-fit:cover;" alt="Avatar">
                         <?php endif; ?>
                         <div class="overflow-hidden">
                             <div class="fw-bold text-truncate" style="max-width:160px">
@@ -136,14 +136,14 @@
                     <a class="dropdown-item d-flex align-items-center gap-2"
                         href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/user/profile">
                         <?php if ($user_photo): ?>
-                        <img src="<?php echo APP_URL  ?>/assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
-                            width="28" height="28" class="rounded-circle flex-shrink-0" style="object-fit:cover"
-                            alt="Foto perfil"
-                            onerror="this.onerror=null;this.src='<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png'">
+                            <img src="<?php echo APP_URL  ?>/assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
+                                width="28" height="28" class="rounded-circle flex-shrink-0" style="object-fit:cover"
+                                alt="Foto perfil"
+                                onerror="this.onerror=null;this.src='<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png'">
                         <?php else: ?>
-                        <img src="<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png" width="28" height="28"
-                            class="rounded-circle flex-shrink-0" style="object-fit:cover" alt="Perfil"
-                            onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\'bi bi-person-circle fs-5 flex-shrink-0\'></i>')">
+                            <img src="<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png" width="28" height="28"
+                                class="rounded-circle flex-shrink-0" style="object-fit:cover" alt="Perfil"
+                                onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\'bi bi-person-circle fs-5 flex-shrink-0\'></i>')">
                         <?php endif; ?>
                         Meu Perfil
                     </a>
@@ -284,14 +284,14 @@
             <li class="nav-item">
                 <a class="nav-link gap-2" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/user/profile">
                     <?php if ($user_photo): ?>
-                    <img src="<?php echo APP_URL  ?>/assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
-                        width="28" height="28" class="rounded-circle flex-shrink-0" style="object-fit:cover"
-                        alt="Foto perfil"
-                        onerror="this.onerror=null;this.src='<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png'">
+                        <img src="<?php echo APP_URL  ?>/assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
+                            width="28" height="28" class="rounded-circle flex-shrink-0" style="object-fit:cover"
+                            alt="Foto perfil"
+                            onerror="this.onerror=null;this.src='<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png'">
                     <?php else: ?>
-                    <img src="<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png" width="28" height="28"
-                        class="rounded-circle flex-shrink-0" style="object-fit:cover" alt="Perfil"
-                        onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\'bi bi-person-circle fs-5 flex-shrink-0\'></i>')">
+                        <img src="<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png" width="28" height="28"
+                            class="rounded-circle flex-shrink-0" style="object-fit:cover" alt="Perfil"
+                            onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\'bi bi-person-circle fs-5 flex-shrink-0\'></i>')">
                     <?php endif; ?>
                     Meu Perfil
                 </a>
@@ -464,18 +464,18 @@
 <!-- ════ MODAL — Logout  FIM ════ -->
 
 <script>
-// ── Conexão offline ─────────────────────────────────
-function checkConnection() {
-    if (!navigator.onLine) {
-        var toast = bootstrap.Toast.getOrCreateInstance(document.getElementById('connectionToast'));
-        toast.show();
+    // ── Conexão offline ─────────────────────────────────
+    function checkConnection() {
+        if (!navigator.onLine) {
+            var toast = bootstrap.Toast.getOrCreateInstance(document.getElementById('connectionToast'));
+            toast.show();
+        }
     }
-}
-checkConnection();
-window.addEventListener('offline', checkConnection);
-window.addEventListener('online', function() {
-    var toastEl = document.getElementById('connectionToast');
-    var toast = bootstrap.Toast.getInstance(toastEl);
-    if (toast) toast.hide();
-});
+    checkConnection();
+    window.addEventListener('offline', checkConnection);
+    window.addEventListener('online', function() {
+        var toastEl = document.getElementById('connectionToast');
+        var toast = bootstrap.Toast.getInstance(toastEl);
+        if (toast) toast.hide();
+    });
 </script>

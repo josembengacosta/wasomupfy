@@ -619,36 +619,65 @@ if ($is_worldwide) {
     }
 }
 
-// ── Álbuns distribuídos neste território (mantido como estava) ─────
-$albums_q = $db->prepare("
-    SELECT
-        al.id_album,
-        al.title_album,
-        al.type_album,
-        al.img_cover,
-        al.territory,
-        al.release_date,
-        al.genre_main,
-        a.stage_name,
-        COUNT(DISTINCT t.id_track) AS num_tracks,
-        COALESCE(SUM(sc.streams), 0) AS total_streams,
-        COALESCE(SUM(sc.revenue), 0) AS total_revenue
-    FROM _album al
-    LEFT JOIN _artist a ON a.id_artist = al.id_artist
-    LEFT JOIN _track t ON t.id_album = al.id_album AND t.status_track IN ('active','approved')
-    LEFT JOIN _stream_country sc ON sc.id_track = t.id_track
-                               AND sc.year_stream = ?
-                               AND sc.country_code = ?
-    WHERE al.id_users = ?
-      AND al.status_album IN ('approved','active')
-      AND (
-          al.territory LIKE '%Worldwide%'
-          OR al.territory LIKE ?
-      )
-    GROUP BY al.id_album
-    ORDER BY total_streams DESC
-");
-$albums_q->execute([$filter_year, $iso2, $id_users, '%' . $country_name . '%']);
+// ── Álbuns distribuídos neste território ─────
+if ($is_worldwide) {
+    // Worldwide: considerar álbuns com território "Worldwide"
+    $albums_q = $db->prepare("
+        SELECT
+            al.id_album,
+            al.title_album,
+            al.type_album,
+            al.img_cover,
+            al.territory,
+            al.release_date,
+            al.genre_main,
+            a.stage_name,
+            COUNT(DISTINCT t.id_track) AS num_tracks,
+            COALESCE(SUM(s.streams), 0) AS total_streams,
+            COALESCE(SUM(s.revenue), 0) AS total_revenue
+        FROM _album al
+        LEFT JOIN _artist a ON a.id_artist = al.id_artist
+        LEFT JOIN _track t ON t.id_album = al.id_album AND t.status_track IN ('active','approved')
+        LEFT JOIN _stream s ON s.id_track = t.id_track AND s.year_stream = ?
+        WHERE al.id_users = ?
+          AND al.status_album IN ('approved','active')
+          AND (al.territory LIKE '%Worldwide%' OR al.territory IS NULL OR al.territory = '')
+        GROUP BY al.id_album
+        ORDER BY total_streams DESC
+    ");
+    $albums_q->execute([$filter_year, $id_users]);
+} else {
+    // País específico: álbuns cujo território contém o código ISO ou "Worldwide"
+    $albums_q = $db->prepare("
+        SELECT
+            al.id_album,
+            al.title_album,
+            al.type_album,
+            al.img_cover,
+            al.territory,
+            al.release_date,
+            al.genre_main,
+            a.stage_name,
+            COUNT(DISTINCT t.id_track) AS num_tracks,
+            COALESCE(SUM(sc.streams), 0) AS total_streams,
+            COALESCE(SUM(sc.revenue), 0) AS total_revenue
+        FROM _album al
+        LEFT JOIN _artist a ON a.id_artist = al.id_artist
+        LEFT JOIN _track t ON t.id_album = al.id_album AND t.status_track IN ('active','approved')
+        LEFT JOIN _stream_country sc ON sc.id_track = t.id_track
+                                   AND sc.year_stream = ?
+                                   AND LOWER(sc.country_code) = LOWER(?)
+        WHERE al.id_users = ?
+          AND al.status_album IN ('approved','active')
+          AND (
+              al.territory LIKE '%Worldwide%'
+              OR FIND_IN_SET(?, REPLACE(al.territory, ' ', '')) > 0
+          )
+        GROUP BY al.id_album
+        ORDER BY total_streams DESC
+    ");
+    $albums_q->execute([$filter_year, $iso2, $id_users, $iso2]);
+}
 $albums = $albums_q->fetchAll(PDO::FETCH_ASSOC);
 
 $total_albums = count($albums);

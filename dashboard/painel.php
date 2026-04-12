@@ -126,7 +126,16 @@ $balance_aoa = (float)($balance['balance_aoa'] ?? 0);
 $min_withdrawal = 10000.00; // Minimo de saque: 10.000 Kz
 $can_withdraw = $plan_paid && $bank_account && ($balance_aoa >= $min_withdrawal);
 
-// Streams por plataforma (tabelas: _stream + _store + _track)
+
+$current_year  = date('Y');
+$current_month = (int)date('n');
+?>
+
+<?php
+// ════════════════════════════════════════════════════════════════
+// STREAMS & GRÁFICO (VERSÃO DEBUG)
+// ════════════════════════════════════════════════════════════════
+// 1. Streams para a lista (apenas lojas com total > 0)
 $streams_stmt = getDB()->prepare("
     SELECT
         st.id_store,
@@ -135,86 +144,150 @@ $streams_stmt = getDB()->prepare("
         COALESCE(SUM(s.streams), 0) as total
     FROM _store st
     LEFT JOIN _stream s ON s.id_store = st.id_store
-    LEFT JOIN _track  t ON t.id_track  = s.id_track AND t.id_users = ?
-    WHERE st.is_active = 1 AND st.type_store = 'streaming'
-    GROUP BY st.id_store, st.name_store, st.slug_store
+    LEFT JOIN _track t ON t.id_track = s.id_track AND t.id_users = ?
+    WHERE st.is_active = 1
+    GROUP BY st.id_store
     HAVING total > 0
     ORDER BY total DESC
-    LIMIT 6
+    LIMIT 10
 ");
 $streams_stmt->execute([$id_users]);
 $streams = $streams_stmt->fetchAll();
 $has_streams = !empty($streams);
 
-// Streams por mês para o gráfico (últimos 6 meses, por plataforma com dados)
+// 2. Dados mensais para gráfico (sem filtro de type_store)
 $chart_stmt = getDB()->prepare("
     SELECT
-        st.name_store,
         st.slug_store,
+        st.name_store,
         s.year_stream,
         s.month_stream,
         SUM(s.streams) as total
-    FROM _stream s
-    JOIN _track  t  ON t.id_track  = s.id_track AND t.id_users = ?
-    JOIN _store  st ON st.id_store = s.id_store AND st.type_store = 'streaming'
-    WHERE (s.year_stream * 100 + s.month_stream) >= (YEAR(NOW()) * 100 + MONTH(NOW()) - 6)
-    GROUP BY st.id_store, st.name_store, st.slug_store, s.year_stream, s.month_stream
+    FROM _store st
+    LEFT JOIN _stream s ON s.id_store = st.id_store
+    LEFT JOIN _track t ON t.id_track = s.id_track AND t.id_users = ?
+    WHERE st.is_active = 1
+    GROUP BY st.id_store, s.year_stream, s.month_stream
     ORDER BY s.year_stream, s.month_stream
 ");
 $chart_stmt->execute([$id_users]);
 $chart_rows = $chart_stmt->fetchAll();
 
-// Total de lancamentos
+// 3. Total de lançamentos
 $rel_stmt = getDB()->prepare("SELECT COUNT(*) as total FROM _album WHERE id_users = ?");
 $rel_stmt->execute([$id_users]);
 $total_releases = (int)($rel_stmt->fetch()['total'] ?? 0);
 
-// Preparar dados do gráfico para o JS
+// 4. Determinar período (primeiro mês com stream até último)
+$start_date = null;
+$end_date   = null;
+
+// Filtrar apenas linhas com dados válidos (ano e mês não nulos)
+$valid_rows = array_filter($chart_rows, function ($r) {
+    return $r['year_stream'] !== null && $r['month_stream'] !== null;
+});
+
+if (!empty($valid_rows)) {
+    // Ordenar por ano e mês para garantir que o primeiro e último sejam os extremos
+    usort($valid_rows, function ($a, $b) {
+        return ($a['year_stream'] * 100 + $a['month_stream']) <=> ($b['year_stream'] * 100 + $b['month_stream']);
+    });
+
+    $first = reset($valid_rows);
+    $last  = end($valid_rows);
+
+    $start_date = DateTime::createFromFormat('Y-n', $first['year_stream'] . '-' . $first['month_stream']);
+    $end_date   = DateTime::createFromFormat('Y-n', $last['year_stream'] . '-' . $last['month_stream']);
+}
+
+// Fallback se não houver dados: usar o mês atual
+if (!$start_date || !$end_date) {
+    $start_date = new DateTime();
+    $end_date   = new DateTime();
+}
+
+// 5. Labels de todos os meses no intervalo
+$months_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+$chart_labels = [];
+$period = clone $start_date;
+while ($period <= $end_date) {
+    $chart_labels[] = $months_pt[(int)$period->format('n') - 1] . ' ' . $period->format('Y');
+    $period->add(new DateInterval('P1M'));
+}
+
+// 6. Cores (mantidas)
 $platform_colors = [
     'spotify'       => ['border' => '#1db954', 'bg' => 'rgba(29,185,84,0.45)'],
     'apple-music'   => ['border' => '#fa586a', 'bg' => 'rgba(250,88,106,0.45)'],
+    'apple_music'   => ['border' => '#fa586a', 'bg' => 'rgba(250,88,106,0.45)'],
     'deezer'        => ['border' => '#ff0089', 'bg' => 'rgba(255,0,137,0.45)'],
     'amazon-music'  => ['border' => '#00a8e0', 'bg' => 'rgba(0,168,224,0.45)'],
+    'amazon_music'  => ['border' => '#00a8e0', 'bg' => 'rgba(0,168,224,0.45)'],
     'youtube-music' => ['border' => '#ff0000', 'bg' => 'rgba(255,0,0,0.45)'],
+    'youtube_music' => ['border' => '#ff0000', 'bg' => 'rgba(255,0,0,0.45)'],
     'tidal'         => ['border' => '#00ffff', 'bg' => 'rgba(0,255,255,0.35)'],
     'boomplay'      => ['border' => '#ff6600', 'bg' => 'rgba(255,102,0,0.45)'],
     'soundcloud'    => ['border' => '#ff5500', 'bg' => 'rgba(255,85,0,0.45)'],
+    'tiktok'        => ['border' => '#010101', 'bg' => 'rgba(0,0,0,0.45)'],
+    'itunes'        => ['border' => '#c864c8', 'bg' => 'rgba(200,100,200,0.4)'],
+    'resso'         => ['border' => '#ff6b6b', 'bg' => 'rgba(255,107,107,0.4)'],
+    'claro-music'   => ['border' => '#d90429', 'bg' => 'rgba(217,4,41,0.4)'],
+    'facebook'      => ['border' => '#1877f2', 'bg' => 'rgba(24,119,242,0.4)'],
+    'youtube'       => ['border' => '#ff0000', 'bg' => 'rgba(255,0,0,0.4)'],
+    'pandora'       => ['border' => '#3668b0', 'bg' => 'rgba(54,104,176,0.4)'],
 ];
 
-$chart_labels   = [];
+// 7. Agrupar dados por plataforma e mês
+$by_platform = [];
+foreach ($valid_rows as $r) {
+    $slug = $r['slug_store'];
+    $key  = $r['year_stream'] . '-' . str_pad($r['month_stream'], 2, '0', STR_PAD_LEFT);
+    $by_platform[$slug]['name'] = $r['name_store'];
+    $by_platform[$slug]['data'][$key] = (int)$r['total'];
+}
+
+// 8. Construir datasets para Chart.js
 $chart_datasets = [];
+$period_keys = [];
+$period = clone $start_date;
+while ($period <= $end_date) {
+    $period_keys[] = $period->format('Y-m');
+    $period->add(new DateInterval('P1M'));
+}
 
-if ($has_streams && !empty($chart_rows)) {
-    // Construir labels de meses únicos ordenados
-    $months_seen = [];
-    foreach ($chart_rows as $r) {
-        $key = $r['year_stream'] . '-' . str_pad($r['month_stream'], 2, '0', STR_PAD_LEFT);
-        if (!isset($months_seen[$key])) {
-            $months_seen[$key] = date('M Y', mktime(0, 0, 0, $r['month_stream'], 1, $r['year_stream']));
-        }
+foreach ($by_platform as $slug => $info) {
+    $color = $platform_colors[$slug] ?? ['border' => '#aaaaaa', 'bg' => 'rgba(170,170,170,0.4)'];
+    $data  = [];
+    foreach ($period_keys as $pk) {
+        $data[] = $info['data'][$pk] ?? 0;
     }
-    ksort($months_seen);
-    $chart_labels = array_values($months_seen);
-    $month_keys   = array_keys($months_seen);
+    $chart_datasets[] = [
+        'label'           => $info['name'],
+        'data'            => $data,
+        'borderColor'     => $color['border'],
+        'backgroundColor' => $color['bg'],
+        'fill'            => true,
+        'stack'           => 'combined',
+        'tension'         => 0.4,
+    ];
+}
 
-    // Agrupar por plataforma
-    $by_platform = [];
-    foreach ($chart_rows as $r) {
-        $slug = $r['slug_store'];
-        $key  = $r['year_stream'] . '-' . str_pad($r['month_stream'], 2, '0', STR_PAD_LEFT);
-        $by_platform[$slug]['name'] = $r['name_store'];
-        $by_platform[$slug]['data'][$key] = (int)$r['total'];
-    }
-
-    foreach ($by_platform as $slug => $info) {
+// Se não houver datasets, criar vazios para lojas ativas
+if (empty($chart_datasets)) {
+    $all_stores_stmt = getDB()->prepare("
+        SELECT name_store, slug_store
+        FROM _store
+        WHERE is_active = 1
+        ORDER BY display_order
+    ");
+    $all_stores_stmt->execute();
+    $all_stores = $all_stores_stmt->fetchAll();
+    foreach ($all_stores as $store) {
+        $slug  = $store['slug_store'];
         $color = $platform_colors[$slug] ?? ['border' => '#aaaaaa', 'bg' => 'rgba(170,170,170,0.4)'];
-        $data  = [];
-        foreach ($month_keys as $mk) {
-            $data[] = $info['data'][$mk] ?? 0;
-        }
         $chart_datasets[] = [
-            'label'           => $info['name'],
-            'data'            => $data,
+            'label'           => $store['name_store'],
+            'data'            => array_fill(0, count($chart_labels) ?: 1, 0),
             'borderColor'     => $color['border'],
             'backgroundColor' => $color['bg'],
             'fill'            => true,
@@ -225,8 +298,7 @@ if ($has_streams && !empty($chart_rows)) {
 }
 
 $chart_json_labels   = json_encode($chart_labels);
-$chart_json_datasets = json_encode($chart_datasets);
-?>
+$chart_json_datasets = json_encode($chart_datasets); ?>
 
 <!DOCTYPE html>
 <html lang="pt-ao">
@@ -943,7 +1015,7 @@ $chart_json_datasets = json_encode($chart_datasets);
             </div>
 
             <?php elseif (!$has_streams): ?>
-            <!-- Estado: tem lançamentos mas streams ainda a chegar (aguarda 24-72h) -->
+            <!-- Estado: tem lançamentos mas streams ainda a chegar -->
             <div class="card text-center py-5">
                 <div class="mb-3">
                     <span class="spinner-border spinner-border-sm text-muted me-2"></span>
@@ -960,35 +1032,113 @@ $chart_json_datasets = json_encode($chart_datasets);
             </div>
 
             <?php else: ?>
-            <!-- Estado: tem streams reais -->
+            <!-- Estado: exibir gráfico (sempre, mesmo sem streams) -->
             <div class="card">
-                <canvas id="streamChart"></canvas>
+                <?php if (!empty($chart_datasets)): ?>
+                <canvas id="streamChart" style="max-height:300px"></canvas>
+                <?php else: ?>
+                <div class="text-center py-5 text-muted">
+                    <i class="bi bi-calendar-x fs-1 mb-2" style="opacity:.4"></i>
+                    <p>Sem dados de streams disponíveis.</p>
+                </div>
+                <?php endif; ?>
                 <hr />
                 <ul class="mt-2">
                     <?php
-                        // Ícones CDN por plataforma
                         $platform_icons = [
-                            'spotify'       => '<img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" width="22" alt="Spotify">',
-                            'apple_music'   => '<img src="https://upload.wikimedia.org/wikipedia/commons/5/5f/Apple_Music_icon.svg" width="22" alt="Apple Music">',
-                            'deezer'        => '<img src="https://e-cdns-files.dzcdn.net/img/common/logos/deezer-logo.svg" width="22" alt="Deezer">',
-                            'youtube_music' => '<img src="https://upload.wikimedia.org/wikipedia/commons/6/6a/Youtube_Music_icon.svg" width="22" alt="YouTube Music">',
-                            'amazon_music'  => '<img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Amazon_Music_logo.svg" width="22" alt="Amazon Music">',
-                            'tidal'         => '<i class="fa-brands fa-tidal fs-5"></i>',
-                            'soundcloud'    => '<i class="fa-brands fa-soundcloud fs-5 text-warning"></i>',
-                            'tiktok'        => '<i class="fa-brands fa-tiktok fs-5"></i>',
+                            // ── Streaming de áudio principal ──────────────────────────────────────
+                            'spotify'           => '<img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" width="22" alt="Spotify">',
+                            'apple_music'       => '<img src="https://upload.wikimedia.org/wikipedia/commons/5/5f/Apple_Music_icon.svg" width="22" alt="Apple Music">',
+                            'apple-music'       => '<img src="https://upload.wikimedia.org/wikipedia/commons/5/5f/Apple_Music_icon.svg" width="22" alt="Apple Music">',
+                            'deezer'            => '<img src="https://e-cdns-files.dzcdn.net/img/common/logos/deezer-logo.svg" width="22" alt="Deezer">',
+                            'tidal'             => '<img src="https://upload.wikimedia.org/wikipedia/commons/1/12/Tidal_%28service%29_logo.svg" width="22" alt="Tidal">',
+                            'amazon_music'      => '<img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Amazon_Music_logo.svg" width="22" alt="Amazon Music">',
+                            'amazon-music'      => '<img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Amazon_Music_logo.svg" width="22" alt="Amazon Music">',
+                            'amazon_unlimited'  => '<img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Amazon_Music_logo.svg" width="22" alt="Amazon Unlimited">',
+                            'soundcloud'        => '<img src="https://upload.wikimedia.org/wikipedia/commons/a/a2/SoundCloud_logo_svg.svg" width="22" alt="SoundCloud">',
+                            'pandora'           => '<img src="https://upload.wikimedia.org/wikipedia/commons/f/f7/Pandora_logo_with_new_icon.svg" width="22" alt="Pandora">',
+                            'napster'           => '<img src="https://upload.wikimedia.org/wikipedia/commons/4/42/Napster_corporate_logo.svg" width="22" alt="Napster">',
+                            'qobuz'             => '<img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Qobuz_logo.svg" width="22" alt="Qobuz">',
+                            'kkbox'             => '<img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/KKBOX_logo.svg" width="22" alt="KKBOX">',
+                            'anghami'           => '<img src="https://upload.wikimedia.org/wikipedia/commons/8/89/Anghami-logo.svg" width="22" alt="Anghami">',
+                            'audiomack'         => '<img src="https://upload.wikimedia.org/wikipedia/commons/8/8e/Audiomack_logo.svg" width="22" alt="Audiomack">',
+                            'gaana'             => '<img src="https://upload.wikimedia.org/wikipedia/commons/f/f3/Gaana_logo.svg" width="22" alt="Gaana">',
+                            'jiosaavn'          => '<img src="https://upload.wikimedia.org/wikipedia/commons/2/29/JioSaavn_Logo.svg" width="22" alt="JioSaavn">',
+                            'wynk'              => '<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Wynk_Logo.jpg/240px-Wynk_Logo.jpg" width="22" alt="Wynk">',
+                            'hungama'           => '<img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Hungama_logo.svg" width="22" alt="Hungama">',
+                            'yandex_music'      => '<img src="https://upload.wikimedia.org/wikipedia/commons/d/da/Yandex_Music_icon_ru.svg" width="22" alt="Yandex Music">',
+                            'boomplay'          => '<img src="https://play-lh.googleusercontent.com/cxCsZIh08Nj2Hd0OmNnMp7CAMq3kRfnz3VObgFH7RCrUiKDMRYzTHblZAMxGEopbcc=w240-h480-rw" width="22" alt="Boomplay">',
+                            'mdundo'            => '<i class="bi bi-music-note-list fs-5" style="color:#e85d04;"></i>',
+                            'boomplay_free'     => '<img src="https://play-lh.googleusercontent.com/cxCsZIh08Nj2Hd0OmNnMp7CAMq3kRfnz3VObgFH7RCrUiKDMRYzTHblZAMxGEopbcc=w240-h480-rw" width="22" alt="Boomplay Free">',
+                            'resso'             => '<img src="https://upload.wikimedia.org/wikipedia/commons/8/8d/Resso-icon.png" width="22" alt="Resso">',
+
+                            // ── Vídeo & social ────────────────────────────────────────────────────
+                            'youtube'           => '<img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" width="22" alt="YouTube">',
+                            'youtube_music'     => '<img src="https://upload.wikimedia.org/wikipedia/commons/6/6a/Youtube_Music_icon.svg" width="22" alt="YouTube Music">',
+                            'youtube-music'     => '<img src="https://upload.wikimedia.org/wikipedia/commons/6/6a/Youtube_Music_icon.svg" width="22" alt="YouTube Music">',
+                            'youtube_premium'   => '<img src="https://upload.wikimedia.org/wikipedia/commons/6/6a/Youtube_Music_icon.svg" width="22" alt="YouTube Premium">',
+                            'tiktok'            => '<img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Tiktok_icon.svg" width="22" alt="TikTok">',
+                            'tiktok_music'      => '<img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Tiktok_icon.svg" width="22" alt="TikTok Music">',
+                            'facebook'          => '<img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png" width="22" alt="Facebook">',
+                            'instagram'         => '<img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" width="22" alt="Instagram">',
+                            'snapchat'          => '<img src="https://upload.wikimedia.org/wikipedia/commons/c/c4/Snapchat_logo.svg" width="22" alt="Snapchat">',
+                            'twitter'           => '<img src="https://upload.wikimedia.org/wikipedia/commons/5/57/X_logo_2023_%28white%29.png" width="22" alt="X / Twitter">',
+                            'x'                 => '<img src="https://upload.wikimedia.org/wikipedia/commons/5/57/X_logo_2023_%28white%29.png" width="22" alt="X">',
+                            'twitch'            => '<img src="https://upload.wikimedia.org/wikipedia/commons/d/d3/Twitch_Glitch_Logo_Purple.svg" width="22" alt="Twitch">',
+                            'triller'           => '<img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Triller_app_logo.png" width="22" alt="Triller">',
+                            'kwai'              => '<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Kwai_logo.png/240px-Kwai_logo.png" width="22" alt="Kwai">',
+
+                            // ── Lojas / download ──────────────────────────────────────────────────
+                            'itunes'            => '<img src="https://upload.wikimedia.org/wikipedia/commons/5/5f/Apple_Music_icon.svg" width="22" alt="iTunes">',
+                            'itunes_store'      => '<img src="https://upload.wikimedia.org/wikipedia/commons/5/5f/Apple_Music_icon.svg" width="22" alt="iTunes Store">',
+                            'google_play'       => '<img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" width="40" alt="Google Play">',
+                            'google-play'       => '<img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" width="40" alt="Google Play">',
+                            'beatport'          => '<img src="https://upload.wikimedia.org/wikipedia/commons/a/ac/Beatport-logo.svg" width="22" alt="Beatport">',
+                            'traxsource'        => '<i class="bi bi-vinyl fs-5" style="color:#00b4d8;"></i>',
+                            'juno_download'     => '<i class="bi bi-download fs-5 text-secondary"></i>',
+                            'bandcamp'          => '<img src="https://upload.wikimedia.org/wikipedia/commons/b/b3/Bandcamp-button-bc-circle-black.svg" width="22" alt="Bandcamp">',
+                            'amazon_download'   => '<img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Amazon_Music_logo.svg" width="22" alt="Amazon Download">',
+                            '7digital'          => '<i class="bi bi-7-circle fs-5 text-danger"></i>',
+
+                            // ── Rádio / podcasts ─────────────────────────────────────────────────
+                            'iheartradio'       => '<img src="https://upload.wikimedia.org/wikipedia/commons/1/16/IHeartRadio_logo.svg" width="22" alt="iHeartRadio">',
+                            'iheart'            => '<img src="https://upload.wikimedia.org/wikipedia/commons/1/16/IHeartRadio_logo.svg" width="22" alt="iHeart">',
+                            'tunein'            => '<img src="https://upload.wikimedia.org/wikipedia/commons/a/a8/TuneIn_logo.svg" width="22" alt="TuneIn">',
+
+                            // ── Regionais / outros ────────────────────────────────────────────────
+                            'claro_music'       => '<i class="bi bi-vinyl fs-5 text-danger"></i>',
+                            'claro-music'       => '<i class="bi bi-vinyl fs-5 text-danger"></i>',
+                            'netease'           => '<img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/NetEase_Music.png" width="22" alt="NetEase">',
+                            'qq_music'          => '<img src="https://upload.wikimedia.org/wikipedia/commons/2/29/QQ_Music_Logo.png" width="22" alt="QQ Music">',
+                            'joox'              => '<img src="https://upload.wikimedia.org/wikipedia/commons/f/f8/Joox-logo.svg" width="22" alt="JOOX">',
+                            'melon'             => '<img src="https://upload.wikimedia.org/wikipedia/commons/7/75/Melon_Logo.svg" width="22" alt="Melon">',
+                            'bugs'              => '<i class="bi bi-music-note-beamed fs-5" style="color:#ff6b6b;"></i>',
+                            'naver_music'       => '<i class="bi bi-music-note fs-5 text-success"></i>',
+                            'vibe'              => '<i class="bi bi-soundwave fs-5" style="color:#7209b7;"></i>',
+                            'saavn'             => '<img src="https://upload.wikimedia.org/wikipedia/commons/2/29/JioSaavn_Logo.svg" width="22" alt="Saavn">',
+                            'zvuk'              => '<i class="bi bi-headphones fs-5" style="color:#7c3aed;"></i>',
+                            'tencent'           => '<img src="https://upload.wikimedia.org/wikipedia/commons/2/29/QQ_Music_Logo.png" width="22" alt="Tencent">',
+
+                            // ── Fallback ──────────────────────────────────────────────────────────
+                            'default'           => '<i class="bi bi-music-note-beamed fs-5 text-muted"></i>',
                         ];
-                        foreach ($streams as $s):
-                            $slug = $s['slug_store'];
-                            $icon = $platform_icons[$slug] ?? '<i class="bi bi-music-note-beamed fs-5 text-muted"></i>';
+                        if (!empty($streams)):
+                            foreach (array_slice($streams, 0, 6) as $s):
+                                $slug = $s['slug_store'];
+                                $icon = $platform_icons[$slug] ?? '<i class="bi bi-music-note-beamed fs-5 text-muted me-2"></i>';
                         ?>
                     <li>
                         <div class="platform-info">
                             <?php echo $icon; ?>
-                            <span><?php echo htmlspecialchars($s['name_store']); ?></span>
+                            <span class="me-3"> <?php echo htmlspecialchars($s['name_store']); ?></span>
                         </div>
-                        <span class="stream-count"><?php echo number_format($s['total'], 0, ',', '.'); ?> streams</span>
+                        <span class="stream-count"
+                            style="color: #ff0089"><?php echo number_format($s['total'], 0, ',', '.'); ?> streams</span>
                     </li>
-                    <?php endforeach; ?>
+                    <?php endforeach;
+                        else: ?>
+                    <li class="text-muted">Nenhuma plataforma com streams ainda.</li>
+                    <?php endif; ?>
                 </ul>
             </div>
             <?php endif; ?>
@@ -1165,7 +1315,7 @@ $chart_json_datasets = json_encode($chart_datasets);
     </script>
     <script>
     // ── Gráfico de streams — dados reais da BD ──────────────
-    <?php if ($has_streams && !empty($chart_json_datasets)): ?>
+    <?php if ($has_streams && !empty($chart_datasets)): ?>
         (function() {
             const canvas = document.getElementById('streamChart');
             if (!canvas) return;

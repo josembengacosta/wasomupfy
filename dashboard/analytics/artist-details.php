@@ -11,33 +11,21 @@ requireLogin();
 $platform = checkDashboardStatus();
 $user     = checkUserAccess((int)$_SESSION['id_users']);
 
-$id_users       = (int)$user['id_users'];
-$first_name     = htmlspecialchars($user['first_name']);
-$user_name      = htmlspecialchars($user['user_name'] ?? '');
-$email_verified = (bool)$user['email_verified'];
-$plan_selected  = $user['plan_selected'];
-$onboard_done   = (bool)($user['onboarding_done'] ?? false);
-$user_photo     = $user['photo_user'] ?? null;
+$id_users        = (int)$user['id_users'];
+$first_name      = htmlspecialchars($user['first_name']);
+$user_name       = htmlspecialchars($user['user_name'] ?? '');
+$email_verified  = (bool)$user['email_verified'];
+$plan_selected   = $user['plan_selected'];
+$onboard_done    = (bool)($user['onboarding_done'] ?? false);
+$user_photo      = $user['photo_user'] ?? null;
 $name_artist_band = htmlspecialchars($user['name_artist_band'] ?? 'Cria Perfil Artístico');
-$notif_count    = getUnreadNotifCount($id_users);
-$db             = getDB();
+$notif_count     = getUnreadNotifCount($id_users);
+$db              = getDB();
 
 // ── Saldo ─────────────────────────────────────
 $w = $db->prepare('SELECT balance_aoa FROM _wallet WHERE id_users = ?');
 $w->execute([$id_users]);
 $balance = $w->fetch() ?: ['balance_aoa' => 0];
-
-// ── Plano ─────────────────────────────────────
-$plan_id     = (int)$user['plan_selected'];
-$plan        = null;
-$max_artists = 1;
-if ($plan_id) {
-    $ps = $db->prepare('SELECT * FROM _plans WHERE id_plan = ?');
-    $ps->execute([$plan_id]);
-    $plan = $ps->fetch();
-    if ($plan) $max_artists = (int)($plan['max_artists'] ?? 1);
-}
-$plan_name = $plan ? htmlspecialchars($plan['name_plan']) : 'Sem plano';
 
 // ── Plano ─────────────────────────────────────
 $plan      = null;
@@ -47,8 +35,6 @@ if ($plan_selected) {
     $ps->execute([$plan_selected]);
     $plan = $ps->fetch();
 }
-
-// Adicionar verificação de expiração do plano
 $plan_expired = false;
 if ($plan_paid && !empty($user['plan_expires_at'])) {
     $plan_expired = strtotime($user['plan_expires_at']) < time();
@@ -76,7 +62,6 @@ if ($plan_paid) {
 $ls = $db->prepare('SELECT last_login_at, last_login_ip FROM _users_security WHERE id_users = ?');
 $ls->execute([$id_users]);
 $sec = $ls->fetch();
-
 $sess_stmt = $db->prepare("
     SELECT ip_address, user_agent, country, city, creat_session, last_activity
     FROM _users_sessions WHERE id_users = ? AND is_active = 1
@@ -87,27 +72,27 @@ $current_session  = $sess_stmt->fetch();
 $session_duration_str = '—';
 if ($current_session && $current_session['creat_session']) {
     $secs = time() - strtotime($current_session['creat_session']);
-    if ($secs < 60)     $session_duration_str = $secs . 's';
-    elseif ($secs < 3600)  $session_duration_str = floor($secs / 60) . 'min';
+    if ($secs < 60) $session_duration_str = $secs . 's';
+    elseif ($secs < 3600) $session_duration_str = floor($secs / 60) . 'min';
     elseif ($secs < 86400) $session_duration_str = floor($secs / 3600) . 'h ' . floor(($secs % 3600) / 60) . 'min';
-    else                   $session_duration_str = floor($secs / 86400) . 'd ' . floor(($secs % 86400) / 3600) . 'h';
+    else $session_duration_str = floor($secs / 86400) . 'd ' . floor(($secs % 86400) / 3600) . 'h';
 }
 $member_since   = $user['creat_user'] ? date('d/m/Y', strtotime($user['creat_user'])) : '—';
 $last_login_str = ($sec && $sec['last_login_at']) ? date('d/m/Y H:i', strtotime($sec['last_login_at'])) : '—';
 $ua_raw   = $current_session['user_agent'] ?? '';
 $browser  = 'Desconhecido';
-if (str_contains($ua_raw, 'Edg'))     $browser = 'Microsoft Edge';
-elseif (str_contains($ua_raw, 'Chrome'))  $browser = 'Google Chrome';
+if (str_contains($ua_raw, 'Edg')) $browser = 'Microsoft Edge';
+elseif (str_contains($ua_raw, 'Chrome')) $browser = 'Google Chrome';
 elseif (str_contains($ua_raw, 'Firefox')) $browser = 'Mozilla Firefox';
-elseif (str_contains($ua_raw, 'Safari'))  $browser = 'Safari';
-elseif (str_contains($ua_raw, 'Opera'))   $browser = 'Opera';
+elseif (str_contains($ua_raw, 'Safari')) $browser = 'Safari';
+elseif (str_contains($ua_raw, 'Opera')) $browser = 'Opera';
 $sess_location = trim(($current_session['city'] ?? '') . ', ' . ($current_session['country'] ?? ''), ', ') ?: 'Desconhecida';
 $sess_ip       = $current_session['ip_address'] ?? ($sec['last_login_ip'] ?? '—');
 
 // ── Parâmetros da URL ─────────────────────────
-$id_artist   = isset($_GET['artist']) ? (int)$_GET['artist'] : 0;
-$filter_year = isset($_GET['year'])   ? (int)$_GET['year']   : (int)date('Y');
-$filter_store = isset($_GET['store']) ? (int)$_GET['store']  : 0; // 0 = todos
+$id_artist    = isset($_GET['artist']) ? (int)$_GET['artist'] : 0;
+$filter_year  = isset($_GET['year'])   ? (int)$_GET['year']   : (int)date('Y');
+$filter_store = isset($_GET['store'])  ? (int)$_GET['store']  : 0; // 0 = todos
 
 if (!$id_artist) {
     redirect(APP_URL_PANEL . '/statistics#artist');
@@ -123,9 +108,7 @@ $artist_q = $db->prepare("
 ");
 $artist_q->execute([$id_artist, $id_users]);
 $artist = $artist_q->fetch();
-
 if (!$artist) {
-    // Artista não encontrado ou não pertence ao utilizador
     redirect(APP_URL_PANEL . '/statistics#artist');
 }
 
@@ -140,7 +123,15 @@ $years_q = $db->prepare("
 ");
 $years_q->execute([$id_artist, $id_users]);
 $available_years = $years_q->fetchAll(PDO::FETCH_COLUMN);
-if (empty($available_years)) $available_years = [(int)date('Y')];
+if (empty($available_years)) {
+    $available_years = [(int)date('Y')];
+} else {
+    $current_year = (int)date('Y');
+    if (!in_array($current_year, $available_years)) {
+        $available_years[] = $current_year;
+        rsort($available_years);
+    }
+}
 
 // ── Lojas activas ─────────────────────────────
 $stores_q = $db->prepare("SELECT id_store, name_store, slug_store FROM _store WHERE is_active = 1 ORDER BY display_order ASC");
@@ -148,42 +139,76 @@ $stores_q->execute();
 $stores    = $stores_q->fetchAll(PDO::FETCH_ASSOC);
 $store_map = array_column($stores, null, 'id_store');
 
-// ── TOTAIS do artista no ano ──────────────────
+// ── TOTAIS do artista no ano (garante linha mesmo sem streams) ──
 $totals_q = $db->prepare("
     SELECT
         COALESCE(SUM(s.streams), 0)   AS total_streams,
         COALESCE(SUM(s.downloads), 0) AS total_downloads,
         COALESCE(SUM(s.revenue), 0)   AS total_revenue,
         COUNT(DISTINCT t.id_track)    AS total_tracks
-    FROM _stream s
-    JOIN _track t  ON t.id_track  = s.id_track
-    JOIN _album al ON al.id_album = t.id_album
-    WHERE al.id_artist = ? AND al.id_users = ?
-      AND s.year_stream = ?
-      " . ($filter_store ? "AND s.id_store = ?" : "") . "
+    FROM _artist a
+    LEFT JOIN _album al ON al.id_artist = a.id_artist 
+        AND al.status_album IN ('approved','active')
+    LEFT JOIN _track t ON t.id_album = al.id_album 
+        AND t.status_track IN ('active','approved')
+    LEFT JOIN _stream s ON s.id_track = t.id_track 
+        AND s.year_stream = ?
+        " . ($filter_store ? "AND s.id_store = ?" : "") . "
+    WHERE a.id_artist = ? AND a.id_users = ?
+    GROUP BY a.id_artist
 ");
-$p = [$id_artist, $id_users, $filter_year];
+$p = [$filter_year];
 if ($filter_store) $p[] = $filter_store;
+$p[] = $id_artist;
+$p[] = $id_users;
 $totals_q->execute($p);
 $totals = $totals_q->fetch();
+if (!$totals) {
+    $totals = ['total_streams' => 0, 'total_downloads' => 0, 'total_revenue' => 0, 'total_tracks' => 0];
+}
 
 // ── STREAMS POR PLATAFORMA ────────────────────
-$platforms_q = $db->prepare("
-    SELECT
-        st.id_store,
-        st.name_store,
-        st.slug_store,
-        COALESCE(SUM(s.streams), 0)  AS total_streams,
-        COALESCE(SUM(s.revenue), 0)  AS total_revenue
-    FROM _stream s
-    JOIN _track t  ON t.id_track  = s.id_track
-    JOIN _album al ON al.id_album = t.id_album
-    JOIN _store st ON st.id_store = s.id_store
-    WHERE al.id_artist = ? AND al.id_users = ? AND s.year_stream = ?
-    GROUP BY st.id_store, st.name_store, st.slug_store
-    ORDER BY total_streams DESC
-");
-$platforms_q->execute([$id_artist, $id_users, $filter_year]);
+if ($filter_store) {
+    // Mostrar a loja selecionada, mesmo com zero streams
+    $platforms_q = $db->prepare("
+        SELECT
+            st.id_store,
+            st.name_store,
+            st.slug_store,
+            COALESCE(SUM(s.streams), 0)  AS total_streams,
+            COALESCE(SUM(s.revenue), 0)  AS total_revenue
+        FROM _store st
+        LEFT JOIN _stream s ON s.id_store = st.id_store 
+            AND s.year_stream = ?
+        LEFT JOIN _track t ON t.id_track = s.id_track
+        LEFT JOIN _album al ON al.id_album = t.id_album 
+            AND al.id_artist = ? AND al.id_users = ?
+        WHERE st.id_store = ? AND st.is_active = 1
+        GROUP BY st.id_store, st.name_store, st.slug_store
+    ");
+    $platforms_q->execute([$filter_year, $id_artist, $id_users, $filter_store]);
+} else {
+    // Mostrar apenas lojas que têm streams > 0
+    $platforms_q = $db->prepare("
+        SELECT
+            st.id_store,
+            st.name_store,
+            st.slug_store,
+            COALESCE(SUM(s.streams), 0)  AS total_streams,
+            COALESCE(SUM(s.revenue), 0)  AS total_revenue
+        FROM _store st
+        LEFT JOIN _stream s ON s.id_store = st.id_store 
+            AND s.year_stream = ?
+        LEFT JOIN _track t ON t.id_track = s.id_track
+        LEFT JOIN _album al ON al.id_album = t.id_album 
+            AND al.id_artist = ? AND al.id_users = ?
+        WHERE st.is_active = 1
+        GROUP BY st.id_store, st.name_store, st.slug_store
+        HAVING total_streams > 0
+        ORDER BY total_streams DESC
+    ");
+    $platforms_q->execute([$filter_year, $id_artist, $id_users]);
+}
 $platforms_data = $platforms_q->fetchAll(PDO::FETCH_ASSOC);
 
 // ── STREAMS POR MÊS + PLATAFORMA (gráfico) ───
@@ -194,21 +219,26 @@ $chart_q = $db->prepare("
         st.name_store,
         st.slug_store,
         COALESCE(SUM(s.streams), 0) AS streams
-    FROM _stream s
-    JOIN _track t  ON t.id_track  = s.id_track
-    JOIN _album al ON al.id_album = t.id_album
-    JOIN _store st ON st.id_store = s.id_store
-    WHERE al.id_artist = ? AND al.id_users = ? AND s.year_stream = ?
-      " . ($filter_store ? "AND s.id_store = ?" : "") . "
+    FROM _artist a
+    LEFT JOIN _album al ON al.id_artist = a.id_artist 
+        AND al.status_album IN ('approved','active')
+    LEFT JOIN _track t ON t.id_album = al.id_album 
+        AND t.status_track IN ('active','approved')
+    LEFT JOIN _stream s ON s.id_track = t.id_track 
+        AND s.year_stream = ?
+        " . ($filter_store ? "AND s.id_store = ?" : "") . "
+    LEFT JOIN _store st ON st.id_store = s.id_store
+    WHERE a.id_artist = ? AND a.id_users = ?
     GROUP BY s.month_stream, s.id_store, st.name_store, st.slug_store
     ORDER BY s.month_stream ASC, st.display_order ASC
 ");
-$pc = [$id_artist, $id_users, $filter_year];
+$pc = [$filter_year];
 if ($filter_store) $pc[] = $filter_store;
+$pc[] = $id_artist;
+$pc[] = $id_users;
 $chart_q->execute($pc);
 $chart_raw = $chart_q->fetchAll(PDO::FETCH_ASSOC);
 
-// Organizar para Chart.js
 $store_colors = [
     'spotify'       => ['border' => '#1db954', 'bg' => 'rgba(29,185,84,0.4)'],
     'apple-music'   => ['border' => '#fc3c44', 'bg' => 'rgba(252,60,68,0.4)'],
@@ -299,7 +329,6 @@ $pt[] = $id_users;
 $tracks_q->execute($pt);
 $tracks = $tracks_q->fetchAll(PDO::FETCH_ASSOC);
 
-// Helper: formatar duração
 function formatDuration(?int $sec): string
 {
     if (!$sec) return '—';
@@ -309,6 +338,36 @@ function formatDuration(?int $sec): string
 $base_url  = rtrim(APP_URL, '/');
 $cover_url = $base_url . '/assets/comprovantes/uploads/covers/';
 $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
+
+// ── Função auxiliar para os banners de alerta ──
+function wuAlert(string $type, string $icon, string $message, ?array $action = null, bool $dismiss = true, string $id = ''): void
+{
+    $alertColors = [
+        'danger'  => ['bg' => 'rgba(239,68,68,.08)',  'border' => 'rgba(239,68,68,.25)',  'text' => '#ef4444'],
+        'warning' => ['bg' => 'rgba(234,179,8,.08)',  'border' => 'rgba(234,179,8,.25)',  'text' => '#eab308'],
+        'info'    => ['bg' => 'rgba(99,102,241,.08)', 'border' => 'rgba(99,102,241,.25)', 'text' => '#6366f1'],
+    ];
+    $c   = $alertColors[$type] ?? $alertColors['info'];
+    $eid = $id ?: ('wuPanelAlert_' . md5($message));
+    echo "<div id=\"{$eid}\" style=\"display:flex;align-items:flex-start;gap:10px;"
+        . "background:{$c['bg']};border:1px solid {$c['border']};border-radius:12px;"
+        . "padding:.75rem 1rem;font-size:.83rem;margin-bottom:.6rem;"
+        . "transition:opacity .3s;\">";
+    echo "<i class=\"bi {$icon}\" style=\"font-size:1rem;flex-shrink:0;margin-top:2px;color:{$c['text']};\"></i>";
+    echo '<span class="wu-alert-msg">' . $message;
+    if ($action) {
+        echo " <a href=\"{$action['url']}\" style=\"color:{$c['text']};font-weight:700;"
+            . "text-decoration:underline;white-space:nowrap\">{$action['label']} &rarr;</a>";
+    }
+    echo '</span>';
+    if ($dismiss) {
+        echo "<button type=\"button\" class=\"wu-alert-dismiss\" aria-label=\"Fechar\""
+            . " onclick=\"(function(el){el.style.opacity='0';"
+            . "setTimeout(function(){el.style.display='none'},300)})(document.getElementById('{$eid}'))\">"
+            . "&times;</button>";
+    }
+    echo '</div>';
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-ao">
@@ -555,39 +614,6 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
     ============================================ */ ?>
 
         <?php renderDashboardAlerts($user, $platform); ?>
-
-        <?php
-        // Cor map para helpers inline — idêntico ao renderDashboardAlerts()
-        $alertColors = [
-            'danger'  => ['bg' => 'rgba(239,68,68,.08)',  'border' => 'rgba(239,68,68,.25)',  'text' => '#ef4444'],
-            'warning' => ['bg' => 'rgba(234,179,8,.08)',  'border' => 'rgba(234,179,8,.25)',  'text' => '#eab308'],
-            'info'    => ['bg' => 'rgba(99,102,241,.08)', 'border' => 'rgba(99,102,241,.25)', 'text' => '#6366f1'],
-        ];
-        function wuAlert(string $type, string $icon, string $message, ?array $action = null, bool $dismiss = true, string $id = ''): void
-        {
-            global $alertColors;
-            $c   = $alertColors[$type] ?? $alertColors['info'];
-            $eid = $id ?: ('wuPanelAlert_' . md5($message));
-            echo "<div id=\"{$eid}\" style=\"display:flex;align-items:flex-start;gap:10px;"
-                . "background:{$c['bg']};border:1px solid {$c['border']};border-radius:12px;"
-                . "padding:.75rem 1rem;font-size:.83rem;margin-bottom:.6rem;"
-                . "transition:opacity .3s;\">";
-            echo "<i class=\"bi {$icon}\" style=\"font-size:1rem;flex-shrink:0;margin-top:2px;color:{$c['text']};\"></i>";
-            echo '<span class="wu-alert-msg">' . $message;
-            if ($action) {
-                echo " <a href=\"{$action['url']}\" style=\"color:{$c['text']};font-weight:700;"
-                    . "text-decoration:underline;white-space:nowrap\">{$action['label']} &rarr;</a>";
-            }
-            echo '</span>';
-            if ($dismiss) {
-                echo "<button type=\"button\" class=\"wu-alert-dismiss\" aria-label=\"Fechar\""
-                    . " onclick=\"(function(el){el.style.opacity='0';"
-                    . "setTimeout(function(){el.style.display='none'},300)})(document.getElementById('{$eid}'))\">"
-                    . "&times;</button>";
-            }
-            echo '</div>';
-        }
-        ?>
 
         <?php /* ── NÍVEL 1: Crítico — bloqueia distribuição ── */ ?>
 
@@ -840,7 +866,14 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
         <?php if (!empty($platforms_data)): ?>
         <div class="card mb-4" style="border-radius:16px">
             <div class="card-header">
-                <h6 class="mb-0"><i class="bi bi-collection me-2 text-pink"></i>Streams por plataforma</h6>
+                <h6 class="mb-0">
+                    <i class="bi bi-collection me-2 text-pink"></i>
+                    <?php if ($filter_store && isset($store_map[$filter_store])): ?>
+                    Streams na <?php echo htmlspecialchars($store_map[$filter_store]['name_store']); ?>
+                    <?php else: ?>
+                    Streams por plataforma
+                    <?php endif; ?>
+                </h6>
             </div>
             <div class="card-body pt-2">
                 <?php
@@ -968,7 +1001,7 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
     </div><!-- /container -->
 
     <script>
-    const BASE_URL = <?php echo (APP_URL. '/' . APP_URL_PANEL); ?>;
+    const BASE_URL = <?php echo (APP_URL . '/' . APP_URL_PANEL); ?>;
     (function() {
         function refreshBadge() {
             fetch(BASE_URL + '/ajax/notifications_api.php?action=count', {
