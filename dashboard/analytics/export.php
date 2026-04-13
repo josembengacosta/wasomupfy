@@ -334,120 +334,120 @@ $months_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Ou
     <?php require_once __DIR__ . '/../include/head.php'; ?>
     <title>Exportar Dados — <?php echo APP_NAME; ?></title>
     <style>
-    .export-hero {
-        background: linear-gradient(135deg, #0f2a1e 0%, #1a3a28 50%, #1a1a2e 100%);
-        border-radius: 18px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-        color: #fff;
-    }
+        .export-hero {
+            background: linear-gradient(135deg, #0f2a1e 0%, #1a3a28 50%, #1a1a2e 100%);
+            border-radius: 18px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            color: #fff;
+        }
 
-    .export-card {
-        border-radius: 16px;
-        overflow: hidden;
-        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
-        background: var(--card-bg, #fff);
-        transition: box-shadow .2s, transform .15s;
-    }
+        .export-card {
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
+            background: var(--card-bg, #fff);
+            transition: box-shadow .2s, transform .15s;
+        }
 
-    .export-card:hover {
-        box-shadow: 0 6px 24px rgba(0, 0, 0, .1);
-        transform: translateY(-2px);
-    }
+        .export-card:hover {
+            box-shadow: 0 6px 24px rgba(0, 0, 0, .1);
+            transform: translateY(-2px);
+        }
 
-    .export-card-header {
-        padding: 18px 20px 14px;
-        border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .06));
-        display: flex;
-        align-items: center;
-        gap: 14px;
-    }
+        .export-card-header {
+            padding: 18px 20px 14px;
+            border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .06));
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
 
-    .export-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        flex-shrink: 0;
-    }
+        .export-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
 
-    .export-card-body {
-        padding: 16px 20px 20px;
-    }
+        .export-card-body {
+            padding: 16px 20px 20px;
+        }
 
-    .export-meta {
-        font-size: .75rem;
-        color: var(--text-muted, #6c757d);
-    }
+        .export-meta {
+            font-size: .75rem;
+            color: var(--text-muted, #6c757d);
+        }
 
-    .export-count {
-        font-size: 1.1rem;
-        font-weight: 800;
-    }
+        .export-count {
+            font-size: 1.1rem;
+            font-weight: 800;
+        }
 
-    .btn-export-dl {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: .55rem 1.2rem;
-        border-radius: 10px;
-        font-weight: 700;
-        font-size: .85rem;
-        text-decoration: none;
-        transition: all .2s;
-        border: 2px solid transparent;
-    }
+        .btn-export-dl {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: .55rem 1.2rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: .85rem;
+            text-decoration: none;
+            transition: all .2s;
+            border: 2px solid transparent;
+        }
 
-    .btn-export-csv {
-        background: rgba(25, 135, 84, .1);
-        color: #198754;
-        border-color: rgba(25, 135, 84, .3);
-    }
+        .btn-export-csv {
+            background: rgba(25, 135, 84, .1);
+            color: #198754;
+            border-color: rgba(25, 135, 84, .3);
+        }
 
-    .btn-export-csv:hover {
-        background: #198754;
-        color: #fff;
-    }
+        .btn-export-csv:hover {
+            background: #198754;
+            color: #fff;
+        }
 
-    /* ── Filtros ── */
-    .filter-bar {
-        background: var(--card-bg, #fff);
-        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
-        border-radius: 14px;
-        padding: 14px 18px;
-        margin-bottom: 24px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        align-items: flex-end;
-    }
+        /* ── Filtros ── */
+        .filter-bar {
+            background: var(--card-bg, #fff);
+            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
+            border-radius: 14px;
+            padding: 14px 18px;
+            margin-bottom: 24px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: flex-end;
+        }
 
-    .filter-bar label {
-        font-size: .7rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: .5px;
-        color: var(--text-muted, #6c757d);
-        display: block;
-        margin-bottom: 3px;
-    }
+        .filter-bar label {
+            font-size: .7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            color: var(--text-muted, #6c757d);
+            display: block;
+            margin-bottom: 3px;
+        }
 
-    /* ── Aviso ── */
-    .export-notice {
-        background: rgba(255, 193, 7, .06);
-        border: 1px solid rgba(255, 193, 7, .25);
-        border-radius: 12px;
-        padding: 12px 16px;
-        margin-bottom: 20px;
-        font-size: .8rem;
-        color: var(--text-muted, #6c757d);
-        display: flex;
-        gap: 10px;
-        align-items: flex-start;
-    }
+        /* ── Aviso ── */
+        .export-notice {
+            background: rgba(255, 193, 7, .06);
+            border: 1px solid rgba(255, 193, 7, .25);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            font-size: .8rem;
+            color: var(--text-muted, #6c757d);
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
     </style>
 </head>
 
@@ -504,7 +504,7 @@ $months_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Ou
         <?php /* ── NÍVEL 1: Crítico — bloqueia distribuição ── */ ?>
 
         <?php if (!$email_verified): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'danger',
                 'bi-envelope-exclamation-fill',
                 '<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta e receber notificações de pagamentos.',
@@ -515,7 +515,7 @@ $months_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Ou
         <?php endif; ?>
 
         <?php if ($plan && !$plan_paid): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'warning',
                 'bi-clock-history',
                 '<strong>Pagamento pendente — ' . htmlspecialchars($plan['name_plan']) . '.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados até confirmação.',
@@ -524,7 +524,7 @@ $months_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Ou
                 'banner-plan-pending'
             ); ?>
         <?php elseif (!$plan): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'danger',
                 'bi-credit-card-fill',
                 '<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir a tua música para +150 plataformas.',
@@ -537,10 +537,10 @@ $months_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Ou
         <?php /* ── NÍVEL 2: Importante — perfil incompleto ── */ ?>
 
         <?php if ($plan_paid && !$has_artist): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'info',
                 'bi-person-plus-fill',
-                '<strong>Cria o teu perfil de artista.</strong> Tens plano activo mas ainda não criaste um perfil. Precisas de um para poder lançar música.',
+                '<strong>Cria o teu perfil artístico.</strong> Tens plano activo mas ainda não criaste um perfil artístico. Precisas de um para poder lançar música.',
                 ['label' => 'Criar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/add-artist'],
                 true,
                 'banner-artist'
@@ -550,7 +550,7 @@ $months_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Ou
         <?php /* ── NÍVEL 3: Informativo — conta bancária ── */ ?>
 
         <?php if ($plan_paid && $has_artist && !$bank_account): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'info',
                 'bi-bank',
                 '<strong>Conta bancária não registada.</strong> Para poder sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.',
@@ -571,7 +571,7 @@ $months_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Ou
         }
         ?>
         <?php if ($rejected_account): ?>
-        <?php
+            <?php
             $rej_msg = '<strong>Conta ' . htmlspecialchars($rejected_account['type_account']) . ' rejeitada.</strong>';
             if ($rejected_account['reject_reason']) {
                 $rej_msg .= ' Motivo: <em>' . htmlspecialchars($rejected_account['reject_reason']) . '</em>.';
@@ -606,15 +606,15 @@ $months_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Ou
         <!-- Filtros -->
         <form method="GET" action="export" id="filterForm">
             <?php if ($context): ?><input type="hidden" name="context"
-                value="<?php echo htmlspecialchars($context); ?>" /><?php endif; ?>
+                    value="<?php echo htmlspecialchars($context); ?>" /><?php endif; ?>
             <div class="filter-bar">
                 <div>
                     <label>Ano</label>
                     <select name="year" class="form-select form-select-sm" style="min-width:100px"
                         onchange="this.form.submit()">
                         <?php foreach ($available_years as $y): ?>
-                        <option value="<?php echo $y; ?>" <?php echo $y == $filter_year ? 'selected' : ''; ?>>
-                            <?php echo $y; ?></option>
+                            <option value="<?php echo $y; ?>" <?php echo $y == $filter_year ? 'selected' : ''; ?>>
+                                <?php echo $y; ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -624,10 +624,10 @@ $months_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Ou
                         onchange="this.form.submit()">
                         <option value="0" <?php echo !$filter_store ? 'selected' : ''; ?>>Todas as plataformas</option>
                         <?php foreach ($stores as $st): ?>
-                        <option value="<?php echo $st['id_store']; ?>"
-                            <?php echo $st['id_store'] == $filter_store ? 'selected' : ''; ?>>
-                            <?php echo htmlspecialchars($st['name_store']); ?>
-                        </option>
+                            <option value="<?php echo $st['id_store']; ?>"
+                                <?php echo $st['id_store'] == $filter_store ? 'selected' : ''; ?>>
+                                <?php echo htmlspecialchars($st['name_store']); ?>
+                            </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -670,9 +670,9 @@ $months_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Ou
                                 style="color:#FF0089"><?php echo number_format($count_streams); ?></span>
                             <span class="export-meta ms-1">registos em <?php echo $filter_year; ?></span>
                             <?php if ($filter_store && isset($store_map[$filter_store])): ?>
-                            <div class="export-meta mt-1"><i
-                                    class="bi bi-funnel me-1"></i><?php echo htmlspecialchars($store_map[$filter_store]['name_store']); ?>
-                            </div>
+                                <div class="export-meta mt-1"><i
+                                        class="bi bi-funnel me-1"></i><?php echo htmlspecialchars($store_map[$filter_store]['name_store']); ?>
+                                </div>
                             <?php endif; ?>
                         </div>
                         <div class="export-meta mb-3">
@@ -680,15 +680,15 @@ $months_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Ou
                             Receita USD
                         </div>
                         <?php if ($count_streams > 0): ?>
-                        <a href="export?do_export=streams_csv&year=<?php echo $filter_year; ?>&store=<?php echo $filter_store; ?>&csrf=<?php echo urlencode($csrf); ?>"
-                            class="btn-export-dl btn-export-csv w-100 justify-content-center">
-                            <i class="bi bi-filetype-csv"></i> Download CSV
-                        </a>
+                            <a href="export?do_export=streams_csv&year=<?php echo $filter_year; ?>&store=<?php echo $filter_store; ?>&csrf=<?php echo urlencode($csrf); ?>"
+                                class="btn-export-dl btn-export-csv w-100 justify-content-center">
+                                <i class="bi bi-filetype-csv"></i> Download CSV
+                            </a>
                         <?php else: ?>
-                        <button class="btn-export-dl btn-export-csv w-100 justify-content-center" disabled
-                            style="opacity:.4;cursor:not-allowed">
-                            <i class="bi bi-filetype-csv"></i> Sem dados
-                        </button>
+                            <button class="btn-export-dl btn-export-csv w-100 justify-content-center" disabled
+                                style="opacity:.4;cursor:not-allowed">
+                                <i class="bi bi-filetype-csv"></i> Sem dados
+                            </button>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -717,15 +717,15 @@ $months_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Ou
                             Royalty AOA, Estado
                         </div>
                         <?php if ($count_royalties > 0): ?>
-                        <a href="export?do_export=royalties_csv&year=<?php echo $filter_year; ?>&csrf=<?php echo urlencode($csrf); ?>"
-                            class="btn-export-dl btn-export-csv w-100 justify-content-center">
-                            <i class="bi bi-filetype-csv"></i> Download CSV
-                        </a>
+                            <a href="export?do_export=royalties_csv&year=<?php echo $filter_year; ?>&csrf=<?php echo urlencode($csrf); ?>"
+                                class="btn-export-dl btn-export-csv w-100 justify-content-center">
+                                <i class="bi bi-filetype-csv"></i> Download CSV
+                            </a>
                         <?php else: ?>
-                        <button class="btn-export-dl btn-export-csv w-100 justify-content-center" disabled
-                            style="opacity:.4;cursor:not-allowed">
-                            <i class="bi bi-filetype-csv"></i> Sem dados
-                        </button>
+                            <button class="btn-export-dl btn-export-csv w-100 justify-content-center" disabled
+                                style="opacity:.4;cursor:not-allowed">
+                                <i class="bi bi-filetype-csv"></i> Sem dados
+                            </button>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -754,15 +754,15 @@ $months_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Ou
                             Artista, Estado, Streams, Downloads, Receita USD
                         </div>
                         <?php if ($count_tracks > 0): ?>
-                        <a href="export?do_export=tracks_csv&year=<?php echo $filter_year; ?>&store=<?php echo $filter_store; ?>&csrf=<?php echo urlencode($csrf); ?>"
-                            class="btn-export-dl btn-export-csv w-100 justify-content-center">
-                            <i class="bi bi-filetype-csv"></i> Download CSV
-                        </a>
+                            <a href="export?do_export=tracks_csv&year=<?php echo $filter_year; ?>&store=<?php echo $filter_store; ?>&csrf=<?php echo urlencode($csrf); ?>"
+                                class="btn-export-dl btn-export-csv w-100 justify-content-center">
+                                <i class="bi bi-filetype-csv"></i> Download CSV
+                            </a>
                         <?php else: ?>
-                        <button class="btn-export-dl btn-export-csv w-100 justify-content-center" disabled
-                            style="opacity:.4;cursor:not-allowed">
-                            <i class="bi bi-filetype-csv"></i> Sem dados
-                        </button>
+                            <button class="btn-export-dl btn-export-csv w-100 justify-content-center" disabled
+                                style="opacity:.4;cursor:not-allowed">
+                                <i class="bi bi-filetype-csv"></i> Sem dados
+                            </button>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -785,25 +785,25 @@ $months_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Ou
                 ];
                 foreach ($pdf_cards as $pc):
                 ?>
-                <div class="col-md-4">
-                    <div class="export-card" style="opacity:.5;pointer-events:none">
-                        <div class="export-card-header">
-                            <div class="export-icon" style="background:rgba(220,53,69,.1);color:#dc3545">
-                                <i class="bi <?php echo $pc['icon']; ?>"></i>
+                    <div class="col-md-4">
+                        <div class="export-card" style="opacity:.5;pointer-events:none">
+                            <div class="export-card-header">
+                                <div class="export-icon" style="background:rgba(220,53,69,.1);color:#dc3545">
+                                    <i class="bi <?php echo $pc['icon']; ?>"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold"><?php echo $pc['label']; ?></div>
+                                    <div class="export-meta"><?php echo $pc['desc']; ?></div>
+                                </div>
                             </div>
-                            <div>
-                                <div class="fw-bold"><?php echo $pc['label']; ?></div>
-                                <div class="export-meta"><?php echo $pc['desc']; ?></div>
+                            <div class="export-card-body">
+                                <button class="btn-export-dl w-100 justify-content-center" disabled
+                                    style="background:rgba(220,53,69,.08);color:#dc3545;border:2px solid rgba(220,53,69,.2)">
+                                    <i class="bi bi-filetype-pdf"></i> Em breve
+                                </button>
                             </div>
-                        </div>
-                        <div class="export-card-body">
-                            <button class="btn-export-dl w-100 justify-content-center" disabled
-                                style="background:rgba(220,53,69,.08);color:#dc3545;border:2px solid rgba(220,53,69,.2)">
-                                <i class="bi bi-filetype-pdf"></i> Em breve
-                            </button>
                         </div>
                     </div>
-                </div>
                 <?php endforeach; ?>
             </div>
         </div>
@@ -817,7 +817,7 @@ $months_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Ou
     <script src="<?php echo APP_URL  ?>/js/theme.wp.js"></script>
     <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
     <script>
-    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
+        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
     </script>
 </body>
 

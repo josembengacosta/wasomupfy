@@ -20,7 +20,7 @@ $db = getDB();
 // Verificar se foi passado um ID
 $id_album = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 if (!$id_album) {
-    redirect('/dashboard/launch/releases', ['error' => 'invalid_release']);
+    redirect(APP_URL_PANEL . '/releases', ['error' => 'invalid_release']);
 }
 
 // Buscar dados do álbum (verificar se pertence ao utilizador)
@@ -32,7 +32,7 @@ $album_stmt->execute([$id_album, $id_users]);
 $album = $album_stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$album) {
-    redirect('/dashboard/launch/releases', ['error' => 'release_not_found']);
+    redirect(APP_URL_PANEL . '/releases', ['error' => 'release_not_found']);
 }
 
 // Buscar artista principal

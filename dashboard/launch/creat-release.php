@@ -1015,7 +1015,10 @@ error_reporting(E_ALL);
                     <i class="bi bi-shield-check flex-shrink-0 mt-1 fs-5"></i>
                     <div style="font-size:.85rem">
                         <strong>Ao distribuir este lançamento, concordas em cumprir todos os nossos
-                            <a href="#" style="color:var(--wasom)">Termos e Condições</a> bem como as nossas
+                            <a href="<?php  echo APP_URL .'/'. APP_URL_PANEL ?>/page/politicies/terms"
+                                style="color:var(--wasom)">Termos
+                                e
+                                Condições</a> bem como as nossas
                             <a href="#" style="color:var(--wasom)">Políticas de Privacidade</a>.</strong>
                         <p class="mb-0 mt-1 text-muted">Confirmas que és titular dos direitos sobre todo o conteúdo
                             deste lançamento

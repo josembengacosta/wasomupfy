@@ -707,7 +707,7 @@ $verified_at_str = $user['email_verified'] && $user['email_verified_at']
             <?php wuAlert(
                 'info',
                 'bi-person-plus-fill',
-                '<strong>Cria o teu perfil de artista.</strong> Tens plano activo mas ainda não criaste um perfil. Precisas de um para poder lançar música.',
+                '<strong>Cria o teu perfil artístico.</strong> Tens plano activo mas ainda não criaste um perfil artístico. Precisas de um para poder lançar música.',
                 ['label' => 'Criar agora', 'url' => 'artists/add-artist'],
                 true,
                 'banner-artist'

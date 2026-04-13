@@ -1,4 +1,5 @@
 <?php
+ob_start(); // capturar qualquer output espúrio (warnings, notices) antes do JSON
 // ═══════════════════════════════════════════════════════════════════════════════
 // WASOM UPFY v2.0 — Processar Acções AJAX de Pagamentos
 // Arquivo: wu-panel-2026/pages/payments/process.php

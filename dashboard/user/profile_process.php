@@ -73,6 +73,12 @@ switch ($action) {
         $name_artist_band = trim($_POST['name_artist_band'] ?? '');
 
         if (empty($first_name)) jsonOut(false, 'O primeiro nome é obrigatório.');
+        if ($tel_user && !preg_match('/^\+?\d{7,15}$/', $tel_user)) {
+            jsonOut(false, 'Número de telefone inválido.');
+        }
+        if ($url_user && !filter_var($url_user, FILTER_VALIDATE_URL)) {
+            jsonOut(false, 'URL inválida (deve começar com http:// ou https://).');
+        }
         if (strlen($user_name_new) < 3) jsonOut(false, 'O nome de utilizador deve ter pelo menos 3 caracteres.');
 
         // Username único
@@ -96,14 +102,21 @@ switch ($action) {
             $dir  = __DIR__ . '/../../assets/comprovantes/uploads/users/';
             if (!is_dir($dir)) mkdir($dir, 0750, true);
 
-            // Apagar foto anterior
-            if ($photo_path) {
-                $old = $dir . $photo_path;
-                if (file_exists($old)) @unlink($old);
+            $filename = 'user_' . $id_users . '_' . time() . '.' . $ext;
+            $temp_path = $dir . 'temp_' . $filename;
+
+            if (move_uploaded_file($file['tmp_name'], $temp_path)) {
+                // Apagar foto antiga
+                if ($user['photo_user']) {
+                    $old = $dir . $user['photo_user'];
+                    if (file_exists($old)) @unlink($old);
+                }
+                // Renomear para o nome final
+                rename($temp_path, $dir . $filename);
+                $photo_path = $filename;
+            } else {
+                jsonOut(false, 'Erro ao guardar a imagem.');
             }
-            $filename   = 'user_' . $id_users . '_' . time() . '.' . $ext;
-            $photo_path = $filename;
-            move_uploaded_file($file['tmp_name'], $dir . $filename);
         }
 
         $db->prepare("
@@ -214,6 +227,14 @@ switch ($action) {
         </div>
     </div>";
         sendEmail($user['email_user'], 'Senha alterada — ' . APP_NAME, $body);
+        $email_sent = sendEmail($user['email_user'], 'Senha alterada — ' . APP_NAME, $body);
+        $msg = 'Senha alterada com sucesso!';
+        if (!$email_sent) {
+            $msg .= ' No entanto, não foi possível enviar o e-mail de confirmação.';
+        } else {
+            $msg .= ' Receberás um email de confirmação.';
+        }
+        jsonOut(true, $msg);
 
         jsonOut(true, 'Senha alterada com sucesso! Receberás um email de confirmação.');
 

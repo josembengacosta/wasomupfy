@@ -375,150 +375,150 @@ $cover_albums = $base_url . '/assets/comprovantes/uploads/covers/';
     <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/statistics.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
-    /* ── Stat cards ── */
-    .stat-hero-card {
-        border-radius: 18px;
-        padding: 20px 24px;
-        position: relative;
-        overflow: hidden;
-        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
-        transition: box-shadow .2s;
-    }
+        /* ── Stat cards ── */
+        .stat-hero-card {
+            border-radius: 18px;
+            padding: 20px 24px;
+            position: relative;
+            overflow: hidden;
+            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
+            transition: box-shadow .2s;
+        }
 
-    .stat-hero-card:hover {
-        box-shadow: 0 4px 24px rgba(255, 0, 137, .09);
-    }
+        .stat-hero-card:hover {
+            box-shadow: 0 4px 24px rgba(255, 0, 137, .09);
+        }
 
-    .stat-hero-card .stat-label {
-        font-size: .72rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: .5px;
-        color: var(--text-muted, #6c757d);
-        margin-bottom: 6px;
-    }
+        .stat-hero-card .stat-label {
+            font-size: .72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            color: var(--text-muted, #6c757d);
+            margin-bottom: 6px;
+        }
 
-    .stat-hero-card .stat-value {
-        font-size: 1.8rem;
-        font-weight: 900;
-        line-height: 1;
-    }
+        .stat-hero-card .stat-value {
+            font-size: 1.8rem;
+            font-weight: 900;
+            line-height: 1;
+        }
 
-    .stat-hero-card .stat-sub {
-        font-size: .75rem;
-        color: var(--text-muted, #6c757d);
-        margin-top: 4px;
-    }
+        .stat-hero-card .stat-sub {
+            font-size: .75rem;
+            color: var(--text-muted, #6c757d);
+            margin-top: 4px;
+        }
 
-    .stat-hero-card .stat-icon {
-        position: absolute;
-        right: 20px;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 3rem;
-        opacity: .07;
-    }
+        .stat-hero-card .stat-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 3rem;
+            opacity: .07;
+        }
 
-    /* ── Filtros ── */
-    .filter-bar {
-        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
-        border-radius: 16px;
-        padding: 16px 20px;
-        margin-bottom: 24px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        align-items: flex-end;
-    }
+        /* ── Filtros ── */
+        .filter-bar {
+            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
+            border-radius: 16px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: flex-end;
+        }
 
-    .filter-bar label {
-        font-size: .72rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: .5px;
-        color: var(--text-muted, #6c757d);
-        display: block;
-        margin-bottom: 4px;
-    }
+        .filter-bar label {
+            font-size: .72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            color: var(--text-muted, #6c757d);
+            display: block;
+            margin-bottom: 4px;
+        }
 
-    .filter-bar select,
-    .filter-bar input {
-        font-size: .85rem;
-        border-radius: 10px;
-    }
+        .filter-bar select,
+        .filter-bar input {
+            font-size: .85rem;
+            border-radius: 10px;
+        }
 
-    /* ── Plataformas list ── */
-    .platform-row {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 10px 0;
-        border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .06));
-    }
+        /* ── Plataformas list ── */
+        .platform-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .06));
+        }
 
-    .platform-row:last-child {
-        border-bottom: none;
-    }
+        .platform-row:last-child {
+            border-bottom: none;
+        }
 
-    .platform-dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        flex-shrink: 0;
-    }
+        .platform-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
 
-    .platform-bar-bg {
-        flex: 1;
-        height: 6px;
-        border-radius: 6px;
-        background: var(--border-color, rgba(0, 0, 0, .07));
-        overflow: hidden;
-    }
+        .platform-bar-bg {
+            flex: 1;
+            height: 6px;
+            border-radius: 6px;
+            background: var(--border-color, rgba(0, 0, 0, .07));
+            overflow: hidden;
+        }
 
-    .platform-bar-fill {
-        height: 100%;
-        border-radius: 6px;
-        transition: width .5s ease;
-    }
+        .platform-bar-fill {
+            height: 100%;
+            border-radius: 6px;
+            transition: width .5s ease;
+        }
 
-    .platform-streams {
-        font-size: .78rem;
-        font-weight: 700;
-        min-width: 80px;
-        text-align: right;
-    }
+        .platform-streams {
+            font-size: .78rem;
+            font-weight: 700;
+            min-width: 80px;
+            text-align: right;
+        }
 
-    /* ── Artists table ── */
-    .artist-row-img {
-        width: 38px;
-        height: 38px;
-        border-radius: 10px;
-        object-fit: cover;
-        background: rgba(255, 0, 137, .08);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-    }
+        /* ── Artists table ── */
+        .artist-row-img {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            object-fit: cover;
+            background: rgba(255, 0, 137, .08);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
 
-    .artist-row-img img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
+        .artist-row-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
-    /* ── Empty state ── */
-    .empty-section {
-        text-align: center;
-        padding: 40px 20px;
-        color: var(--text-muted, #6c757d);
-    }
+        /* ── Empty state ── */
+        .empty-section {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted, #6c757d);
+        }
 
-    .empty-section .icon {
-        font-size: 2.5rem;
-        opacity: .15;
-        margin-bottom: 10px;
-    }
+        .empty-section .icon {
+            font-size: 2.5rem;
+            opacity: .15;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 
@@ -578,7 +578,7 @@ $cover_albums = $base_url . '/assets/comprovantes/uploads/covers/';
         <?php /* ── NÍVEL 1: Crítico — bloqueia distribuição ── */ ?>
 
         <?php if (!$email_verified): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'danger',
                 'bi-envelope-exclamation-fill',
                 '<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta e receber notificações de pagamentos.',
@@ -589,7 +589,7 @@ $cover_albums = $base_url . '/assets/comprovantes/uploads/covers/';
         <?php endif; ?>
 
         <?php if ($plan && !$plan_paid): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'warning',
                 'bi-clock-history',
                 '<strong>Pagamento pendente — ' . htmlspecialchars($plan['name_plan']) . '.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados até confirmação.',
@@ -598,7 +598,7 @@ $cover_albums = $base_url . '/assets/comprovantes/uploads/covers/';
                 'banner-plan-pending'
             ); ?>
         <?php elseif (!$plan): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'danger',
                 'bi-credit-card-fill',
                 '<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir a tua música para +150 plataformas.',
@@ -611,10 +611,10 @@ $cover_albums = $base_url . '/assets/comprovantes/uploads/covers/';
         <?php /* ── NÍVEL 2: Importante — perfil incompleto ── */ ?>
 
         <?php if ($plan_paid && !$has_artist): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'info',
                 'bi-person-plus-fill',
-                '<strong>Cria o teu perfil de artista.</strong> Tens plano activo mas ainda não criaste um perfil. Precisas de um para poder lançar música.',
+                '<strong>Cria o teu perfil artístico.</strong> Tens plano activo mas ainda não criaste um perfil artístico. Precisas de um para poder lançar música.',
                 ['label' => 'Criar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/add-artist'],
                 true,
                 'banner-artist'
@@ -624,7 +624,7 @@ $cover_albums = $base_url . '/assets/comprovantes/uploads/covers/';
         <?php /* ── NÍVEL 3: Informativo — conta bancária ── */ ?>
 
         <?php if ($plan_paid && $has_artist && !$bank_account): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'info',
                 'bi-bank',
                 '<strong>Conta bancária não registada.</strong> Para poder sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.',
@@ -645,7 +645,7 @@ $cover_albums = $base_url . '/assets/comprovantes/uploads/covers/';
         }
         ?>
         <?php if ($rejected_account): ?>
-        <?php
+            <?php
             $rej_msg = '<strong>Conta ' . htmlspecialchars($rejected_account['type_account']) . ' rejeitada.</strong>';
             if ($rejected_account['reject_reason']) {
                 $rej_msg .= ' Motivo: <em>' . htmlspecialchars($rejected_account['reject_reason']) . '</em>.';
@@ -693,9 +693,9 @@ $cover_albums = $base_url . '/assets/comprovantes/uploads/covers/';
                     <select name="year" class="form-select form-select-sm" style="min-width:100px"
                         onchange="this.form.submit()">
                         <?php foreach ($available_years as $y): ?>
-                        <option value="<?php echo $y; ?>" <?php echo $y == $filter_year ? 'selected' : ''; ?>>
-                            <?php echo $y; ?>
-                        </option>
+                            <option value="<?php echo $y; ?>" <?php echo $y == $filter_year ? 'selected' : ''; ?>>
+                                <?php echo $y; ?>
+                            </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -705,10 +705,10 @@ $cover_albums = $base_url . '/assets/comprovantes/uploads/covers/';
                         onchange="this.form.submit()">
                         <option value="0" <?php echo !$filter_store ? 'selected' : ''; ?>>Todas as plataformas</option>
                         <?php foreach ($stores as $st): ?>
-                        <option value="<?php echo $st['id_store']; ?>"
-                            <?php echo $st['id_store'] == $filter_store ? 'selected' : ''; ?>>
-                            <?php echo htmlspecialchars($st['name_store']); ?>
-                        </option>
+                            <option value="<?php echo $st['id_store']; ?>"
+                                <?php echo $st['id_store'] == $filter_store ? 'selected' : ''; ?>>
+                                <?php echo htmlspecialchars($st['name_store']); ?>
+                            </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -717,7 +717,7 @@ $cover_albums = $base_url . '/assets/comprovantes/uploads/covers/';
                     <i class="bi bi-info-circle"></i>
                     A mostrar dados de <strong><?php echo $filter_year; ?></strong>
                     <?php if ($filter_store && isset($store_map[$filter_store])): ?>
-                    — <?php echo htmlspecialchars($store_map[$filter_store]['name_store']); ?>
+                        — <?php echo htmlspecialchars($store_map[$filter_store]['name_store']); ?>
                     <?php endif; ?>
                 </div>
             </div>
@@ -758,34 +758,34 @@ $cover_albums = $base_url . '/assets/comprovantes/uploads/covers/';
         <div class="chart-card platforms-card mb-4">
             <div class="card">
                 <?php if (empty($chart_datasets)): ?>
-                <div class="empty-section">
-                    <div class="icon"><i class="bi bi-bar-chart"></i></div>
-                    <div class="small fw-semibold mb-1">Sem dados de streams para <?php echo $filter_year; ?>.</div>
-                    <div class="small">Os streams aparecem aqui após a importação mensal de dados pelas plataformas.
+                    <div class="empty-section">
+                        <div class="icon"><i class="bi bi-bar-chart"></i></div>
+                        <div class="small fw-semibold mb-1">Sem dados de streams para <?php echo $filter_year; ?>.</div>
+                        <div class="small">Os streams aparecem aqui após a importação mensal de dados pelas plataformas.
+                        </div>
                     </div>
-                </div>
                 <?php else: ?>
-                <canvas id="streamChart" style="max-height:320px"></canvas>
-                <hr style="opacity:.07;margin:16px 0" />
-                <!-- Lista de plataformas com barras -->
-                <?php
+                    <canvas id="streamChart" style="max-height:320px"></canvas>
+                    <hr style="opacity:.07;margin:16px 0" />
+                    <!-- Lista de plataformas com barras -->
+                    <?php
                     $max_streams = max(array_column($platforms_data, 'total_streams') ?: [1]);
                     foreach ($platforms_data as $pd):
                         $slug   = $pd['slug_store'];
                         $colors = $store_colors[$slug] ?? $store_colors['default'];
                         $pct    = $max_streams > 0 ? round(($pd['total_streams'] / $max_streams) * 100) : 0;
                     ?>
-                <div class="platform-row">
-                    <div class="platform-dot" style="background:<?php echo $colors['border']; ?>"></div>
-                    <div style="min-width:120px;font-size:.82rem;font-weight:600">
-                        <?php echo htmlspecialchars($pd['name_store']); ?></div>
-                    <div class="platform-bar-bg">
-                        <div class="platform-bar-fill"
-                            style="width:<?php echo $pct; ?>%;background:<?php echo $colors['border']; ?>"></div>
-                    </div>
-                    <div class="platform-streams"><?php echo number_format((int)$pd['total_streams']); ?></div>
-                </div>
-                <?php endforeach; ?>
+                        <div class="platform-row">
+                            <div class="platform-dot" style="background:<?php echo $colors['border']; ?>"></div>
+                            <div style="min-width:120px;font-size:.82rem;font-weight:600">
+                                <?php echo htmlspecialchars($pd['name_store']); ?></div>
+                            <div class="platform-bar-bg">
+                                <div class="platform-bar-fill"
+                                    style="width:<?php echo $pct; ?>%;background:<?php echo $colors['border']; ?>"></div>
+                            </div>
+                            <div class="platform-streams"><?php echo number_format((int)$pd['total_streams']); ?></div>
+                        </div>
+                    <?php endforeach; ?>
                 <?php endif; ?>
             </div>
         </div>
@@ -798,48 +798,48 @@ $cover_albums = $base_url . '/assets/comprovantes/uploads/covers/';
                     <span class="badge bg-secondary"><?php echo count($artists_data); ?></span>
                 </div>
                 <?php if (empty($artists_data)): ?>
-                <div class="empty-section">
-                    <div class="icon"><i class="bi bi-person"></i></div>
-                    <div class="small">Nenhum artista encontrado.</div>
-                    <a href="../artists/add-artist" class="btn btn-sm btn-pink mt-3">Adicionar artista</a>
-                </div>
+                    <div class="empty-section">
+                        <div class="icon"><i class="bi bi-person"></i></div>
+                        <div class="small">Nenhum artista encontrado.</div>
+                        <a href="../artists/add-artist" class="btn btn-sm btn-pink mt-3">Adicionar artista</a>
+                    </div>
                 <?php else: ?>
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover mb-0" id="artistsTable">
-                        <thead>
-                            <tr>
-                                <th style="width:52px">Foto</th>
-                                <th>Artista</th>
-                                <th>Streams <?php echo $filter_year; ?></th>
-                                <th class="text-center" style="width:60px">Detalhes</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($artists_data as $art): ?>
-                            <tr>
-                                <td>
-                                    <div class="artist-row-img">
-                                        <?php if ($art['photo_artist']): ?>
-                                        <img src="<?php echo htmlspecialchars($cover_artists . $art['photo_artist']); ?>"
-                                            onerror="this.parentElement.innerHTML='🎤'" alt="" />
-                                        <?php else: ?>🎤<?php endif; ?>
-                                    </div>
-                                </td>
-                                <td class="fw-semibold"><?php echo htmlspecialchars($art['stage_name']); ?></td>
-                                <td class="fw-bold" style="color:#FF0089">
-                                    <?php echo number_format((int)$art['total_streams']); ?>
-                                </td>
-                                <td class="text-center">
-                                    <a href="artist-details?artist=<?php echo (int)$art['id_artist']; ?>&year=<?php echo $filter_year; ?>&store=<?php echo $filter_store; ?>"
-                                        class="btn btn-sm btn-outline-secondary" style="border-radius:8px">
-                                        <i class="bi bi-chevron-right"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover mb-0" id="artistsTable">
+                            <thead>
+                                <tr>
+                                    <th style="width:52px">Foto</th>
+                                    <th>Artista</th>
+                                    <th>Streams <?php echo $filter_year; ?></th>
+                                    <th class="text-center" style="width:60px">Detalhes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($artists_data as $art): ?>
+                                    <tr>
+                                        <td>
+                                            <div class="artist-row-img">
+                                                <?php if ($art['photo_artist']): ?>
+                                                    <img src="<?php echo htmlspecialchars($cover_artists . $art['photo_artist']); ?>"
+                                                        onerror="this.parentElement.innerHTML='🎤'" alt="" />
+                                                    <?php else: ?>🎤<?php endif; ?>
+                                            </div>
+                                        </td>
+                                        <td class="fw-semibold"><?php echo htmlspecialchars($art['stage_name']); ?></td>
+                                        <td class="fw-bold" style="color:#FF0089">
+                                            <?php echo number_format((int)$art['total_streams']); ?>
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="artist-details?artist=<?php echo (int)$art['id_artist']; ?>&year=<?php echo $filter_year; ?>&store=<?php echo $filter_store; ?>"
+                                                class="btn btn-sm btn-outline-secondary" style="border-radius:8px">
+                                                <i class="bi bi-chevron-right"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 <?php endif; ?>
             </div>
         </div>
@@ -852,29 +852,30 @@ $cover_albums = $base_url . '/assets/comprovantes/uploads/covers/';
                     <span class="badge bg-secondary"><?php echo count($playlists_data); ?></span>
                 </div>
                 <?php if (empty($playlists_data)): ?>
-                <div class="empty-section">
-                    <div class="icon"><i class="bi bi-collection-play"></i></div>
-                    <div class="small fw-semibold mb-1">Nenhum lançamento activo em <?php echo $filter_year; ?>.</div>
-                    <div class="small">As playlists aparecem aqui após a aprovação dos teus álbuns e singles.</div>
-                    <a href="../launch/releases" class="btn btn-sm btn-pink mt-3">Ver lançamentos</a>
-                </div>
+                    <div class="empty-section">
+                        <div class="icon"><i class="bi bi-collection-play"></i></div>
+                        <div class="small fw-semibold mb-1">Nenhum lançamento activo em <?php echo $filter_year; ?>.</div>
+                        <div class="small">As playlists aparecem aqui após a aprovação dos teus álbuns e singles.</div>
+                        <a href="<?php echo APP_URL . "/" . APP_URL_PANEL ?>/releases" class="btn btn-sm btn-pink mt-3">Ver
+                            lançamentos</a>
+                    </div>
                 <?php else: ?>
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover mb-0" id="playlistsTable">
-                        <thead>
-                            <tr>
-                                <th style="width:52px">Capa</th>
-                                <th>Título</th>
-                                <th>Artista</th>
-                                <th>Tipo</th>
-                                <th>Faixas</th>
-                                <th>Streams <?php echo $filter_year; ?></th>
-                                <th>Receita (USD)</th>
-                                <th class="text-center" style="width:60px">Detalhes</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($playlists_data as $pl):
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover mb-0" id="playlistsTable">
+                            <thead>
+                                <tr>
+                                    <th style="width:52px">Capa</th>
+                                    <th>Título</th>
+                                    <th>Artista</th>
+                                    <th>Tipo</th>
+                                    <th>Faixas</th>
+                                    <th>Streams <?php echo $filter_year; ?></th>
+                                    <th>Receita (USD)</th>
+                                    <th class="text-center" style="width:60px">Detalhes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($playlists_data as $pl):
                                     $type_colors = [
                                         'single'  => 'bg-primary',
                                         'EP'      => 'bg-warning text-dark',
@@ -883,54 +884,54 @@ $cover_albums = $base_url . '/assets/comprovantes/uploads/covers/';
                                     ];
                                     $tc = $type_colors[strtolower($pl['type_album'] ?? '')] ?? 'bg-secondary';
                                 ?>
-                            <tr>
-                                <td>
-                                    <?php if ($pl['img_cover']): ?>
-                                    <div class="artist-row-img">
-                                        <img src="<?php echo htmlspecialchars($cover_albums . $pl['img_cover']); ?>"
-                                            onerror="this.parentElement.innerHTML='🎵'" alt="">
-                                    </div>
-                                    <?php else: ?>
-                                    <div class="artist-row-img"
-                                        style="background:rgba(255,0,137,.06);display:flex;align-items:center;justify-content:center;font-size:1.2rem">
-                                        🎵</div>
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <div class="fw-semibold" style="font-size:.87rem">
-                                        <?php echo htmlspecialchars($pl['title_album']); ?>
-                                    </div>
-                                    <?php if ($pl['release_date']): ?>
-                                    <div style="font-size:.7rem;color:var(--text-muted,#6c757d)">
-                                        <?php echo date('d/m/Y', strtotime($pl['release_date'])); ?>
-                                    </div>
-                                    <?php endif; ?>
-                                </td>
-                                <td class="small"><?php echo htmlspecialchars($pl['stage_name'] ?? '—'); ?></td>
-                                <td>
-                                    <span class="badge <?php echo $tc; ?>" style="font-size:.6rem">
-                                        <?php echo strtoupper($pl['type_album'] ?? ''); ?>
-                                    </span>
-                                </td>
-                                <td class="text-center small"><?php echo (int)$pl['num_tracks']; ?></td>
-                                <td class="fw-bold" style="color:#FF0089">
-                                    <?php echo number_format((int)$pl['total_streams']); ?>
-                                </td>
-                                <td class="small fw-semibold" style="color:#198754">
-                                    $<?php echo number_format((float)$pl['total_revenue'], 4); ?>
-                                </td>
-                                <td class="text-center">
-                                    <a href="playlist-details?playlist=<?php echo urlencode($pl['title_album']); ?>&year=<?php echo $filter_year; ?><?php echo $filter_store ? '&store=' . $filter_store : ''; ?>"
-                                        class="btn btn-sm btn-outline-secondary" style="border-radius:8px"
-                                        title="Ver detalhes">
-                                        <i class="bi bi-chevron-right"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
+                                    <tr>
+                                        <td>
+                                            <?php if ($pl['img_cover']): ?>
+                                                <div class="artist-row-img">
+                                                    <img src="<?php echo htmlspecialchars($cover_albums . $pl['img_cover']); ?>"
+                                                        onerror="this.parentElement.innerHTML='🎵'" alt="">
+                                                </div>
+                                            <?php else: ?>
+                                                <div class="artist-row-img"
+                                                    style="background:rgba(255,0,137,.06);display:flex;align-items:center;justify-content:center;font-size:1.2rem">
+                                                    🎵</div>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <div class="fw-semibold" style="font-size:.87rem">
+                                                <?php echo htmlspecialchars($pl['title_album']); ?>
+                                            </div>
+                                            <?php if ($pl['release_date']): ?>
+                                                <div style="font-size:.7rem;color:var(--text-muted,#6c757d)">
+                                                    <?php echo date('d/m/Y', strtotime($pl['release_date'])); ?>
+                                                </div>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td class="small"><?php echo htmlspecialchars($pl['stage_name'] ?? '—'); ?></td>
+                                        <td>
+                                            <span class="badge <?php echo $tc; ?>" style="font-size:.6rem">
+                                                <?php echo strtoupper($pl['type_album'] ?? ''); ?>
+                                            </span>
+                                        </td>
+                                        <td class="text-center small"><?php echo (int)$pl['num_tracks']; ?></td>
+                                        <td class="fw-bold" style="color:#FF0089">
+                                            <?php echo number_format((int)$pl['total_streams']); ?>
+                                        </td>
+                                        <td class="small fw-semibold" style="color:#198754">
+                                            $<?php echo number_format((float)$pl['total_revenue'], 4); ?>
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="playlist-details?playlist=<?php echo urlencode($pl['title_album']); ?>&year=<?php echo $filter_year; ?><?php echo $filter_store ? '&store=' . $filter_store : ''; ?>"
+                                                class="btn btn-sm btn-outline-secondary" style="border-radius:8px"
+                                                title="Ver detalhes">
+                                                <i class="bi bi-chevron-right"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 <?php endif; ?>
             </div>
         </div>
@@ -945,28 +946,28 @@ $cover_albums = $base_url . '/assets/comprovantes/uploads/covers/';
                     <span class="badge bg-secondary"><?php echo count($countries_data); ?></span>
                 </div>
                 <?php if (empty($countries_data)): ?>
-                <div class="empty-section">
-                    <div class="icon"><i class="bi bi-flag"></i></div>
-                    <div class="small fw-semibold mb-1">Nenhum stream registado por país em <?php echo $filter_year; ?>.
+                    <div class="empty-section">
+                        <div class="icon"><i class="bi bi-flag"></i></div>
+                        <div class="small fw-semibold mb-1">Nenhum stream registado por país em <?php echo $filter_year; ?>.
+                        </div>
+                        <div class="small">Os dados geográficos aparecerão aqui quando as plataformas enviarem relatórios.
+                        </div>
                     </div>
-                    <div class="small">Os dados geográficos aparecerão aqui quando as plataformas enviarem relatórios.
-                    </div>
-                </div>
                 <?php else: ?>
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover mb-0" id="countriesTable">
-                        <thead>
-                            <tr>
-                                <th style="width:40px">Bandeira</th>
-                                <th>País</th>
-                                <th>Faixas</th>
-                                <th>Streams <?php echo $filter_year; ?></th>
-                                <th>Receita (USD)</th>
-                                <th class="text-center" style="width:60px">Detalhes</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover mb-0" id="countriesTable">
+                            <thead>
+                                <tr>
+                                    <th style="width:40px">Bandeira</th>
+                                    <th>País</th>
+                                    <th>Faixas</th>
+                                    <th>Streams <?php echo $filter_year; ?></th>
+                                    <th>Receita (USD)</th>
+                                    <th class="text-center" style="width:60px">Detalhes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
                                 // Paleta de cores para barras (mesma lógica dos territórios)
                                 $country_colors = ['#FF0089', '#6366f1', '#0d6efd', '#198754', '#f97316', '#06b6d4', '#8b5cf6', '#eab308'];
                                 $max_country_streams = max(array_column($countries_data, 'total_streams') ?: [1]);
@@ -979,49 +980,49 @@ $cover_albums = $base_url . '/assets/comprovantes/uploads/covers/';
                                     // Link para country-details (já vai funcionar com o teu country-details.php melhorado)
                                     $country_link = urlencode($country_name_display);
                                 ?>
-                            <tr>
-                                <td class="text-center">
-                                    <img src="<?php echo $flag_url; ?>"
-                                        style="width:24px; height:18px; border-radius:3px; object-fit:cover;"
-                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';"
-                                        alt="<?php echo $country_code; ?>" />
-                                    <span style="display:none;"><?php echo substr($country_code, 0, 2); ?></span>
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center gap-2">
-                                        <div>
-                                            <div class="fw-semibold" style="font-size:.87rem">
-                                                <?php echo htmlspecialchars($country_name_display); ?>
-                                            </div>
-                                            <!-- barra de proporção -->
-                                            <div
-                                                style="height:4px;border-radius:4px;background:rgba(0,0,0,.06);width:140px;margin-top:4px;overflow:hidden">
-                                                <div
-                                                    style="height:100%;border-radius:4px;background:<?php echo $color; ?>;width:<?php echo $pct; ?>%;transition:width .4s">
+                                    <tr>
+                                        <td class="text-center">
+                                            <img src="<?php echo $flag_url; ?>"
+                                                style="width:24px; height:18px; border-radius:3px; object-fit:cover;"
+                                                onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';"
+                                                alt="<?php echo $country_code; ?>" />
+                                            <span style="display:none;"><?php echo substr($country_code, 0, 2); ?></span>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div>
+                                                    <div class="fw-semibold" style="font-size:.87rem">
+                                                        <?php echo htmlspecialchars($country_name_display); ?>
+                                                    </div>
+                                                    <!-- barra de proporção -->
+                                                    <div
+                                                        style="height:4px;border-radius:4px;background:rgba(0,0,0,.06);width:140px;margin-top:4px;overflow:hidden">
+                                                        <div
+                                                            style="height:100%;border-radius:4px;background:<?php echo $color; ?>;width:<?php echo $pct; ?>%;transition:width .4s">
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="text-center small"><?php echo (int)$c['num_tracks']; ?></td>
-                                <td class="fw-bold" style="color:#FF0089">
-                                    <?php echo number_format((int)$c['total_streams']); ?>
-                                </td>
-                                <td class="small fw-semibold" style="color:#198754">
-                                    $<?php echo number_format((float)$c['total_revenue'], 4); ?>
-                                </td>
-                                <td class="text-center">
-                                    <a href="country-details?country=<?php echo $country_link; ?>&year=<?php echo $filter_year; ?>"
-                                        class="btn btn-sm btn-outline-secondary" style="border-radius:8px"
-                                        title="Ver detalhes de <?php echo htmlspecialchars($country_name_display); ?>">
-                                        <i class="bi bi-chevron-right"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
+                                        </td>
+                                        <td class="text-center small"><?php echo (int)$c['num_tracks']; ?></td>
+                                        <td class="fw-bold" style="color:#FF0089">
+                                            <?php echo number_format((int)$c['total_streams']); ?>
+                                        </td>
+                                        <td class="small fw-semibold" style="color:#198754">
+                                            $<?php echo number_format((float)$c['total_revenue'], 4); ?>
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="country-details?country=<?php echo $country_link; ?>&year=<?php echo $filter_year; ?>"
+                                                class="btn btn-sm btn-outline-secondary" style="border-radius:8px"
+                                                title="Ver detalhes de <?php echo htmlspecialchars($country_name_display); ?>">
+                                                <i class="bi bi-chevron-right"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 <?php endif; ?>
             </div>
         </div>
@@ -1034,28 +1035,29 @@ $cover_albums = $base_url . '/assets/comprovantes/uploads/covers/';
                     <span class="badge bg-secondary"><?php echo count($territories_data); ?></span>
                 </div>
                 <?php if (empty($territories_data)): ?>
-                <div class="empty-section">
-                    <div class="icon"><i class="bi bi-globe2"></i></div>
-                    <div class="small fw-semibold mb-1">Nenhum território configurado.</div>
-                    <div class="small">Define o campo <strong>Território</strong> nos teus álbuns para ver dados aqui.
+                    <div class="empty-section">
+                        <div class="icon"><i class="bi bi-globe2"></i></div>
+                        <div class="small fw-semibold mb-1">Nenhum território configurado.</div>
+                        <div class="small">Define o campo <strong>Território</strong> nos teus álbuns para ver dados aqui.
+                        </div>
+                        <a href="<?php echo APP_URL . "/" . APP_URL_PANEL ?>/releases" class="btn btn-sm btn-pink mt-3">Ver
+                            lançamentos</a>
                     </div>
-                    <a href="../launch/releases" class="btn btn-sm btn-pink mt-3">Ver lançamentos</a>
-                </div>
                 <?php else: ?>
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover mb-0" id="territoriesTable">
-                        <thead>
-                            <tr>
-                                <th>Território</th>
-                                <th>Álbuns</th>
-                                <th>Faixas</th>
-                                <th>Streams <?php echo $filter_year; ?></th>
-                                <th>Receita (USD)</th>
-                                <th class="text-center" style="width:60px">Detalhes</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover mb-0" id="territoriesTable">
+                            <thead>
+                                <tr>
+                                    <th>Território</th>
+                                    <th>Álbuns</th>
+                                    <th>Faixas</th>
+                                    <th>Streams <?php echo $filter_year; ?></th>
+                                    <th>Receita (USD)</th>
+                                    <th class="text-center" style="width:60px">Detalhes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
                                 // Paleta de cores para barras de território
                                 $terr_colors = ['#FF0089', '#6366f1', '#0d6efd', '#198754', '#f97316', '#06b6d4', '#8b5cf6', '#eab308'];
                                 $max_terr = max(array_column($territories_data, 'total_streams') ?: [1]);
@@ -1066,52 +1068,52 @@ $cover_albums = $base_url . '/assets/comprovantes/uploads/covers/';
                                     $terr_link = urlencode($terr['territory']);
                                     $is_worldwide = stripos($terr['territory'], 'worldwide') !== false;
                                 ?>
-                            <tr>
-                                <td>
-                                    <div class="d-flex align-items-center gap-2">
-                                        <?php if ($is_worldwide): ?>
-                                        <i class="bi bi-globe2"
-                                            style="color:<?php echo $color; ?>;font-size:1.1rem"></i>
-                                        <?php else: ?>
-                                        <i class="bi bi-geo-alt-fill"
-                                            style="color:<?php echo $color; ?>;font-size:1rem"></i>
-                                        <?php endif; ?>
-                                        <div>
-                                            <div class="fw-semibold" style="font-size:.87rem">
-                                                <?php echo htmlspecialchars(mb_substr($terr['territory'], 0, 40)); ?>
-                                                <?php if (mb_strlen($terr['territory']) > 40): ?><span
-                                                    class="text-muted small">…</span><?php endif; ?>
-                                            </div>
-                                            <!-- barra de proporção -->
-                                            <div
-                                                style="height:4px;border-radius:4px;background:rgba(0,0,0,.06);width:140px;margin-top:4px;overflow:hidden">
-                                                <div
-                                                    style="height:100%;border-radius:4px;background:<?php echo $color; ?>;width:<?php echo $pct; ?>%;transition:width .4s">
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <?php if ($is_worldwide): ?>
+                                                    <i class="bi bi-globe2"
+                                                        style="color:<?php echo $color; ?>;font-size:1.1rem"></i>
+                                                <?php else: ?>
+                                                    <i class="bi bi-geo-alt-fill"
+                                                        style="color:<?php echo $color; ?>;font-size:1rem"></i>
+                                                <?php endif; ?>
+                                                <div>
+                                                    <div class="fw-semibold" style="font-size:.87rem">
+                                                        <?php echo htmlspecialchars(mb_substr($terr['territory'], 0, 40)); ?>
+                                                        <?php if (mb_strlen($terr['territory']) > 40): ?><span
+                                                                class="text-muted small">…</span><?php endif; ?>
+                                                    </div>
+                                                    <!-- barra de proporção -->
+                                                    <div
+                                                        style="height:4px;border-radius:4px;background:rgba(0,0,0,.06);width:140px;margin-top:4px;overflow:hidden">
+                                                        <div
+                                                            style="height:100%;border-radius:4px;background:<?php echo $color; ?>;width:<?php echo $pct; ?>%;transition:width .4s">
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="text-center small"><?php echo (int)$terr['num_albums']; ?></td>
-                                <td class="text-center small"><?php echo (int)$terr['num_tracks']; ?></td>
-                                <td class="fw-bold" style="color:#FF0089">
-                                    <?php echo number_format((int)$terr['total_streams']); ?>
-                                </td>
-                                <td class="small fw-semibold" style="color:#198754">
-                                    $<?php echo number_format((float)$terr['total_revenue'], 4); ?>
-                                </td>
-                                <td class="text-center">
-                                    <a href="country-details?country=<?php echo $terr_link; ?>&year=<?php echo $filter_year; ?>"
-                                        class="btn btn-sm btn-outline-secondary" style="border-radius:8px"
-                                        title="Ver detalhes do território">
-                                        <i class="bi bi-chevron-right"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
+                                        </td>
+                                        <td class="text-center small"><?php echo (int)$terr['num_albums']; ?></td>
+                                        <td class="text-center small"><?php echo (int)$terr['num_tracks']; ?></td>
+                                        <td class="fw-bold" style="color:#FF0089">
+                                            <?php echo number_format((int)$terr['total_streams']); ?>
+                                        </td>
+                                        <td class="small fw-semibold" style="color:#198754">
+                                            $<?php echo number_format((float)$terr['total_revenue'], 4); ?>
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="country-details?country=<?php echo $terr_link; ?>&year=<?php echo $filter_year; ?>"
+                                                class="btn btn-sm btn-outline-secondary" style="border-radius:8px"
+                                                title="Ver detalhes do território">
+                                                <i class="bi bi-chevron-right"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 <?php endif; ?>
             </div>
         </div>
@@ -1140,7 +1142,7 @@ $cover_albums = $base_url . '/assets/comprovantes/uploads/covers/';
                         <i class="bi bi-funnel me-2"></i>
                         A exportar dados de <strong><?php echo $filter_year; ?></strong>
                         <?php if ($filter_store && isset($store_map[$filter_store])): ?>
-                        — <strong><?php echo htmlspecialchars($store_map[$filter_store]['name_store']); ?></strong>
+                            — <strong><?php echo htmlspecialchars($store_map[$filter_store]['name_store']); ?></strong>
                         <?php else: ?> — todas as plataformas<?php endif; ?>
                     </div>
 
@@ -1248,83 +1250,83 @@ $cover_albums = $base_url . '/assets/comprovantes/uploads/covers/';
     <script src="<?php echo APP_URL  ?>/js/theme.wp.js"></script>
     <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
     <script>
-    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
+        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
 
-    <?php if (!empty($chart_datasets)): ?>
-    // ── Chart.js ──────────────────────────────────
-    const ctx = document.getElementById('streamChart').getContext('2d');
-    const streamChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: <?php echo json_encode($months_pt_short); ?>,
-            datasets: <?php echo json_encode($chart_datasets); ?>
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            interaction: {
-                mode: 'index',
-                intersect: false
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    stacked: true,
-                    title: {
-                        display: true,
-                        text: 'Streams'
-                    }
+        <?php if (!empty($chart_datasets)): ?>
+            // ── Chart.js ──────────────────────────────────
+            const ctx = document.getElementById('streamChart').getContext('2d');
+            const streamChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: <?php echo json_encode($months_pt_short); ?>,
+                    datasets: <?php echo json_encode($chart_datasets); ?>
                 },
-                x: {
-                    stacked: true,
-                    title: {
-                        display: true,
-                        text: 'Mês'
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            stacked: true,
+                            title: {
+                                display: true,
+                                text: 'Streams'
+                            }
+                        },
+                        x: {
+                            stacked: true,
+                            title: {
+                                display: true,
+                                text: 'Mês'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        }
                     }
                 }
-            },
-            plugins: {
-                legend: {
-                    position: 'top'
-                },
-                tooltip: {
-                    mode: 'index',
-                    intersect: false
-                }
-            }
-        }
-    });
-    <?php endif; ?>
+            });
+        <?php endif; ?>
 
-    <?php if (!empty($countries_data)): ?>
-    $(document).ready(function() {
-        $('#countriesTable').DataTable({
-            paging: true,
-            searching: true,
-            ordering: true,
-            info: true,
-            lengthChange: false,
-            pageLength: 10,
-            order: [
-                [3, 'desc']
-            ], // ordenar por streams (coluna 3)
-            columnDefs: [{
-                    orderable: false,
-                    targets: [0, 5]
-                } // bandeira e detalhes não ordenáveis
-            ],
-            language: {
-                search: 'Pesquisar país:',
-                info: 'A mostrar _START_ a _END_ de _TOTAL_ países',
-                paginate: {
-                    next: 'Próximo',
-                    previous: 'Anterior'
-                },
-                emptyTable: 'Nenhum país com streams.'
-            }
-        });
-    });
-    <?php endif; ?>
+        <?php if (!empty($countries_data)): ?>
+            $(document).ready(function() {
+                $('#countriesTable').DataTable({
+                    paging: true,
+                    searching: true,
+                    ordering: true,
+                    info: true,
+                    lengthChange: false,
+                    pageLength: 10,
+                    order: [
+                        [3, 'desc']
+                    ], // ordenar por streams (coluna 3)
+                    columnDefs: [{
+                            orderable: false,
+                            targets: [0, 5]
+                        } // bandeira e detalhes não ordenáveis
+                    ],
+                    language: {
+                        search: 'Pesquisar país:',
+                        info: 'A mostrar _START_ a _END_ de _TOTAL_ países',
+                        paginate: {
+                            next: 'Próximo',
+                            previous: 'Anterior'
+                        },
+                        emptyTable: 'Nenhum país com streams.'
+                    }
+                });
+            });
+        <?php endif; ?>
     </script>
 </body>
 

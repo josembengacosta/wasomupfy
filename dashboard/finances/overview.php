@@ -270,7 +270,7 @@ $user_artist_name = htmlspecialchars($user['name_artist_band'] ?? $user['first_n
         <?php /* ── NÍVEL 1: Crítico — bloqueia distribuição ── */ ?>
 
         <?php if (!$email_verified): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'danger',
                 'bi-envelope-exclamation-fill',
                 '<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta e receber notificações de pagamentos.',
@@ -281,7 +281,7 @@ $user_artist_name = htmlspecialchars($user['name_artist_band'] ?? $user['first_n
         <?php endif; ?>
 
         <?php if ($plan && !$plan_paid): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'warning',
                 'bi-clock-history',
                 '<strong>Pagamento pendente — ' . htmlspecialchars($plan['name_plan']) . '.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados até confirmação.',
@@ -290,7 +290,7 @@ $user_artist_name = htmlspecialchars($user['name_artist_band'] ?? $user['first_n
                 'banner-plan-pending'
             ); ?>
         <?php elseif (!$plan): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'danger',
                 'bi-credit-card-fill',
                 '<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir a tua música para +150 plataformas.',
@@ -303,10 +303,10 @@ $user_artist_name = htmlspecialchars($user['name_artist_band'] ?? $user['first_n
         <?php /* ── NÍVEL 2: Importante — perfil incompleto ── */ ?>
 
         <?php if ($plan_paid && !$has_artist): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'info',
                 'bi-person-plus-fill',
-                '<strong>Cria o teu perfil de artista.</strong> Tens plano activo mas ainda não criaste um perfil. Precisas de um para poder lançar música.',
+                '<strong>Cria o teu perfil artístico.</strong> Tens plano activo mas ainda não criaste um perfil artístico. Precisas de um para poder lançar música.',
                 ['label' => 'Criar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/add-artist'],
                 true,
                 'banner-artist'
@@ -316,7 +316,7 @@ $user_artist_name = htmlspecialchars($user['name_artist_band'] ?? $user['first_n
         <?php /* ── NÍVEL 3: Informativo — conta bancária ── */ ?>
 
         <?php if ($plan_paid && $has_artist && !$bank_account): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'info',
                 'bi-bank',
                 '<strong>Conta bancária não registada.</strong> Para poder sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.',
@@ -337,7 +337,7 @@ $user_artist_name = htmlspecialchars($user['name_artist_band'] ?? $user['first_n
         }
         ?>
         <?php if ($rejected_account): ?>
-        <?php
+            <?php
             $rej_msg = '<strong>Conta ' . htmlspecialchars($rejected_account['type_account']) . ' rejeitada.</strong>';
             if ($rejected_account['reject_reason']) {
                 $rej_msg .= ' Motivo: <em>' . htmlspecialchars($rejected_account['reject_reason']) . '</em>.';
@@ -379,25 +379,25 @@ $user_artist_name = htmlspecialchars($user['name_artist_band'] ?? $user['first_n
                 <h2 id="balance"><?php echo number_format($balance_aoa, 2, ",", "."); ?> AOA</h2>
 
                 <?php if (!$plan_paid): ?>
-                <p class="text-warning small mb-2">
-                    <i class="bi bi-lock-fill me-1"></i>
-                    Activa o teu plano para começar a receber royalties.
-                </p>
+                    <p class="text-warning small mb-2">
+                        <i class="bi bi-lock-fill me-1"></i>
+                        Activa o teu plano para começar a receber royalties.
+                    </p>
                 <?php elseif (!$bank_account): ?>
-                <p class="text-muted small mb-2">
-                    <i class="bi bi-exclamation-circle me-1"></i>
-                    Para sacar, primeiro regista uma conta bancária.
-                </p>
+                    <p class="text-muted small mb-2">
+                        <i class="bi bi-exclamation-circle me-1"></i>
+                        Para sacar, primeiro regista uma conta bancária.
+                    </p>
                 <?php elseif ($balance_aoa < $min_withdrawal): ?>
-                <p class="text-muted small mb-2">
-                    <i class="bi bi-info-circle me-1"></i>
-                    Mínimo para saque: <strong>10.000 Kz</strong>
-                    (tens <?php echo number_format($balance_aoa, 0, ',', '.'); ?> Kz).
-                </p>
+                    <p class="text-muted small mb-2">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Mínimo para saque: <strong>10.000 Kz</strong>
+                        (tens <?php echo number_format($balance_aoa, 0, ',', '.'); ?> Kz).
+                    </p>
                 <?php else: ?>
-                <p class="small mb-2" style="color:#ccc">
-                    Os teus rendimentos estão prontos. Solicita o saque agora.
-                </p>
+                    <p class="small mb-2" style="color:#ccc">
+                        Os teus rendimentos estão prontos. Solicita o saque agora.
+                    </p>
                 <?php endif; ?>
 
                 <div class="d-flex gap-2 mt-2">
@@ -407,20 +407,20 @@ $user_artist_name = htmlspecialchars($user['name_artist_band'] ?? $user['first_n
                     </button>
 
                     <?php if (!$bank_account): ?>
-                    <!-- Sem conta: leva para criar conta bancária -->
-                    <a href="withdraw" class="btn btn-pink">
-                        <i class="bi bi-bank me-1"></i> Criar Conta Bancária
-                    </a>
+                        <!-- Sem conta: leva para criar conta bancária -->
+                        <a href="withdraw" class="btn btn-pink">
+                            <i class="bi bi-bank me-1"></i> Criar Conta Bancária
+                        </a>
                     <?php elseif ($can_withdraw): ?>
-                    <!-- Pode sacar -->
-                    <button class="btn btn-pink" data-bs-toggle="modal" data-bs-target="#sake">
-                        <i class="bi bi-wallet2 me-2"></i> Sacar
-                    </button>
+                        <!-- Pode sacar -->
+                        <button class="btn btn-pink" data-bs-toggle="modal" data-bs-target="#sake">
+                            <i class="bi bi-wallet2 me-2"></i> Sacar
+                        </button>
                     <?php else: ?>
-                    <!-- Saldo insuficiente ou plano inactivo -->
-                    <button class="btn btn-pink" disabled title="Saldo mínimo de 10.000 Kz necessário">
-                        <i class="bi bi-wallet2 me-2"></i> Sacar
-                    </button>
+                        <!-- Saldo insuficiente ou plano inactivo -->
+                        <button class="btn btn-pink" disabled title="Saldo mínimo de 10.000 Kz necessário">
+                            <i class="bi bi-wallet2 me-2"></i> Sacar
+                        </button>
                     <?php endif; ?>
                 </div>
             </div>
@@ -466,51 +466,51 @@ $user_artist_name = htmlspecialchars($user['name_artist_band'] ?? $user['first_n
                 </div>
                 <div class="table-responsive">
                     <?php if (empty($royalties)): ?>
-                    <div class="text-center py-5 text-muted">
-                        <i class="bi bi-music-note-list fs-1 d-block mb-2 opacity-25"></i>
-                        <div class="small">Nenhum royalty registado ainda.</div>
-                        <div class="small">Os royalties aparecem aqui após a aprovação dos teus lançamentos.</div>
-                    </div>
+                        <div class="text-center py-5 text-muted">
+                            <i class="bi bi-music-note-list fs-1 d-block mb-2 opacity-25"></i>
+                            <div class="small">Nenhum royalty registado ainda.</div>
+                            <div class="small">Os royalties aparecem aqui após a aprovação dos teus lançamentos.</div>
+                        </div>
                     <?php else: ?>
-                    <table id="royaltiesTable" class="table table-striped table-hover mb-0">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Faixa / Álbum</th>
-                                <th>Período</th>
-                                <th>Bruto (USD)</th>
-                                <th>Líquido (USD)</th>
-                                <th>Líquido (AOA)</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($royalties as $r):
+                        <table id="royaltiesTable" class="table table-striped table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Faixa / Álbum</th>
+                                    <th>Período</th>
+                                    <th>Bruto (USD)</th>
+                                    <th>Líquido (USD)</th>
+                                    <th>Líquido (AOA)</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($royalties as $r):
                                     $rs  = $royalty_status[$r['status_royalty']] ?? $royalty_status['pending'];
                                     $per = $months_pt[(int)$r['month_royalty']] . '/' . $r['year_royalty'];
                                 ?>
-                            <tr>
-                                <td class="text-muted small"><?php echo (int)$r['id_royalty']; ?></td>
-                                <td>
-                                    <div class="fw-semibold small"><?php echo htmlspecialchars($r['title_track']); ?>
-                                    </div>
-                                    <div class="text-muted" style="font-size:.72rem">
-                                        <?php echo htmlspecialchars($r['title_album']); ?></div>
-                                </td>
-                                <td class="small"><?php echo $per; ?></td>
-                                <td class="small fw-semibold">
-                                    $<?php echo number_format((float)$r['gross_revenue'], 4); ?></td>
-                                <td class="small fw-semibold text-success">
-                                    $<?php echo number_format((float)$r['net_royalty'], 4); ?></td>
-                                <td class="small fw-semibold">
-                                    <?php echo $r['net_royalty_aoa'] ? number_format((float)$r['net_royalty_aoa'], 2, ',', '.') . ' Kz' : '—'; ?>
-                                </td>
-                                <td><span class="badge <?php echo $rs['class']; ?>"><?php echo $rs['label']; ?></span>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                                    <tr>
+                                        <td class="text-muted small"><?php echo (int)$r['id_royalty']; ?></td>
+                                        <td>
+                                            <div class="fw-semibold small"><?php echo htmlspecialchars($r['title_track']); ?>
+                                            </div>
+                                            <div class="text-muted" style="font-size:.72rem">
+                                                <?php echo htmlspecialchars($r['title_album']); ?></div>
+                                        </td>
+                                        <td class="small"><?php echo $per; ?></td>
+                                        <td class="small fw-semibold">
+                                            $<?php echo number_format((float)$r['gross_revenue'], 4); ?></td>
+                                        <td class="small fw-semibold text-success">
+                                            $<?php echo number_format((float)$r['net_royalty'], 4); ?></td>
+                                        <td class="small fw-semibold">
+                                            <?php echo $r['net_royalty_aoa'] ? number_format((float)$r['net_royalty_aoa'], 2, ',', '.') . ' Kz' : '—'; ?>
+                                        </td>
+                                        <td><span class="badge <?php echo $rs['class']; ?>"><?php echo $rs['label']; ?></span>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
                     <?php endif; ?>
                 </div>
             </div>
@@ -525,47 +525,47 @@ $user_artist_name = htmlspecialchars($user['name_artist_band'] ?? $user['first_n
                 </div>
                 <div class="table-responsive">
                     <?php if (empty($withdrawals)): ?>
-                    <div class="text-center py-5 text-muted">
-                        <i class="bi bi-bank fs-1 d-block mb-2 opacity-25"></i>
-                        <div class="small">Nenhum saque realizado ainda.</div>
-                    </div>
+                        <div class="text-center py-5 text-muted">
+                            <i class="bi bi-bank fs-1 d-block mb-2 opacity-25"></i>
+                            <div class="small">Nenhum saque realizado ainda.</div>
+                        </div>
                     <?php else: ?>
-                    <table id="withdrawalsTable" class="table table-striped table-hover mb-0">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Data</th>
-                                <th>Conta destino</th>
-                                <th>Valor pedido</th>
-                                <th>Valor líquido</th>
-                                <th>Moeda</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($withdrawals as $w):
+                        <table id="withdrawalsTable" class="table table-striped table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Data</th>
+                                    <th>Conta destino</th>
+                                    <th>Valor pedido</th>
+                                    <th>Valor líquido</th>
+                                    <th>Moeda</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($withdrawals as $w):
                                     $ws = $withdrawal_status[$w['status_withdrawal']] ?? $withdrawal_status['pending'];
                                 ?>
-                            <tr>
-                                <td class="text-muted small"><?php echo (int)$w['id_withdrawal']; ?></td>
-                                <td class="small"><?php echo date('d/m/Y', strtotime($w['creat_withdrawal'])); ?></td>
-                                <td class="small">
-                                    <div class="fw-semibold">
-                                        <?php echo htmlspecialchars($w['full_name_account'] ?? '—'); ?></div>
-                                    <div class="text-muted" style="font-size:.7rem">
-                                        <?php echo htmlspecialchars($w['type_account'] ?? ''); ?></div>
-                                </td>
-                                <td class="small fw-semibold">
-                                    <?php echo number_format((float)$w['amount_requested'], 2, ',', '.'); ?></td>
-                                <td class="small fw-semibold text-success">
-                                    <?php echo number_format((float)$w['amount_net'], 2, ',', '.'); ?></td>
-                                <td class="small"><?php echo htmlspecialchars($w['currency']); ?></td>
-                                <td><span class="badge <?php echo $ws['class']; ?>"><?php echo $ws['label']; ?></span>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                                    <tr>
+                                        <td class="text-muted small"><?php echo (int)$w['id_withdrawal']; ?></td>
+                                        <td class="small"><?php echo date('d/m/Y', strtotime($w['creat_withdrawal'])); ?></td>
+                                        <td class="small">
+                                            <div class="fw-semibold">
+                                                <?php echo htmlspecialchars($w['full_name_account'] ?? '—'); ?></div>
+                                            <div class="text-muted" style="font-size:.7rem">
+                                                <?php echo htmlspecialchars($w['type_account'] ?? ''); ?></div>
+                                        </td>
+                                        <td class="small fw-semibold">
+                                            <?php echo number_format((float)$w['amount_requested'], 2, ',', '.'); ?></td>
+                                        <td class="small fw-semibold text-success">
+                                            <?php echo number_format((float)$w['amount_net'], 2, ',', '.'); ?></td>
+                                        <td class="small"><?php echo htmlspecialchars($w['currency']); ?></td>
+                                        <td><span class="badge <?php echo $ws['class']; ?>"><?php echo $ws['label']; ?></span>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
                     <?php endif; ?>
                 </div>
             </div>
@@ -587,99 +587,99 @@ $user_artist_name = htmlspecialchars($user['name_artist_band'] ?? $user['first_n
                 <div class="modal-body">
                     <?php if ($can_withdraw && $bank_account): ?>
 
-                    <!-- ─ Estado: pode sacar ─ -->
-                    <p class="text-muted small mb-3">
-                        <i class="bi bi-info-circle me-1"></i>
-                        O valor é processado pela equipa em até 48 horas. Receberás uma notificação por e-mail.
-                    </p>
-                    <form method="post" action="finances/withdrawal_process" class="needs-validation row g-3" novalidate
-                        id="withdrawal-form">
-                        <input type="hidden" name="csrf_token"
-                            value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
+                        <!-- ─ Estado: pode sacar ─ -->
+                        <p class="text-muted small mb-3">
+                            <i class="bi bi-info-circle me-1"></i>
+                            O valor é processado pela equipa em até 48 horas. Receberás uma notificação por e-mail.
+                        </p>
+                        <form method="post" action="finances/withdrawal_process" class="needs-validation row g-3" novalidate
+                            id="withdrawal-form">
+                            <input type="hidden" name="csrf_token"
+                                value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
 
-                        <!-- Valor (preenchido automaticamente) -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Valor de Saque <span
-                                    class="text-muted">(AOA)</span></label>
-                            <input type="text" class="form-control" readonly
-                                value="<?php echo number_format($balance_aoa, 2, ',', '.'); ?>">
-                            <div class="form-text">Valor total disponível</div>
-                        </div>
-
-                        <!-- Conta destino -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Conta Destino</label>
-                            <div class="form-control bg-light d-flex align-items-center gap-2"
-                                style="height:auto;padding:.6rem .9rem">
-                                <?php if (in_array($bank_account['type_account'], ['IBAN', 'Multicaixa'])): ?>
-                                <i class="bi bi-bank text-primary"></i>
-                                <div>
-                                    <div class="fw-semibold small">
-                                        <?php echo htmlspecialchars($bank_account['full_name_account']); ?></div>
-                                    <div class="text-muted" style="font-size:.75rem">IBAN ·
-                                        <?php echo $bank_account['iban'] ? substr(htmlspecialchars($bank_account['iban']), -8) : 'N/A'; ?>
-                                    </div>
-                                </div>
-                                <?php else: ?>
-                                <i class="bi bi-phone text-success"></i>
-                                <div>
-                                    <div class="fw-semibold small">
-                                        <?php echo htmlspecialchars($bank_account['full_name_account']); ?></div>
-                                    <div class="text-muted" style="font-size:.75rem">Express ·
-                                        <?php echo htmlspecialchars($bank_account['tel_account'] ?? 'N/A'); ?></div>
-                                </div>
-                                <?php endif; ?>
+                            <!-- Valor (preenchido automaticamente) -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Valor de Saque <span
+                                        class="text-muted">(AOA)</span></label>
+                                <input type="text" class="form-control" readonly
+                                    value="<?php echo number_format($balance_aoa, 2, ',', '.'); ?>">
+                                <div class="form-text">Valor total disponível</div>
                             </div>
-                        </div>
 
-                        <!-- Senha de confirmação -->
-                        <div class="col-12">
-                            <label class="form-label fw-semibold">Confirmar com a tua senha <span
-                                    class="text-danger">*</span></label>
-                            <input type="password" name="password" class="form-control" required
-                                placeholder="Senha da tua conta Wasom Upfy" autocomplete="current-password">
-                            <div class="invalid-feedback">Insere a tua senha para confirmar o saque.</div>
-                        </div>
-
-                        <div class="col-12">
-                            <div class="alert alert-warning py-2 small mb-0">
-                                <i class="bi bi-shield-check me-1"></i>
-                                Ao confirmar, autorizes o envio de
-                                <strong><?php echo number_format($balance_aoa, 2, ',', '.'); ?> AOA</strong>
-                                para a conta registada. Esta operação não pode ser revertida.
+                            <!-- Conta destino -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Conta Destino</label>
+                                <div class="form-control bg-light d-flex align-items-center gap-2"
+                                    style="height:auto;padding:.6rem .9rem">
+                                    <?php if (in_array($bank_account['type_account'], ['IBAN', 'Multicaixa'])): ?>
+                                        <i class="bi bi-bank text-primary"></i>
+                                        <div>
+                                            <div class="fw-semibold small">
+                                                <?php echo htmlspecialchars($bank_account['full_name_account']); ?></div>
+                                            <div class="text-muted" style="font-size:.75rem">IBAN ·
+                                                <?php echo $bank_account['iban'] ? substr(htmlspecialchars($bank_account['iban']), -8) : 'N/A'; ?>
+                                            </div>
+                                        </div>
+                                    <?php else: ?>
+                                        <i class="bi bi-phone text-success"></i>
+                                        <div>
+                                            <div class="fw-semibold small">
+                                                <?php echo htmlspecialchars($bank_account['full_name_account']); ?></div>
+                                            <div class="text-muted" style="font-size:.75rem">Express ·
+                                                <?php echo htmlspecialchars($bank_account['tel_account'] ?? 'N/A'); ?></div>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="col-12 d-grid">
-                            <button type="submit" class="btn btn-pink">
-                                <i class="bi bi-send me-2"></i>Confirmar Saque
-                            </button>
-                        </div>
-                    </form>
+                            <!-- Senha de confirmação -->
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Confirmar com a tua senha <span
+                                        class="text-danger">*</span></label>
+                                <input type="password" name="password" class="form-control" required
+                                    placeholder="Senha da tua conta Wasom Upfy" autocomplete="current-password">
+                                <div class="invalid-feedback">Insere a tua senha para confirmar o saque.</div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="alert alert-warning py-2 small mb-0">
+                                    <i class="bi bi-shield-check me-1"></i>
+                                    Ao confirmar, autorizes o envio de
+                                    <strong><?php echo number_format($balance_aoa, 2, ',', '.'); ?> AOA</strong>
+                                    para a conta registada. Esta operação não pode ser revertida.
+                                </div>
+                            </div>
+
+                            <div class="col-12 d-grid">
+                                <button type="submit" class="btn btn-pink">
+                                    <i class="bi bi-send me-2"></i>Confirmar Saque
+                                </button>
+                            </div>
+                        </form>
 
                     <?php else: ?>
-                    <!-- ─ Estado: não pode sacar ─ -->
-                    <div class="text-center py-4">
-                        <i class="bi bi-lock fs-1 text-muted mb-3 d-block"></i>
-                        <?php if (!$plan_paid): ?>
-                        <h6>Plano não activo</h6>
-                        <p class="text-muted small">Activa o teu plano para começar a receber royalties e fazer
-                            saques.</p>
-                        <a href="payment" class="btn btn-pink btn-sm">Activar Plano</a>
-                        <?php elseif (!$bank_account): ?>
-                        <h6>Sem conta bancária registada</h6>
-                        <p class="text-muted small">Para sacar os teus royalties, primeiro regista uma conta
-                            bancária (IBAN ou Multicaixa Express).</p>
-                        <a href="withdraw" class="btn btn-pink btn-sm">
-                            <i class="bi bi-bank me-1"></i>Registar Conta Bancária
-                        </a>
-                        <?php else: ?>
-                        <h6>Saldo insuficiente</h6>
-                        <p class="text-muted small">O mínimo para saque é <strong>10.000 Kz</strong>. O teu saldo
-                            actual é <strong><?php echo number_format($balance_aoa, 2, ',', '.'); ?> AOA</strong>.
-                        </p>
-                        <?php endif; ?>
-                    </div>
+                        <!-- ─ Estado: não pode sacar ─ -->
+                        <div class="text-center py-4">
+                            <i class="bi bi-lock fs-1 text-muted mb-3 d-block"></i>
+                            <?php if (!$plan_paid): ?>
+                                <h6>Plano não activo</h6>
+                                <p class="text-muted small">Activa o teu plano para começar a receber royalties e fazer
+                                    saques.</p>
+                                <a href="payment" class="btn btn-pink btn-sm">Activar Plano</a>
+                            <?php elseif (!$bank_account): ?>
+                                <h6>Sem conta bancária registada</h6>
+                                <p class="text-muted small">Para sacar os teus royalties, primeiro regista uma conta
+                                    bancária (IBAN ou Multicaixa Express).</p>
+                                <a href="withdraw" class="btn btn-pink btn-sm">
+                                    <i class="bi bi-bank me-1"></i>Registar Conta Bancária
+                                </a>
+                            <?php else: ?>
+                                <h6>Saldo insuficiente</h6>
+                                <p class="text-muted small">O mínimo para saque é <strong>10.000 Kz</strong>. O teu saldo
+                                    actual é <strong><?php echo number_format($balance_aoa, 2, ',', '.'); ?> AOA</strong>.
+                                </p>
+                            <?php endif; ?>
+                        </div>
                     <?php endif; ?>
 
                 </div>
@@ -698,89 +698,89 @@ $user_artist_name = htmlspecialchars($user['name_artist_band'] ?? $user['first_n
     <script src="<?php echo APP_URL  ?>/js/theme.wp.js"></script>
     <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
     <script>
-    // Tooltips
-    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
+        // Tooltips
+        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
 
-    // DataTables (apenas se a tabela tiver linhas)
-    $(document).ready(function() {
-        <?php if (!empty($royalties)): ?>
-        $('#royaltiesTable').DataTable({
-            paging: true,
-            searching: true,
-            ordering: true,
-            info: true,
-            lengthChange: false,
-            pageLength: 10,
-            order: [
-                [2, 'desc']
-            ],
-            language: {
-                search: 'Pesquisar royalties:',
-                info: 'A mostrar _START_ a _END_ de _TOTAL_',
-                paginate: {
-                    next: 'Próximo',
-                    previous: 'Anterior'
-                },
-                emptyTable: 'Sem royalties registados.'
-            }
+        // DataTables (apenas se a tabela tiver linhas)
+        $(document).ready(function() {
+            <?php if (!empty($royalties)): ?>
+                $('#royaltiesTable').DataTable({
+                    paging: true,
+                    searching: true,
+                    ordering: true,
+                    info: true,
+                    lengthChange: false,
+                    pageLength: 10,
+                    order: [
+                        [2, 'desc']
+                    ],
+                    language: {
+                        search: 'Pesquisar royalties:',
+                        info: 'A mostrar _START_ a _END_ de _TOTAL_',
+                        paginate: {
+                            next: 'Próximo',
+                            previous: 'Anterior'
+                        },
+                        emptyTable: 'Sem royalties registados.'
+                    }
+                });
+            <?php endif; ?>
+
+            <?php if (!empty($withdrawals)): ?>
+                $('#withdrawalsTable').DataTable({
+                    paging: true,
+                    searching: true,
+                    ordering: true,
+                    info: true,
+                    lengthChange: false,
+                    pageLength: 10,
+                    order: [
+                        [1, 'desc']
+                    ],
+                    language: {
+                        search: 'Pesquisar saques:',
+                        info: 'A mostrar _START_ a _END_ de _TOTAL_',
+                        paginate: {
+                            next: 'Próximo',
+                            previous: 'Anterior'
+                        },
+                        emptyTable: 'Sem saques registados.'
+                    }
+                });
+            <?php endif; ?>
         });
-        <?php endif; ?>
 
-        <?php if (!empty($withdrawals)): ?>
-        $('#withdrawalsTable').DataTable({
-            paging: true,
-            searching: true,
-            ordering: true,
-            info: true,
-            lengthChange: false,
-            pageLength: 10,
-            order: [
-                [1, 'desc']
-            ],
-            language: {
-                search: 'Pesquisar saques:',
-                info: 'A mostrar _START_ a _END_ de _TOTAL_',
-                paginate: {
-                    next: 'Próximo',
-                    previous: 'Anterior'
-                },
-                emptyTable: 'Sem saques registados.'
-            }
-        });
+        // Validação form saque
+        <?php if ($can_withdraw && !$has_pending_withdrawal): ?>
+            document.getElementById('withdrawal-form')?.addEventListener('submit', function(e) {
+                if (!this.checkValidity()) {
+                    e.preventDefault();
+                }
+                this.classList.add('was-validated');
+            });
         <?php endif; ?>
-    });
-
-    // Validação form saque
-    <?php if ($can_withdraw && !$has_pending_withdrawal): ?>
-    document.getElementById('withdrawal-form')?.addEventListener('submit', function(e) {
-        if (!this.checkValidity()) {
-            e.preventDefault();
-        }
-        this.classList.add('was-validated');
-    });
-    <?php endif; ?>
     </script>
 
     <script>
-    (function() {
-        function refreshBadge() {
-            fetch('../ajax/notifications_api.php?action=count', {
-                    credentials: 'same-origin'
-                })
-                .then(r => r.json())
-                .then(data => {
-                    var b = document.getElementById('navNotifBadge');
-                    if (!b) return;
-                    var n = parseInt(data.unread || 0);
-                    b.textContent = n > 99 ? '99+' : n;
-                    b.style.display = n > 0 ? '' : 'none';
-                }).catch(function() {});
-        }
-        setTimeout(function() {
-            refreshBadge();
-            setInterval(refreshBadge, 60000);
-        }, 30000);
-    })();
+        (function() {
+            function refreshBadge() {
+                fetch('../ajax/notifications_api.php?action=count', {
+                        credentials: 'same-origin'
+                    })
+                    .then(r => r.json())
+                    .then(data => {
+                        var b = document.getElementById('navNotifBadge');
+                        if (!b) return;
+                        var n = parseInt(data.unread || 0);
+                        b.textContent = n > 99 ? '99+' : n;
+                        b.style.display = n > 0 ? '' : 'none';
+                    }).catch(function() {});
+            }
+            setTimeout(function() {
+                refreshBadge();
+                setInterval(refreshBadge, 60000);
+            }, 30000);
+        })();
     </script>
 </body>
 

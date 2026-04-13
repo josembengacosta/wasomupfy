@@ -471,7 +471,7 @@ $photo_base = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/artists/';
             <?php wuAlert(
                 'info',
                 'bi-person-plus-fill',
-                '<strong>Cria o teu perfil de artista.</strong> Tens plano activo mas ainda não criaste um perfil. Precisas de um para poder lançar música.',
+                '<strong>Cria o teu perfil artístico.</strong> Tens plano activo mas ainda não criaste um perfil artístico. Precisas de um para poder lançar música.',
                 ['label' => 'Criar agora', 'url' => 'artists/add-artist'],
                 true,
                 'banner-artist'
@@ -1040,7 +1040,7 @@ $photo_base = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/artists/';
 
     <script>
         const CSRF = '<?php echo $csrf; ?>';
-        const BASE = '<?php echo (APP_URL. '/' . APP_URL_PANEL); ?>';
+        const BASE = '<?php echo (APP_URL . '/' . APP_URL_PANEL); ?>';
         const PROCESS = BASE + '/artists/add_artist_process';
 
         toastr.options = {

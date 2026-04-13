@@ -13,7 +13,7 @@ define('DB_CHARSET', 'utf8mb4');
 
 // ─── Aplicação ────────────────────────────────
 define('APP_NAME',    'Wasom Upfy');
-define('APP_VERSION', '146.0.3856.62');
+define('APP_VERSION', '2.0');
 define('APP_URL',     'http://localhost/wasomupfy'); // Mudar em produção
 define('APP_URL_PANEL',     'dashboard');
 define('APP_ENV',     'production');                 // 'development' = debug local | 'production' = envio real

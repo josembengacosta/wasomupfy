@@ -4,6 +4,10 @@
 // Arquivo: authentic/include/functions.php
 // ══════════════════════════════════════════════
 
+// Guard: impede redeclaração se incluído por múltiplos caminhos na mesma request
+if (defined('WASOM_FUNCTIONS_LOADED')) return;
+define('WASOM_FUNCTIONS_LOADED', true);
+
 require_once __DIR__ . '/connection.php';
 
 // ════════════════════════════════════════════════
@@ -579,6 +583,60 @@ function destroyUserSession(int $id_users): void
     }
 }
 
+/**
+ * Finaliza o login do utilizador, criando sessão, token, cookie e logs.
+ * Usado tanto no login normal quanto na reactivação.
+ */
+function completeLogin(array $user, bool $remember): void
+{
+    $uid = (int)$user['id_users'];
+    $db = getDB();
+
+    session_regenerate_id(true);
+
+    $_SESSION['id_users']        = $uid;
+    $_SESSION['first_name']      = $user['first_name'];
+    $_SESSION['user_name']       = $user['user_name'];
+    $_SESSION['email']           = $user['email_user'];
+    $_SESSION['status']          = $user['status_user'];
+    $_SESSION['email_verified']  = (bool)$user['email_verified'];
+    $_SESSION['plan_selected']   = $user['plan_selected'];
+    $_SESSION['onboarding_done'] = (bool)($user['onboarding_done'] ?? false);
+
+    $session_token = bin2hex(random_bytes(32));
+    $db->prepare("
+        INSERT INTO _users_sessions (id_users, session_token, ip_address, user_agent, is_active, last_activity)
+        VALUES (?, ?, ?, ?, 1, NOW())
+    ")->execute([$uid, $session_token, $_SERVER['REMOTE_ADDR'] ?? null, $_SERVER['HTTP_USER_AGENT'] ?? null]);
+    $_SESSION['session_token'] = $session_token;
+
+    // Se a função updateUserPresence existir (dashboard/include/platform.php)
+    if (function_exists('updateUserPresence')) {
+        updateUserPresence($uid, '/' . trim((string)APP_URL_PANEL, '/') . '/painel', 'login', 'online', $session_token);
+    }
+
+    $db->prepare("UPDATE _users_security SET last_login_at = NOW(), last_login_ip = ? WHERE id_users = ?")
+        ->execute([$_SERVER['REMOTE_ADDR'] ?? null, $uid]);
+
+    if ($remember) {
+        $remember_token = bin2hex(random_bytes(32));
+        $expires = time() + (30 * 24 * 3600);
+        setcookie('wuf_remember', $remember_token, [
+            'expires' => $expires,
+            'path' => '/',
+            'secure' => (APP_ENV === 'production'),
+            'httponly' => true,
+            'samesite' => 'Strict',
+        ]);
+        $db->prepare("UPDATE _users_security SET remember_token = ? WHERE id_users = ?")
+            ->execute([$remember_token, $uid]);
+        $_SESSION['remember_expires'] = $expires;
+    }
+
+    resetLoginAttempts($uid);
+    logActivity($uid, 'login', 'Sessão iniciada com sucesso');
+}
+
 function verifyUserPassword(int $id_users, string $password): bool
 {
     $db = getDB();
@@ -858,9 +916,11 @@ function logActivity(int $id_users, string $type, string $desc, ?string $entity 
 // HELPERS
 // ════════════════════════════════════════════════
 
+if (!function_exists('sanitize')) {
 function sanitize(string $value): string
 {
     return htmlspecialchars(strip_tags(trim($value)), ENT_QUOTES, 'UTF-8');
+}
 }
 
 function redirect(string $path, array $params = []): void
@@ -890,6 +950,7 @@ function formatPrice(float $amount, string $currency = 'AOA'): string
 {
     return number_format($amount, 2, ',', '.') . ' ' . $currency;
 }
+
 
 // ════════════════════════════════════════════════
 // REMEMBER ME — Validação automática de cookie

@@ -647,7 +647,7 @@ function getDashboardAlerts(array $user, array $platform): array
             'type'    => 'info',
             'icon'    => 'bi-star-fill',
             'message' => 'Ainda não tens um plano activo. Escolhe um plano para começar a distribuir.',
-            'action'  => ['label' => 'Ver Planos', 'url' => APP_URL . '/' . APP_URL_PANEL . '/overview'],
+            'action'  => ['label' => 'Ver Planos', 'url' => APP_URL . '/' . APP_URL_PANEL . '/all-plans'],
             'dismiss' => false,
         ];
     }
@@ -1047,4 +1047,33 @@ function avatarInitials(string $name, int $size = 40): string
         . "justify-content:center;font-family:'Syne',sans-serif;"
         . "font-weight:900;font-size:" . round($size * 0.38) . "px;color:#fff;"
         . "flex-shrink:0;\" data-initials=\"{$initials}";
+}
+
+/**
+ * Verifica se o usuário já possui o artista responsável (principal).
+ * Considera que o stage_name deve ser igual ao name_artist_band do usuário.
+ */
+function hasMainArtist(int $id_users): bool
+{
+    $db = getDB();
+    $stmt = $db->prepare("SELECT name_artist_band FROM _users WHERE id_users = ?");
+    $stmt->execute([$id_users]);
+    $user = $stmt->fetch();
+    if (!$user || empty($user['name_artist_band'])) {
+        return false;
+    }
+    $stmt = $db->prepare("SELECT id_artist FROM _artist WHERE id_users = ? AND stage_name = ?");
+    $stmt->execute([$id_users, $user['name_artist_band']]);
+    return $stmt->fetch() !== false;
+}
+
+/**
+ * Verifica se o usuário possui pelo menos um artista (qualquer).
+ */
+function hasAnyArtist(int $id_users): bool
+{
+    $db = getDB();
+    $stmt = $db->prepare("SELECT COUNT(*) FROM _artist WHERE id_users = ?");
+    $stmt->execute([$id_users]);
+    return (int)$stmt->fetchColumn() > 0;
 }

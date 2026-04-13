@@ -220,7 +220,7 @@ if ($action === 'set_processing_withdrawal') {
             'payment',
             'Saque em Processamento 🔄',
             'O teu saque de ' . biz_fmt_d((float)$wd['amount_net']) . ' está a ser processado. Serás notificado quando concluído.',
-            APP_URL .'/'. APP_URL_PANEL . '/withdraw'
+            APP_URL .'/'. APP_URL_PANEL . '/overview'
         );
         biz_mail($wd['email_user'], 'Saque em processamento — ' . APP_NAME, wd_email($wd, 'processing'));
         logAudit(
@@ -292,7 +292,7 @@ if ($action === 'approve_withdrawal') {
             'payment',
             'Saque Aprovado ✅',
             'O teu saque de ' . biz_fmt_d((float)$wd['amount_net']) . ' foi aprovado e o pagamento efectuado.',
-            APP_URL .'/'. APP_URL_PANEL . '/withdraw'
+            APP_URL .'/'. APP_URL_PANEL . '/overview'
         );
         biz_mail($wd['email_user'], 'Saque aprovado — ' . APP_NAME, wd_email($wd, 'approved', '', $pu));
         logAudit(
@@ -322,38 +322,61 @@ if ($action === 'reject_withdrawal') {
     if (!$id) jOut(false, 'ID inválido.');
     if (!$reason) jOut(false, 'O motivo é obrigatório.');
 
-    $w = $db->prepare("SELECT w.*,u.email_user,u.first_name,u.second_name FROM _withdrawal w JOIN _users u ON u.id_users=w.id_users WHERE w.id_withdrawal=?");
+    $w = $db->prepare("SELECT w.*, u.email_user, u.first_name, u.second_name, wl.id_wallet, wl.balance_aoa, wl.total_withdrawn 
+        FROM _withdrawal w 
+        JOIN _users u ON u.id_users = w.id_users 
+        LEFT JOIN _wallet wl ON wl.id_users = w.id_users 
+        WHERE w.id_withdrawal = ?");
     $w->execute([$id]);
     $wd = $w->fetch();
     if (!$wd) jOut(false, 'Pedido não encontrado.');
     if (!in_array($wd['status_withdrawal'], ['pending', 'processing'])) jOut(false, 'Pedido já foi processado.');
 
     try {
-        $db->prepare("UPDATE _withdrawal SET status_withdrawal='rejected',reviewed_by=?,reviewed_at=NOW(),rejection_reason=? WHERE id_withdrawal=?")
+        $db->beginTransaction();
+
+        // 1. Atualizar status do saque
+        $db->prepare("UPDATE _withdrawal SET status_withdrawal='rejected', reviewed_by=?, reviewed_at=NOW(), rejection_reason=? WHERE id_withdrawal=?")
             ->execute([$admin_id, $reason, $id]);
-        notifyUser(
-            $db,
-            $wd['id_users'],
-            $admin_id,
-            'warning',
-            'Saque Rejeitado ❌',
-            'O teu saque foi rejeitado. Motivo: ' . $reason,
-            APP_URL .'/'. APP_URL_PANEL . '/withdraw'
-        );
+
+        // 2. Devolver o valor à carteira (reverter a dedução feita na solicitação)
+        if ($wd['id_wallet']) {
+            $amount = (float)$wd['amount_requested'];
+            $new_balance = (float)$wd['balance_aoa'] + $amount;
+            $new_withdrawn = max(0, (float)$wd['total_withdrawn'] - $amount);
+            $db->prepare("UPDATE _wallet SET balance_aoa = ?, total_withdrawn = ?, modif_wallet = NOW() WHERE id_wallet = ?")
+                ->execute([$new_balance, $new_withdrawn, $wd['id_wallet']]);
+
+            // 3. Registrar transação de estorno
+            $ref = 'WD-REJ-' . str_pad($id, 6, '0', STR_PAD_LEFT);
+            $tx = $db->prepare("INSERT INTO _transaction (id_users, id_employees, type_transaction, amount, currency, balance_before, balance_after, reference, description) 
+                VALUES (?, ?, 'withdrawal_reversal', ?, 'AOA', ?, ?, ?, ?)");
+            $tx->execute([
+                $wd['id_users'],
+                $admin_id,
+                $amount,
+                $wd['balance_aoa'],
+                $new_balance,
+                $ref,
+                'Estorno de saque rejeitado #' . $id . ' - Motivo: ' . $reason
+            ]);
+        }
+
+        // 4. Notificações e log
+        notifyUser($db, $wd['id_users'], $admin_id, 'warning', 'Saque Rejeitado ❌', 
+            'O teu saque foi rejeitado. Motivo: ' . $reason, 
+            APP_URL .'/'. APP_URL_PANEL . '/overview');
         biz_mail($wd['email_user'], 'Saque rejeitado — ' . APP_NAME, wd_email($wd, 'rejected', $reason));
-        logAudit(
-            $admin_id,
-            $wd['id_users'],
-            'withdrawal.rejected',
-            '_withdrawal',
-            $id,
+        logAudit($admin_id, $wd['id_users'], 'withdrawal.rejected', '_withdrawal', $id,
             json_encode(['status_withdrawal' => $wd['status_withdrawal']]),
-            json_encode(['status_withdrawal' => 'rejected', 'reason' => $reason])
-        );
-        jOut(true, 'Pedido rejeitado. Utilizador notificado com o motivo.');
+            json_encode(['status_withdrawal' => 'rejected', 'reason' => $reason]));
+
+        $db->commit();
+        jOut(true, 'Pedido rejeitado. Saldo devolvido à carteira do utilizador.');
     } catch (Exception $e) {
+        $db->rollBack();
         error_log('[WD REJECT] ' . $e->getMessage());
-        jOut(false, 'Erro ao rejeitar.');
+        jOut(false, 'Erro ao rejeitar: ' . $e->getMessage());
     }
 }
 
@@ -423,7 +446,7 @@ if ($action === 'pay_royalty') {
     try {
         $report_path = null;
         if (!empty($_FILES['report_file']['tmp_name']) && is_uploaded_file($_FILES['report_file']['tmp_name'])) {
-            $uploadDir = dirname(__DIR__, 2) . '/assets/payment/uploads/royalties';
+            $uploadDir = dirname(__DIR__, 3) . '/assets/payment/uploads/royalties';
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0755, true);
             }
@@ -604,13 +627,13 @@ if ($action === 'manual_deposit') {
 
     $report_path = null;
     if (!empty($_FILES['report_file']['tmp_name']) && is_uploaded_file($_FILES['report_file']['tmp_name'])) {
-        $uploadDir = dirname(__DIR__, 2) . '/assets/payment/uploads/royalties';
+        $uploadDir = dirname(__DIR__, 3) . '/assets/payment/uploads/royalties';
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0755, true);
         }
         $origName = basename($_FILES['report_file']['name']);
         $ext = strtolower(pathinfo($origName, PATHINFO_EXTENSION));
-        $safeName = 'royalty_' . time() . '_' . bin2hex(random_bytes(6)) . ($ext ? '.' . $ext : '');
+        $safeName = 'royalty_' . $id . '_' . time() . '_' . bin2hex(random_bytes(6)) . ($ext ? '.' . $ext : '');
         $dest = $uploadDir . '/' . $safeName;
         if (!move_uploaded_file($_FILES['report_file']['tmp_name'], $dest)) {
             jOut(false, 'Falha ao enviar ficheiro de relatório.');

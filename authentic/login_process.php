@@ -27,70 +27,35 @@ if (!validateCsrf($_POST['csrf_token'] ?? '')) {
 if (isset($_POST['action']) && $_POST['action'] === 'confirm_reactivate') {
     $pending = $_SESSION['pending_reactivation'] ?? null;
 
-    if (!$pending || time() > $pending['expires']) {
+    if (!$pending) {
+        redirect('/login', ['error' => 'session_expired']);
+    }
+    if (time() > $pending['expires']) {
         unset($_SESSION['pending_reactivation']);
-        redirect('/login', ['error' => 'session']);
+        redirect('/login', ['error' => 'reactivation_expired']);
     }
 
     $uid      = (int)$pending['id_users'];
     $remember = (bool)$pending['remember'];
 
-    getDB()->prepare("
-        UPDATE _users SET status_user = 'active', deactivation_user = NULL, modif_user = NOW()
-        WHERE id_users = ?
-    ")->execute([$uid]);
+    // Verificar bloqueio novamente (segurança)
+    $block = checkLoginBlock($uid);
+    if ($block['blocked']) {
+        unset($_SESSION['pending_reactivation']);
+        redirect('/login', ['error' => 'blocked', 'msg' => urlencode($block['message'])]);
+    }
+
+    $db = getDB();
+    $db->prepare("UPDATE _users SET status_user = 'active', deactivation_user = NULL, modif_user = NOW() WHERE id_users = ?")
+        ->execute([$uid]);
 
     unset($_SESSION['pending_reactivation']);
 
     $user = getUserById($uid);
-    session_regenerate_id(true);
-    $_SESSION['id_users']        = $uid;
-    $_SESSION['first_name']      = $user['first_name'];
-    $_SESSION['user_name']       = $user['user_name'];
-    $_SESSION['email']           = $user['email_user'];
-    $_SESSION['status']          = 'active';
-    $_SESSION['email_verified']  = (bool)$user['email_verified'];
-    $_SESSION['plan_selected']   = $user['plan_selected'];
-    $_SESSION['onboarding_done'] = (bool)($user['onboarding_done'] ?? false);
+    completeLogin($user, $remember);
 
-    $session_token = bin2hex(random_bytes(32));
-    getDB()->prepare("
-        INSERT INTO _users_sessions (id_users, session_token, ip_address, user_agent, is_active, last_activity)
-        VALUES (?, ?, ?, ?, 1, NOW())
-    ")->execute([$uid, $session_token, $_SERVER['REMOTE_ADDR'] ?? null, $_SERVER['HTTP_USER_AGENT'] ?? null]);
-    $_SESSION['session_token'] = $session_token;
-
-    updateUserPresence(
-        $uid,
-        '/' . trim((string)APP_URL_PANEL, '/') . '/painel',
-        'login',
-        'online',
-        $session_token
-    );
-
-    getDB()->prepare("
-        UPDATE _users_security SET last_login_at = NOW(), last_login_ip = ? WHERE id_users = ?
-    ")->execute([$_SERVER['REMOTE_ADDR'] ?? null, $uid]);
-
-    if ($remember) {
-        $remember_token = bin2hex(random_bytes(32));
-        $expires = time() + (30 * 24 * 3600);
-        setcookie('wuf_remember', $remember_token, [
-            'expires' => $expires,
-            'path' => '/',
-            'secure' => (APP_ENV === 'production'),
-            'httponly' => true,
-            'samesite' => 'Strict',
-        ]);
-        getDB()->prepare("UPDATE _users_security SET remember_token = ? WHERE id_users = ?")
-            ->execute([$remember_token, $uid]);
-    }
-
-    resetLoginAttempts($uid);
-    logActivity($uid, 'account_reactivated', 'Conta reactivada via confirmação no modal de login');
-    logActivity($uid, 'login', 'Sessão iniciada após reactivação');
-
-    redirect('/dashboard/painel');
+    logActivity($uid, 'account_reactivated', 'Conta reactivada via modal de login');
+    redirect('/' . APP_URL_PANEL . '/painel');
 }
 
 // ══════════════════════════════════════════════
@@ -120,10 +85,7 @@ $uid = (int)$user['id_users'];
 // ─── Verificar bloqueio ───────────────────────
 $block = checkLoginBlock($uid);
 if ($block['blocked']) {
-    redirect('/login', [
-        'error' => 'blocked',
-        'msg'   => urlencode($block['message']),
-    ]);
+    redirect('/login', ['error' => 'blocked', 'msg' => urlencode($block['message'])]);
 }
 
 // ─── Verificar conta suspensa/fraude ─────────
@@ -136,12 +98,20 @@ if ($user['status_user'] === 'inactive') {
     $deact_until = $user['deactivation_user'] ?? null;
 
     if ($deact_until && strtotime($deact_until) > time()) {
+        // Verificar bloqueio antes de mostrar modal (redundante, mas seguro)
+        $block = checkLoginBlock($uid);
+        if ($block['blocked']) {
+            redirect('/login', ['error' => 'blocked', 'msg' => urlencode($block['message'])]);
+        }
+
         // Verificar senha antes de mostrar modal de confirmação
         if (!password_verify($password, $user['password_user'])) {
             registerFailedLogin($uid);
             $attempts_now = (int)($user['login_attempts'] ?? 0) + 1;
             $remaining    = max(0, MAX_LOGIN_ATTEMPTS - $attempts_now);
-            redirect('/login', ['error' => 'invalid', 'remaining' => $remaining]);
+            $_SESSION['login_error'] = 'invalid';
+            $_SESSION['remaining_attempts'] = $remaining;
+            redirect('/login');
         }
         // Senha correcta — guardar estado pendente e mostrar modal
         $_SESSION['pending_reactivation'] = [
@@ -163,10 +133,9 @@ if (!password_verify($password, $user['password_user'])) {
     registerFailedLogin($uid);
     $attempts_now = (int)($user['login_attempts'] ?? 0) + 1;
     $remaining    = max(0, MAX_LOGIN_ATTEMPTS - $attempts_now);
-    redirect('/login', [
-        'error'     => 'invalid',
-        'remaining' => $remaining,
-    ]);
+    $_SESSION['login_error'] = 'invalid';
+    $_SESSION['remaining_attempts'] = $remaining;
+    redirect('/login');
 }
 
 // ══════════════════════════════════════════════
@@ -175,7 +144,6 @@ if (!password_verify($password, $user['password_user'])) {
 
 // ─── Verificar 2FA antes de criar sessão ─────
 if (!empty($user['two_factor_enabled'])) {
-
     $_SESSION['pending_2fa'] = [
         'id_users' => $uid,
         'remember' => $remember,
@@ -184,88 +152,18 @@ if (!empty($user['two_factor_enabled'])) {
     redirect('/2fa-verify');
 }
 
+// Finalizar login (cria sessão, cookie, logs)
+completeLogin($user, $remember);
 
-// Regenerar sessão (previne session fixation)
-session_regenerate_id(true);
-
-// Guardar dados na sessão
-$_SESSION['id_users']        = $uid;
-$_SESSION['first_name']      = $user['first_name'];
-$_SESSION['user_name']       = $user['user_name'];
-$_SESSION['email']           = $user['email_user'];
-$_SESSION['status']          = $user['status_user'];
-$_SESSION['email_verified']  = (bool)$user['email_verified'];
-$_SESSION['plan_selected']   = $user['plan_selected'];
-$_SESSION['onboarding_done'] = (bool)($user['onboarding_done'] ?? false);
-
-// ─── Registar sessão em _users_sessions ──────
-$session_token = bin2hex(random_bytes(32));
-getDB()->prepare("
-    INSERT INTO _users_sessions
-    (id_users, session_token, ip_address, user_agent, is_active, last_activity)
-    VALUES (?, ?, ?, ?, 1, NOW())
-")->execute([
-    $uid,
-    $session_token,
-    $_SERVER['REMOTE_ADDR']     ?? null,
-    $_SERVER['HTTP_USER_AGENT'] ?? null,
-]);
-$_SESSION['session_token'] = $session_token;
-
-updateUserPresence(
-    $uid,
-    '/' . trim((string)APP_URL_PANEL, '/') . '/painel',
-    'login',
-    'online',
-    $session_token
-);
-
-// ─── Atualizar último login em _users_security ─
-getDB()->prepare("
-    UPDATE _users_security
-    SET last_login_at = NOW(), last_login_ip = ?
-    WHERE id_users = ?
-")->execute([$_SERVER['REMOTE_ADDR'] ?? null, $uid]);
-
-// ─── "Lembrar-me" — cookie 30 dias ───────────
-if ($remember) {
-    $remember_token = bin2hex(random_bytes(32));
-    $expires        = time() + (30 * 24 * 3600);
-
-    setcookie('wuf_remember', $remember_token, [
-        'expires'  => $expires,
-        'path'     => '/',
-        'secure'   => (APP_ENV === 'production'),
-        'httponly' => true,
-        'samesite' => 'Strict',
-    ]);
-
-    getDB()->prepare("
-        UPDATE _users_security SET remember_token = ? WHERE id_users = ?
-    ")->execute([$remember_token, $uid]);
-
-    $_SESSION['remember_expires'] = $expires;
-}
-
-// ─── Resetar tentativas de login ──────────────
-resetLoginAttempts($uid);
-
-// ─── Registar actividade ──────────────────────
-logActivity($uid, 'login', 'Sessao iniciada com sucesso');
-
-// ══════════════════════════════════════════════
-// REDIRECIONAR CONFORME ESTADO DA CONTA
-// ══════════════════════════════════════════════
-
+// Redirecionar conforme estado da conta
 if ($user['status_user'] === 'processing') {
-    getDB()->prepare("
-        UPDATE _users SET status_user = 'pending_plan' WHERE id_users = ? AND status_user = 'processing'
-    ")->execute([$uid]);
+    getDB()->prepare("UPDATE _users SET status_user = 'pending_plan' WHERE id_users = ? AND status_user = 'processing'")
+        ->execute([$uid]);
     $_SESSION['status'] = 'pending_plan';
 }
 
-if ($user['status_user'] === 'pending_plan' || $_SESSION['status'] === 'pending_plan') {
-    redirect($user['plan_selected'] ? '/dashboard/painel' : '/dashboard/all-plans');
+if ($user['status_user'] === 'pending_plan' || ($_SESSION['status'] ?? '') === 'pending_plan') {
+    redirect('/' . APP_URL_PANEL . ($user['plan_selected'] ? '/painel' : '/all-plans'));
 }
 
-redirect('/dashboard/painel');
+redirect('/' . APP_URL_PANEL . '/painel');

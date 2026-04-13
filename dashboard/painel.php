@@ -8,6 +8,7 @@ checkRememberMe();
 requireLogin();
 $platform = checkDashboardStatus();
 $user     = getUserById($_SESSION['id_users']);
+$db = getDB();
 
 $user = getUserById((int)$_SESSION['id_users']);
 
@@ -39,11 +40,6 @@ if ($plan_selected) {
 }
 // Plano considerado pago se status_user = 'active' E plan_activated_at preenchido
 $plan_paid = ($user['status_user'] === 'active' && !empty($user['plan_activated_at']));
-
-// Tem artistas?
-$as = getDB()->prepare('SELECT COUNT(*) as total FROM _artist WHERE id_users = ?');
-$as->execute([$id_users]);
-$has_artist = (int)($as->fetch()['total'] ?? 0) > 0;
 
 // Foto do utilizador — usada em ambos os lugares do dropdown (conta + perfil)
 $user_photo = $user['photo_user'] ?? null;
@@ -133,8 +129,9 @@ $current_month = (int)date('n');
 
 <?php
 // ════════════════════════════════════════════════════════════════
-// STREAMS & GRÁFICO (VERSÃO DEBUG)
+// STREAMS & GRÁFICO (ANO MAIS RECENTE COM DADOS, 12 MESES FIXOS)
 // ════════════════════════════════════════════════════════════════
+
 // 1. Streams para a lista (apenas lojas com total > 0)
 $streams_stmt = getDB()->prepare("
     SELECT
@@ -155,67 +152,42 @@ $streams_stmt->execute([$id_users]);
 $streams = $streams_stmt->fetchAll();
 $has_streams = !empty($streams);
 
-// 2. Dados mensais para gráfico (sem filtro de type_store)
+// 2. Descobrir o ano mais recente com streams para este utilizador
+$year_stmt = getDB()->prepare("
+    SELECT MAX(s.year_stream) 
+    FROM _stream s
+    JOIN _track t ON t.id_track = s.id_track
+    WHERE t.id_users = ?
+");
+$year_stmt->execute([$id_users]);
+$latest_year = $year_stmt->fetchColumn();
+
+// Se não houver nenhum stream, usar o ano atual como fallback
+$display_year = $latest_year ? (int)$latest_year : (int)date('Y');
+
+// 3. Dados mensais para o gráfico (ano fixo, 12 meses)
 $chart_stmt = getDB()->prepare("
     SELECT
         st.slug_store,
         st.name_store,
-        s.year_stream,
         s.month_stream,
         SUM(s.streams) as total
-    FROM _store st
-    LEFT JOIN _stream s ON s.id_store = st.id_store
-    LEFT JOIN _track t ON t.id_track = s.id_track AND t.id_users = ?
-    WHERE st.is_active = 1
-    GROUP BY st.id_store, s.year_stream, s.month_stream
-    ORDER BY s.year_stream, s.month_stream
+    FROM _stream s
+    JOIN _track  t  ON t.id_track = s.id_track AND t.id_users = ?
+    JOIN _store  st ON st.id_store = s.id_store
+    WHERE s.year_stream = ?
+    GROUP BY st.id_store, st.slug_store, st.name_store, s.month_stream
+    ORDER BY s.month_stream
 ");
-$chart_stmt->execute([$id_users]);
+$chart_stmt->execute([$id_users, $display_year]);
 $chart_rows = $chart_stmt->fetchAll();
 
-// 3. Total de lançamentos
+// 4. Total de lançamentos
 $rel_stmt = getDB()->prepare("SELECT COUNT(*) as total FROM _album WHERE id_users = ?");
 $rel_stmt->execute([$id_users]);
 $total_releases = (int)($rel_stmt->fetch()['total'] ?? 0);
 
-// 4. Determinar período (primeiro mês com stream até último)
-$start_date = null;
-$end_date   = null;
-
-// Filtrar apenas linhas com dados válidos (ano e mês não nulos)
-$valid_rows = array_filter($chart_rows, function ($r) {
-    return $r['year_stream'] !== null && $r['month_stream'] !== null;
-});
-
-if (!empty($valid_rows)) {
-    // Ordenar por ano e mês para garantir que o primeiro e último sejam os extremos
-    usort($valid_rows, function ($a, $b) {
-        return ($a['year_stream'] * 100 + $a['month_stream']) <=> ($b['year_stream'] * 100 + $b['month_stream']);
-    });
-
-    $first = reset($valid_rows);
-    $last  = end($valid_rows);
-
-    $start_date = DateTime::createFromFormat('Y-n', $first['year_stream'] . '-' . $first['month_stream']);
-    $end_date   = DateTime::createFromFormat('Y-n', $last['year_stream'] . '-' . $last['month_stream']);
-}
-
-// Fallback se não houver dados: usar o mês atual
-if (!$start_date || !$end_date) {
-    $start_date = new DateTime();
-    $end_date   = new DateTime();
-}
-
-// 5. Labels de todos os meses no intervalo
-$months_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-$chart_labels = [];
-$period = clone $start_date;
-while ($period <= $end_date) {
-    $chart_labels[] = $months_pt[(int)$period->format('n') - 1] . ' ' . $period->format('Y');
-    $period->add(new DateInterval('P1M'));
-}
-
-// 6. Cores (mantidas)
+// 5. Cores por slug
 $platform_colors = [
     'spotify'       => ['border' => '#1db954', 'bg' => 'rgba(29,185,84,0.45)'],
     'apple-music'   => ['border' => '#fa586a', 'bg' => 'rgba(250,88,106,0.45)'],
@@ -237,29 +209,29 @@ $platform_colors = [
     'pandora'       => ['border' => '#3668b0', 'bg' => 'rgba(54,104,176,0.4)'],
 ];
 
-// 7. Agrupar dados por plataforma e mês
+// 6. Labels fixas: 12 meses do ano
+$months_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+$chart_labels = [];
+for ($m = 1; $m <= 12; $m++) {
+    $chart_labels[] = $months_pt[$m-1] . ' ' . $display_year;
+}
+
+// 7. Agrupar dados por plataforma (meses 1-12 preenchidos com zero)
 $by_platform = [];
-foreach ($valid_rows as $r) {
+foreach ($chart_rows as $r) {
     $slug = $r['slug_store'];
-    $key  = $r['year_stream'] . '-' . str_pad($r['month_stream'], 2, '0', STR_PAD_LEFT);
+    $month = (int)$r['month_stream'];
     $by_platform[$slug]['name'] = $r['name_store'];
-    $by_platform[$slug]['data'][$key] = (int)$r['total'];
+    $by_platform[$slug]['data'][$month] = (int)$r['total'];
 }
 
-// 8. Construir datasets para Chart.js
+// 8. Construir datasets para Chart.js (12 pontos fixos)
 $chart_datasets = [];
-$period_keys = [];
-$period = clone $start_date;
-while ($period <= $end_date) {
-    $period_keys[] = $period->format('Y-m');
-    $period->add(new DateInterval('P1M'));
-}
-
 foreach ($by_platform as $slug => $info) {
     $color = $platform_colors[$slug] ?? ['border' => '#aaaaaa', 'bg' => 'rgba(170,170,170,0.4)'];
-    $data  = [];
-    foreach ($period_keys as $pk) {
-        $data[] = $info['data'][$pk] ?? 0;
+    $data = [];
+    for ($m = 1; $m <= 12; $m++) {
+        $data[] = $info['data'][$m] ?? 0;
     }
     $chart_datasets[] = [
         'label'           => $info['name'],
@@ -267,7 +239,6 @@ foreach ($by_platform as $slug => $info) {
         'borderColor'     => $color['border'],
         'backgroundColor' => $color['bg'],
         'fill'            => true,
-        'stack'           => 'combined',
         'tension'         => 0.4,
     ];
 }
@@ -287,11 +258,10 @@ if (empty($chart_datasets)) {
         $color = $platform_colors[$slug] ?? ['border' => '#aaaaaa', 'bg' => 'rgba(170,170,170,0.4)'];
         $chart_datasets[] = [
             'label'           => $store['name_store'],
-            'data'            => array_fill(0, count($chart_labels) ?: 1, 0),
+            'data'            => array_fill(0, 12, 0),
             'borderColor'     => $color['border'],
             'backgroundColor' => $color['bg'],
             'fill'            => true,
-            'stack'           => 'combined',
             'tension'         => 0.4,
         ];
     }
@@ -367,139 +337,14 @@ $chart_json_datasets = json_encode($chart_datasets); ?>
     <?php require_once __DIR__ . '/include/sidebar.php'; ?>
     <!-- Main Content -->
     <div class="container my-4">
-
-        <?php /* ============================================
-    BANNERS DE NOTIFICACAO DO PAINEL
-    Estilo: inline CSS consistente com renderDashboardAlerts().
-    Bootstrap alert nativo removido — um único sistema visual.
-    Lógica de prioridade:
-      Nível 1 (danger)  — bloqueia distribuição
-      Nível 2 (warning) — importante, requer atenção
-      Nível 3 (info)    — informativo / acção opcional
-    ============================================ */ ?>
-
-        <?php renderDashboardAlerts($user, $platform); ?>
-
         <?php
-        // Cor map para helpers inline — idêntico ao renderDashboardAlerts()
-        $alertColors = [
-            'danger'  => ['bg' => 'rgba(239,68,68,.08)',  'border' => 'rgba(239,68,68,.25)',  'text' => '#ef4444'],
-            'warning' => ['bg' => 'rgba(234,179,8,.08)',  'border' => 'rgba(234,179,8,.25)',  'text' => '#eab308'],
-            'info'    => ['bg' => 'rgba(99,102,241,.08)', 'border' => 'rgba(99,102,241,.25)', 'text' => '#6366f1'],
-        ];
-        function wuAlert(string $type, string $icon, string $message, ?array $action = null, bool $dismiss = true, string $id = ''): void
-        {
-            global $alertColors;
-            $c   = $alertColors[$type] ?? $alertColors['info'];
-            $eid = $id ?: ('wuPanelAlert_' . md5($message));
-            echo "<div id=\"{$eid}\" style=\"display:flex;align-items:flex-start;gap:10px;"
-                . "background:{$c['bg']};border:1px solid {$c['border']};border-radius:12px;"
-                . "padding:.75rem 1rem;font-size:.83rem;margin-bottom:.6rem;"
-                . "transition:opacity .3s;\">";
-            echo "<i class=\"bi {$icon}\" style=\"font-size:1rem;flex-shrink:0;margin-top:2px;color:{$c['text']};\"></i>";
-            echo '<span class="wu-alert-msg">' . $message;
-            if ($action) {
-                echo " <a href=\"{$action['url']}\" style=\"color:{$c['text']};font-weight:700;"
-                    . "text-decoration:underline;white-space:nowrap\">{$action['label']} &rarr;</a>";
-            }
-            echo '</span>';
-            if ($dismiss) {
-                echo "<button type=\"button\" class=\"wu-alert-dismiss\" aria-label=\"Fechar\""
-                    . " onclick=\"(function(el){el.style.opacity='0';"
-                    . "setTimeout(function(){el.style.display='none'},300)})(document.getElementById('{$eid}'))\">"
-                    . "&times;</button>";
-            }
-            echo '</div>';
-        }
+        require_once __DIR__ . '/include/alert.php';
+        renderPanelAlerts($user, $plan, $plan_paid, $bank_account, $db, $id_users);
+
+        // Restaurar variáveis necessárias para o restante da página
+        $total_artists = (int)$db->query("SELECT COUNT(*) FROM _artist WHERE id_users = $id_users")->fetchColumn();
+        $has_any_artist = $total_artists > 0;
         ?>
-
-        <?php /* ── NÍVEL 1: Crítico — bloqueia distribuição ── */ ?>
-
-        <?php if (!$email_verified): ?>
-        <?php wuAlert(
-                'danger',
-                'bi-envelope-exclamation-fill',
-                '<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta e receber notificações de pagamentos.',
-                ['label' => 'Verificar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/user/profile#perfil'],
-                true,
-                'banner-email'
-            ); ?>
-        <?php endif; ?>
-
-        <?php if ($plan && !$plan_paid): ?>
-        <?php wuAlert(
-                'warning',
-                'bi-clock-history',
-                '<strong>Pagamento pendente — ' . htmlspecialchars($plan['name_plan']) . '.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados até confirmação.',
-                ['label' => 'Finalizar pagamento', 'url' => APP_URL . '/' . APP_URL_PANEL . '/payment/pay'],
-                true,
-                'banner-plan-pending'
-            ); ?>
-        <?php elseif (!$plan): ?>
-        <?php wuAlert(
-                'danger',
-                'bi-credit-card-fill',
-                '<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir a tua música para +150 plataformas.',
-                ['label' => 'Ver planos', 'url' => APP_URL . '/' . APP_URL_PANEL . '/all-plans'],
-                false,
-                'banner-plan'
-            ); ?>
-        <?php endif; ?>
-
-        <?php /* ── NÍVEL 2: Importante — perfil incompleto ── */ ?>
-
-        <?php if ($plan_paid && !$has_artist): ?>
-        <?php wuAlert(
-                'info',
-                'bi-person-plus-fill',
-                '<strong>Cria o teu perfil de artista.</strong> Tens plano activo mas ainda não criaste um perfil. Precisas de um para poder lançar música.',
-                ['label' => 'Criar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/add-artist'],
-                true,
-                'banner-artist'
-            ); ?>
-        <?php endif; ?>
-
-        <?php /* ── NÍVEL 3: Informativo — conta bancária ── */ ?>
-
-        <?php if ($plan_paid && $has_artist && !$bank_account): ?>
-        <?php wuAlert(
-                'info',
-                'bi-bank',
-                '<strong>Conta bancária não registada.</strong> Para poder sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.',
-                ['label' => 'Registar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/withdraw'],
-                true,
-                'banner-bank'
-            ); ?>
-        <?php endif; ?>
-
-        <?php /* ── NÍVEL 3: Conta bancária rejeitada ── */ ?>
-
-        <?php
-        $rejected_account = null;
-        if ($plan_paid) {
-            $rej_stmt = getDB()->prepare("SELECT type_account, reject_reason FROM _account WHERE id_users = ? AND status_account = 'rejected' LIMIT 1");
-            $rej_stmt->execute([$id_users]);
-            $rejected_account = $rej_stmt->fetch();
-        }
-        ?>
-        <?php if ($rejected_account): ?>
-        <?php
-            $rej_msg = '<strong>Conta ' . htmlspecialchars($rejected_account['type_account']) . ' rejeitada.</strong>';
-            if ($rejected_account['reject_reason']) {
-                $rej_msg .= ' Motivo: <em>' . htmlspecialchars($rejected_account['reject_reason']) . '</em>.';
-            }
-            $rej_msg .= ' Actualiza os dados e submete novamente.';
-            wuAlert(
-                'danger',
-                'bi-x-circle-fill',
-                $rej_msg,
-                ['label' => 'Corrigir agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/withdraw'],
-                true,
-                'banner-account-rejected'
-            );
-            ?>
-        <?php endif; ?>
-
         <!-- Header da Pagina Inicial -->
         <div class="page-header">
             <h1>
@@ -769,7 +614,7 @@ $chart_json_datasets = json_encode($chart_datasets); ?>
                             <p class="text-muted text-center">
                                 Para distribuir música precisas de um perfil de artista.
                             </p>
-                            <?php if ($has_artist): ?>
+                            <?php if ($has_any_artist): ?>
                             <div class="alert alert-success text-center mb-3">
                                 <i class="bi bi-check-circle-fill me-2"></i>
                                 Já tens um perfil de artista. Tudo pronto!
@@ -846,7 +691,7 @@ $chart_json_datasets = json_encode($chart_datasets); ?>
                                     <?php endif; ?>
                                 </li>
                                 <li class="list-group-item d-flex align-items-center gap-2 px-0">
-                                    <?php if ($has_artist): ?>
+                                    <?php if ($has_any_artist): ?>
                                     <i class="bi bi-check-circle-fill text-success fs-5"></i>
                                     <span>Perfil de artista criado</span>
                                     <?php else: ?>
@@ -958,7 +803,7 @@ $chart_json_datasets = json_encode($chart_datasets); ?>
                         <a href="payment" class="btn btn-pink w-100">
                             <i class="bi bi-credit-card me-2"></i> Finalizar Pagamento
                         </a>
-                        <?php elseif (!$has_artist): ?>
+                        <?php elseif (!$has_any_artist): ?>
                         <h5>Cria o teu perfil de artista</h5>
                         <p>Antes de lançar música, precisa de um perfil de artista associado à tua conta.</p>
                         <a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/add-artist" class="btn btn-pink w-100">
@@ -1003,7 +848,7 @@ $chart_json_datasets = json_encode($chart_datasets); ?>
                 <p class="text-muted small">
                     Cria o teu primeiro lançamento para começar a receber streams nas plataformas.
                 </p>
-                <?php if ($has_artist): ?>
+                <?php if ($has_any_artist): ?>
                 <a href="creat-release" class="btn btn-pink btn-sm mt-2">
                     <i class="bi bi-plus me-1"></i>Criar Lançamento
                 </a>
@@ -1274,7 +1119,7 @@ $chart_json_datasets = json_encode($chart_datasets); ?>
     // ── Badge de notificações — polling leve a cada 60s ──────────
     (function() {
         function refreshNotifBadge() {
-            fetch('ajax/notifications_api.php?action=count', {
+            fetch('ajax/notifications_api?action=count', {
                     credentials: 'same-origin'
                 })
                 .then(r => r.json())

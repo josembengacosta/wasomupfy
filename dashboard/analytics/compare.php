@@ -353,236 +353,236 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
     <title>Comparar Períodos — <?php echo APP_NAME; ?></title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
-    /* ══ Layout ══ */
-    .comparison-header {
-        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-        border-radius: 18px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-        color: #fff;
-    }
+        /* ══ Layout ══ */
+        .comparison-header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 18px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            color: #fff;
+        }
 
-    /* ══ Período cards ══ */
-    .period-card {
-        border-radius: 14px;
-        padding: 1.5rem;
-        height: 100%;
-        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
-        transition: box-shadow .2s;
-    }
+        /* ══ Período cards ══ */
+        .period-card {
+            border-radius: 14px;
+            padding: 1.5rem;
+            height: 100%;
+            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
+            transition: box-shadow .2s;
+        }
 
-    .period-card.period-a {
-        border-left: 4px solid #ff0089;
-    }
+        .period-card.period-a {
+            border-left: 4px solid #ff0089;
+        }
 
-    .period-card.period-b {
-        border-left: 4px solid #00d084;
-    }
+        .period-card.period-b {
+            border-left: 4px solid #00d084;
+        }
 
-    .period-card:hover {
-        box-shadow: 0 6px 24px rgba(255, 0, 137, .1);
-    }
+        .period-card:hover {
+            box-shadow: 0 6px 24px rgba(255, 0, 137, .1);
+        }
 
-    /* ══ Métricas ══ */
-    .metric-box {
-        background: var(--metric-bg, rgba(0, 0, 0, .03));
-        border-radius: 12px;
-        padding: 1.2rem;
-        text-align: center;
-        margin-bottom: .8rem;
-    }
+        /* ══ Métricas ══ */
+        .metric-box {
+            background: var(--metric-bg, rgba(0, 0, 0, .03));
+            border-radius: 12px;
+            padding: 1.2rem;
+            text-align: center;
+            margin-bottom: .8rem;
+        }
 
-    .metric-value {
-        font-size: 1.8rem;
-        font-weight: 900;
-    }
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 900;
+        }
 
-    .metric-label {
-        font-size: .72rem;
-        color: var(--text-muted, #6c757d);
-        text-transform: uppercase;
-        letter-spacing: .6px;
-        margin-top: 4px;
-    }
+        .metric-label {
+            font-size: .72rem;
+            color: var(--text-muted, #6c757d);
+            text-transform: uppercase;
+            letter-spacing: .6px;
+            margin-top: 4px;
+        }
 
-    .total-streams-a {
-        color: #ff0089;
-        font-size: 2.4rem;
-        font-weight: 900;
-    }
+        .total-streams-a {
+            color: #ff0089;
+            font-size: 2.4rem;
+            font-weight: 900;
+        }
 
-    .total-streams-b {
-        color: #00d084;
-        font-size: 2.4rem;
-        font-weight: 900;
-    }
+        .total-streams-b {
+            color: #00d084;
+            font-size: 2.4rem;
+            font-weight: 900;
+        }
 
-    .vs-divider {
-        font-size: 1.5rem;
-        font-weight: 900;
-        color: var(--text-muted, #aaa);
-    }
+        .vs-divider {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--text-muted, #aaa);
+        }
 
-    /* ══ Badges variação ══ */
-    .comparison-badge {
-        display: inline-block;
-        padding: .4rem 1rem;
-        border-radius: 20px;
-        font-weight: 700;
-        font-size: .88rem;
-    }
+        /* ══ Badges variação ══ */
+        .comparison-badge {
+            display: inline-block;
+            padding: .4rem 1rem;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: .88rem;
+        }
 
-    .badge-positive {
-        background: rgba(0, 208, 132, .12);
-        color: #00a862;
-        border: 1px solid #00d084;
-    }
+        .badge-positive {
+            background: rgba(0, 208, 132, .12);
+            color: #00a862;
+            border: 1px solid #00d084;
+        }
 
-    .badge-negative {
-        background: rgba(255, 68, 68, .12);
-        color: #cc3333;
-        border: 1px solid #ff4444;
-    }
+        .badge-negative {
+            background: rgba(255, 68, 68, .12);
+            color: #cc3333;
+            border: 1px solid #ff4444;
+        }
 
-    .badge-neutral {
-        background: rgba(150, 150, 150, .1);
-        color: #888;
-        border: 1px solid #aaa;
-    }
+        .badge-neutral {
+            background: rgba(150, 150, 150, .1);
+            color: #888;
+            border: 1px solid #aaa;
+        }
 
-    .percentage-change {
-        font-weight: 700;
-        padding: .25rem .7rem;
-        border-radius: 20px;
-        font-size: .82rem;
-    }
+        .percentage-change {
+            font-weight: 700;
+            padding: .25rem .7rem;
+            border-radius: 20px;
+            font-size: .82rem;
+        }
 
-    /* ══ Botões ══ */
-    .btn-compare {
-        background: #ff0089;
-        color: #fff;
-        border: none;
-        padding: .75rem 2rem;
-        border-radius: 25px;
-        font-weight: 700;
-        transition: background .2s, transform .15s;
-    }
+        /* ══ Botões ══ */
+        .btn-compare {
+            background: #ff0089;
+            color: #fff;
+            border: none;
+            padding: .75rem 2rem;
+            border-radius: 25px;
+            font-weight: 700;
+            transition: background .2s, transform .15s;
+        }
 
-    .btn-compare:hover {
-        background: #cc006e;
-        transform: scale(1.04);
-        color: #fff;
-    }
+        .btn-compare:hover {
+            background: #cc006e;
+            transform: scale(1.04);
+            color: #fff;
+        }
 
-    .btn-swap {
-        background: transparent;
-        border: 2px solid #ff0089;
-        color: #ff0089;
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all .25s;
-    }
+        .btn-swap {
+            background: transparent;
+            border: 2px solid #ff0089;
+            color: #ff0089;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .25s;
+        }
 
-    .btn-swap:hover {
-        background: #ff0089;
-        color: #fff;
-        transform: rotate(180deg);
-    }
+        .btn-swap:hover {
+            background: #ff0089;
+            color: #fff;
+            transform: rotate(180deg);
+        }
 
-    /* ══ Quick select ══ */
-    .quick-select {
-        display: inline-block;
-        padding: .4rem 1rem;
-        border-radius: 20px;
-        margin: .2rem;
-        cursor: pointer;
-        border: 1px solid var(--border-color, rgba(0, 0, 0, .12));
-        font-size: .82rem;
-        transition: all .2s;
-    }
+        /* ══ Quick select ══ */
+        .quick-select {
+            display: inline-block;
+            padding: .4rem 1rem;
+            border-radius: 20px;
+            margin: .2rem;
+            cursor: pointer;
+            border: 1px solid var(--border-color, rgba(0, 0, 0, .12));
+            font-size: .82rem;
+            transition: all .2s;
+        }
 
-    .quick-select:hover,
-    .quick-select.active {
-        background: #ff0089;
-        border-color: #ff0089;
-        color: #fff;
-    }
+        .quick-select:hover,
+        .quick-select.active {
+            background: #ff0089;
+            border-color: #ff0089;
+            color: #fff;
+        }
 
-    /* ══ Plataformas ══ */
-    .platform-icon-circle {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.1rem;
-        flex-shrink: 0;
-        color: #fff;
-    }
+        /* ══ Plataformas ══ */
+        .platform-icon-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            color: #fff;
+        }
 
-    .bar-compare {
-        height: 12px;
-        border-radius: 6px;
-    }
+        .bar-compare {
+            height: 12px;
+            border-radius: 6px;
+        }
 
-    .bar-a {
-        background: linear-gradient(90deg, #ff0089, #ff4da6);
-    }
+        .bar-a {
+            background: linear-gradient(90deg, #ff0089, #ff4da6);
+        }
 
-    .bar-b {
-        background: linear-gradient(90deg, #00d084, #4dffc4);
-    }
+        .bar-b {
+            background: linear-gradient(90deg, #00d084, #4dffc4);
+        }
 
-    /* ══ Artistas ══ */
-    .artist-rank-row {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 8px 0;
-        border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .06));
-    }
+        /* ══ Artistas ══ */
+        .artist-rank-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .06));
+        }
 
-    .artist-rank-row:last-child {
-        border-bottom: none;
-    }
+        .artist-rank-row:last-child {
+            border-bottom: none;
+        }
 
-    .artist-photo-sm {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        object-fit: cover;
-        flex-shrink: 0;
-    }
+        .artist-photo-sm {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
 
-    .artist-photo-sm-placeholder {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        background: rgba(255, 0, 137, .08);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.1rem;
-        flex-shrink: 0;
-    }
+        .artist-photo-sm-placeholder {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 0, 137, .08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
 
-    /* ══ Empty state ══ */
-    .compare-cta {
-        text-align: center;
-        padding: 48px 24px;
-        color: var(--text-muted, #6c757d);
-    }
+        /* ══ Empty state ══ */
+        .compare-cta {
+            text-align: center;
+            padding: 48px 24px;
+            color: var(--text-muted, #6c757d);
+        }
 
-    .compare-cta .icon {
-        font-size: 3rem;
-        opacity: .12;
-        margin-bottom: 14px;
-    }
+        .compare-cta .icon {
+            font-size: 3rem;
+            opacity: .12;
+            margin-bottom: 14px;
+        }
     </style>
 </head>
 
@@ -639,7 +639,7 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
         <?php /* ── NÍVEL 1: Crítico — bloqueia distribuição ── */ ?>
 
         <?php if (!$email_verified): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'danger',
                 'bi-envelope-exclamation-fill',
                 '<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta e receber notificações de pagamentos.',
@@ -650,7 +650,7 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
         <?php endif; ?>
 
         <?php if ($plan && !$plan_paid): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'warning',
                 'bi-clock-history',
                 '<strong>Pagamento pendente — ' . htmlspecialchars($plan['name_plan']) . '.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados até confirmação.',
@@ -659,7 +659,7 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
                 'banner-plan-pending'
             ); ?>
         <?php elseif (!$plan): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'danger',
                 'bi-credit-card-fill',
                 '<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir a tua música para +150 plataformas.',
@@ -672,10 +672,10 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
         <?php /* ── NÍVEL 2: Importante — perfil incompleto ── */ ?>
 
         <?php if ($plan_paid && !$has_artist): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'info',
                 'bi-person-plus-fill',
-                '<strong>Cria o teu perfil de artista.</strong> Tens plano activo mas ainda não criaste um perfil. Precisas de um para poder lançar música.',
+                '<strong>Cria o teu perfil artístico.</strong> Tens plano activo mas ainda não criaste um perfil artístico. Precisas de um para poder lançar música.',
                 ['label' => 'Criar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/add-artist'],
                 true,
                 'banner-artist'
@@ -685,7 +685,7 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
         <?php /* ── NÍVEL 3: Informativo — conta bancária ── */ ?>
 
         <?php if ($plan_paid && $has_artist && !$bank_account): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'info',
                 'bi-bank',
                 '<strong>Conta bancária não registada.</strong> Para poder sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.',
@@ -706,7 +706,7 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
         }
         ?>
         <?php if ($rejected_account): ?>
-        <?php
+            <?php
             $rej_msg = '<strong>Conta ' . htmlspecialchars($rejected_account['type_account']) . ' rejeitada.</strong>';
             if ($rejected_account['reject_reason']) {
                 $rej_msg .= ' Motivo: <em>' . htmlspecialchars($rejected_account['reject_reason']) . '</em>.';
@@ -735,10 +735,10 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
                         <i class="bi bi-arrow-left"></i> Voltar
                     </a>
                     <?php if ($has_data && (!empty($rows_a) || !empty($rows_b))): ?>
-                    <a href="export?context=compare&ya_start=<?php echo $ya_start; ?>&ma_start=<?php echo $ma_start; ?>&ya_end=<?php echo $ya_end; ?>&ma_end=<?php echo $ma_end; ?>&yb_start=<?php echo $yb_start; ?>&mb_start=<?php echo $mb_start; ?>&yb_end=<?php echo $yb_end; ?>&mb_end=<?php echo $mb_end; ?>"
-                        class="btn btn-secondary">
-                        <i class="bi bi-download"></i> Exportar
-                    </a>
+                        <a href="export?context=compare&ya_start=<?php echo $ya_start; ?>&ma_start=<?php echo $ma_start; ?>&ya_end=<?php echo $ya_end; ?>&ma_end=<?php echo $ma_end; ?>&yb_start=<?php echo $yb_start; ?>&mb_start=<?php echo $mb_start; ?>&yb_end=<?php echo $yb_end; ?>&mb_end=<?php echo $mb_end; ?>"
+                            class="btn btn-secondary">
+                            <i class="bi bi-download"></i> Exportar
+                        </a>
                     <?php endif; ?>
                 </div>
             </div>
@@ -765,8 +765,8 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
                                 <label class="form-label small text-muted">Ano início</label>
                                 <select name="ya_start" id="ya_start" class="form-select form-select-sm">
                                     <?php foreach ($available_years as $y): ?>
-                                    <option value="<?php echo $y; ?>" <?php echo $y == $ya_start ? 'selected' : ''; ?>>
-                                        <?php echo $y; ?></option>
+                                        <option value="<?php echo $y; ?>" <?php echo $y == $ya_start ? 'selected' : ''; ?>>
+                                            <?php echo $y; ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -774,9 +774,9 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
                                 <label class="form-label small text-muted">Mês início</label>
                                 <select name="ma_start" id="ma_start" class="form-select form-select-sm">
                                     <?php foreach ($months_pt as $mi => $mn): ?>
-                                    <option value="<?php echo $mi + 1; ?>"
-                                        <?php echo ($mi + 1) == $ma_start ? 'selected' : ''; ?>><?php echo $mn; ?>
-                                    </option>
+                                        <option value="<?php echo $mi + 1; ?>"
+                                            <?php echo ($mi + 1) == $ma_start ? 'selected' : ''; ?>><?php echo $mn; ?>
+                                        </option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -784,8 +784,8 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
                                 <label class="form-label small text-muted">Ano fim</label>
                                 <select name="ya_end" id="ya_end" class="form-select form-select-sm">
                                     <?php foreach ($available_years as $y): ?>
-                                    <option value="<?php echo $y; ?>" <?php echo $y == $ya_end ? 'selected' : ''; ?>>
-                                        <?php echo $y; ?></option>
+                                        <option value="<?php echo $y; ?>" <?php echo $y == $ya_end ? 'selected' : ''; ?>>
+                                            <?php echo $y; ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -793,9 +793,9 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
                                 <label class="form-label small text-muted">Mês fim</label>
                                 <select name="ma_end" id="ma_end" class="form-select form-select-sm">
                                     <?php foreach ($months_pt as $mi => $mn): ?>
-                                    <option value="<?php echo $mi + 1; ?>"
-                                        <?php echo ($mi + 1) == $ma_end ? 'selected' : ''; ?>><?php echo $mn; ?>
-                                    </option>
+                                        <option value="<?php echo $mi + 1; ?>"
+                                            <?php echo ($mi + 1) == $ma_end ? 'selected' : ''; ?>><?php echo $mn; ?>
+                                        </option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -819,8 +819,8 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
                                 <label class="form-label small text-muted">Ano início</label>
                                 <select name="yb_start" id="yb_start" class="form-select form-select-sm">
                                     <?php foreach ($available_years as $y): ?>
-                                    <option value="<?php echo $y; ?>" <?php echo $y == $yb_start ? 'selected' : ''; ?>>
-                                        <?php echo $y; ?></option>
+                                        <option value="<?php echo $y; ?>" <?php echo $y == $yb_start ? 'selected' : ''; ?>>
+                                            <?php echo $y; ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -828,9 +828,9 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
                                 <label class="form-label small text-muted">Mês início</label>
                                 <select name="mb_start" id="mb_start" class="form-select form-select-sm">
                                     <?php foreach ($months_pt as $mi => $mn): ?>
-                                    <option value="<?php echo $mi + 1; ?>"
-                                        <?php echo ($mi + 1) == $mb_start ? 'selected' : ''; ?>><?php echo $mn; ?>
-                                    </option>
+                                        <option value="<?php echo $mi + 1; ?>"
+                                            <?php echo ($mi + 1) == $mb_start ? 'selected' : ''; ?>><?php echo $mn; ?>
+                                        </option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -838,8 +838,8 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
                                 <label class="form-label small text-muted">Ano fim</label>
                                 <select name="yb_end" id="yb_end" class="form-select form-select-sm">
                                     <?php foreach ($available_years as $y): ?>
-                                    <option value="<?php echo $y; ?>" <?php echo $y == $yb_end ? 'selected' : ''; ?>>
-                                        <?php echo $y; ?></option>
+                                        <option value="<?php echo $y; ?>" <?php echo $y == $yb_end ? 'selected' : ''; ?>>
+                                            <?php echo $y; ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -847,9 +847,9 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
                                 <label class="form-label small text-muted">Mês fim</label>
                                 <select name="mb_end" id="mb_end" class="form-select form-select-sm">
                                     <?php foreach ($months_pt as $mi => $mn): ?>
-                                    <option value="<?php echo $mi + 1; ?>"
-                                        <?php echo ($mi + 1) == $mb_end ? 'selected' : ''; ?>><?php echo $mn; ?>
-                                    </option>
+                                        <option value="<?php echo $mi + 1; ?>"
+                                            <?php echo ($mi + 1) == $mb_end ? 'selected' : ''; ?>><?php echo $mn; ?>
+                                        </option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -865,10 +865,10 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
                     <select name="store" class="form-select form-select-sm" style="min-width:160px">
                         <option value="0" <?php echo !$filter_store ? 'selected' : ''; ?>>Todas</option>
                         <?php foreach ($stores as $st): ?>
-                        <option value="<?php echo $st['id_store']; ?>"
-                            <?php echo $st['id_store'] == $filter_store ? 'selected' : ''; ?>>
-                            <?php echo htmlspecialchars($st['name_store']); ?>
-                        </option>
+                            <option value="<?php echo $st['id_store']; ?>"
+                                <?php echo $st['id_store'] == $filter_store ? 'selected' : ''; ?>>
+                                <?php echo htmlspecialchars($st['name_store']); ?>
+                            </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -879,165 +879,165 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
         </form>
 
         <?php if (!$has_data): ?>
-        <!-- CTA inicial -->
-        <div class="compare-cta">
-            <div class="icon"><i class="bi bi-calendar-range"></i></div>
-            <div class="fw-semibold mb-1">Selecciona dois períodos e clica em <strong>Comparar</strong></div>
-            <div class="small">Podes usar a seleção rápida acima para comparar meses, trimestres ou anos.</div>
-        </div>
+            <!-- CTA inicial -->
+            <div class="compare-cta">
+                <div class="icon"><i class="bi bi-calendar-range"></i></div>
+                <div class="fw-semibold mb-1">Selecciona dois períodos e clica em <strong>Comparar</strong></div>
+                <div class="small">Podes usar a seleção rápida acima para comparar meses, trimestres ou anos.</div>
+            </div>
 
         <?php elseif (empty($rows_a) && empty($rows_b)): ?>
-        <div class="compare-cta">
-            <div class="icon"><i class="bi bi-bar-chart"></i></div>
-            <div class="fw-semibold mb-1">Sem dados para os períodos seleccionados.</div>
-            <div class="small">Tenta outro intervalo ou aguarda a importação dos dados das plataformas.</div>
-        </div>
+            <div class="compare-cta">
+                <div class="icon"><i class="bi bi-bar-chart"></i></div>
+                <div class="fw-semibold mb-1">Sem dados para os períodos seleccionados.</div>
+                <div class="small">Tenta outro intervalo ou aguarda a importação dos dados das plataformas.</div>
+            </div>
 
         <?php else: ?>
-        <!-- ════ RESULTADOS ════ -->
+            <!-- ════ RESULTADOS ════ -->
 
-        <!-- Total streams A vs B -->
-        <div class="period-card mb-4">
-            <div class="row align-items-center text-center g-3">
-                <div class="col-md-5">
-                    <div class="small text-muted text-uppercase fw-bold" style="letter-spacing:.5px">Período A</div>
-                    <div class="total-streams-a"><?php echo number_format((int)$total_a_streams); ?></div>
-                    <div class="small text-muted"><?php echo $months_pt[$ma_start - 1] . '/' . $ya_start; ?> →
-                        <?php echo $months_pt[$ma_end - 1] . '/' . $ya_end; ?></div>
-                </div>
-                <div class="col-md-2">
-                    <div class="vs-divider">VS</div>
-                    <?php if ($pct_streams !== null): ?>
-                    <div class="mt-2">
-                        <span
-                            class="comparison-badge <?php echo $pct_streams > 0 ? 'badge-positive' : ($pct_streams < 0 ? 'badge-negative' : 'badge-neutral'); ?>">
-                            <i
-                                class="bi bi-arrow-<?php echo $pct_streams > 0 ? 'up' : ($pct_streams < 0 ? 'down' : 'dash'); ?> me-1"></i>
-                            <?php echo abs($pct_streams); ?>%
-                            <?php echo $pct_streams > 0 ? 'crescimento' : ($pct_streams < 0 ? 'queda' : 'estável'); ?>
-                        </span>
+            <!-- Total streams A vs B -->
+            <div class="period-card mb-4">
+                <div class="row align-items-center text-center g-3">
+                    <div class="col-md-5">
+                        <div class="small text-muted text-uppercase fw-bold" style="letter-spacing:.5px">Período A</div>
+                        <div class="total-streams-a"><?php echo number_format((int)$total_a_streams); ?></div>
+                        <div class="small text-muted"><?php echo $months_pt[$ma_start - 1] . '/' . $ya_start; ?> →
+                            <?php echo $months_pt[$ma_end - 1] . '/' . $ya_end; ?></div>
                     </div>
-                    <?php endif; ?>
-                </div>
-                <div class="col-md-5">
-                    <div class="small text-muted text-uppercase fw-bold" style="letter-spacing:.5px">Período B</div>
-                    <div class="total-streams-b"><?php echo number_format((int)$total_b_streams); ?></div>
-                    <div class="small text-muted"><?php echo $months_pt[$mb_start - 1] . '/' . $yb_start; ?> →
-                        <?php echo $months_pt[$mb_end - 1] . '/' . $yb_end; ?></div>
+                    <div class="col-md-2">
+                        <div class="vs-divider">VS</div>
+                        <?php if ($pct_streams !== null): ?>
+                            <div class="mt-2">
+                                <span
+                                    class="comparison-badge <?php echo $pct_streams > 0 ? 'badge-positive' : ($pct_streams < 0 ? 'badge-negative' : 'badge-neutral'); ?>">
+                                    <i
+                                        class="bi bi-arrow-<?php echo $pct_streams > 0 ? 'up' : ($pct_streams < 0 ? 'down' : 'dash'); ?> me-1"></i>
+                                    <?php echo abs($pct_streams); ?>%
+                                    <?php echo $pct_streams > 0 ? 'crescimento' : ($pct_streams < 0 ? 'queda' : 'estável'); ?>
+                                </span>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="small text-muted text-uppercase fw-bold" style="letter-spacing:.5px">Período B</div>
+                        <div class="total-streams-b"><?php echo number_format((int)$total_b_streams); ?></div>
+                        <div class="small text-muted"><?php echo $months_pt[$mb_start - 1] . '/' . $yb_start; ?> →
+                            <?php echo $months_pt[$mb_end - 1] . '/' . $yb_end; ?></div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Métricas 3 cards -->
-        <div class="row g-3 mb-4">
-            <div class="col-md-4">
-                <div class="period-card text-center">
-                    <div class="metric-label">Downloads</div>
-                    <div class="d-flex justify-content-center align-items-baseline gap-3 mt-2">
-                        <div>
-                            <div style="font-size:.7rem;color:#ff0089">A</div>
-                            <div class="metric-value" style="color:#ff0089">
-                                <?php echo number_format((int)$total_a_downloads); ?></div>
+            <!-- Métricas 3 cards -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <div class="period-card text-center">
+                        <div class="metric-label">Downloads</div>
+                        <div class="d-flex justify-content-center align-items-baseline gap-3 mt-2">
+                            <div>
+                                <div style="font-size:.7rem;color:#ff0089">A</div>
+                                <div class="metric-value" style="color:#ff0089">
+                                    <?php echo number_format((int)$total_a_downloads); ?></div>
+                            </div>
+                            <div class="vs-divider" style="font-size:1rem">vs</div>
+                            <div>
+                                <div style="font-size:.7rem;color:#00d084">B</div>
+                                <div class="metric-value" style="color:#00d084">
+                                    <?php echo number_format((int)$total_b_downloads); ?></div>
+                            </div>
                         </div>
-                        <div class="vs-divider" style="font-size:1rem">vs</div>
-                        <div>
-                            <div style="font-size:.7rem;color:#00d084">B</div>
-                            <div class="metric-value" style="color:#00d084">
-                                <?php echo number_format((int)$total_b_downloads); ?></div>
-                        </div>
+                        <?php if ($pct_downloads !== null): ?>
+                            <div class="mt-2"><span
+                                    class="comparison-badge <?php echo $pct_downloads >= 0 ? 'badge-positive' : 'badge-negative'; ?>"
+                                    style="font-size:.72rem">
+                                    <i
+                                        class="bi bi-arrow-<?php echo $pct_downloads >= 0 ? 'up' : 'down'; ?> me-1"></i><?php echo abs($pct_downloads); ?>%
+                                </span></div>
+                        <?php endif; ?>
                     </div>
-                    <?php if ($pct_downloads !== null): ?>
-                    <div class="mt-2"><span
-                            class="comparison-badge <?php echo $pct_downloads >= 0 ? 'badge-positive' : 'badge-negative'; ?>"
-                            style="font-size:.72rem">
-                            <i
-                                class="bi bi-arrow-<?php echo $pct_downloads >= 0 ? 'up' : 'down'; ?> me-1"></i><?php echo abs($pct_downloads); ?>%
-                        </span></div>
-                    <?php endif; ?>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="period-card text-center">
-                    <div class="metric-label">Receita bruta (USD)</div>
-                    <div class="d-flex justify-content-center align-items-baseline gap-3 mt-2">
-                        <div>
-                            <div style="font-size:.7rem;color:#ff0089">A</div>
-                            <div class="metric-value" style="color:#ff0089;font-size:1.4rem">
-                                $<?php echo number_format((float)$total_a_revenue, 2); ?></div>
+                <div class="col-md-4">
+                    <div class="period-card text-center">
+                        <div class="metric-label">Receita bruta (USD)</div>
+                        <div class="d-flex justify-content-center align-items-baseline gap-3 mt-2">
+                            <div>
+                                <div style="font-size:.7rem;color:#ff0089">A</div>
+                                <div class="metric-value" style="color:#ff0089;font-size:1.4rem">
+                                    $<?php echo number_format((float)$total_a_revenue, 2); ?></div>
+                            </div>
+                            <div class="vs-divider" style="font-size:1rem">vs</div>
+                            <div>
+                                <div style="font-size:.7rem;color:#00d084">B</div>
+                                <div class="metric-value" style="color:#00d084;font-size:1.4rem">
+                                    $<?php echo number_format((float)$total_b_revenue, 2); ?></div>
+                            </div>
                         </div>
-                        <div class="vs-divider" style="font-size:1rem">vs</div>
-                        <div>
-                            <div style="font-size:.7rem;color:#00d084">B</div>
-                            <div class="metric-value" style="color:#00d084;font-size:1.4rem">
-                                $<?php echo number_format((float)$total_b_revenue, 2); ?></div>
-                        </div>
+                        <?php if ($pct_revenue !== null): ?>
+                            <div class="mt-2"><span
+                                    class="comparison-badge <?php echo $pct_revenue >= 0 ? 'badge-positive' : 'badge-negative'; ?>"
+                                    style="font-size:.72rem">
+                                    <i
+                                        class="bi bi-arrow-<?php echo $pct_revenue >= 0 ? 'up' : 'down'; ?> me-1"></i><?php echo abs($pct_revenue); ?>%
+                                </span></div>
+                        <?php endif; ?>
                     </div>
-                    <?php if ($pct_revenue !== null): ?>
-                    <div class="mt-2"><span
-                            class="comparison-badge <?php echo $pct_revenue >= 0 ? 'badge-positive' : 'badge-negative'; ?>"
-                            style="font-size:.72rem">
-                            <i
-                                class="bi bi-arrow-<?php echo $pct_revenue >= 0 ? 'up' : 'down'; ?> me-1"></i><?php echo abs($pct_revenue); ?>%
-                        </span></div>
-                    <?php endif; ?>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="period-card text-center">
-                    <div class="metric-label">Média mensal de streams</div>
-                    <?php
+                <div class="col-md-4">
+                    <div class="period-card text-center">
+                        <div class="metric-label">Média mensal de streams</div>
+                        <?php
                         $months_a_count = count($totals_a) ?: 1;
                         $months_b_count = count($totals_b) ?: 1;
                         $avg_a = round($total_a_streams / $months_a_count);
                         $avg_b = round($total_b_streams / $months_b_count);
                         $pct_avg = pct_change($avg_a, $avg_b);
                         ?>
-                    <div class="d-flex justify-content-center align-items-baseline gap-3 mt-2">
-                        <div>
-                            <div style="font-size:.7rem;color:#ff0089">A</div>
-                            <div class="metric-value" style="color:#ff0089"><?php echo number_format($avg_a); ?></div>
+                        <div class="d-flex justify-content-center align-items-baseline gap-3 mt-2">
+                            <div>
+                                <div style="font-size:.7rem;color:#ff0089">A</div>
+                                <div class="metric-value" style="color:#ff0089"><?php echo number_format($avg_a); ?></div>
+                            </div>
+                            <div class="vs-divider" style="font-size:1rem">vs</div>
+                            <div>
+                                <div style="font-size:.7rem;color:#00d084">B</div>
+                                <div class="metric-value" style="color:#00d084"><?php echo number_format($avg_b); ?></div>
+                            </div>
                         </div>
-                        <div class="vs-divider" style="font-size:1rem">vs</div>
-                        <div>
-                            <div style="font-size:.7rem;color:#00d084">B</div>
-                            <div class="metric-value" style="color:#00d084"><?php echo number_format($avg_b); ?></div>
-                        </div>
+                        <?php if ($pct_avg !== null): ?>
+                            <div class="mt-2"><span
+                                    class="comparison-badge <?php echo $pct_avg >= 0 ? 'badge-positive' : 'badge-negative'; ?>"
+                                    style="font-size:.72rem">
+                                    <i
+                                        class="bi bi-arrow-<?php echo $pct_avg >= 0 ? 'up' : 'down'; ?> me-1"></i><?php echo abs($pct_avg); ?>%
+                                </span></div>
+                        <?php endif; ?>
                     </div>
-                    <?php if ($pct_avg !== null): ?>
-                    <div class="mt-2"><span
-                            class="comparison-badge <?php echo $pct_avg >= 0 ? 'badge-positive' : 'badge-negative'; ?>"
-                            style="font-size:.72rem">
-                            <i
-                                class="bi bi-arrow-<?php echo $pct_avg >= 0 ? 'up' : 'down'; ?> me-1"></i><?php echo abs($pct_avg); ?>%
-                        </span></div>
-                    <?php endif; ?>
                 </div>
             </div>
-        </div>
 
-        <!-- Gráfico mensal -->
-        <div class="period-card mb-4">
-            <h6 class="mb-3"><i class="bi bi-graph-up me-2 text-pink"></i>Evolução mensal dos streams</h6>
-            <canvas id="comparisonChart" style="max-height:300px"></canvas>
-        </div>
+            <!-- Gráfico mensal -->
+            <div class="period-card mb-4">
+                <h6 class="mb-3"><i class="bi bi-graph-up me-2 text-pink"></i>Evolução mensal dos streams</h6>
+                <canvas id="comparisonChart" style="max-height:300px"></canvas>
+            </div>
 
-        <!-- Comparação por plataforma -->
-        <?php if (!empty($all_slugs)): ?>
-        <div class="period-card mb-4">
-            <h6 class="mb-3"><i class="bi bi-grid-3x3-gap-fill me-2 text-pink"></i>Comparação por plataforma</h6>
-            <div class="table-responsive">
-                <table class="table table-hover mb-0" style="font-size:.85rem">
-                    <thead>
-                        <tr>
-                            <th>Plataforma</th>
-                            <th class="text-end" style="color:#ff0089">Streams A</th>
-                            <th class="text-end" style="color:#00d084">Streams B</th>
-                            <th class="text-center">Variação</th>
-                            <th style="min-width:160px">Tendência</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($all_slugs as $slug):
+            <!-- Comparação por plataforma -->
+            <?php if (!empty($all_slugs)): ?>
+                <div class="period-card mb-4">
+                    <h6 class="mb-3"><i class="bi bi-grid-3x3-gap-fill me-2 text-pink"></i>Comparação por plataforma</h6>
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" style="font-size:.85rem">
+                            <thead>
+                                <tr>
+                                    <th>Plataforma</th>
+                                    <th class="text-end" style="color:#ff0089">Streams A</th>
+                                    <th class="text-end" style="color:#00d084">Streams B</th>
+                                    <th class="text-center">Variação</th>
+                                    <th style="min-width:160px">Tendência</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($all_slugs as $slug):
                                     $pa = $plat_a[$slug] ?? ['name' => $slug, 'streams' => 0];
                                     $pb = $plat_b[$slug] ?? ['name' => $slug, 'streams' => 0];
                                     $name = $pa['name'] !== $slug ? $pa['name'] : ($pb['name'] !== $slug ? $pb['name'] : $slug);
@@ -1048,100 +1048,100 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
                                     $pct_bar_a = round($pa['streams'] / $max_bar * 100);
                                     $pct_bar_b = round($pb['streams'] / $max_bar * 100);
                                 ?>
-                        <tr>
-                            <td>
-                                <div class="d-flex align-items-center gap-2">
-                                    <div class="platform-icon-circle"
-                                        style="background:<?php echo $colors['border']; ?>">
-                                        <i class="bi <?php echo $icon; ?>"></i>
-                                    </div>
-                                    <?php echo htmlspecialchars($name); ?>
-                                </div>
-                            </td>
-                            <td class="text-end fw-semibold" style="color:#ff0089">
-                                <?php echo number_format((int)$pa['streams']); ?></td>
-                            <td class="text-end fw-semibold" style="color:#00d084">
-                                <?php echo number_format((int)$pb['streams']); ?></td>
-                            <td class="text-center">
-                                <?php if ($pct !== null): ?>
-                                <span
-                                    class="percentage-change <?php echo $pct >= 0 ? 'badge-positive' : 'badge-negative'; ?>">
-                                    <i
-                                        class="bi bi-arrow-<?php echo $pct >= 0 ? 'up' : 'down'; ?> me-1"></i><?php echo abs($pct); ?>%
-                                </span>
-                                <?php else: ?><span class="text-muted small">—</span><?php endif; ?>
-                            </td>
-                            <td>
-                                <div class="mb-1">
-                                    <div class="bar-compare bar-a"
-                                        style="width:<?php echo $pct_bar_a; ?>%;max-width:100%"></div>
-                                </div>
-                                <div>
-                                    <div class="bar-compare bar-b"
-                                        style="width:<?php echo $pct_bar_b; ?>%;max-width:100%"></div>
-                                </div>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <?php endif; ?>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="platform-icon-circle"
+                                                    style="background:<?php echo $colors['border']; ?>">
+                                                    <i class="bi <?php echo $icon; ?>"></i>
+                                                </div>
+                                                <?php echo htmlspecialchars($name); ?>
+                                            </div>
+                                        </td>
+                                        <td class="text-end fw-semibold" style="color:#ff0089">
+                                            <?php echo number_format((int)$pa['streams']); ?></td>
+                                        <td class="text-end fw-semibold" style="color:#00d084">
+                                            <?php echo number_format((int)$pb['streams']); ?></td>
+                                        <td class="text-center">
+                                            <?php if ($pct !== null): ?>
+                                                <span
+                                                    class="percentage-change <?php echo $pct >= 0 ? 'badge-positive' : 'badge-negative'; ?>">
+                                                    <i
+                                                        class="bi bi-arrow-<?php echo $pct >= 0 ? 'up' : 'down'; ?> me-1"></i><?php echo abs($pct); ?>%
+                                                </span>
+                                            <?php else: ?><span class="text-muted small">—</span><?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <div class="mb-1">
+                                                <div class="bar-compare bar-a"
+                                                    style="width:<?php echo $pct_bar_a; ?>%;max-width:100%"></div>
+                                            </div>
+                                            <div>
+                                                <div class="bar-compare bar-b"
+                                                    style="width:<?php echo $pct_bar_b; ?>%;max-width:100%"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            <?php endif; ?>
 
-        <!-- Top artistas A vs B -->
-        <?php if (!empty($artists_a) || !empty($artists_b)): ?>
-        <div class="row g-3 mb-4">
-            <div class="col-md-6">
-                <div class="period-card period-a h-100">
-                    <h6 class="mb-3"><i class="bi bi-person-fill me-2" style="color:#ff0089"></i>Top Artistas — Período
-                        A</h6>
-                    <?php if (empty($artists_a)): ?>
-                    <div class="small text-muted">Sem dados.</div>
-                    <?php else: ?>
-                    <?php foreach ($artists_a as $i => $art): ?>
-                    <div class="artist-rank-row">
-                        <span class="fw-bold" style="min-width:20px;color:#ff0089"><?php echo $i + 1; ?></span>
-                        <?php if ($art['photo_artist']): ?>
-                        <img class="artist-photo-sm"
-                            src="<?php echo htmlspecialchars($photo_url . $art['photo_artist']); ?>"
-                            onerror="this.outerHTML='<div class=\'artist-photo-sm-placeholder\'>🎤</div>'" alt="" />
-                        <?php else: ?><div class="artist-photo-sm-placeholder">🎤</div><?php endif; ?>
-                        <div class="flex-grow-1 fw-semibold small"><?php echo htmlspecialchars($art['stage_name']); ?>
+            <!-- Top artistas A vs B -->
+            <?php if (!empty($artists_a) || !empty($artists_b)): ?>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="period-card period-a h-100">
+                            <h6 class="mb-3"><i class="bi bi-person-fill me-2" style="color:#ff0089"></i>Top Artistas — Período
+                                A</h6>
+                            <?php if (empty($artists_a)): ?>
+                                <div class="small text-muted">Sem dados.</div>
+                            <?php else: ?>
+                                <?php foreach ($artists_a as $i => $art): ?>
+                                    <div class="artist-rank-row">
+                                        <span class="fw-bold" style="min-width:20px;color:#ff0089"><?php echo $i + 1; ?></span>
+                                        <?php if ($art['photo_artist']): ?>
+                                            <img class="artist-photo-sm"
+                                                src="<?php echo htmlspecialchars($photo_url . $art['photo_artist']); ?>"
+                                                onerror="this.outerHTML='<div class=\'artist-photo-sm-placeholder\'>🎤</div>'" alt="" />
+                                        <?php else: ?><div class="artist-photo-sm-placeholder">🎤</div><?php endif; ?>
+                                        <div class="flex-grow-1 fw-semibold small"><?php echo htmlspecialchars($art['stage_name']); ?>
+                                        </div>
+                                        <div class="small fw-bold" style="color:#ff0089">
+                                            <?php echo number_format((int)$art['streams']); ?></div>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </div>
-                        <div class="small fw-bold" style="color:#ff0089">
-                            <?php echo number_format((int)$art['streams']); ?></div>
                     </div>
-                    <?php endforeach; ?>
-                    <?php endif; ?>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="period-card period-b h-100">
-                    <h6 class="mb-3"><i class="bi bi-person-fill me-2" style="color:#00d084"></i>Top Artistas — Período
-                        B</h6>
-                    <?php if (empty($artists_b)): ?>
-                    <div class="small text-muted">Sem dados.</div>
-                    <?php else: ?>
-                    <?php foreach ($artists_b as $i => $art): ?>
-                    <div class="artist-rank-row">
-                        <span class="fw-bold" style="min-width:20px;color:#00d084"><?php echo $i + 1; ?></span>
-                        <?php if ($art['photo_artist']): ?>
-                        <img class="artist-photo-sm"
-                            src="<?php echo htmlspecialchars($photo_url . $art['photo_artist']); ?>"
-                            onerror="this.outerHTML='<div class=\'artist-photo-sm-placeholder\'>🎤</div>'" alt="" />
-                        <?php else: ?><div class="artist-photo-sm-placeholder">🎤</div><?php endif; ?>
-                        <div class="flex-grow-1 fw-semibold small"><?php echo htmlspecialchars($art['stage_name']); ?>
+                    <div class="col-md-6">
+                        <div class="period-card period-b h-100">
+                            <h6 class="mb-3"><i class="bi bi-person-fill me-2" style="color:#00d084"></i>Top Artistas — Período
+                                B</h6>
+                            <?php if (empty($artists_b)): ?>
+                                <div class="small text-muted">Sem dados.</div>
+                            <?php else: ?>
+                                <?php foreach ($artists_b as $i => $art): ?>
+                                    <div class="artist-rank-row">
+                                        <span class="fw-bold" style="min-width:20px;color:#00d084"><?php echo $i + 1; ?></span>
+                                        <?php if ($art['photo_artist']): ?>
+                                            <img class="artist-photo-sm"
+                                                src="<?php echo htmlspecialchars($photo_url . $art['photo_artist']); ?>"
+                                                onerror="this.outerHTML='<div class=\'artist-photo-sm-placeholder\'>🎤</div>'" alt="" />
+                                        <?php else: ?><div class="artist-photo-sm-placeholder">🎤</div><?php endif; ?>
+                                        <div class="flex-grow-1 fw-semibold small"><?php echo htmlspecialchars($art['stage_name']); ?>
+                                        </div>
+                                        <div class="small fw-bold" style="color:#00d084">
+                                            <?php echo number_format((int)$art['streams']); ?></div>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </div>
-                        <div class="small fw-bold" style="color:#00d084">
-                            <?php echo number_format((int)$art['streams']); ?></div>
                     </div>
-                    <?php endforeach; ?>
-                    <?php endif; ?>
                 </div>
-            </div>
-        </div>
-        <?php endif; ?>
+            <?php endif; ?>
 
         <?php endif; // fim $has_data 
         ?>
@@ -1155,153 +1155,153 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
     <script src="<?php echo APP_URL  ?>/js/theme.wp.js"></script>
     <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
     <script>
-    // ── Seleção rápida ────────────────────────────
-    function setQuick(type) {
-        const now = new Date();
-        const y = now.getFullYear();
-        const m = now.getMonth() + 1; // 1-12
+        // ── Seleção rápida ────────────────────────────
+        function setQuick(type) {
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = now.getMonth() + 1; // 1-12
 
-        let yaS, maS, yaE, maE, ybS, mbS, ybE, mbE;
+            let yaS, maS, yaE, maE, ybS, mbS, ybE, mbE;
 
-        if (type === 'month') {
-            // Mês anterior vs este mês
-            const prevM = m === 1 ? 12 : m - 1;
-            const prevY = m === 1 ? y - 1 : y;
-            yaS = yaE = prevY;
-            maS = maE = prevM;
-            ybS = ybE = y;
-            mbS = mbE = m;
-        } else if (type === 'quarter') {
-            const q = Math.ceil(m / 3);
-            const prevQ = q === 1 ? 4 : q - 1;
-            const prevQY = q === 1 ? y - 1 : y;
-            yaS = prevQY;
-            maS = (prevQ - 1) * 3 + 1;
-            yaE = prevQY;
-            maE = prevQ * 3;
-            ybS = y;
-            mbS = (q - 1) * 3 + 1;
-            ybE = y;
-            mbE = Math.min(q * 3, m);
-        } else { // year
-            yaS = y - 1;
-            maS = 1;
-            yaE = y - 1;
-            maE = 12;
-            ybS = y;
-            mbS = 1;
-            ybE = y;
-            mbE = m;
+            if (type === 'month') {
+                // Mês anterior vs este mês
+                const prevM = m === 1 ? 12 : m - 1;
+                const prevY = m === 1 ? y - 1 : y;
+                yaS = yaE = prevY;
+                maS = maE = prevM;
+                ybS = ybE = y;
+                mbS = mbE = m;
+            } else if (type === 'quarter') {
+                const q = Math.ceil(m / 3);
+                const prevQ = q === 1 ? 4 : q - 1;
+                const prevQY = q === 1 ? y - 1 : y;
+                yaS = prevQY;
+                maS = (prevQ - 1) * 3 + 1;
+                yaE = prevQY;
+                maE = prevQ * 3;
+                ybS = y;
+                mbS = (q - 1) * 3 + 1;
+                ybE = y;
+                mbE = Math.min(q * 3, m);
+            } else { // year
+                yaS = y - 1;
+                maS = 1;
+                yaE = y - 1;
+                maE = 12;
+                ybS = y;
+                mbS = 1;
+                ybE = y;
+                mbE = m;
+            }
+
+            setSelects(yaS, maS, yaE, maE, 'ya_start', 'ma_start', 'ya_end', 'ma_end');
+            setSelects(ybS, mbS, ybE, mbE, 'yb_start', 'mb_start', 'yb_end', 'mb_end');
+            document.getElementById('compareForm').submit();
         }
 
-        setSelects(yaS, maS, yaE, maE, 'ya_start', 'ma_start', 'ya_end', 'ma_end');
-        setSelects(ybS, mbS, ybE, mbE, 'yb_start', 'mb_start', 'yb_end', 'mb_end');
-        document.getElementById('compareForm').submit();
-    }
-
-    function setSelects(yS, mS, yE, mE, idYS, idMS, idYE, idME) {
-        const setVal = (id, val) => {
-            const el = document.getElementById(id);
-            if (el) {
-                for (let opt of el.options) {
-                    if (parseInt(opt.value) === val) {
-                        opt.selected = true;
-                        break;
+        function setSelects(yS, mS, yE, mE, idYS, idMS, idYE, idME) {
+            const setVal = (id, val) => {
+                const el = document.getElementById(id);
+                if (el) {
+                    for (let opt of el.options) {
+                        if (parseInt(opt.value) === val) {
+                            opt.selected = true;
+                            break;
+                        }
                     }
                 }
-            }
-        };
-        setVal(idYS, yS);
-        setVal(idMS, mS);
-        setVal(idYE, yE);
-        setVal(idME, mE);
-    }
-
-    // ── Swap períodos ─────────────────────────────
-    function swapPeriods() {
-        const getV = id => document.getElementById(id).value;
-        const setV = (id, v) => {
-            document.getElementById(id).value = v;
-        };
-        const [yaS, maS, yaE, maE] = [getV('ya_start'), getV('ma_start'), getV('ya_end'), getV('ma_end')];
-        const [ybS, mbS, ybE, mbE] = [getV('yb_start'), getV('mb_start'), getV('yb_end'), getV('mb_end')];
-        setV('ya_start', ybS);
-        setV('ma_start', mbS);
-        setV('ya_end', ybE);
-        setV('ma_end', mbE);
-        setV('yb_start', yaS);
-        setV('mb_start', maS);
-        setV('yb_end', yaE);
-        setV('mb_end', maE);
-    }
-
-    <?php if ($has_data && (!empty($rows_a) || !empty($rows_b))): ?>
-    // ── Gráfico ───────────────────────────────────
-    const labelsA = <?php echo json_encode(array_values($labels_a)); ?>;
-    const labelsB = <?php echo json_encode(array_values($labels_b)); ?>;
-    const dataA = <?php echo json_encode(array_values($chart_data_a)); ?>;
-    const dataB = <?php echo json_encode(array_values($chart_data_b)); ?>;
-    const maxLen = Math.max(labelsA.length, labelsB.length);
-    const chartLabels = labelsA.length >= labelsB.length ? labelsA : labelsB;
-
-    new Chart(document.getElementById('comparisonChart').getContext('2d'), {
-        type: 'line',
-        data: {
-            labels: chartLabels,
-            datasets: [{
-                    label: 'Período A (<?php echo $months_pt[$ma_start - 1] . '/' . $ya_start; ?> → <?php echo $months_pt[$ma_end - 1] . '/' . $ya_end; ?>)',
-                    data: dataA.slice(0, maxLen),
-                    borderColor: '#ff0089',
-                    backgroundColor: 'rgba(255,0,137,0.08)',
-                    tension: 0.4,
-                    fill: true,
-                    spanGaps: true
-                },
-                {
-                    label: 'Período B (<?php echo $months_pt[$mb_start - 1] . '/' . $yb_start; ?> → <?php echo $months_pt[$mb_end - 1] . '/' . $yb_end; ?>)',
-                    data: dataB.slice(0, maxLen),
-                    borderColor: '#00d084',
-                    backgroundColor: 'rgba(0,208,132,0.08)',
-                    tension: 0.4,
-                    fill: true,
-                    spanGaps: true
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            interaction: {
-                mode: 'index',
-                intersect: false
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Streams'
-                    }
-                },
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Mês'
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    position: 'top'
-                },
-                tooltip: {
-                    mode: 'index',
-                    intersect: false
-                }
-            }
+            };
+            setVal(idYS, yS);
+            setVal(idMS, mS);
+            setVal(idYE, yE);
+            setVal(idME, mE);
         }
-    });
-    <?php endif; ?>
+
+        // ── Swap períodos ─────────────────────────────
+        function swapPeriods() {
+            const getV = id => document.getElementById(id).value;
+            const setV = (id, v) => {
+                document.getElementById(id).value = v;
+            };
+            const [yaS, maS, yaE, maE] = [getV('ya_start'), getV('ma_start'), getV('ya_end'), getV('ma_end')];
+            const [ybS, mbS, ybE, mbE] = [getV('yb_start'), getV('mb_start'), getV('yb_end'), getV('mb_end')];
+            setV('ya_start', ybS);
+            setV('ma_start', mbS);
+            setV('ya_end', ybE);
+            setV('ma_end', mbE);
+            setV('yb_start', yaS);
+            setV('mb_start', maS);
+            setV('yb_end', yaE);
+            setV('mb_end', maE);
+        }
+
+        <?php if ($has_data && (!empty($rows_a) || !empty($rows_b))): ?>
+            // ── Gráfico ───────────────────────────────────
+            const labelsA = <?php echo json_encode(array_values($labels_a)); ?>;
+            const labelsB = <?php echo json_encode(array_values($labels_b)); ?>;
+            const dataA = <?php echo json_encode(array_values($chart_data_a)); ?>;
+            const dataB = <?php echo json_encode(array_values($chart_data_b)); ?>;
+            const maxLen = Math.max(labelsA.length, labelsB.length);
+            const chartLabels = labelsA.length >= labelsB.length ? labelsA : labelsB;
+
+            new Chart(document.getElementById('comparisonChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: chartLabels,
+                    datasets: [{
+                            label: 'Período A (<?php echo $months_pt[$ma_start - 1] . '/' . $ya_start; ?> → <?php echo $months_pt[$ma_end - 1] . '/' . $ya_end; ?>)',
+                            data: dataA.slice(0, maxLen),
+                            borderColor: '#ff0089',
+                            backgroundColor: 'rgba(255,0,137,0.08)',
+                            tension: 0.4,
+                            fill: true,
+                            spanGaps: true
+                        },
+                        {
+                            label: 'Período B (<?php echo $months_pt[$mb_start - 1] . '/' . $yb_start; ?> → <?php echo $months_pt[$mb_end - 1] . '/' . $yb_end; ?>)',
+                            data: dataB.slice(0, maxLen),
+                            borderColor: '#00d084',
+                            backgroundColor: 'rgba(0,208,132,0.08)',
+                            tension: 0.4,
+                            fill: true,
+                            spanGaps: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Streams'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Mês'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        }
+                    }
+                }
+            });
+        <?php endif; ?>
     </script>
 </body>
 

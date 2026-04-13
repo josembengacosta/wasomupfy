@@ -118,472 +118,472 @@ $full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['
     <?php require_once __DIR__ . '/../include/head.php'; ?>
     <title>Ajuda — <?php echo APP_NAME; ?></title>
     <style>
-    /* ══ Help header ══ */
-    .help-header {
-        background: linear-gradient(135deg, #FF0089 0%, #FF4D4D 100%);
-        border-radius: 24px;
-        padding: 3rem 2rem;
-        margin-bottom: 2rem;
-        color: #fff;
-        position: relative;
-        overflow: hidden;
-        text-align: center;
-    }
-
-    .help-header::before {
-        content: '\F431';
-        font-family: 'bootstrap-icons';
-        position: absolute;
-        left: -20px;
-        bottom: -20px;
-        font-size: 12rem;
-        opacity: .08;
-        transform: rotate(-15deg);
-    }
-
-    .help-header::after {
-        content: '\F44F';
-        font-family: 'bootstrap-icons';
-        position: absolute;
-        right: -20px;
-        top: -20px;
-        font-size: 10rem;
-        opacity: .08;
-        transform: rotate(15deg);
-    }
-
-    .help-header h1 {
-        font-size: 2.8rem;
-        font-weight: 800;
-        margin-bottom: 1rem;
-        position: relative;
-        z-index: 2;
-    }
-
-    .help-header p {
-        font-size: 1.1rem;
-        max-width: 680px;
-        margin: 0 auto;
-        opacity: .92;
-        position: relative;
-        z-index: 2;
-    }
-
-    /* ══ Search box ══ */
-    .search-box {
-        max-width: 580px;
-        margin: 1.8rem auto 0;
-        position: relative;
-        z-index: 2;
-    }
-
-    .search-box .input-group {
-        background: #fff;
-        border-radius: 50px;
-        overflow: hidden;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, .18);
-    }
-
-    .search-box input {
-        border: none;
-        padding: .9rem 1.4rem;
-        font-size: .95rem;
-    }
-
-    .search-box input:focus {
-        box-shadow: none;
-        outline: none;
-    }
-
-    .search-box .search-btn {
-        background: #fff;
-        border: none;
-        padding: 0 1.8rem;
-        color: #FF0089;
-        font-weight: 700;
-        transition: all .2s;
-    }
-
-    .search-box .search-btn:hover {
-        background: #FF0089;
-        color: #fff;
-    }
-
-    /* ══ Category cards ══ */
-    .help-category-card {
-        background: var(--card-bg, #fff);
-        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
-        border-radius: 18px;
-        padding: 2rem 1.4rem;
-        text-align: center;
-        height: 100%;
-        transition: all .25s;
-        text-decoration: none;
-        color: inherit;
-        display: block;
-    }
-
-    .help-category-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 16px 36px rgba(255, 0, 137, .14);
-        border-color: #FF0089;
-        color: inherit;
-    }
-
-    .help-category-icon {
-        width: 72px;
-        height: 72px;
-        background: linear-gradient(135deg, rgba(255, 0, 137, .1), rgba(255, 77, 77, .1));
-        border-radius: 24px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1.3rem;
-    }
-
-    .help-category-icon i {
-        font-size: 2.5rem;
-        color: #FF0089;
-    }
-
-    .help-category-card h3 {
-        font-size: 1.15rem;
-        font-weight: 700;
-        margin-bottom: .4rem;
-    }
-
-    .help-category-card p {
-        color: var(--text-muted, #6c757d);
-        font-size: .88rem;
-        margin-bottom: .8rem;
-    }
-
-    .help-category-card .badge {
-        background: #FF0089;
-        font-weight: 500;
-        padding: .35rem .85rem;
-    }
-
-    /* ══ FAQ items ══ */
-    .faq-item {
-        background: var(--card-bg, #fff);
-        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
-        border-radius: 14px;
-        padding: 1.4rem;
-        margin-bottom: .8rem;
-        border-left: 4px solid transparent;
-        transition: all .2s;
-    }
-
-    .faq-item:hover {
-        box-shadow: 0 6px 20px rgba(255, 0, 137, .1);
-        border-left-color: #FF0089;
-    }
-
-    .faq-question {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        cursor: pointer;
-        user-select: none;
-    }
-
-    .faq-question h5 {
-        margin: 0;
-        font-weight: 600;
-        font-size: .95rem;
-    }
-
-    .faq-question .faq-icon {
-        font-size: 1.1rem;
-        color: #FF0089;
-        transition: transform .3s;
-        flex-shrink: 0;
-    }
-
-    .faq-question[aria-expanded="true"] .faq-icon {
-        transform: rotate(180deg);
-    }
-
-    .faq-answer {
-        margin-top: 1rem;
-        padding-top: 1rem;
-        border-top: 1px solid var(--border-color, rgba(0, 0, 0, .08));
-        color: var(--text-muted, #6c757d);
-        font-size: .88rem;
-    }
-
-    /* ══ Tutorial cards ══ */
-    .tutorial-card {
-        background: var(--card-bg, #fff);
-        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
-        border-radius: 14px;
-        overflow: hidden;
-        height: 100%;
-        transition: all .25s;
-    }
-
-    .tutorial-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 28px rgba(255, 0, 137, .13);
-    }
-
-    .tutorial-thumb {
-        position: relative;
-        padding-top: 56.25%;
-        background: linear-gradient(135deg, #FF0089, #FF4D4D);
-    }
-
-    .tutorial-thumb-inner {
-        position: absolute;
-        inset: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .play-btn {
-        width: 52px;
-        height: 52px;
-        background: #fff;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #FF0089;
-        font-size: 1.5rem;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, .25);
-        transition: all .2s;
-    }
-
-    .tutorial-card:hover .play-btn {
-        background: #FF0089;
-        color: #fff;
-        transform: scale(1.1);
-    }
-
-    .tutorial-icon-bg {
-        font-size: 5rem;
-        opacity: .12;
-        color: #fff;
-        position: absolute;
-        right: 10px;
-        bottom: -10px;
-    }
-
-    .tutorial-body {
-        padding: 1.3rem;
-    }
-
-    .tutorial-body h5 {
-        font-weight: 700;
-        font-size: .95rem;
-        margin-bottom: .35rem;
-    }
-
-    .tutorial-body p {
-        color: var(--text-muted, #6c757d);
-        font-size: .82rem;
-        margin-bottom: .8rem;
-    }
-
-    .tutorial-meta {
-        display: flex;
-        gap: 1rem;
-        font-size: .76rem;
-        color: var(--text-muted, #6c757d);
-    }
-
-    .tutorial-meta i {
-        color: #FF0089;
-        margin-right: 3px;
-    }
-
-    /* ══ Support option cards ══ */
-    .support-option {
-        background: var(--card-bg, #fff);
-        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
-        border-radius: 18px;
-        padding: 2rem 1.5rem;
-        text-align: center;
-        height: 100%;
-        transition: all .25s;
-    }
-
-    .support-option:hover {
-        border-color: #FF0089;
-        transform: translateY(-4px);
-        box-shadow: 0 10px 28px rgba(255, 0, 137, .1);
-    }
-
-    .support-option>i {
-        font-size: 2.8rem;
-        color: #FF0089;
-        display: block;
-        margin-bottom: .9rem;
-    }
-
-    .support-option h4 {
-        font-weight: 700;
-        font-size: 1.05rem;
-        margin-bottom: .4rem;
-    }
-
-    .support-option p {
-        color: var(--text-muted, #6c757d);
-        font-size: .86rem;
-        margin-bottom: 1.2rem;
-    }
-
-    /* ══ Buttons ══ */
-    .btn-help {
-        background: linear-gradient(135deg, #FF0089, #FF4D4D);
-        border: none;
-        color: #fff;
-        padding: .5rem 1.8rem;
-        border-radius: 50px;
-        font-weight: 600;
-        transition: all .2s;
-    }
-
-    .btn-help:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 18px rgba(255, 0, 137, .3);
-        color: #fff;
-    }
-
-    .btn-help-outline {
-        background: transparent;
-        border: 2px solid #FF0089;
-        color: #FF0089;
-        padding: .5rem 1.8rem;
-        border-radius: 50px;
-        font-weight: 600;
-        transition: all .2s;
-    }
-
-    .btn-help-outline:hover {
-        background: #FF0089;
-        color: #fff;
-    }
-
-    /* ══ Contact info ══ */
-    .contact-info {
-        background: var(--metric-bg, rgba(0, 0, 0, .03));
-        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
-        border-radius: 16px;
-        padding: 1.5rem;
-    }
-
-    .contact-item {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        margin-bottom: .9rem;
-    }
-
-    .contact-item:last-child {
-        margin-bottom: 0;
-    }
-
-    .contact-item-icon {
-        width: 38px;
-        height: 38px;
-        background: var(--card-bg, #fff);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #FF0089;
-        flex-shrink: 0;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, .07);
-    }
-
-    .contact-item strong {
-        display: block;
-        font-size: .85rem;
-    }
-
-    .contact-item span {
-        color: var(--text-muted, #6c757d);
-        font-size: .8rem;
-    }
-
-    /* ══ Quick links ══ */
-    .quick-link {
-        background: var(--card-bg, #fff);
-        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
-        border-radius: 11px;
-        padding: .9rem 1.1rem;
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        text-decoration: none;
-        color: inherit;
-        transition: all .2s;
-        margin-bottom: .6rem;
-    }
-
-    .quick-link:last-child {
-        margin-bottom: 0;
-    }
-
-    .quick-link i {
-        font-size: 1.8rem;
-        color: #FF0089;
-        transition: color .2s;
-        flex-shrink: 0;
-    }
-
-    .quick-link:hover {
-        background: #FF0089;
-        color: #fff;
-        transform: translateX(4px);
-        border-color: #FF0089;
-    }
-
-    .quick-link:hover i {
-        color: #fff;
-    }
-
-    .quick-link:hover small {
-        color: rgba(255, 255, 255, .8);
-    }
-
-    .quick-link h6 {
-        margin: 0;
-        font-weight: 600;
-        font-size: .87rem;
-    }
-
-    .quick-link small {
-        color: var(--text-muted, #6c757d);
-        font-size: .76rem;
-    }
-
-    /* ══ Section title ══ */
-    .sec-title {
-        font-size: 1.25rem;
-        font-weight: 800;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 1.3rem;
-    }
-
-    .sec-title i {
-        color: #FF0089;
-    }
-
-    @media(max-width:768px) {
+        /* ══ Help header ══ */
         .help-header {
-            padding: 2rem 1rem;
+            background: linear-gradient(135deg, #FF0089 0%, #FF4D4D 100%);
+            border-radius: 24px;
+            padding: 3rem 2rem;
+            margin-bottom: 2rem;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .help-header::before {
+            content: '\F431';
+            font-family: 'bootstrap-icons';
+            position: absolute;
+            left: -20px;
+            bottom: -20px;
+            font-size: 12rem;
+            opacity: .08;
+            transform: rotate(-15deg);
+        }
+
+        .help-header::after {
+            content: '\F44F';
+            font-family: 'bootstrap-icons';
+            position: absolute;
+            right: -20px;
+            top: -20px;
+            font-size: 10rem;
+            opacity: .08;
+            transform: rotate(15deg);
         }
 
         .help-header h1 {
-            font-size: 2rem;
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
         }
-    }
+
+        .help-header p {
+            font-size: 1.1rem;
+            max-width: 680px;
+            margin: 0 auto;
+            opacity: .92;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ══ Search box ══ */
+        .search-box {
+            max-width: 580px;
+            margin: 1.8rem auto 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .search-box .input-group {
+            background: #fff;
+            border-radius: 50px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .18);
+        }
+
+        .search-box input {
+            border: none;
+            padding: .9rem 1.4rem;
+            font-size: .95rem;
+        }
+
+        .search-box input:focus {
+            box-shadow: none;
+            outline: none;
+        }
+
+        .search-box .search-btn {
+            background: #fff;
+            border: none;
+            padding: 0 1.8rem;
+            color: #FF0089;
+            font-weight: 700;
+            transition: all .2s;
+        }
+
+        .search-box .search-btn:hover {
+            background: #FF0089;
+            color: #fff;
+        }
+
+        /* ══ Category cards ══ */
+        .help-category-card {
+            background: var(--card-bg, #fff);
+            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
+            border-radius: 18px;
+            padding: 2rem 1.4rem;
+            text-align: center;
+            height: 100%;
+            transition: all .25s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .help-category-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 36px rgba(255, 0, 137, .14);
+            border-color: #FF0089;
+            color: inherit;
+        }
+
+        .help-category-icon {
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, rgba(255, 0, 137, .1), rgba(255, 77, 77, .1));
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.3rem;
+        }
+
+        .help-category-icon i {
+            font-size: 2.5rem;
+            color: #FF0089;
+        }
+
+        .help-category-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: .4rem;
+        }
+
+        .help-category-card p {
+            color: var(--text-muted, #6c757d);
+            font-size: .88rem;
+            margin-bottom: .8rem;
+        }
+
+        .help-category-card .badge {
+            background: #FF0089;
+            font-weight: 500;
+            padding: .35rem .85rem;
+        }
+
+        /* ══ FAQ items ══ */
+        .faq-item {
+            background: var(--card-bg, #fff);
+            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
+            border-radius: 14px;
+            padding: 1.4rem;
+            margin-bottom: .8rem;
+            border-left: 4px solid transparent;
+            transition: all .2s;
+        }
+
+        .faq-item:hover {
+            box-shadow: 0 6px 20px rgba(255, 0, 137, .1);
+            border-left-color: #FF0089;
+        }
+
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .faq-question h5 {
+            margin: 0;
+            font-weight: 600;
+            font-size: .95rem;
+        }
+
+        .faq-question .faq-icon {
+            font-size: 1.1rem;
+            color: #FF0089;
+            transition: transform .3s;
+            flex-shrink: 0;
+        }
+
+        .faq-question[aria-expanded="true"] .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color, rgba(0, 0, 0, .08));
+            color: var(--text-muted, #6c757d);
+            font-size: .88rem;
+        }
+
+        /* ══ Tutorial cards ══ */
+        .tutorial-card {
+            background: var(--card-bg, #fff);
+            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
+            border-radius: 14px;
+            overflow: hidden;
+            height: 100%;
+            transition: all .25s;
+        }
+
+        .tutorial-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(255, 0, 137, .13);
+        }
+
+        .tutorial-thumb {
+            position: relative;
+            padding-top: 56.25%;
+            background: linear-gradient(135deg, #FF0089, #FF4D4D);
+        }
+
+        .tutorial-thumb-inner {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .play-btn {
+            width: 52px;
+            height: 52px;
+            background: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FF0089;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, .25);
+            transition: all .2s;
+        }
+
+        .tutorial-card:hover .play-btn {
+            background: #FF0089;
+            color: #fff;
+            transform: scale(1.1);
+        }
+
+        .tutorial-icon-bg {
+            font-size: 5rem;
+            opacity: .12;
+            color: #fff;
+            position: absolute;
+            right: 10px;
+            bottom: -10px;
+        }
+
+        .tutorial-body {
+            padding: 1.3rem;
+        }
+
+        .tutorial-body h5 {
+            font-weight: 700;
+            font-size: .95rem;
+            margin-bottom: .35rem;
+        }
+
+        .tutorial-body p {
+            color: var(--text-muted, #6c757d);
+            font-size: .82rem;
+            margin-bottom: .8rem;
+        }
+
+        .tutorial-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: .76rem;
+            color: var(--text-muted, #6c757d);
+        }
+
+        .tutorial-meta i {
+            color: #FF0089;
+            margin-right: 3px;
+        }
+
+        /* ══ Support option cards ══ */
+        .support-option {
+            background: var(--card-bg, #fff);
+            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
+            border-radius: 18px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            height: 100%;
+            transition: all .25s;
+        }
+
+        .support-option:hover {
+            border-color: #FF0089;
+            transform: translateY(-4px);
+            box-shadow: 0 10px 28px rgba(255, 0, 137, .1);
+        }
+
+        .support-option>i {
+            font-size: 2.8rem;
+            color: #FF0089;
+            display: block;
+            margin-bottom: .9rem;
+        }
+
+        .support-option h4 {
+            font-weight: 700;
+            font-size: 1.05rem;
+            margin-bottom: .4rem;
+        }
+
+        .support-option p {
+            color: var(--text-muted, #6c757d);
+            font-size: .86rem;
+            margin-bottom: 1.2rem;
+        }
+
+        /* ══ Buttons ══ */
+        .btn-help {
+            background: linear-gradient(135deg, #FF0089, #FF4D4D);
+            border: none;
+            color: #fff;
+            padding: .5rem 1.8rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all .2s;
+        }
+
+        .btn-help:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(255, 0, 137, .3);
+            color: #fff;
+        }
+
+        .btn-help-outline {
+            background: transparent;
+            border: 2px solid #FF0089;
+            color: #FF0089;
+            padding: .5rem 1.8rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all .2s;
+        }
+
+        .btn-help-outline:hover {
+            background: #FF0089;
+            color: #fff;
+        }
+
+        /* ══ Contact info ══ */
+        .contact-info {
+            background: var(--metric-bg, rgba(0, 0, 0, .03));
+            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: .9rem;
+        }
+
+        .contact-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .contact-item-icon {
+            width: 38px;
+            height: 38px;
+            background: var(--card-bg, #fff);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FF0089;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .07);
+        }
+
+        .contact-item strong {
+            display: block;
+            font-size: .85rem;
+        }
+
+        .contact-item span {
+            color: var(--text-muted, #6c757d);
+            font-size: .8rem;
+        }
+
+        /* ══ Quick links ══ */
+        .quick-link {
+            background: var(--card-bg, #fff);
+            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
+            border-radius: 11px;
+            padding: .9rem 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+            color: inherit;
+            transition: all .2s;
+            margin-bottom: .6rem;
+        }
+
+        .quick-link:last-child {
+            margin-bottom: 0;
+        }
+
+        .quick-link i {
+            font-size: 1.8rem;
+            color: #FF0089;
+            transition: color .2s;
+            flex-shrink: 0;
+        }
+
+        .quick-link:hover {
+            background: #FF0089;
+            color: #fff;
+            transform: translateX(4px);
+            border-color: #FF0089;
+        }
+
+        .quick-link:hover i {
+            color: #fff;
+        }
+
+        .quick-link:hover small {
+            color: rgba(255, 255, 255, .8);
+        }
+
+        .quick-link h6 {
+            margin: 0;
+            font-weight: 600;
+            font-size: .87rem;
+        }
+
+        .quick-link small {
+            color: var(--text-muted, #6c757d);
+            font-size: .76rem;
+        }
+
+        /* ══ Section title ══ */
+        .sec-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1.3rem;
+        }
+
+        .sec-title i {
+            color: #FF0089;
+        }
+
+        @media(max-width:768px) {
+            .help-header {
+                padding: 2rem 1rem;
+            }
+
+            .help-header h1 {
+                font-size: 2rem;
+            }
+        }
     </style>
 </head>
 
@@ -640,7 +640,7 @@ $full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['
         <?php /* ── NÍVEL 1: Crítico — bloqueia distribuição ── */ ?>
 
         <?php if (!$email_verified): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'danger',
                 'bi-envelope-exclamation-fill',
                 '<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta e receber notificações de pagamentos.',
@@ -651,7 +651,7 @@ $full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['
         <?php endif; ?>
 
         <?php if ($plan && !$plan_paid): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'warning',
                 'bi-clock-history',
                 '<strong>Pagamento pendente — ' . htmlspecialchars($plan['name_plan']) . '.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados até confirmação.',
@@ -660,7 +660,7 @@ $full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['
                 'banner-plan-pending'
             ); ?>
         <?php elseif (!$plan): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'danger',
                 'bi-credit-card-fill',
                 '<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir a tua música para +150 plataformas.',
@@ -673,10 +673,10 @@ $full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['
         <?php /* ── NÍVEL 2: Importante — perfil incompleto ── */ ?>
 
         <?php if ($plan_paid && !$has_artist): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'info',
                 'bi-person-plus-fill',
-                '<strong>Cria o teu perfil de artista.</strong> Tens plano activo mas ainda não criaste um perfil. Precisas de um para poder lançar música.',
+                '<strong>Cria o teu perfil artístico.</strong> Tens plano activo mas ainda não criaste um perfil artístico. Precisas de um para poder lançar música.',
                 ['label' => 'Criar agora', 'url' => APP_URL . '/' . APP_URL_PANEL . '/add-artist'],
                 true,
                 'banner-artist'
@@ -686,7 +686,7 @@ $full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['
         <?php /* ── NÍVEL 3: Informativo — conta bancária ── */ ?>
 
         <?php if ($plan_paid && $has_artist && !$bank_account): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'info',
                 'bi-bank',
                 '<strong>Conta bancária não registada.</strong> Para poder sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.',
@@ -707,7 +707,7 @@ $full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['
         }
         ?>
         <?php if ($rejected_account): ?>
-        <?php
+            <?php
             $rej_msg = '<strong>Conta ' . htmlspecialchars($rejected_account['type_account']) . ' rejeitada.</strong>';
             if ($rejected_account['reject_reason']) {
                 $rej_msg .= ' Motivo: <em>' . htmlspecialchars($rejected_account['reject_reason']) . '</em>.';
@@ -950,28 +950,28 @@ $full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['
                 ],
             ];
             foreach ($tutorials as $t): ?>
-            <div class="col-md-4 mb-3">
-                <div class="tutorial-card">
-                    <div class="tutorial-thumb">
-                        <div class="tutorial-thumb-inner">
-                            <i class="bi <?php echo $t['icon']; ?> tutorial-icon-bg"></i>
-                            <div class="play-btn"><i class="bi bi-play-fill"></i></div>
+                <div class="col-md-4 mb-3">
+                    <div class="tutorial-card">
+                        <div class="tutorial-thumb">
+                            <div class="tutorial-thumb-inner">
+                                <i class="bi <?php echo $t['icon']; ?> tutorial-icon-bg"></i>
+                                <div class="play-btn"><i class="bi bi-play-fill"></i></div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="tutorial-body">
-                        <h5><?php echo $t['title']; ?></h5>
-                        <p><?php echo $t['desc']; ?></p>
-                        <div class="tutorial-meta">
-                            <span><i class="bi bi-clock"></i><?php echo $t['dur']; ?></span>
-                            <span><i class="bi bi-eye"></i><?php echo $t['views']; ?> visualizações</span>
+                        <div class="tutorial-body">
+                            <h5><?php echo $t['title']; ?></h5>
+                            <p><?php echo $t['desc']; ?></p>
+                            <div class="tutorial-meta">
+                                <span><i class="bi bi-clock"></i><?php echo $t['dur']; ?></span>
+                                <span><i class="bi bi-eye"></i><?php echo $t['views']; ?> visualizações</span>
+                            </div>
+                            <button class="btn btn-help-outline btn-sm w-100 mt-2 tutorial-btn"
+                                data-slug="<?php echo $t['slug']; ?>">
+                                Assistir Tutorial
+                            </button>
                         </div>
-                        <button class="btn btn-help-outline btn-sm w-100 mt-2 tutorial-btn"
-                            data-slug="<?php echo $t['slug']; ?>">
-                            Assistir Tutorial
-                        </button>
                     </div>
                 </div>
-            </div>
             <?php endforeach; ?>
         </div>
 
@@ -1095,48 +1095,48 @@ $full_name  = htmlspecialchars(trim(($user['first_name'] ?? '') . ' ' . ($user['
     <script src="<?php echo APP_URL  ?>/js/theme.wp.js"></script>
     <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function() {
 
-        // ── Pesquisa ────────────────────────────────────────
-        function doSearch() {
-            var term = document.getElementById('helpSearch').value.trim();
-            if (term) window.location.href = 'faq?search=' + encodeURIComponent(term);
-        }
+            // ── Pesquisa ────────────────────────────────────────
+            function doSearch() {
+                var term = document.getElementById('helpSearch').value.trim();
+                if (term) window.location.href = 'faq?search=' + encodeURIComponent(term);
+            }
 
-        var searchBtn = document.getElementById('searchBtn');
-        var searchInput = document.getElementById('helpSearch');
+            var searchBtn = document.getElementById('searchBtn');
+            var searchInput = document.getElementById('helpSearch');
 
-        if (searchBtn) searchBtn.addEventListener('click', doSearch);
-        if (searchInput) searchInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') doSearch();
-        });
-
-        // ── Tutoriais ───────────────────────────────────────
-        document.querySelectorAll('.tutorial-btn').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                var slug = this.dataset.slug;
-                // Redireccionamento futuro: window.location.href = '../tutorials/' + slug;
-                // Por agora abre um modal ou alerta temporário
-                alert('Tutorial "' + slug + '" em breve disponível!');
+            if (searchBtn) searchBtn.addEventListener('click', doSearch);
+            if (searchInput) searchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') doSearch();
             });
-        });
 
-        // ── FAQ arrow sync ──────────────────────────────────
-        // O Bootstrap gere o collapse, mas o chevron precisa de ser rotacionado
-        // via CSS (.faq-question[aria-expanded="true"] .faq-icon) — já está no CSS.
-        // Forçar o aria-expanded no parent quando o collapse abre/fecha:
-        document.querySelectorAll('.faq-item .collapse').forEach(function(collapseEl) {
-            collapseEl.addEventListener('show.bs.collapse', function() {
-                var btn = this.closest('.faq-item').querySelector('.faq-question');
-                if (btn) btn.setAttribute('aria-expanded', 'true');
+            // ── Tutoriais ───────────────────────────────────────
+            document.querySelectorAll('.tutorial-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var slug = this.dataset.slug;
+                    // Redireccionamento futuro: window.location.href = '../tutorials/' + slug;
+                    // Por agora abre um modal ou alerta temporário
+                    alert('Tutorial "' + slug + '" em breve disponível!');
+                });
             });
-            collapseEl.addEventListener('hide.bs.collapse', function() {
-                var btn = this.closest('.faq-item').querySelector('.faq-question');
-                if (btn) btn.setAttribute('aria-expanded', 'false');
-            });
-        });
 
-    }); // fim DOMContentLoaded
+            // ── FAQ arrow sync ──────────────────────────────────
+            // O Bootstrap gere o collapse, mas o chevron precisa de ser rotacionado
+            // via CSS (.faq-question[aria-expanded="true"] .faq-icon) — já está no CSS.
+            // Forçar o aria-expanded no parent quando o collapse abre/fecha:
+            document.querySelectorAll('.faq-item .collapse').forEach(function(collapseEl) {
+                collapseEl.addEventListener('show.bs.collapse', function() {
+                    var btn = this.closest('.faq-item').querySelector('.faq-question');
+                    if (btn) btn.setAttribute('aria-expanded', 'true');
+                });
+                collapseEl.addEventListener('hide.bs.collapse', function() {
+                    var btn = this.closest('.faq-item').querySelector('.faq-question');
+                    if (btn) btn.setAttribute('aria-expanded', 'false');
+                });
+            });
+
+        }); // fim DOMContentLoaded
     </script>
 </body>
 

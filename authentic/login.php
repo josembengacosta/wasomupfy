@@ -7,37 +7,56 @@ require_once __DIR__ . '/include/functions.php';
 startSecureSession();
 
 if (isLoggedIn()) {
-    redirect('/dashboard/painel');
+    redirect(APP_URL_PANEL . '/painel');
 }
 
 $notices = [
     'account_created'     => 'Conta criada com sucesso! Faz login para continuar.',
-    'password_reset'      => 'Senha redefinida. Podes iniciar sessao.',
-    'logout'              => 'Sessao terminada com sucesso.',
-    'session'             => 'Sessao expirada. Inicia sessao novamente.',
+    'password_reset'      => 'Senha redefinida. Podes iniciar sessão.',
+    'logout'              => 'Sessão terminada com sucesso.',
+    'session'             => 'Sessão expirada. Inicia sessão novamente.',
     'account_deactivated' => 'Conta desactivada. Tens 29 dias para recuperar — basta iniciares sessão.',
-    'account_deleted'     => 'A tua conta foi eliminada permanentemente. Obrigado por teres usado o ' . (defined('APP_NAME') ? APP_NAME : 'Wasom Upfy') . '.',
-];
-$errors = [
-    'csrf'             => 'Sessao expirada. Tenta novamente.',
-    'empty'            => 'Preenche o e-mail e a senha.',
-    'invalid'          => 'E-mail ou senha incorretos.',
-    'disabled'         => 'Os logins estão temporariamente desativados pela equipa de Wasom Upfy.',
-    'global_disabled'  => getPlatformMaintenanceMsg() ?: 'Acesso ao sistema desativado pela equipa de Wasom Upfy.',
-    'suspended'        => 'Conta suspensa. Contacta o suporte.',
-    'fraud'            => 'Conta bloqueada por atividade suspeita. Contacta o suporte.',
-    'blocked'          => isset($_GET['msg']) ? urldecode($_GET['msg']) : 'Conta temporariamente bloqueada.',
-    'timeout'          => 'A tua sessão expirou. Inicia sessão novamente.',
-    'session_timeout'  => 'O teu tempo de sessão expirou. Inicia sessão novamente.',
-    'inactive_expired' => 'O prazo de recuperação da tua conta expirou. Contacta o suporte se precisares de ajuda.',
+    'account_deleted'     => 'A tua conta foi eliminada permanentemente. Obrigado por teres usado o ' . APP_NAME . '.',
 ];
 
-$notice = isset($_GET['notice']) ? ($notices[$_GET['notice']] ?? '') : '';
-$error = isset($_GET['error']) ? ($errors[$_GET['error']] ?? '') : '';
-if (isset($_GET['remaining']) && (int)$_GET['remaining'] > 0) {
-    $r = (int)$_GET['remaining'];
-    $error .= " ({$r} tentativa(s) restante(s) antes do bloqueio)";
+$errors = [
+    'csrf'                => 'Sessão expirada. Tenta novamente.',
+    'empty'               => 'Preenche o e-mail e a senha.',
+    'invalid'             => 'E-mail ou senha incorretos.',
+    'disabled'            => 'Os logins estão temporariamente desativados pela equipa de Wasom Upfy.',
+    'global_disabled'     => getPlatformMaintenanceMsg() ?: 'Acesso ao sistema desativado pela equipa de Wasom Upfy.',
+    'suspended'           => 'Conta suspensa. Contacta o suporte.',
+    'fraud'               => 'Conta bloqueada por atividade suspeita. Contacta o suporte.',
+    'blocked'             => isset($_GET['msg']) ? urldecode($_GET['msg']) : 'Conta temporariamente bloqueada.',
+    'timeout'             => 'A tua sessão expirou. Inicia sessão novamente.',
+    'session_timeout'     => 'O teu tempo de sessão expirou. Inicia sessão novamente.',
+    'inactive_expired'    => 'O prazo de recuperação da tua conta expirou. Contacta o suporte se precisares de ajuda.',
+    'session_expired'     => 'Sessão expirada. Tenta novamente.',
+    'reactivation_expired' => 'O tempo para confirmar a reactivação expirou. Inicia sessão novamente.',
+];
+
+// 1. Prioridade: erro vindo da sessão (definido pelo login_process)
+$error = '';
+if (isset($_SESSION['login_error'])) {
+    $error_key = $_SESSION['login_error'];
+    $error = $errors[$error_key] ?? 'Ocorreu um erro.';
+    if (isset($_SESSION['remaining_attempts']) && $_SESSION['remaining_attempts'] > 0) {
+        $error .= " ({$_SESSION['remaining_attempts']} tentativa(s) restante(s))";
+    }
+    unset($_SESSION['login_error'], $_SESSION['remaining_attempts']);
 }
+
+// 2. Se não há erro de sessão, verificar URL (fallback para links antigos)
+if (empty($error) && isset($_GET['error'])) {
+    $error_key = $_GET['error'];
+    $error = $errors[$error_key] ?? '';
+    if (isset($_GET['remaining']) && (int)$_GET['remaining'] > 0) {
+        $error .= " ({$_GET['remaining']} tentativa(s) restante(s) antes do bloqueio)";
+    }
+}
+
+// 3. Notices (sucesso) vindos da URL
+$notice = isset($_GET['notice']) ? ($notices[$_GET['notice']] ?? '') : '';
 ?>
 <!DOCTYPE html>
 <html lang="pt-ao">
@@ -121,6 +140,131 @@ if (isset($_GET['remaining']) && (int)$_GET['remaining'] > 0) {
         border-bottom-color: #ff0089;
         border-top-color: #ff0089;
         border-left-color: #ff0089;
+    }
+
+    /* ── Modal de Reactivação Profissional ── */
+    .modal-content {
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+    }
+
+    .modal-header {
+        padding: 1.5rem 1.5rem 0.5rem;
+        border-bottom: none;
+    }
+
+    .modal-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        letter-spacing: -0.01em;
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+        color: #334155;
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    .modal-body strong {
+        color: #0f172a;
+        font-weight: 600;
+    }
+
+    .reactivate-highlight {
+        background: linear-gradient(135deg, rgba(255, 0, 137, 0.03) 0%, rgba(255, 0, 137, 0.08) 100%);
+        border-left: 4px solid #FF0089;
+        padding: 1rem 1.25rem;
+        border-radius: 12px;
+        margin: 1.2rem 0;
+        font-size: 0.9rem;
+    }
+
+    .reactivate-dates {
+        display: flex;
+        justify-content: space-between;
+        background: #f8fafc;
+        padding: 0.75rem 1rem;
+        border-radius: 12px;
+        margin: 1rem 0;
+    }
+
+    .reactivate-date-item {
+        text-align: center;
+        flex: 1;
+    }
+
+    .reactivate-date-label {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #64748b;
+        margin-bottom: 4px;
+    }
+
+    .reactivate-date-value {
+        font-weight: 700;
+        color: #0f172a;
+        font-size: 1rem;
+    }
+
+    .modal-footer {
+        padding: 1rem 1.5rem 1.5rem;
+        border-top: none;
+        gap: 12px;
+    }
+
+    .btn-outline-secondary {
+        border: 1.5px solid #e2e8f0;
+        background: white;
+        color: #475569;
+        font-weight: 500;
+        padding: 0.6rem 1.5rem;
+        border-radius: 12px;
+        transition: all 0.2s ease;
+    }
+
+    .btn-outline-secondary:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #1e293b;
+    }
+
+    .btn-reactivate {
+        background: linear-gradient(135deg, #FF0089 0%, #e6007a 100%);
+        color: white;
+        border: none;
+        font-weight: 600;
+        padding: 0.6rem 1.8rem;
+        border-radius: 12px;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 12px rgba(255, 0, 137, 0.25);
+    }
+
+    .btn-reactivate:hover {
+        background: linear-gradient(135deg, #e6007a 0%, #cc0070 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 8px 16px rgba(255, 0, 137, 0.3);
+        color: white;
+    }
+
+    .modal.fade .modal-dialog {
+        transition: transform 0.3s ease-out;
+        transform: scale(0.95);
+    }
+
+    .modal.show .modal-dialog {
+        transform: scale(1);
+    }
+
+    .reactivate-date-item small {
+        display: block;
+        font-size: 0.7rem;
+        color: #64748b;
+        margin-top: 2px;
     }
     </style>
 </head>
@@ -250,6 +394,100 @@ if (isset($_GET['remaining']) && (int)$_GET['remaining'] > 0) {
             </section>
         </div>
     </main>
+
+    <?php if (isset($_GET['confirm_reactivate']) && isset($_SESSION['pending_reactivation'])): 
+    $pending = $_SESSION['pending_reactivation'];
+    
+    // Define fuso horário de Angola para exibição
+    $tz = new DateTimeZone('Africa/Luanda');
+    
+    // Cria objeto DateTime a partir do prazo final (já em UTC ou local, tratado como UTC)
+    $deadline = new DateTime($pending['deact_until'], new DateTimeZone('UTC'));
+    $deadline->setTimezone($tz);
+    
+    // Data de desativação: 29 dias antes
+    $deact = clone $deadline;
+    $deact->sub(new DateInterval('P29D'));
+    
+    $meses_abrev = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+    $meses_full  = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+    
+    $deact_date = $deact->format('d') . ' ' . $meses_abrev[(int)$deact->format('n')-1] . ' ' . $deact->format('Y');
+    $deact_full = $deact->format('d') . ' de ' . $meses_full[(int)$deact->format('n')-1] . ' de ' . $deact->format('Y');
+    
+    $deadline_date = $deadline->format('d') . ' ' . $meses_abrev[(int)$deadline->format('n')-1] . ' ' . $deadline->format('Y');
+    $deadline_full = $deadline->format('d') . ' de ' . $meses_full[(int)$deadline->format('n')-1] . ' de ' . $deadline->format('Y');
+    
+    $now = new DateTime('now', $tz);
+    $days_left = $deadline < $now ? 0 : $deadline->diff($now)->days;
+?>
+
+    <!-- Modal de Reactivação -->
+    <div class="modal fade" id="reactivateModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-arrow-counterclockwise me-2" style="color: #FF0089;"></i>
+                        Reativar a tua conta?
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Desativaste a tua conta Wasom Upfy em <strong><?php echo $deact_full; ?></strong>.</p>
+
+                    <div class="reactivate-dates">
+                        <div class="reactivate-date-item">
+                            <div class="reactivate-date-label">Data da desativação</div>
+                            <div class="reactivate-date-value"><?php echo $deact_date; ?></div>
+                        </div>
+                        <div class="reactivate-date-item">
+                            <div class="reactivate-date-label">Prazo final</div>
+                            <div class="reactivate-date-value"><?php echo $deadline_date; ?></div>
+                        </div>
+                    </div>
+
+                    <div class="reactivate-highlight">
+                        <i class="bi bi-exclamation-triangle-fill me-2" style="color: #FF0089;"></i>
+                        A partir de <strong><?php echo $deadline_full; ?></strong> não será mais possível restaurar a
+                        tua conta.
+                        <?php if ($days_left > 0): ?>
+                        <br><span class="badge bg-warning text-dark mt-2">Faltam <?php echo $days_left; ?> dia(s)</span>
+                        <?php endif; ?>
+                    </div>
+
+                    <p class="mb-0 small text-muted">
+                        Ao clicar em "Sim, reativar", interromperás o processo de desativação e terás acesso imediato à
+                        tua conta.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <form method="post" action="login_process" class="d-flex gap-2">
+                        <input type="hidden" name="csrf_token"
+                            value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
+                        <input type="hidden" name="action" value="confirm_reactivate">
+                        <button type="button" class="btn btn-outline-secondary"
+                            data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-reactivate">
+                            <i class="bi bi-check-circle me-2"></i>Sim, reativar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    window.addEventListener('DOMContentLoaded', function() {
+        var modalElement = document.getElementById('reactivateModal');
+        if (modalElement) {
+            var modal = new bootstrap.Modal(modalElement);
+            modal.show();
+        }
+    });
+    </script>
+    <?php endif; ?>
 
     <?php include __DIR__ . '/_modal_support.php'; ?>
 

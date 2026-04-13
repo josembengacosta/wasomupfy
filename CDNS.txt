@@ -1440,3 +1440,54 @@ Eu posso montar isso contigo passo a passo.
 josembengadacosta@gmail.com
 
 Amoreterno...1
+
+
+
+
+TRUNCATE `_account`;
+TRUNCATE `_album`;
+TRUNCATE `_album_review_request`;
+TRUNCATE `_album_store`;
+TRUNCATE `_artist`;
+TRUNCATE `_artist_collaborator`;
+TRUNCATE `_audit_log`;
+TRUNCATE `_blacklist`;
+TRUNCATE `_broadcast`;
+TRUNCATE `_broadcast_receipt`;
+TRUNCATE `_collaborators`;
+TRUNCATE `_collab_activity`;
+TRUNCATE `_collab_sessions`;
+TRUNCATE `_contact_message`;
+TRUNCATE `_delete_requests`;
+TRUNCATE `_feedback`;
+TRUNCATE `_financial_report`;
+TRUNCATE `_invoice`;
+TRUNCATE `_message`;
+TRUNCATE `_notification`;
+TRUNCATE `_payment`;
+TRUNCATE `_payment_intent`;
+TRUNCATE `_payment_proof`;
+TRUNCATE `_report_history`;
+TRUNCATE `_royalty`;
+TRUNCATE `_stream`;
+TRUNCATE `_stream_country`;
+TRUNCATE `_support_reply`;
+TRUNCATE `_support_ticket`;
+TRUNCATE `_takedown_request`;
+TRUNCATE `_track`;
+TRUNCATE `_transaction`;
+TRUNCATE `_users`;
+TRUNCATE `_users_security`;
+TRUNCATE `_users_sessions`;
+TRUNCATE `_users_tokens`;
+TRUNCATE `_user_activity_log`;
+TRUNCATE `_user_plan`;
+TRUNCATE `_user_presence`;
+TRUNCATE `_user_settings`;
+TRUNCATE `_visit`;
+TRUNCATE `_visitor`;
+TRUNCATE `_visitor_pageview`;
+TRUNCATE `_wallet`;
+TRUNCATE `_withdrawal`;
+TRUNCATE `_withdrawal_requests`;
+TRUNCATE `_youtube_channel`;

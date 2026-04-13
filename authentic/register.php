@@ -2,36 +2,40 @@
 require_once __DIR__ . '/include/functions.php';
 startSecureSession();
 
-// Redirecionar se ja estiver autenticado
 if (isLoggedIn()) {
     redirect('/dashboard/painel');
 }
 
-// Capturar plano pre-seleccionado via URL (?plan=single)
-// e guardar na sessao para o register_process.php usar
 $valid_plans = ['single', 'album', 'artist', 'label'];
 if (!empty($_GET['plan']) && in_array($_GET['plan'], $valid_plans)) {
     $_SESSION['register_plan'] = $_GET['plan'];
 }
 $selected_plan = $_SESSION['register_plan'] ?? null;
 
-// Mapear erros vindos do register_process.php
 $error_messages = [
-    'csrf'             => 'Sessao expirada. Tente novamente.',
-    'invalid_email'    => 'Endereco de email invalido.',
-    'email_taken'      => 'Este email ja esta registado. Faca login ou recupere a senha.',
-    'invalid_name'     => 'O nome deve ter entre 6 e 100 caracteres (minimo 2 palavras).',
-    'invalid_date'     => 'Data de nascimento invalida.',
-    'underage'         => 'Tens de ter pelo menos 16 anos para te registares.',
-    'invalid_gender'   => 'Seleciona um genero valido.',
-    'invalid_country'  => 'Seleciona um pais valido (codigo de 2 letras).',
-    'invalid_city'     => 'Indica a tua cidade.',
-    'weak_password'    => 'A senha deve ter pelo menos 10 caracteres.',
-    'password_mismatch' => 'As senhas nao coincidem.',
-    'terms'            => 'Tens de aceitar os termos e condicoes.',
-    'server'           => 'Erro interno. Tenta novamente mais tarde.',
+    'csrf'                => 'Sessão expirada. Tente novamente.',
+    'invalid_email'       => 'Endereço de email inválido.',
+    'email_mismatch'      => 'Os emails não coincidem.',
+    'email_taken'         => 'Este email já está registado. Faça login ou recupere a senha.',
+    'invalid_name'        => 'O nome deve ter entre 2 e 100 caracteres.',
+    'invalid_date'        => 'Data de nascimento inválida.',
+    'underage'            => 'Tens de ter pelo menos 18 anos para te registares.',
+    'invalid_gender'      => 'Seleciona um género válido.',
+    'invalid_country'     => 'Seleciona um país válido.',
+    'invalid_city'        => 'Indica a tua cidade.',
+    'invalid_phone'       => 'Número de telefone inválido. Use formato internacional (ex: +244 912 345 678).',
+    'weak_password'       => 'A senha deve ter pelo menos 10 caracteres, incluindo maiúsculas, minúsculas e números.',
+    'password_mismatch'   => 'As senhas não coincidem.',
+    'terms'               => 'Tens de aceitar os termos e condições.',
+    'server'              => 'Erro interno. Tenta novamente mais tarde.',
+    'too_many_attempts'   => 'Muitas tentativas de registo. Tenta novamente mais tarde.',
+    'global_disabled'     => 'Os registos estão temporariamente desativados.',
+    'register_disabled'   => 'Os registos estão temporariamente desativados pela equipa.',
 ];
 $error = isset($_GET['error']) ? ($error_messages[$_GET['error']] ?? '') : '';
+
+$formData = $_SESSION['register_form_data'] ?? [];
+unset($_SESSION['register_form_data']);
 ?>
 <!DOCTYPE html>
 <html lang="pt-ao">
@@ -54,377 +58,377 @@ $error = isset($_GET['error']) ? ($error_messages[$_GET['error']] ?? '') : '';
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/josembengacosta/wasomupfy@main/css/light.css" />
 </head>
 <style>
-    :root {
-        --wasom-primary: #ff0089;
-        --wasom-secondary: #e04385;
-        --wasom-light: #fff0f7;
-        --wasom-dark: #cc0070;
+:root {
+    --wasom-primary: #ff0089;
+    --wasom-secondary: #e04385;
+    --wasom-light: #fff0f7;
+    --wasom-dark: #cc0070;
+}
+
+.card {
+    border-radius: 15px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    background: rgba(255, 255, 255, 0.98);
+    margin: auto;
+    border: none;
+    overflow: hidden;
+}
+
+.btn-wasomupfy {
+    background: linear-gradient(45deg,
+            var(--wasom-primary),
+            var(--wasom-secondary));
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 3px 6px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+
+
+.btn-wasomupfy:hover {
+    background: linear-gradient(45deg,
+            var(--wasom-dark),
+            var(--wasom-secondary));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(255, 0, 137, 0.25);
+    color: white;
+}
+
+.btn-outline-wasom {
+    border: 2px solid var(--wasom-primary);
+    color: var(--wasom-primary);
+    background: transparent;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-wasom:hover {
+    background: var(--wasom-primary);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.step-progress {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    position: relative;
+    padding: 0 1rem;
+}
+
+.step-progress::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50px;
+    right: 50px;
+    height: 2px;
+    background: #e9ecef;
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+.step-item {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    flex: 1;
+}
+
+.step-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #e9ecef;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 3px solid white;
+}
+
+.step-item.active .step-circle {
+    background: var(--wasom-primary);
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 0 0 3px rgba(255, 0, 137, 0.2);
+}
+
+.step-item.completed .step-circle {
+    background: var(--wasom-primary);
+    color: white;
+}
+
+.step-title {
+    font-size: 0.85rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.step-item.active .step-title {
+    color: var(--wasom-primary);
+    font-weight: 600;
+}
+
+.form-step {
+    display: none;
+    animation: fadeIn 0.5s ease;
+}
+
+.form-step.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
     }
 
-    .card {
-        border-radius: 15px;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-        background: rgba(255, 255, 255, 0.98);
-        margin: auto;
-        border: none;
-        overflow: hidden;
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
+}
 
-    .btn-wasomupfy {
-        background: linear-gradient(45deg,
-                var(--wasom-primary),
-                var(--wasom-secondary));
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        padding: 3px 6px;
-        font-size: 1.1rem;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
+.input-group {
+    position: relative;
+}
 
+.input-group-text {
+    background: var(--wasom-light);
+    border: 1px solid #dee2e6;
+    border-right: none;
+}
 
+.form-control:focus {
+    border-color: var(--wasom-primary);
+    box-shadow: 0 0 0 0.25rem rgba(255, 0, 137, 0.15);
+}
 
-    .btn-wasomupfy:hover {
-        background: linear-gradient(45deg,
-                var(--wasom-dark),
-                var(--wasom-secondary));
-        transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(255, 0, 137, 0.25);
-        color: white;
-    }
+.password-requirements {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+    border-left: 4px solid var(--wasom-primary);
+}
 
-    .btn-outline-wasom {
-        border: 2px solid var(--wasom-primary);
-        color: var(--wasom-primary);
-        background: transparent;
-        border-radius: 10px;
-        padding: 10px 20px;
-        font-weight: 500;
-        transition: all 0.3s ease;
-    }
+.requirements-title {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #495057;
+}
 
-    .btn-outline-wasom:hover {
-        background: var(--wasom-primary);
-        color: white;
-        transform: translateY(-2px);
-    }
+.requirements-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
 
-    .step-progress {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 2rem;
-        position: relative;
-        padding: 0 1rem;
-    }
+.requirements-list li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
 
+.req-icon {
+    margin-right: 0.5rem;
+    font-size: 1rem;
+}
+
+.req-icon.valid {
+    color: #28a745;
+}
+
+.req-icon.invalid {
+    color: #dc3545;
+}
+
+.strength-meter {
+    height: 8px;
+    margin-top: 5px;
+    border-radius: 4px;
+    background: #e9ecef;
+    overflow: hidden;
+    position: relative;
+}
+
+.strength-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.strength-text {
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+    text-align: right;
+}
+
+.password-wrapper {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #6c757d;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.form-radio-group {
+    display: flex;
+    gap: 2rem;
+    margin-top: 0.5rem;
+}
+
+.form-radio-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 2px solid #dee2e6;
+    transition: all 0.3s ease;
+    flex: 1;
+    justify-content: center;
+}
+
+.form-radio-label:hover {
+    border-color: var(--wasom-primary);
+}
+
+.form-radio-label.active {
+    border-color: var(--wasom-primary);
+    background: rgba(255, 0, 137, 0.05);
+}
+
+.form-radio-input {
+    display: none;
+}
+
+.form-radio-text {
+    margin-left: 0.5rem;
+    font-weight: 500;
+}
+
+.review-item {
+    padding: 1rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.review-item:last-child {
+    border-bottom: none;
+}
+
+.review-label {
+    font-weight: 600;
+    color: #495057;
+    min-width: 120px;
+}
+
+.review-value {
+    color: #6c757d;
+}
+
+.preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease;
+}
+
+.loaded .preloader {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.spinner-border {
+    border-bottom-color: var(--wasom-primary);
+    border-top-color: var(--wasom-primary);
+    border-left-color: var(--wasom-primary);
+}
+
+.select-wrapper {
+    position: relative;
+}
+
+.select-wrapper::after {
+    content: "";
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');
+    pointer-events: none;
+}
+
+.form-check-input:checked {
+    background-color: var(--wasom-primary);
+    border-color: var(--wasom-primary);
+}
+
+.text-wasom {
+    color: var(--wasom-primary) !important;
+}
+
+.birthday-selects {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+}
+
+@media (max-width: 768px) {
     .step-progress::before {
-        content: "";
-        position: absolute;
-        top: 50%;
-        left: 50px;
-        right: 50px;
-        height: 2px;
-        background: #e9ecef;
-        transform: translateY(-50%);
-        z-index: 1;
-    }
-
-    .step-item {
-        position: relative;
-        z-index: 2;
-        text-align: center;
-        flex: 1;
+        left: 30px;
+        right: 30px;
     }
 
     .step-circle {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: #e9ecef;
-        color: #6c757d;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 0.5rem;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        border: 3px solid white;
-    }
-
-    .step-item.active .step-circle {
-        background: var(--wasom-primary);
-        color: white;
-        transform: scale(1.1);
-        box-shadow: 0 0 0 3px rgba(255, 0, 137, 0.2);
-    }
-
-    .step-item.completed .step-circle {
-        background: var(--wasom-primary);
-        color: white;
-    }
-
-    .step-title {
-        font-size: 0.85rem;
-        color: #6c757d;
-        font-weight: 500;
-    }
-
-    .step-item.active .step-title {
-        color: var(--wasom-primary);
-        font-weight: 600;
-    }
-
-    .form-step {
-        display: none;
-        animation: fadeIn 0.5s ease;
-    }
-
-    .form-step.active {
-        display: block;
-    }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .input-group {
-        position: relative;
-    }
-
-    .input-group-text {
-        background: var(--wasom-light);
-        border: 1px solid #dee2e6;
-        border-right: none;
-    }
-
-    .form-control:focus {
-        border-color: var(--wasom-primary);
-        box-shadow: 0 0 0 0.25rem rgba(255, 0, 137, 0.15);
-    }
-
-    .password-requirements {
-        background: #f8f9fa;
-        border-radius: 8px;
-        padding: 1rem;
-        margin-top: 1rem;
-        border-left: 4px solid var(--wasom-primary);
-    }
-
-    .requirements-title {
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-        color: #495057;
-    }
-
-    .requirements-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .requirements-list li {
-        display: flex;
-        align-items: center;
-        margin-bottom: 0.5rem;
+        width: 32px;
+        height: 32px;
         font-size: 0.9rem;
     }
 
-    .req-icon {
-        margin-right: 0.5rem;
-        font-size: 1rem;
-    }
-
-    .req-icon.valid {
-        color: #28a745;
-    }
-
-    .req-icon.invalid {
-        color: #dc3545;
-    }
-
-    .strength-meter {
-        height: 8px;
-        margin-top: 5px;
-        border-radius: 4px;
-        background: #e9ecef;
-        overflow: hidden;
-        position: relative;
-    }
-
-    .strength-fill {
-        height: 100%;
-        width: 0%;
-        border-radius: 4px;
-        transition: all 0.3s ease;
-    }
-
-    .strength-text {
-        font-size: 0.8rem;
-        margin-top: 0.25rem;
-        text-align: right;
-    }
-
-    .password-wrapper {
-        position: relative;
-    }
-
-    .toggle-password {
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: none;
-        border: none;
-        color: #6c757d;
-        cursor: pointer;
-        z-index: 10;
-    }
-
-    .form-radio-group {
-        display: flex;
-        gap: 2rem;
-        margin-top: 0.5rem;
-    }
-
-    .form-radio-label {
-        display: flex;
-        align-items: center;
-        cursor: pointer;
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
-        border: 2px solid #dee2e6;
-        transition: all 0.3s ease;
-        flex: 1;
-        justify-content: center;
-    }
-
-    .form-radio-label:hover {
-        border-color: var(--wasom-primary);
-    }
-
-    .form-radio-label.active {
-        border-color: var(--wasom-primary);
-        background: rgba(255, 0, 137, 0.05);
-    }
-
-    .form-radio-input {
-        display: none;
-    }
-
-    .form-radio-text {
-        margin-left: 0.5rem;
-        font-weight: 500;
-    }
-
-    .review-item {
-        padding: 1rem;
-        border-bottom: 1px solid #e9ecef;
-    }
-
-    .review-item:last-child {
-        border-bottom: none;
-    }
-
-    .review-label {
-        font-weight: 600;
-        color: #495057;
-        min-width: 120px;
-    }
-
-    .review-value {
-        color: #6c757d;
-    }
-
-    .preloader {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-        transition: opacity 0.5s ease;
-    }
-
-    .loaded .preloader {
-        opacity: 0;
-        pointer-events: none;
-    }
-
-    .spinner-border {
-        border-bottom-color: var(--wasom-primary);
-        border-top-color: var(--wasom-primary);
-        border-left-color: var(--wasom-primary);
-    }
-
-    .select-wrapper {
-        position: relative;
-    }
-
-    .select-wrapper::after {
-        content: "";
-        position: absolute;
-        right: 12px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 16px;
-        height: 16px;
-        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');
-        pointer-events: none;
-    }
-
-    .form-check-input:checked {
-        background-color: var(--wasom-primary);
-        border-color: var(--wasom-primary);
-    }
-
-    .text-wasom {
-        color: var(--wasom-primary) !important;
+    .step-title {
+        font-size: 0.75rem;
     }
 
     .birthday-selects {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: 1rem;
+        grid-template-columns: 1fr;
     }
 
-    @media (max-width: 768px) {
-        .step-progress::before {
-            left: 30px;
-            right: 30px;
-        }
-
-        .step-circle {
-            width: 32px;
-            height: 32px;
-            font-size: 0.9rem;
-        }
-
-        .step-title {
-            font-size: 0.75rem;
-        }
-
-        .birthday-selects {
-            grid-template-columns: 1fr;
-        }
-
-        .form-radio-group {
-            flex-direction: column;
-            gap: 0.5rem;
-        }
+    .form-radio-group {
+        flex-direction: column;
+        gap: 0.5rem;
     }
+}
 </style>
 
 <body data-theme="default" data-layout="fluid">
@@ -478,36 +482,31 @@ $error = isset($_GET['error']) ? ($error_messages[$_GET['error']] ?? '') : '';
 
                                 <form method="POST" action="register_process" class="needs-validation"
                                     id="registration-form" novalidate>
-
                                     <?php if ($selected_plan): ?>
-                                        <div style="padding: 1rem;"
-                                            class="alert alert-info d-flex align-items-center mb-3 py-2">
-                                            <i class="bi bi-check-circle-fill me-2"></i>
-                                            Plano
-                                            <strong>&nbsp;<?php echo htmlspecialchars(ucfirst($selected_plan)); ?></strong>&nbsp;pré-selecionado
-                                        </div>
+                                    <div class="alert alert-info d-flex align-items-center mb-3 py-2">
+                                        <i class="bi bi-check-circle-fill me-2"></i>
+                                        Plano
+                                        <strong>&nbsp;<?php echo htmlspecialchars(ucfirst($selected_plan)); ?></strong>&nbsp;pré-selecionado
+                                    </div>
                                     <?php endif; ?>
 
                                     <?php if ($error): ?>
-                                        <div style="padding: 1rem;"
-                                            class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4"
-                                            role="alert">
-                                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                                            <div><?php echo htmlspecialchars($error); ?></div>
-                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                        </div>
+                                    <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-3 py-2"
+                                        role="alert">
+                                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                        <div><?php echo htmlspecialchars($error); ?></div>
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
                                     <?php endif; ?>
+
                                     <input type="hidden" name="csrf_token"
                                         value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>" />
-                                    <input type="text" name="hairypot" style="display: none" value="" />
+                                    <input type="text" name="hairypot" style="display:none" value="" />
 
                                     <!-- Step 1: Informações Básicas -->
                                     <div class="form-step active" id="step-1">
-                                        <h3 class="h5 mb-4 text-wasom">
-                                            <i class="bi bi-person-circle me-2"></i>Informações
-                                            Pessoais
-                                        </h3>
-
+                                        <h3 class="h5 mb-4 text-wasom"><i
+                                                class="bi bi-person-circle me-2"></i>Informações Pessoais</h3>
                                         <div class="row">
                                             <div class="col-md-12 mb-3">
                                                 <label for="email" class="form-label">E-mail <span
@@ -515,136 +514,118 @@ $error = isset($_GET['error']) ? ($error_messages[$_GET['error']] ?? '') : '';
                                                 <div class="input-group">
                                                     <span class="input-group-text"><i class="bi bi-envelope"></i></span>
                                                     <input type="email" class="form-control" id="email"
+                                                        value="<?php echo htmlspecialchars($formData['email_user'] ?? ''); ?>"
                                                         name="email_user" required placeholder="seu.email@exemplo.com"
                                                         autocomplete="email" />
-                                                    <div class="invalid-feedback">
-                                                        Por favor, insira um e-mail válido.
+                                                    <div class="invalid-feedback">Por favor, insira um e-mail válido.
                                                     </div>
                                                 </div>
                                             </div>
-
                                             <div class="col-md-12 mb-3">
-                                                <label for="confirm_email" class="form-label">Confirmar E-mail
-                                                    <span class="text-danger">*</span></label>
+                                                <label for="confirm_email" class="form-label">Confirmar E-mail <span
+                                                        class="text-danger">*</span></label>
                                                 <div class="input-group">
                                                     <span class="input-group-text"><i
                                                             class="bi bi-envelope-check"></i></span>
-                                                    <input type="email" class="form-control" id="confirm_email" required
-                                                        placeholder="Confirme seu e-mail" autocomplete="email" />
-                                                    <div class="invalid-feedback">
-                                                        Os e-mails não coincidem.
-                                                    </div>
+                                                    <input type="email" class="form-control" id="confirm_email"
+                                                        value="<?php echo htmlspecialchars($formData['confirm_email'] ?? ''); ?>"
+                                                        name="confirm_email" required placeholder="Confirme seu e-mail"
+                                                        autocomplete="off" />
+                                                    <div class="invalid-feedback">Os e-mails não coincidem.</div>
                                                 </div>
                                             </div>
                                         </div>
-
                                         <div class="row">
                                             <div class="col-md-12 mb-3">
-                                                <label for="fullname_user" class="form-label">Nome Completo
-                                                    <span class="text-danger">*</span></label>
+                                                <label for="fullname_user" class="form-label">Nome Completo <span
+                                                        class="text-danger">*</span></label>
                                                 <div class="input-group">
                                                     <span class="input-group-text"><i class="bi bi-person"></i></span>
                                                     <input type="text" class="form-control" id="fullname_user"
-                                                        name="fullname_user" required minlength="6" maxlength="100"
+                                                        value="<?php echo htmlspecialchars($formData['fullname_user'] ?? ''); ?>"
+                                                        name="fullname_user" required minlength="2" maxlength="100"
                                                         placeholder="Nome completo" />
-                                                    <div class="invalid-feedback">
-                                                        Por favor, insira um nome válido (mínimo 6
-                                                        caracteres).
-                                                    </div>
+                                                    <div class="invalid-feedback">Por favor, insira um nome válido
+                                                        (mínimo 2 caracteres).</div>
                                                 </div>
-                                                <div class="form-text">
-                                                    Use o nome que aparece em seus documentos oficiais.
-                                                </div>
+                                                <div class="form-text">Use o nome que aparece em seus documentos
+                                                    oficiais.</div>
                                             </div>
                                         </div>
-
                                         <div class="row">
                                             <div class="col-md-12 mb-3">
-                                                <label class="form-label">Data de Nascimento
-                                                    <span class="text-danger">*</span></label>
+                                                <label class="form-label">Data de Nascimento <span
+                                                        class="text-danger">*</span></label>
                                                 <div class="birthday-selects">
                                                     <select class="form-select" id="birth_day" name="birth_day"
                                                         required>
                                                         <option value="" selected disabled>Dia</option>
                                                         <?php for ($i = 1; $i <= 31; $i++): ?>
-                                                            <option value="<?php echo $i; ?>">
-                                                                <?php echo $i; ?>
-                                                            </option>
+                                                        <option value="<?php echo $i; ?>"
+                                                            <?php echo ($formData['birth_day'] ?? '') == $i ? 'selected' : ''; ?>>
+                                                            <?php echo $i; ?></option>
                                                         <?php endfor; ?>
                                                     </select>
-
                                                     <select class="form-select" id="birth_month" name="birth_month"
                                                         required>
                                                         <option value="" selected disabled>Mês</option>
-                                                        <option value="1">Janeiro</option>
-                                                        <option value="2">Fevereiro</option>
-                                                        <option value="3">Março</option>
-                                                        <option value="4">Abril</option>
-                                                        <option value="5">Maio</option>
-                                                        <option value="6">Junho</option>
-                                                        <option value="7">Julho</option>
-                                                        <option value="8">Agosto</option>
-                                                        <option value="9">Setembro</option>
-                                                        <option value="10">Outubro</option>
-                                                        <option value="11">Novembro</option>
-                                                        <option value="12">Dezembro</option>
+                                                        <?php
+                                                        $months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+                                                        foreach ($months as $k => $v): ?>
+                                                        <option value="<?php echo $k + 1; ?>"
+                                                            <?php echo ($formData['birth_month'] ?? '') == ($k + 1) ? 'selected' : ''; ?>>
+                                                            <?php echo $v; ?></option>
+                                                        <?php endforeach; ?>
                                                     </select>
-
                                                     <select class="form-select" id="birth_year" name="birth_year"
                                                         required>
                                                         <option value="" selected disabled>Ano</option>
-                                                        <?php for ($i = date('Y') - 18; $i >= date('Y') -
-                                                            100; $i--): ?>
-                                                            <option value="<?php echo $i; ?>">
-                                                                <?php echo $i; ?>
-                                                            </option>
+                                                        <?php $current_year = date('Y');
+                                                        for ($i = $current_year - 18; $i >= $current_year - 100; $i--): ?>
+                                                        <option value="<?php echo $i; ?>"
+                                                            <?php echo ($formData['birth_year'] ?? '') == $i ? 'selected' : ''; ?>>
+                                                            <?php echo $i; ?></option>
                                                         <?php endfor; ?>
                                                     </select>
                                                 </div>
-                                                <div class="invalid-feedback" id="birthday-error">
-                                                    Por favor, selecione uma data válida.
-                                                </div>
+                                                <div class="invalid-feedback" id="birthday-error">Por favor, selecione
+                                                    uma data válida.</div>
                                             </div>
                                         </div>
-
                                         <div class="row">
                                             <div class="col-md-12 mb-3">
-                                                <label class="form-label">Gênero <span
+                                                <label class="form-label">Género <span
                                                         class="text-danger">*</span></label>
-                                                <p class="field-description text-muted small mb-2">
-                                                    Seu gênero nos ajuda no fornecimento de sugestões e
-                                                    atendimento da nossa equipa.
-                                                </p>
                                                 <div class="form-radio-group">
                                                     <label class="form-radio-label" for="gender_male">
                                                         <input type="radio" class="form-radio-input" id="gender_male"
-                                                            name="gender" value="M" required />
+                                                            name="gender" value="M" required
+                                                            <?php echo ($formData['gender'] ?? '') === 'M' ? 'checked' : ''; ?> />
                                                         <i class="bi bi-gender-male"></i>
                                                         <span class="form-radio-text ms-2">Masculino</span>
                                                     </label>
-
                                                     <label class="form-radio-label" for="gender_female">
                                                         <input type="radio" class="form-radio-input" id="gender_female"
-                                                            name="gender" value="F" />
+                                                            name="gender" value="F"
+                                                            <?php echo ($formData['gender'] ?? '') === 'F' ? 'checked' : ''; ?> />
                                                         <i class="bi bi-gender-female"></i>
                                                         <span class="form-radio-text ms-2">Feminino</span>
                                                     </label>
-
                                                     <label class="form-radio-label" for="gender_other">
                                                         <input type="radio" class="form-radio-input" id="gender_other"
-                                                            name="gender" value="O" />
+                                                            name="gender" value="O"
+                                                            <?php echo ($formData['gender'] ?? '') === 'O' ? 'checked' : ''; ?> />
                                                         <i class="bi bi-gender-ambiguous"></i>
                                                         <span class="form-radio-text ms-2">Outro</span>
                                                     </label>
                                                 </div>
                                             </div>
                                         </div>
-
                                         <div class="row mt-4">
                                             <div class="col-12 d-flex justify-content-end">
-                                                <button type="button" class="btn btn-wasomupfy" onclick="nextStep(2)">
-                                                    Continuar <i class="bi bi-arrow-right ms-2"></i>
-                                                </button>
+                                                <button type="button" class="btn btn-wasomupfy"
+                                                    onclick="nextStep(2)">Continuar <i
+                                                        class="bi bi-arrow-right ms-2"></i></button>
                                             </div>
                                         </div>
                                     </div>
@@ -669,7 +650,9 @@ $error = isset($_GET['error']) ? ($error_messages[$_GET['error']] ?? '') : '';
                                                     <option value="AL">Albânia</option>
                                                     <option value="DE">Alemanha</option>
                                                     <option value="AD">Andorra</option>
-                                                    <option value="AO">Angola</option>
+                                                    <option value="AO"
+                                                        <?php echo ($formData['country_user'] ?? '') === 'AO' ? 'selected' : ''; ?>>
+                                                        Angola</option>
                                                     <option value="AI">Anguilla</option>
                                                     <option value="AQ">Antártida</option>
                                                     <option value="AG">Antígua e Barbuda</option>
@@ -937,8 +920,9 @@ $error = isset($_GET['error']) ? ($error_messages[$_GET['error']] ?? '') : '';
                                                         class="text-danger">*</span></label>
                                                 <div class="input-group">
                                                     <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
-                                                    <input type="text" class="form-control" id="city" name="city"
-                                                        required placeholder="Sua cidade"
+                                                    <input type="text" class="form-control" id="city"
+                                                        value="<?php echo htmlspecialchars($formData['city'] ?? ''); ?>"
+                                                        name="city" required placeholder="Sua cidade"
                                                         autocomplete="address-level2" />
                                                     <div class="invalid-feedback">
                                                         Por favor, insira sua cidade.
@@ -954,8 +938,10 @@ $error = isset($_GET['error']) ? ($error_messages[$_GET['error']] ?? '') : '';
                                                 <div class="input-group">
                                                     <span class="input-group-text"><i
                                                             class="bi bi-telephone"></i></span>
-                                                    <input type="tel" class="form-control" id="phone" name="tel_user"
-                                                        placeholder="+244 9XX XXX XXX" autocomplete="tel" />
+                                                    <input type="tel" class="form-control" id="phone"
+                                                        value="<?php echo htmlspecialchars($formData['tel_user'] ?? ''); ?>"
+                                                        name="tel_user" placeholder="+244 9XX XXX XXX"
+                                                        autocomplete="tel" />
                                                 </div>
                                                 <div class="form-text">
                                                     Adicione seu telefone para melhor atendimento.
@@ -1119,11 +1105,12 @@ $error = isset($_GET['error']) ? ($error_messages[$_GET['error']] ?? '') : '';
                                                 name="terms_agree" required />
                                             <label class="form-check-label" for="terms_agree">
                                                 Li e concordo com os
-                                                <a href="#terms" data-bs-toggle="modal" data-bs-target="#terms"
+                                                <a target="_blank" href="page/politicies/terms"
                                                     class="text-wasom">Termos de Uso</a>
                                                 e
-                                                <a href="#privacy" data-bs-toggle="modal" data-bs-target="#privacy"
-                                                    class="text-wasom">Política de Privacidade</a>
+                                                <a target="_blank" href="page/politicies/privacy"
+                                                    class="text-wasom">Política de
+                                                    Privacidade</a>
                                             </label>
                                             <div class="invalid-feedback">
                                                 Você deve concordar com os termos para continuar.
@@ -1176,410 +1163,410 @@ $error = isset($_GET['error']) ? ($error_messages[$_GET['error']] ?? '') : '';
     <script src="js/validacao.js"></script>
 
     <script>
-        // Sistema de Etapas
-        let currentStep = 1;
-        const totalSteps = 4;
+    // Sistema de Etapas
+    let currentStep = 1;
+    const totalSteps = 4;
 
-        function updateProgressSteps() {
-            document.querySelectorAll(".step-item").forEach((item, index) => {
-                const stepNum = parseInt(item.dataset.step);
-                item.classList.remove("active", "completed");
+    function updateProgressSteps() {
+        document.querySelectorAll(".step-item").forEach((item, index) => {
+            const stepNum = parseInt(item.dataset.step);
+            item.classList.remove("active", "completed");
 
-                if (stepNum < currentStep) {
-                    item.classList.add("completed");
-                } else if (stepNum === currentStep) {
-                    item.classList.add("active");
-                }
-            });
-        }
-
-        function showStep(step) {
-            document.querySelectorAll(".form-step").forEach((el) => {
-                el.classList.remove("active");
-            });
-
-            const stepEl = document.getElementById(`step-${step}`);
-            if (stepEl) {
-                stepEl.classList.add("active");
-                currentStep = step;
-                updateProgressSteps();
-
-                // Scroll to top of form
-                stepEl.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start",
-                });
+            if (stepNum < currentStep) {
+                item.classList.add("completed");
+            } else if (stepNum === currentStep) {
+                item.classList.add("active");
             }
-        }
+        });
+    }
 
-        function nextStep(step) {
-            if (!validateCurrentStep()) return;
-            showStep(step);
-        }
+    function showStep(step) {
+        document.querySelectorAll(".form-step").forEach((el) => {
+            el.classList.remove("active");
+        });
 
-        function prevStep(step) {
-            showStep(step);
-        }
+        const stepEl = document.getElementById(`step-${step}`);
+        if (stepEl) {
+            stepEl.classList.add("active");
+            currentStep = step;
+            updateProgressSteps();
 
-        // Validação do passo atual
-        function validateCurrentStep() {
-            const stepEl = document.getElementById(`step-${currentStep}`);
-            const inputs = stepEl.querySelectorAll(
-                "input[required], select[required]"
-            );
-            let isValid = true;
-
-            // Reset validation
-            inputs.forEach((input) => {
-                input.classList.remove("is-invalid");
+            // Scroll to top of form
+            stepEl.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
             });
+        }
+    }
 
-            // Validação específica para cada passo
-            switch (currentStep) {
-                case 1:
-                    // Validação de e-mail
-                    const email = document.getElementById("email").value;
-                    const confirmEmail = document.getElementById("confirm_email").value;
+    function nextStep(step) {
+        if (!validateCurrentStep()) return;
+        showStep(step);
+    }
 
-                    if (!email || !validateEmail(email)) {
-                        document.getElementById("email").classList.add("is-invalid");
-                        isValid = false;
-                    }
+    function prevStep(step) {
+        showStep(step);
+    }
 
-                    if (email !== confirmEmail) {
-                        document
-                            .getElementById("confirm_email")
-                            .classList.add("is-invalid");
-                        isValid = false;
-                    }
+    // Validação do passo atual
+    function validateCurrentStep() {
+        const stepEl = document.getElementById(`step-${currentStep}`);
+        const inputs = stepEl.querySelectorAll(
+            "input[required], select[required]"
+        );
+        let isValid = true;
 
-                    // Validação de nome
-                    const fullname = document.getElementById("fullname_user").value;
-                    if (!fullname || fullname.length < 6) {
-                        document
-                            .getElementById("fullname_user")
-                            .classList.add("is-invalid");
-                        isValid = false;
-                    }
+        // Reset validation
+        inputs.forEach((input) => {
+            input.classList.remove("is-invalid");
+        });
 
-                    // Validação de data de nascimento
-                    const day = document.getElementById("birth_day").value;
-                    const month = document.getElementById("birth_month").value;
-                    const year = document.getElementById("birth_year").value;
+        // Validação específica para cada passo
+        switch (currentStep) {
+            case 1:
+                // Validação de e-mail
+                const email = document.getElementById("email").value;
+                const confirmEmail = document.getElementById("confirm_email").value;
 
-                    if (!day || !month || !year) {
-                        document.getElementById("birthday-error").style.display = "block";
-                        isValid = false;
-                    } else {
-                        // Valida se é maior de 18 anos
-                        const birthDate = new Date(year, month - 1, day);
-                        const today = new Date();
-                        const age = today.getFullYear() - birthDate.getFullYear();
-                        const monthDiff = today.getMonth() - birthDate.getMonth();
+                if (!email || !validateEmail(email)) {
+                    document.getElementById("email").classList.add("is-invalid");
+                    isValid = false;
+                }
 
-                        if (age < 18 || (age === 18 && monthDiff < 0)) {
-                            document.getElementById("birthday-error").textContent =
-                                "Você deve ter pelo menos 18 anos para se cadastrar.";
-                            document.getElementById("birthday-error").style.display =
-                                "block";
-                            isValid = false;
-                        } else {
-                            document.getElementById("birthday-error").style.display =
-                                "none";
-                        }
-                    }
+                if (email !== confirmEmail) {
+                    document
+                        .getElementById("confirm_email")
+                        .classList.add("is-invalid");
+                    isValid = false;
+                }
 
-                    // Validação de gênero
-                    const genderSelected = document.querySelector(
-                        'input[name="gender"]:checked'
-                    );
-                    if (!genderSelected) {
-                        document
-                            .querySelector(".form-radio-group")
-                            .classList.add("is-invalid");
-                        isValid = false;
-                    }
-                    break;
+                // Validação de nome
+                const fullname = document.getElementById("fullname_user").value;
+                if (!fullname || fullname.length < 6) {
+                    document
+                        .getElementById("fullname_user")
+                        .classList.add("is-invalid");
+                    isValid = false;
+                }
 
-                case 2:
-                    // Validação de país e cidade
-                    const country = document.getElementById("country").value;
-                    const city = document.getElementById("city").value;
+                // Validação de data de nascimento
+                const day = document.getElementById("birth_day").value;
+                const month = document.getElementById("birth_month").value;
+                const year = document.getElementById("birth_year").value;
 
-                    if (!country) {
-                        document.getElementById("country").classList.add("is-invalid");
-                        isValid = false;
-                    }
+                if (!day || !month || !year) {
+                    document.getElementById("birthday-error").style.display = "block";
+                    isValid = false;
+                } else {
+                    // Valida se é maior de 18 anos
+                    const birthDate = new Date(year, month - 1, day);
+                    const today = new Date();
+                    const age = today.getFullYear() - birthDate.getFullYear();
+                    const monthDiff = today.getMonth() - birthDate.getMonth();
 
-                    if (!city) {
-                        document.getElementById("city").classList.add("is-invalid");
-                        isValid = false;
-                    }
-                    break;
-
-                case 3:
-                    // Validação de senha
-                    const password = document.getElementById("password").value;
-                    const confirmPassword =
-                        document.getElementById("confirm_password").value;
-
-                    if (!validatePasswordStrength(password)) {
-                        document.getElementById("password").classList.add("is-invalid");
-                        isValid = false;
-                    }
-
-                    if (password !== confirmPassword) {
-                        document
-                            .getElementById("confirm_password")
-                            .classList.add("is-invalid");
-                        document.getElementById("password-match-error").style.display =
+                    if (age < 18 || (age === 18 && monthDiff < 0)) {
+                        document.getElementById("birthday-error").textContent =
+                            "Você deve ter pelo menos 18 anos para se cadastrar.";
+                        document.getElementById("birthday-error").style.display =
                             "block";
                         isValid = false;
                     } else {
-                        document.getElementById("password-match-error").style.display =
+                        document.getElementById("birthday-error").style.display =
                             "none";
                     }
-                    break;
-            }
+                }
 
-            return isValid;
+                // Validação de gênero
+                const genderSelected = document.querySelector(
+                    'input[name="gender"]:checked'
+                );
+                if (!genderSelected) {
+                    document
+                        .querySelector(".form-radio-group")
+                        .classList.add("is-invalid");
+                    isValid = false;
+                }
+                break;
+
+            case 2:
+                // Validação de país e cidade
+                const country = document.getElementById("country").value;
+                const city = document.getElementById("city").value;
+
+                if (!country) {
+                    document.getElementById("country").classList.add("is-invalid");
+                    isValid = false;
+                }
+
+                if (!city) {
+                    document.getElementById("city").classList.add("is-invalid");
+                    isValid = false;
+                }
+                break;
+
+            case 3:
+                // Validação de senha
+                const password = document.getElementById("password").value;
+                const confirmPassword =
+                    document.getElementById("confirm_password").value;
+
+                if (!validatePasswordStrength(password)) {
+                    document.getElementById("password").classList.add("is-invalid");
+                    isValid = false;
+                }
+
+                if (password !== confirmPassword) {
+                    document
+                        .getElementById("confirm_password")
+                        .classList.add("is-invalid");
+                    document.getElementById("password-match-error").style.display =
+                        "block";
+                    isValid = false;
+                } else {
+                    document.getElementById("password-match-error").style.display =
+                        "none";
+                }
+                break;
         }
 
-        // Função auxiliar para validar e-mail
-        function validateEmail(email) {
-            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return re.test(email);
+        return isValid;
+    }
+
+    // Função auxiliar para validar e-mail
+    function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
+
+    // Validação de senha em tempo real
+    function validatePassword() {
+        const password = document.getElementById("password").value;
+        validatePasswordStrength(password);
+        validatePasswordMatch();
+    }
+
+    function validatePasswordStrength(password) {
+        let strength = 0;
+        const requirements = {
+            length: password.length >= 10,
+            upper: /[A-Z]/.test(password),
+            lower: /[a-z]/.test(password),
+            number: /[0-9]/.test(password),
+            special: /[^A-Za-z0-9]/.test(password),
+        };
+
+        // Atualizar ícones
+        document.getElementById("icon-length").className = requirements.length ?
+            "bi bi-check-circle req-icon valid" :
+            "bi bi-x-circle req-icon invalid";
+        document.getElementById("icon-letter").className =
+            requirements.upper && requirements.lower ?
+            "bi bi-check-circle req-icon valid" :
+            "bi bi-x-circle req-icon invalid";
+        document.getElementById("icon-number").className =
+            requirements.number || requirements.special ?
+            "bi bi-check-circle req-icon valid" :
+            "bi bi-x-circle req-icon invalid";
+
+        // Calcular força
+        if (requirements.length) strength += 25;
+        if (requirements.upper && requirements.lower) strength += 25;
+        if (requirements.number) strength += 25;
+        if (requirements.special) strength += 25;
+
+        // Atualizar barra
+        const fill = document.getElementById("strength-fill");
+        const text = document.getElementById("strength-text");
+
+        fill.style.width = `${strength}%`;
+
+        if (strength < 50) {
+            fill.style.backgroundColor = "#dc3545";
+            text.textContent = "Senha fraca";
+            text.style.color = "#dc3545";
+            return false;
+        } else if (strength < 75) {
+            fill.style.backgroundColor = "#ffc107";
+            text.textContent = "Senha média";
+            text.style.color = "#ffc107";
+            return false;
+        } else {
+            fill.style.backgroundColor = "#28a745";
+            text.textContent = "Senha forte";
+            text.style.color = "#28a745";
+            return true;
         }
+    }
 
-        // Validação de senha em tempo real
-        function validatePassword() {
-            const password = document.getElementById("password").value;
-            validatePasswordStrength(password);
-            validatePasswordMatch();
+    function validatePasswordMatch() {
+        const password = document.getElementById("password").value;
+        const confirmPassword =
+            document.getElementById("confirm_password").value;
+        const errorElement = document.getElementById("password-match-error");
+
+        if (confirmPassword && password !== confirmPassword) {
+            document
+                .getElementById("confirm_password")
+                .classList.add("is-invalid");
+            errorElement.style.display = "block";
+            return false;
+        } else {
+            document
+                .getElementById("confirm_password")
+                .classList.remove("is-invalid");
+            errorElement.style.display = "none";
+            return true;
         }
+    }
 
-        function validatePasswordStrength(password) {
-            let strength = 0;
-            const requirements = {
-                length: password.length >= 10,
-                upper: /[A-Z]/.test(password),
-                lower: /[a-z]/.test(password),
-                number: /[0-9]/.test(password),
-                special: /[^A-Za-z0-9]/.test(password),
-            };
+    // Alternar visibilidade da senha
+    function togglePasswordVisibility(fieldId) {
+        const input = document.getElementById(fieldId);
+        const button = input.nextElementSibling;
 
-            // Atualizar ícones
-            document.getElementById("icon-length").className = requirements.length ?
-                "bi bi-check-circle req-icon valid" :
-                "bi bi-x-circle req-icon invalid";
-            document.getElementById("icon-letter").className =
-                requirements.upper && requirements.lower ?
-                "bi bi-check-circle req-icon valid" :
-                "bi bi-x-circle req-icon invalid";
-            document.getElementById("icon-number").className =
-                requirements.number || requirements.special ?
-                "bi bi-check-circle req-icon valid" :
-                "bi bi-x-circle req-icon invalid";
-
-            // Calcular força
-            if (requirements.length) strength += 25;
-            if (requirements.upper && requirements.lower) strength += 25;
-            if (requirements.number) strength += 25;
-            if (requirements.special) strength += 25;
-
-            // Atualizar barra
-            const fill = document.getElementById("strength-fill");
-            const text = document.getElementById("strength-text");
-
-            fill.style.width = `${strength}%`;
-
-            if (strength < 50) {
-                fill.style.backgroundColor = "#dc3545";
-                text.textContent = "Senha fraca";
-                text.style.color = "#dc3545";
-                return false;
-            } else if (strength < 75) {
-                fill.style.backgroundColor = "#ffc107";
-                text.textContent = "Senha média";
-                text.style.color = "#ffc107";
-                return false;
-            } else {
-                fill.style.backgroundColor = "#28a745";
-                text.textContent = "Senha forte";
-                text.style.color = "#28a745";
-                return true;
-            }
+        if (input.type === "password") {
+            input.type = "text";
+            button.innerHTML = '<i class="bi bi-eye-slash"></i>';
+        } else {
+            input.type = "password";
+            button.innerHTML = '<i class="bi bi-eye"></i>';
         }
+    }
 
-        function validatePasswordMatch() {
-            const password = document.getElementById("password").value;
-            const confirmPassword =
-                document.getElementById("confirm_password").value;
-            const errorElement = document.getElementById("password-match-error");
+    // Atualizar dados de revisão
+    function updateReviewData() {
+        document.getElementById("review-email").textContent =
+            document.getElementById("email").value;
+        document.getElementById("review-fullname").textContent =
+            document.getElementById("fullname_user").value;
 
-            if (confirmPassword && password !== confirmPassword) {
-                document
-                    .getElementById("confirm_password")
-                    .classList.add("is-invalid");
-                errorElement.style.display = "block";
-                return false;
-            } else {
-                document
-                    .getElementById("confirm_password")
-                    .classList.remove("is-invalid");
-                errorElement.style.display = "none";
-                return true;
-            }
-        }
-
-        // Alternar visibilidade da senha
-        function togglePasswordVisibility(fieldId) {
-            const input = document.getElementById(fieldId);
-            const button = input.nextElementSibling;
-
-            if (input.type === "password") {
-                input.type = "text";
-                button.innerHTML = '<i class="bi bi-eye-slash"></i>';
-            } else {
-                input.type = "password";
-                button.innerHTML = '<i class="bi bi-eye"></i>';
-            }
-        }
-
-        // Atualizar dados de revisão
-        function updateReviewData() {
-            document.getElementById("review-email").textContent =
-                document.getElementById("email").value;
-            document.getElementById("review-fullname").textContent =
-                document.getElementById("fullname_user").value;
-
-            // Data de nascimento
-            const day = document.getElementById("birth_day").value;
-            const month = document.getElementById("birth_month").value;
-            const year = document.getElementById("birth_year").value;
-            if (day && month && year) {
-                const monthNames = [
-                    "Janeiro",
-                    "Fevereiro",
-                    "Março",
-                    "Abril",
-                    "Maio",
-                    "Junho",
-                    "Julho",
-                    "Agosto",
-                    "Setembro",
-                    "Outubro",
-                    "Novembro",
-                    "Dezembro",
-                ];
-                document.getElementById(
-                    "review-birthdate"
-                ).textContent = `${day} de ${
+        // Data de nascimento
+        const day = document.getElementById("birth_day").value;
+        const month = document.getElementById("birth_month").value;
+        const year = document.getElementById("birth_year").value;
+        if (day && month && year) {
+            const monthNames = [
+                "Janeiro",
+                "Fevereiro",
+                "Março",
+                "Abril",
+                "Maio",
+                "Junho",
+                "Julho",
+                "Agosto",
+                "Setembro",
+                "Outubro",
+                "Novembro",
+                "Dezembro",
+            ];
+            document.getElementById(
+                "review-birthdate"
+            ).textContent = `${day} de ${
             monthNames[parseInt(month) - 1]
           } de ${year}`;
-            }
-
-            // Gênero
-            const gender = document.querySelector('input[name="gender"]:checked');
-            if (gender) {
-                const genderText = {
-                    M: "Masculino",
-                    F: "Feminino",
-                    O: "Outro",
-                };
-                document.getElementById("review-gender").textContent =
-                    genderText[gender.value];
-            }
-
-            // País e cidade
-            const countrySelect = document.getElementById("country");
-            document.getElementById("review-country").textContent =
-                countrySelect.options[countrySelect.selectedIndex].text;
-            document.getElementById("review-city").textContent =
-                document.getElementById("city").value;
-
-            // Telefone
-            const phone = document.getElementById("phone").value;
-            document.getElementById("review-phone").textContent =
-                phone || "Não informado";
         }
 
-        // Manipular o envio do formulário
-        document
-            .getElementById("registration-form")
-            .addEventListener("submit", function(e) {
-                e.preventDefault();
+        // Gênero
+        const gender = document.querySelector('input[name="gender"]:checked');
+        if (gender) {
+            const genderText = {
+                M: "Masculino",
+                F: "Feminino",
+                O: "Outro",
+            };
+            document.getElementById("review-gender").textContent =
+                genderText[gender.value];
+        }
 
-                if (
-                    !validateCurrentStep() ||
-                    !document.getElementById("terms_agree").checked
-                ) {
-                    document.getElementById("terms_agree").classList.add("is-invalid");
-                    return;
-                }
+        // País e cidade
+        const countrySelect = document.getElementById("country");
+        document.getElementById("review-country").textContent =
+            countrySelect.options[countrySelect.selectedIndex].text;
+        document.getElementById("review-city").textContent =
+            document.getElementById("city").value;
 
-                // Mostrar loading
-                const submitBtn = document.getElementById("submit-btn");
-                const submitText = document.getElementById("submit-text");
-                const submitSpinner = document.getElementById("submit-spinner");
+        // Telefone
+        const phone = document.getElementById("phone").value;
+        document.getElementById("review-phone").textContent =
+            phone || "Não informado";
+    }
 
-                submitBtn.disabled = true;
-                submitText.textContent = "Criando conta...";
-                submitSpinner.classList.remove("d-none");
+    // Manipular o envio do formulário
+    document
+        .getElementById("registration-form")
+        .addEventListener("submit", function(e) {
+            e.preventDefault();
 
-                // Simular envio (substituir por AJAX real)
-                // Submeter o formulário para o PHP processar
-                this.submit();
-            });
+            if (
+                !validateCurrentStep() ||
+                !document.getElementById("terms_agree").checked
+            ) {
+                document.getElementById("terms_agree").classList.add("is-invalid");
+                return;
+            }
 
-        // Atualizar dados de revisão ao mostrar o passo 4
-        document
-            .getElementById("step-4")
-            .addEventListener("animationstart", function() {
-                if (currentStep === 4) {
-                    updateReviewData();
-                }
-            });
+            // Mostrar loading
+            const submitBtn = document.getElementById("submit-btn");
+            const submitText = document.getElementById("submit-text");
+            const submitSpinner = document.getElementById("submit-spinner");
 
-        // Estilizar radio buttons
-        document.querySelectorAll(".form-radio-input").forEach((input) => {
-            input.addEventListener("change", function() {
-                document.querySelectorAll(".form-radio-label").forEach((label) => {
-                    label.classList.remove("active");
-                });
-                this.parentElement.classList.add("active");
-            });
+            submitBtn.disabled = true;
+            submitText.textContent = "Criando conta...";
+            submitSpinner.classList.remove("d-none");
+
+            // Simular envio (substituir por AJAX real)
+            // Submeter o formulário para o PHP processar
+            this.submit();
         });
 
-        // Preloader
-        window.addEventListener("load", () => {
-            setTimeout(() => document.body.classList.add("loaded"), 300);
+    // Atualizar dados de revisão ao mostrar o passo 4
+    document
+        .getElementById("step-4")
+        .addEventListener("animationstart", function() {
+            if (currentStep === 4) {
+                updateReviewData();
+            }
         });
 
-        // Inicializar
-        document.addEventListener("DOMContentLoaded", function() {
-            updateProgressSteps();
+    // Estilizar radio buttons
+    document.querySelectorAll(".form-radio-input").forEach((input) => {
+        input.addEventListener("change", function() {
+            document.querySelectorAll(".form-radio-label").forEach((label) => {
+                label.classList.remove("active");
+            });
+            this.parentElement.classList.add("active");
+        });
+    });
 
-            // Adicionar validação em tempo real
-            document.getElementById("email").addEventListener("blur", function() {
-                if (this.value && !validateEmail(this.value)) {
+    // Preloader
+    window.addEventListener("load", () => {
+        setTimeout(() => document.body.classList.add("loaded"), 300);
+    });
+
+    // Inicializar
+    document.addEventListener("DOMContentLoaded", function() {
+        updateProgressSteps();
+
+        // Adicionar validação em tempo real
+        document.getElementById("email").addEventListener("blur", function() {
+            if (this.value && !validateEmail(this.value)) {
+                this.classList.add("is-invalid");
+            } else {
+                this.classList.remove("is-invalid");
+            }
+        });
+
+        document
+            .getElementById("confirm_email")
+            .addEventListener("blur", function() {
+                const email = document.getElementById("email").value;
+                if (this.value && this.value !== email) {
                     this.classList.add("is-invalid");
                 } else {
                     this.classList.remove("is-invalid");
                 }
             });
-
-            document
-                .getElementById("confirm_email")
-                .addEventListener("blur", function() {
-                    const email = document.getElementById("email").value;
-                    if (this.value && this.value !== email) {
-                        this.classList.add("is-invalid");
-                    } else {
-                        this.classList.remove("is-invalid");
-                    }
-                });
-        });
+    });
     </script>
 </body>
 

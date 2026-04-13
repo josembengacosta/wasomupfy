@@ -167,11 +167,11 @@ $planFeatures = [
     <meta property="og:image:alt" content="<?php echo $siteName; ?>" />
 
     <script>
-        window.addEventListener("load", function() {
-            setTimeout(function() {
-                document.querySelector("body").classList.add("loaded");
-            }, 200);
-        });
+    window.addEventListener("load", function() {
+        setTimeout(function() {
+            document.querySelector("body").classList.add("loaded");
+        }, 200);
+    });
     </script>
 
     <link rel="shortcut icon" href="assets/img/icones/wasomupfy_fiv1.png" type="image/x-icon" />
@@ -185,14 +185,14 @@ $planFeatures = [
 
     <!-- Schema.org JSON-LD dinâmico -->
     <script type="application/ld+json">
-        {
-            "@context": "https://schema.org",
-            "@type": "Organization",
-            "name": "<?php echo addslashes($siteName); ?>",
-            "url": "<?php echo addslashes($siteUrl); ?>",
-            "logo": "<?php echo addslashes($siteUrl); ?>/assets/img/brand/wasomupfy_brand.png",
-            "sameAs": [
-                <?php
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "<?php echo addslashes($siteName); ?>",
+        "url": "<?php echo addslashes($siteUrl); ?>",
+        "logo": "<?php echo addslashes($siteUrl); ?>/assets/img/brand/wasomupfy_brand.png",
+        "sameAs": [
+            <?php
                 $sameAs = [];
                 if (cfg('facebook_url'))  $sameAs[] = '"' . addslashes(cfg('facebook_url'))  . '"';
                 if (cfg('instagram_url')) $sameAs[] = '"' . addslashes(cfg('instagram_url')) . '"';
@@ -201,24 +201,24 @@ $planFeatures = [
                 if (cfg('linkedin_url'))  $sameAs[] = '"' . addslashes(cfg('linkedin_url'))  . '"';
                 echo implode(",\n            ", $sameAs ?: ['"https://www.facebook.com/wasom.official"']);
                 ?>
-            ],
-            "contactPoint": {
-                "@type": "ContactPoint",
-                "email": "<?php echo addslashes(cfg('info_email', 'info@wasomupfy.com')); ?>",
-                "contactType": "customer service",
-                "hoursAvailable": {
-                    "@type": "OpeningHoursSpecification",
-                    "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-                    "opens": "08:00",
-                    "closes": "17:00"
-                }
-            },
-            "address": {
-                "@type": "PostalAddress",
-                "addressCountry": "Angola",
-                "addressLocality": "Luanda"
+        ],
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "email": "<?php echo addslashes(cfg('info_email', 'info@wasomupfy.com')); ?>",
+            "contactType": "customer service",
+            "hoursAvailable": {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+                "opens": "08:00",
+                "closes": "17:00"
             }
+        },
+        "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "Angola",
+            "addressLocality": "Luanda"
         }
+    }
     </script>
 </head>
 
@@ -276,19 +276,19 @@ $planFeatures = [
                                         $nPrc  = number_format($p['price_plan'], 0, ',', '.');
                                         $nPer  = $p['type_plan'] === 'subscription' ? '/ano' : '';
                                     ?>
-                                        <a title="<?php echo htmlspecialchars($p['name_plan']); ?>"
-                                            class="dropdown-item mb-3 text-body" href="plan/<?php echo $nSlug; ?>">
-                                            <div class="d-flex align-items-center">
-                                                <i class="fa-solid <?php echo $nIcon; ?> text-wasomupfy fs-3"
-                                                    style="width:35px"></i>
-                                                <div class="ms-3 lh-1">
-                                                    <h5 class="mb-1"><?php echo htmlspecialchars($p['name_plan']); ?></h5>
-                                                    <p class="mb-0 fs-6">Nosso plano
-                                                        <?php echo htmlspecialchars($p['name_plan']); ?> —
-                                                        <?php echo $nPrc; ?> Kz<?php echo $nPer; ?></p>
-                                                </div>
+                                    <a title="<?php echo htmlspecialchars($p['name_plan']); ?>"
+                                        class="dropdown-item mb-3 text-body" href="plan/<?php echo $nSlug; ?>">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fa-solid <?php echo $nIcon; ?> text-wasomupfy fs-3"
+                                                style="width:35px"></i>
+                                            <div class="ms-3 lh-1">
+                                                <h5 class="mb-1"><?php echo htmlspecialchars($p['name_plan']); ?></h5>
+                                                <p class="mb-0 fs-6">Nosso plano
+                                                    <?php echo htmlspecialchars($p['name_plan']); ?> —
+                                                    <?php echo $nPrc; ?> Kz<?php echo $nPer; ?></p>
                                             </div>
-                                        </a>
+                                        </div>
+                                    </a>
                                     <?php endforeach; ?>
                                     <a title="Todos os planos" class="dropdown-item mb-3 text-body"
                                         href="plan/all-plans">
@@ -391,14 +391,14 @@ $planFeatures = [
                                     <li><a title="Caixa de mensagem" class="dropdown-item" href="contact">Caixa de
                                             mensagem</a></li>
                                     <?php if (cfg('support_email')): ?>
-                                        <li><a title="E-mail" class="dropdown-item"
-                                                href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"><?php echo htmlspecialchars(cfg('support_email')); ?></a>
-                                        </li>
+                                    <li><a title="E-mail" class="dropdown-item"
+                                            href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"><?php echo htmlspecialchars(cfg('support_email')); ?></a>
+                                    </li>
                                     <?php endif; ?>
                                     <?php if ($whatsNum): ?>
-                                        <li><a title="WhatsApp" class="dropdown-item"
-                                                href="https://api.whatsapp.com/send/?phone=<?php echo $whatsNum; ?>&text&type=phone_number&app_absent=0">
-                                                WhatsApp</a></li>
+                                    <li><a title="WhatsApp" class="dropdown-item"
+                                            href="https://api.whatsapp.com/send/?phone=<?php echo $whatsNum; ?>&text&type=phone_number&app_absent=0">
+                                            WhatsApp</a></li>
                                     <?php endif; ?>
                                 </ul>
                             </li>
@@ -409,9 +409,9 @@ $planFeatures = [
                                 Entrar <i data-feather="log-in"></i>
                             </a>
                             <?php if ($canRegister): ?>
-                                <a title="Sign-up" href="/wasomupfy/register" class="btn btn-wasomupfy">Inscreva-se</a>
+                            <a title="Sign-up" href="/wasomupfy/register" class="btn btn-wasomupfy">Inscreva-se</a>
                             <?php else: ?>
-                                <span class="btn btn-secondary disabled">Inscrições fechadas</span>
+                            <span class="btn btn-secondary disabled">Inscrições fechadas</span>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -437,10 +437,10 @@ $planFeatures = [
                                     <h3 class="text-white-stable">
                                         Suba as suas músicas por apenas
                                         <?php if (isset($plansBySlug['single'])): ?>
-                                            <strong
-                                                class="text-wasomupfy"><?php echo number_format($plansBySlug['single']['price_plan'], 0, ',', '.'); ?>Kz</strong>
+                                        <strong
+                                            class="text-wasomupfy"><?php echo number_format($plansBySlug['single']['price_plan'], 0, ',', '.'); ?>Kz</strong>
                                         <?php else: ?>
-                                            <strong class="text-wasomupfy">2.000Kz</strong>
+                                        <strong class="text-wasomupfy">2.000Kz</strong>
                                         <?php endif; ?>
                                     </h3>
                                     <p class="lead font-weight-lighter mt-3">
@@ -458,16 +458,16 @@ $planFeatures = [
                                 </div>
                                 <div class="d-flex flex-row gap-2 justify-content-left">
                                     <?php if ($canRegister): ?>
-                                        <a href="/wasomupfy/register" title="Junta-se agora"
-                                            class="btn btn-wasomupfy hover-scale-x-105 icon-link icon-link-hover"
-                                            rel="internal">
-                                            Junta-se agora
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                                fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
-                                                <path fill-rule="evenodd"
-                                                    d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
-                                            </svg>
-                                        </a>
+                                    <a href="/wasomupfy/register" title="Junta-se agora"
+                                        class="btn btn-wasomupfy hover-scale-x-105 icon-link icon-link-hover"
+                                        rel="internal">
+                                        Junta-se agora
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                            fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd"
+                                                d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
+                                        </svg>
+                                    </a>
                                     <?php endif; ?>
                                     <a href="about" title="Sobre"
                                         class="btn btn-secondary hover-scale-x-105 icon-link icon-link-hover">
@@ -481,58 +481,58 @@ $planFeatures = [
                                     <div class="text-md-start d-flex align-items-start justify-content-md-start">
                                         <div class="ms-1 d-flex gap-3">
                                             <?php if (cfg('facebook_url')): ?>
-                                                <a target="_blank" rel="external" title="Facebook <?php echo $siteName; ?>"
-                                                    href="<?php echo htmlspecialchars(cfg('facebook_url')); ?>"
-                                                    class="btn btn-wasomupfy">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                                                        fill="currentColor" class="bi bi-facebook" viewBox="0 0 16 16">
-                                                        <path
-                                                            d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z" />
-                                                    </svg>
-                                                </a>
+                                            <a target="_blank" rel="external" title="Facebook <?php echo $siteName; ?>"
+                                                href="<?php echo htmlspecialchars(cfg('facebook_url')); ?>"
+                                                class="btn btn-wasomupfy">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                                    fill="currentColor" class="bi bi-facebook" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z" />
+                                                </svg>
+                                            </a>
                                             <?php endif; ?>
                                             <?php if (cfg('instagram_url')): ?>
-                                                <a target="_blank" rel="external" title="Instagram <?php echo $siteName; ?>"
-                                                    href="<?php echo htmlspecialchars(cfg('instagram_url')); ?>"
-                                                    class="btn btn-wasomupfy">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                                                        fill="currentColor" class="bi bi-instagram" viewBox="0 0 16 16">
-                                                        <path
-                                                            d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z" />
-                                                    </svg>
-                                                </a>
+                                            <a target="_blank" rel="external" title="Instagram <?php echo $siteName; ?>"
+                                                href="<?php echo htmlspecialchars(cfg('instagram_url')); ?>"
+                                                class="btn btn-wasomupfy">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                                    fill="currentColor" class="bi bi-instagram" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z" />
+                                                </svg>
+                                            </a>
                                             <?php endif; ?>
                                             <?php if ($whatsNum): ?>
-                                                <a target="_blank" rel="external" title="WhatsApp <?php echo $siteName; ?>"
-                                                    href="https://wa.me/<?php echo $whatsNum; ?>" class="btn btn-wasomupfy">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                                                        fill="currentColor" viewBox="0 0 24 24">
-                                                        <path
-                                                            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.76.982.998-3.677-.236-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.9 6.994c-.004 5.45-4.437 9.88-9.885 9.88m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.333.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.333 11.893-11.893 0-3.18-1.24-6.162-3.495-8.411" />
-                                                    </svg>
-                                                </a>
+                                            <a target="_blank" rel="external" title="WhatsApp <?php echo $siteName; ?>"
+                                                href="https://wa.me/<?php echo $whatsNum; ?>" class="btn btn-wasomupfy">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                                    fill="currentColor" viewBox="0 0 24 24">
+                                                    <path
+                                                        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.76.982.998-3.677-.236-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.9 6.994c-.004 5.45-4.437 9.88-9.885 9.88m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.333.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.333 11.893-11.893 0-3.18-1.24-6.162-3.495-8.411" />
+                                                </svg>
+                                            </a>
                                             <?php endif; ?>
                                             <?php if (cfg('youtube_url')): ?>
-                                                <a target="_blank" rel="external" title="YouTube <?php echo $siteName; ?>"
-                                                    href="<?php echo htmlspecialchars(cfg('youtube_url')); ?>"
-                                                    class="btn btn-wasomupfy">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                                                        fill="currentColor" class="bi bi-youtube" viewBox="0 0 16 16">
-                                                        <path
-                                                            d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.007 2.007 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.007 2.007 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31.4 31.4 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.007 2.007 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A99.788 99.788 0 0 1 7.858 2h.193zM6.4 5.209v4.818l4.157-2.408L6.4 5.209z" />
-                                                    </svg>
-                                                </a>
+                                            <a target="_blank" rel="external" title="YouTube <?php echo $siteName; ?>"
+                                                href="<?php echo htmlspecialchars(cfg('youtube_url')); ?>"
+                                                class="btn btn-wasomupfy">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                                    fill="currentColor" class="bi bi-youtube" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.007 2.007 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.007 2.007 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31.4 31.4 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.007 2.007 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A99.788 99.788 0 0 1 7.858 2h.193zM6.4 5.209v4.818l4.157-2.408L6.4 5.209z" />
+                                                </svg>
+                                            </a>
                                             <?php endif; ?>
                                             <?php if (cfg('linkedin_url')): ?>
-                                                <a target="_blank" rel="external" title="LinkedIn <?php echo $siteName; ?>"
-                                                    href="<?php echo htmlspecialchars(cfg('linkedin_url')); ?>"
-                                                    class="btn btn-wasomupfy">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                                                        fill="currentColor" viewBox="0 0 24 24">
-                                                        <path
-                                                            d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                                                    </svg>
-                                                </a>
+                                            <a target="_blank" rel="external" title="LinkedIn <?php echo $siteName; ?>"
+                                                href="<?php echo htmlspecialchars(cfg('linkedin_url')); ?>"
+                                                class="btn btn-wasomupfy">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                                    fill="currentColor" viewBox="0 0 24 24">
+                                                    <path
+                                                        d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                                                </svg>
+                                            </a>
                                             <?php endif; ?>
                                         </div>
                                     </div>
@@ -682,16 +682,16 @@ $planFeatures = [
                             </div>
                             <div class="mt-5 pt-3">
                                 <?php if ($canRegister): ?>
-                                    <a href="/wasomupfy/register?new_account"
-                                        class="btn btn-wasomupfy btn-lg w-100 py-3 d-flex align-items-center justify-content-center">
-                                        <i class="bi bi-music-note-beamed me-2 fs-5"></i>
-                                        Comece a distribuir agora
-                                    </a>
+                                <a href="/wasomupfy/register?new_account"
+                                    class="btn btn-wasomupfy btn-lg w-100 py-3 d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-music-note-beamed me-2 fs-5"></i>
+                                    Comece a distribuir agora
+                                </a>
                                 <?php else: ?>
-                                    <span
-                                        class="btn btn-secondary btn-lg w-100 py-3 d-flex align-items-center justify-content-center disabled">
-                                        Inscrições temporariamente fechadas
-                                    </span>
+                                <span
+                                    class="btn btn-secondary btn-lg w-100 py-3 d-flex align-items-center justify-content-center disabled">
+                                    Inscrições temporariamente fechadas
+                                </span>
                                 <?php endif; ?>
                                 <p class="text-center text-body small mt-2 mb-0">
                                     <i class="bi bi-shield-check text-success me-1"></i>
@@ -728,38 +728,38 @@ $planFeatures = [
                             ['ico' => 'assets/img/icones/divisao_de_seus_royalties.png', 'title' => 'Transparência nos Royalties',      'items' => ['Divisão clara entre todos os envolvidos', 'Relatórios mensais detalhados', 'Sistema anti-fraude para proteger os seus direitos']],
                         ];
                         foreach ($featureCards as $fc): ?>
-                            <div class="col-lg-6 col-md-6 col-12">
-                                <div class="card-lift h-100" data-cue="zoomIn" data-duration="500">
-                                    <div class="card-body p-5">
-                                        <div class="d-lg-flex">
-                                            <div class="p-3 icon-xl icon-shape rounded bg-opacity-10">
-                                                <img src="<?php echo $fc['ico']; ?>" width="120" height="120"
-                                                    alt="<?php echo htmlspecialchars($fc['title']); ?>" />
-                                            </div>
-                                            <div class="ms-lg-5 mt-4 mt-lg-0">
-                                                <div class="mb-4">
-                                                    <h3><?php echo $fc['title']; ?></h3>
-                                                    <ul class="list-group mb-2">
-                                                        <?php foreach ($fc['items'] as $fi): ?>
-                                                            <li>— <?php echo $fi; ?></li>
-                                                        <?php endforeach; ?>
-                                                    </ul>
-                                                </div>
+                        <div class="col-lg-6 col-md-6 col-12">
+                            <div class="card-lift h-100" data-cue="zoomIn" data-duration="500">
+                                <div class="card-body p-5">
+                                    <div class="d-lg-flex">
+                                        <div class="p-3 icon-xl icon-shape rounded bg-opacity-10">
+                                            <img src="<?php echo $fc['ico']; ?>" width="120" height="120"
+                                                alt="<?php echo htmlspecialchars($fc['title']); ?>" />
+                                        </div>
+                                        <div class="ms-lg-5 mt-4 mt-lg-0">
+                                            <div class="mb-4">
+                                                <h3><?php echo $fc['title']; ?></h3>
+                                                <ul class="list-group mb-2">
+                                                    <?php foreach ($fc['items'] as $fi): ?>
+                                                    <li>— <?php echo $fi; ?></li>
+                                                    <?php endforeach; ?>
+                                                </ul>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
                         <?php endforeach; ?>
 
                         <div class="text-center">
                             <p>Junte-se a milhares de artistas que já transformaram as suas carreiras com a
                                 <?php echo $siteName; ?>.</p>
                             <?php if ($canRegister): ?>
-                                <a href="/wasomupfy/register?new_account"
-                                    class="btn btn-wasomupfy btn-lg w-100 py-3 d-flex align-items-center justify-content-center">
-                                    Cadastra-se agora
-                                </a>
+                            <a href="/wasomupfy/register?new_account"
+                                class="btn btn-wasomupfy btn-lg w-100 py-3 d-flex align-items-center justify-content-center">
+                                Cadastra-se agora
+                            </a>
                             <?php endif; ?>
                         </div>
 
@@ -822,61 +822,61 @@ $planFeatures = [
                         $period  = $p['type_plan'] === 'subscription' ? '/ano' : '';
                         $feats   = $planFeatures[$slug] ?? [];
                     ?>
-                        <div class="col-xl-3 col-lg-6" data-cue="zoomIn" <?php echo $cfg_plan['delay']; ?>>
-                            <div class="card <?php echo $cfg_plan['cardCls']; ?> h-100 hover-lift">
-                                <?php if ($cfg_plan['popular']): ?>
-                                    <div class="position-absolute top-0 start-50 translate-middle mt-3">
-                                        <span class="badge bg-wasomupfy text-white rounded-pill px-3 py-2">
-                                            <i class="bi bi-star-fill me-1"></i> Mais Popular
-                                        </span>
+                    <div class="col-xl-3 col-lg-6" data-cue="zoomIn" <?php echo $cfg_plan['delay']; ?>>
+                        <div class="card <?php echo $cfg_plan['cardCls']; ?> h-100 hover-lift">
+                            <?php if ($cfg_plan['popular']): ?>
+                            <div class="position-absolute top-0 start-50 translate-middle mt-3">
+                                <span class="badge bg-wasomupfy text-white rounded-pill px-3 py-2">
+                                    <i class="bi bi-star-fill me-1"></i> Mais Popular
+                                </span>
+                            </div>
+                            <?php endif; ?>
+                            <div class="card-body p-4 <?php echo $cfg_plan['popular'] ? 'pt-5' : ''; ?>">
+                                <div class="text-center mb-4 <?php echo $cfg_plan['popular'] ? 'pt-3' : ''; ?>">
+                                    <span
+                                        class="badge <?php echo $cfg_plan['badgeCls']; ?> rounded-pill px-3 py-1 mb-3 d-inline-block">
+                                        <?php echo $cfg_plan['badge']; ?>
+                                    </span>
+                                    <h3 class="h4 mb-2 text-wasomupfy"><?php echo htmlspecialchars($p['name_plan']); ?>
+                                    </h3>
+                                    <div class="d-flex align-items-baseline justify-content-center mb-3">
+                                        <span class="h1 fw-bold text-wasomupfy mb-0"><?php echo $price; ?></span>
+                                        <span class="text-body ms-1">Kz<?php echo $period; ?></span>
                                     </div>
-                                <?php endif; ?>
-                                <div class="card-body p-4 <?php echo $cfg_plan['popular'] ? 'pt-5' : ''; ?>">
-                                    <div class="text-center mb-4 <?php echo $cfg_plan['popular'] ? 'pt-3' : ''; ?>">
-                                        <span
-                                            class="badge <?php echo $cfg_plan['badgeCls']; ?> rounded-pill px-3 py-1 mb-3 d-inline-block">
-                                            <?php echo $cfg_plan['badge']; ?>
-                                        </span>
-                                        <h3 class="h4 mb-2 text-wasomupfy"><?php echo htmlspecialchars($p['name_plan']); ?>
-                                        </h3>
-                                        <div class="d-flex align-items-baseline justify-content-center mb-3">
-                                            <span class="h1 fw-bold text-wasomupfy mb-0"><?php echo $price; ?></span>
-                                            <span class="text-body ms-1">Kz<?php echo $period; ?></span>
-                                        </div>
-                                        <div class="mb-4">
-                                            <span class="text-success fw-semibold"><?php echo $royalty; ?>% Royalties</span>
-                                            <div class="progress mt-2" style="height:6px">
-                                                <div class="progress-bar bg-success" style="width:<?php echo $royalty; ?>%">
-                                                </div>
+                                    <div class="mb-4">
+                                        <span class="text-success fw-semibold"><?php echo $royalty; ?>% Royalties</span>
+                                        <div class="progress mt-2" style="height:6px">
+                                            <div class="progress-bar bg-success" style="width:<?php echo $royalty; ?>%">
                                             </div>
                                         </div>
                                     </div>
-                                    <ul class="list-unstyled mb-4">
-                                        <?php foreach ($feats as [$check, $text]): ?>
-                                            <li class="d-flex align-items-start mb-3">
-                                                <i
-                                                    class="bi <?php echo $check ? 'bi-check-circle-fill text-success' : 'bi-x-circle-fill text-danger'; ?> me-2 mt-1"></i>
-                                                <span><?php echo htmlspecialchars($text); ?></span>
-                                            </li>
-                                        <?php endforeach; ?>
-                                    </ul>
-                                    <div class="text-center mt-auto">
-                                        <?php if ($canRegister): ?>
-                                            <a href="/wasomupfy/register?plan=<?php echo $slug; ?>"
-                                                class="btn <?php echo $cfg_plan['btnCls']; ?> w-100">
-                                                <i class="bi <?php echo $cfg_plan['btnIcon']; ?> me-2"></i>
-                                                <?php echo $cfg_plan['btnLabel']; ?>
-                                            </a>
-                                        <?php else: ?>
-                                            <a href="plan/<?php echo $slug; ?>" class="btn btn-outline-secondary w-100">
-                                                Ver detalhes do plano
-                                            </a>
-                                        <?php endif; ?>
-                                        <p class="text-body small mt-2 mb-0"><?php echo $cfg_plan['btnNote']; ?></p>
-                                    </div>
+                                </div>
+                                <ul class="list-unstyled mb-4">
+                                    <?php foreach ($feats as [$check, $text]): ?>
+                                    <li class="d-flex align-items-start mb-3">
+                                        <i
+                                            class="bi <?php echo $check ? 'bi-check-circle-fill text-success' : 'bi-x-circle-fill text-danger'; ?> me-2 mt-1"></i>
+                                        <span><?php echo htmlspecialchars($text); ?></span>
+                                    </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                                <div class="text-center mt-auto">
+                                    <?php if ($canRegister): ?>
+                                    <a href="/wasomupfy/register?plan=<?php echo $slug; ?>"
+                                        class="btn <?php echo $cfg_plan['btnCls']; ?> w-100">
+                                        <i class="bi <?php echo $cfg_plan['btnIcon']; ?> me-2"></i>
+                                        <?php echo $cfg_plan['btnLabel']; ?>
+                                    </a>
+                                    <?php else: ?>
+                                    <a href="plan/<?php echo $slug; ?>" class="btn btn-outline-secondary w-100">
+                                        Ver detalhes do plano
+                                    </a>
+                                    <?php endif; ?>
+                                    <p class="text-body small mt-2 mb-0"><?php echo $cfg_plan['btnNote']; ?></p>
                                 </div>
                             </div>
                         </div>
+                    </div>
                     <?php endforeach; ?>
                 </div>
 
@@ -895,8 +895,8 @@ $planFeatures = [
                                             <tr class="border-bottom">
                                                 <th class="text-start" style="width:40%">Característica</th>
                                                 <?php foreach ($plansBySlug as $slug => $p): ?>
-                                                    <th class="text-center"><?php echo htmlspecialchars($p['name_plan']); ?>
-                                                    </th>
+                                                <th class="text-center"><?php echo htmlspecialchars($p['name_plan']); ?>
+                                                </th>
                                                 <?php endforeach; ?>
                                             </tr>
                                         </thead>
@@ -904,8 +904,8 @@ $planFeatures = [
                                             <tr class="border-bottom">
                                                 <td class="text-start fw-semibold">Royalties</td>
                                                 <?php foreach ($plansBySlug as $slug => $p): ?>
-                                                    <td class="text-center text-success fw-bold"><?php echo $royalty; ?>%
-                                                    </td>
+                                                <td class="text-center text-success fw-bold"><?php echo $royalty; ?>%
+                                                </td>
                                                 <?php endforeach; ?>
                                             </tr>
                                             <tr class="border-bottom">
@@ -958,30 +958,30 @@ $planFeatures = [
                         </div>
                         <div class="text-justify">
                             <?php if (empty($faqs)): ?>
-                                <p class="text-center text-muted">Nenhuma pergunta disponível de momento.</p>
+                            <p class="text-center text-muted">Nenhuma pergunta disponível de momento.</p>
                             <?php else: ?>
-                                <div class="accordion" id="faqAccordion">
-                                    <?php foreach ($faqs as $fi => $faq): ?>
-                                        <div class="accordion-item border-0 mb-3 shadow-sm">
-                                            <h3 class="accordion-header">
-                                                <button
-                                                    class="accordion-button <?php echo $fi === 0 ? 'bg-wasomupfy' : 'bg-wasomupfy collapsed'; ?> rounded-3"
-                                                    type="button" data-bs-toggle="collapse"
-                                                    data-bs-target="#faqItem<?php echo $faq['id_faq']; ?>"
-                                                    aria-expanded="<?php echo $fi === 0 ? 'true' : 'false'; ?>">
-                                                    <?php echo htmlspecialchars($faq['question']); ?>
-                                                </button>
-                                            </h3>
-                                            <div id="faqItem<?php echo $faq['id_faq']; ?>"
-                                                class="accordion-collapse collapse<?php echo $fi === 0 ? ' show' : ''; ?>"
-                                                data-bs-parent="#faqAccordion">
-                                                <div class="accordion-body">
-                                                    <?php echo nl2br(htmlspecialchars($faq['answer'])); ?>
-                                                </div>
-                                            </div>
+                            <div class="accordion" id="faqAccordion">
+                                <?php foreach ($faqs as $fi => $faq): ?>
+                                <div class="accordion-item border-0 mb-3 shadow-sm">
+                                    <h3 class="accordion-header">
+                                        <button
+                                            class="accordion-button <?php echo $fi === 0 ? 'bg-wasomupfy' : 'bg-wasomupfy collapsed'; ?> rounded-3"
+                                            type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#faqItem<?php echo $faq['id_faq']; ?>"
+                                            aria-expanded="<?php echo $fi === 0 ? 'true' : 'false'; ?>">
+                                            <?php echo htmlspecialchars($faq['question']); ?>
+                                        </button>
+                                    </h3>
+                                    <div id="faqItem<?php echo $faq['id_faq']; ?>"
+                                        class="accordion-collapse collapse<?php echo $fi === 0 ? ' show' : ''; ?>"
+                                        data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            <?php echo nl2br(htmlspecialchars($faq['answer'])); ?>
                                         </div>
-                                    <?php endforeach; ?>
+                                    </div>
                                 </div>
+                                <?php endforeach; ?>
+                            </div>
                             <?php endif; ?>
 
                             <div class="text-center mt-4">
@@ -1002,9 +1002,9 @@ $planFeatures = [
                                     ideal.</p>
                                 <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
                                     <?php if ($canRegister): ?>
-                                        <a href="/wasomupfy/register" class="btn btn-wasomupfy btn-lg">
-                                            <i class="bi bi-rocket-takeoff-fill me-2"></i> Começar Agora
-                                        </a>
+                                    <a href="/wasomupfy/register" class="btn btn-wasomupfy btn-lg">
+                                        <i class="bi bi-rocket-takeoff-fill me-2"></i> Começar Agora
+                                    </a>
                                     <?php endif; ?>
                                     <a href="contact" class="btn btn-outline-primary btn-lg">
                                         <i class="bi bi-chat-dots-fill me-2"></i> Falar com Suporte
@@ -1099,12 +1099,12 @@ $planFeatures = [
                     <div class="col-lg-12">
                         <div class="text-center mt-lg-6">
                             <?php if ($canRegister): ?>
-                                <a href="/wasomupfy/register" title="Inscreva-se agora"
-                                    class="btn btn-wasomupfy btn-lg px-5 py-3 hover-scale-x-105 icon-link icon-link-hover">
-                                    Inscreve-se agora
-                                </a>
+                            <a href="/wasomupfy/register" title="Inscreva-se agora"
+                                class="btn btn-wasomupfy btn-lg px-5 py-3 hover-scale-x-105 icon-link icon-link-hover">
+                                Inscreve-se agora
+                            </a>
                             <?php else: ?>
-                                <a href="plan/all-plans" class="btn btn-outline-primary btn-lg px-5 py-3">Ver os planos</a>
+                            <a href="plan/all-plans" class="btn btn-outline-primary btn-lg px-5 py-3">Ver os planos</a>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -1117,7 +1117,7 @@ $planFeatures = [
         <!-- ══ Depoimentos ═══════════════════════════════════════════════════ -->
         <section class="py-5">
             <div class="container" data-cue="fadeIn">
-                <div class="row justify-content-center mb-6">
+                <div class="row justify-content-center mb-6 d-none">
                     <div class="col-lg-8 text-center">
                         <span
                             class="badge bg-wasomupfy bg-opacity-10 text-wasomupfy rounded-pill px-4 py-2 mb-3 d-inline-block">
@@ -1132,7 +1132,7 @@ $planFeatures = [
                 </div>
 
                 <!-- Carrossel -->
-                <div class="row mb-5">
+                <div class="row mb-5 d-none">
                     <div class="col-12">
                         <div class="position-relative">
                             <div class="d-flex justify-content-center gap-3 mb-4">
@@ -1150,39 +1150,39 @@ $planFeatures = [
                                     ['seed' => 'Pedro', 'bg' => 'ff9900', 'name' => 'Pedro Santos', 'role' => 'DJ • Eletrónica', 'metric' => '<i class="bi bi-apple text-dark me-1"></i>#2 em playlists Apple Music', 'stars' => 5, 'badge' => '<span class="badge bg-warning bg-opacity-10 text-warning ms-3"><i class="bi bi-rocket-takeoff me-1"></i>Lançamento</span>', 'msg' => '"O meu single foi para o ar em menos de 24 horas e já está em todas as plataformas. A velocidade da Wasom Upfy é impressionante!"'],
                                 ];
                                 foreach ($depos as $d): ?>
-                                    <div class="testimonial-item">
-                                        <div class="card border-0 shadow-sm h-100">
-                                            <div class="card-body p-4 p-lg-5">
-                                                <div class="mb-4">
-                                                    <div class="d-flex align-items-center mb-3">
-                                                        <div class="rating-stars">
-                                                            <?php for ($i = 1; $i <= 5; $i++): ?>
-                                                                <i
-                                                                    class="bi <?php echo $i <= $d['stars'] ? 'bi-star-fill' : 'bi-star-half'; ?> text-warning"></i>
-                                                            <?php endfor; ?>
-                                                        </div>
-                                                        <?php echo $d['badge']; ?>
+                                <div class="testimonial-item">
+                                    <div class="card border-0 shadow-sm h-100">
+                                        <div class="card-body p-4 p-lg-5">
+                                            <div class="mb-4">
+                                                <div class="d-flex align-items-center mb-3">
+                                                    <div class="rating-stars">
+                                                        <?php for ($i = 1; $i <= 5; $i++): ?>
+                                                        <i
+                                                            class="bi <?php echo $i <= $d['stars'] ? 'bi-star-fill' : 'bi-star-half'; ?> text-warning"></i>
+                                                        <?php endfor; ?>
                                                     </div>
-                                                    <p class="lead mb-0"><?php echo $d['msg']; ?></p>
+                                                    <?php echo $d['badge']; ?>
                                                 </div>
-                                                <div class="d-flex align-items-center">
-                                                    <div class="position-relative">
-                                                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=<?php echo $d['seed']; ?>&backgroundColor=<?php echo $d['bg']; ?>"
-                                                            alt="<?php echo htmlspecialchars($d['name']); ?>"
-                                                            class="avatar avatar-lg rounded-circle" />
-                                                    </div>
-                                                    <div class="ms-3">
-                                                        <h5 class="mb-1 fw-bold text-muted">
-                                                            <?php echo htmlspecialchars($d['name']); ?></h5>
-                                                        <p class="text-body-secondary mb-1 small"><?php echo $d['role']; ?>
-                                                        </p>
-                                                        <div class="d-flex align-items-center small">
-                                                            <?php echo $d['metric']; ?></div>
-                                                    </div>
+                                                <p class="lead mb-0"><?php echo $d['msg']; ?></p>
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <div class="position-relative">
+                                                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=<?php echo $d['seed']; ?>&backgroundColor=<?php echo $d['bg']; ?>"
+                                                        alt="<?php echo htmlspecialchars($d['name']); ?>"
+                                                        class="avatar avatar-lg rounded-circle" />
+                                                </div>
+                                                <div class="ms-3">
+                                                    <h5 class="mb-1 fw-bold text-muted">
+                                                        <?php echo htmlspecialchars($d['name']); ?></h5>
+                                                    <p class="text-body-secondary mb-1 small"><?php echo $d['role']; ?>
+                                                    </p>
+                                                    <div class="d-flex align-items-center small">
+                                                        <?php echo $d['metric']; ?></div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
                                 <?php endforeach; ?>
                             </div>
                         </div>
@@ -1203,21 +1203,21 @@ $planFeatures = [
                                     <div class="col-lg-6">
                                         <div class="row text-center">
                                             <div class="col-6 col-md-3 mb-3">
-                                                <div class="h2 fw-bold text-wasomupfy mb-1 counter_ws" data-valor="250"
-                                                    data-tipo="contagem">0+</div>
+                                                <div class="h2 fw-bold text-wasomupfy mb-1 counter_ws"
+                                                    data-valor="5000000" data-tipo="contagem">0+</div>
                                                 <div class="small">Streams Totais</div>
                                             </div>
                                             <div class="col-6 col-md-3 mb-3">
-                                                <div class="h2 fw-bold text-wasomupfy mb-1 counter_ws" data-valor="3"
+                                                <div class="h2 fw-bold text-wasomupfy mb-1 counter_ws" data-valor="6"
                                                     data-tipo="contagem">0+</div>
                                                 <div class="small">Países</div>
                                             </div>
-                                            <div class="col-6 col-md-3 mb-3">
+                                            <div class="col-6 col-md-6 mb-3">
                                                 <div class="h2 fw-bold text-wasomupfy mb-1 counter_ws"
-                                                    data-valor="5000000" data-tipo="moeda">0</div>
+                                                    data-valor="434012" data-tipo="moeda">0</div>
                                                 <div class="small">Royalties Pagos</div>
                                             </div>
-                                            <div class="col-6 col-md-3 mb-3">
+                                            <div class="col-6 col-md-3 mb-3 d-none">
                                                 <div class="h2 fw-bold text-wasomupfy mb-1 counter_ws" data-valor="98"
                                                     data-tipo="porcentagem">0</div>
                                                 <div class="small">Satisfação</div>
@@ -1231,7 +1231,7 @@ $planFeatures = [
                 </div>
 
                 <!-- Grid de depoimentos -->
-                <div class="row g-4 mb-6">
+                <div class="row g-4 mb-6 d-none">
                     <?php
                     $gridDepos = [
                         ['seed' => 'Maria', 'bg' => 'e4405f', 'name' => 'Maria Costa', 'role' => 'Plano Manager', 'msg' => '"O suporte da Wasom Upfy é excecional. Eles realmente se importam com o sucesso dos artistas."'],
@@ -1239,24 +1239,24 @@ $planFeatures = [
                         ['seed' => 'Ana', 'bg' => '00a8e1', 'name' => 'Ana Santos', 'role' => 'Produtora Musical', 'msg' => '"Transparência total nos pagamentos. Finalmente uma plataforma que respeita os artistas."'],
                     ];
                     foreach ($gridDepos as $gd): ?>
-                        <div class="col-lg-4" data-cue="zoomIn">
-                            <div class="card border-0 shadow-sm h-100 hover-lift">
-                                <div class="card-body p-4">
-                                    <div class="mb-3"><i class="bi bi-quote fs-1 text-wasomupfy opacity-25"></i></div>
-                                    <p class="mb-4"><?php echo $gd['msg']; ?></p>
-                                    <div class="d-flex align-items-center">
-                                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=<?php echo $gd['seed']; ?>&backgroundColor=<?php echo $gd['bg']; ?>"
-                                            alt="<?php echo htmlspecialchars($gd['name']); ?>"
-                                            class="avatar avatar-md rounded-circle me-3" />
-                                        <div>
-                                            <h6 class="mb-0 fw-semibold text-muted">
-                                                <?php echo htmlspecialchars($gd['name']); ?></h6>
-                                            <span class="text-body-secondary small"><?php echo $gd['role']; ?></span>
-                                        </div>
+                    <div class="col-lg-4" data-cue="zoomIn">
+                        <div class="card border-0 shadow-sm h-100 hover-lift">
+                            <div class="card-body p-4">
+                                <div class="mb-3"><i class="bi bi-quote fs-1 text-wasomupfy opacity-25"></i></div>
+                                <p class="mb-4"><?php echo $gd['msg']; ?></p>
+                                <div class="d-flex align-items-center">
+                                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=<?php echo $gd['seed']; ?>&backgroundColor=<?php echo $gd['bg']; ?>"
+                                        alt="<?php echo htmlspecialchars($gd['name']); ?>"
+                                        class="avatar avatar-md rounded-circle me-3" />
+                                    <div>
+                                        <h6 class="mb-0 fw-semibold text-muted">
+                                            <?php echo htmlspecialchars($gd['name']); ?></h6>
+                                        <span class="text-body-secondary small"><?php echo $gd['role']; ?></span>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
                     <?php endforeach; ?>
                 </div>
 
@@ -1270,9 +1270,9 @@ $planFeatures = [
                         </p>
                         <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
                             <?php if ($canRegister): ?>
-                                <a href="/wasomupfy/register" class="btn btn-wasomupfy btn-lg px-5 py-3">
-                                    <i class="bi bi-rocket-takeoff-fill me-2"></i> Começar Agora
-                                </a>
+                            <a href="/wasomupfy/register" class="btn btn-wasomupfy btn-lg px-5 py-3">
+                                <i class="bi bi-rocket-takeoff-fill me-2"></i> Começar Agora
+                            </a>
                             <?php endif; ?>
                             <a href="#testemunhos" class="btn btn-outline-primary btn-lg px-5 py-3">
                                 <i class="bi bi-play-circle-fill me-2"></i> Ver Mais Histórias
@@ -1314,18 +1314,18 @@ $planFeatures = [
                                 ['val' => '50000000', 'tipo' => 'contagem', 'label' => 'Streams'],
                             ];
                             foreach ($aboutStats as $as): ?>
-                                <div class="col-6 col-md-3">
-                                    <div class="text-center">
-                                        <?php if ($as['tipo']): ?>
-                                            <div class="h2 fw-bold text-wasomupfy mb-2 counter_ws"
-                                                data-valor="<?php echo $as['val']; ?>" data-tipo="<?php echo $as['tipo']; ?>">0
-                                            </div>
-                                        <?php else: ?>
-                                            <div class="h2 fw-bold text-wasomupfy mb-2"><?php echo $as['val']; ?></div>
-                                        <?php endif; ?>
-                                        <div class="text-body small"><?php echo $as['label']; ?></div>
+                            <div class="col-6 col-md-3">
+                                <div class="text-center">
+                                    <?php if ($as['tipo']): ?>
+                                    <div class="h2 fw-bold text-wasomupfy mb-2 counter_ws"
+                                        data-valor="<?php echo $as['val']; ?>" data-tipo="<?php echo $as['tipo']; ?>">0
                                     </div>
+                                    <?php else: ?>
+                                    <div class="h2 fw-bold text-wasomupfy mb-2"><?php echo $as['val']; ?></div>
+                                    <?php endif; ?>
+                                    <div class="text-body small"><?php echo $as['label']; ?></div>
                                 </div>
+                            </div>
                             <?php endforeach; ?>
                         </div>
                         <div class="row g-4">
@@ -1379,10 +1379,10 @@ $planFeatures = [
                                     <p class="text-body-secondary mb-3">Empresa</p>
                                     <div class="d-flex justify-content-center gap-2 mb-3">
                                         <?php if (cfg('linkedin_url')): ?>
-                                            <a href="<?php echo htmlspecialchars(cfg('linkedin_url')); ?>" target="_blank"
-                                                class="btn btn-outline-wasomupfy btn-sm rounded-circle">
-                                                <i class="bi bi-linkedin"></i>
-                                            </a>
+                                        <a href="<?php echo htmlspecialchars(cfg('linkedin_url')); ?>" target="_blank"
+                                            class="btn btn-outline-wasomupfy btn-sm rounded-circle">
+                                            <i class="bi bi-linkedin"></i>
+                                        </a>
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -1427,25 +1427,25 @@ $planFeatures = [
                                 ['icon' => 'bi-bar-chart-fill', 'title' => 'Análise e Relatórios', 'desc' => 'Dados detalhados para tomar decisões estratégicas informadas.', 'items' => ['Relatórios de desempenho', 'Análise demográfica', 'Insights de mercado'], 'link' => 'plan/all-plans'],
                             ];
                             foreach ($servicos as $srv): ?>
-                                <div class="col-lg-4 col-md-6">
-                                    <div class="card border-0 shadow-sm h-100 hover-lift">
-                                        <div class="card-body p-4 p-lg-5">
-                                            <div class="icon-shape icon-lg bg-wasomupfy bg-opacity-10 rounded-3 p-3 mb-4">
-                                                <i class="bi <?php echo $srv['icon']; ?> text-wasomupfy fs-2"></i>
-                                            </div>
-                                            <h4 class="h5 mb-3"><?php echo $srv['title']; ?></h4>
-                                            <p class="text-body mb-4"><?php echo $srv['desc']; ?></p>
-                                            <ul class="list-unstyled mb-0">
-                                                <?php foreach ($srv['items'] as $si): ?>
-                                                    <li class="d-flex align-items-start mb-2">
-                                                        <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
-                                                        <span><?php echo $si; ?></span>
-                                                    </li>
-                                                <?php endforeach; ?>
-                                            </ul>
+                            <div class="col-lg-4 col-md-6">
+                                <div class="card border-0 shadow-sm h-100 hover-lift">
+                                    <div class="card-body p-4 p-lg-5">
+                                        <div class="icon-shape icon-lg bg-wasomupfy bg-opacity-10 rounded-3 p-3 mb-4">
+                                            <i class="bi <?php echo $srv['icon']; ?> text-wasomupfy fs-2"></i>
                                         </div>
+                                        <h4 class="h5 mb-3"><?php echo $srv['title']; ?></h4>
+                                        <p class="text-body mb-4"><?php echo $srv['desc']; ?></p>
+                                        <ul class="list-unstyled mb-0">
+                                            <?php foreach ($srv['items'] as $si): ?>
+                                            <li class="d-flex align-items-start mb-2">
+                                                <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+                                                <span><?php echo $si; ?></span>
+                                            </li>
+                                            <?php endforeach; ?>
+                                        </ul>
                                     </div>
                                 </div>
+                            </div>
                             <?php endforeach; ?>
                         </div>
                     </div>
@@ -1467,9 +1467,9 @@ $planFeatures = [
                                                 <i class="bi bi-info-circle-fill me-2"></i> Conheça Mais
                                             </a>
                                             <?php if ($canRegister): ?>
-                                                <a href="/wasomupfy/register" class="btn btn-wasomupfy btn-lg">
-                                                    <i class="bi bi-rocket-takeoff-fill me-2"></i> Começar Agora
-                                                </a>
+                                            <a href="/wasomupfy/register" class="btn btn-wasomupfy btn-lg">
+                                                <i class="bi bi-rocket-takeoff-fill me-2"></i> Começar Agora
+                                            </a>
                                             <?php endif; ?>
                                         </div>
                                     </div>
@@ -1807,16 +1807,16 @@ $planFeatures = [
                                 ['bg' => 'purple', 'icon' => 'bi-trophy-fill', 'label' => 'Concursos'],
                             ];
                             foreach ($commBenefits as $cb): ?>
-                                <div class="col-6">
-                                    <div class="d-flex align-items-center bg-white bg-opacity-10 rounded-3 p-3">
-                                        <div class="icon-shape icon-sm bg-<?php echo $cb['bg']; ?> rounded-2 p-2 me-3">
-                                            <i class="bi <?php echo $cb['icon']; ?> text-<?php echo $cb['bg']; ?>"></i>
-                                        </div>
-                                        <div>
-                                            <h6 class="mb-0 small fw-semibold"><?php echo $cb['label']; ?></h6>
-                                        </div>
+                            <div class="col-6">
+                                <div class="d-flex align-items-center bg-white bg-opacity-10 rounded-3 p-3">
+                                    <div class="icon-shape icon-sm bg-<?php echo $cb['bg']; ?> rounded-2 p-2 me-3">
+                                        <i class="bi <?php echo $cb['icon']; ?> text-<?php echo $cb['bg']; ?>"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0 small fw-semibold"><?php echo $cb['label']; ?></h6>
                                     </div>
                                 </div>
+                            </div>
                             <?php endforeach; ?>
                         </div>
                         <div class="d-flex gap-4 mb-4">
@@ -1870,13 +1870,13 @@ $planFeatures = [
                                         ['Networking com Artistas', 'Conecte-se com produtores e artistas da comunidade'],
                                     ];
                                     foreach ($commList as [$t, $d]): ?>
-                                        <div class="d-flex align-items-start mb-3">
-                                            <i class="bi bi-check-circle-fill text-success me-3 mt-1"></i>
-                                            <div>
-                                                <h6 class="mb-1 fw-semibold text-muted"><?php echo $t; ?></h6>
-                                                <p class="text-body small mb-0"><?php echo $d; ?></p>
-                                            </div>
+                                    <div class="d-flex align-items-start mb-3">
+                                        <i class="bi bi-check-circle-fill text-success me-3 mt-1"></i>
+                                        <div>
+                                            <h6 class="mb-1 fw-semibold text-muted"><?php echo $t; ?></h6>
+                                            <p class="text-body small mb-0"><?php echo $d; ?></p>
                                         </div>
+                                    </div>
                                     <?php endforeach; ?>
                                 </div>
                                 <div class="text-center">
@@ -2112,56 +2112,56 @@ $planFeatures = [
     <script src="js/visitor-presence.js"></script>
 
     <script>
-        feather.replace({
-            width: "1em",
-            height: "1em"
-        });
+    feather.replace({
+        width: "1em",
+        height: "1em"
+    });
     </script>
 
     <!-- GTM -->
     <script>
-        !(function(e, t, a, n, g) {
-            (e[n] = e[n] || []), e[n].push({
-                "gtm.start": new Date().getTime(),
-                event: "gtm.js"
-            });
-            var m = t.getElementsByTagName(a)[0],
-                r = t.createElement(a);
-            (r.async = !0), (r.src = "https://www.googletagmanager.com/gtm.js?id=GTM-MF4DZVH"), m.parentNode
-                .insertBefore(r, m);
-        })(window, document, "script", "dataLayer");
+    !(function(e, t, a, n, g) {
+        (e[n] = e[n] || []), e[n].push({
+            "gtm.start": new Date().getTime(),
+            event: "gtm.js"
+        });
+        var m = t.getElementsByTagName(a)[0],
+            r = t.createElement(a);
+        (r.async = !0), (r.src = "https://www.googletagmanager.com/gtm.js?id=GTM-MF4DZVH"), m.parentNode
+            .insertBefore(r, m);
+    })(window, document, "script", "dataLayer");
     </script>
 
     <!-- Carrossel de depoimentos -->
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const carousel = document.querySelector(".testimonial-carousel");
-            const prevBtn = document.querySelector(".testimonial-prev");
-            const nextBtn = document.querySelector(".testimonial-next");
-            if (!carousel || !prevBtn || !nextBtn) return;
-            const items = document.querySelectorAll(".testimonial-item");
-            let currentIndex = 0;
+    document.addEventListener("DOMContentLoaded", function() {
+        const carousel = document.querySelector(".testimonial-carousel");
+        const prevBtn = document.querySelector(".testimonial-prev");
+        const nextBtn = document.querySelector(".testimonial-next");
+        if (!carousel || !prevBtn || !nextBtn) return;
+        const items = document.querySelectorAll(".testimonial-item");
+        let currentIndex = 0;
 
-            function updateCarousel() {
-                const itemWidth = items[0].offsetWidth + 24;
-                carousel.scrollTo({
-                    left: currentIndex * itemWidth,
-                    behavior: "smooth"
-                });
+        function updateCarousel() {
+            const itemWidth = items[0].offsetWidth + 24;
+            carousel.scrollTo({
+                left: currentIndex * itemWidth,
+                behavior: "smooth"
+            });
+        }
+        nextBtn.addEventListener("click", function() {
+            if (currentIndex < items.length - 1) {
+                currentIndex++;
+                updateCarousel();
             }
-            nextBtn.addEventListener("click", function() {
-                if (currentIndex < items.length - 1) {
-                    currentIndex++;
-                    updateCarousel();
-                }
-            });
-            prevBtn.addEventListener("click", function() {
-                if (currentIndex > 0) {
-                    currentIndex--;
-                    updateCarousel();
-                }
-            });
         });
+        prevBtn.addEventListener("click", function() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateCarousel();
+            }
+        });
+    });
     </script>
 
     <!-- ═══════════════════════════════════════════════════════════════════════
@@ -2171,282 +2171,282 @@ $planFeatures = [
          tempo, evitando que forms subsequentes falhem com 403.
     ════════════════════════════════════════════════════════════════════════════ -->
     <script>
-        (function() {
-            const BASE = document.body.dataset.basePath || '.';
+    (function() {
+        const BASE = document.body.dataset.basePath || '.';
 
-            /* ── Actualiza todos os inputs csrf_token da página de uma só vez ── */
-            function syncAllCsrf(newToken) {
-                if (!newToken) return;
-                document.querySelectorAll('[name="csrf_token"]').forEach(function(el) {
-                    el.value = newToken;
+        /* ── Actualiza todos os inputs csrf_token da página de uma só vez ── */
+        function syncAllCsrf(newToken) {
+            if (!newToken) return;
+            document.querySelectorAll('[name="csrf_token"]').forEach(function(el) {
+                el.value = newToken;
+            });
+        }
+
+        /* ── Utilitário: envia JSON, mostra resposta, esconde após delay ─── */
+        function ajaxPost(url, payload, msgBox, btn, labelDefault, onSuccess) {
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>A enviar…';
+
+            fetch(BASE + url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                })
+                .then(function(r) {
+                    return r.json();
+                })
+                .then(function(data) {
+                    msgBox.className = 'alert ' + (data.success ? 'alert-success' : 'alert-danger');
+                    msgBox.textContent = data.message || (data.success ? 'Enviado com sucesso!' :
+                        'Erro ao enviar.');
+                    msgBox.classList.remove('d-none');
+
+                    /* Roda o token em TODOS os forms da página */
+                    if (data.new_csrf) syncAllCsrf(data.new_csrf);
+
+                    if (data.success && typeof onSuccess === 'function') onSuccess();
+                })
+                .catch(function() {
+                    msgBox.className = 'alert alert-danger';
+                    msgBox.textContent = 'Erro de ligação. Tente novamente.';
+                    msgBox.classList.remove('d-none');
+                })
+                .finally(function() {
+                    btn.disabled = false;
+                    btn.innerHTML = labelDefault;
+                    setTimeout(function() {
+                        msgBox.classList.add('d-none');
+                    }, 7000);
                 });
-            }
+        }
 
-            /* ── Utilitário: envia JSON, mostra resposta, esconde após delay ─── */
-            function ajaxPost(url, payload, msgBox, btn, labelDefault, onSuccess) {
-                btn.disabled = true;
-                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>A enviar…';
+        /* ════════════════════════════════════════════════════════════════════
+           1. Formulário de Contacto (Caixa de mensagem)
+        ═════════════════════════════════════════════════════════════════════= */
+        var fContact = document.getElementById('form-contact-home');
+        if (fContact) {
+            fContact.addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (!fContact.checkValidity()) {
+                    fContact.classList.add('was-validated');
+                    return;
+                }
 
-                fetch(BASE + url, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(payload)
-                    })
-                    .then(function(r) {
-                        return r.json();
-                    })
-                    .then(function(data) {
-                        msgBox.className = 'alert ' + (data.success ? 'alert-success' : 'alert-danger');
-                        msgBox.textContent = data.message || (data.success ? 'Enviado com sucesso!' :
-                            'Erro ao enviar.');
-                        msgBox.classList.remove('d-none');
+                ajaxPost(
+                    '/ajax/contact.php', {
+                        csrf: fContact.querySelector('[name="csrf_token"]').value,
+                        name: document.getElementById('name_user_home').value.trim(),
+                        email: document.getElementById('email_user_home').value.trim(),
+                        phone: document.getElementById('tel_user_home').value.trim(),
+                        subject: document.getElementById('subject_home').value.trim(),
+                        message: document.getElementById('message_home').value.trim()
+                    },
+                    document.getElementById('contact-msg-home'),
+                    document.getElementById('btn-contact-home'),
+                    'Enviar mensagem',
+                    function() {
+                        fContact.reset();
+                        fContact.classList.remove('was-validated');
+                    }
+                );
+            });
+        }
 
-                        /* Roda o token em TODOS os forms da página */
-                        if (data.new_csrf) syncAllCsrf(data.new_csrf);
+        /* ════════════════════════════════════════════════════════════════════
+           2. Formulário de Sugestões (inline, aba 2)
+        ═════════════════════════════════════════════════════════════════════= */
+        var fFeedback = document.getElementById('form-feedback-home');
+        if (fFeedback) {
+            fFeedback.addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (!fFeedback.checkValidity()) {
+                    fFeedback.classList.add('was-validated');
+                    return;
+                }
 
-                        if (data.success && typeof onSuccess === 'function') onSuccess();
-                    })
-                    .catch(function() {
-                        msgBox.className = 'alert alert-danger';
-                        msgBox.textContent = 'Erro de ligação. Tente novamente.';
-                        msgBox.classList.remove('d-none');
-                    })
-                    .finally(function() {
-                        btn.disabled = false;
-                        btn.innerHTML = labelDefault;
+                var firstName = document.getElementById('name_fb_home').value.trim();
+                var secondName = document.getElementById('name2_fb_home').value.trim();
+
+                ajaxPost(
+                    '/ajax/feedback.php', {
+                        csrf: fFeedback.querySelector('[name="csrf_token"]').value,
+                        name: secondName ? firstName + ' ' + secondName : firstName,
+                        subject: document.getElementById('subject_fb_home').value.trim(),
+                        message: document.getElementById('message_fb_home').value.trim(),
+                        page: window.location.pathname
+                    },
+                    document.getElementById('feedback-msg-home'),
+                    document.getElementById('btn-feedback-home'),
+                    'Enviar Sugestão',
+                    function() {
+                        fFeedback.reset();
+                        fFeedback.classList.remove('was-validated');
+                    }
+                );
+            });
+        }
+
+        /* ════════════════════════════════════════════════════════════════════
+           3. Modal Feedback
+        ═════════════════════════════════════════════════════════════════════= */
+        var fModal = document.getElementById('formFeedback');
+        if (fModal) {
+            fModal.addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (!fModal.checkValidity()) {
+                    fModal.classList.add('was-validated');
+                    return;
+                }
+
+                ajaxPost(
+                    '/ajax/feedback.php', {
+                        csrf: fModal.querySelector('[name="csrf_token"]').value,
+                        name: fModal.querySelector('[name="name_fb"]').value.trim(),
+                        subject: fModal.querySelector('[name="subject_fb"]').value.trim(),
+                        message: fModal.querySelector('[name="message_fb"]').value.trim(),
+                        page: window.location.pathname
+                    },
+                    document.getElementById('feedback-modal-msg'),
+                    document.getElementById('btn-feedback-modal'),
+                    'Enviar Feedback <i class="fa-solid fa-paper-plane ms-2"></i>',
+                    function() {
+                        fModal.reset();
                         setTimeout(function() {
-                            msgBox.classList.add('d-none');
-                        }, 7000);
-                    });
-            }
-
-            /* ════════════════════════════════════════════════════════════════════
-               1. Formulário de Contacto (Caixa de mensagem)
-            ═════════════════════════════════════════════════════════════════════= */
-            var fContact = document.getElementById('form-contact-home');
-            if (fContact) {
-                fContact.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    if (!fContact.checkValidity()) {
-                        fContact.classList.add('was-validated');
-                        return;
+                            var m = bootstrap.Modal.getInstance(document.getElementById(
+                                'modalFeedback'));
+                            if (m) m.hide();
+                        }, 2500);
                     }
+                );
+            });
+        }
 
-                    ajaxPost(
-                        '/ajax/contact.php', {
-                            csrf: fContact.querySelector('[name="csrf_token"]').value,
-                            name: document.getElementById('name_user_home').value.trim(),
-                            email: document.getElementById('email_user_home').value.trim(),
-                            phone: document.getElementById('tel_user_home').value.trim(),
-                            subject: document.getElementById('subject_home').value.trim(),
-                            message: document.getElementById('message_home').value.trim()
-                        },
-                        document.getElementById('contact-msg-home'),
-                        document.getElementById('btn-contact-home'),
-                        'Enviar mensagem',
-                        function() {
-                            fContact.reset();
-                            fContact.classList.remove('was-validated');
-                        }
-                    );
-                });
-            }
-
-            /* ════════════════════════════════════════════════════════════════════
-               2. Formulário de Sugestões (inline, aba 2)
-            ═════════════════════════════════════════════════════════════════════= */
-            var fFeedback = document.getElementById('form-feedback-home');
-            if (fFeedback) {
-                fFeedback.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    if (!fFeedback.checkValidity()) {
-                        fFeedback.classList.add('was-validated');
-                        return;
-                    }
-
-                    var firstName = document.getElementById('name_fb_home').value.trim();
-                    var secondName = document.getElementById('name2_fb_home').value.trim();
-
-                    ajaxPost(
-                        '/ajax/feedback.php', {
-                            csrf: fFeedback.querySelector('[name="csrf_token"]').value,
-                            name: secondName ? firstName + ' ' + secondName : firstName,
-                            subject: document.getElementById('subject_fb_home').value.trim(),
-                            message: document.getElementById('message_fb_home').value.trim(),
-                            page: window.location.pathname
-                        },
-                        document.getElementById('feedback-msg-home'),
-                        document.getElementById('btn-feedback-home'),
-                        'Enviar Sugestão',
-                        function() {
-                            fFeedback.reset();
-                            fFeedback.classList.remove('was-validated');
-                        }
-                    );
-                });
-            }
-
-            /* ════════════════════════════════════════════════════════════════════
-               3. Modal Feedback
-            ═════════════════════════════════════════════════════════════════════= */
-            var fModal = document.getElementById('formFeedback');
-            if (fModal) {
-                fModal.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    if (!fModal.checkValidity()) {
-                        fModal.classList.add('was-validated');
-                        return;
-                    }
-
-                    ajaxPost(
-                        '/ajax/feedback.php', {
-                            csrf: fModal.querySelector('[name="csrf_token"]').value,
-                            name: fModal.querySelector('[name="name_fb"]').value.trim(),
-                            subject: fModal.querySelector('[name="subject_fb"]').value.trim(),
-                            message: fModal.querySelector('[name="message_fb"]').value.trim(),
-                            page: window.location.pathname
-                        },
-                        document.getElementById('feedback-modal-msg'),
-                        document.getElementById('btn-feedback-modal'),
-                        'Enviar Feedback <i class="fa-solid fa-paper-plane ms-2"></i>',
-                        function() {
-                            fModal.reset();
-                            setTimeout(function() {
-                                var m = bootstrap.Modal.getInstance(document.getElementById(
-                                    'modalFeedback'));
-                                if (m) m.hide();
-                            }, 2500);
-                        }
-                    );
-                });
-            }
-
-        })();
+    })();
     </script>
 
     <script>
-        // Animação dos elementos ao rolar
-        document.addEventListener("DOMContentLoaded", function() {
-            // Observador de interseção para animações
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: "0px 0px -50px 0px",
+    // Animação dos elementos ao rolar
+    document.addEventListener("DOMContentLoaded", function() {
+        // Observador de interseção para animações
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px",
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("animated");
+                }
+            });
+        }, observerOptions);
+
+        // Observar todos os elementos com data-cue
+        document.querySelectorAll("[data-cue]").forEach((el) => {
+            observer.observe(el);
+        });
+
+        // Contador animado para estatísticas
+        const counters = document.querySelectorAll(".counter-animate");
+
+        counters.forEach((counter) => {
+            const target = parseInt(counter.textContent);
+            const increment = target / 100;
+            let current = 0;
+
+            const updateCounter = () => {
+                if (current < target) {
+                    current += increment;
+                    counter.textContent = Math.ceil(current);
+                    setTimeout(updateCounter, 20);
+                } else {
+                    counter.textContent = target;
+                }
             };
 
-            const observer = new IntersectionObserver((entries) => {
+            // Iniciar quando visível
+            const counterObserver = new IntersectionObserver((entries) => {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
-                        entry.target.classList.add("animated");
+                        updateCounter();
+                        counterObserver.unobserve(entry.target);
                     }
                 });
-            }, observerOptions);
-
-            // Observar todos os elementos com data-cue
-            document.querySelectorAll("[data-cue]").forEach((el) => {
-                observer.observe(el);
             });
 
-            // Contador animado para estatísticas
-            const counters = document.querySelectorAll(".counter-animate");
-
-            counters.forEach((counter) => {
-                const target = parseInt(counter.textContent);
-                const increment = target / 100;
-                let current = 0;
-
-                const updateCounter = () => {
-                    if (current < target) {
-                        current += increment;
-                        counter.textContent = Math.ceil(current);
-                        setTimeout(updateCounter, 20);
-                    } else {
-                        counter.textContent = target;
-                    }
-                };
-
-                // Iniciar quando visível
-                const counterObserver = new IntersectionObserver((entries) => {
-                    entries.forEach((entry) => {
-                        if (entry.isIntersecting) {
-                            updateCounter();
-                            counterObserver.unobserve(entry.target);
-                        }
-                    });
-                });
-
-                counterObserver.observe(counter);
-            });
-
-            // Efeito de digitação para o título (opcional)
-            const title = document.querySelector(".display-5");
-            if (title) {
-                const text = title.textContent;
-                title.textContent = "";
-
-                let i = 0;
-
-                function typeWriter() {
-                    if (i < text.length) {
-                        title.textContent += text.charAt(i);
-                        i++;
-                        setTimeout(typeWriter, 50);
-                    }
-                }
-
-                // Iniciar quando visível
-                const titleObserver = new IntersectionObserver((entries) => {
-                    entries.forEach((entry) => {
-                        if (entry.isIntersecting) {
-                            typeWriter();
-                            titleObserver.unobserve(entry.target);
-                        }
-                    });
-                });
-
-                titleObserver.observe(title);
-            }
+            counterObserver.observe(counter);
         });
+
+        // Efeito de digitação para o título (opcional)
+        const title = document.querySelector(".display-5");
+        if (title) {
+            const text = title.textContent;
+            title.textContent = "";
+
+            let i = 0;
+
+            function typeWriter() {
+                if (i < text.length) {
+                    title.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, 50);
+                }
+            }
+
+            // Iniciar quando visível
+            const titleObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        typeWriter();
+                        titleObserver.unobserve(entry.target);
+                    }
+                });
+            });
+
+            titleObserver.observe(title);
+        }
+    });
     </script>
 
     <!-- Script para atualizar ano automaticamente -->
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Atualizar ano atual
-            document.getElementById("current-year").textContent =
-                new Date().getFullYear();
+    document.addEventListener("DOMContentLoaded", function() {
+        // Atualizar ano atual
+        document.getElementById("current-year").textContent =
+            new Date().getFullYear();
 
-            // Inicializar Feather Icons se estiverem sendo usados
-            if (typeof feather !== "undefined") {
-                feather.replace();
-            }
+        // Inicializar Feather Icons se estiverem sendo usados
+        if (typeof feather !== "undefined") {
+            feather.replace();
+        }
 
-            // Melhorar acessibilidade dos botões de colapso
-            document
-                .querySelectorAll('[data-bs-toggle="collapse"]')
-                .forEach((button) => {
-                    button.addEventListener("click", function() {
-                        const target = document.querySelector(
-                            this.getAttribute("data-bs-target")
+        // Melhorar acessibilidade dos botões de colapso
+        document
+            .querySelectorAll('[data-bs-toggle="collapse"]')
+            .forEach((button) => {
+                button.addEventListener("click", function() {
+                    const target = document.querySelector(
+                        this.getAttribute("data-bs-target")
+                    );
+                    const isExpanded = this.getAttribute("aria-expanded") === "true";
+                    this.setAttribute("aria-expanded", !isExpanded);
+
+                    // Atualizar ícone
+                    const icon = this.querySelector("i[data-feather]");
+                    if (icon) {
+                        icon.setAttribute(
+                            "data-feather",
+                            isExpanded ? "chevron-down" : "chevron-up"
                         );
-                        const isExpanded = this.getAttribute("aria-expanded") === "true";
-                        this.setAttribute("aria-expanded", !isExpanded);
-
-                        // Atualizar ícone
-                        const icon = this.querySelector("i[data-feather]");
-                        if (icon) {
-                            icon.setAttribute(
-                                "data-feather",
-                                isExpanded ? "chevron-down" : "chevron-up"
-                            );
-                            if (typeof feather !== "undefined") {
-                                feather.replace();
-                            }
+                        if (typeof feather !== "undefined") {
+                            feather.replace();
                         }
-                    });
+                    }
                 });
-        });
+            });
+    });
     </script>
 </body>
 

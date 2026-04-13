@@ -125,7 +125,7 @@ Ver planos
 /all-plans
 banner-plan
 bi-person-plus-fill
-<strong>Cria o teu perfil de artista.</strong> Tens plano activo mas ainda não criaste um perfil. Precisas de um para poder lançar música.
+<strong>Cria o teu perfil artístico.</strong> Tens plano activo mas ainda não criaste um perfil artístico. Precisas de um para poder lançar música.
 Criar agora
 /add-artist
 banner-artist
