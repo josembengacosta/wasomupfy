@@ -129,7 +129,6 @@ function usr_status_badge(string $s): string
         'processing'    => '<span class="badge usr-s-processing">Em revisão</span>',
         'blocked'   => '<span class="badge usr-s-blocked">Bloqueado</span>',
         'fraud'  => '<span class="badge usr-s-fraud">Fraude</span>',
-        'pending_plan'  => '<span class="badge usr-s-pending_plan">Plano Pendente</span>',
         default     => '<span class="badge bg-secondary">' . ucfirst($s) . '</span>',
     };
 }
@@ -366,213 +365,213 @@ $paises = [
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
     <style>
-        /* Status badges */
-        .usr-s-active {
-            background: rgba(34, 197, 94, .15);
-            color: #166534;
-        }
+    /* Status badges */
+    .usr-s-active {
+        background: rgba(34, 197, 94, .15);
+        color: #166534;
+    }
 
-        .usr-s-suspended {
-            background: rgba(239, 68, 68, .15);
-            color: #991b1b;
-        }
+    .usr-s-suspended {
+        background: rgba(239, 68, 68, .15);
+        color: #991b1b;
+    }
 
-        .usr-s-processing {
-            background: rgba(234, 179, 8, .15);
-            color: #92400e;
-        }
+    .usr-s-processing {
+        background: rgba(234, 179, 8, .15);
+        color: #92400e;
+    }
 
-        .usr-s-blocked {
-            background: rgba(107, 114, 128, .15);
-            color: #374151;
-        }
+    .usr-s-blocked {
+        background: rgba(107, 114, 128, .15);
+        color: #374151;
+    }
 
-        .usr-s-inactive {
-            background: rgba(59, 130, 246, .15);
-            color: #1e40af;
-        }
+    .usr-s-inactive {
+        background: rgba(59, 130, 246, .15);
+        color: #1e40af;
+    }
 
-        .usr-s-fraud {
-            background: rgba(115, 27, 27, 0.15);
-            color: #2b2c2d;
-        }
+    .usr-s-fraud {
+        background: rgba(115, 27, 27, 0.15);
+        color: #2b2c2d;
+    }
 
-        .dark-mode .usr-s-active {
-            background: rgba(34, 197, 94, .18);
-            color: #4ade80;
-        }
+    .dark-mode .usr-s-active {
+        background: rgba(34, 197, 94, .18);
+        color: #4ade80;
+    }
 
-        .dark-mode .usr-s-suspended {
-            background: rgba(239, 68, 68, .18);
-            color: #f87171;
-        }
+    .dark-mode .usr-s-suspended {
+        background: rgba(239, 68, 68, .18);
+        color: #f87171;
+    }
 
-        .dark-mode .usr-s-processing {
-            background: rgba(234, 179, 8, .18);
-            color: #facc15;
-        }
+    .dark-mode .usr-s-processing {
+        background: rgba(234, 179, 8, .18);
+        color: #facc15;
+    }
 
-        .dark-mode .usr-s-blocked {
-            background: rgba(107, 114, 128, .18);
-            color: #9ca3af;
-        }
+    .dark-mode .usr-s-blocked {
+        background: rgba(107, 114, 128, .18);
+        color: #9ca3af;
+    }
 
-        .dark-mode .usr-s-inactive {
-            background: rgba(59, 130, 246, .18);
-            color: #93c5fd;
-        }
+    .dark-mode .usr-s-inactive {
+        background: rgba(59, 130, 246, .18);
+        color: #93c5fd;
+    }
 
-        .dark-mode .usr-s-fraud {
-            background: rgba(115, 27, 27, 0.15);
-            color: #fff;
-        }
+    .dark-mode .usr-s-fraud {
+        background: rgba(115, 27, 27, 0.15);
+        color: #fff;
+    }
 
-        /* Stat cards */
-        .usr-stat {
-            background: var(--card-bg, #fff);
-            border: 1px solid var(--border-color, #e8e8f0);
-            border-radius: 12px;
-            padding: 14px 18px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
+    /* Stat cards */
+    .usr-stat {
+        background: var(--card-bg, #fff);
+        border: 1px solid var(--border-color, #e8e8f0);
+        border-radius: 12px;
+        padding: 14px 18px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
 
-        .usr-stat-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-        }
+    .usr-stat-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+    }
 
-        .usr-stat-num {
-            font-size: 1.3rem;
-            font-weight: 800;
-            line-height: 1;
-        }
+    .usr-stat-num {
+        font-size: 1.3rem;
+        font-weight: 800;
+        line-height: 1;
+    }
 
-        .usr-stat-lbl {
-            font-size: .74rem;
-            opacity: .6;
-            margin-top: 2px;
-        }
+    .usr-stat-lbl {
+        font-size: .74rem;
+        opacity: .6;
+        margin-top: 2px;
+    }
 
-        /* Filter card */
-        .filter-card {
-            background: var(--card-bg, #fff);
-            border: 1px solid var(--border-color, #e8e8f0);
-            border-radius: 12px;
-            padding: 16px 18px;
-            margin-bottom: 18px;
-        }
+    /* Filter card */
+    .filter-card {
+        background: var(--card-bg, #fff);
+        border: 1px solid var(--border-color, #e8e8f0);
+        border-radius: 12px;
+        padding: 16px 18px;
+        margin-bottom: 18px;
+    }
 
-        .filter-card .form-label {
-            font-size: .76rem;
-            font-weight: 600;
-            margin-bottom: 3px;
-        }
+    .filter-card .form-label {
+        font-size: .76rem;
+        font-weight: 600;
+        margin-bottom: 3px;
+    }
 
-        /* Table */
-        #users-table th {
-            font-size: .74rem;
-            text-transform: uppercase;
-            letter-spacing: .4px;
-            font-weight: 700;
-            white-space: nowrap;
-            cursor: pointer;
-            user-select: none;
-        }
+    /* Table */
+    #users-table th {
+        font-size: .74rem;
+        text-transform: uppercase;
+        letter-spacing: .4px;
+        font-weight: 700;
+        white-space: nowrap;
+        cursor: pointer;
+        user-select: none;
+    }
 
-        #users-table th:hover {
-            opacity: .75;
-        }
+    #users-table th:hover {
+        opacity: .75;
+    }
 
-        #users-table td {
-            font-size: .82rem;
-            vertical-align: middle;
-        }
+    #users-table td {
+        font-size: .82rem;
+        vertical-align: middle;
+    }
 
-        /* Avatar */
-        .usr-avatar {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid rgba(255, 0, 137, .2);
-        }
+    /* Avatar */
+    .usr-avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid rgba(255, 0, 137, .2);
+    }
 
-        .usr-avatar-ini {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: .65rem;
-            color: #fff;
-            flex-shrink: 0;
-        }
+    .usr-avatar-ini {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: .65rem;
+        color: #fff;
+        flex-shrink: 0;
+    }
 
-        /* Dropdown acções — fix hover tremer */
-        .actions-dropdown .dropdown-menu {
-            position: fixed !important;
-            z-index: 1055;
-            min-width: 170px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, .12);
-            border: 1px solid var(--border-color, #e8e8f0);
-            border-radius: 10px;
-            padding: 4px;
-        }
+    /* Dropdown acções — fix hover tremer */
+    .actions-dropdown .dropdown-menu {
+        position: fixed !important;
+        z-index: 1055;
+        min-width: 170px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, .12);
+        border: 1px solid var(--border-color, #e8e8f0);
+        border-radius: 10px;
+        padding: 4px;
+    }
 
-        .actions-dropdown .dropdown-item {
-            font-size: .82rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 12px;
-            border-radius: 7px;
-        }
+    .actions-dropdown .dropdown-item {
+        font-size: .82rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 7px;
+    }
 
-        .actions-dropdown .dropdown-item i {
-            width: 16px;
-            flex-shrink: 0;
-        }
+    .actions-dropdown .dropdown-item i {
+        width: 16px;
+        flex-shrink: 0;
+    }
 
-        #users-table tbody tr:has(.dropdown.show) {
-            background: var(--card-bg, #fff) !important;
-        }
+    #users-table tbody tr:has(.dropdown.show) {
+        background: var(--card-bg, #fff) !important;
+    }
 
-        /* Paginação */
-        .usr-pagination .page-link {
-            border-radius: 8px !important;
-            margin: 0 2px;
-            font-size: .8rem;
-        }
+    /* Paginação */
+    .usr-pagination .page-link {
+        border-radius: 8px !important;
+        margin: 0 2px;
+        font-size: .8rem;
+    }
 
-        /* Empty */
-        .usr-empty {
-            text-align: center;
-            padding: 48px 24px;
-            opacity: .4;
-        }
+    /* Empty */
+    .usr-empty {
+        text-align: center;
+        padding: 48px 24px;
+        opacity: .4;
+    }
 
-        .usr-empty i {
-            font-size: 2.5rem;
-            display: block;
-            margin-bottom: 12px;
-        }
+    .usr-empty i {
+        font-size: 2.5rem;
+        display: block;
+        margin-bottom: 12px;
+    }
 
-        /* Dark mode */
-        .dark-mode .filter-card,
-        .dark-mode .usr-stat {
-            background: var(--dark-card, #1a1a27);
-            border-color: var(--dark-border, #2e2e42);
-        }
+    /* Dark mode */
+    .dark-mode .filter-card,
+    .dark-mode .usr-stat {
+        background: var(--dark-card, #1a1a27);
+        border-color: var(--dark-border, #2e2e42);
+    }
     </style>
 </head>
 
@@ -602,22 +601,22 @@ $paises = [
                         </nav>
                     </div>
                     <?php if (hasPermission($admin_id, 'users.edit')): ?>
-                        <div class="col-auto ms-auto">
-                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users/add" class="btn btn-sm text-white"
-                                style="background:#FF0089;border-color:#FF0089">
-                                <i class="bi bi-person-plus me-1"></i>Adicionar Utilizador
-                            </a>
-                        </div>
+                    <div class="col-auto ms-auto">
+                        <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users/add" class="btn btn-sm text-white"
+                            style="background:#FF0089;border-color:#FF0089">
+                            <i class="bi bi-person-plus me-1"></i>Adicionar Utilizador
+                        </a>
+                    </div>
                     <?php endif; ?>
                 </div>
 
                 <!-- Feedback -->
                 <?php if ($feedback): ?>
-                    <div class="alert alert-<?php echo $feedback[0]; ?> alert-dismissible fade show mb-3">
-                        <i class="bi <?php echo $feedback[1]; ?> me-2"></i>
-                        <?php echo htmlspecialchars($feedback[2]); ?>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
+                <div class="alert alert-<?php echo $feedback[0]; ?> alert-dismissible fade show mb-3">
+                    <i class="bi <?php echo $feedback[1]; ?> me-2"></i>
+                    <?php echo htmlspecialchars($feedback[2]); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
                 <?php endif; ?>
 
                 <!-- Stat cards -->
@@ -718,10 +717,10 @@ $paises = [
                                 <select class="form-select form-select-sm" name="country">
                                     <option value="">Todos</option>
                                     <?php foreach ($paises as $code => $name): ?>
-                                        <option value="<?php echo $code; ?>"
-                                            <?php echo $f_country === $code ? 'selected' : ''; ?>>
-                                            <?php echo $name; ?>
-                                        </option>
+                                    <option value="<?php echo $code; ?>"
+                                        <?php echo $f_country === $code ? 'selected' : ''; ?>>
+                                        <?php echo $name; ?>
+                                    </option>
                                     <?php endforeach; ?>
                                 </select>
 
@@ -751,10 +750,10 @@ $paises = [
                                 <select class="form-select form-select-sm" name="plan">
                                     <option value="">Todos</option>
                                     <?php foreach ($plans_list as $plan): ?>
-                                        <option value="<?php echo $plan['id_plan']; ?>"
-                                            <?php echo $f_plan == (string)$plan['id_plan'] ? 'selected' : ''; ?>>
-                                            <?php echo htmlspecialchars($plan['name_plan']); ?>
-                                        </option>
+                                    <option value="<?php echo $plan['id_plan']; ?>"
+                                        <?php echo $f_plan == (string)$plan['id_plan'] ? 'selected' : ''; ?>>
+                                        <?php echo htmlspecialchars($plan['name_plan']); ?>
+                                    </option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -778,10 +777,10 @@ $paises = [
                         style="border-bottom:1px solid var(--border-color,#e8e8f0)">
                         <span style="font-size:.82rem;font-weight:600">
                             <?php if ($total_filtered !== (int)$stats['total']): ?>
-                                <span style="color:#FF0089"><?php echo number_format($total_filtered); ?></span>
-                                de <?php echo number_format($stats['total']); ?> utilizadores
+                            <span style="color:#FF0089"><?php echo number_format($total_filtered); ?></span>
+                            de <?php echo number_format($stats['total']); ?> utilizadores
                             <?php else: ?>
-                                <?php echo number_format($total_filtered); ?> utilizadores
+                            <?php echo number_format($total_filtered); ?> utilizadores
                             <?php endif; ?>
                         </span>
                         <span style="font-size:.76rem;opacity:.5">
@@ -832,158 +831,158 @@ $paises = [
                             </thead>
                             <tbody>
                                 <?php if (empty($users_list)): ?>
-                                    <tr>
-                                        <td colspan="9">
-                                            <div class="usr-empty">
-                                                <i class="bi bi-people"></i>
-                                                Nenhum utilizador encontrado para os filtros aplicados.
-                                            </div>
-                                        </td>
-                                    </tr>
+                                <tr>
+                                    <td colspan="9">
+                                        <div class="usr-empty">
+                                            <i class="bi bi-people"></i>
+                                            Nenhum utilizador encontrado para os filtros aplicados.
+                                        </div>
+                                    </td>
+                                </tr>
                                 <?php else: ?>
-                                    <?php foreach ($users_list as $usr):
+                                <?php foreach ($users_list as $usr):
                                         $fullname = trim($usr['first_name'] . ' ' . ($usr['second_name'] ?? ''));
                                         $ini      = adm_initials($usr['first_name'], $usr['second_name'] ?? '');
                                         $color    = adm_avatar_color($fullname);
                                     ?>
-                                        <tr>
-                                            <!-- ID -->
-                                            <td>
-                                                <span style="font-family:monospace;font-size:.75rem;opacity:.6">
-                                                    #<?php echo $usr['id_users']; ?>
-                                                </span>
-                                            </td>
+                                <tr>
+                                    <!-- ID -->
+                                    <td>
+                                        <span style="font-family:monospace;font-size:.75rem;opacity:.6">
+                                            #<?php echo $usr['id_users']; ?>
+                                        </span>
+                                    </td>
 
-                                            <!-- Avatar -->
-                                            <td>
-                                                <?php if (!empty($usr['photo_user'])): ?>
-                                                    <img src="<?php echo APP_URL; ?>/assets/comprovantes/uploads/users/<?php echo htmlspecialchars($usr['photo_user']); ?>"
-                                                        class="usr-avatar" alt=""
-                                                        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
-                                                    <div class="usr-avatar-ini"
-                                                        style="background:<?php echo $color; ?>;display:none">
-                                                        <?php echo $ini; ?>
-                                                    </div>
-                                                <?php else: ?>
-                                                    <div class="usr-avatar-ini" style="background:<?php echo $color; ?>">
-                                                        <?php echo $ini; ?>
-                                                    </div>
-                                                <?php endif; ?>
-                                            </td>
+                                    <!-- Avatar -->
+                                    <td>
+                                        <?php if (!empty($usr['photo_user'])): ?>
+                                        <img src="<?php echo APP_URL; ?>/assets/comprovantes/uploads/users/<?php echo htmlspecialchars($usr['photo_user']); ?>"
+                                            class="usr-avatar" alt=""
+                                            onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+                                        <div class="usr-avatar-ini"
+                                            style="background:<?php echo $color; ?>;display:none">
+                                            <?php echo $ini; ?>
+                                        </div>
+                                        <?php else: ?>
+                                        <div class="usr-avatar-ini" style="background:<?php echo $color; ?>">
+                                            <?php echo $ini; ?>
+                                        </div>
+                                        <?php endif; ?>
+                                    </td>
 
-                                            <!-- Nome + username -->
-                                            <td>
-                                                <div style="font-weight:600;font-size:.83rem">
-                                                    <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users/view?id=<?php echo $usr['id_users']; ?>"
-                                                        style="color:inherit;text-decoration:none">
-                                                        <?php echo htmlspecialchars($fullname); ?>
-                                                    </a>
-                                                </div>
-                                                <?php if ($usr['user_name']): ?>
-                                                    <div style="font-size:.73rem;opacity:.5">
-                                                        @<?php echo htmlspecialchars($usr['user_name']); ?></div>
-                                                <?php endif; ?>
-                                            </td>
+                                    <!-- Nome + username -->
+                                    <td>
+                                        <div style="font-weight:600;font-size:.83rem">
+                                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users/view?id=<?php echo $usr['id_users']; ?>"
+                                                style="color:inherit;text-decoration:none">
+                                                <?php echo htmlspecialchars($fullname); ?>
+                                            </a>
+                                        </div>
+                                        <?php if ($usr['user_name']): ?>
+                                        <div style="font-size:.73rem;opacity:.5">
+                                            @<?php echo htmlspecialchars($usr['user_name']); ?></div>
+                                        <?php endif; ?>
+                                    </td>
 
-                                            <!-- Email -->
-                                            <td>
-                                                <a href="mailto:<?php echo htmlspecialchars($usr['email_user']); ?>"
-                                                    style="font-size:.8rem;color:inherit">
-                                                    <?php echo htmlspecialchars($usr['email_user']); ?>
-                                                </a>
-                                            </td>
+                                    <!-- Email -->
+                                    <td>
+                                        <a href="mailto:<?php echo htmlspecialchars($usr['email_user']); ?>"
+                                            style="font-size:.8rem;color:inherit">
+                                            <?php echo htmlspecialchars($usr['email_user']); ?>
+                                        </a>
+                                    </td>
 
-                                            <!-- Telefone -->
-                                            <td>
-                                                <a href="https://wa.me/<?php echo htmlspecialchars($usr['tel_user']); ?>"
-                                                    target="_blank" title="Ir para WhatsApp"
-                                                    style="font-size:.8rem;color:inherit">
-                                                    <?php echo htmlspecialchars($usr['tel_user']); ?>
-                                                </a>
-                                            </td>
+                                    <!-- Telefone -->
+                                    <td>
+                                        <a href="https://wa.me/<?php echo htmlspecialchars($usr['tel_user']); ?>"
+                                            target="_blank" title="Ir para WhatsApp"
+                                            style="font-size:.8rem;color:inherit">
+                                            <?php echo htmlspecialchars($usr['tel_user']); ?>
+                                        </a>
+                                    </td>
 
-                                            <!-- País -->
-                                            <td style="font-size:.8rem">
-                                                <?php echo htmlspecialchars($usr['country_user'] ?? '—'); ?>
-                                                <?php if ($usr['city_user']): ?>
-                                                    <span style="opacity:.5"> /
-                                                        <?php echo htmlspecialchars($usr['city_user']); ?></span>
-                                                <?php endif; ?>
-                                            </td>
+                                    <!-- País -->
+                                    <td style="font-size:.8rem">
+                                        <?php echo htmlspecialchars($usr['country_user'] ?? '—'); ?>
+                                        <?php if ($usr['city_user']): ?>
+                                        <span style="opacity:.5"> /
+                                            <?php echo htmlspecialchars($usr['city_user']); ?></span>
+                                        <?php endif; ?>
+                                    </td>
 
-                                            <!-- Plano -->
-                                            <td>
-                                                <?php if ($usr['name_plan']): ?>
-                                                    <span style="font-size:.76rem;padding:3px 8px;border-radius:20px;
+                                    <!-- Plano -->
+                                    <td>
+                                        <?php if ($usr['name_plan']): ?>
+                                        <span style="font-size:.76rem;padding:3px 8px;border-radius:20px;
                                              background:rgba(255,0,137,.08);color:#FF0089;font-weight:600">
-                                                        <?php echo htmlspecialchars($usr['name_plan']); ?>
-                                                    </span>
+                                            <?php echo htmlspecialchars($usr['name_plan']); ?>
+                                        </span>
+                                        <?php else: ?>
+                                        <span style="opacity:.35;font-size:.76rem">—</span>
+                                        <?php endif; ?>
+                                    </td>
+
+                                    <!-- Estado -->
+                                    <td><?php echo usr_status_badge($usr['status_user']); ?></td>
+
+                                    <!-- Criado -->
+                                    <td style="font-size:.78rem;white-space:nowrap">
+                                        <?php echo adm_fmt_date($usr['creat_user']); ?>
+                                    </td>
+
+                                    <!-- Acções -->
+                                    <td>
+                                        <div class="dropdown actions-dropdown">
+                                            <button class="btn btn-sm btn-outline-secondary" type="button"
+                                                data-bs-toggle="dropdown" data-bs-reference="toggle" title="Acções">
+                                                <i class="bi bi-three-dots-vertical"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li>
+                                                    <a class="dropdown-item"
+                                                        href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users/view?id=<?php echo $usr['id_users']; ?>">
+                                                        <i class="bi bi-eye text-info"></i>Visualizar
+                                                    </a>
+                                                </li>
+                                                <?php if (hasPermission($admin_id, 'users.edit')): ?>
+                                                <li>
+                                                    <a class="dropdown-item"
+                                                        href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users/edit?id=<?php echo $usr['id_users']; ?>">
+                                                        <i class="bi bi-pencil text-warning"></i>Editar
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <hr class="dropdown-divider my-1">
+                                                </li>
+                                                <?php if ($usr['status_user'] === 'active'): ?>
+                                                <li>
+                                                    <a class="dropdown-item"
+                                                        href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users/unavailable-account?id=<?php echo $usr['id_users']; ?>">
+                                                        <i class="bi bi-lock text-warning"></i>Suspender
+                                                    </a>
+                                                </li>
                                                 <?php else: ?>
-                                                    <span style="opacity:.35;font-size:.76rem">—</span>
+                                                <li>
+                                                    <a class="dropdown-item"
+                                                        href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users/available-account?id=<?php echo $usr['id_users']; ?>">
+                                                        <i class="bi bi-unlock text-success"></i>Activar
+                                                    </a>
+                                                </li>
                                                 <?php endif; ?>
-                                            </td>
-
-                                            <!-- Estado -->
-                                            <td><?php echo usr_status_badge($usr['status_user']); ?></td>
-
-                                            <!-- Criado -->
-                                            <td style="font-size:.78rem;white-space:nowrap">
-                                                <?php echo adm_fmt_date($usr['creat_user']); ?>
-                                            </td>
-
-                                            <!-- Acções -->
-                                            <td>
-                                                <div class="dropdown actions-dropdown">
-                                                    <button class="btn btn-sm btn-outline-secondary" type="button"
-                                                        data-bs-toggle="dropdown" data-bs-reference="toggle" title="Acções">
-                                                        <i class="bi bi-three-dots-vertical"></i>
-                                                    </button>
-                                                    <ul class="dropdown-menu dropdown-menu-end">
-                                                        <li>
-                                                            <a class="dropdown-item"
-                                                                href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users/view?id=<?php echo $usr['id_users']; ?>">
-                                                                <i class="bi bi-eye text-info"></i>Visualizar
-                                                            </a>
-                                                        </li>
-                                                        <?php if (hasPermission($admin_id, 'users.edit')): ?>
-                                                            <li>
-                                                                <a class="dropdown-item"
-                                                                    href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users/edit?id=<?php echo $usr['id_users']; ?>">
-                                                                    <i class="bi bi-pencil text-warning"></i>Editar
-                                                                </a>
-                                                            </li>
-                                                            <li>
-                                                                <hr class="dropdown-divider my-1">
-                                                            </li>
-                                                            <?php if ($usr['status_user'] === 'active'): ?>
-                                                                <li>
-                                                                    <a class="dropdown-item"
-                                                                        href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users/unavailable-account?id=<?php echo $usr['id_users']; ?>">
-                                                                        <i class="bi bi-lock text-warning"></i>Suspender
-                                                                    </a>
-                                                                </li>
-                                                            <?php else: ?>
-                                                                <li>
-                                                                    <a class="dropdown-item"
-                                                                        href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users/available-account?id=<?php echo $usr['id_users']; ?>">
-                                                                        <i class="bi bi-unlock text-success"></i>Activar
-                                                                    </a>
-                                                                </li>
-                                                            <?php endif; ?>
-                                                            <?php if ($admin_role === 'super_admin'): ?>
-                                                                <li>
-                                                                    <a class="dropdown-item text-danger"
-                                                                        href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users/delete?id=<?php echo $usr['id_users']; ?>">
-                                                                        <i class="bi bi-trash text-danger"></i>Excluir
-                                                                    </a>
-                                                                </li>
-                                                            <?php endif; ?>
-                                                        <?php endif; ?>
-                                                    </ul>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
+                                                <?php if ($admin_role === 'super_admin'): ?>
+                                                <li>
+                                                    <a class="dropdown-item text-danger"
+                                                        href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/users/delete?id=<?php echo $usr['id_users']; ?>">
+                                                        <i class="bi bi-trash text-danger"></i>Excluir
+                                                    </a>
+                                                </li>
+                                                <?php endif; ?>
+                                                <?php endif; ?>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
                                 <?php endif; ?>
                             </tbody>
                         </table>
@@ -991,47 +990,47 @@ $paises = [
 
                     <!-- Paginação -->
                     <?php if ($total_pages > 1): ?>
-                        <div class="d-flex justify-content-center py-3">
-                            <nav>
-                                <ul class="pagination pagination-sm usr-pagination mb-0">
-                                    <li class="page-item <?php echo $page <= 1 ? 'disabled' : ''; ?>">
-                                        <a class="page-link"
-                                            href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page - 1])); ?>">
-                                            <i class="bi bi-chevron-left"></i>
-                                        </a>
-                                    </li>
-                                    <?php
+                    <div class="d-flex justify-content-center py-3">
+                        <nav>
+                            <ul class="pagination pagination-sm usr-pagination mb-0">
+                                <li class="page-item <?php echo $page <= 1 ? 'disabled' : ''; ?>">
+                                    <a class="page-link"
+                                        href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page - 1])); ?>">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </a>
+                                </li>
+                                <?php
                                     $start = max(1, $page - 2);
                                     $end = min($total_pages, $page + 2);
                                     if ($start > 1): ?>
-                                        <li class="page-item"><a class="page-link"
-                                                href="?<?php echo http_build_query(array_merge($_GET, ['page' => 1])); ?>">1</a>
-                                        </li>
-                                        <?php if ($start > 2): ?><li class="page-item disabled"><span class="page-link">…</span>
-                                            </li><?php endif; ?>
-                                    <?php endif; ?>
-                                    <?php for ($i = $start; $i <= $end; $i++): ?>
-                                        <li class="page-item <?php echo $i === $page ? 'active' : ''; ?>">
-                                            <a class="page-link"
-                                                href="?<?php echo http_build_query(array_merge($_GET, ['page' => $i])); ?>"><?php echo $i; ?></a>
-                                        </li>
-                                    <?php endfor; ?>
-                                    <?php if ($end < $total_pages): ?>
-                                        <?php if ($end < $total_pages - 1): ?><li class="page-item disabled"><span
-                                                    class="page-link">…</span></li><?php endif; ?>
-                                        <li class="page-item"><a class="page-link"
-                                                href="?<?php echo http_build_query(array_merge($_GET, ['page' => $total_pages])); ?>"><?php echo $total_pages; ?></a>
-                                        </li>
-                                    <?php endif; ?>
-                                    <li class="page-item <?php echo $page >= $total_pages ? 'disabled' : ''; ?>">
-                                        <a class="page-link"
-                                            href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page + 1])); ?>">
-                                            <i class="bi bi-chevron-right"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </nav>
-                        </div>
+                                <li class="page-item"><a class="page-link"
+                                        href="?<?php echo http_build_query(array_merge($_GET, ['page' => 1])); ?>">1</a>
+                                </li>
+                                <?php if ($start > 2): ?><li class="page-item disabled"><span class="page-link">…</span>
+                                </li><?php endif; ?>
+                                <?php endif; ?>
+                                <?php for ($i = $start; $i <= $end; $i++): ?>
+                                <li class="page-item <?php echo $i === $page ? 'active' : ''; ?>">
+                                    <a class="page-link"
+                                        href="?<?php echo http_build_query(array_merge($_GET, ['page' => $i])); ?>"><?php echo $i; ?></a>
+                                </li>
+                                <?php endfor; ?>
+                                <?php if ($end < $total_pages): ?>
+                                <?php if ($end < $total_pages - 1): ?><li class="page-item disabled"><span
+                                        class="page-link">…</span></li><?php endif; ?>
+                                <li class="page-item"><a class="page-link"
+                                        href="?<?php echo http_build_query(array_merge($_GET, ['page' => $total_pages])); ?>"><?php echo $total_pages; ?></a>
+                                </li>
+                                <?php endif; ?>
+                                <li class="page-item <?php echo $page >= $total_pages ? 'disabled' : ''; ?>">
+                                    <a class="page-link"
+                                        href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page + 1])); ?>">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
                     <?php endif; ?>
                 </div>
 
@@ -1058,29 +1057,29 @@ $paises = [
     <script src="<?php echo APP_URL; ?>/js/lastest.js"></script>
     <script src="<?php echo APP_URL; ?>/js/lastest.min.js"></script>
     <script>
-        window.__BASE_URL__ = '<?php echo APP_URL; ?>';
-        window.__ADMIN_PATH__ = '<?php echo ADMIN_PATH; ?>';
+    window.__BASE_URL__ = '<?php echo APP_URL; ?>';
+    window.__ADMIN_PATH__ = '<?php echo ADMIN_PATH; ?>';
 
-        // Debounce nos campos de texto
-        (function() {
-            var timer;
-            ['inp-name', 'inp-email'].forEach(function(id) {
-                var el = document.getElementById(id);
-                if (!el) return;
-                el.addEventListener('input', function() {
-                    clearTimeout(timer);
-                    timer = setTimeout(function() {
-                        document.getElementById('filter-form').submit();
-                    }, 500);
-                });
-            });
-            // Selects — submit imediato
-            document.querySelectorAll('#filter-form select').forEach(function(sel) {
-                sel.addEventListener('change', function() {
+    // Debounce nos campos de texto
+    (function() {
+        var timer;
+        ['inp-name', 'inp-email'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            el.addEventListener('input', function() {
+                clearTimeout(timer);
+                timer = setTimeout(function() {
                     document.getElementById('filter-form').submit();
-                });
+                }, 500);
             });
-        })();
+        });
+        // Selects — submit imediato
+        document.querySelectorAll('#filter-form select').forEach(function(sel) {
+            sel.addEventListener('change', function() {
+                document.getElementById('filter-form').submit();
+            });
+        });
+    })();
     </script>
 </body>
 

@@ -44,21 +44,92 @@
 
   let unloadHandled = false;
 
-  function getCurrentActivity() {
+function getCurrentActivity() {
     const path = window.location.pathname.toLowerCase();
 
-    if (path.includes("releases")) return "releases";
-    if (path.includes("finances")) return "finances";
-    if (path.includes("withdraw")) return "finances";
-    if (path.includes("artists")) return "artists";
-    if (path.includes("analytics")) return "analytics";
-    if (path.includes("statistics")) return "analytics";
-    if (path.includes("profile")) return "profile";
-    if (path.includes("settings")) return "settings";
-    if (path.includes("support")) return "support";
-    if (path.includes("notification")) return "notifications";
+    // Lançamentos (releases)
+    if (path.includes("/releases") || path.includes("/creat-release") || path.includes("/draft-release") || path.includes("/edit-release") || path.includes("/release_process") || path.includes("/creat_release_process")) {
+        return "releases";
+    }
+
+    // Finanças
+    if (path.includes("/finances") || path.includes("/overview") || path.includes("/transactions") || path.includes("/withdraw") || path.includes("/payment/pay") || path.includes("/_modal_withdrawal") || path.includes("/account_process") || path.includes("/split_process")) {
+        return "finances";
+    }
+
+    // Artistas
+    if (path.includes("/artists") || path.includes("/add-artist") || path.includes("/add_artist_process") || path.includes("/youtube/ucy")) {
+        return "artists";
+    }
+
+    // Analytics / Estatísticas
+    if (path.includes("/analytics") || path.includes("/statistics") || path.includes("/artist-details") || path.includes("/country-details") || path.includes("/playlist-details") || path.includes("/compare") || path.includes("/report") || path.includes("/export")) {
+        return "analytics";
+    }
+
+    // Perfil do usuário
+    if (path.includes("/user/profile")) {
+        return "profile";
+    }
+
+    // Configurações da conta (manage-account)
+    if (path.includes("/account/manage-account") || path.includes("/account/add-user")) {
+        return "account_settings";
+    }
+
+    // Configurações gerais (settings)
+    if (path.includes("/page/settings")) {
+        return "settings";
+    }
+
+    // Suporte
+    if (path.includes("/support") || path.includes("/page/support") || path.includes("/ajax/support_dashboard")) {
+        return "support";
+    }
+
+    // Notificações
+    if (path.includes("/notifications") || path.includes("/page/notifications") || path.includes("/ajax/notifications_api")) {
+        return "notifications";
+    }
+
+    // Planos
+    if (path.includes("/all-plans")) {
+        return "plans";
+    }
+
+    // FAQ / Ajuda
+    if (path.includes("/faq") || path.includes("/help")) {
+        return "help";
+    }
+
+    // Serviços disponíveis
+    if (path.includes("/services/available-services")) {
+        return "services";
+    }
+
+    // Páginas de erro
+    if (path.includes("/error/403") || path.includes("/error/404") || path.includes("/error/500") || path.includes("/error/503") || path.includes("/maintenance")) {
+        return "error_page";
+    }
+
+    // Páginas de políticas
+    if (path.includes("/politicies/terms") || path.includes("/politicies/privacy")) {
+        return "policies";
+    }
+
+    // Offline
+    if (path.includes("/offline")) {
+        return "offline";
+    }
+
+    // Painel principal (dashboard/painel)
+    if (path === "/dashboard/" || path === "/dashboard/painel" || path.endsWith("/dashboard") || path.endsWith("/painel") || path === "/dashboard" || path.includes("/dashboard")) {
+        return "dashboard";
+    }
+
+    // Fallback
     return "dashboard";
-  }
+}
 
   function readJsonStorage(key, fallback) {
     try {

@@ -43,7 +43,7 @@ $role_labels = ['admin' => 'Administrador', 'editor' => 'Editor', 'analyst' => '
 $role_label  = $collab ? ($role_labels[$collab['role_collab']] ?? 'Colaborador') : '';
 $owner_name  = $collab ? trim($collab['owner_first'] . ' ' . ($collab['owner_second'] ?? '')) : '';
 $plan_name   = $collab ? ($collab['name_plan'] ?? APP_NAME) : APP_NAME;
-$login_url   = rtrim(APP_URL, '/' . APP_URL_PANEL) . '/account/collab-login';
+$login_url   = APP_URL . '/' . APP_URL_PANEL . '/account/collab-login';
 ?>
 <!DOCTYPE html>
 <html lang="pt-ao">
@@ -208,7 +208,7 @@ $login_url   = rtrim(APP_URL, '/' . APP_URL_PANEL) . '/account/collab-login';
             <h1 style="color:#fff;font-size:1.3rem;margin:0"><?php echo APP_NAME; ?></h1>
         </div>
         <div class="card-body-bg text-center">
-            <span class="state-icon">✅</span>
+            <span class="state-icon"><i class="bi bi-check text-success"></i></span>
             <h3 class="fw-bold mb-2">Conta já activada</h3>
             <p class="text-muted">Este link de activação já foi utilizado. A tua conta já está activa.</p>
             <a href="<?php echo htmlspecialchars($login_url); ?>" class="btn btn-wasom mt-2">Entrar no painel</a>
@@ -221,7 +221,7 @@ $login_url   = rtrim(APP_URL, '/' . APP_URL_PANEL) . '/account/collab-login';
             <h1 style="color:#fff;font-size:1.3rem;margin:0"><?php echo APP_NAME; ?></h1>
         </div>
         <div class="card-body-bg text-center">
-            <span class="state-icon">⏰</span>
+            <span class="state-icon"> <i class="bi bi-clock text-danger"></i></span>
             <h3 class="fw-bold mb-2">Link expirado</h3>
             <p class="text-muted">Este link de activação expirou (válido por 72h). Pede ao administrador da conta que
                 reenvie o convite.</p>
@@ -334,7 +334,7 @@ $login_url   = rtrim(APP_URL, '/' . APP_URL_PANEL) . '/account/collab-login';
     <script>
     const TOKEN = '<?php echo htmlspecialchars($token); ?>';
     const LOGIN_URL = '<?php echo htmlspecialchars($login_url); ?>';
-    const PROCESS = '<?php echo rtrim(APP_URL, "/" . APP_URL_PANEL); ?>/account/collab_activate_process';
+    const PROCESS = '<?php echo APP_URL. "/" . APP_URL_PANEL ?>/account/collab_activate_process';
 
     function toggleP(id, btn) {
         const inp = document.getElementById(id);

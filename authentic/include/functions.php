@@ -47,6 +47,13 @@ function isLoggedIn(): bool
 function requireLogin(): void
 {
     if (!isLoggedIn()) {
+        // Obtém o caminho relativo ao base path da aplicação
+        $request_uri = $_SERVER['REQUEST_URI'];
+        $base_path = parse_url(APP_URL, PHP_URL_PATH); // Ex.: '/wasomupfy'
+        if ($base_path && strpos($request_uri, $base_path) === 0) {
+            $request_uri = substr($request_uri, strlen($base_path));
+        }
+        $_SESSION['redirect_after_login'] = $request_uri ?: '/';
         redirect('/login', ['session' => 'expired']);
     }
 }
@@ -925,9 +932,16 @@ function sanitize(string $value): string
 
 function redirect(string $path, array $params = []): void
 {
-    $path = ltrim($path, '/');
-    $url  = APP_URL . '/' . $path;
-    if ($params) $url .= '?' . http_build_query($params);
+    // Se já for uma URL completa (http...), usa diretamente
+    if (filter_var($path, FILTER_VALIDATE_URL)) {
+        $url = $path;
+    } else {
+        $path = ltrim($path, '/');
+        $url  = APP_URL . '/' . $path;
+    }
+    if ($params) {
+        $url .= (strpos($url, '?') === false ? '?' : '&') . http_build_query($params);
+    }
     header("Location: $url");
     exit;
 }

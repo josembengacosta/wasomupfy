@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action_change_passwo
     echo json_encode([
         'ok'       => true,
         'message'  => 'Senha definida!',
-        'redirect' => rtrim(APP_URL, '/') . '/dashboard/collab/overview',
+        'redirect' => APP_URL.'/' . APP_URL_PANEL .'/collab/overview',
     ]);
     exit;
 }

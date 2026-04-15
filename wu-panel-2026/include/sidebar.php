@@ -18,6 +18,7 @@ $canSettingsView      = hasPermission($admin_id, 'settings.view');
 
 $faqUrl              = APP_URL . '/page/support/faq';
 $tutorialUrl         = APP_URL . '/page/support/tutorial';
+$adminFaqUrl         = APP_URL . '/' . ADMIN_PATH . '/faq'; // Novo: Gestão de FAQs (Admin)
 $pendingAccountsCount = $canFinancesView
     ? (int)$db->query("SELECT COUNT(*) FROM _account WHERE status_account = 'pending'")->fetchColumn()
     : 0;
@@ -287,6 +288,16 @@ $pendingAccountsCount = $canFinancesView
                 <?php endif; ?>
             </a>
         </li>
+        <!-- NOVO: Gestão de Planos -->
+        <?php if (hasPermission($admin_id, 'finances.edit')): ?>
+        <li class="nav-item">
+            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/plans"
+                class="nav-link<?php echo adm_is_active('plans') ? ' active' : ''; ?>">
+                <i class="bi bi-tags"></i>
+                <span>Planos</span>
+            </a>
+        </li>
+        <?php endif; ?>
         <?php endif; ?>
 
         <?php if ($canMusicView): ?>
@@ -350,8 +361,15 @@ $pendingAccountsCount = $canFinancesView
             <div class="collapse<?php echo $helpOpen ? ' show' : ''; ?>" id="collapseHelp">
                 <a href="<?php echo $faqUrl; ?>" class="nav-link" target="_blank" rel="noopener">
                     <i class="bi bi-messenger"></i>
-                    <span>FAQs</span>
+                    <span>FAQs (Público)</span>
                 </a>
+                <?php if (hasPermission($admin_id, 'content.edit')): ?>
+                <a href="<?php echo $adminFaqUrl; ?>"
+                    class="nav-link<?php echo adm_is_active('faq') ? ' active' : ''; ?>">
+                    <i class="bi bi-database-gear"></i>
+                    <span>Gerenciar FAQs</span>
+                </a>
+                <?php endif; ?>
                 <a href="<?php echo $tutorialUrl; ?>" class="nav-link" target="_blank" rel="noopener">
                     <i class="bi bi-book"></i>
                     <span>Tutoriais</span>

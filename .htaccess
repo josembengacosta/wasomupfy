@@ -351,6 +351,10 @@ RewriteRule ^wu-panel-2026/finances/?$                      wu-panel-2026/pages/
 RewriteRule ^wu-panel-2026/finances/royalty-splits/?$       wu-panel-2026/pages/finances/royalty-splits.php [L]
 RewriteRule ^wu-panel-2026/finances/withdrawals/?$          wu-panel-2026/pages/finances/withdrawals.php [L]
 
+# Gestão de Planos (Admin)
+RewriteRule ^wu-panel-2026/plans/?$                      wu-panel-2026/pages/finances/plans.php [L]
+RewriteRule ^wu-panel-2026/plans-process/?$              wu-panel-2026/pages/finances/plans-process.php [L]
+
 # ── Contas Bancaria ──
 RewriteRule ^wu-panel-2026/accounts/?$                      wu-panel-2026/pages/accounts/all-accounts.php [L]
 RewriteRule ^wu-panel-2026/accounts/view/?$                 wu-panel-2026/pages/accounts/view-account.php [L,QSA]
@@ -405,6 +409,10 @@ RewriteRule ^wu-panel-2026/settings/config-process/?$       wu-panel-2026/pages/
 RewriteRule ^wu-panel-2026/settings/security/?$             wu-panel-2026/pages/settings/security.php [L]
 RewriteRule ^wu-panel-2026/settings/security-process/?$     wu-panel-2026/pages/settings/security-process.php [L]
 RewriteRule ^wu-panel-2026/audit/?$                         wu-panel-2026/pages/manager/audit.php [L,QSA]
+
+# FAQ Admin
+RewriteRule ^wu-panel-2026/faq/?$                      wu-panel-2026/pages/faq/faq.php [L]
+RewriteRule ^wu-panel-2026/faq_process/?$              wu-panel-2026/pages/faq/faq_process.php [L]
 
 # ##WASOM_ADMIN_END## — NÃO remover esta linha
 

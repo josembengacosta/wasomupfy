@@ -144,7 +144,7 @@ $cover_base  = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/covers/';
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex, nofollow" />
-    <meta name="theme-color" content="#FF0089" />
+    <meta name="theme-color" content="#FF2D66" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <link rel="manifest" href="../../dashboard/manifest.json" />
     <title>Painel — <?php echo APP_NAME; ?></title>
@@ -153,205 +153,89 @@ $cover_base  = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/covers/';
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="css/collab.css" />
     <style>
-        /* ── Overview: Access badge ── */
-        .access-card {
-            background: linear-gradient(135deg, rgba(255, 0, 137, .08), rgba(255, 77, 77, .06));
-            border: 1.5px solid rgba(255, 0, 137, .2);
-            border-radius: 16px;
-            padding: 20px;
-        }
+    /* ── Overview: Access badge ── */
+    .access-card {
+        background: linear-gradient(135deg, rgba(255, 0, 137, .08), rgba(255, 77, 77, .06));
+        border: 1.5px solid rgba(255, 0, 137, .2);
+        border-radius: 16px;
+        padding: 20px;
+    }
 
-        /* ── Overview: Album row ── */
-        .album-row {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border);
-        }
+    /* ── Overview: Album row ── */
+    .album-row {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border);
+    }
 
-        .album-row:last-child {
-            border-bottom: none;
-        }
+    .album-row:last-child {
+        border-bottom: none;
+    }
 
-        .album-cover {
-            width: 44px;
-            height: 44px;
-            border-radius: 8px;
-            object-fit: cover;
-            background: rgba(255, 0, 137, .07);
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            overflow: hidden;
-        }
+    .album-cover {
+        width: 44px;
+        height: 44px;
+        border-radius: 8px;
+        object-fit: cover;
+        background: rgba(255, 0, 137, .07);
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        overflow: hidden;
+    }
 
-        .album-cover img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+    .album-cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 
-        /* ── Overview: Activity ── */
-        .act-item {
-            display: flex;
-            gap: 10px;
-            padding: 9px 0;
-            border-bottom: 1px solid var(--border);
-            font-size: .82rem;
-        }
+    /* ── Overview: Activity ── */
+    .act-item {
+        display: flex;
+        gap: 10px;
+        padding: 9px 0;
+        border-bottom: 1px solid var(--border);
+        font-size: .82rem;
+    }
 
-        .act-item:last-child {
-            border-bottom: none;
-        }
+    .act-item:last-child {
+        border-bottom: none;
+    }
 
-        .act-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--wasom);
-            flex-shrink: 0;
-            margin-top: 5px;
-        }
+    .act-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--wasom);
+        flex-shrink: 0;
+        margin-top: 5px;
+    }
 
-        /* ── Overview: Locked ── */
-        .locked-section {
-            border-radius: 16px;
-            border: 1.5px dashed var(--border);
-            padding: 32px;
-            text-align: center;
-            opacity: .6;
-        }
+    /* ── Overview: Locked ── */
+    .locked-section {
+        border-radius: 16px;
+        border: 1.5px dashed var(--border);
+        padding: 32px;
+        text-align: center;
+        opacity: .6;
+    }
     </style>
 </head>
 
 <body>
 
-    <!-- ═══ NAVBAR ═══ -->
-    <nav class="collab-nav">
-        <button class="theme-btn d-md-none" id="btn-sidebar-toggle">
-            <i class="bi bi-list"></i>
-        </button>
-        <a class="nav-brand" href="overview">
-            <?php echo APP_NAME; ?>
-            <span>For Collaborator</span>
-        </a>
-        <div class="nav-spacer"></div>
-
-        <!-- Role chip -->
-        <div class="nav-chip d-none d-md-inline-flex"
-            style="background:<?php echo $rm['bg']; ?>;color:<?php echo $rm['color']; ?>;border-color:<?php echo $rm['color']; ?>20">
-            <i class="bi <?php echo $rm['icon']; ?>"></i>
-            <?php echo $role_label; ?>
-        </div>
-
-        <!-- Theme toggle -->
-        <button class="theme-btn" id="themeToggle" title="Alternar tema">
-            <i class="bi bi-sun" id="themeIcon"></i>
-        </button>
-
-        <!-- Avatar + dropdown -->
-        <div class="dropdown">
-            <button class="nav-avatar dropdown-toggle" style="padding:0" data-bs-toggle="dropdown">
-                <?php if ($collab['photo_collab']): ?>
-                    <img src="<?php echo htmlspecialchars($collab['photo_collab']); ?>" alt=""
-                        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
-                    <span style="display:none"><i class="bi bi-person-circle"></i></span>
-                <?php else: ?>
-                    <span><i class="bi bi-person-circle"></i></span>
-                <?php endif; ?>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end" style="font-size:.84rem;min-width:200px">
-                <li class="px-3 py-2">
-                    <div class="fw-bold">
-                        <?php echo htmlspecialchars($collab['first_name'] . ' ' . ($collab['second_name'] ?? '')); ?>
-                    </div>
-                    <div class="text-reset" style="font-size:.72rem">
-                        @<?php echo htmlspecialchars($collab['user_collab']); ?></div>
-                    <div class="mt-1">
-                        <span class="chip"
-                            style="background:<?php echo $rm['bg']; ?>;color:<?php echo $rm['color']; ?>">
-                            <i class="bi <?php echo $rm['icon']; ?>"></i><?php echo $role_label; ?>
-                        </span>
-                    </div>
-                </li>
-                <li>
-                    <hr class="dropdown-divider" />
-                </li>
-                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#myProfileModal">
-                        <i class="bi bi-person me-2"></i>O meu perfil
-                    </a></li>
-                <li>
-                    <hr class="dropdown-divider" />
-                </li>
-                <li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">
-                        <i class="bi bi-box-arrow-right me-2"></i>Terminar sessão
-                    </a></li>
-            </ul>
-        </div>
-    </nav>
-
+    <!-- ═══ NAVBAR ═══ -->>
+    <?php require_once __DIR__ . '/include/navbar-top.php'; ?>
     <!-- ═══ SIDEBAR OVERLAY (mobile) ═══ -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
     <!-- ═══ SIDEBAR ═══ -->
-    <aside class="collab-sidebar" id="collabSidebar">
-
-        <!-- Owner info -->
-        <div class="owner-card mb-3">
-            <div
-                style="font-size:.65rem;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">
-                Conta</div>
-            <div class="fw-bold" style="font-size:.95rem"><?php echo $owner_artist_name; ?></div>
-            <div style="font-size:.72rem;color:rgba(255,255,255,.75);margin-top:2px"><?php echo $plan_name; ?></div>
-        </div>
-
-        <div class="sidebar-section">Menu</div>
-
-        <a href="overview" class="sidebar-link active">
-            <i class="bi bi-speedometer2"></i>Dashboard
-        </a>
-
-        <?php if ($can_view_releases): ?>
-            <a href="<?php echo rtrim(APP_URL, '/'); ?>/dashboard/collab/releases" class="sidebar-link">
-                <i class="bi bi-disc"></i>Lançamentos
-                <?php if ((int)($album_stats['pending'] ?? 0) > 0): ?>
-                    <span class="badge-count"><?php echo $album_stats['pending']; ?></span>
-                <?php endif; ?>
-            </a>
-        <?php endif; ?>
-
-        <?php if ($can_view_artists): ?>
-            <a href="<?php echo rtrim(APP_URL, '/'); ?>/dashboard/collab/artists" class="sidebar-link">
-                <i class="bi bi-people"></i>Artistas
-            </a>
-        <?php endif; ?>
-
-        <?php if ($can_view_finances): ?>
-            <div class="sidebar-section">Finanças</div>
-            <a href="<?php echo rtrim(APP_URL, '/'); ?>/dashboard/collab/overview" class="sidebar-link">
-                <i class="bi bi-currency-dollar"></i>Visão geral
-            </a>
-        <?php endif; ?>
-
-        <?php if ($can_view_stats): ?>
-            <div class="sidebar-section">Análise</div>
-            <a href="<?php echo rtrim(APP_URL, '/'); ?>/dashboard/collab/statistics" class="sidebar-link">
-                <i class="bi bi-bar-chart"></i>Estatísticas
-            </a>
-        <?php endif; ?>
-
-        <div class="sidebar-section">Conta</div>
-        <a href="#" class="sidebar-link" data-bs-toggle="modal" data-bs-target="#myProfileModal">
-            <i class="bi bi-person-gear"></i>O meu perfil
-        </a>
-        <a href="#" class="sidebar-link text-danger" data-bs-toggle="modal" data-bs-target="#logoutModal">
-            <i class="bi bi-box-arrow-right"></i>Terminar sessão
-        </a>
-
-    </aside>
+    <?php require_once __DIR__ . '/include/sidebar.php'; ?>
 
 
     <!-- ═══ MAIN CONTENT ═══ -->
@@ -398,12 +282,12 @@ $cover_base  = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/covers/';
                         ];
                         foreach ($perms as [$has, $label, $icon]):
                         ?>
-                            <span class="chip" style="background:<?php echo $has ? 'rgba(25,135,84,.12)' : 'rgba(108,117,125,.1)'; ?>;
+                        <span class="chip" style="background:<?php echo $has ? 'rgba(25,135,84,.12)' : 'rgba(108,117,125,.1)'; ?>;
                                               color:<?php echo $has ? '#198754' : '#aaa'; ?>">
-                                <i class="bi <?php echo $icon; ?>"></i>
-                                <?php echo $label; ?>
-                                <i class="bi <?php echo $has ? 'bi-check2' : 'bi-x'; ?>"></i>
-                            </span>
+                            <i class="bi <?php echo $icon; ?>"></i>
+                            <?php echo $label; ?>
+                            <i class="bi <?php echo $has ? 'bi-check2' : 'bi-x'; ?>"></i>
+                        </span>
                         <?php endforeach; ?>
                     </div>
                 </div>
@@ -467,110 +351,110 @@ $cover_base  = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/covers/';
 
                 <!-- Últimos lançamentos -->
                 <?php if ($can_view_releases): ?>
-                    <div class="dash-card mb-3">
-                        <div class="d-flex align-items-center justify-content-between mb-3">
-                            <div class="fw-bold small d-flex align-items-center gap-2">
-                                <i class="bi bi-disc" style="color:var(--wasom)"></i>
-                                Últimos Lançamentos
-                            </div>
-                            <?php if ($can_edit_releases): ?>
-                                <a href="<?php echo rtrim(APP_URL, '/'); ?>/dashboard/collab/releases"
-                                    class="btn btn-sm px-3 fw-semibold"
-                                    style="background:var(--wasom);color:#fff;border-radius:20px;font-size:.75rem">
-                                    Ver todos
-                                </a>
-                            <?php endif; ?>
+                <div class="dash-card mb-3">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="fw-bold small d-flex align-items-center gap-2">
+                            <i class="bi bi-disc" style="color:var(--wasom)"></i>
+                            Últimos Lançamentos
                         </div>
-
-                        <?php if (empty($recent_albums)): ?>
-                            <div class="text-center py-4">
-                                <div style="font-size:2rem;opacity:.2;margin-bottom:8px">🎵</div>
-                                <div class="text-muted small">Sem lançamentos ainda.</div>
-                            </div>
-                        <?php else: ?>
-                            <?php foreach ($recent_albums as $alb_row):
-                                $as_m = $album_status_meta[$alb_row['status_album']] ?? $album_status_meta['draft'];
-                            ?>
-                                <div class="album-row">
-                                    <div class="album-cover">
-                                        <?php if ($alb_row['img_cover']): ?>
-                                            <img src="<?php echo htmlspecialchars($cover_base . $alb_row['img_cover']); ?>" alt=""
-                                                onerror="this.style.display='none';this.parentElement.textContent='🎵'" />
-                                            <?php else: ?>🎵
-                                        <?php endif; ?>
-                                    </div>
-                                    <div style="flex:1;min-width:0">
-                                        <div class="fw-semibold small text-truncate">
-                                            <?php echo htmlspecialchars($alb_row['title_album']); ?>
-                                        </div>
-                                        <div class="text-reset" style="font-size:.7rem">
-                                            <?php echo htmlspecialchars($alb_row['stage_name'] ?? '—'); ?>
-                                            · <?php echo ucfirst($alb_row['type_album']); ?>
-                                            · <?php echo date('d/m/Y', strtotime($alb_row['creat_album'])); ?>
-                                        </div>
-                                    </div>
-                                    <span class="chip"
-                                        style="background:<?php echo $as_m['bg']; ?>;color:<?php echo $as_m['color']; ?>">
-                                        <?php echo $as_m['label']; ?>
-                                    </span>
-                                </div>
-                            <?php endforeach; ?>
+                        <?php if ($can_edit_releases): ?>
+                        <a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/collab/releases"
+                            class="btn btn-sm px-3 fw-semibold"
+                            style="background:var(--wasom);color:#fff;border-radius:20px;font-size:.75rem">
+                            Ver todos
+                        </a>
                         <?php endif; ?>
                     </div>
-                <?php else: ?>
-                    <div class="locked-section mb-3">
-                        <div style="font-size:2rem;margin-bottom:8px"><i class="bi bi-lock"></i></div>
-                        <div class="fw-semibold small">Sem acesso a Lançamentos</div>
-                        <div class="text-reset" style="font-size:.75rem;margin-top:4px">
-                            A tua função (<?php echo $role_label; ?>) não tem permissão para ver lançamentos.
-                        </div>
+
+                    <?php if (empty($recent_albums)): ?>
+                    <div class="text-center py-4">
+                        <div style="font-size:2rem;opacity:.2;margin-bottom:8px">🎵</div>
+                        <div class="text-muted small">Sem lançamentos ainda.</div>
                     </div>
+                    <?php else: ?>
+                    <?php foreach ($recent_albums as $alb_row):
+                                $as_m = $album_status_meta[$alb_row['status_album']] ?? $album_status_meta['draft'];
+                            ?>
+                    <div class="album-row">
+                        <div class="album-cover">
+                            <?php if ($alb_row['img_cover']): ?>
+                            <img src="<?php echo htmlspecialchars($cover_base . $alb_row['img_cover']); ?>" alt=""
+                                onerror="this.style.display='none';this.parentElement.textContent='🎵'" />
+                            <?php else: ?>🎵
+                            <?php endif; ?>
+                        </div>
+                        <div style="flex:1;min-width:0">
+                            <div class="fw-semibold small text-truncate">
+                                <?php echo htmlspecialchars($alb_row['title_album']); ?>
+                            </div>
+                            <div class="text-reset" style="font-size:.7rem">
+                                <?php echo htmlspecialchars($alb_row['stage_name'] ?? '—'); ?>
+                                · <?php echo ucfirst($alb_row['type_album']); ?>
+                                · <?php echo date('d/m/Y', strtotime($alb_row['creat_album'])); ?>
+                            </div>
+                        </div>
+                        <span class="chip"
+                            style="background:<?php echo $as_m['bg']; ?>;color:<?php echo $as_m['color']; ?>">
+                            <?php echo $as_m['label']; ?>
+                        </span>
+                    </div>
+                    <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+                <?php else: ?>
+                <div class="locked-section mb-3">
+                    <div style="font-size:2rem;margin-bottom:8px"><i class="bi bi-lock"></i></div>
+                    <div class="fw-semibold small">Sem acesso a Lançamentos</div>
+                    <div class="text-reset" style="font-size:.75rem;margin-top:4px">
+                        A tua função (<?php echo $role_label; ?>) não tem permissão para ver lançamentos.
+                    </div>
+                </div>
                 <?php endif; ?>
 
 
                 <!-- Finanças (só admin/analyst) -->
                 <?php if ($can_view_finances && $wallet): ?>
-                    <div class="dash-card mb-3">
-                        <div class="fw-bold small d-flex align-items-center gap-2 mb-3">
-                            <i class="bi bi-currency-dollar" style="color:var(--wasom)"></i>
-                            Resumo Financeiro
-                            <span class="text-muted fw-normal" style="font-size:.7rem">(só leitura)</span>
+                <div class="dash-card mb-3">
+                    <div class="fw-bold small d-flex align-items-center gap-2 mb-3">
+                        <i class="bi bi-currency-dollar" style="color:var(--wasom)"></i>
+                        Resumo Financeiro
+                        <span class="text-muted fw-normal" style="font-size:.7rem">(só leitura)</span>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-6 col-md-3">
+                            <div class="text-reset" style="font-size:.7rem">Saldo AOA</div>
+                            <div class="fw-bold">
+                                <?php echo number_format((float)$wallet['balance_aoa'], 2, ',', '.'); ?> Kz
+                            </div>
                         </div>
-                        <div class="row g-3">
-                            <div class="col-6 col-md-3">
-                                <div class="text-reset" style="font-size:.7rem">Saldo AOA</div>
-                                <div class="fw-bold">
-                                    <?php echo number_format((float)$wallet['balance_aoa'], 2, ',', '.'); ?> Kz
-                                </div>
+                        <div class="col-6 col-md-3">
+                            <div class="text-reset" style="font-size:.7rem">Saldo USD</div>
+                            <div class="fw-bold">
+                                $<?php echo number_format((float)$wallet['balance_usd'], 2, ',', '.'); ?>
                             </div>
-                            <div class="col-6 col-md-3">
-                                <div class="text-reset" style="font-size:.7rem">Saldo USD</div>
-                                <div class="fw-bold">
-                                    $<?php echo number_format((float)$wallet['balance_usd'], 2, ',', '.'); ?>
-                                </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="text-reset" style="font-size:.7rem">Total ganho</div>
+                            <div class="fw-bold">
+                                Kz<?php echo number_format((float)$wallet['total_earned'], 2, ',', '.'); ?>
                             </div>
-                            <div class="col-6 col-md-3">
-                                <div class="text-reset" style="font-size:.7rem">Total ganho</div>
-                                <div class="fw-bold">
-                                    Kz<?php echo number_format((float)$wallet['total_earned'], 2, ',', '.'); ?>
-                                </div>
-                            </div>
-                            <div class="col-6 col-md-3">
-                                <div class="text-reset" style="font-size:.7rem">Total sacado</div>
-                                <div class="fw-bold">
-                                    <?php echo number_format((float)$wallet['total_withdrawn'], 2, ',', '.'); ?> Kz
-                                </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="text-reset" style="font-size:.7rem">Total sacado</div>
+                            <div class="fw-bold">
+                                <?php echo number_format((float)$wallet['total_withdrawn'], 2, ',', '.'); ?> Kz
                             </div>
                         </div>
                     </div>
+                </div>
                 <?php elseif (!$can_view_finances): ?>
-                    <div class="locked-section mb-3">
-                        <div style="font-size:2rem;margin-bottom:8px"> <i class="bi bi-"> </i> </div>
-                        <div class="fw-semibold small">Sem acesso a Finanças</div>
-                        <div class="text-reset" style="font-size:.75rem;margin-top:4px">
-                            Só Administradores e Analistas têm acesso aos dados financeiros.
-                        </div>
+                <div class="locked-section mb-3">
+                    <div style="font-size:2rem;margin-bottom:8px"> <i class="bi bi-"> </i> </div>
+                    <div class="fw-semibold small">Sem acesso a Finanças</div>
+                    <div class="text-reset" style="font-size:.75rem;margin-top:4px">
+                        Só Administradores e Analistas têm acesso aos dados financeiros.
                     </div>
+                </div>
                 <?php endif; ?>
 
             </div><!-- /col-lg-8 -->
@@ -612,11 +496,11 @@ $cover_base  = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/covers/';
                         As minhas actividades
                     </div>
                     <?php if (empty($my_activities)): ?>
-                        <div class="text-center py-3">
-                            <div class="text-muted small">Sem actividades registadas.</div>
-                        </div>
+                    <div class="text-center py-3">
+                        <div class="text-muted small">Sem actividades registadas.</div>
+                    </div>
                     <?php else: ?>
-                        <?php
+                    <?php
                         $act_icons = [
                             'login'            => 'bi-box-arrow-in-right',
                             'logout'           => 'bi-box-arrow-right',
@@ -628,15 +512,15 @@ $cover_base  = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/covers/';
                             $ico = $act_icons[$act['activity_type']] ?? 'bi-activity';
                             $dt  = date('d/m H:i', strtotime($act['creat_activity']));
                         ?>
-                            <div class="act-item">
-                                <div class="act-dot"></div>
-                                <div style="min-width:0">
-                                    <div class="text-truncate">
-                                        <?php echo htmlspecialchars($act['description'] ?: $act['activity_type']); ?></div>
-                                    <div class="text-reset" style="font-size:.7rem"><?php echo $dt; ?></div>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
+                    <div class="act-item">
+                        <div class="act-dot"></div>
+                        <div style="min-width:0">
+                            <div class="text-truncate">
+                                <?php echo htmlspecialchars($act['description'] ?: $act['activity_type']); ?></div>
+                            <div class="text-reset" style="font-size:.7rem"><?php echo $dt; ?></div>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
                     <?php endif; ?>
                 </div>
 
@@ -645,154 +529,50 @@ $cover_base  = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/covers/';
 
     </main><!-- /main-content -->
 
+    <!-- Bottom nav -->
+    <?php require_once __DIR__ . '/include/navbar-bottom.php'; ?>
 
-    <!-- ── Bottom nav (mobile) ── -->
-    <nav class="bottom-nav-collab">
-        <a href="" class="active"><i class="bi bi-speedometer2"></i>Dashboard</a>
-        <?php if ($can_view_releases): ?>
-            <a href="<?php echo rtrim(APP_URL, '/'); ?>/dashboard/collab/releases">
-                <i class="bi bi-disc"></i>Releases
-            </a>
-        <?php endif; ?>
-        <?php if ($can_view_artists): ?>
-            <a href="<?php echo rtrim(APP_URL, '/'); ?>/dashboard/collab/artists">
-                <i class="bi bi-people"></i>Artistas
-            </a>
-        <?php endif; ?>
-        <?php if ($can_view_stats): ?>
-            <a href="<?php echo rtrim(APP_URL, '/'); ?>/dashboard/collab/statistics">
-                <i class="bi bi-bar-chart"></i>Stats
-            </a>
-        <?php endif; ?>
-        <a href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">
-            <i class="bi bi-box-arrow-right"></i>Sair
-        </a>
-    </nav>
-
-
-    <!-- ═══ MODAL — O meu perfil ═══ -->
-    <div class="modal fade" id="myProfileModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title"><i class="bi bi-person me-2" style="color:var(--wasom)"></i>O meu perfil
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body pt-0">
-                    <div class="text-center mb-3">
-                        <?php if ($collab['photo_collab']): ?>
-                            <img src="<?php echo htmlspecialchars($collab['photo_collab']); ?>"
-                                style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid var(--wasom)"
-                                onerror="this.style.display='none'" alt="" />
-                        <?php else: ?>
-                            <div
-                                style="width:72px;height:72px;border-radius:50%;background:rgba(255,0,137,.1);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto">
-                                🎤</div>
-                        <?php endif; ?>
-                        <h5 class="fw-bold mt-2 mb-0">
-                            <?php echo htmlspecialchars($collab['first_name'] . ' ' . ($collab['second_name'] ?? '')); ?>
-                        </h5>
-                        <div class="text-muted small">@<?php echo htmlspecialchars($collab['user_collab']); ?></div>
-                    </div>
-                    <div style="font-size:.83rem">
-                        <?php
-                        $info_rows = [
-                            ['Email',       $collab['email_collab'],      'bi-envelope'],
-                            ['Telefone',    $collab['tel_collab'] ?: '—', 'bi-telephone'],
-                            ['Função',      $role_label,                   'bi-person-badge'],
-                            ['Membro desde', date('d/m/Y', strtotime($collab['creat_collab'])), 'bi-calendar3'],
-                            ['Último login', $collab['last_login_at'] ? date('d/m/Y H:i', strtotime($collab['last_login_at'])) : '—', 'bi-clock'],
-                        ];
-                        foreach ($info_rows as [$label, $val, $ico]):
-                        ?>
-                            <div class="d-flex gap-2 py-2 border-bottom align-items-center">
-                                <i class="bi <?php echo $ico; ?> text-muted" style="width:16px"></i>
-                                <span class="text-reset" style="width:100px;flex-shrink:0"><?php echo $label; ?></span>
-                                <span class="fw-semibold text-truncate"><?php echo htmlspecialchars($val); ?></span>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                    <?php if ($collab['notes']): ?>
-                        <div class="mt-3 p-3"
-                            style="background:rgba(255,0,137,.04);border-radius:10px;border:1px solid rgba(255,0,137,.1)">
-                            <div class="text-reset" style="font-size:.7rem;margin-bottom:4px">NOTAS DO ADMINISTRADOR</div>
-                            <div style="font-size:.82rem"><?php echo htmlspecialchars($collab['notes']); ?></div>
-                        </div>
-                    <?php endif; ?>
-                </div>
-                <div class="modal-footer border-0 pt-0">
-                    <button class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Fechar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- ═══ MODAL — Logout ═══ -->
-    <div class="modal fade" id="logoutModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header border-0 pb-1">
-                    <h5 class="modal-title">Terminar sessão?</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body pt-0">
-                    <p class="small mb-0">
-                        Vais sair do painel de colaboradores. Podes entrar novamente através do link que recebeste por
-                        email.
-                    </p>
-                </div>
-                <div class="modal-footer border-0 gap-2 pt-1">
-                    <button class="btn btn-outline-secondary btn-sm flex-fill"
-                        data-bs-dismiss="modal">Continuar</button>
-                    <a href="<?php echo htmlspecialchars($logout_url); ?>" class="btn btn-danger btn-sm flex-fill">
-                        <i class="bi bi-box-arrow-right me-1"></i>Terminar
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
+    <?php require_once __DIR__ . '/include/modallogoutmyprofile.php'; ?>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
-        // ── Sidebar toggle (mobile) ────────────────────
-        function closeSidebar() {
-            document.getElementById('collabSidebar').classList.remove('open');
-            document.getElementById('sidebarOverlay').classList.remove('show');
-        }
-        document.getElementById('btn-sidebar-toggle')?.addEventListener('click', () => {
-            const sb = document.getElementById('collabSidebar');
-            const ov = document.getElementById('sidebarOverlay');
-            const open = sb.classList.toggle('open');
-            ov.classList.toggle('show', open);
-        });
+    // ── Sidebar toggle (mobile) ────────────────────
+    function closeSidebar() {
+        document.getElementById('collabSidebar').classList.remove('open');
+        document.getElementById('sidebarOverlay').classList.remove('show');
+    }
+    document.getElementById('btn-sidebar-toggle')?.addEventListener('click', () => {
+        const sb = document.getElementById('collabSidebar');
+        const ov = document.getElementById('sidebarOverlay');
+        const open = sb.classList.toggle('open');
+        ov.classList.toggle('show', open);
+    });
 
-        // ── Theme toggle ───────────────────────────────
-        const html = document.documentElement;
-        const saved = localStorage.getItem('wu_theme') || 'light';
-        html.setAttribute('data-theme', saved);
-        document.getElementById('themeIcon').className = saved === 'dark' ? 'bi bi-moon' : 'bi bi-sun';
+    // ── Theme toggle ───────────────────────────────
+    const html = document.documentElement;
+    const saved = localStorage.getItem('wu_theme') || 'light';
+    html.setAttribute('data-theme', saved);
+    document.getElementById('themeIcon').className = saved === 'dark' ? 'bi bi-moon' : 'bi bi-sun';
 
-        document.getElementById('themeToggle').addEventListener('click', () => {
-            const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-            html.setAttribute('data-theme', next);
-            localStorage.setItem('wu_theme', next);
-            document.getElementById('themeIcon').className = next === 'dark' ? 'bi bi-moon' : 'bi bi-sun';
-        });
+    document.getElementById('themeToggle').addEventListener('click', () => {
+        const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        localStorage.setItem('wu_theme', next);
+        document.getElementById('themeIcon').className = next === 'dark' ? 'bi bi-moon' : 'bi bi-sun';
+    });
 
-        // ── Ping last_seen every 2 min ─────────────────
-        setInterval(() => {
-            fetch('<?php echo rtrim(APP_URL, "/") . "/dashboard/collab/ping"; ?>', {
-                method: 'POST',
-                body: (() => {
-                    const f = new FormData();
-                    return f;
-                })()
-            }).catch(() => {});
-        }, 120000);
+    // ── Ping last_seen every 2 min ─────────────────
+    setInterval(() => {
+        fetch('<?php echo rtrim(APP_URL, "/") . "/dashboard/collab/ping"; ?>', {
+            method: 'POST',
+            body: (() => {
+                const f = new FormData();
+                return f;
+            })()
+        }).catch(() => {});
+    }, 120000);
     </script>
 </body>
 

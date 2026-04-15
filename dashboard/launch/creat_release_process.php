@@ -195,9 +195,9 @@ switch ($action) {
 
         jsonOut(true, 'Artista criado com sucesso!', ['id_artist' => $new_id]);
 
-    // ──────────────────────────────────────────
-    // CREATE RELEASE
-    // ──────────────────────────────────────────
+        // ──────────────────────────────────────────
+        // CREATE RELEASE
+        // ──────────────────────────────────────────
     case 'create_release':
         $title          = trim($_POST['title_album']     ?? '');
         $version        = trim($_POST['version_album']   ?? '');
@@ -305,6 +305,42 @@ switch ($action) {
             $filename   = 'cover_' . $id_users . '_' . time() . '.' . $ext;
             $cover_path = $filename;
             move_uploaded_file($file['tmp_name'], $dir . $filename);
+        }
+
+        // Verificar limite de lançamentos do plano
+        $user_plan_stmt = $db->prepare("
+    SELECT up.releases_used, up.releases_limit, up.status_plan
+    FROM _user_plan up
+    WHERE up.id_users = ? AND up.status_plan = 'active'
+    ORDER BY up.id_user_plan DESC
+    LIMIT 1
+");
+        $user_plan_stmt->execute([$id_users]);
+        $user_plan = $user_plan_stmt->fetch();
+
+        if (!$user_plan) {
+            jsonOut(false, 'Não foi possível localizar o teu plano ativo. Contacta o suporte.');
+        }
+
+        // Para planos com limite definido (ex.: pacotes de singles)
+        if ($user_plan['releases_limit'] !== null) {
+            if ((int)$user_plan['releases_used'] >= (int)$user_plan['releases_limit']) {
+                jsonOut(false, 'Atingiste o limite de lançamentos do teu plano. Faz upgrade para continuar.');
+            }
+        }
+
+        // Para plano Single sem pacote, deve ter apenas 1 lançamento ativo (independente de releases_limit)
+        if ($plan_slug === 'single') {
+            $active_count_stmt = $db->prepare("
+        SELECT COUNT(*) FROM _album
+        WHERE id_users = ? 
+          AND status_album IN ('pending', 'under_review', 'approved')
+    ");
+            $active_count_stmt->execute([$id_users]);
+            $active_albums = (int)$active_count_stmt->fetchColumn();
+            if ($active_albums >= 1) {
+                jsonOut(false, 'O plano Single permite apenas 1 lançamento ativo. Aguarda a conclusão do teu lançamento atual ou faz upgrade.');
+            }
         }
 
         // ── DATABASE TRANSACTION ──────────────
@@ -427,7 +463,6 @@ switch ($action) {
                 INSERT INTO _album_store (id_album, id_store, status)
                 VALUES (?, ?, 'pending')
             ");
-
             foreach ($store_ids as $sid) {
                 $sv = $db->prepare("SELECT id_store FROM _store WHERE id_store = ? AND is_active = 1");
                 $sv->execute([(int)$sid]);
@@ -435,6 +470,13 @@ switch ($action) {
                     $ins_store->execute([$id_album, (int)$sid]);
                 }
             }
+
+            // 4. Incrementar contador de lançamentos usados
+            $db->prepare("
+                UPDATE _user_plan 
+                SET releases_used = releases_used + 1 
+                WHERE id_users = ? AND status_plan = 'active'
+            ")->execute([$id_users]);
 
             $db->commit();
 
@@ -474,14 +516,14 @@ switch ($action) {
         $copyright_p = trim($_POST['copyright_p'] ?? '');
         $name_author_band = trim($_POST['name_author_band'] ?? '');
         $id_artist = (int)($_POST['id_artist'] ?? 0);
-        
+
         // Stores selecionadas
         $store_ids = $_POST['stores'] ?? [];
         if (!is_array($store_ids)) $store_ids = [];
 
         // Tracks (vem como array do formulário de edição)
         $tracks = $_POST['tracks'] ?? [];
-        
+
         // Validar dados básicos
         if (empty($title) || strlen($title) > 150) {
             jsonOut(false, 'Título inválido ou muito longo (máx. 150 caracteres).');
@@ -495,14 +537,14 @@ switch ($action) {
         if (!$id_artist) {
             jsonOut(false, 'Seleciona um artista principal.');
         }
-        
+
         // Verificar se o álbum pertence ao utilizador
         $check = $db->prepare("SELECT id_album FROM _album WHERE id_album = ? AND id_users = ?");
         $check->execute([$id_album, $id_users]);
         if (!$check->fetch()) {
             jsonOut(false, 'Lançamento não encontrado ou não pertence à tua conta.');
         }
-        
+
         // Verificar se o artista pertence ao utilizador
         $check_artist = $db->prepare("SELECT id_artist FROM _artist WHERE id_artist = ? AND id_users = ?");
         $check_artist->execute([$id_artist, $id_users]);
@@ -512,7 +554,7 @@ switch ($action) {
 
         try {
             $db->beginTransaction();
-            
+
             // 1. Atualizar _album
             $update_album = $db->prepare("
                 UPDATE _album SET
@@ -529,7 +571,7 @@ switch ($action) {
                     id_artist = ?
                 WHERE id_album = ? AND id_users = ?
             ");
-            
+
             $update_album->execute([
                 $title,
                 $type_album,
@@ -545,12 +587,12 @@ switch ($action) {
                 $id_album,
                 $id_users
             ]);
-            
+
             // 2. Atualizar tracks (se vierem do formulário)
             if (!empty($tracks) && is_array($tracks)) {
                 foreach ($tracks as $track) {
                     if (empty($track['id_track'])) continue;
-                    
+
                     $id_track = (int)$track['id_track'];
                     $track_title = trim($track['title_track'] ?? '');
                     $track_author = trim($track['name_author'] ?? $name_author_band);
@@ -562,10 +604,10 @@ switch ($action) {
                     $track_isrc = !empty($track['isrc']) ? strtoupper(preg_replace('/[^A-Z0-9]/', '', $track['isrc'])) : null;
                     $track_duration = !empty($track['duration_seconds']) ? (int)$track['duration_seconds'] : null;
                     $mix_version = trim($track['mix_version'] ?? '');
-                    
+
                     // Combinar título com versão se existir
                     $full_track_title = $track_title . ($mix_version ? ' (' . $mix_version . ')' : '');
-                    
+
                     $update_track = $db->prepare("
                         UPDATE _track SET
                             title_track = ?,
@@ -579,7 +621,7 @@ switch ($action) {
                             duration_seconds = ?
                         WHERE id_track = ? AND id_album = ? AND id_users = ?
                     ");
-                    
+
                     $update_track->execute([
                         $full_track_title,
                         $track_author ?: $name_author_band,
@@ -596,10 +638,10 @@ switch ($action) {
                     ]);
                 }
             }
-            
+
             // 3. Atualizar stores (remover todas e reinserir)
             $db->prepare("DELETE FROM _album_store WHERE id_album = ?")->execute([$id_album]);
-            
+
             if (!empty($store_ids)) {
                 $ins_store = $db->prepare("INSERT INTO _album_store (id_album, id_store, status) VALUES (?, ?, 'pending')");
                 foreach ($store_ids as $sid) {
@@ -609,9 +651,9 @@ switch ($action) {
                     }
                 }
             }
-            
+
             $db->commit();
-            
+
             logActivity(
                 $id_users,
                 'release_updated',
@@ -619,11 +661,10 @@ switch ($action) {
                 'album',
                 $id_album
             );
-            
+
             jsonOut(true, 'Lançamento atualizado com sucesso!', [
                 'id_album' => $id_album
             ]);
-            
         } catch (Exception $e) {
             $db->rollBack();
             error_log('[EDIT ERROR] ' . $e->getMessage());

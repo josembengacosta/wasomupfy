@@ -171,7 +171,7 @@ try {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex, nofollow" />
-    <meta name="theme-color" content="#FF0089" />
+    <meta name="theme-color" content="#FF2D66" />
     <title>Lançamentos — <?php echo APP_NAME; ?></title>
     <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
@@ -179,155 +179,61 @@ try {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
     <link rel="stylesheet" href="css/collab.css" />
     <style>
-        /* ── Album cards ── */
-        .album-card {
-            background: var(--card);
-            border-radius: 16px;
-            border: 1.5px solid var(--border);
-            overflow: hidden;
-            transition: border-color .2s, box-shadow .2s;
-        }
+    /* ── Album cards ── */
+    .album-card {
+        background: var(--card);
+        border-radius: 16px;
+        border: 1.5px solid var(--border);
+        overflow: hidden;
+        transition: border-color .2s, box-shadow .2s;
+    }
 
-        .album-card:hover {
-            border-color: rgba(255, 0, 137, .2);
-            box-shadow: 0 4px 20px rgba(255, 0, 137, .08);
-        }
+    .album-card:hover {
+        border-color: rgba(255, 0, 137, .2);
+        box-shadow: 0 4px 20px rgba(255, 0, 137, .08);
+    }
 
-        .album-cover {
-            width: 100%;
-            aspect-ratio: 1;
-            object-fit: cover;
-            background: rgba(255, 0, 137, .06);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-        }
+    .album-cover {
+        width: 100%;
+        aspect-ratio: 1;
+        object-fit: cover;
+        background: rgba(255, 0, 137, .06);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+    }
 
-        .album-cover img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+    .album-cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 
-        .album-body {
-            padding: 14px;
-        }
+    .album-body {
+        padding: 14px;
+    }
 
-        /* ── Filtros ── */
-        .filter-bar {
-            background: var(--card);
-            border-radius: 14px;
-            border: 1.5px solid var(--border);
-            padding: 16px;
-            margin-bottom: 20px;
-        }
+    /* ── Filtros ── */
+    .filter-bar {
+        background: var(--card);
+        border-radius: 14px;
+        border: 1.5px solid var(--border);
+        padding: 16px;
+        margin-bottom: 20px;
+    }
     </style>
 </head>
 
 <body>
 
-    <!-- ═══ NAVBAR ═══ -->
-    <nav class="collab-nav">
-        <button class="theme-btn d-md-none" id="btn-sidebar-toggle"><i class="bi bi-list"></i></button>
-        <a class="nav-brand" href="<?php echo $base_url; ?>/dashboard/collab/overview">
-            <?php echo APP_NAME; ?><span>For Colaboradores</span>
-        </a>
-        <div class="nav-spacer"></div>
-        <div class="nav-chip d-none d-md-inline-flex"
-            style="background:<?php echo $rm['bg']; ?>;color:<?php echo $rm['color']; ?>;border-color:<?php echo $rm['color']; ?>20">
-            <i class="bi <?php echo $rm['icon']; ?>"></i><?php echo $role_label; ?>
-        </div>
-        <button class="theme-btn" id="themeToggle"><i class="bi bi-sun" id="themeIcon"></i></button>
-        <div class="dropdown">
-            <button class="nav-avatar dropdown-toggle" style="background:none;border:none;cursor:pointer"
-                data-bs-toggle="dropdown">
-                <?php if ($collab['photo_collab']): ?>
-                    <img src="<?php echo htmlspecialchars($collab['photo_collab']); ?>" alt=""
-                        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
-                    <span style="display:none">👤</span>
-                <?php else: ?><span>👤</span><?php endif; ?>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end" style="font-size:.84rem;min-width:200px">
-                <li class="px-3 py-2">
-                    <div class="fw-bold">
-                        <?php echo htmlspecialchars($collab['first_name'] . ' ' . ($collab['second_name'] ?? '')); ?>
-                    </div>
-                    <div class="text-muted" style="font-size:.72rem">
-                        @<?php echo htmlspecialchars($collab['user_collab']); ?></div>
-                    <div class="mt-1">
-                        <span class="chip"
-                            style="background:<?php echo $rm['bg']; ?>;color:<?php echo $rm['color']; ?>">
-                            <i class="bi <?php echo $rm['icon']; ?>"></i><?php echo $role_label; ?>
-                        </span>
-                    </div>
-                </li>
-                <li>
-                    <hr class="dropdown-divider" />
-                </li>
-                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#myProfileModal"><i
-                            class="bi bi-person me-2"></i>O meu perfil</a></li>
-                <li><a class="dropdown-item" href="<?php echo $base_url; ?>/dashboard/collab/overview"><i
-                            class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
-                <li>
-                    <hr class="dropdown-divider" />
-                </li>
-                <li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal"
-                        data-bs-target="#logoutModal"><i class="bi bi-box-arrow-right me-2"></i>Terminar sessão</a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <!-- ═══ SIDEBAR OVERLAY ═══ -->
+    <!-- ═══ NAVBAR ═══ -->>
+    <?php require_once __DIR__ . '/include/navbar-top.php'; ?>
+    <!-- ═══ SIDEBAR OVERLAY (mobile) ═══ -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
     <!-- ═══ SIDEBAR ═══ -->
-    <aside class="collab-sidebar" id="collabSidebar">
-        <div class="owner-card mb-3">
-            <div
-                style="font-size:.65rem;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">
-                Conta</div>
-            <div class="fw-bold" style="font-size:.95rem"><?php echo $owner_artist_name; ?></div>
-            <div style="font-size:.72rem;color:rgba(255,255,255,.75);margin-top:2px"><?php echo $plan_name; ?></div>
-        </div>
-
-        <div class="sidebar-section">Menu</div>
-        <a href="<?php echo $base_url; ?>/dashboard/collab/overview" class="sidebar-link">
-            <i class="bi bi-speedometer2"></i>Dashboard
-        </a>
-        <?php if ($can_view_releases): ?>
-            <a href="<?php echo $base_url; ?>/dashboard/collab/releases" class="sidebar-link active">
-                <i class="bi bi-disc"></i>Lançamentos
-                <?php if ((int)($stats['pending'] ?? 0) > 0): ?>
-                    <span class="badge-count"><?php echo $stats['pending']; ?></span>
-                <?php endif; ?>
-            </a>
-        <?php endif; ?>
-        <?php if ($can_view_artists): ?>
-            <a href="<?php echo $base_url; ?>/dashboard/collab/artists" class="sidebar-link">
-                <i class="bi bi-people"></i>Artistas
-            </a>
-        <?php endif; ?>
-        <?php if ($can_view_finances): ?>
-            <div class="sidebar-section">Finanças</div>
-            <a href="<?php echo $base_url; ?>/dashboard/collab/finances" class="sidebar-link">
-                <i class="bi bi-currency-dollar"></i>Visão geral
-            </a>
-        <?php endif; ?>
-        <?php if ($can_view_stats): ?>
-            <div class="sidebar-section">Análise</div>
-            <a href="<?php echo $base_url; ?>/dashboard/collab/statistics" class="sidebar-link">
-                <i class="bi bi-bar-chart"></i>Estatísticas
-            </a>
-        <?php endif; ?>
-        <div class="sidebar-section">Conta</div>
-        <a href="#" class="sidebar-link" data-bs-toggle="modal" data-bs-target="#myProfileModal">
-            <i class="bi bi-person-gear"></i>O meu perfil
-        </a>
-        <a href="#" class="sidebar-link text-danger" data-bs-toggle="modal" data-bs-target="#logoutModal">
-            <i class="bi bi-box-arrow-right"></i>Terminar sessão
-        </a>
-    </aside>
+    <?php require_once __DIR__ . '/include/sidebar.php'; ?>
 
 
     <!-- ═══ MAIN CONTENT ═══ -->
@@ -341,11 +247,11 @@ try {
             </div>
             <div class="d-flex align-items-center gap-2">
                 <?php if ($can_edit_releases): ?>
-                    <button class="btn btn-sm fw-semibold px-3"
-                        style="background:var(--wasom);color:#fff;border-radius:20px" data-bs-toggle="modal"
-                        data-bs-target="#collabCreateModal">
-                        <i class="bi bi-plus me-1"></i>Novo lançamento
-                    </button>
+                <button class="btn btn-sm fw-semibold px-3"
+                    style="background:var(--wasom);color:#fff;border-radius:20px" data-bs-toggle="modal"
+                    data-bs-target="#collabCreateModal">
+                    <i class="bi bi-plus me-1"></i>Novo lançamento
+                </button>
                 <?php endif; ?>
             </div>
         </div>
@@ -439,17 +345,18 @@ try {
                     $is_active = $filter_status === $val;
                     $url = '?' . http_build_query(array_merge($_GET, ['status' => $val, 'page' => 1]));
                 ?>
-                    <a href="<?php echo htmlspecialchars($url); ?>"
-                        class="filter-pill <?php echo $is_active ? 'active' : ''; ?>">
-                        <?php echo $lbl; ?>
-                        <span class="count"><?php echo $cnt_v; ?></span>
-                    </a>
+                <a href="<?php echo htmlspecialchars($url); ?>"
+                    class="filter-pill <?php echo $is_active ? 'active' : ''; ?>">
+                    <?php echo $lbl; ?>
+                    <span class="count"><?php echo $cnt_v; ?></span>
+                </a>
                 <?php endforeach; ?>
 
                 <!-- Tipo -->
                 <select class="form-select form-select-sm" name="type"
                     style="max-width:130px;border-color:var(--border)" onchange="this.form.submit()">
-                    <option value="all" <?php echo $filter_type === 'all'     ? 'selected' : ''; ?>>Todos os tipos</option>
+                    <option value="all" <?php echo $filter_type === 'all'     ? 'selected' : ''; ?>>Todos os tipos
+                    </option>
                     <option value="single" <?php echo $filter_type === 'single'  ? 'selected' : ''; ?>>Single</option>
                     <option value="EP" <?php echo $filter_type === 'EP'      ? 'selected' : ''; ?>>EP</option>
                     <option value="album" <?php echo $filter_type === 'album'   ? 'selected' : ''; ?>>Álbum</option>
@@ -460,124 +367,113 @@ try {
                     <i class="bi bi-funnel"></i>
                 </button>
                 <?php if ($search || $filter_status !== 'all' || $filter_type !== 'all'): ?>
-                    <a href="?" class="btn btn-sm btn-outline-danger"><i class="bi bi-x"></i> Limpar</a>
+                <a href="?" class="btn btn-sm btn-outline-danger"><i class="bi bi-x"></i> Limpar</a>
                 <?php endif; ?>
             </form>
         </div>
 
         <!-- Grid de álbuns -->
         <?php if (empty($albums)): ?>
-            <div class="text-center py-5" style="color:var(--muted)">
-                <div style="font-size:3.5rem;opacity:.2;margin-bottom:12px">🎵</div>
-                <div class="fw-semibold">Nenhum lançamento encontrado</div>
-                <div class="small mt-1">Tenta outros filtros ou pesquisa</div>
-                <?php if ($can_edit_releases): ?>
-                    <button class="btn btn-sm mt-3 px-4" style="background:var(--wasom);color:#fff;border-radius:20px"
-                        data-bs-toggle="modal" data-bs-target="#collabCreateModal">
-                        <i class="bi bi-plus me-1"></i>Criar lançamento
-                    </button>
-                <?php endif; ?>
-            </div>
+        <div class="text-center py-5" style="color:var(--muted)">
+            <div style="font-size:3.5rem;opacity:.2;margin-bottom:12px">🎵</div>
+            <div class="fw-semibold">Nenhum lançamento encontrado</div>
+            <div class="small mt-1">Tenta outros filtros ou pesquisa</div>
+            <?php if ($can_edit_releases): ?>
+            <button class="btn btn-sm mt-3 px-4" style="background:var(--wasom);color:#fff;border-radius:20px"
+                data-bs-toggle="modal" data-bs-target="#collabCreateModal">
+                <i class="bi bi-plus me-1"></i>Criar lançamento
+            </button>
+            <?php endif; ?>
+        </div>
         <?php else: ?>
-            <div class="row g-3 mb-4">
-                <?php foreach ($albums as $alb):
+        <div class="row g-3 mb-4">
+            <?php foreach ($albums as $alb):
                     $sm = $status_meta[$alb['status_album']] ?? $status_meta['draft'];
                     $tl = $type_labels[$alb['type_album']] ?? $alb['type_album'];
                 ?>
-                    <div class="col-6 col-md-4 col-lg-3">
-                        <div class="album-card h-100">
-                            <!-- Capa -->
-                            <div class="album-cover" style="height:160px">
-                                <?php if ($alb['img_cover']): ?>
-                                    <img src="<?php echo htmlspecialchars($cover_base . $alb['img_cover']); ?>" alt=""
-                                        onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\'font-size:3rem\'>🎵</span>'" />
-                                <?php else: ?>
-                                    <span style="font-size:3rem">🎵</span>
-                                <?php endif; ?>
-                            </div>
-                            <div class="album-body">
-                                <!-- Status + tipo -->
-                                <div class="d-flex gap-1 mb-2 flex-wrap">
-                                    <span class="chip"
-                                        style="background:<?php echo $sm['bg']; ?>;color:<?php echo $sm['color']; ?>">
-                                        <?php echo $sm['label']; ?>
-                                    </span>
-                                    <span class="chip" style="background:rgba(255,0,137,.07);color:var(--wasom)">
-                                        <?php echo $tl; ?>
-                                    </span>
-                                </div>
-                                <!-- Título -->
-                                <div class="fw-bold text-truncate" style="font-size:.88rem">
-                                    <?php echo htmlspecialchars($alb['title_album']); ?>
-                                </div>
-                                <!-- Artista -->
-                                <div class="text-muted text-truncate" style="font-size:.73rem;margin-top:2px">
-                                    <i class="bi bi-person me-1"></i><?php echo htmlspecialchars($alb['stage_name'] ?? '—'); ?>
-                                </div>
-                                <!-- Data -->
-                                <div class="text-muted" style="font-size:.7rem;margin-top:4px">
-                                    <i class="bi bi-calendar3 me-1"></i>
-                                    <?php echo $alb['release_date'] ? date('d/m/Y', strtotime($alb['release_date'])) : date('d/m/Y', strtotime($alb['creat_album'])); ?>
-                                </div>
-                                <!-- UPC -->
-                                <?php if ($alb['upc']): ?>
-                                    <div class="text-muted mt-1" style="font-size:.68rem;font-family:monospace">
-                                        UPC: <?php echo htmlspecialchars($alb['upc']); ?>
-                                    </div>
-                                <?php endif; ?>
-                                <!-- Acções -->
-                                <div class="d-flex gap-1 mt-3 flex-wrap">
-                                    <button class="btn btn-sm flex-fill"
-                                        style="background:rgba(255,0,137,.07);color:var(--wasom);border:1px solid rgba(255,0,137,.15);font-size:.72rem;border-radius:8px"
-                                        onclick="viewAlbum(<?php echo $alb['id_album']; ?>)">
-                                        <i class="bi bi-eye me-1"></i>Ver detalhes
-                                    </button>
-                                    <?php if ($can_edit_releases && in_array($alb['status_album'], ['draft', 'rejected'])): ?>
-                                        <button class="btn btn-sm"
-                                            style="background:rgba(255,0,137,.1);color:var(--wasom);border:1px solid rgba(255,0,137,.2);font-size:.72rem;border-radius:8px"
-                                            data-bs-toggle="modal" data-bs-target="#collabCreateModal">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="album-card h-100">
+                    <!-- Capa -->
+                    <div class="album-cover" style="height:160px">
+                        <?php if ($alb['img_cover']): ?>
+                        <img src="<?php echo htmlspecialchars($cover_base . $alb['img_cover']); ?>" alt=""
+                            onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\'font-size:3rem\'>🎵</span>'" />
+                        <?php else: ?>
+                        <span style="font-size:3rem">🎵</span>
+                        <?php endif; ?>
+                    </div>
+                    <div class="album-body">
+                        <!-- Status + tipo -->
+                        <div class="d-flex gap-1 mb-2 flex-wrap">
+                            <span class="chip"
+                                style="background:<?php echo $sm['bg']; ?>;color:<?php echo $sm['color']; ?>">
+                                <?php echo $sm['label']; ?>
+                            </span>
+                            <span class="chip" style="background:rgba(255,0,137,.07);color:var(--wasom)">
+                                <?php echo $tl; ?>
+                            </span>
+                        </div>
+                        <!-- Título -->
+                        <div class="fw-bold text-truncate" style="font-size:.88rem">
+                            <?php echo htmlspecialchars($alb['title_album']); ?>
+                        </div>
+                        <!-- Artista -->
+                        <div class="text-muted text-truncate" style="font-size:.73rem;margin-top:2px">
+                            <i class="bi bi-person me-1"></i><?php echo htmlspecialchars($alb['stage_name'] ?? '—'); ?>
+                        </div>
+                        <!-- Data -->
+                        <div class="text-muted" style="font-size:.7rem;margin-top:4px">
+                            <i class="bi bi-calendar3 me-1"></i>
+                            <?php echo $alb['release_date'] ? date('d/m/Y', strtotime($alb['release_date'])) : date('d/m/Y', strtotime($alb['creat_album'])); ?>
+                        </div>
+                        <!-- UPC -->
+                        <?php if ($alb['upc']): ?>
+                        <div class="text-muted mt-1" style="font-size:.68rem;font-family:monospace">
+                            UPC: <?php echo htmlspecialchars($alb['upc']); ?>
+                        </div>
+                        <?php endif; ?>
+                        <!-- Acções -->
+                        <div class="d-flex gap-1 mt-3 flex-wrap">
+                            <button class="btn btn-sm flex-fill"
+                                style="background:rgba(255,0,137,.07);color:var(--wasom);border:1px solid rgba(255,0,137,.15);font-size:.72rem;border-radius:8px"
+                                onclick="viewAlbum(<?php echo $alb['id_album']; ?>)">
+                                <i class="bi bi-eye me-1"></i>Ver detalhes
+                            </button>
+                            <?php if ($can_edit_releases && in_array($alb['status_album'], ['draft', 'rejected'])): ?>
+                            <button class="btn btn-sm"
+                                style="background:rgba(255,0,137,.1);color:var(--wasom);border:1px solid rgba(255,0,137,.2);font-size:.72rem;border-radius:8px"
+                                data-bs-toggle="modal" data-bs-target="#collabCreateModal">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <?php endif; ?>
                         </div>
                     </div>
-                <?php endforeach; ?>
+                </div>
             </div>
+            <?php endforeach; ?>
+        </div>
 
-            <!-- Paginação -->
-            <?php if ($pages > 1): ?>
-                <nav class="d-flex justify-content-center gap-1 flex-wrap">
-                    <?php for ($p = 1; $p <= $pages; $p++): ?>
-                        <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $p])); ?>"
-                            class="btn btn-sm <?php echo $p === $page ? 'btn-wasom' : 'btn-outline-secondary'; ?>"
-                            style="<?php echo $p === $page ? 'background:var(--wasom);color:#fff;border-color:var(--wasom)' : ''; ?>; min-width:36px">
-                            <?php echo $p; ?>
-                        </a>
-                    <?php endfor; ?>
-                </nav>
-            <?php endif; ?>
+        <!-- Paginação -->
+        <?php if ($pages > 1): ?>
+        <nav class="d-flex justify-content-center gap-1 flex-wrap">
+            <?php for ($p = 1; $p <= $pages; $p++): ?>
+            <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $p])); ?>"
+                class="btn btn-sm <?php echo $p === $page ? 'btn-wasom' : 'btn-outline-secondary'; ?>"
+                style="<?php echo $p === $page ? 'background:var(--wasom);color:#fff;border-color:var(--wasom)' : ''; ?>; min-width:36px">
+                <?php echo $p; ?>
+            </a>
+            <?php endfor; ?>
+        </nav>
+        <?php endif; ?>
         <?php endif; ?>
 
     </main><!-- /main-content -->
 
 
-    <!-- Bottom nav (mobile) -->
-    <nav class="bottom-nav-collab">
-        <a href="<?php echo $base_url; ?>/dashboard/collab/overview"><i class="bi bi-speedometer2"></i>Dashboard</a>
-        <a href="<?php echo $base_url; ?>/dashboard/collab/releases" class="active"><i
-                class="bi bi-disc"></i>Releases</a>
-        <?php if ($can_view_artists): ?>
-            <a href="<?php echo $base_url; ?>/dashboard/collab/artists"><i class="bi bi-people"></i>Artistas</a>
-        <?php endif; ?>
-        <?php if ($can_view_stats): ?>
-            <a href="<?php echo $base_url; ?>/dashboard/collab/statistics"><i class="bi bi-bar-chart"></i>Stats</a>
-        <?php endif; ?>
-        <?php if ($can_view_finances): ?>
-            <a href="<?php echo $base_url; ?>/dashboard/collab/finances"><i class="bi bi-currency-dollar"></i>Finanças</a>
-        <?php endif; ?>
-    </nav>
+    <!-- Bottom nav -->
+    <?php require_once __DIR__ . '/include/navbar-bottom.php'; ?>
+
+    <?php require_once __DIR__ . '/include/modallogoutmyprofile.php'; ?>
 
 
     <!-- Modal aviso: criar/editar lançamento -->
@@ -623,172 +519,89 @@ try {
     </div>
 
 
-    <!-- Modal — O meu perfil -->
-    <div class="modal fade" id="myProfileModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title"><i class="bi bi-person me-2" style="color:var(--wasom)"></i>O meu perfil
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body pt-0">
-                    <div class="text-center mb-3">
-                        <?php if ($collab['photo_collab']): ?>
-                            <img src="<?php echo htmlspecialchars($collab['photo_collab']); ?>"
-                                style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid var(--wasom)"
-                                onerror="this.style.display='none'" alt="" />
-                        <?php else: ?>
-                            <div
-                                style="width:72px;height:72px;border-radius:50%;background:rgba(255,0,137,.1);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto">
-                                🎤</div>
-                        <?php endif; ?>
-                        <h5 class="fw-bold mt-2 mb-0">
-                            <?php echo htmlspecialchars($collab['first_name'] . ' ' . ($collab['second_name'] ?? '')); ?>
-                        </h5>
-                        <div class="text-muted small">@<?php echo htmlspecialchars($collab['user_collab']); ?></div>
-                    </div>
-                    <div style="font-size:.83rem">
-                        <?php
-                        $info_rows = [
-                            ['Email',        $collab['email_collab'],       'bi-envelope'],
-                            ['Telefone',     $collab['tel_collab'] ?: '—',  'bi-telephone'],
-                            ['Função',       $role_label,                    'bi-person-badge'],
-                            ['Membro desde', date('d/m/Y', strtotime($collab['creat_collab'])), 'bi-calendar3'],
-                            ['Último login', $collab['last_login_at'] ? date('d/m/Y H:i', strtotime($collab['last_login_at'])) : '—', 'bi-clock'],
-                        ];
-                        foreach ($info_rows as [$label, $val, $ico]):
-                        ?>
-                            <div class="d-flex gap-2 py-2 border-bottom align-items-center">
-                                <i class="bi <?php echo $ico; ?> text-muted" style="width:16px"></i>
-                                <span class="text-muted" style="width:100px;flex-shrink:0"><?php echo $label; ?></span>
-                                <span class="fw-semibold text-truncate"><?php echo htmlspecialchars($val); ?></span>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                    <?php if ($collab['notes']): ?>
-                        <div class="mt-3 p-3"
-                            style="background:rgba(255,0,137,.04);border-radius:10px;border:1px solid rgba(255,0,137,.1)">
-                            <div class="text-muted" style="font-size:.7rem;margin-bottom:4px">NOTAS DO ADMINISTRADOR</div>
-                            <div style="font-size:.82rem"><?php echo htmlspecialchars($collab['notes']); ?></div>
-                        </div>
-                    <?php endif; ?>
-                </div>
-                <div class="modal-footer border-0 pt-0">
-                    <button class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Fechar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ════ MODAL — Logout ════ -->
-    <div class="modal fade" id="logoutModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered" style="max-width:360px">
-            <div class="modal-content">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title">Terminar sessão?</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body pt-0">
-                    <p class="text-muted small mb-0">
-                        Vais sair do painel de colaboradores. Podes entrar novamente através do link que recebeste por
-                        email.
-                    </p>
-                </div>
-                <div class="modal-footer border-0 gap-2 pt-1">
-                    <button class="btn btn-outline-secondary btn-sm flex-fill"
-                        data-bs-dismiss="modal">Continuar</button>
-                    <a href="<?php echo htmlspecialchars($logout_url); ?>" class="btn btn-danger btn-sm flex-fill">
-                        <i class="bi bi-box-arrow-right me-1"></i>Terminar
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
-        const BASE_URL = '<?php echo $base_url; ?>';
+    const BASE_URL = '<?php echo $base_url; ?>';
 
-        // ── Sidebar toggle ────────────────────────────
-        function closeSidebar() {
-            document.getElementById('collabSidebar').classList.remove('open');
-            document.getElementById('sidebarOverlay').classList.remove('show');
-        }
-        document.getElementById('btn-sidebar-toggle')?.addEventListener('click', () => {
-            const sb = document.getElementById('collabSidebar');
-            const ov = document.getElementById('sidebarOverlay');
-            const open = sb.classList.toggle('open');
-            ov.classList.toggle('show', open);
-        });
+    // ── Sidebar toggle ────────────────────────────
+    function closeSidebar() {
+        document.getElementById('collabSidebar').classList.remove('open');
+        document.getElementById('sidebarOverlay').classList.remove('show');
+    }
+    document.getElementById('btn-sidebar-toggle')?.addEventListener('click', () => {
+        const sb = document.getElementById('collabSidebar');
+        const ov = document.getElementById('sidebarOverlay');
+        const open = sb.classList.toggle('open');
+        ov.classList.toggle('show', open);
+    });
 
-        // ── Theme ─────────────────────────────────────
-        const html = document.documentElement;
-        const saved = localStorage.getItem('wu_theme') || 'light';
-        html.setAttribute('data-theme', saved);
-        document.getElementById('themeIcon').className = saved === 'dark' ? 'bi bi-moon' : 'bi bi-sun';
-        document.getElementById('themeToggle').addEventListener('click', () => {
-            const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-            html.setAttribute('data-theme', next);
-            localStorage.setItem('wu_theme', next);
-            document.getElementById('themeIcon').className = next === 'dark' ? 'bi bi-moon' : 'bi bi-sun';
-        });
+    // ── Theme ─────────────────────────────────────
+    const html = document.documentElement;
+    const saved = localStorage.getItem('wu_theme') || 'light';
+    html.setAttribute('data-theme', saved);
+    document.getElementById('themeIcon').className = saved === 'dark' ? 'bi bi-moon' : 'bi bi-sun';
+    document.getElementById('themeToggle').addEventListener('click', () => {
+        const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        localStorage.setItem('wu_theme', next);
+        document.getElementById('themeIcon').className = next === 'dark' ? 'bi bi-moon' : 'bi bi-sun';
+    });
 
-        // ── Ver detalhes do álbum (AJAX) ──────────────
-        const albumModal = new bootstrap.Modal(document.getElementById('albumDetailModal'));
+    // ── Ver detalhes do álbum (AJAX) ──────────────
+    const albumModal = new bootstrap.Modal(document.getElementById('albumDetailModal'));
 
-        async function viewAlbum(id) {
-            document.getElementById('modal-album-title').textContent = 'A carregar...';
-            document.getElementById('modal-album-body').innerHTML =
-                '<div class="text-center py-4"><div class="spinner-border" style="color:#FF0089"></div></div>';
-            albumModal.show();
+    async function viewAlbum(id) {
+        document.getElementById('modal-album-title').textContent = 'A carregar...';
+        document.getElementById('modal-album-body').innerHTML =
+            '<div class="text-center py-4"><div class="spinner-border" style="color:#FF0089"></div></div>';
+        albumModal.show();
 
-            try {
-                const r = await fetch(`${BASE_URL}/dashboard/collab/releases_ajax.php?id=${id}`);
-                const data = await r.json();
+        try {
+            const r = await fetch(`${BASE_URL}/dashboard/collab/releases_ajax.php?id=${id}`);
+            const data = await r.json();
 
-                if (!data.ok) throw new Error(data.message || 'Erro');
+            if (!data.ok) throw new Error(data.message || 'Erro');
 
-                const a = data.album;
-                const sm = {
-                    approved: {
-                        label: 'Aprovado',
-                        color: '#198754',
-                        bg: 'rgba(25,135,84,.1)'
-                    },
-                    pending: {
-                        label: 'Pendente',
-                        color: '#856404',
-                        bg: 'rgba(255,193,7,.12)'
-                    },
-                    under_review: {
-                        label: 'Em revisão',
-                        color: '#0d6efd',
-                        bg: 'rgba(13,110,253,.1)'
-                    },
-                    rejected: {
-                        label: 'Recusado',
-                        color: '#dc3545',
-                        bg: 'rgba(220,53,69,.1)'
-                    },
-                    draft: {
-                        label: 'Rascunho',
-                        color: '#6c757d',
-                        bg: 'rgba(108,117,125,.1)'
-                    },
-                } [a.status_album] || {
-                    label: a.status_album,
+            const a = data.album;
+            const sm = {
+                approved: {
+                    label: 'Aprovado',
+                    color: '#198754',
+                    bg: 'rgba(25,135,84,.1)'
+                },
+                pending: {
+                    label: 'Pendente',
+                    color: '#856404',
+                    bg: 'rgba(255,193,7,.12)'
+                },
+                under_review: {
+                    label: 'Em revisão',
+                    color: '#0d6efd',
+                    bg: 'rgba(13,110,253,.1)'
+                },
+                rejected: {
+                    label: 'Recusado',
+                    color: '#dc3545',
+                    bg: 'rgba(220,53,69,.1)'
+                },
+                draft: {
+                    label: 'Rascunho',
                     color: '#6c757d',
                     bg: 'rgba(108,117,125,.1)'
-                };
+                },
+            } [a.status_album] || {
+                label: a.status_album,
+                color: '#6c757d',
+                bg: 'rgba(108,117,125,.1)'
+            };
 
-                document.getElementById('modal-album-title').textContent = a.title_album;
+            document.getElementById('modal-album-title').textContent = a.title_album;
 
-                let tracksHtml = '';
-                if (data.tracks && data.tracks.length) {
-                    tracksHtml = `<div class="mt-3">
+            let tracksHtml = '';
+            if (data.tracks && data.tracks.length) {
+                tracksHtml = `<div class="mt-3">
                 <div class="fw-semibold small mb-2"><i class="bi bi-music-note-list me-1" style="color:#FF0089"></i>Faixas (${data.tracks.length})</div>
                 ${data.tracks.map((t,i) => `
                 <div class="d-flex align-items-center gap-2 py-2 border-bottom" style="font-size:.82rem">
@@ -801,17 +614,17 @@ try {
                     ${t.duration_seconds ? '<span class="text-muted" style="font-size:.7rem;white-space:nowrap">'+Math.floor(t.duration_seconds/60)+':'+(t.duration_seconds%60).toString().padStart(2,'0')+'</span>' : ''}
                 </div>`).join('')}
             </div>`;
-                }
+            }
 
-                let rejectionHtml = '';
-                if (a.status_album === 'rejected' && a.rejection_reason) {
-                    rejectionHtml = `<div class="mt-3 p-3" style="background:rgba(220,53,69,.06);border-radius:10px;border:1px solid rgba(220,53,69,.15)">
+            let rejectionHtml = '';
+            if (a.status_album === 'rejected' && a.rejection_reason) {
+                rejectionHtml = `<div class="mt-3 p-3" style="background:rgba(220,53,69,.06);border-radius:10px;border:1px solid rgba(220,53,69,.15)">
                 <div style="font-size:.7rem;color:#dc3545;font-weight:700;margin-bottom:4px">MOTIVO DA RECUSA</div>
                 <div style="font-size:.83rem">${a.rejection_reason}</div>
             </div>`;
-                }
+            }
 
-                document.getElementById('modal-album-body').innerHTML = `
+            document.getElementById('modal-album-body').innerHTML = `
         <div class="row g-3">
             <div class="col-md-4">
                 <div style="width:100%;aspect-ratio:1;border-radius:12px;overflow:hidden;background:rgba(255,0,137,.06);display:flex;align-items:center;justify-content:center;font-size:4rem">
@@ -844,18 +657,18 @@ try {
         </div>
         ${rejectionHtml}
         ${tracksHtml}`;
-            } catch (e) {
-                document.getElementById('modal-album-body').innerHTML =
-                    `<div class="alert alert-danger small py-2"><i class="bi bi-exclamation-circle me-1"></i>${e.message}</div>`;
-            }
+        } catch (e) {
+            document.getElementById('modal-album-body').innerHTML =
+                `<div class="alert alert-danger small py-2"><i class="bi bi-exclamation-circle me-1"></i>${e.message}</div>`;
         }
+    }
 
-        // ── Ping last_seen ────────────────────────────
-        setInterval(() => {
-            fetch('<?php echo $base_url; ?>/dashboard/collab/ping', {
-                method: 'POST'
-            }).catch(() => {});
-        }, 120000);
+    // ── Ping last_seen ────────────────────────────
+    setInterval(() => {
+        fetch('<?php echo $base_url; ?>/dashboard/collab/ping', {
+            method: 'POST'
+        }).catch(() => {});
+    }, 120000);
     </script>
 </body>
 

@@ -151,237 +151,237 @@ $priority_cfg = [
     <?php require_once __DIR__ . '/../include/head.php'; ?>
     <title>Suporte — <?php echo APP_NAME; ?></title>
     <style>
+    .support-hero {
+        background: linear-gradient(135deg, #FF0089 0%, #c8006e 55%, #7b0044 100%);
+        border-radius: 20px;
+        padding: 2.2rem 2.5rem;
+        margin-bottom: 2rem;
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .support-hero::after {
+        content: '\F348';
+        font-family: 'bootstrap-icons';
+        position: absolute;
+        right: -20px;
+        bottom: -28px;
+        font-size: 9rem;
+        opacity: .07;
+    }
+
+    .support-hero .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255, 255, 255, .18);
+        border: 1px solid rgba(255, 255, 255, .3);
+        border-radius: 999px;
+        padding: 4px 14px;
+        font-size: .78rem;
+        font-weight: 700;
+        backdrop-filter: blur(4px);
+        margin-bottom: .8rem;
+    }
+
+    .form-card {
+        background: var(--card-bg, #fff);
+        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
+        border-radius: 18px;
+        padding: 1.8rem;
+    }
+
+    .form-card .form-control,
+    .form-card .form-select {
+        border-radius: 10px;
+        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .12));
+        background: var(--input-bg, #f8f9fa);
+        padding: .6rem .95rem;
+        transition: border-color .2s, box-shadow .2s;
+    }
+
+    .form-card .form-control:focus,
+    .form-card .form-select:focus {
+        border-color: #FF0089;
+        box-shadow: 0 0 0 .2rem rgba(255, 0, 137, .15);
+        background: var(--card-bg, #fff);
+    }
+
+    .form-card textarea.form-control {
+        min-height: 130px;
+        resize: vertical;
+    }
+
+    .form-card .form-label {
+        font-weight: 600;
+        font-size: .88rem;
+        margin-bottom: .4rem;
+    }
+
+    .form-progress-bar {
+        height: 5px;
+        background: var(--border-color, rgba(0, 0, 0, .08));
+        border-radius: 999px;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-progress-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #FF0089, #c8006e);
+        border-radius: 999px;
+        transition: width .3s ease;
+    }
+
+    .urgency-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+
+    .urgency-option {
+        border: 2px solid var(--border-color, rgba(0, 0, 0, .1));
+        border-radius: 10px;
+        padding: 10px 6px;
+        text-align: center;
+        cursor: pointer;
+        transition: all .15s;
+        user-select: none;
+        font-size: .78rem;
+        font-weight: 600;
+    }
+
+    .urgency-option:hover {
+        border-color: #FF0089;
+    }
+
+    .urgency-option input[type=radio] {
+        display: none;
+    }
+
+    .urgency-option.sel-low {
+        border-color: #198754;
+        background: rgba(25, 135, 84, .07);
+        color: #198754;
+    }
+
+    .urgency-option.sel-medium {
+        border-color: #ffc107;
+        background: rgba(255, 193, 7, .08);
+        color: #856404;
+    }
+
+    .urgency-option.sel-high {
+        border-color: #dc3545;
+        background: rgba(220, 53, 69, .07);
+        color: #dc3545;
+    }
+
+    .btn-support {
+        background: linear-gradient(135deg, #FF0089, #c8006e);
+        border: none;
+        color: #fff;
+        border-radius: 12px;
+        font-weight: 700;
+        padding: .75rem 2rem;
+        width: 100%;
+        transition: all .2s;
+        font-size: .95rem;
+    }
+
+    .btn-support:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(255, 0, 137, .4);
+        color: #fff;
+    }
+
+    .btn-support:disabled {
+        opacity: .65;
+    }
+
+    .file-drop {
+        border: 2px dashed var(--border-color, rgba(0, 0, 0, .15));
+        border-radius: 12px;
+        padding: 1.2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: border-color .2s, background .2s;
+    }
+
+    .file-drop:hover,
+    .file-drop.drag-over {
+        border-color: #FF0089;
+        background: rgba(255, 0, 137, .03);
+    }
+
+    .file-drop input[type=file] {
+        display: none;
+    }
+
+    .file-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--metric-bg, rgba(0, 0, 0, .03));
+        border-radius: 8px;
+        padding: 5px 10px;
+        font-size: .78rem;
+        margin-top: 5px;
+    }
+
+    .result-banner {
+        border-radius: 12px;
+        padding: .85rem 1.1rem;
+        font-size: .86rem;
+        display: none;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .result-banner.show {
+        display: flex;
+    }
+
+    .result-banner.ok {
+        background: rgba(25, 135, 84, .1);
+        border: 1.5px solid #198754;
+        color: #0a5c36;
+    }
+
+    .result-banner.err {
+        background: rgba(220, 53, 69, .08);
+        border: 1.5px solid #dc3545;
+        color: #842029;
+    }
+
+    .ticket-row {
+        padding: 11px 0;
+        border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .07));
+        font-size: .83rem;
+    }
+
+    .ticket-row:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .sec-title {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #FF0089;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 1.2rem;
+    }
+
+    @media(max-width:768px) {
         .support-hero {
-            background: linear-gradient(135deg, #FF0089 0%, #c8006e 55%, #7b0044 100%);
-            border-radius: 20px;
-            padding: 2.2rem 2.5rem;
-            margin-bottom: 2rem;
-            color: #fff;
-            position: relative;
-            overflow: hidden;
+            padding: 1.5rem;
         }
-
-        .support-hero::after {
-            content: '\F348';
-            font-family: 'bootstrap-icons';
-            position: absolute;
-            right: -20px;
-            bottom: -28px;
-            font-size: 9rem;
-            opacity: .07;
-        }
-
-        .support-hero .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(255, 255, 255, .18);
-            border: 1px solid rgba(255, 255, 255, .3);
-            border-radius: 999px;
-            padding: 4px 14px;
-            font-size: .78rem;
-            font-weight: 700;
-            backdrop-filter: blur(4px);
-            margin-bottom: .8rem;
-        }
-
-        .form-card {
-            background: var(--card-bg, #fff);
-            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
-            border-radius: 18px;
-            padding: 1.8rem;
-        }
-
-        .form-card .form-control,
-        .form-card .form-select {
-            border-radius: 10px;
-            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .12));
-            background: var(--input-bg, #f8f9fa);
-            padding: .6rem .95rem;
-            transition: border-color .2s, box-shadow .2s;
-        }
-
-        .form-card .form-control:focus,
-        .form-card .form-select:focus {
-            border-color: #FF0089;
-            box-shadow: 0 0 0 .2rem rgba(255, 0, 137, .15);
-            background: var(--card-bg, #fff);
-        }
-
-        .form-card textarea.form-control {
-            min-height: 130px;
-            resize: vertical;
-        }
-
-        .form-card .form-label {
-            font-weight: 600;
-            font-size: .88rem;
-            margin-bottom: .4rem;
-        }
-
-        .form-progress-bar {
-            height: 5px;
-            background: var(--border-color, rgba(0, 0, 0, .08));
-            border-radius: 999px;
-            overflow: hidden;
-            margin-bottom: 1.5rem;
-        }
-
-        .form-progress-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #FF0089, #c8006e);
-            border-radius: 999px;
-            transition: width .3s ease;
-        }
-
-        .urgency-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-        }
-
-        .urgency-option {
-            border: 2px solid var(--border-color, rgba(0, 0, 0, .1));
-            border-radius: 10px;
-            padding: 10px 6px;
-            text-align: center;
-            cursor: pointer;
-            transition: all .15s;
-            user-select: none;
-            font-size: .78rem;
-            font-weight: 600;
-        }
-
-        .urgency-option:hover {
-            border-color: #FF0089;
-        }
-
-        .urgency-option input[type=radio] {
-            display: none;
-        }
-
-        .urgency-option.sel-low {
-            border-color: #198754;
-            background: rgba(25, 135, 84, .07);
-            color: #198754;
-        }
-
-        .urgency-option.sel-medium {
-            border-color: #ffc107;
-            background: rgba(255, 193, 7, .08);
-            color: #856404;
-        }
-
-        .urgency-option.sel-high {
-            border-color: #dc3545;
-            background: rgba(220, 53, 69, .07);
-            color: #dc3545;
-        }
-
-        .btn-support {
-            background: linear-gradient(135deg, #FF0089, #c8006e);
-            border: none;
-            color: #fff;
-            border-radius: 12px;
-            font-weight: 700;
-            padding: .75rem 2rem;
-            width: 100%;
-            transition: all .2s;
-            font-size: .95rem;
-        }
-
-        .btn-support:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(255, 0, 137, .4);
-            color: #fff;
-        }
-
-        .btn-support:disabled {
-            opacity: .65;
-        }
-
-        .file-drop {
-            border: 2px dashed var(--border-color, rgba(0, 0, 0, .15));
-            border-radius: 12px;
-            padding: 1.2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: border-color .2s, background .2s;
-        }
-
-        .file-drop:hover,
-        .file-drop.drag-over {
-            border-color: #FF0089;
-            background: rgba(255, 0, 137, .03);
-        }
-
-        .file-drop input[type=file] {
-            display: none;
-        }
-
-        .file-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--metric-bg, rgba(0, 0, 0, .03));
-            border-radius: 8px;
-            padding: 5px 10px;
-            font-size: .78rem;
-            margin-top: 5px;
-        }
-
-        .result-banner {
-            border-radius: 12px;
-            padding: .85rem 1.1rem;
-            font-size: .86rem;
-            display: none;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .result-banner.show {
-            display: flex;
-        }
-
-        .result-banner.ok {
-            background: rgba(25, 135, 84, .1);
-            border: 1.5px solid #198754;
-            color: #0a5c36;
-        }
-
-        .result-banner.err {
-            background: rgba(220, 53, 69, .08);
-            border: 1.5px solid #dc3545;
-            color: #842029;
-        }
-
-        .ticket-row {
-            padding: 11px 0;
-            border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .07));
-            font-size: .83rem;
-        }
-
-        .ticket-row:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-
-        .sec-title {
-            font-size: 1.05rem;
-            font-weight: 800;
-            color: #FF0089;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 1.2rem;
-        }
-
-        @media(max-width:768px) {
-            .support-hero {
-                padding: 1.5rem;
-            }
-        }
+    }
     </style>
 </head>
 
@@ -439,7 +439,7 @@ $priority_cfg = [
         <?php /* ── NÍVEL 1: Crítico — bloqueia distribuição ── */ ?>
 
         <?php if (!$email_verified): ?>
-            <?php wuAlert(
+        <?php wuAlert(
                 'danger',
                 'bi-envelope-exclamation-fill',
                 '<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta e receber notificações de pagamentos.',
@@ -450,7 +450,7 @@ $priority_cfg = [
         <?php endif; ?>
 
         <?php if ($plan && !$plan_paid): ?>
-            <?php wuAlert(
+        <?php wuAlert(
                 'warning',
                 'bi-clock-history',
                 '<strong>Pagamento pendente — ' . htmlspecialchars($plan['name_plan']) . '.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados até confirmação.',
@@ -459,7 +459,7 @@ $priority_cfg = [
                 'banner-plan-pending'
             ); ?>
         <?php elseif (!$plan): ?>
-            <?php wuAlert(
+        <?php wuAlert(
                 'danger',
                 'bi-credit-card-fill',
                 '<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir a tua música para +150 plataformas.',
@@ -472,7 +472,7 @@ $priority_cfg = [
         <?php /* ── NÍVEL 2: Importante — perfil incompleto ── */ ?>
 
         <?php if ($plan_paid && !$has_artist): ?>
-            <?php wuAlert(
+        <?php wuAlert(
                 'info',
                 'bi-person-plus-fill',
                 '<strong>Cria o teu perfil artístico.</strong> Tens plano activo mas ainda não criaste um perfil artístico. Precisas de um para poder lançar música.',
@@ -485,7 +485,7 @@ $priority_cfg = [
         <?php /* ── NÍVEL 3: Informativo — conta bancária ── */ ?>
 
         <?php if ($plan_paid && $has_artist && !$bank_account): ?>
-            <?php wuAlert(
+        <?php wuAlert(
                 'info',
                 'bi-bank',
                 '<strong>Conta bancária não registada.</strong> Para poder sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.',
@@ -506,7 +506,7 @@ $priority_cfg = [
         }
         ?>
         <?php if ($rejected_account): ?>
-            <?php
+        <?php
             $rej_msg = '<strong>Conta ' . htmlspecialchars($rejected_account['type_account']) . ' rejeitada.</strong>';
             if ($rejected_account['reject_reason']) {
                 $rej_msg .= ' Motivo: <em>' . htmlspecialchars($rejected_account['reject_reason']) . '</em>.';
@@ -528,11 +528,11 @@ $priority_cfg = [
             <div class="hero-badge">
                 <i class="bi bi-headset"></i>
                 <?php if ($open_count + $progress_count > 0): ?>
-                    <?php echo $open_count + $progress_count; ?>
-                    ticket<?php echo ($open_count + $progress_count) > 1 ? 's' : ''; ?>
-                    activo<?php echo ($open_count + $progress_count) > 1 ? 's' : ''; ?>
+                <?php echo $open_count + $progress_count; ?>
+                ticket<?php echo ($open_count + $progress_count) > 1 ? 's' : ''; ?>
+                activo<?php echo ($open_count + $progress_count) > 1 ? 's' : ''; ?>
                 <?php else: ?>
-                    Nenhum ticket em aberto
+                Nenhum ticket em aberto
                 <?php endif; ?>
             </div>
             <h1 class="fw-bold mb-1"><i class="bi bi-headset-vr me-2"></i>Suporte <?php echo APP_NAME ?></h1>
@@ -572,15 +572,71 @@ $priority_cfg = [
                                     class="text-danger">*</span></label>
                             <select class="form-select" id="issueType" name="issueType" required>
                                 <option value="" disabled selected>Selecciona uma opção</option>
-                                <option value="login">Problema com login ou senha</option>
-                                <option value="plan">Alterar ou questão sobre o plano</option>
-                                <option value="payment">Problema com pagamento</option>
-                                <option value="stats">Erro nas estatísticas</option>
-                                <option value="upload">Falha ao enviar ficheiros</option>
-                                <option value="royalty">Questão sobre royalties</option>
-                                <option value="refund">Pedido de reembolso</option>
-                                <option value="account">Conta suspensa ou bloqueada</option>
-                                <option value="other">Outro assunto</option>
+
+                                <optgroup label="Conta e Acesso">
+                                    <option value="login">Problema com login ou senha</option>
+                                    <option value="2fa">Autenticação de dois factores (2FA)</option>
+                                    <option value="account_suspended">Conta suspensa ou bloqueada</option>
+                                    <option value="account_recovery">Recuperação de conta</option>
+                                    <option value="email_verification">Verificação de email</option>
+                                </optgroup>
+
+                                <optgroup label="Planos e Pagamentos">
+                                    <option value="plan">Alterar ou questão sobre o plano</option>
+                                    <option value="plan_activation">Activar plano após pagamento</option>
+                                    <option value="plan_change">Mudar de plano</option>
+                                    <option value="payment">Problema com pagamento</option>
+                                    <option value="refund">Pedido de reembolso</option>
+                                </optgroup>
+
+                                <optgroup label="Lançamentos e Distribuição">
+                                    <option value="upload">Falha ao enviar ficheiros</option>
+                                    <option value="release_create">Como criar um novo lançamento</option>
+                                    <option value="release_format">Formatos de áudio aceites</option>
+                                    <option value="release_cover">Requisitos da capa</option>
+                                    <option value="release_schedule">Agendar data de lançamento</option>
+                                    <option value="release_edit">Editar lançamento após envio</option>
+                                    <option value="release_distribution">Tempo de distribuição</option>
+                                </optgroup>
+
+                                <optgroup label="Finanças e Royalties">
+                                    <option value="royalty">Questão sobre royalties</option>
+                                    <option value="royalty_calculation">Como funcionam os royalties</option>
+                                    <option value="royalty_payment">Quando recebo os pagamentos</option>
+                                    <option value="royalty_split">Divisão de royalties entre colaboradores</option>
+                                    <option value="balance">Ver saldo disponível</option>
+                                    <option value="withdrawal">Como efectuar um levantamento</option>
+                                    <option value="withdrawal_min">Valor mínimo para levantamento</option>
+                                </optgroup>
+
+                                <optgroup label="Estatísticas e Dados">
+                                    <option value="stats">Erro nas estatísticas</option>
+                                    <option value="stats_view">Como ver estatísticas das músicas</option>
+                                    <option value="stats_platforms">Plataformas nas estatísticas</option>
+                                    <option value="stats_export">Exportar dados de estatísticas</option>
+                                    <option value="stats_update">Frequência de actualização</option>
+                                </optgroup>
+
+                                <optgroup label="Artistas e Perfil">
+                                    <option value="artist_add">Como cadastrar um novo artista</option>
+                                    <option value="artist_multiple">Vários artistas na mesma conta</option>
+                                    <option value="collaborator_add">Adicionar colaborador</option>
+                                    <option value="social_link">Vincular redes sociais</option>
+                                    <option value="profile_update">Actualizar dados de perfil</option>
+                                    <option value="dark_mode">Modo escuro</option>
+                                </optgroup>
+
+                                <optgroup label="YouTube e Art Track">
+                                    <option value="youtube_unify">Unificação de canal YouTube</option>
+                                    <option value="youtube_verify">Verificar canal YouTube</option>
+                                    <option value="art_track">O que é um Art Track?</option>
+                                </optgroup>
+
+                                <optgroup label="Suporte e Outros">
+                                    <option value="support_how">Como enviar um pedido de suporte</option>
+                                    <option value="support_response">Prazo de resposta do suporte</option>
+                                    <option value="other">Outro assunto</option>
+                                </optgroup>
                             </select>
                             <div class="invalid-feedback">Selecciona o tipo de problema.</div>
                         </div>
@@ -670,48 +726,48 @@ $priority_cfg = [
                         <h5 class="mb-0 fw-bold" style="font-size:.95rem">
                             <i class="bi bi-clock-history me-2" style="color:#FF0089"></i>Os teus tickets
                             <?php if (!empty($tickets)): ?>
-                                <span class="badge ms-1"
-                                    style="background:#FF0089;font-size:.65rem"><?php echo count($tickets); ?></span>
+                            <span class="badge ms-1"
+                                style="background:#FF0089;font-size:.65rem"><?php echo count($tickets); ?></span>
                             <?php endif; ?>
                         </h5>
                     </div>
                     <div class="card-body py-2 px-3">
                         <?php if (empty($tickets)): ?>
-                            <p class="text-muted small py-2 mb-0">Ainda não enviaste nenhum pedido.</p>
+                        <p class="text-muted small py-2 mb-0">Ainda não enviaste nenhum pedido.</p>
                         <?php else: ?>
-                            <?php foreach ($tickets as $t):
+                        <?php foreach ($tickets as $t):
                                 $st = $status_cfg[$t['status_ticket']] ?? ['label' => ucfirst($t['status_ticket']), 'class' => 'bg-secondary'];
                                 $pr = $priority_cfg[$t['priority']]   ?? ['label' => ucfirst($t['priority']), 'class' => 'text-muted'];
                                 $preview = preg_replace('/^\[.*?\]\n\n/', '', $t['body'] ?? '');
                                 $preview = mb_strimwidth($preview, 0, 65, '…');
                             ?>
-                                <div class="ticket-row">
-                                    <div class="d-flex align-items-center flex-wrap gap-1 mb-1">
-                                        <span style="font-size:.68rem;font-family:monospace;color:var(--text-muted,#6c757d)">
-                                            #<?php echo str_pad($t['id_ticket'], 5, '0', STR_PAD_LEFT); ?>
-                                        </span>
-                                        <span class="badge <?php echo $st['class']; ?>"
-                                            style="font-size:.65rem"><?php echo $st['label']; ?></span>
-                                        <span class="<?php echo $pr['class']; ?>" style="font-size:.7rem">·
-                                            <?php echo $pr['label']; ?></span>
-                                        <?php if ($t['reply_count'] > 0): ?>
-                                            <span class="text-muted" style="font-size:.68rem">
-                                                <i class="bi bi-chat-left me-1"></i><?php echo $t['reply_count']; ?>
-                                            </span>
-                                        <?php endif; ?>
-                                    </div>
-                                    <div class="fw-semibold"
-                                        style="font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
-                                        <?php echo htmlspecialchars($t['subject']); ?>
-                                    </div>
-                                    <div class="text-muted" style="font-size:.72rem"><?php echo htmlspecialchars($preview); ?>
-                                    </div>
-                                    <div style="font-size:.68rem;color:var(--text-muted,#6c757d);margin-top:2px">
-                                        <i
-                                            class="bi bi-calendar3 me-1"></i><?php echo date('d/m/Y H:i', strtotime($t['creat_ticket'])); ?>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
+                        <div class="ticket-row">
+                            <div class="d-flex align-items-center flex-wrap gap-1 mb-1">
+                                <span style="font-size:.68rem;font-family:monospace;color:var(--text-muted,#6c757d)">
+                                    #<?php echo str_pad($t['id_ticket'], 5, '0', STR_PAD_LEFT); ?>
+                                </span>
+                                <span class="badge <?php echo $st['class']; ?>"
+                                    style="font-size:.65rem"><?php echo $st['label']; ?></span>
+                                <span class="<?php echo $pr['class']; ?>" style="font-size:.7rem">·
+                                    <?php echo $pr['label']; ?></span>
+                                <?php if ($t['reply_count'] > 0): ?>
+                                <span class="text-muted" style="font-size:.68rem">
+                                    <i class="bi bi-chat-left me-1"></i><?php echo $t['reply_count']; ?>
+                                </span>
+                                <?php endif; ?>
+                            </div>
+                            <div class="fw-semibold"
+                                style="font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+                                <?php echo htmlspecialchars($t['subject']); ?>
+                            </div>
+                            <div class="text-muted" style="font-size:.72rem"><?php echo htmlspecialchars($preview); ?>
+                            </div>
+                            <div style="font-size:.68rem;color:var(--text-muted,#6c757d);margin-top:2px">
+                                <i
+                                    class="bi bi-calendar3 me-1"></i><?php echo date('d/m/Y H:i', strtotime($t['creat_ticket'])); ?>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -767,259 +823,259 @@ $priority_cfg = [
     <script src="<?php echo APP_URL  ?>/js/theme.wp.js"></script>
     <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
     <script>
-        // ══════════════════════════════════════════════════════════════
-        // TODO o código da página fica DENTRO do DOMContentLoaded.
-        // Isto garante:
-        //   1. DOM já existe quando tentamos aceder aos elementos
-        //   2. Não há conflito com variáveis de theme.wp.js / wp.tools.js
-        //      porque usamos um scope isolado (função anónima)
-        // ══════════════════════════════════════════════════════════════
-        document.addEventListener('DOMContentLoaded', function() {
+    // ══════════════════════════════════════════════════════════════
+    // TODO o código da página fica DENTRO do DOMContentLoaded.
+    // Isto garante:
+    //   1. DOM já existe quando tentamos aceder aos elementos
+    //   2. Não há conflito com variáveis de theme.wp.js / wp.tools.js
+    //      porque usamos um scope isolado (função anónima)
+    // ══════════════════════════════════════════════════════════════
+    document.addEventListener('DOMContentLoaded', function() {
 
-            // ── Urgência ───────────────────────────────────────────
-            let selectedUrgency = '';
+        // ── Urgência ───────────────────────────────────────────
+        let selectedUrgency = '';
 
-            function setUrgency(val) {
-                selectedUrgency = val;
-                ['Low', 'Medium', 'High'].forEach(function(u) {
-                    var el = document.getElementById('urg' + u);
-                    if (el) el.className = 'urgency-option';
-                });
-                var active = document.getElementById('urg' + val.charAt(0).toUpperCase() + val.slice(1));
-                if (active) active.classList.add('sel-' + val);
-                var radio = document.querySelector('input[name="urgency"][value="' + val + '"]');
-                if (radio) radio.checked = true;
-                var err = document.getElementById('urgencyError');
-                if (err) err.style.display = 'none';
-                updateProgress();
-            }
-
-            // Clique nos cards de urgência
+        function setUrgency(val) {
+            selectedUrgency = val;
             ['Low', 'Medium', 'High'].forEach(function(u) {
-                var card = document.getElementById('urg' + u);
-                if (card) {
-                    card.addEventListener('click', function() {
-                        setUrgency(u.toLowerCase());
-                    });
-                }
+                var el = document.getElementById('urg' + u);
+                if (el) el.className = 'urgency-option';
+            });
+            var active = document.getElementById('urg' + val.charAt(0).toUpperCase() + val.slice(1));
+            if (active) active.classList.add('sel-' + val);
+            var radio = document.querySelector('input[name="urgency"][value="' + val + '"]');
+            if (radio) radio.checked = true;
+            var err = document.getElementById('urgencyError');
+            if (err) err.style.display = 'none';
+            updateProgress();
+        }
+
+        // Clique nos cards de urgência
+        ['Low', 'Medium', 'High'].forEach(function(u) {
+            var card = document.getElementById('urg' + u);
+            if (card) {
+                card.addEventListener('click', function() {
+                    setUrgency(u.toLowerCase());
+                });
+            }
+        });
+
+        // ── Contador de caracteres ──────────────────────────────
+        var descEl = document.getElementById('description');
+        var charCount = document.getElementById('charCount');
+        if (descEl && charCount) {
+            descEl.addEventListener('input', function() {
+                charCount.textContent = this.value.length;
+                updateProgress();
+            });
+        }
+
+        // ── Progresso ───────────────────────────────────────────
+        function updateProgress() {
+            var issueVal = document.getElementById('issueType') ? document.getElementById('issueType')
+                .value :
+                '';
+            var descVal = descEl ? descEl.value.trim() : '';
+            var fields = [
+                issueVal !== '',
+                selectedUrgency !== '',
+                descVal.length >= 10
+            ];
+            var pct = Math.round(fields.filter(Boolean).length / fields.length * 100);
+            var fill = document.getElementById('progressFill');
+            var pctEl = document.getElementById('progressPct');
+            if (fill) fill.style.width = pct + '%';
+            if (pctEl) pctEl.textContent = pct + '%';
+        }
+
+        var issueTypeEl = document.getElementById('issueType');
+        if (issueTypeEl) {
+            issueTypeEl.addEventListener('change', updateProgress);
+        }
+
+        // ── Upload de ficheiros ─────────────────────────────────
+        var selectedFiles = [];
+        var dropArea = document.getElementById('dropArea');
+        var fileInput = document.getElementById('fileInput');
+        var fileList = document.getElementById('fileList');
+        var MAX_FILES = 5;
+        var MAX_SIZE = 10 * 1024 * 1024;
+        var ALLOWED = ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'txt', 'zip', 'mp4', 'mov'];
+
+        // Clique na área de drop abre o file picker
+        if (dropArea && fileInput) {
+            dropArea.addEventListener('click', function(e) {
+                if (e.target !== fileInput) fileInput.click();
             });
 
-            // ── Contador de caracteres ──────────────────────────────
-            var descEl = document.getElementById('description');
-            var charCount = document.getElementById('charCount');
-            if (descEl && charCount) {
-                descEl.addEventListener('input', function() {
-                    charCount.textContent = this.value.length;
-                    updateProgress();
+            dropArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                dropArea.classList.add('drag-over');
+            });
+            dropArea.addEventListener('dragleave', function() {
+                dropArea.classList.remove('drag-over');
+            });
+            dropArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                dropArea.classList.remove('drag-over');
+                var dt = new DataTransfer();
+                Array.from(e.dataTransfer.files || []).forEach(function(f) {
+                    dt.items.add(f);
                 });
-            }
+                fileInput.files = dt.files;
+                processFiles();
+            });
 
-            // ── Progresso ───────────────────────────────────────────
-            function updateProgress() {
-                var issueVal = document.getElementById('issueType') ? document.getElementById('issueType')
-                    .value :
-                    '';
-                var descVal = descEl ? descEl.value.trim() : '';
-                var fields = [
-                    issueVal !== '',
-                    selectedUrgency !== '',
-                    descVal.length >= 10
-                ];
-                var pct = Math.round(fields.filter(Boolean).length / fields.length * 100);
-                var fill = document.getElementById('progressFill');
-                var pctEl = document.getElementById('progressPct');
-                if (fill) fill.style.width = pct + '%';
-                if (pctEl) pctEl.textContent = pct + '%';
-            }
+            fileInput.addEventListener('change', processFiles);
+        }
 
-            var issueTypeEl = document.getElementById('issueType');
-            if (issueTypeEl) {
-                issueTypeEl.addEventListener('change', updateProgress);
-            }
+        function processFiles() {
+            Array.from(fileInput.files).forEach(function(f) {
+                if (selectedFiles.length >= MAX_FILES) return;
+                var ext = f.name.split('.').pop().toLowerCase();
+                if (!ALLOWED.includes(ext) || f.size > MAX_SIZE) return;
+                if (!selectedFiles.find(function(x) {
+                        return x.name === f.name && x.size === f.size;
+                    })) {
+                    selectedFiles.push(f);
+                }
+            });
+            renderFiles();
+        }
 
-            // ── Upload de ficheiros ─────────────────────────────────
-            var selectedFiles = [];
-            var dropArea = document.getElementById('dropArea');
-            var fileInput = document.getElementById('fileInput');
-            var fileList = document.getElementById('fileList');
-            var MAX_FILES = 5;
-            var MAX_SIZE = 10 * 1024 * 1024;
-            var ALLOWED = ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'txt', 'zip', 'mp4', 'mov'];
+        function renderFiles() {
+            if (!fileList) return;
+            fileList.innerHTML = '';
+            selectedFiles.forEach(function(f, i) {
+                var d = document.createElement('div');
+                d.className = 'file-item';
+                d.innerHTML = '<span><i class="bi bi-paperclip me-1"></i>' + f.name +
+                    ' <small class="text-muted">(' + (f.size / 1024).toFixed(0) +
+                    ' KB)</small></span>' +
+                    '<button type="button" class="btn btn-sm text-danger p-0 ms-2" data-idx="' + i +
+                    '">' +
+                    '<i class="bi bi-x-lg"></i></button>';
+                d.querySelector('button').addEventListener('click', function() {
+                    selectedFiles.splice(parseInt(this.dataset.idx), 1);
+                    renderFiles();
+                });
+                fileList.appendChild(d);
+            });
+        }
 
-            // Clique na área de drop abre o file picker
-            if (dropArea && fileInput) {
-                dropArea.addEventListener('click', function(e) {
-                    if (e.target !== fileInput) fileInput.click();
+        // ── Submit via fetch ────────────────────────────────────
+        var submitBtn = document.getElementById('submitBtn');
+        var banner = document.getElementById('resultBanner');
+
+        if (submitBtn) {
+            submitBtn.addEventListener('click', async function() {
+
+                var issueType = issueTypeEl ? issueTypeEl.value : '';
+                var description = descEl ? descEl.value.trim() : '';
+                var csrfToken = document.querySelector('[name="csrf_token"]');
+                csrfToken = csrfToken ? csrfToken.value : '';
+
+                // Validação
+                var valid = true;
+
+                if (!issueType) {
+                    if (issueTypeEl) issueTypeEl.classList.add('is-invalid');
+                    valid = false;
+                } else {
+                    if (issueTypeEl) issueTypeEl.classList.remove('is-invalid');
+                }
+
+                if (!selectedUrgency) {
+                    var urgErr = document.getElementById('urgencyError');
+                    if (urgErr) urgErr.style.display = 'block';
+                    valid = false;
+                }
+
+                if (description.length < 10) {
+                    if (descEl) descEl.classList.add('is-invalid');
+                    valid = false;
+                } else {
+                    if (descEl) descEl.classList.remove('is-invalid');
+                }
+
+                if (!valid) return;
+
+                // FormData
+                var fd = new FormData();
+                fd.append('csrf_token', csrfToken);
+                fd.append('issueType', issueType);
+                fd.append('urgency', selectedUrgency);
+                fd.append('description', description);
+                selectedFiles.forEach(function(f) {
+                    fd.append('attachment[]', f);
                 });
 
-                dropArea.addEventListener('dragover', function(e) {
-                    e.preventDefault();
-                    dropArea.classList.add('drag-over');
-                });
-                dropArea.addEventListener('dragleave', function() {
-                    dropArea.classList.remove('drag-over');
-                });
-                dropArea.addEventListener('drop', function(e) {
-                    e.preventDefault();
-                    dropArea.classList.remove('drag-over');
-                    var dt = new DataTransfer();
-                    Array.from(e.dataTransfer.files || []).forEach(function(f) {
-                        dt.items.add(f);
+                // UI loading
+                submitBtn.disabled = true;
+                submitBtn.innerHTML =
+                    '<span class="spinner-border spinner-border-sm me-2"></span>A enviar…';
+                if (banner) banner.className = 'result-banner mb-3';
+
+                try {
+                    var res = await fetch('../ajax/support_dashboard', {
+                        method: 'POST',
+                        body: fd,
+                        credentials: 'same-origin'
                     });
-                    fileInput.files = dt.files;
-                    processFiles();
-                });
+                    var data = await res.json();
 
-                fileInput.addEventListener('change', processFiles);
-            }
-
-            function processFiles() {
-                Array.from(fileInput.files).forEach(function(f) {
-                    if (selectedFiles.length >= MAX_FILES) return;
-                    var ext = f.name.split('.').pop().toLowerCase();
-                    if (!ALLOWED.includes(ext) || f.size > MAX_SIZE) return;
-                    if (!selectedFiles.find(function(x) {
-                            return x.name === f.name && x.size === f.size;
-                        })) {
-                        selectedFiles.push(f);
-                    }
-                });
-                renderFiles();
-            }
-
-            function renderFiles() {
-                if (!fileList) return;
-                fileList.innerHTML = '';
-                selectedFiles.forEach(function(f, i) {
-                    var d = document.createElement('div');
-                    d.className = 'file-item';
-                    d.innerHTML = '<span><i class="bi bi-paperclip me-1"></i>' + f.name +
-                        ' <small class="text-muted">(' + (f.size / 1024).toFixed(0) +
-                        ' KB)</small></span>' +
-                        '<button type="button" class="btn btn-sm text-danger p-0 ms-2" data-idx="' + i +
-                        '">' +
-                        '<i class="bi bi-x-lg"></i></button>';
-                    d.querySelector('button').addEventListener('click', function() {
-                        selectedFiles.splice(parseInt(this.dataset.idx), 1);
-                        renderFiles();
-                    });
-                    fileList.appendChild(d);
-                });
-            }
-
-            // ── Submit via fetch ────────────────────────────────────
-            var submitBtn = document.getElementById('submitBtn');
-            var banner = document.getElementById('resultBanner');
-
-            if (submitBtn) {
-                submitBtn.addEventListener('click', async function() {
-
-                    var issueType = issueTypeEl ? issueTypeEl.value : '';
-                    var description = descEl ? descEl.value.trim() : '';
-                    var csrfToken = document.querySelector('[name="csrf_token"]');
-                    csrfToken = csrfToken ? csrfToken.value : '';
-
-                    // Validação
-                    var valid = true;
-
-                    if (!issueType) {
-                        if (issueTypeEl) issueTypeEl.classList.add('is-invalid');
-                        valid = false;
-                    } else {
-                        if (issueTypeEl) issueTypeEl.classList.remove('is-invalid');
+                    if (banner) {
+                        banner.className = 'result-banner mb-3 show ' + (data.ok ? 'ok' :
+                            'err');
+                        banner.innerHTML = '<i class="bi bi-' + (data.ok ? 'check-circle-fill' :
+                                'exclamation-triangle-fill') +
+                            ' fs-5 flex-shrink-0"></i><span>' + data.message + '</span>';
                     }
 
-                    if (!selectedUrgency) {
-                        var urgErr = document.getElementById('urgencyError');
-                        if (urgErr) urgErr.style.display = 'block';
-                        valid = false;
-                    }
-
-                    if (description.length < 10) {
-                        if (descEl) descEl.classList.add('is-invalid');
-                        valid = false;
-                    } else {
-                        if (descEl) descEl.classList.remove('is-invalid');
-                    }
-
-                    if (!valid) return;
-
-                    // FormData
-                    var fd = new FormData();
-                    fd.append('csrf_token', csrfToken);
-                    fd.append('issueType', issueType);
-                    fd.append('urgency', selectedUrgency);
-                    fd.append('description', description);
-                    selectedFiles.forEach(function(f) {
-                        fd.append('attachment[]', f);
-                    });
-
-                    // UI loading
-                    submitBtn.disabled = true;
-                    submitBtn.innerHTML =
-                        '<span class="spinner-border spinner-border-sm me-2"></span>A enviar…';
-                    if (banner) banner.className = 'result-banner mb-3';
-
-                    try {
-                        var res = await fetch('../ajax/support_dashboard', {
-                            method: 'POST',
-                            body: fd,
-                            credentials: 'same-origin'
+                    if (data.ok) {
+                        // Limpar form
+                        if (issueTypeEl) {
+                            issueTypeEl.value = '';
+                            issueTypeEl.classList.remove('is-invalid');
+                        }
+                        if (descEl) {
+                            descEl.value = '';
+                            descEl.classList.remove('is-invalid');
+                        }
+                        if (charCount) charCount.textContent = '0';
+                        selectedUrgency = '';
+                        ['Low', 'Medium', 'High'].forEach(function(u) {
+                            var el = document.getElementById('urg' + u);
+                            if (el) el.className = 'urgency-option';
                         });
-                        var data = await res.json();
-
-                        if (banner) {
-                            banner.className = 'result-banner mb-3 show ' + (data.ok ? 'ok' :
-                                'err');
-                            banner.innerHTML = '<i class="bi bi-' + (data.ok ? 'check-circle-fill' :
-                                    'exclamation-triangle-fill') +
-                                ' fs-5 flex-shrink-0"></i><span>' + data.message + '</span>';
-                        }
-
-                        if (data.ok) {
-                            // Limpar form
-                            if (issueTypeEl) {
-                                issueTypeEl.value = '';
-                                issueTypeEl.classList.remove('is-invalid');
-                            }
-                            if (descEl) {
-                                descEl.value = '';
-                                descEl.classList.remove('is-invalid');
-                            }
-                            if (charCount) charCount.textContent = '0';
-                            selectedUrgency = '';
-                            ['Low', 'Medium', 'High'].forEach(function(u) {
-                                var el = document.getElementById('urg' + u);
-                                if (el) el.className = 'urgency-option';
-                            });
-                            selectedFiles = [];
-                            renderFiles();
-                            updateProgress();
-                            if (banner) banner.scrollIntoView({
-                                behavior: 'smooth',
-                                block: 'nearest'
-                            });
-                            // Actualiza lista após 8s
-                            setTimeout(function() {
-                                location.reload();
-                            }, 8000);
-                        }
-                    } catch (err) {
-                        if (banner) {
-                            banner.className = 'result-banner mb-3 show err';
-                            banner.innerHTML =
-                                '<i class="bi bi-exclamation-triangle-fill fs-5 flex-shrink-0"></i>' +
-                                '<span>Erro de rede. Verifica a ligação e tenta novamente.</span>';
-                        }
-                    } finally {
-                        submitBtn.disabled = false;
-                        submitBtn.innerHTML =
-                            '<i class="bi bi-send me-2"></i>Enviar Pedido de Suporte';
+                        selectedFiles = [];
+                        renderFiles();
+                        updateProgress();
+                        if (banner) banner.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'nearest'
+                        });
+                        // Actualiza lista após 8s
+                        setTimeout(function() {
+                            location.reload();
+                        }, 8000);
                     }
-                });
-            }
+                } catch (err) {
+                    if (banner) {
+                        banner.className = 'result-banner mb-3 show err';
+                        banner.innerHTML =
+                            '<i class="bi bi-exclamation-triangle-fill fs-5 flex-shrink-0"></i>' +
+                            '<span>Erro de rede. Verifica a ligação e tenta novamente.</span>';
+                    }
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML =
+                        '<i class="bi bi-send me-2"></i>Enviar Pedido de Suporte';
+                }
+            });
+        }
 
-        }); // fim DOMContentLoaded
+    }); // fim DOMContentLoaded
     </script>
 </body>
 

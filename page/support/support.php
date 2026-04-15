@@ -53,11 +53,11 @@ $csrf_support = getSiteCsrf(); // gerado no topo, antes de qualquer HTML
     <title><?php echo $siteName; ?> | Suporte técnico</title>
 
     <script>
-        window.addEventListener("load", function() {
-            setTimeout(function() {
-                document.querySelector("body").classList.add("loaded")
-            }, 200)
-        })
+    window.addEventListener("load", function() {
+        setTimeout(function() {
+            document.querySelector("body").classList.add("loaded")
+        }, 200)
+    })
     </script>
 
     <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv1.png" type="image/x-icon">
@@ -124,19 +124,19 @@ $csrf_support = getSiteCsrf(); // gerado no topo, antes de qualquer HTML
                                         $nPrc  = number_format($p['price_plan'], 0, ',', '.');
                                         $nPer  = $p['type_plan'] === 'subscription' ? '/ano' : '';
                                     ?>
-                                        <a title="<?php echo htmlspecialchars($p['name_plan']); ?>"
-                                            class="dropdown-item mb-3 text-body" href="../../plan/<?php echo $nSlug; ?>">
-                                            <div class="d-flex align-items-center">
-                                                <i class="fa-solid <?php echo $nIcon; ?> text-wasomupfy fs-3"
-                                                    style="width: 35px"></i>
-                                                <div class="ms-3 lh-1">
-                                                    <h5 class="mb-1"><?php echo htmlspecialchars($p['name_plan']); ?></h5>
-                                                    <p class="mb-0 fs-6">Nosso plano
-                                                        <?php echo htmlspecialchars($p['name_plan']); ?> —
-                                                        <?php echo $nPrc; ?> Kz<?php echo $nPer; ?></p>
-                                                </div>
+                                    <a title="<?php echo htmlspecialchars($p['name_plan']); ?>"
+                                        class="dropdown-item mb-3 text-body" href="../../plan/<?php echo $nSlug; ?>">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fa-solid <?php echo $nIcon; ?> text-wasomupfy fs-3"
+                                                style="width: 35px"></i>
+                                            <div class="ms-3 lh-1">
+                                                <h5 class="mb-1"><?php echo htmlspecialchars($p['name_plan']); ?></h5>
+                                                <p class="mb-0 fs-6">Nosso plano
+                                                    <?php echo htmlspecialchars($p['name_plan']); ?> —
+                                                    <?php echo $nPrc; ?> Kz<?php echo $nPer; ?></p>
                                             </div>
-                                        </a>
+                                        </div>
+                                    </a>
                                     <?php endforeach; ?>
                                     <a title="Todos os planos" class="dropdown-item mb-3 text-body"
                                         href="../../plan/all-plans">
@@ -240,15 +240,15 @@ $csrf_support = getSiteCsrf(); // gerado no topo, antes de qualquer HTML
                                     <li><a title="Caixa de mensagem" class="dropdown-item" href="../../contact">Caixa de
                                             mensagem</a></li>
                                     <?php if (cfg('support_email')): ?>
-                                        <li><a title="E-mail" class="dropdown-item"
-                                                href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>">
-                                                <?php echo htmlspecialchars(cfg('support_email')); ?></a>
-                                        </li>
+                                    <li><a title="E-mail" class="dropdown-item"
+                                            href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>">
+                                            <?php echo htmlspecialchars(cfg('support_email')); ?></a>
+                                    </li>
                                     <?php endif; ?>
                                     <?php if ($whatsNum): ?>
-                                        <li><a title="WhatsApp" class="dropdown-item"
-                                                href="https://wa.me/<?php echo $whatsNum; ?>">WhatsApp</a>
-                                        </li>
+                                    <li><a title="WhatsApp" class="dropdown-item"
+                                            href="https://wa.me/<?php echo $whatsNum; ?>">WhatsApp</a>
+                                    </li>
                                     <?php endif; ?>
                                 </ul>
                             </li>
@@ -258,7 +258,7 @@ $csrf_support = getSiteCsrf(); // gerado no topo, antes de qualquer HTML
                                 Entrar <i data-feather="log-in"></i>
                             </a>
                             <?php if ($canRegister): ?>
-                                <a title="Sign-up" href="/wasomupfy/register" class="btn btn-wasomupfy">Inscreva-se</a>
+                            <a title="Sign-up" href="/wasomupfy/register" class="btn btn-wasomupfy">Inscreva-se</a>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -404,11 +404,24 @@ $csrf_support = getSiteCsrf(); // gerado no topo, antes de qualquer HTML
                                                     <select id="sup_issue" class="form-control" name="issueType"
                                                         required>
                                                         <option value="" disabled selected>Selecione uma opção</option>
-                                                        <option value="login">Problemas de Login</option>
-                                                        <option value="plan">Alterar o plano</option>
-                                                        <option value="stats">Erro nas Estatísticas</option>
-                                                        <option value="upload">Falha ao Enviar Arquivos</option>
-                                                        <option value="other">Outro</option>
+                                                        <optgroup label="Acesso">
+                                                            <option value="login">Problemas de Login</option>
+                                                            <option value="password">Esqueci a senha</option>
+                                                            <option value="account">Conta bloqueada/suspensa</option>
+                                                        </optgroup>
+                                                        <optgroup label="Planos e Pagamentos">
+                                                            <option value="plan">Alterar o plano</option>
+                                                            <option value="payment">Dúvidas sobre pagamento</option>
+                                                            <option value="refund">Política de reembolso</option>
+                                                        </optgroup>
+                                                        <optgroup label="Serviços">
+                                                            <option value="stats">Erro nas Estatísticas</option>
+                                                            <option value="upload">Falha ao Enviar Arquivos</option>
+                                                            <option value="distribution">Distribuição e prazos</option>
+                                                        </optgroup>
+                                                        <optgroup label="Outros">
+                                                            <option value="other">Outro</option>
+                                                        </optgroup>
                                                     </select>
                                                     <div class="error-message" id="issueTypeError">Por favor, selecione
                                                         o tipo de problema.</div>
@@ -490,39 +503,39 @@ $csrf_support = getSiteCsrf(); // gerado no topo, antes de qualquer HTML
                         </p>
                         <div class="d-flex gap-3" role="list" aria-label="Redes sociais">
                             <?php if (cfg('instagram_url')): ?>
-                                <a href="<?php echo htmlspecialchars(cfg('instagram_url')); ?>" target="_blank"
-                                    rel="external noopener noreferrer" aria-label="Instagram"
-                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                    <i class="fa-brands fa-instagram"></i>
-                                </a>
+                            <a href="<?php echo htmlspecialchars(cfg('instagram_url')); ?>" target="_blank"
+                                rel="external noopener noreferrer" aria-label="Instagram"
+                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                <i class="fa-brands fa-instagram"></i>
+                            </a>
                             <?php endif; ?>
                             <?php if (cfg('facebook_url')): ?>
-                                <a href="<?php echo htmlspecialchars(cfg('facebook_url')); ?>" target="_blank"
-                                    rel="external noopener noreferrer" aria-label="Facebook"
-                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                    <i class="fa-brands fa-facebook-f"></i>
-                                </a>
+                            <a href="<?php echo htmlspecialchars(cfg('facebook_url')); ?>" target="_blank"
+                                rel="external noopener noreferrer" aria-label="Facebook"
+                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                <i class="fa-brands fa-facebook-f"></i>
+                            </a>
                             <?php endif; ?>
                             <?php if (cfg('youtube_url')): ?>
-                                <a href="<?php echo htmlspecialchars(cfg('youtube_url')); ?>" target="_blank"
-                                    rel="external noopener noreferrer" aria-label="YouTube"
-                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                    <i class="fa-brands fa-youtube"></i>
-                                </a>
+                            <a href="<?php echo htmlspecialchars(cfg('youtube_url')); ?>" target="_blank"
+                                rel="external noopener noreferrer" aria-label="YouTube"
+                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                <i class="fa-brands fa-youtube"></i>
+                            </a>
                             <?php endif; ?>
                             <?php if (cfg('linkedin_url')): ?>
-                                <a href="<?php echo htmlspecialchars(cfg('linkedin_url')); ?>" target="_blank"
-                                    rel="external noopener noreferrer" aria-label="LinkedIn"
-                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                    <i class="fa-brands fa-linkedin-in"></i>
-                                </a>
+                            <a href="<?php echo htmlspecialchars(cfg('linkedin_url')); ?>" target="_blank"
+                                rel="external noopener noreferrer" aria-label="LinkedIn"
+                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                <i class="fa-brands fa-linkedin-in"></i>
+                            </a>
                             <?php endif; ?>
                             <?php if ($whatsNum): ?>
-                                <a href="https://wa.me/<?php echo $whatsNum; ?>" target="_blank"
-                                    rel="external noopener noreferrer" aria-label="WhatsApp"
-                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                    <i class="fa-brands fa-whatsapp"></i>
-                                </a>
+                            <a href="https://wa.me/<?php echo $whatsNum; ?>" target="_blank"
+                                rel="external noopener noreferrer" aria-label="WhatsApp"
+                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                <i class="fa-brands fa-whatsapp"></i>
+                            </a>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -556,10 +569,10 @@ $csrf_support = getSiteCsrf(); // gerado no topo, antes de qualquer HTML
                             <li class="mb-2"><a href="../../contact"
                                     class="text-reset text-decoration-none hover-white">Contacta-nos</a></li>
                             <?php if ($whatsNum): ?>
-                                <li class="mb-2">
-                                    <a href="https://wa.me/<?php echo $whatsNum; ?>"
-                                        class="text-reset text-decoration-none hover-white">WhatsApp</a>
-                                </li>
+                            <li class="mb-2">
+                                <a href="https://wa.me/<?php echo $whatsNum; ?>"
+                                    class="text-reset text-decoration-none hover-white">WhatsApp</a>
+                            </li>
                             <?php endif; ?>
                         </ul>
                     </div>
@@ -573,16 +586,16 @@ $csrf_support = getSiteCsrf(); // gerado no topo, antes de qualquer HTML
                                     <?php echo htmlspecialchars(cfg('company_city', 'Luanda')); ?></span>
                             </li>
                             <?php if (cfg('info_email')): ?>
-                                <li class="mb-3 d-flex">
-                                    <a href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
-                                        class="text-reset text-decoration-none"><?php echo htmlspecialchars(cfg('info_email')); ?></a>
-                                </li>
+                            <li class="mb-3 d-flex">
+                                <a href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
+                                    class="text-reset text-decoration-none"><?php echo htmlspecialchars(cfg('info_email')); ?></a>
+                            </li>
                             <?php endif; ?>
                             <?php if (cfg('support_email')): ?>
-                                <li class="mb-3 d-flex">
-                                    <a href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
-                                        class="text-reset text-decoration-none"><?php echo htmlspecialchars(cfg('support_email')); ?></a>
-                                </li>
+                            <li class="mb-3 d-flex">
+                                <a href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
+                                    class="text-reset text-decoration-none"><?php echo htmlspecialchars(cfg('support_email')); ?></a>
+                            </li>
                             <?php endif; ?>
                             <li class="d-flex"><span>Seg — Sex: 08h às 17h</span></li>
                         </ul>
@@ -728,218 +741,218 @@ $csrf_support = getSiteCsrf(); // gerado no topo, antes de qualquer HTML
     <script src="<?php echo APP_URL  ?>/js/cookies.js"></script>
 
     <script>
-        feather.replace({
-            width: "1em",
-            height: "1em"
-        });
+    feather.replace({
+        width: "1em",
+        height: "1em"
+    });
     </script>
 
     <!-- GTM -->
     <script>
-        !(function(e, t, a, n, g) {
-            (e[n] = e[n] || []), e[n].push({
-                "gtm.start": new Date().getTime(),
-                event: "gtm.js"
-            });
-            var m = t.getElementsByTagName(a)[0],
-                r = t.createElement(a);
-            (r.async = !0), (r.src = "https://www.googletagmanager.com/gtm.js?id=GTM-MF4DZVH"), m.parentNode
-                .insertBefore(r, m);
-        })(window, document, "script", "dataLayer");
+    !(function(e, t, a, n, g) {
+        (e[n] = e[n] || []), e[n].push({
+            "gtm.start": new Date().getTime(),
+            event: "gtm.js"
+        });
+        var m = t.getElementsByTagName(a)[0],
+            r = t.createElement(a);
+        (r.async = !0), (r.src = "https://www.googletagmanager.com/gtm.js?id=GTM-MF4DZVH"), m.parentNode
+            .insertBefore(r, m);
+    })(window, document, "script", "dataLayer");
     </script>
 
     <script>
-        (function() {
-            /* ── Sincroniza TODOS os csrf_token da página ─────────────────────── */
-            function syncAllCsrf(token) {
-                if (!token) return;
-                document.querySelectorAll('[name="csrf_token"]').forEach(function(el) {
-                    el.value = token;
-                });
-            }
+    (function() {
+        /* ── Sincroniza TODOS os csrf_token da página ─────────────────────── */
+        function syncAllCsrf(token) {
+            if (!token) return;
+            document.querySelectorAll('[name="csrf_token"]').forEach(function(el) {
+                el.value = token;
+            });
+        }
 
-            /* ── Adicionar campo de ficheiro extra ───────────────────────────── */
-            document.getElementById('btn-add-attachment').addEventListener('click', function() {
-                var container = document.getElementById('attachmentContainer');
-                var input = document.createElement('input');
-                input.type = 'file';
-                input.name = 'attachment[]';
-                input.className = 'form-control mt-2';
-                input.accept = '.jpg,.jpeg,.png,.gif,.pdf,.txt,.zip,.mp4,.mov';
-                container.insertBefore(input, this);
+        /* ── Adicionar campo de ficheiro extra ───────────────────────────── */
+        document.getElementById('btn-add-attachment').addEventListener('click', function() {
+            var container = document.getElementById('attachmentContainer');
+            var input = document.createElement('input');
+            input.type = 'file';
+            input.name = 'attachment[]';
+            input.className = 'form-control mt-2';
+            input.accept = '.jpg,.jpeg,.png,.gif,.pdf,.txt,.zip,.mp4,.mov';
+            container.insertBefore(input, this);
+        });
+
+        /* ── Barra de progresso do formulário ────────────────────────────── */
+        function updateProgressBar() {
+            var form = document.getElementById('supportForm');
+            var inputs = form.querySelectorAll('input[required], select[required], textarea[required]');
+            var filled = 0;
+            inputs.forEach(function(inp) {
+                if (inp.value.trim() !== '') filled++;
+            });
+            document.getElementById('progressBar').style.width = ((filled / inputs.length) * 100) + '%';
+        }
+
+        document.getElementById('supportForm').querySelectorAll('input, select, textarea').forEach(function(el) {
+            el.addEventListener('input', updateProgressBar);
+            el.addEventListener('change', updateProgressBar);
+        });
+
+        /* ══ Formulário de Suporte ══════════════════════════════════════════
+           Usa FormData (multipart) porque tem upload de ficheiro.
+           O CSRF vai dentro do FormData — o endpoint lê $_POST['csrf_token'].
+        ═══════════════════════════════════════════════════════════════════ */
+        var fSupport = document.getElementById('supportForm');
+        var alertBox = document.getElementById('support-alert');
+        var btnSup = document.getElementById('btn-support-submit');
+
+        fSupport.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            /* Validação manual (mantém compatibilidade com CSS .error-message) */
+            var name = document.getElementById('sup_name').value.trim();
+            var email = document.getElementById('sup_email').value.trim();
+            var urgency = document.getElementById('sup_urgency').value;
+            var issueType = document.getElementById('sup_issue').value;
+            var description = document.getElementById('sup_description').value.trim();
+            var isValid = true;
+
+            document.querySelectorAll('.error-message').forEach(function(el) {
+                el.style.display = 'none';
             });
 
-            /* ── Barra de progresso do formulário ────────────────────────────── */
-            function updateProgressBar() {
-                var form = document.getElementById('supportForm');
-                var inputs = form.querySelectorAll('input[required], select[required], textarea[required]');
-                var filled = 0;
-                inputs.forEach(function(inp) {
-                    if (inp.value.trim() !== '') filled++;
-                });
-                document.getElementById('progressBar').style.width = ((filled / inputs.length) * 100) + '%';
+            if (!name) {
+                document.getElementById('nameError').style.display = 'block';
+                isValid = false;
+            }
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                document.getElementById('emailError').style.display = 'block';
+                isValid = false;
+            }
+            if (!urgency) {
+                document.getElementById('urgencyError').style.display = 'block';
+                isValid = false;
+            }
+            if (!issueType) {
+                document.getElementById('issueTypeError').style.display = 'block';
+                isValid = false;
+            }
+            if (!description) {
+                document.getElementById('descriptionError').style.display = 'block';
+                isValid = false;
             }
 
-            document.getElementById('supportForm').querySelectorAll('input, select, textarea').forEach(function(el) {
-                el.addEventListener('input', updateProgressBar);
-                el.addEventListener('change', updateProgressBar);
-            });
+            if (!isValid) {
+                updateProgressBar();
+                return;
+            }
 
-            /* ══ Formulário de Suporte ══════════════════════════════════════════
-               Usa FormData (multipart) porque tem upload de ficheiro.
-               O CSRF vai dentro do FormData — o endpoint lê $_POST['csrf_token'].
-            ═══════════════════════════════════════════════════════════════════ */
-            var fSupport = document.getElementById('supportForm');
-            var alertBox = document.getElementById('support-alert');
-            var btnSup = document.getElementById('btn-support-submit');
+            var basePath = document.body.dataset.basePath || '../..';
+            btnSup.disabled = true;
+            btnSup.textContent = 'A enviar…';
 
-            fSupport.addEventListener('submit', function(e) {
+            var fd = new FormData(fSupport);
+
+            fetch(basePath + '/ajax/support.php', {
+                    method: 'POST',
+                    body: fd /* multipart — não definir Content-Type manualmente */
+                })
+                .then(function(r) {
+                    return r.json();
+                })
+                .then(function(data) {
+                    alertBox.className = 'alert ' + (data.success ? 'alert-success' : 'alert-danger');
+                    alertBox.textContent = data.message || (data.success ?
+                        'Pedido enviado com sucesso!' : 'Erro ao enviar.');
+                    alertBox.classList.remove('d-none');
+
+                    if (data.new_csrf) syncAllCsrf(data.new_csrf);
+
+                    if (data.success) {
+                        fSupport.reset();
+                        updateProgressBar();
+                        /* Remover campos de anexo extra */
+                        document.querySelectorAll('#attachmentContainer input[type="file"]').forEach(
+                            function(el, i) {
+                                if (i > 0) el.remove();
+                            });
+                    }
+                })
+                .catch(function() {
+                    alertBox.className = 'alert alert-danger';
+                    alertBox.textContent = 'Erro de ligação. Tente novamente.';
+                    alertBox.classList.remove('d-none');
+                })
+                .finally(function() {
+                    btnSup.disabled = false;
+                    btnSup.textContent = 'Enviar Pedido';
+                    setTimeout(function() {
+                        alertBox.classList.add('d-none');
+                    }, 7000);
+                });
+        });
+
+        /* ══ Modal Feedback ═════════════════════════════════════════════════ */
+        var fModal = document.getElementById('formFeedback');
+        if (fModal) {
+            fModal.addEventListener('submit', function(e) {
                 e.preventDefault();
-
-                /* Validação manual (mantém compatibilidade com CSS .error-message) */
-                var name = document.getElementById('sup_name').value.trim();
-                var email = document.getElementById('sup_email').value.trim();
-                var urgency = document.getElementById('sup_urgency').value;
-                var issueType = document.getElementById('sup_issue').value;
-                var description = document.getElementById('sup_description').value.trim();
-                var isValid = true;
-
-                document.querySelectorAll('.error-message').forEach(function(el) {
-                    el.style.display = 'none';
-                });
-
-                if (!name) {
-                    document.getElementById('nameError').style.display = 'block';
-                    isValid = false;
-                }
-                if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                    document.getElementById('emailError').style.display = 'block';
-                    isValid = false;
-                }
-                if (!urgency) {
-                    document.getElementById('urgencyError').style.display = 'block';
-                    isValid = false;
-                }
-                if (!issueType) {
-                    document.getElementById('issueTypeError').style.display = 'block';
-                    isValid = false;
-                }
-                if (!description) {
-                    document.getElementById('descriptionError').style.display = 'block';
-                    isValid = false;
-                }
-
-                if (!isValid) {
-                    updateProgressBar();
+                if (!fModal.checkValidity()) {
+                    fModal.classList.add('was-validated');
                     return;
                 }
 
                 var basePath = document.body.dataset.basePath || '../..';
-                btnSup.disabled = true;
-                btnSup.textContent = 'A enviar…';
+                var btn = document.getElementById('btn-feedback-modal');
+                var msgBox = document.getElementById('feedback-modal-msg');
 
-                var fd = new FormData(fSupport);
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>A enviar…';
 
-                fetch(basePath + '/ajax/support.php', {
+                fetch(basePath + '/ajax/feedback.php', {
                         method: 'POST',
-                        body: fd /* multipart — não definir Content-Type manualmente */
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            csrf: fModal.querySelector('[name="csrf_token"]').value,
+                            name: fModal.querySelector('[name="name_fb"]').value.trim(),
+                            subject: fModal.querySelector('[name="subject_fb"]').value.trim(),
+                            message: fModal.querySelector('[name="message_fb"]').value.trim(),
+                            page: window.location.pathname
+                        })
                     })
                     .then(function(r) {
                         return r.json();
                     })
                     .then(function(data) {
-                        alertBox.className = 'alert ' + (data.success ? 'alert-success' : 'alert-danger');
-                        alertBox.textContent = data.message || (data.success ?
-                            'Pedido enviado com sucesso!' : 'Erro ao enviar.');
-                        alertBox.classList.remove('d-none');
-
+                        msgBox.className = 'alert ' + (data.success ? 'alert-success' : 'alert-danger');
+                        msgBox.textContent = data.message || (data.success ?
+                            'Feedback enviado! Obrigado.' : 'Erro ao enviar.');
+                        msgBox.classList.remove('d-none');
                         if (data.new_csrf) syncAllCsrf(data.new_csrf);
-
                         if (data.success) {
-                            fSupport.reset();
-                            updateProgressBar();
-                            /* Remover campos de anexo extra */
-                            document.querySelectorAll('#attachmentContainer input[type="file"]').forEach(
-                                function(el, i) {
-                                    if (i > 0) el.remove();
-                                });
+                            fModal.reset();
+                            setTimeout(function() {
+                                var m = bootstrap.Modal.getInstance(document.getElementById(
+                                    'modalFeedback'));
+                                if (m) m.hide();
+                            }, 2500);
                         }
                     })
                     .catch(function() {
-                        alertBox.className = 'alert alert-danger';
-                        alertBox.textContent = 'Erro de ligação. Tente novamente.';
-                        alertBox.classList.remove('d-none');
+                        msgBox.className = 'alert alert-danger';
+                        msgBox.textContent = 'Erro de ligação. Tente novamente.';
+                        msgBox.classList.remove('d-none');
                     })
                     .finally(function() {
-                        btnSup.disabled = false;
-                        btnSup.textContent = 'Enviar Pedido';
-                        setTimeout(function() {
-                            alertBox.classList.add('d-none');
-                        }, 7000);
+                        btn.disabled = false;
+                        btn.innerHTML = 'Enviar Feedback <i class="fa-solid fa-paper-plane ms-2"></i>';
                     });
             });
+        }
 
-            /* ══ Modal Feedback ═════════════════════════════════════════════════ */
-            var fModal = document.getElementById('formFeedback');
-            if (fModal) {
-                fModal.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    if (!fModal.checkValidity()) {
-                        fModal.classList.add('was-validated');
-                        return;
-                    }
-
-                    var basePath = document.body.dataset.basePath || '../..';
-                    var btn = document.getElementById('btn-feedback-modal');
-                    var msgBox = document.getElementById('feedback-modal-msg');
-
-                    btn.disabled = true;
-                    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>A enviar…';
-
-                    fetch(basePath + '/ajax/feedback.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                csrf: fModal.querySelector('[name="csrf_token"]').value,
-                                name: fModal.querySelector('[name="name_fb"]').value.trim(),
-                                subject: fModal.querySelector('[name="subject_fb"]').value.trim(),
-                                message: fModal.querySelector('[name="message_fb"]').value.trim(),
-                                page: window.location.pathname
-                            })
-                        })
-                        .then(function(r) {
-                            return r.json();
-                        })
-                        .then(function(data) {
-                            msgBox.className = 'alert ' + (data.success ? 'alert-success' : 'alert-danger');
-                            msgBox.textContent = data.message || (data.success ?
-                                'Feedback enviado! Obrigado.' : 'Erro ao enviar.');
-                            msgBox.classList.remove('d-none');
-                            if (data.new_csrf) syncAllCsrf(data.new_csrf);
-                            if (data.success) {
-                                fModal.reset();
-                                setTimeout(function() {
-                                    var m = bootstrap.Modal.getInstance(document.getElementById(
-                                        'modalFeedback'));
-                                    if (m) m.hide();
-                                }, 2500);
-                            }
-                        })
-                        .catch(function() {
-                            msgBox.className = 'alert alert-danger';
-                            msgBox.textContent = 'Erro de ligação. Tente novamente.';
-                            msgBox.classList.remove('d-none');
-                        })
-                        .finally(function() {
-                            btn.disabled = false;
-                            btn.innerHTML = 'Enviar Feedback <i class="fa-solid fa-paper-plane ms-2"></i>';
-                        });
-                });
-            }
-
-        })();
+    })();
     </script>
 
 </body>

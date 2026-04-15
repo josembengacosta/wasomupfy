@@ -47,6 +47,45 @@ $as = $db->prepare('SELECT COUNT(*) AS total FROM _artist WHERE id_users = ?');
 $as->execute([$id_users]);
 $has_artist = (int)($as->fetch()['total'] ?? 0) > 0;
 
+// ── Verificar limite de lançamentos do plano ─────────────────
+$can_create_release = true;
+$limit_message = '';
+
+// Buscar plano ativo do usuário
+$user_plan_stmt = $db->prepare("
+    SELECT up.releases_used, up.releases_limit, up.status_plan
+    FROM _user_plan up
+    WHERE up.id_users = ? AND up.status_plan = 'active'
+    ORDER BY up.id_user_plan DESC
+    LIMIT 1
+");
+$user_plan_stmt->execute([$id_users]);
+$user_plan = $user_plan_stmt->fetch();
+
+if ($user_plan) {
+    // Verificar limite numérico (pacotes)
+    if ($user_plan['releases_limit'] !== null) {
+        if ((int)$user_plan['releases_used'] >= (int)$user_plan['releases_limit']) {
+            $can_create_release = false;
+            $limit_message = 'Atingiste o limite de lançamentos do teu plano. Faz upgrade para continuar.';
+        }
+    }
+}
+
+// Verificação adicional para Single (apenas 1 lançamento ativo)
+$plan_slug = $plan['slug_plan'] ?? '';
+if ($plan_slug === 'single' && $can_create_release) {
+    $active_count_stmt = $db->prepare("
+        SELECT COUNT(*) FROM _album
+        WHERE id_users = ? 
+          AND status_album IN ('pending', 'under_review', 'approved')
+    ");
+    $active_count_stmt->execute([$id_users]);
+    if ((int)$active_count_stmt->fetchColumn() >= 1) {
+        $can_create_release = false;
+        $limit_message = 'O plano Single permite apenas 1 lançamento ativo. Aguarda a conclusão ou faz upgrade.';
+    }
+}
 // ── Conta bancária ────────────────────────────
 $ba = $db->prepare("SELECT id_account FROM _account WHERE id_users = ? AND status_account = 'verified' LIMIT 1");
 $ba->execute([$id_users]);
@@ -182,178 +221,178 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
     <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/release-style.css" />
     <style>
-        /* ── Cards de lançamento ─── */
-        .release-card {
-            border-radius: 12px;
-            overflow: hidden;
-            position: relative;
-            border: 1px solid var(--border-color, rgba(0, 0, 0, .08));
-            box-shadow: 0 2px 8px rgba(0, 0, 0, .06);
-            transition: transform .2s, box-shadow .2s;
-            height: 100%;
-        }
+    /* ── Cards de lançamento ─── */
+    .release-card {
+        border-radius: 12px;
+        overflow: hidden;
+        position: relative;
+        border: 1px solid var(--border-color, rgba(0, 0, 0, .08));
+        box-shadow: 0 2px 8px rgba(0, 0, 0, .06);
+        transition: transform .2s, box-shadow .2s;
+        height: 100%;
+    }
 
-        .release-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 32px rgba(255, 0, 137, .15);
-            border-color: rgba(255, 0, 137, .3);
-        }
+    .release-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 32px rgba(255, 0, 137, .15);
+        border-color: rgba(255, 0, 137, .3);
+    }
 
-        .release-cover {
-            width: 100%;
-            aspect-ratio: 1/1;
-            object-fit: cover;
-            cursor: pointer;
-            display: block;
-        }
+    .release-cover {
+        width: 100%;
+        aspect-ratio: 1/1;
+        object-fit: cover;
+        cursor: pointer;
+        display: block;
+    }
 
-        .release-cover-placeholder {
-            width: 100%;
-            aspect-ratio: 1/1;
-            background: linear-gradient(135deg, #2d2d2d, #1a1a1a);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: #555;
-        }
+    .release-cover-placeholder {
+        width: 100%;
+        aspect-ratio: 1/1;
+        background: linear-gradient(135deg, #2d2d2d, #1a1a1a);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #555;
+    }
 
-        .release-body {
-            padding: 12px 14px;
-        }
+    .release-body {
+        padding: 12px 14px;
+    }
 
-        .release-title {
-            font-weight: 700;
-            font-size: .95rem;
-            margin: 0 0 2px;
-            line-height: 1.3;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+    .release-title {
+        font-weight: 700;
+        font-size: .95rem;
+        margin: 0 0 2px;
+        line-height: 1.3;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
-        .release-artist {
-            font-size: .8rem;
-            color: #888;
-            margin-bottom: 6px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+    .release-artist {
+        font-size: .8rem;
+        color: #888;
+        margin-bottom: 6px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
-        .release-meta {
-            font-size: .75rem;
-            color: #999;
-            margin-bottom: 8px;
-        }
+    .release-meta {
+        font-size: .75rem;
+        color: #999;
+        margin-bottom: 8px;
+    }
 
-        .release-actions {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-            padding: 0 14px 14px;
-        }
+    .release-actions {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        padding: 0 14px 14px;
+    }
 
-        /* ── Status ribbon ─── */
-        .status-badge {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            font-size: .7rem;
-            font-weight: 700;
-            padding: 3px 9px;
-            border-radius: 20px;
-            text-transform: uppercase;
-            letter-spacing: .4px;
-            backdrop-filter: blur(6px);
-        }
+    /* ── Status ribbon ─── */
+    .status-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        font-size: .7rem;
+        font-weight: 700;
+        padding: 3px 9px;
+        border-radius: 20px;
+        text-transform: uppercase;
+        letter-spacing: .4px;
+        backdrop-filter: blur(6px);
+    }
 
-        .status-approved {
-            background: rgba(25, 135, 84, .85);
-            color: #fff;
-        }
+    .status-approved {
+        background: rgba(25, 135, 84, .85);
+        color: #fff;
+    }
 
-        .status-pending {
-            background: rgba(255, 193, 7, .9);
-            color: #000;
-        }
+    .status-pending {
+        background: rgba(255, 193, 7, .9);
+        color: #000;
+    }
 
-        .status-rejected {
-            background: rgba(220, 53, 69, .85);
-            color: #fff;
-        }
+    .status-rejected {
+        background: rgba(220, 53, 69, .85);
+        color: #fff;
+    }
 
-        .status-draft {
-            background: rgba(108, 117, 125, .8);
-            color: #fff;
-        }
+    .status-draft {
+        background: rgba(108, 117, 125, .8);
+        color: #fff;
+    }
 
-        .status-warning {
-            background: rgba(255, 193, 7, .9);
-            color: #000;
-        }
+    .status-warning {
+        background: rgba(255, 193, 7, .9);
+        color: #000;
+    }
 
-        /* ── Modal do álbum ─── */
-        .album-modal-cover {
-            width: 100%;
-            max-width: 200px;
-            border-radius: 10px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, .3);
-        }
+    /* ── Modal do álbum ─── */
+    .album-modal-cover {
+        width: 100%;
+        max-width: 200px;
+        border-radius: 10px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, .3);
+    }
 
-        .track-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 6px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, .08);
-            font-size: .85rem;
-        }
+    .track-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, .08);
+        font-size: .85rem;
+    }
 
-        .track-row:last-child {
-            border-bottom: none;
-        }
+    .track-row:last-child {
+        border-bottom: none;
+    }
 
-        .track-num {
-            color: #ff0089;
-            font-weight: 700;
-            min-width: 24px;
-        }
+    .track-num {
+        color: #ff0089;
+        font-weight: 700;
+        min-width: 24px;
+    }
 
-        .track-isrc {
-            font-size: .7rem;
-            color: #888;
-        }
+    .track-isrc {
+        font-size: .7rem;
+        color: #888;
+    }
 
-        /* ── Estado vazio ─── */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-        }
+    /* ── Estado vazio ─── */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+    }
 
-        .empty-state i {
-            font-size: 4rem;
-            color: #dee2e6;
-            margin-bottom: 16px;
-        }
+    .empty-state i {
+        font-size: 4rem;
+        color: #dee2e6;
+        margin-bottom: 16px;
+    }
 
-        /* ── Streaming links no card ─── */
-        .streaming-links a {
-            font-size: 1.1rem;
-            color: #888;
-            margin-right: 6px;
-            transition: color .2s;
-            text-decoration: none;
-        }
+    /* ── Streaming links no card ─── */
+    .streaming-links a {
+        font-size: 1.1rem;
+        color: #888;
+        margin-right: 6px;
+        transition: color .2s;
+        text-decoration: none;
+    }
 
-        .streaming-links a:hover {
-            color: #ff0089;
-        }
+    .streaming-links a:hover {
+        color: #ff0089;
+    }
 
-        /* ── Modal de revisão ─── */
-        #reviewModal .form-label {
-            font-size: .85rem;
-        }
+    /* ── Modal de revisão ─── */
+    #reviewModal .form-label {
+        font-size: .85rem;
+    }
     </style>
 </head>
 
@@ -411,7 +450,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
         <?php /* ── NÍVEL 1: Crítico — bloqueia distribuição ── */ ?>
 
         <?php if (!$email_verified): ?>
-            <?php wuAlert(
+        <?php wuAlert(
                 'danger',
                 'bi-envelope-exclamation-fill',
                 '<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta e receber notificações de pagamentos.',
@@ -422,7 +461,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
         <?php endif; ?>
 
         <?php if ($plan && !$plan_paid): ?>
-            <?php wuAlert(
+        <?php wuAlert(
                 'warning',
                 'bi-clock-history',
                 '<strong>Pagamento pendente — ' . htmlspecialchars($plan['name_plan']) . '.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados até confirmação.',
@@ -431,7 +470,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
                 'banner-plan-pending'
             ); ?>
         <?php elseif (!$plan): ?>
-            <?php wuAlert(
+        <?php wuAlert(
                 'danger',
                 'bi-credit-card-fill',
                 '<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir a tua música para +150 plataformas.',
@@ -444,7 +483,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
         <?php /* ── NÍVEL 2: Importante — perfil incompleto ── */ ?>
 
         <?php if ($plan_paid && !$has_artist): ?>
-            <?php wuAlert(
+        <?php wuAlert(
                 'info',
                 'bi-person-plus-fill',
                 '<strong>Cria o teu perfil artístico.</strong> Tens plano activo mas ainda não criaste um perfil artístico. Precisas de um para poder lançar música.',
@@ -457,7 +496,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
         <?php /* ── NÍVEL 3: Informativo — conta bancária ── */ ?>
 
         <?php if ($plan_paid && $has_artist && !$bank_account): ?>
-            <?php wuAlert(
+        <?php wuAlert(
                 'info',
                 'bi-bank',
                 '<strong>Conta bancária não registada.</strong> Para poder sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.',
@@ -478,7 +517,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
         }
         ?>
         <?php if ($rejected_account): ?>
-            <?php
+        <?php
             $rej_msg = '<strong>Conta ' . htmlspecialchars($rejected_account['type_account']) . ' rejeitada.</strong>';
             if ($rejected_account['reject_reason']) {
                 $rej_msg .= ' Motivo: <em>' . htmlspecialchars($rejected_account['reject_reason']) . '</em>.';
@@ -516,17 +555,32 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
                         <i class="bi bi-pencil"></i> Rascunhos
                         <span class="badge bg-warning" id="draft-count-badge">0</span>
                     </button>
+                    <?php if ($can_create_release): ?>
                     <button class="btn btn-pink" onclick="window.location='creat-release'">
                         <i class="bi bi-plus"></i> Novo lançamento
                     </button>
+                    <?php else: ?>
+                    <button class="btn btn-secondary" disabled data-bs-toggle="tooltip"
+                        title="<?php echo htmlspecialchars($limit_message); ?>">
+                        <i class="bi bi-plus"></i> Novo lançamento
+                    </button>
+                    <a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/all-plans" class="btn btn-pink ms-2">
+                        <i class="bi bi-arrow-up-circle"></i> Fazer Upgrade
+                    </a>
+                    <div class="small mt-2">
+
+                        <span class="text-dark badge bg-warning"> <i
+                                class="bi bi-exclamation-circle me-1"></i><?php echo htmlspecialchars($limit_message); ?></span>
+                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
             <!-- Ícone decorativo: disco -->
             <style>
-                .page-header::before {
-                    content: '\F428';
-                    /* bi-disc-fill */
-                }
+            .page-header::before {
+                content: '\F428';
+                /* bi-disc-fill */
+            }
             </style>
         </div>
 
@@ -999,180 +1053,182 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
     <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
 
     <script>
-        // ════════════════════════════════════════════════
-        // DADOS DA BD (PHP → JS)
-        // ════════════════════════════════════════════════
-        const CSRF = '<?php echo $csrf; ?>';
-        const BASE_URL = '<?php echo APP_URL; ?>';
-        const ALBUMS_DB = <?php echo $albums_json; ?>;
-        const COVER_BASE = BASE_URL + '/assets/comprovantes/uploads/covers/';
+    // Ativar tooltips
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
+    // ════════════════════════════════════════════════
+    // DADOS DA BD (PHP → JS)
+    // ════════════════════════════════════════════════
+    const CSRF = '<?php echo $csrf; ?>';
+    const BASE_URL = '<?php echo APP_URL; ?>';
+    const ALBUMS_DB = <?php echo $albums_json; ?>;
+    const COVER_BASE = BASE_URL + '/assets/comprovantes/uploads/covers/';
 
-        // ════════════════════════════════════════════════
-        // RASCUNHOS — localStorage
-        // Chave: wasom_drafts_{id_users}
-        // Estrutura: [{id, title, artist, type, genre, created_at, ...}]
-        // ════════════════════════════════════════════════
-        const DRAFT_KEY = 'wasom_drafts_<?php echo $id_users; ?>';
+    // ════════════════════════════════════════════════
+    // RASCUNHOS — localStorage
+    // Chave: wasom_drafts_{id_users}
+    // Estrutura: [{id, title, artist, type, genre, created_at, ...}]
+    // ════════════════════════════════════════════════
+    const DRAFT_KEY = 'wasom_drafts_<?php echo $id_users; ?>';
 
-        function getDrafts() {
-            try {
-                return JSON.parse(localStorage.getItem(DRAFT_KEY) || '[]');
-            } catch (e) {
-                return [];
-            }
+    function getDrafts() {
+        try {
+            return JSON.parse(localStorage.getItem(DRAFT_KEY) || '[]');
+        } catch (e) {
+            return [];
         }
+    }
 
-        function saveDraft(draft) {
-            const drafts = getDrafts();
-            const idx = drafts.findIndex(d => d.id === draft.id);
-            if (idx >= 0) drafts[idx] = draft;
-            else drafts.push(draft);
-            localStorage.setItem(DRAFT_KEY, JSON.stringify(drafts));
-            updateDraftBadge();
-        }
+    function saveDraft(draft) {
+        const drafts = getDrafts();
+        const idx = drafts.findIndex(d => d.id === draft.id);
+        if (idx >= 0) drafts[idx] = draft;
+        else drafts.push(draft);
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(drafts));
+        updateDraftBadge();
+    }
 
-        function deleteDraft(draftId) {
-            const drafts = getDrafts().filter(d => d.id !== draftId);
-            localStorage.setItem(DRAFT_KEY, JSON.stringify(drafts));
-            updateDraftBadge();
-        }
+    function deleteDraft(draftId) {
+        const drafts = getDrafts().filter(d => d.id !== draftId);
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(drafts));
+        updateDraftBadge();
+    }
 
-        function updateDraftBadge() {
-            const n = getDrafts().length;
-            document.getElementById('draft-count-badge').textContent = n;
-            document.getElementById('draft-count-badge').style.display = n ? '' : 'none';
-        }
+    function updateDraftBadge() {
+        const n = getDrafts().length;
+        document.getElementById('draft-count-badge').textContent = n;
+        document.getElementById('draft-count-badge').style.display = n ? '' : 'none';
+    }
 
-        // ════════════════════════════════════════════════
-        // HELPERS
-        // ════════════════════════════════════════════════
-        const STATUS_LABEL = {
-            approved: 'Aprovado',
-            pending: 'Pendente',
-            under_review: 'Em revisão',
-            rejected: 'Reprovado',
-            draft: 'Rascunho',
-            deleting: 'A eliminar...'
-        };
-        const STATUS_CLASS = {
-            approved: 'approved',
-            pending: 'pending',
-            under_review: 'warning',
-            rejected: 'rejected',
-            draft: 'draft',
-            deleting: 'warning'
-        };
-        const TYPE_LABEL = {
-            single: 'Single',
-            ep: 'EP',
-            EP: 'EP',
-            album: 'Álbum',
-            mixtape: 'Mixtape'
-        };
+    // ════════════════════════════════════════════════
+    // HELPERS
+    // ════════════════════════════════════════════════
+    const STATUS_LABEL = {
+        approved: 'Aprovado',
+        pending: 'Pendente',
+        under_review: 'Em revisão',
+        rejected: 'Reprovado',
+        draft: 'Rascunho',
+        deleting: 'A eliminar...'
+    };
+    const STATUS_CLASS = {
+        approved: 'approved',
+        pending: 'pending',
+        under_review: 'warning',
+        rejected: 'rejected',
+        draft: 'draft',
+        deleting: 'warning'
+    };
+    const TYPE_LABEL = {
+        single: 'Single',
+        ep: 'EP',
+        EP: 'EP',
+        album: 'Álbum',
+        mixtape: 'Mixtape'
+    };
 
-        function fmt_date(str) {
-            if (!str) return '—';
-            const d = new Date(str);
-            if (isNaN(d)) return str;
-            return d.toLocaleDateString('pt-PT', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
-            });
-        }
+    function fmt_date(str) {
+        if (!str) return '—';
+        const d = new Date(str);
+        if (isNaN(d)) return str;
+        return d.toLocaleDateString('pt-PT', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+    }
 
-        function cover_url(path) {
-            if (!path) return null;
-            if (path.startsWith('http')) return path;
-            return COVER_BASE + path;
-        }
+    function cover_url(path) {
+        if (!path) return null;
+        if (path.startsWith('http')) return path;
+        return COVER_BASE + path;
+    }
 
-        const PLATFORM_ICONS = {
-            spotify: {
-                icon: 'bi-spotify',
-                color: '#1db954',
-                label: 'Spotify'
-            },
-            apple: {
-                icon: 'bi-apple',
-                color: '#fc3c44',
-                label: 'Apple Music'
-            },
-            youtube: {
-                icon: 'bi-youtube',
-                color: '#ff0000',
-                label: 'YouTube'
-            },
-            deezer: {
-                icon: 'bi-music-note',
-                color: '#ef5466',
-                label: 'Deezer'
-            },
-            amazon: {
-                icon: 'bi-amazon',
-                color: '#ff9900',
-                label: 'Amazon'
-            },
-            tidal: {
-                icon: 'bi-water',
-                color: '#00ffff',
-                label: 'Tidal'
-            },
-        };
+    const PLATFORM_ICONS = {
+        spotify: {
+            icon: 'bi-spotify',
+            color: '#1db954',
+            label: 'Spotify'
+        },
+        apple: {
+            icon: 'bi-apple',
+            color: '#fc3c44',
+            label: 'Apple Music'
+        },
+        youtube: {
+            icon: 'bi-youtube',
+            color: '#ff0000',
+            label: 'YouTube'
+        },
+        deezer: {
+            icon: 'bi-music-note',
+            color: '#ef5466',
+            label: 'Deezer'
+        },
+        amazon: {
+            icon: 'bi-amazon',
+            color: '#ff9900',
+            label: 'Amazon'
+        },
+        tidal: {
+            icon: 'bi-water',
+            color: '#00ffff',
+            label: 'Tidal'
+        },
+    };
 
-        // ════════════════════════════════════════════════
-        // ESTADO
-        // ════════════════════════════════════════════════
-        const PER_PAGE = 12;
-        let currentPage = 1;
-        let filtered = [];
+    // ════════════════════════════════════════════════
+    // ESTADO
+    // ════════════════════════════════════════════════
+    const PER_PAGE = 12;
+    let currentPage = 1;
+    let filtered = [];
 
-        // ════════════════════════════════════════════════
-        // RENDER CARD 
-        // ════════════════════════════════════════════════
-        function renderCard(alb) {
-            const coverUrl = cover_url(alb.img_cover);
-            const coverHtml = coverUrl ?
-                `<img src="${coverUrl}" class="release-cover" alt="${alb.title_album}" onclick="openModal(${alb.id_album})" loading="lazy"/>` :
-                `<div class="release-cover-placeholder" onclick="openModal(${alb.id_album})"><i class="bi bi-disc text-white-50" style="font-size:3rem"></i></div>`;
+    // ════════════════════════════════════════════════
+    // RENDER CARD 
+    // ════════════════════════════════════════════════
+    function renderCard(alb) {
+        const coverUrl = cover_url(alb.img_cover);
+        const coverHtml = coverUrl ?
+            `<img src="${coverUrl}" class="release-cover" alt="${alb.title_album}" onclick="openModal(${alb.id_album})" loading="lazy"/>` :
+            `<div class="release-cover-placeholder" onclick="openModal(${alb.id_album})"><i class="bi bi-disc text-white-50" style="font-size:3rem"></i></div>`;
 
-            const artist = alb.stage_name || alb.real_name || '—';
-            const statusClass = STATUS_CLASS[alb.status_album] || 'draft';
-            const statusLabel = STATUS_LABEL[alb.status_album] || alb.status_album;
-            const trackCount = alb.track_count || (alb.tracks ? alb.tracks.length : 0);
+        const artist = alb.stage_name || alb.real_name || '—';
+        const statusClass = STATUS_CLASS[alb.status_album] || 'draft';
+        const statusLabel = STATUS_LABEL[alb.status_album] || alb.status_album;
+        const trackCount = alb.track_count || (alb.tracks ? alb.tracks.length : 0);
 
-            // Botão Detalhes (sempre presente)
-            let actionBtns =
-                `<button class="btn btn-apply btn-sm flex-fill" onclick="openModal(${alb.id_album})"><i class="bi bi-eye me-1"></i>Detalhes</button>`;
+        // Botão Detalhes (sempre presente)
+        let actionBtns =
+            `<button class="btn btn-apply btn-sm flex-fill" onclick="openModal(${alb.id_album})"><i class="bi bi-eye me-1"></i>Detalhes</button>`;
 
-            // Botões específicos por status
-            if (alb.status_album === 'rejected') {
-                actionBtns += `
+        // Botões específicos por status
+        if (alb.status_album === 'rejected') {
+            actionBtns += `
             <button class="btn btn-sm flex-fill" style="background:#FF0089;color:#fff" onclick="openReview(${alb.id_album})">
                 <i class="bi bi-arrow-repeat me-1"></i>Revisão
             </button>`;
-            }
+        }
 
-            // Botão Editar (para todos exceto 'deleting')
+        // Botão Editar (para todos exceto 'deleting')
 
-            if (['draft', 'pending', 'rejected', 'under_review'].includes(alb.status_album)) {
-                actionBtns += `
+        if (['draft', 'pending', 'rejected', 'under_review'].includes(alb.status_album)) {
+            actionBtns += `
             <a href="${BASE_URL}/dashboard/edit-release?id=${alb.id_album}" 
                class="btn btn-outline-secondary btn-sm" title="Editar">
                 <i class="bi bi-pencil"></i>
             </a>`;
+        }
+
+
+        // BOTÃO ELIMINAR - APENAS approved, draft, rejected
+        if (['approved', 'pending', 'rejected', 'draft'].includes(alb.status_album)) {
+            // Determinar o tipo para o modal
+            let deleteType = 'published';
+            if (alb.status_album === 'draft') {
+                deleteType = 'draft';
             }
 
-
-            // BOTÃO ELIMINAR - APENAS approved, draft, rejected
-            if (['approved', 'pending', 'rejected', 'draft'].includes(alb.status_album)) {
-                // Determinar o tipo para o modal
-                let deleteType = 'published';
-                if (alb.status_album === 'draft') {
-                    deleteType = 'draft';
-                }
-
-                actionBtns += `
+            actionBtns += `
             <button class="btn btn-outline-danger btn-sm" 
                     onclick='openDeleteModal(${alb.id_album}, "${deleteType}", {
                         title: "${alb.title_album.replace(/'/g, "\\'")}",
@@ -1183,16 +1239,16 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
                     title="Eliminar lançamento">
                 <i class="bi bi-trash"></i>
             </button>`;
-            } else if (alb.status_album === 'deleting') {
-                // Status 'deleting' - botão especial
-                actionBtns = `
+        } else if (alb.status_album === 'deleting') {
+            // Status 'deleting' - botão especial
+            actionBtns = `
             <button class="btn btn-warning btn-sm flex-fill" onclick="openDeleteStatusModal(${alb.id_album})">
                 <i class="bi bi-hourglass-split me-1"></i>Pedido pendente
             </button>`;
-            }
+        }
 
 
-            return `
+        return `
     <div class="col-xl-2 col-lg-3 col-md-4 col-6">
       <div class="release-card">
         <span class="status-badge status-${statusClass}">${statusLabel}</span>
@@ -1205,18 +1261,18 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
         <div class="release-actions">${actionBtns}</div>
       </div>
     </div>`;
-        }
+    }
 
-        // ════════════════════════════════════════════════
-        // RENDER GRID + PAGINAÇÃO
-        // ════════════════════════════════════════════════
-        function renderGrid() {
-            const grid = document.getElementById('releases-grid');
-            const start = (currentPage - 1) * PER_PAGE;
-            const page = filtered.slice(start, start + PER_PAGE);
+    // ════════════════════════════════════════════════
+    // RENDER GRID + PAGINAÇÃO
+    // ════════════════════════════════════════════════
+    function renderGrid() {
+        const grid = document.getElementById('releases-grid');
+        const start = (currentPage - 1) * PER_PAGE;
+        const page = filtered.slice(start, start + PER_PAGE);
 
-            if (filtered.length === 0) {
-                grid.innerHTML = `
+        if (filtered.length === 0) {
+            grid.innerHTML = `
         <div class="col-12">
           <div class="empty-state">
             <i class="bi bi-disc"></i>
@@ -1227,152 +1283,152 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
             </a>
           </div>
         </div>`;
-                document.getElementById('pagination').innerHTML = '';
-                document.getElementById('result-count').textContent = '0 lançamentos';
-                return;
-            }
+            document.getElementById('pagination').innerHTML = '';
+            document.getElementById('result-count').textContent = '0 lançamentos';
+            return;
+        }
 
-            grid.innerHTML = page.map(renderCard).join('');
-            document.getElementById('result-count').textContent =
-                `${filtered.length} lançamento${filtered.length !== 1 ? 's' : ''}`;
+        grid.innerHTML = page.map(renderCard).join('');
+        document.getElementById('result-count').textContent =
+            `${filtered.length} lançamento${filtered.length !== 1 ? 's' : ''}`;
 
-            // Paginação
-            const totalPages = Math.ceil(filtered.length / PER_PAGE);
-            const pag = document.getElementById('pagination');
-            if (totalPages <= 1) {
-                pag.innerHTML = '';
-                return;
-            }
+        // Paginação
+        const totalPages = Math.ceil(filtered.length / PER_PAGE);
+        const pag = document.getElementById('pagination');
+        if (totalPages <= 1) {
+            pag.innerHTML = '';
+            return;
+        }
 
-            let html =
-                `<li class="page-item ${currentPage===1?'disabled':''}"><a class="page-link" href="#" data-p="${currentPage-1}">‹</a></li>`;
-            for (let i = 1; i <= totalPages; i++) {
-                html +=
-                    `<li class="page-item ${i===currentPage?'active':''}"><a class="page-link" href="#" data-p="${i}">${i}</a></li>`;
-            }
+        let html =
+            `<li class="page-item ${currentPage===1?'disabled':''}"><a class="page-link" href="#" data-p="${currentPage-1}">‹</a></li>`;
+        for (let i = 1; i <= totalPages; i++) {
             html +=
-                `<li class="page-item ${currentPage===totalPages?'disabled':''}"><a class="page-link" href="#" data-p="${currentPage+1}">›</a></li>`;
-            pag.innerHTML = html;
-            pag.querySelectorAll('.page-link').forEach(a => a.addEventListener('click', e => {
-                e.preventDefault();
-                const p = parseInt(a.dataset.p);
-                if (p && p !== currentPage) {
-                    currentPage = p;
-                    renderGrid();
-                    window.scrollTo(0, 0);
-                }
-            }));
+                `<li class="page-item ${i===currentPage?'active':''}"><a class="page-link" href="#" data-p="${i}">${i}</a></li>`;
         }
+        html +=
+            `<li class="page-item ${currentPage===totalPages?'disabled':''}"><a class="page-link" href="#" data-p="${currentPage+1}">›</a></li>`;
+        pag.innerHTML = html;
+        pag.querySelectorAll('.page-link').forEach(a => a.addEventListener('click', e => {
+            e.preventDefault();
+            const p = parseInt(a.dataset.p);
+            if (p && p !== currentPage) {
+                currentPage = p;
+                renderGrid();
+                window.scrollTo(0, 0);
+            }
+        }));
+    }
 
-        // ════════════════════════════════════════════════
-        // FILTROS
-        // ════════════════════════════════════════════════
-        function applyFilters() {
-            const t = document.getElementById('f-title').value.toLowerCase();
-            const ar = document.getElementById('f-artist').value.toLowerCase();
-            const u = document.getElementById('f-upc').value.toLowerCase();
-            const tp = document.getElementById('f-type').value;
-            const st = document.getElementById('f-status').value;
+    // ════════════════════════════════════════════════
+    // FILTROS
+    // ════════════════════════════════════════════════
+    function applyFilters() {
+        const t = document.getElementById('f-title').value.toLowerCase();
+        const ar = document.getElementById('f-artist').value.toLowerCase();
+        const u = document.getElementById('f-upc').value.toLowerCase();
+        const tp = document.getElementById('f-type').value;
+        const st = document.getElementById('f-status').value;
 
-            filtered = ALBUMS_DB.filter(a =>
-                (!t || a.title_album.toLowerCase().includes(t)) &&
-                (!ar || (a.stage_name || a.real_name || '').toLowerCase().includes(ar)) &&
-                (!u || (a.upc || '').toLowerCase().includes(u)) &&
-                (!tp || a.type_album.toLowerCase() === tp.toLowerCase()) &&
-                (!st || a.status_album === st)
-            );
-            currentPage = 1;
-            renderGrid();
-        }
-
-        ['f-title', 'f-artist', 'f-upc'].forEach(id =>
-            document.getElementById(id).addEventListener('input', applyFilters)
+        filtered = ALBUMS_DB.filter(a =>
+            (!t || a.title_album.toLowerCase().includes(t)) &&
+            (!ar || (a.stage_name || a.real_name || '').toLowerCase().includes(ar)) &&
+            (!u || (a.upc || '').toLowerCase().includes(u)) &&
+            (!tp || a.type_album.toLowerCase() === tp.toLowerCase()) &&
+            (!st || a.status_album === st)
         );
-        ['f-type', 'f-status'].forEach(id =>
-            document.getElementById(id).addEventListener('change', applyFilters)
-        );
-        document.getElementById('btn-clear-filters').addEventListener('click', () => {
-            ['f-title', 'f-artist', 'f-upc'].forEach(id => document.getElementById(id).value = '');
-            ['f-type', 'f-status'].forEach(id => document.getElementById(id).value = '');
-            document.querySelectorAll('#status-tabs button').forEach(b => b.classList.remove('active'));
-            document.querySelector('#status-tabs button[data-tab=""]').classList.add('active');
+        currentPage = 1;
+        renderGrid();
+    }
+
+    ['f-title', 'f-artist', 'f-upc'].forEach(id =>
+        document.getElementById(id).addEventListener('input', applyFilters)
+    );
+    ['f-type', 'f-status'].forEach(id =>
+        document.getElementById(id).addEventListener('change', applyFilters)
+    );
+    document.getElementById('btn-clear-filters').addEventListener('click', () => {
+        ['f-title', 'f-artist', 'f-upc'].forEach(id => document.getElementById(id).value = '');
+        ['f-type', 'f-status'].forEach(id => document.getElementById(id).value = '');
+        document.querySelectorAll('#status-tabs button').forEach(b => b.classList.remove('active'));
+        document.querySelector('#status-tabs button[data-tab=""]').classList.add('active');
+        applyFilters();
+    });
+
+    // Tabs de status rápidos
+    document.querySelectorAll('#status-tabs button').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('#status-tabs button').forEach(b => b.classList.remove(
+                'active'));
+            btn.classList.add('active');
+            document.getElementById('f-status').value = btn.dataset.tab;
             applyFilters();
         });
+    });
 
-        // Tabs de status rápidos
-        document.querySelectorAll('#status-tabs button').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('#status-tabs button').forEach(b => b.classList.remove(
-                    'active'));
-                btn.classList.add('active');
-                document.getElementById('f-status').value = btn.dataset.tab;
-                applyFilters();
-            });
-        });
+    // ════════════════════════════════════════════════
+    // MODAL DETALHES
+    // ════════════════════════════════════════════════
+    function openModal(albumId) {
+        const alb = ALBUMS_DB.find(a => a.id_album == albumId);
+        if (!alb) return;
 
-        // ════════════════════════════════════════════════
-        // MODAL DETALHES
-        // ════════════════════════════════════════════════
-        function openModal(albumId) {
-            const alb = ALBUMS_DB.find(a => a.id_album == albumId);
-            if (!alb) return;
+        const coverUrl = cover_url(alb.img_cover);
+        document.getElementById('m-cover').src = coverUrl || '../assets/img/placeholder-album.png';
+        document.getElementById('m-title').textContent = alb.title_album;
+        document.getElementById('m-artist').textContent = alb.stage_name || alb.real_name || '—';
+        document.getElementById('m-type').textContent = TYPE_LABEL[alb.type_album] || alb.type_album || '—';
+        document.getElementById('m-genre').textContent = alb.genre_main || '—';
+        document.getElementById('m-subgenre').textContent = alb.genre_secondary || '—';
+        document.getElementById('m-language').textContent = alb.language || '—';
+        document.getElementById('m-date').textContent = fmt_date(alb.release_date);
+        document.getElementById('m-label').textContent = alb.label_name || '—';
+        document.getElementById('m-copyright-p').textContent = alb.copyright_p || '—';
+        document.getElementById('m-copyright-c').textContent = alb.copyright_c || '—';
+        document.getElementById('m-upc').textContent = alb.upc || '—';
+        document.getElementById('m-id').textContent = alb.id_album || '—';
+        document.getElementById('m-created').textContent = alb.creat_album ? new Date(alb.creat_album)
+            .toLocaleString(
+                'pt-PT') : '—';
+        document.getElementById('m-updated').textContent = alb.modif_album ? new Date(alb.modif_album)
+            .toLocaleString(
+                'pt-PT') : '—';
 
-            const coverUrl = cover_url(alb.img_cover);
-            document.getElementById('m-cover').src = coverUrl || '../assets/img/placeholder-album.png';
-            document.getElementById('m-title').textContent = alb.title_album;
-            document.getElementById('m-artist').textContent = alb.stage_name || alb.real_name || '—';
-            document.getElementById('m-type').textContent = TYPE_LABEL[alb.type_album] || alb.type_album || '—';
-            document.getElementById('m-genre').textContent = alb.genre_main || '—';
-            document.getElementById('m-subgenre').textContent = alb.genre_secondary || '—';
-            document.getElementById('m-language').textContent = alb.language || '—';
-            document.getElementById('m-date').textContent = fmt_date(alb.release_date);
-            document.getElementById('m-label').textContent = alb.label_name || '—';
-            document.getElementById('m-copyright-p').textContent = alb.copyright_p || '—';
-            document.getElementById('m-copyright-c').textContent = alb.copyright_c || '—';
-            document.getElementById('m-upc').textContent = alb.upc || '—';
-            document.getElementById('m-id').textContent = alb.id_album || '—';
-            document.getElementById('m-created').textContent = alb.creat_album ? new Date(alb.creat_album)
-                .toLocaleString(
-                    'pt-PT') : '—';
-            document.getElementById('m-updated').textContent = alb.modif_album ? new Date(alb.modif_album)
-                .toLocaleString(
-                    'pt-PT') : '—';
+        // Status badge
+        const statusClass = STATUS_CLASS[alb.status_album] || 'draft';
+        const statusLabel = STATUS_LABEL[alb.status_album] || alb.status_album;
+        document.getElementById('m-status-badge').innerHTML =
+            `<span class="status-badge status-${statusClass}" style="position:static">${statusLabel}</span>`;
 
-            // Status badge
-            const statusClass = STATUS_CLASS[alb.status_album] || 'draft';
-            const statusLabel = STATUS_LABEL[alb.status_album] || alb.status_album;
-            document.getElementById('m-status-badge').innerHTML =
-                `<span class="status-badge status-${statusClass}" style="position:static">${statusLabel}</span>`;
+        // Motivo de rejeição
+        const rejWrap = document.getElementById('m-reject-wrap');
+        if (alb.status_album === 'rejected' && alb.rejection_reason) {
+            document.getElementById('m-reject-reason').textContent = alb.rejection_reason;
+            rejWrap.classList.remove('d-none');
+        } else {
+            rejWrap.classList.add('d-none');
+        }
 
-            // Motivo de rejeição
-            const rejWrap = document.getElementById('m-reject-wrap');
-            if (alb.status_album === 'rejected' && alb.rejection_reason) {
-                document.getElementById('m-reject-reason').textContent = alb.rejection_reason;
-                rejWrap.classList.remove('d-none');
-            } else {
-                rejWrap.classList.add('d-none');
-            }
+        // Faixas e estatísticas
+        const tracks = alb.tracks || [];
+        document.getElementById('m-track-count').textContent = tracks.length;
 
-            // Faixas e estatísticas
-            const tracks = alb.tracks || [];
-            document.getElementById('m-track-count').textContent = tracks.length;
+        // Calcular duração total e faixas explícitas
+        let totalSeconds = 0;
+        let explicitCount = 0;
 
-            // Calcular duração total e faixas explícitas
-            let totalSeconds = 0;
-            let explicitCount = 0;
-
-            const tracksList = document.getElementById('m-tracks-list');
-            tracksList.innerHTML = tracks.length ?
-                tracks.map((t, i) => {
-                    // Extrair segundos da duração formatada (MM:SS)
-                    if (t.duration_track) {
-                        const parts = t.duration_track.split(':');
-                        if (parts.length === 2) {
-                            totalSeconds += parseInt(parts[0]) * 60 + parseInt(parts[1]);
-                        }
+        const tracksList = document.getElementById('m-tracks-list');
+        tracksList.innerHTML = tracks.length ?
+            tracks.map((t, i) => {
+                // Extrair segundos da duração formatada (MM:SS)
+                if (t.duration_track) {
+                    const parts = t.duration_track.split(':');
+                    if (parts.length === 2) {
+                        totalSeconds += parseInt(parts[0]) * 60 + parseInt(parts[1]);
                     }
+                }
 
-                    return `
+                return `
             <div class="track-row">
                 <div class="d-flex align-items-center gap-2 overflow-hidden">
                     <span class="track-num">${t.position_track || i+1}</span>
@@ -1387,191 +1443,191 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
                 </div>
                 <span class="text-reset small flex-shrink-0">${t.duration_track || ''}</span>
             </div>`;
-                }).join('') :
-                '<p class="text-reset small">Nenhuma faixa registada.</p>';
+            }).join('') :
+            '<p class="text-reset small">Nenhuma faixa registada.</p>';
 
-            // Atualizar estatísticas
-            const hours = Math.floor(totalSeconds / 3600);
-            const minutes = Math.floor((totalSeconds % 3600) / 60);
-            const seconds = totalSeconds % 60;
-            let durationStr = '';
-            if (hours > 0) durationStr += `${hours}h `;
-            if (minutes > 0 || hours > 0) durationStr += `${minutes}min `;
-            durationStr += `${seconds}s`;
+        // Atualizar estatísticas
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+        let durationStr = '';
+        if (hours > 0) durationStr += `${hours}h `;
+        if (minutes > 0 || hours > 0) durationStr += `${minutes}min `;
+        durationStr += `${seconds}s`;
 
-            document.getElementById('m-total-duration').textContent = durationStr;
-            document.getElementById('m-explicit-count').textContent = explicitCount;
+        document.getElementById('m-total-duration').textContent = durationStr;
+        document.getElementById('m-explicit-count').textContent = explicitCount;
 
-            // Streaming links (só approved)
-            const streamWrap = document.getElementById('m-streaming-wrap');
-            if (alb.status_album === 'approved') {
-                streamWrap.classList.remove('d-none');
-                document.getElementById('m-streaming-links').innerHTML =
-                    Object.entries(PLATFORM_ICONS).map(([slug, p]) =>
-                        `<a href="#" title="${p.label}" style="font-size:1.5rem;color:${p.color}"><i class="bi ${p.icon}"></i></a>`
-                    ).join('');
-            } else {
-                streamWrap.classList.add('d-none');
-            }
+        // Streaming links (só approved)
+        const streamWrap = document.getElementById('m-streaming-wrap');
+        if (alb.status_album === 'approved') {
+            streamWrap.classList.remove('d-none');
+            document.getElementById('m-streaming-links').innerHTML =
+                Object.entries(PLATFORM_ICONS).map(([slug, p]) =>
+                    `<a href="#" title="${p.label}" style="font-size:1.5rem;color:${p.color}"><i class="bi ${p.icon}"></i></a>`
+                ).join('');
+        } else {
+            streamWrap.classList.add('d-none');
+        }
 
-            // Plataformas de distribuição
-            const platformsList = document.getElementById('m-platforms-list');
-            if (alb.status_album === 'approved') {
-                platformsList.innerHTML = Object.entries(PLATFORM_ICONS).map(([slug, p]) =>
-                    `<a href="#" title="${p.label}" style="font-size:1.2rem;color:${p.color}" class="me-2">
+        // Plataformas de distribuição
+        const platformsList = document.getElementById('m-platforms-list');
+        if (alb.status_album === 'approved') {
+            platformsList.innerHTML = Object.entries(PLATFORM_ICONS).map(([slug, p]) =>
+                `<a href="#" title="${p.label}" style="font-size:1.2rem;color:${p.color}" class="me-2">
                 <i class="bi ${p.icon}"></i>
             </a>`
-                ).join('');
-            } else {
-                platformsList.innerHTML = '<span class="text-muted">Disponível após aprovação</span>';
-            }
-
-            // Botões do footer
-            const btnEdit = document.getElementById('m-btn-edit');
-            const btnReview = document.getElementById('m-btn-review');
-            btnEdit.classList.add('d-none');
-            btnReview.classList.add('d-none');
-
-            if (alb.status_album === 'rejected') {
-                btnEdit.href = `${BASE_URL}/dashboard/edit-release?id=${alb.id_album}`;
-                btnEdit.innerHTML = '<i class="bi bi-pencil me-1"></i>Editar';
-                btnEdit.classList.remove('d-none');
-                btnReview.classList.remove('d-none');
-                btnReview.onclick = () => {
-                    bootstrap.Modal.getInstance(document.getElementById('albumModal')).hide();
-                    openReview(albumId);
-                };
-            } else if (alb.status_album === 'draft') {
-                btnEdit.href = `${BASE_URL}/dashboard/creat-release?draft=${alb.id_album}`;
-                btnEdit.innerHTML = '<i class="bi bi-play-fill me-1"></i>Continuar rascunho';
-                btnEdit.classList.remove('d-none');
-            } else if (alb.status_album !== 'pending') {
-                btnEdit.href = `${BASE_URL}/dashboard/edit-release?id=${alb.id_album}`;
-                btnEdit.innerHTML = '<i class="bi bi-pencil me-1"></i>Editar';
-                btnEdit.classList.remove('d-none');
-            }
-
-            new bootstrap.Modal(document.getElementById('albumModal')).show();
+            ).join('');
+        } else {
+            platformsList.innerHTML = '<span class="text-muted">Disponível após aprovação</span>';
         }
 
-        // ════════════════════════════════════════════════
-        // MODAL REVISÃO
-        // ════════════════════════════════════════════════
-        function openReview(albumId) {
-            const alb = ALBUMS_DB.find(a => a.id_album == albumId);
-            if (!alb) return;
+        // Botões do footer
+        const btnEdit = document.getElementById('m-btn-edit');
+        const btnReview = document.getElementById('m-btn-review');
+        btnEdit.classList.add('d-none');
+        btnReview.classList.add('d-none');
 
-            document.getElementById('rev-album-id').value = albumId;
-            document.getElementById('rev-album-title').textContent = alb.title_album + ' — ' + (alb.stage_name ||
-                alb
-                .real_name || '');
-            document.getElementById('rev-reason').value = '';
-            document.getElementById('rev-char-count').textContent = '0';
-            document.getElementById('rev-feedback').classList.add('d-none');
-
-            const rejDisplay = document.getElementById('rev-reject-display');
-            if (alb.rejection_reason) {
-                document.getElementById('rev-reject-text').textContent = alb.rejection_reason;
-                rejDisplay.classList.remove('d-none');
-            } else {
-                rejDisplay.classList.add('d-none');
-            }
-
-            new bootstrap.Modal(document.getElementById('reviewModal')).show();
+        if (alb.status_album === 'rejected') {
+            btnEdit.href = `${BASE_URL}/dashboard/edit-release?id=${alb.id_album}`;
+            btnEdit.innerHTML = '<i class="bi bi-pencil me-1"></i>Editar';
+            btnEdit.classList.remove('d-none');
+            btnReview.classList.remove('d-none');
+            btnReview.onclick = () => {
+                bootstrap.Modal.getInstance(document.getElementById('albumModal')).hide();
+                openReview(albumId);
+            };
+        } else if (alb.status_album === 'draft') {
+            btnEdit.href = `${BASE_URL}/dashboard/creat-release?draft=${alb.id_album}`;
+            btnEdit.innerHTML = '<i class="bi bi-play-fill me-1"></i>Continuar rascunho';
+            btnEdit.classList.remove('d-none');
+        } else if (alb.status_album !== 'pending') {
+            btnEdit.href = `${BASE_URL}/dashboard/edit-release?id=${alb.id_album}`;
+            btnEdit.innerHTML = '<i class="bi bi-pencil me-1"></i>Editar';
+            btnEdit.classList.remove('d-none');
         }
 
-        // Contador do textarea
-        document.getElementById('rev-reason').addEventListener('input', function() {
-            document.getElementById('rev-char-count').textContent = this.value.length;
-        });
+        new bootstrap.Modal(document.getElementById('albumModal')).show();
+    }
 
-        // Enviar solicitação de revisão
-        document.getElementById('rev-submit-btn').addEventListener('click', function() {
-            const albumId = document.getElementById('rev-album-id').value;
-            const reason = document.getElementById('rev-reason').value.trim();
-            const fb = document.getElementById('rev-feedback');
+    // ════════════════════════════════════════════════
+    // MODAL REVISÃO
+    // ════════════════════════════════════════════════
+    function openReview(albumId) {
+        const alb = ALBUMS_DB.find(a => a.id_album == albumId);
+        if (!alb) return;
 
-            if (reason.length < 20) {
-                fb.innerHTML =
-                    '<div class="alert alert-danger small py-2">A justificação deve ter pelo menos 20 caracteres.</div>';
-                fb.classList.remove('d-none');
-                return;
-            }
+        document.getElementById('rev-album-id').value = albumId;
+        document.getElementById('rev-album-title').textContent = alb.title_album + ' — ' + (alb.stage_name ||
+            alb
+            .real_name || '');
+        document.getElementById('rev-reason').value = '';
+        document.getElementById('rev-char-count').textContent = '0';
+        document.getElementById('rev-feedback').classList.add('d-none');
 
-            document.getElementById('rev-btn-text').classList.add('d-none');
-            document.getElementById('rev-btn-load').classList.remove('d-none');
-            this.disabled = true;
+        const rejDisplay = document.getElementById('rev-reject-display');
+        if (alb.rejection_reason) {
+            document.getElementById('rev-reject-text').textContent = alb.rejection_reason;
+            rejDisplay.classList.remove('d-none');
+        } else {
+            rejDisplay.classList.add('d-none');
+        }
 
-            fetch(BASE_URL + '/dashboard/release_process', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: `action=request_review&id_album=${encodeURIComponent(albumId)}&reason=${encodeURIComponent(reason)}&csrf_token=${encodeURIComponent(CSRF)}`
-                })
-                .then(r => r.json())
-                .then(data => {
-                    if (data.ok) {
-                        fb.innerHTML =
-                            '<div class="alert alert-success small py-2"><i class="bi bi-check-circle me-1"></i>' +
-                            data.message + '</div>';
-                        fb.classList.remove('d-none');
-                        document.getElementById('rev-submit-btn').style.display = 'none';
-                        // Toastr
-                        toastr.success('Solicitação de revisão enviada!');
-                        setTimeout(() => bootstrap.Modal.getInstance(document.getElementById(
-                                'reviewModal'))
-                            .hide(), 2000);
-                    } else {
-                        fb.innerHTML = '<div class="alert alert-danger small py-2">' + (data.message ||
-                            'Erro. Tenta novamente.') + '</div>';
-                        fb.classList.remove('d-none');
-                    }
-                })
-                .catch(() => {
+        new bootstrap.Modal(document.getElementById('reviewModal')).show();
+    }
+
+    // Contador do textarea
+    document.getElementById('rev-reason').addEventListener('input', function() {
+        document.getElementById('rev-char-count').textContent = this.value.length;
+    });
+
+    // Enviar solicitação de revisão
+    document.getElementById('rev-submit-btn').addEventListener('click', function() {
+        const albumId = document.getElementById('rev-album-id').value;
+        const reason = document.getElementById('rev-reason').value.trim();
+        const fb = document.getElementById('rev-feedback');
+
+        if (reason.length < 20) {
+            fb.innerHTML =
+                '<div class="alert alert-danger small py-2">A justificação deve ter pelo menos 20 caracteres.</div>';
+            fb.classList.remove('d-none');
+            return;
+        }
+
+        document.getElementById('rev-btn-text').classList.add('d-none');
+        document.getElementById('rev-btn-load').classList.remove('d-none');
+        this.disabled = true;
+
+        fetch(BASE_URL + '/dashboard/release_process', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `action=request_review&id_album=${encodeURIComponent(albumId)}&reason=${encodeURIComponent(reason)}&csrf_token=${encodeURIComponent(CSRF)}`
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.ok) {
                     fb.innerHTML =
-                        '<div class="alert alert-danger small py-2">Erro de ligação. Verifica a tua internet.</div>';
+                        '<div class="alert alert-success small py-2"><i class="bi bi-check-circle me-1"></i>' +
+                        data.message + '</div>';
                     fb.classList.remove('d-none');
-                })
-                .finally(() => {
-                    document.getElementById('rev-btn-text').classList.remove('d-none');
-                    document.getElementById('rev-btn-load').classList.add('d-none');
-                    document.getElementById('rev-submit-btn').disabled = false;
-                });
-        });
+                    document.getElementById('rev-submit-btn').style.display = 'none';
+                    // Toastr
+                    toastr.success('Solicitação de revisão enviada!');
+                    setTimeout(() => bootstrap.Modal.getInstance(document.getElementById(
+                            'reviewModal'))
+                        .hide(), 2000);
+                } else {
+                    fb.innerHTML = '<div class="alert alert-danger small py-2">' + (data.message ||
+                        'Erro. Tenta novamente.') + '</div>';
+                    fb.classList.remove('d-none');
+                }
+            })
+            .catch(() => {
+                fb.innerHTML =
+                    '<div class="alert alert-danger small py-2">Erro de ligação. Verifica a tua internet.</div>';
+                fb.classList.remove('d-none');
+            })
+            .finally(() => {
+                document.getElementById('rev-btn-text').classList.remove('d-none');
+                document.getElementById('rev-btn-load').classList.add('d-none');
+                document.getElementById('rev-submit-btn').disabled = false;
+            });
+    });
 
 
 
-        // ════════════════════════════════════════════════
-        // MODAL RASCUNHOS (LOCAIS + BD)
-        // ════════════════════════════════════════════════
-        document.getElementById('btn-drafts').addEventListener('click', async () => {
-            // Abrir modal
-            const modal = new bootstrap.Modal(document.getElementById('draftsModal'));
-            modal.show();
+    // ════════════════════════════════════════════════
+    // MODAL RASCUNHOS (LOCAIS + BD)
+    // ════════════════════════════════════════════════
+    document.getElementById('btn-drafts').addEventListener('click', async () => {
+        // Abrir modal
+        const modal = new bootstrap.Modal(document.getElementById('draftsModal'));
+        modal.show();
 
-            // Carregar rascunhos locais (rápido)
-            carregarRascunhosLocais();
+        // Carregar rascunhos locais (rápido)
+        carregarRascunhosLocais();
 
-            // Carregar rascunhos da BD (via AJAX)
-            await carregarRascunhosBD();
-        });
+        // Carregar rascunhos da BD (via AJAX)
+        await carregarRascunhosBD();
+    });
 
-        function carregarRascunhosLocais() {
-            const drafts = getDrafts();
-            const container = document.getElementById('local-drafts-list');
+    function carregarRascunhosLocais() {
+        const drafts = getDrafts();
+        const container = document.getElementById('local-drafts-list');
 
-            if (drafts.length === 0) {
-                container.innerHTML = `
+        if (drafts.length === 0) {
+            container.innerHTML = `
             <div class="text-center py-4 text-muted">
                 <i class="bi bi-pencil fs-1 d-block mb-3 opacity-25"></i>
                 <p>Não tens rascunhos guardados neste dispositivo.</p>
                 <p class="small">Os rascunhos locais são guardados quando começas a preencher um novo lançamento sem o terminar.</p>
             </div>`;
-                return;
-            }
+            return;
+        }
 
-            container.innerHTML = drafts.map(d => `
+        container.innerHTML = drafts.map(d => `
         <div class="draft-item d-flex align-items-center gap-3 p-3 border rounded mb-2">
             <i class="bi bi-file-earmark-music fs-3 text-muted flex-shrink-0"></i>
             <div class="flex-grow-1 overflow-hidden">
@@ -1591,30 +1647,30 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
             </div>
         </div>
     `).join('');
-        }
+    }
 
-        async function carregarRascunhosBD() {
-            const container = document.getElementById('bd-drafts-list');
+    async function carregarRascunhosBD() {
+        const container = document.getElementById('bd-drafts-list');
 
-            try {
-                const res = await fetch(BASE_URL + '/dashboard/get_drafts', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: `csrf_token=${encodeURIComponent(CSRF)}`
-                });
+        try {
+            const res = await fetch(BASE_URL + '/dashboard/get_drafts', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `csrf_token=${encodeURIComponent(CSRF)}`
+            });
 
-                const data = await res.json();
+            const data = await res.json();
 
-                if (data.drafts && data.drafts.length > 0) {
-                    container.innerHTML = data.drafts.map(d => {
-                        // Escapar dados para o modal
-                        const title = (d.title_album || 'Sem título').replace(/'/g, "\\'");
-                        const artist = (d.name_author_band || '—').replace(/'/g, "\\'");
-                        const cover = d.cover_url ? d.cover_url : '';
+            if (data.drafts && data.drafts.length > 0) {
+                container.innerHTML = data.drafts.map(d => {
+                    // Escapar dados para o modal
+                    const title = (d.title_album || 'Sem título').replace(/'/g, "\\'");
+                    const artist = (d.name_author_band || '—').replace(/'/g, "\\'");
+                    const cover = d.cover_url ? d.cover_url : '';
 
-                        return `
+                    return `
                 <div class="draft-item d-flex align-items-center gap-3 p-3 border rounded mb-2">
                     <i class="bi bi-cloud fs-3 text-wasom flex-shrink-0"></i>
                     <div class="flex-grow-1 overflow-hidden">
@@ -1639,60 +1695,60 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
                     </div>
                 </div>
             `
-                    }).join('');
-                } else {
-                    container.innerHTML = `
+                }).join('');
+            } else {
+                container.innerHTML = `
                 <div class="text-center py-4 text-muted">
                     <i class="bi bi-cloud fs-1 d-block mb-3 opacity-25"></i>
                     <p>Não tens rascunhos guardados na nuvem.</p>
                     <p class="small">Os rascunhos na nuvem são lançamentos que começaste mas não finalizaste.</p>
                 </div>`;
-                }
-            } catch (err) {
-                container.innerHTML = `
+            }
+        } catch (err) {
+            container.innerHTML = `
             <div class="alert alert-danger small">
                 Erro ao carregar rascunhos da nuvem.
             </div>`;
-            }
+        }
+    }
+
+    // ════════════════════════════════════════════════
+    // MODAL DE ELIMINAÇÃO 
+    // ════════════════════════════════════════════════
+    function openDeleteModal(itemId, itemType, itemData = {}) {
+        const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+
+        // Guardar dados
+        document.getElementById('deleteItemId').value = itemId;
+        document.getElementById('deleteItemType').value = itemType;
+
+        // Preencher informações do álbum
+        document.getElementById('deleteAlbumTitle').textContent = itemData.title || 'Sem título';
+        document.getElementById('deleteAlbumArtist').textContent = itemData.artist || '—';
+        document.getElementById('deleteAlbumMeta').textContent = itemData.meta || '';
+
+        if (itemData.cover) {
+            document.getElementById('deleteAlbumCover').src = itemData.cover;
+            document.getElementById('deleteAlbumCover').style.display = 'block';
+        } else {
+            document.getElementById('deleteAlbumCover').src = '../assets/img/placeholder-album.png';
         }
 
-        // ════════════════════════════════════════════════
-        // MODAL DE ELIMINAÇÃO 
-        // ════════════════════════════════════════════════
-        function openDeleteModal(itemId, itemType, itemData = {}) {
-            const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+        // Reset do modal
+        document.getElementById('deletePassword').value = '';
+        document.getElementById('deleteConfirmCheck').checked = false;
+        document.getElementById('deleteConfirmBtn').disabled = true;
+        document.getElementById('passwordField').classList.add('d-none');
+        document.getElementById('deleteFeedback').classList.add('d-none');
 
-            // Guardar dados
-            document.getElementById('deleteItemId').value = itemId;
-            document.getElementById('deleteItemType').value = itemType;
+        // Configurar baseado no tipo
+        let warningHtml = '';
+        let subtitle = '';
 
-            // Preencher informações do álbum
-            document.getElementById('deleteAlbumTitle').textContent = itemData.title || 'Sem título';
-            document.getElementById('deleteAlbumArtist').textContent = itemData.artist || '—';
-            document.getElementById('deleteAlbumMeta').textContent = itemData.meta || '';
-
-            if (itemData.cover) {
-                document.getElementById('deleteAlbumCover').src = itemData.cover;
-                document.getElementById('deleteAlbumCover').style.display = 'block';
-            } else {
-                document.getElementById('deleteAlbumCover').src = '../assets/img/placeholder-album.png';
-            }
-
-            // Reset do modal
-            document.getElementById('deletePassword').value = '';
-            document.getElementById('deleteConfirmCheck').checked = false;
-            document.getElementById('deleteConfirmBtn').disabled = true;
-            document.getElementById('passwordField').classList.add('d-none');
-            document.getElementById('deleteFeedback').classList.add('d-none');
-
-            // Configurar baseado no tipo
-            let warningHtml = '';
-            let subtitle = '';
-
-            switch (itemType) {
-                case 'local':
-                    subtitle = 'Rascunho local (neste dispositivo)';
-                    warningHtml = `
+        switch (itemType) {
+            case 'local':
+                subtitle = 'Rascunho local (neste dispositivo)';
+                warningHtml = `
                 <div class="d-flex gap-2">
                     <i class="bi bi-pc-display fs-4 flex-shrink-0"></i>
                     <div>
@@ -1701,14 +1757,14 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
                         Ao eliminar, não poderás recuperá-lo.</p>
                     </div>
                 </div>`;
-                    document.getElementById('deleteConfirmLabel').innerHTML =
-                        'Compreendo que este rascunho local será eliminado permanentemente.';
-                    break;
+                document.getElementById('deleteConfirmLabel').innerHTML =
+                    'Compreendo que este rascunho local será eliminado permanentemente.';
+                break;
 
 
-                case 'draft': // Para rascunhos na nuvem
-                    subtitle = 'Rascunho na nuvem';
-                    warningHtml = `
+            case 'draft': // Para rascunhos na nuvem
+                subtitle = 'Rascunho na nuvem';
+                warningHtml = `
         <div class="d-flex gap-2">
             <i class="bi bi-cloud-arrow-up fs-4 flex-shrink-0 text-warning"></i>
             <div>
@@ -1717,16 +1773,16 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
                 e eliminado permanentemente após <strong>72 horas</strong>.</p>
             </div>
         </div>`;
-                    document.getElementById('passwordField').classList.remove('d-none');
-                    document.getElementById('passwordHelp').textContent =
-                        'Confirma a tua senha para solicitar a eliminação.';
-                    document.getElementById('deleteConfirmLabel').innerHTML =
-                        'Compreendo que após 72 horas o rascunho será eliminado.';
-                    break;
+                document.getElementById('passwordField').classList.remove('d-none');
+                document.getElementById('passwordHelp').textContent =
+                    'Confirma a tua senha para solicitar a eliminação.';
+                document.getElementById('deleteConfirmLabel').innerHTML =
+                    'Compreendo que após 72 horas o rascunho será eliminado.';
+                break;
 
-                case 'published': // Para approved, pending, rejected
-                    subtitle = 'Lançamento publicado';
-                    warningHtml = `
+            case 'published': // Para approved, pending, rejected
+                subtitle = 'Lançamento publicado';
+                warningHtml = `
         <div class="d-flex gap-2">
             <i class="bi bi-globe2 fs-4 flex-shrink-0 text-danger"></i>
             <div>
@@ -1735,128 +1791,116 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
                 Ao solicitares a remoção, será removido após <strong>72 horas</strong>.</p>
             </div>
         </div>`;
-                    document.getElementById('passwordField').classList.remove('d-none');
-                    document.getElementById('passwordHelp').textContent = 'Confirma a tua senha para solicitar a remoção.';
-                    document.getElementById('deleteConfirmLabel').innerHTML = 'Compreendo que após 72 horas será removido.';
-                    break;
-            }
-
-            document.getElementById('deleteModalSubtitle').textContent = subtitle;
-            document.getElementById('deleteWarning').innerHTML = warningHtml;
-            document.getElementById('deleteWarning').className =
-                itemType === 'published' ? 'alert alert-danger' : 'alert alert-warning';
-
-            modal.show();
+                document.getElementById('passwordField').classList.remove('d-none');
+                document.getElementById('passwordHelp').textContent = 'Confirma a tua senha para solicitar a remoção.';
+                document.getElementById('deleteConfirmLabel').innerHTML = 'Compreendo que após 72 horas será removido.';
+                break;
         }
 
-        // Ativar checkbox para habilitar botão
-        document.getElementById('deleteConfirmCheck').addEventListener('change', function() {
-            const btn = document.getElementById('deleteConfirmBtn');
-            btn.disabled = !this.checked;
-        });
+        document.getElementById('deleteModalSubtitle').textContent = subtitle;
+        document.getElementById('deleteWarning').innerHTML = warningHtml;
+        document.getElementById('deleteWarning').className =
+            itemType === 'published' ? 'alert alert-danger' : 'alert alert-warning';
+
+        modal.show();
+    }
+
+    // Ativar checkbox para habilitar botão
+    document.getElementById('deleteConfirmCheck').addEventListener('change', function() {
+        const btn = document.getElementById('deleteConfirmBtn');
+        btn.disabled = !this.checked;
+    });
 
 
-        // Ação de eliminar - VERSÃO CORRIGIDA
-        document.getElementById('deleteConfirmBtn').addEventListener('click', async function() {
-            const itemId = document.getElementById('deleteItemId').value;
-            const itemType = document.getElementById('deleteItemType').value;
-            const password = document.getElementById('deletePassword').value;
-            const feedback = document.getElementById('deleteFeedback');
+    // Ação de eliminar - VERSÃO CORRIGIDA
+    document.getElementById('deleteConfirmBtn').addEventListener('click', async function() {
+        const itemId = document.getElementById('deleteItemId').value;
+        const itemType = document.getElementById('deleteItemType').value;
+        const password = document.getElementById('deletePassword').value;
+        const feedback = document.getElementById('deleteFeedback');
 
-            // Loading state
-            document.getElementById('deleteBtnText').classList.add('d-none');
-            document.getElementById('deleteBtnLoad').classList.remove('d-none');
-            this.disabled = true;
+        // Loading state
+        document.getElementById('deleteBtnText').classList.add('d-none');
+        document.getElementById('deleteBtnLoad').classList.remove('d-none');
+        this.disabled = true;
 
-            try {
-                let response;
+        try {
+            let response;
 
-                if (itemType === 'local') {
-                    // Eliminar rascunho local
-                    deleteDraft(itemId);
-                    toastr.success('Rascunho local eliminado!');
-                    bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal')).hide();
-                    carregarRascunhosLocais();
+            if (itemType === 'local') {
+                // Eliminar rascunho local
+                deleteDraft(itemId);
+                toastr.success('Rascunho local eliminado!');
+                bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal')).hide();
+                carregarRascunhosLocais();
 
-                    // Voltar ao estado normal
-                    document.getElementById('deleteBtnText').classList.remove('d-none');
-                    document.getElementById('deleteBtnLoad').classList.add('d-none');
-                    this.disabled = false;
-                    return;
-                }
+                // Voltar ao estado normal
+                document.getElementById('deleteBtnText').classList.remove('d-none');
+                document.getElementById('deleteBtnLoad').classList.add('d-none');
+                this.disabled = false;
+                return;
+            }
 
-                // Para rascunhos BD ou publicados, precisa de senha
-                if (!password) {
-                    feedback.innerHTML =
-                        '<div class="alert alert-danger small py-2">A senha é obrigatória.</div>';
-                    feedback.classList.remove('d-none');
+            // Para rascunhos BD ou publicados, precisa de senha
+            if (!password) {
+                feedback.innerHTML =
+                    '<div class="alert alert-danger small py-2">A senha é obrigatória.</div>';
+                feedback.classList.remove('d-none');
 
-                    // Voltar ao estado normal
-                    document.getElementById('deleteBtnText').classList.remove('d-none');
-                    document.getElementById('deleteBtnLoad').classList.add('d-none');
-                    this.disabled = false;
-                    return;
-                }
+                // Voltar ao estado normal
+                document.getElementById('deleteBtnText').classList.remove('d-none');
+                document.getElementById('deleteBtnLoad').classList.add('d-none');
+                this.disabled = false;
+                return;
+            }
 
-                // Verificar senha e criar pedido
-                const formData = new FormData();
-                formData.append('action', itemType === 'draft' ? 'delete_draft' :
-                    (itemType === 'published' ? 'delete_release_request' : 'delete_draft_request'));
-                formData.append('id_album', itemId);
-                if (itemType !== 'draft') {
-                    formData.append('password', password);
-                }
-                formData.append('csrf_token', CSRF);
+            // Verificar senha e criar pedido
+            const formData = new FormData();
+            formData.append('action', itemType === 'draft' ? 'delete_draft' :
+                (itemType === 'published' ? 'delete_release_request' : 'delete_draft_request'));
+            formData.append('id_album', itemId);
+            if (itemType !== 'draft') {
+                formData.append('password', password);
+            }
+            formData.append('csrf_token', CSRF);
 
-                console.log('A enviar pedido para:', BASE_URL + '/dashboard/launch/release_process.php');
-                console.log('Action:', itemType === 'draft' ? 'delete_draft_request' :
-                    'delete_release_request');
+            console.log('A enviar pedido para:', BASE_URL + '/dashboard/launch/release_process.php');
+            console.log('Action:', itemType === 'draft' ? 'delete_draft_request' :
+                'delete_release_request');
 
-                response = await fetch(BASE_URL + '/dashboard/release_process', {
-                    method: 'POST',
-                    body: formData
-                });
+            response = await fetch(BASE_URL + '/dashboard/release_process', {
+                method: 'POST',
+                body: formData
+            });
 
-                const data = await response.json();
-                console.log('Resposta do servidor:', data);
+            const data = await response.json();
+            console.log('Resposta do servidor:', data);
 
 
-                if (data.ok) {
-                    // Fechar modal primeiro
-                    bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal')).hide();
+            if (data.ok) {
+                // Fechar modal primeiro
+                bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal')).hide();
 
-                    // SweetAlert de sucesso
-                    await Swal.fire({
-                        icon: 'success',
-                        title: 'Solicitação enviada!',
-                        html: `
+                // SweetAlert de sucesso
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Solicitação enviada!',
+                    html: `
             <p class="mb-2">${data.message}</p>
             <p class="mb-0 text-reset small">O álbum será eliminado em 72 horas, a menos que canceles o pedido.</p>
         `,
-                        confirmButtonColor: '#FF0089'
-                    });
+                    confirmButtonColor: '#FF0089'
+                });
 
-                    // Recarregar listas
-                    if (itemType === 'draft') {
-                        carregarRascunhosBD();
-                    } else {
-                        setTimeout(() => window.location.reload(), 1500);
-                    }
+                // Recarregar listas
+                if (itemType === 'draft') {
+                    carregarRascunhosBD();
                 } else {
-                    // Mostrar erro no feedback do modal (já tens)
-                    feedback.innerHTML = `<div class="alert alert-danger small py-2">${data.message}</div>`;
-                    feedback.classList.remove('d-none');
-
-                    // Voltar ao estado normal
-                    document.getElementById('deleteBtnText').classList.remove('d-none');
-                    document.getElementById('deleteBtnLoad').classList.add('d-none');
-                    this.disabled = false;
+                    setTimeout(() => window.location.reload(), 1500);
                 }
-
-            } catch (err) {
-                console.error('Erro detalhado:', err);
-                feedback.innerHTML =
-                    '<div class="alert alert-danger small py-2">Erro de ligação. Tenta novamente.</div>';
+            } else {
+                // Mostrar erro no feedback do modal (já tens)
+                feedback.innerHTML = `<div class="alert alert-danger small py-2">${data.message}</div>`;
                 feedback.classList.remove('d-none');
 
                 // Voltar ao estado normal
@@ -1864,261 +1908,273 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
                 document.getElementById('deleteBtnLoad').classList.add('d-none');
                 this.disabled = false;
             }
+
+        } catch (err) {
+            console.error('Erro detalhado:', err);
+            feedback.innerHTML =
+                '<div class="alert alert-danger small py-2">Erro de ligação. Tenta novamente.</div>';
+            feedback.classList.remove('d-none');
+
+            // Voltar ao estado normal
+            document.getElementById('deleteBtnText').classList.remove('d-none');
+            document.getElementById('deleteBtnLoad').classList.add('d-none');
+            this.disabled = false;
+        }
+    });
+
+    // ════════════════════════════════════════════════
+    // ELIMINAR RASCUNHO LOCAL
+    // ════════════════════════════════════════════════
+    function removerRascunhoLocal(draftId) {
+        // Buscar dados do rascunho
+        const drafts = getDrafts();
+        const draft = drafts.find(d => d.id === draftId);
+
+        if (!draft) {
+            toastr.error('Rascunho não encontrado');
+            return;
+        }
+
+        // Abrir o modal de eliminação com tipo 'local'
+        openDeleteModal(draftId, 'local', {
+            title: draft.title || 'Sem título',
+            artist: draft.artist_names || '—',
+            meta: 'Rascunho local',
+            cover: '' // Rascunhos locais não têm capa guardada
+        });
+    }
+
+    // ════════════════════════════════════════════════
+    // MODAL DE STATUS DE ELIMINAÇÃO
+    // ════════════════════════════════════════════════
+    function openDeleteStatusModal(albumId) {
+        const alb = ALBUMS_DB.find(a => a.id_album == albumId);
+        if (!alb) return;
+
+        // Preencher informações básicas
+        document.getElementById('statusAlbumTitle').textContent = alb.title_album || 'Sem título';
+        document.getElementById('statusAlbumArtist').textContent = alb.stage_name || alb.real_name || '—';
+        document.getElementById('statusAlbumMeta').textContent = `${alb.track_count || 0} faixas`;
+
+        const coverUrl = cover_url(alb.img_cover);
+        if (coverUrl) {
+            document.getElementById('statusAlbumCover').src = coverUrl;
+        } else {
+            document.getElementById('statusAlbumCover').src = '../assets/img/placeholder-album.png';
+        }
+
+        // Guardar ID
+        document.getElementById('deleteStatusAlbumId').value = albumId;
+
+        // Calcular tempo restante (se tiver as datas)
+        if (alb.delete_requested_at && alb.delete_expires_at) {
+            const requested = new Date(alb.delete_requested_at);
+            const expires = new Date(alb.delete_expires_at);
+            const now = new Date();
+
+            // Formatar datas
+            document.getElementById('deleteRequestedAt').textContent =
+                requested.toLocaleString('pt-PT');
+            document.getElementById('deleteExpiresAt').textContent =
+                expires.toLocaleString('pt-PT');
+
+            // Calcular progresso (quanto % já passou)
+            const totalTime = expires - requested;
+            const elapsedTime = now - requested;
+            const progress = Math.min(100, Math.max(0, (elapsedTime / totalTime) * 100));
+
+            document.getElementById('deleteProgressBar').style.width = progress + '%';
+
+            // Calcular tempo restante
+            const timeLeft = expires - now;
+            if (timeLeft > 0) {
+                const hoursLeft = Math.floor(timeLeft / (1000 * 60 * 60));
+                const minutesLeft = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+
+                document.getElementById('deleteTimeRemaining').textContent =
+                    `${hoursLeft}h ${minutesLeft}min restantes`;
+                document.getElementById('deleteTimeDetail').textContent =
+                    `A eliminação automática ocorrerá em ${hoursLeft}h ${minutesLeft}min`;
+            } else {
+                document.getElementById('deleteTimeRemaining').textContent = 'A processar...';
+                document.getElementById('deleteTimeDetail').textContent =
+                    'O prazo expirou. A eliminação será processada em breve.';
+            }
+        } else {
+            document.getElementById('deleteRequestedAt').textContent = '—';
+            document.getElementById('deleteExpiresAt').textContent = '—';
+            document.getElementById('deleteTimeRemaining').textContent = 'Em processamento';
+            document.getElementById('deleteTimeDetail').textContent =
+                'O pedido está a ser processado.';
+            document.getElementById('deleteProgressBar').style.width = '50%';
+        }
+
+        new bootstrap.Modal(document.getElementById('deleteStatusModal')).show();
+    }
+
+    // ════════════════════════════════════════════════
+    // CANCELAR PEDIDO DE ELIMINAÇÃO - COM SWEETALERT
+    // ════════════════════════════════════════════════
+    document.getElementById('cancelDeleteRequestBtn').addEventListener('click', async function() {
+        const albumId = document.getElementById('deleteStatusAlbumId').value;
+        const feedback = document.getElementById('deleteStatusFeedback');
+
+        // SweetAlert de confirmação (substitui o confirm)
+        const confirmResult = await Swal.fire({
+            title: 'Cancelar pedido?',
+            text: 'Tens a certeza que queres cancelar o pedido de eliminação? O álbum voltará ao estado anterior.',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#ffc107',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sim, cancelar pedido',
+            cancelButtonText: 'Não, manter'
         });
 
-        // ════════════════════════════════════════════════
-        // ELIMINAR RASCUNHO LOCAL
-        // ════════════════════════════════════════════════
-        function removerRascunhoLocal(draftId) {
-            // Buscar dados do rascunho
-            const drafts = getDrafts();
-            const draft = drafts.find(d => d.id === draftId);
-
-            if (!draft) {
-                toastr.error('Rascunho não encontrado');
-                return;
-            }
-
-            // Abrir o modal de eliminação com tipo 'local'
-            openDeleteModal(draftId, 'local', {
-                title: draft.title || 'Sem título',
-                artist: draft.artist_names || '—',
-                meta: 'Rascunho local',
-                cover: '' // Rascunhos locais não têm capa guardada
-            });
+        if (!confirmResult.isConfirmed) {
+            return; // Usuário cancelou
         }
 
-        // ════════════════════════════════════════════════
-        // MODAL DE STATUS DE ELIMINAÇÃO
-        // ════════════════════════════════════════════════
-        function openDeleteStatusModal(albumId) {
-            const alb = ALBUMS_DB.find(a => a.id_album == albumId);
-            if (!alb) return;
-
-            // Preencher informações básicas
-            document.getElementById('statusAlbumTitle').textContent = alb.title_album || 'Sem título';
-            document.getElementById('statusAlbumArtist').textContent = alb.stage_name || alb.real_name || '—';
-            document.getElementById('statusAlbumMeta').textContent = `${alb.track_count || 0} faixas`;
-
-            const coverUrl = cover_url(alb.img_cover);
-            if (coverUrl) {
-                document.getElementById('statusAlbumCover').src = coverUrl;
-            } else {
-                document.getElementById('statusAlbumCover').src = '../assets/img/placeholder-album.png';
+        // Mostrar loading
+        Swal.fire({
+            title: 'A processar...',
+            html: 'A cancelar pedido de eliminação',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
             }
+        });
 
-            // Guardar ID
-            document.getElementById('deleteStatusAlbumId').value = albumId;
+        try {
+            const formData = new FormData();
+            formData.append('action', 'cancel_delete_request');
+            formData.append('id_album', albumId);
+            formData.append('csrf_token', CSRF);
 
-            // Calcular tempo restante (se tiver as datas)
-            if (alb.delete_requested_at && alb.delete_expires_at) {
-                const requested = new Date(alb.delete_requested_at);
-                const expires = new Date(alb.delete_expires_at);
-                const now = new Date();
-
-                // Formatar datas
-                document.getElementById('deleteRequestedAt').textContent =
-                    requested.toLocaleString('pt-PT');
-                document.getElementById('deleteExpiresAt').textContent =
-                    expires.toLocaleString('pt-PT');
-
-                // Calcular progresso (quanto % já passou)
-                const totalTime = expires - requested;
-                const elapsedTime = now - requested;
-                const progress = Math.min(100, Math.max(0, (elapsedTime / totalTime) * 100));
-
-                document.getElementById('deleteProgressBar').style.width = progress + '%';
-
-                // Calcular tempo restante
-                const timeLeft = expires - now;
-                if (timeLeft > 0) {
-                    const hoursLeft = Math.floor(timeLeft / (1000 * 60 * 60));
-                    const minutesLeft = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-
-                    document.getElementById('deleteTimeRemaining').textContent =
-                        `${hoursLeft}h ${minutesLeft}min restantes`;
-                    document.getElementById('deleteTimeDetail').textContent =
-                        `A eliminação automática ocorrerá em ${hoursLeft}h ${minutesLeft}min`;
-                } else {
-                    document.getElementById('deleteTimeRemaining').textContent = 'A processar...';
-                    document.getElementById('deleteTimeDetail').textContent =
-                        'O prazo expirou. A eliminação será processada em breve.';
-                }
-            } else {
-                document.getElementById('deleteRequestedAt').textContent = '—';
-                document.getElementById('deleteExpiresAt').textContent = '—';
-                document.getElementById('deleteTimeRemaining').textContent = 'Em processamento';
-                document.getElementById('deleteTimeDetail').textContent =
-                    'O pedido está a ser processado.';
-                document.getElementById('deleteProgressBar').style.width = '50%';
-            }
-
-            new bootstrap.Modal(document.getElementById('deleteStatusModal')).show();
-        }
-
-        // ════════════════════════════════════════════════
-        // CANCELAR PEDIDO DE ELIMINAÇÃO - COM SWEETALERT
-        // ════════════════════════════════════════════════
-        document.getElementById('cancelDeleteRequestBtn').addEventListener('click', async function() {
-            const albumId = document.getElementById('deleteStatusAlbumId').value;
-            const feedback = document.getElementById('deleteStatusFeedback');
-
-            // SweetAlert de confirmação (substitui o confirm)
-            const confirmResult = await Swal.fire({
-                title: 'Cancelar pedido?',
-                text: 'Tens a certeza que queres cancelar o pedido de eliminação? O álbum voltará ao estado anterior.',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#ffc107',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Sim, cancelar pedido',
-                cancelButtonText: 'Não, manter'
+            const response = await fetch(BASE_URL + '/dashboard/release_process', {
+                method: 'POST',
+                body: formData
             });
 
-            if (!confirmResult.isConfirmed) {
-                return; // Usuário cancelou
-            }
+            const data = await response.json();
 
-            // Mostrar loading
-            Swal.fire({
-                title: 'A processar...',
-                html: 'A cancelar pedido de eliminação',
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            });
+            // Fechar loading
+            Swal.close();
 
-            try {
-                const formData = new FormData();
-                formData.append('action', 'cancel_delete_request');
-                formData.append('id_album', albumId);
-                formData.append('csrf_token', CSRF);
-
-                const response = await fetch(BASE_URL + '/dashboard/release_process', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const data = await response.json();
-
-                // Fechar loading
-                Swal.close();
-
-                if (data.ok) {
-                    // Sucesso com SweetAlert
-                    await Swal.fire({
-                        icon: 'success',
-                        title: 'Pedido cancelado!',
-                        html: `
+            if (data.ok) {
+                // Sucesso com SweetAlert
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Pedido cancelado!',
+                    html: `
                     <p class="mb-2">${data.message}</p>
                     <p class="mb-0 text-reset small">O álbum voltou ao estado anterior e não será eliminado.</p>
                 `,
-                        confirmButtonColor: '#FF0089'
-                    });
+                    confirmButtonColor: '#FF0089'
+                });
 
-                    // Fechar modal e recarregar
-                    bootstrap.Modal.getInstance(document.getElementById('deleteStatusModal')).hide();
-                    setTimeout(() => window.location.reload(), 1500);
+                // Fechar modal e recarregar
+                bootstrap.Modal.getInstance(document.getElementById('deleteStatusModal')).hide();
+                setTimeout(() => window.location.reload(), 1500);
 
-                } else {
-                    // Erro com SweetAlert
-                    await Swal.fire({
-                        icon: 'error',
-                        title: 'Erro ao cancelar',
-                        text: data.message || 'Ocorreu um erro ao cancelar o pedido.',
-                        confirmButtonColor: '#FF0089'
-                    });
-                }
-
-            } catch (err) {
-                console.error('Erro:', err);
-                Swal.close();
-
-                // Erro de ligação com SweetAlert
+            } else {
+                // Erro com SweetAlert
                 await Swal.fire({
                     icon: 'error',
-                    title: 'Erro de ligação',
-                    text: 'Verifica a tua internet e tenta novamente.',
+                    title: 'Erro ao cancelar',
+                    text: data.message || 'Ocorreu um erro ao cancelar o pedido.',
                     confirmButtonColor: '#FF0089'
                 });
             }
-        });
 
-        // ════════════════════════════════════════════════
-        // INIT - carregar dados, configurar filtros, badges, etc  
-        // ════════════════════════════════════════════════
-        document.addEventListener('DOMContentLoaded', function() {
-            updateDraftBadge();
+        } catch (err) {
+            console.error('Erro:', err);
+            Swal.close();
 
-            // 1️⃣ Garantir que a tab "Todos" está activa visualmente
-            const tabs = document.querySelectorAll('#status-tabs button');
-            if (tabs.length > 0) {
-                tabs.forEach(b => b.classList.remove('active'));
-                document.querySelector('#status-tabs button[data-tab=""]')?.classList.add('active');
-            }
+            // Erro de ligação com SweetAlert
+            await Swal.fire({
+                icon: 'error',
+                title: 'Erro de ligação',
+                text: 'Verifica a tua internet e tenta novamente.',
+                confirmButtonColor: '#FF0089'
+            });
+        }
+    });
 
-            // 2️⃣ Garantir que o filtro de status está vazio (todos)
-            const statusFilter = document.getElementById('f-status');
-            if (statusFilter) statusFilter.value = '';
+    // ════════════════════════════════════════════════
+    // INIT - carregar dados, configurar filtros, badges, etc  
+    // ════════════════════════════════════════════════
+    document.addEventListener('DOMContentLoaded', function() {
+        updateDraftBadge();
 
-            // 3️⃣ Atribuir todos os álbuns ao array filtrado
-            filtered = [...ALBUMS_DB]; // Isto pega TODOS os lançamentos
+        // 1️⃣ Garantir que a tab "Todos" está activa visualmente
+        const tabs = document.querySelectorAll('#status-tabs button');
+        if (tabs.length > 0) {
+            tabs.forEach(b => b.classList.remove('active'));
+            document.querySelector('#status-tabs button[data-tab=""]')?.classList.add('active');
+        }
 
-            // 4️⃣ Renderizar na primeira página
-            currentPage = 1;
-            renderGrid(); // ← Esta função desenha os cards na tela
+        // 2️⃣ Garantir que o filtro de status está vazio (todos)
+        const statusFilter = document.getElementById('f-status');
+        if (statusFilter) statusFilter.value = '';
 
-            // Também adicionar listeners para as tabs garantirem que mostram todos
-            document.querySelectorAll('#status-tabs button').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('#status-tabs button').forEach(b => b
-                        .classList
-                        .remove('active'));
-                    btn.classList.add('active');
-                    document.getElementById('f-status').value = btn.dataset.tab;
+        // 3️⃣ Atribuir todos os álbuns ao array filtrado
+        filtered = [...ALBUMS_DB]; // Isto pega TODOS os lançamentos
 
-                    // Se clicou em "Todos", limpar também outros filtros de texto?
-                    if (btn.dataset.tab === '') {
-                        // Opcional: limpar filtros de texto também
-                        // document.getElementById('f-title').value = '';
-                        // document.getElementById('f-artist').value = '';
-                        // document.getElementById('f-upc').value = '';
-                    }
+        // 4️⃣ Renderizar na primeira página
+        currentPage = 1;
+        renderGrid(); // ← Esta função desenha os cards na tela
 
-                    applyFilters();
-                });
+        // Também adicionar listeners para as tabs garantirem que mostram todos
+        document.querySelectorAll('#status-tabs button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#status-tabs button').forEach(b => b
+                    .classList
+                    .remove('active'));
+                btn.classList.add('active');
+                document.getElementById('f-status').value = btn.dataset.tab;
+
+                // Se clicou em "Todos", limpar também outros filtros de texto?
+                if (btn.dataset.tab === '') {
+                    // Opcional: limpar filtros de texto também
+                    // document.getElementById('f-title').value = '';
+                    // document.getElementById('f-artist').value = '';
+                    // document.getElementById('f-upc').value = '';
+                }
+
+                applyFilters();
             });
         });
+    });
 
-        // Toastr config
-        toastr.options = {
-            positionClass: 'toast-top-right',
-            timeOut: 4000,
-            progressBar: true,
-            closeButton: true
-        };
+    // Toastr config
+    toastr.options = {
+        positionClass: 'toast-top-right',
+        timeOut: 4000,
+        progressBar: true,
+        closeButton: true
+    };
 
-        // ── Badge de notificações — polling 60s ──────────────────
-        (function() {
-            function refreshBadge() {
-                fetch('./ajax/notifications_api.php?action=count', {
-                        credentials: 'same-origin'
-                    })
-                    .then(r => r.json())
-                    .then(data => {
-                        var b = document.getElementById('navNotifBadge');
-                        if (!b) return;
-                        var n = parseInt(data.unread || 0);
-                        b.textContent = n > 99 ? '99+' : n;
-                        b.style.display = n > 0 ? '' : 'none';
-                    }).catch(function() {});
-            }
-            setTimeout(function() {
-                refreshBadge();
-                setInterval(refreshBadge, 60000);
-            }, 30000);
-        })();
+    // ── Badge de notificações — polling 60s ──────────────────
+    (function() {
+        function refreshBadge() {
+            fetch('./ajax/notifications_api.php?action=count', {
+                    credentials: 'same-origin'
+                })
+                .then(r => r.json())
+                .then(data => {
+                    var b = document.getElementById('navNotifBadge');
+                    if (!b) return;
+                    var n = parseInt(data.unread || 0);
+                    b.textContent = n > 99 ? '99+' : n;
+                    b.style.display = n > 0 ? '' : 'none';
+                }).catch(function() {});
+        }
+        setTimeout(function() {
+            refreshBadge();
+            setInterval(refreshBadge, 60000);
+        }, 30000);
+    })();
     </script>
 </body>
 

@@ -261,7 +261,6 @@ function pay_status_label(string $s): string
         'approved' => 'Aprovado',
         'pending' => 'Pendente',
         'rejected' => 'Rejeitado',
-        'refunded' => 'Reembolso',
         default => ucfirst($s),
     };
 }

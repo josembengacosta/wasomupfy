@@ -107,6 +107,17 @@ if ($user['plan_selected']) {
 $plan_name = $plan ? htmlspecialchars($plan['name_plan']) : 'Sem plano';
 $plan_slug = $plan ? $plan['slug_plan'] : '';
 
+// ── Limite de colaboradores do plano ──────────
+$max_collaborators = 1; // padrão
+if ($plan) {
+    $max_collaborators = (int)($plan['max_collaborators'] ?? 1);
+}
+// Se o plano não tiver max_collaborators definido, mas soubermos pelo slug
+if (!$plan || !isset($plan['max_collaborators'])) {
+    if ($plan_slug === 'label') $max_collaborators = 5;
+    else $max_collaborators = 1;
+}
+
 // ── Collaborators (sem limite) ────────────────
 $collab_st = $db->prepare("
     SELECT *, TIMESTAMPDIFF(MINUTE, last_seen_at, NOW()) AS mins_since_seen
@@ -693,20 +704,54 @@ $photo_base   = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/user/';
                 <!-- ████ SECÇÃO 2 — EQUIPA / COLABORADORES ████ -->
                 <div class="manage-section" id="sec-equipa">
 
-                    <!-- Cabeçalho da equipa -->
+                    <!-- Cabeçalho da equipa com limite -->
                     <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
                         <div>
                             <span class="fw-semibold small">Plano <span
                                     style="color:var(--wasom)"><?php echo $plan_name; ?></span></span>
                             <span class="text-muted small ms-2">·</span>
-                            <span class="text-muted small ms-2"><?php echo $collab_count; ?>
-                                colaborador<?php echo $collab_count !== 1 ? 'es' : ''; ?></span>
+                            <span class="text-muted small ms-2"><?php echo $collab_count; ?> /
+                                <?php echo $max_collaborators; ?> colaboradores</span>
                         </div>
+                        <?php if ($collab_count < $max_collaborators): ?>
                         <button class="btn btn-sm px-3 fw-semibold"
                             style="background:var(--wasom);color:#fff;border-radius:20px" data-bs-toggle="modal"
                             data-bs-target="#addCollabModal">
                             <i class="bi bi-person-plus me-1"></i>Adicionar colaborador
                         </button>
+                        <?php else: ?>
+                        <button class="btn btn-sm px-3 fw-semibold"
+                            style="background:#6c757d;color:#fff;border-radius:20px;cursor:not-allowed" disabled
+                            title="Limite de colaboradores atingido. Faz upgrade para adicionar mais.">
+                            <i class="bi bi-person-plus me-1"></i>Limite atingido
+                        </button>
+                        <a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/all-plans"
+                            class="btn btn-sm btn-outline-warning px-3" style="border-radius:20px">
+                            <i class="bi bi-arrow-up-circle me-1"></i>Fazer upgrade
+                        </a>
+                        <?php endif; ?>
+                    </div>
+
+                    <!-- Barra de progresso -->
+                    <div class="plan-limit-bar mb-3">
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span><i class="bi bi-people me-1"></i>Colaboradores utilizados</span>
+                            <strong><?php echo $collab_count; ?> / <?php echo $max_collaborators; ?></strong>
+                        </div>
+                        <div class="progress" style="height:6px;border-radius:999px">
+                            <div class="progress-bar" role="progressbar"
+                                style="width:<?php echo min(100, ($collab_count / $max_collaborators) * 100); ?>%;background:var(--wasom);border-radius:999px">
+                            </div>
+                        </div>
+                        <?php if ($collab_count >= $max_collaborators): ?>
+                        <div class="mt-2 text-warning small d-flex gap-2">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            <span>Limite de colaboradores atingido. <a
+                                    href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/all-plans"
+                                    style="color:var(--wasom);font-weight:700">Faz upgrade <i
+                                        class="bi bi-arrow-right"></i></a></span>
+                        </div>
+                        <?php endif; ?>
                     </div>
 
                     <!-- Collaborators list -->
@@ -997,7 +1042,7 @@ $photo_base   = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/user/';
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary btn-sm"
                         data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-sm px-4 fw-semibold"
+                    <button type="button" class="btn btn-md px-4 fw-semibold"
                         style="background:var(--wasom);color:#fff;border-radius:10px" id="btn-add-collab"
                         onclick="addCollaborator()">
                         <span id="add-collab-text"><i class="bi bi-send me-1"></i>Enviar convite</span>

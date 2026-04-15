@@ -165,7 +165,7 @@ $photo_base  = $base_url . '/assets/comprovantes/uploads/artists/';
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex, nofollow" />
-    <meta name="theme-color" content="#FF0089" />
+    <meta name="theme-color" content="#FF2D66" />
     <title>Artistas — <?php echo APP_NAME; ?></title>
     <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv.png" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
@@ -344,103 +344,13 @@ $photo_base  = $base_url . '/assets/comprovantes/uploads/artists/';
 
 <body>
 
-    <!-- ═══ NAVBAR ═══ -->
-    <nav class="collab-nav">
-        <button class="theme-btn d-md-none" id="btn-sidebar-toggle"><i class="bi bi-list"></i></button>
-        <a class="nav-brand" href="<?php echo $base_url; ?>/dashboard/collab/overview">
-            <?php echo APP_NAME; ?><span>For Colaboradores</span>
-        </a>
-        <div class="nav-spacer"></div>
-        <div class="nav-chip d-none d-md-inline-flex"
-            style="background:<?php echo $rm['bg']; ?>;color:<?php echo $rm['color']; ?>;border-color:<?php echo $rm['color']; ?>20">
-            <i class="bi <?php echo $rm['icon']; ?>"></i><?php echo $role_label; ?>
-        </div>
-        <button class="theme-btn" id="themeToggle"><i class="bi bi-sun" id="themeIcon"></i></button>
-        <div class="dropdown">
-            <button class="nav-avatar dropdown-toggle" style="background:none;border:none;cursor:pointer"
-                data-bs-toggle="dropdown">
-                <?php if ($collab['photo_collab']): ?>
-                <img src="<?php echo htmlspecialchars($collab['photo_collab']); ?>" alt=""
-                    onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
-                <span style="display:none"> <i class="bi bi-person-circle"></i> </span>
-                <?php else: ?><span> <i class="bi bi-person-circle"></i> </span><?php endif; ?>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end" style="font-size:.84rem;min-width:200px">
-                <li class="px-3 py-2">
-                    <div class="fw-bold">
-                        <?php echo htmlspecialchars($collab['first_name'] . ' ' . ($collab['second_name'] ?? '')); ?>
-                    </div>
-                    <div class="text-muted" style="font-size:.72rem">
-                        @<?php echo htmlspecialchars($collab['user_collab']); ?></div>
-                    <div class="mt-1">
-                        <span class="chip"
-                            style="background:<?php echo $rm['bg']; ?>;color:<?php echo $rm['color']; ?>">
-                            <i class="bi <?php echo $rm['icon']; ?>"></i><?php echo $role_label; ?>
-                        </span>
-                    </div>
-                </li>
-                <li>
-                    <hr class="dropdown-divider" />
-                </li>
-                <li><a class="dropdown-item" href="<?php echo $base_url; ?>/dashboard/collab/overview"><i
-                            class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
-                <li>
-                    <hr class="dropdown-divider" />
-                </li>
-                <li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal"
-                        data-bs-target="#logoutModal"><i class="bi bi-box-arrow-right me-2"></i>Terminar sessão</a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <!-- Sidebar overlay -->
+    <!-- ═══ NAVBAR ═══ -->>
+    <?php require_once __DIR__ . '/include/navbar-top.php'; ?>
+    <!-- ═══ SIDEBAR OVERLAY (mobile) ═══ -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
     <!-- ═══ SIDEBAR ═══ -->
-    <aside class="collab-sidebar" id="collabSidebar">
-        <div class="owner-card mb-3">
-            <div
-                style="font-size:.65rem;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">
-                Conta</div>
-            <div class="fw-bold" style="font-size:.95rem"><?php echo $owner_artist_name; ?></div>
-            <div style="font-size:.72rem;color:rgba(255,255,255,.75);margin-top:2px"><?php echo $plan_name; ?></div>
-        </div>
-
-        <div class="sidebar-section">Menu</div>
-        <a href="<?php echo $base_url; ?>/dashboard/collab/overview" class="sidebar-link">
-            <i class="bi bi-speedometer2"></i>Dashboard
-        </a>
-        <?php if ($can_view_releases): ?>
-        <a href="<?php echo $base_url; ?>/dashboard/collab/releases" class="sidebar-link">
-            <i class="bi bi-disc"></i>Lançamentos
-        </a>
-        <?php endif; ?>
-        <?php if ($can_view_artists): ?>
-        <a href="<?php echo $base_url; ?>/dashboard/collab/artists" class="sidebar-link active">
-            <i class="bi bi-people"></i>Artistas
-        </a>
-        <?php endif; ?>
-        <?php if ($can_view_finances): ?>
-        <div class="sidebar-section">Finanças</div>
-        <a href="<?php echo $base_url; ?>/dashboard/collab/finances" class="sidebar-link">
-            <i class="bi bi-currency-dollar"></i>Visão geral
-        </a>
-        <?php endif; ?>
-        <?php if ($can_view_stats): ?>
-        <div class="sidebar-section">Análise</div>
-        <a href="<?php echo $base_url; ?>/dashboard/collab/statistics" class="sidebar-link">
-            <i class="bi bi-bar-chart"></i>Estatísticas
-        </a>
-        <?php endif; ?>
-        <div class="sidebar-section">Conta</div>
-        <a href="#" class="sidebar-link" data-bs-toggle="modal" data-bs-target="#myProfileModal">
-            <i class="bi bi-person-gear"></i>O meu perfil
-        </a>
-        <a href="#" class="sidebar-link text-danger" data-bs-toggle="modal" data-bs-target="#logoutModal">
-            <i class="bi bi-box-arrow-right"></i>Terminar sessão
-        </a>
-    </aside>
-
+    <?php require_once __DIR__ . '/include/sidebar.php'; ?>
 
     <!-- ═══ MAIN CONTENT ═══ -->
     <main class="main-content">
@@ -747,105 +657,9 @@ $photo_base  = $base_url . '/assets/comprovantes/uploads/artists/';
 
 
     <!-- Bottom nav -->
-    <nav class="bottom-nav-collab">
-        <a href="<?php echo $base_url; ?>/<?php echo  APP_URL_PANEL ?>/collab/overview"><i
-                class="bi bi-speedometer2"></i>Dashboard</a>
-        <?php if ($can_view_releases): ?>
-        <a href="<?php echo $base_url; ?>/<?php echo  APP_URL_PANEL ?>/collab/releases"><i
-                class="bi bi-disc"></i>Releases</a>
-        <?php endif; ?>
-        <a href="<?php echo $base_url; ?>/<?php echo  APP_URL_PANEL ?>/collab/artists" class="active"><i
-                class="bi bi-people"></i>Artistas</a>
-        <?php if ($can_view_stats): ?>
-        <a href="<?php echo $base_url; ?>/<?php echo  APP_URL_PANEL ?>/collab/statistics"><i
-                class="bi bi-bar-chart"></i>Stats</a>
-        <?php endif; ?>
-        <?php if ($can_view_finances): ?>
-        <a href="<?php echo $base_url; ?>/<?php echo  APP_URL_PANEL ?>/collab/finances"><i
-                class="bi bi-currency-dollar"></i>Finanças</a>
-        <?php endif; ?>
-    </nav>
+    <?php require_once __DIR__ . '/include/navbar-bottom.php'; ?>
 
-
-    <!-- Modal — O meu perfil -->
-    <div class="modal fade" id="myProfileModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title"><i class="bi bi-person me-2" style="color:var(--wasom)"></i>O meu perfil
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body pt-0">
-                    <div class="text-center mb-3">
-                        <?php if ($collab['photo_collab']): ?>
-                        <img src="<?php echo htmlspecialchars($collab['photo_collab']); ?>"
-                            style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid var(--wasom)"
-                            onerror="this.style.display='none'" alt="" />
-                        <?php else: ?>
-                        <div
-                            style="width:72px;height:72px;border-radius:50%;background:rgba(255,0,137,.1);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto">
-                            🎤</div>
-                        <?php endif; ?>
-                        <h5 class="fw-bold mt-2 mb-0">
-                            <?php echo htmlspecialchars($collab['first_name'] . ' ' . ($collab['second_name'] ?? '')); ?>
-                        </h5>
-                        <div class="text-muted small">@<?php echo htmlspecialchars($collab['user_collab']); ?></div>
-                    </div>
-                    <div style="font-size:.83rem">
-                        <?php
-                        $info_rows = [
-                            ['Email',        $collab['email_collab'],       'bi-envelope'],
-                            ['Telefone',     $collab['tel_collab'] ?: '—',  'bi-telephone'],
-                            ['Função',       $role_label,                    'bi-person-badge'],
-                            ['Membro desde', date('d/m/Y', strtotime($collab['creat_collab'])), 'bi-calendar3'],
-                            ['Último login', $collab['last_login_at'] ? date('d/m/Y H:i', strtotime($collab['last_login_at'])) : '—', 'bi-clock'],
-                        ];
-                        foreach ($info_rows as [$label, $val, $ico]):
-                        ?>
-                        <div class="d-flex gap-2 py-2 border-bottom align-items-center">
-                            <i class="bi <?php echo $ico; ?> text-muted" style="width:16px"></i>
-                            <span class="text-muted" style="width:100px;flex-shrink:0"><?php echo $label; ?></span>
-                            <span class="fw-semibold text-truncate"><?php echo htmlspecialchars($val); ?></span>
-                        </div>
-                        <?php endforeach; ?>
-                    </div>
-                    <?php if ($collab['notes']): ?>
-                    <div class="mt-3 p-3"
-                        style="background:rgba(255,0,137,.04);border-radius:10px;border:1px solid rgba(255,0,137,.1)">
-                        <div class="text-muted" style="font-size:.7rem;margin-bottom:4px">NOTAS DO ADMINISTRADOR</div>
-                        <div style="font-size:.82rem"><?php echo htmlspecialchars($collab['notes']); ?></div>
-                    </div>
-                    <?php endif; ?>
-                </div>
-                <div class="modal-footer border-0 pt-0">
-                    <button class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Fechar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ════ MODAL — Logout ════ -->
-    <div class="modal fade" id="logoutModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered" style="max-width:360px">
-            <div class="modal-content">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title">Terminar sessão?</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body pt-0">
-                    <p class="text-muted small mb-0">Vais sair do painel de colaboradores.</p>
-                </div>
-                <div class="modal-footer border-0 gap-2">
-                    <button class="btn btn-outline-secondary flex-fill btn-sm"
-                        data-bs-dismiss="modal">Continuar</button>
-                    <a href="<?php echo htmlspecialchars($logout_url); ?>" class="btn btn-danger flex-fill btn-sm">
-                        <i class="bi bi-box-arrow-right me-1"></i>Terminar
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
+    <?php require_once __DIR__ . '/include/modallogoutmyprofile.php'; ?>
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

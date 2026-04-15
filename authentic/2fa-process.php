@@ -179,14 +179,27 @@ if ($remember) {
 resetLoginAttempts($uid);
 logActivity($uid, 'login', 'Sessão iniciada com sucesso (2FA verificado)');
 
-// Redirecionar conforme estado
-if ($user['status_user'] === 'processing') {
-    $db->prepare("UPDATE _users SET status_user='pending_plan' WHERE id_users=? AND status_user='processing'")
-       ->execute([$uid]);
-    $_SESSION['status'] = 'pending_plan';
-}
-if (($_SESSION['status'] ?? '') === 'pending_plan') {
-    redirect($user['plan_selected'] ? '/dashboard/painel' : '/dashboard/all-plans');
+// ══════════════════════════════════════════════
+// REDIRECIONAMENTO APÓS 2FA BEM-SUCEDIDO
+// ══════════════════════════════════════════════
+
+// Recupera a URL salva (se houver)
+$redirect_url = $pending['redirect_after'] ?? null;
+unset($_SESSION['pending_2fa'], $_SESSION['redirect_after_login']);
+
+// Se existe URL armazenada e é interna (relativa), redireciona para ela
+if ($redirect_url && parse_url($redirect_url, PHP_URL_HOST) === null) {
+    redirect($redirect_url);
 }
 
-redirect('/dashboard/painel');
+// Fallback: comportamento padrão
+if ($user['status_user'] === 'processing') {
+    $db->prepare("UPDATE _users SET status_user='pending_plan' WHERE id_users=? AND status_user='processing'")
+        ->execute([$uid]);
+    $_SESSION['status'] = 'pending_plan';
+}
+if (($user['status_user'] ?? $_SESSION['status'] ?? '') === 'pending_plan') {
+    redirect($user['plan_selected'] ? APP_URL_PANEL .'/painel' : APP_URL_PANEL . '/all-plans');
+}
+
+redirect(APP_URL_PANEL . '/painel');

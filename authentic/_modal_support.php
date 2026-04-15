@@ -75,7 +75,6 @@ $support_prefill_email = $prefill_email ?? ($reset_email ?? ($email ?? ''));
                                 <option value="Problema com pagamento">Problema com pagamento</option>
                                 <option value="Problema com distribuição">Problema com distribuição</option>
                                 <option value="Conta suspensa ou bloqueada">Conta suspensa ou bloqueada</option>
-                                <option value="Pedido de reembolso">Pedido de reembolso</option>
                                 <option value="Outro">Outro</option>
                             </select>
                             <div class="invalid-feedback">Selecciona o assunto.</div>

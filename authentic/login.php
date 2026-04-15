@@ -6,9 +6,14 @@
 require_once __DIR__ . '/include/functions.php';
 startSecureSession();
 
+if (!isset($_GET['session']) || $_GET['session'] !== 'expired') {
+    unset($_SESSION['redirect_after_login']);
+}
+
 if (isLoggedIn()) {
     redirect(APP_URL_PANEL . '/painel');
 }
+
 
 $notices = [
     'account_created'     => 'Conta criada com sucesso! Faz login para continuar.',

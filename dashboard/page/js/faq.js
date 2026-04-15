@@ -69,7 +69,7 @@ const translations = {
     faq31_question: "Como activar o meu plano após o pagamento?",
     faq32_question: "Como enviar um pedido de suporte?",
     faq33_question: "Qual é o prazo de resposta do suporte?",
-    faq34_question: "Como solicitar um reembolso?",
+    faq34_question: "Posso solicitar um reembolso?",
     // FAQ answers
     faq1_answer:
       "Acede à secção Artistas no menu, clica em Adicionar Novo e preenche os dados — nome artístico, nome real, foto, bio e contactos. Após rever, guarda as alterações. O processo leva poucos minutos. Certifica-te de que os dados estão correctos para evitar problemas futuros.",
@@ -138,7 +138,7 @@ const translations = {
     faq33_answer:
       "O suporte funciona de Segunda a Sexta 9h–18h (WAT) e Sábado 9h–13h. Tickets são respondidos em até 48 horas úteis. Tickets urgentes têm prioridade em até 24 horas.",
     faq34_answer:
-      "Envia um pedido de suporte com o tipo Pedido de reembolso, incluindo número da transacção, data e motivo. Reembolsos são processados em até 10 dias úteis, mediante análise. Devoluções vão para a mesma conta de origem.",
+      "Não. Todos os pagamentos efectuados à Wasom Upfy são definitivos e não reembolsáveis, independentemente da circunstância, conforme a nossa Política de Não Reembolso. A única excepção é uma cobrança duplicada por erro técnico comprovável da plataforma, que poderá ser analisada para crédito de conta (não reembolso monetário). Nesse caso, deves abrir um pedido de suporte com os comprovativos no prazo de 72 horas após a ocorrência. A análise não garante resultado favorável."
   },
 
   "en-US": {

@@ -49,12 +49,18 @@ if (isset($_POST['action']) && $_POST['action'] === 'confirm_reactivate') {
     $db->prepare("UPDATE _users SET status_user = 'active', deactivation_user = NULL, modif_user = NOW() WHERE id_users = ?")
         ->execute([$uid]);
 
-    unset($_SESSION['pending_reactivation']);
-
     $user = getUserById($uid);
     completeLogin($user, $remember);
 
     logActivity($uid, 'account_reactivated', 'Conta reactivada via modal de login');
+
+    // Recupera URL salva (se existir)
+    $redirect_url = $pending['redirect_after'] ?? null;
+    unset($_SESSION['redirect_after_login'], $_SESSION['pending_reactivation']);
+
+    if ($redirect_url && parse_url($redirect_url, PHP_URL_HOST) === null) {
+        redirect($redirect_url);
+    }
     redirect('/' . APP_URL_PANEL . '/painel');
 }
 
@@ -98,7 +104,7 @@ if ($user['status_user'] === 'inactive') {
     $deact_until = $user['deactivation_user'] ?? null;
 
     if ($deact_until && strtotime($deact_until) > time()) {
-        // Verificar bloqueio antes de mostrar modal (redundante, mas seguro)
+        // Verificar bloqueio antes de mostrar modal
         $block = checkLoginBlock($uid);
         if ($block['blocked']) {
             redirect('/login', ['error' => 'blocked', 'msg' => urlencode($block['message'])]);
@@ -115,12 +121,13 @@ if ($user['status_user'] === 'inactive') {
         }
         // Senha correcta — guardar estado pendente e mostrar modal
         $_SESSION['pending_reactivation'] = [
-            'id_users'    => $uid,
-            'email'       => $user['email_user'],
-            'first_name'  => $user['first_name'],
-            'deact_until' => $deact_until,
-            'remember'    => $remember,
-            'expires'     => time() + 300,
+            'id_users'       => $uid,
+            'email'          => $user['email_user'],
+            'first_name'     => $user['first_name'],
+            'deact_until'    => $deact_until,
+            'remember'       => $remember,
+            'expires'        => time() + 300,
+            'redirect_after' => $_SESSION['redirect_after_login'] ?? null,   // ← ADICIONADO
         ];
         redirect('/login', ['confirm_reactivate' => '1']);
     } else {
@@ -144,10 +151,12 @@ if (!password_verify($password, $user['password_user'])) {
 
 // ─── Verificar 2FA antes de criar sessão ─────
 if (!empty($user['two_factor_enabled'])) {
+    // Preserva a URL de redirecionamento, se existir
     $_SESSION['pending_2fa'] = [
-        'id_users' => $uid,
-        'remember' => $remember,
-        'expires'  => time() + 300,
+        'id_users'       => $uid,
+        'remember'       => $remember,
+        'expires'        => time() + 300,
+        'redirect_after' => $_SESSION['redirect_after_login'] ?? null,
     ];
     redirect('/2fa-verify');
 }
@@ -155,7 +164,16 @@ if (!empty($user['two_factor_enabled'])) {
 // Finalizar login (cria sessão, cookie, logs)
 completeLogin($user, $remember);
 
-// Redirecionar conforme estado da conta
+// ─── Determinar URL de redirecionamento ─────
+$redirect_url = $_SESSION['redirect_after_login'] ?? null;
+unset($_SESSION['redirect_after_login']); // limpa para não reutilizar
+
+// Se existir uma URL armazenada e for interna (relativa), redireciona para ela
+if ($redirect_url && parse_url($redirect_url, PHP_URL_HOST) === null) {
+    redirect($redirect_url);
+}
+
+// Fallback: comportamento padrão
 if ($user['status_user'] === 'processing') {
     getDB()->prepare("UPDATE _users SET status_user = 'pending_plan' WHERE id_users = ? AND status_user = 'processing'")
         ->execute([$uid]);

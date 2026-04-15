@@ -69,7 +69,6 @@ $issue_labels = [
     'stats'   => 'Erro nas estatísticas',
     'upload'  => 'Falha ao enviar ficheiros',
     'royalty' => 'Questão sobre royalties',
-    'refund'  => 'Pedido de reembolso',
     'account' => 'Conta suspensa ou bloqueada',
     'other'   => 'Outro assunto',
 ];

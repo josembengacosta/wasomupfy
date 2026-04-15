@@ -4,12 +4,24 @@
 // Arquivo: dashboard/payment.php
 // ══════════════════════════════════════════════════════
 require_once __DIR__ . '/../../authentic/include/functions.php';
+require_once __DIR__ . '/../include/platform.php';
 startSecureSession();
 checkRememberMe();
 requireLogin();
+$platform = checkDashboardStatus();
+$user     = checkUserAccess((int)$_SESSION['id_users']);
 
-$id_users = (int)$_SESSION['id_users'];
-$user     = getUserById($id_users);
+$id_users       = (int)$user['id_users'];
+$first_name     = htmlspecialchars($user['first_name']);
+$user_name      = htmlspecialchars($user['user_name'] ?? '');
+$email_verified = (bool)$user['email_verified'];
+$plan_selected  = $user['plan_selected'];
+$onboard_done   = (bool)($user['onboarding_done'] ?? false);
+$user_photo     = $user['photo_user'] ?? null;
+$name_artist_band = htmlspecialchars($user['name_artist_band'] ?? 'Cria Perfil Artístico');
+$notif_count    = getUnreadNotifCount($id_users);
+$db             = getDB();
+
 
 // ─── Determinar plano ──────────────────────────────────
 // Aceita ?plan=single|album|artist|label ou usa o plano guardado no utilizador
@@ -168,6 +180,20 @@ if ($proof || in_array($intent['status'], ['approved', 'rejected'], true)) {
 } elseif ($intent['status'] === 'waiting_payment') {
     $initial_step = 3; // Já viu as instruções
 }
+
+// Buscar plano ativo atual do usuário (se houver)
+$current_active_plan = null;
+$stmt = $db->prepare("
+    SELECT p.name_plan, p.slug_plan, up.releases_used, up.releases_limit
+    FROM _user_plan up
+    JOIN _plans p ON p.id_plan = up.id_plan
+    WHERE up.id_users = ? AND up.status_plan = 'active'
+    LIMIT 1
+");
+$stmt->execute([$id_users]);
+$current_active_plan = $stmt->fetch();
+
+$is_upgrade = $current_active_plan && $current_active_plan['slug_plan'] !== $plan['slug_plan'];
 ?>
 <!DOCTYPE html>
 <html lang="pt-ao">
@@ -820,6 +846,37 @@ if ($proof || in_array($intent['status'], ['approved', 'rejected'], true)) {
                         <span class="price-currency">AOA</span>
                     </div>
                 </div>
+
+                <?php if ($is_upgrade): ?>
+                <div class="alert alert-warning d-flex gap-2 mb-3"
+                    style="background:rgba(255,193,7,.1);border:1px solid rgba(255,193,7,.3);border-radius:10px">
+                    <i class="bi bi-arrow-repeat fs-5"></i>
+                    <div>
+                        <strong>Estás a alterar o teu plano</strong><br>
+                        <span style="font-size:.85rem">
+                            Atualmente tens o plano
+                            <strong><?php echo htmlspecialchars($current_active_plan['name_plan']); ?></strong>.
+                            Ao activares o plano <strong><?php echo $plan_name; ?></strong>, o plano anterior será
+                            desactivado e os lançamentos restantes não serão transferidos.
+                        </span>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                <?php if ($current_active_plan && $current_active_plan['releases_limit'] !== null): ?>
+                <div class="mb-3 p-3 rounded" style="background:rgba(255,255,255,.04);border:1px solid var(--border)">
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span>Uso do plano atual</span>
+                        <strong><?php echo $current_active_plan['releases_used']; ?> /
+                            <?php echo $current_active_plan['releases_limit']; ?></strong>
+                    </div>
+                    <div class="progress" style="height:6px">
+                        <div class="progress-bar bg-warning"
+                            style="width:<?php echo min(100, ($current_active_plan['releases_used'] / $current_active_plan['releases_limit']) * 100); ?>%">
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
             </div>
 
             <div class="alert-dark-info mb-3">

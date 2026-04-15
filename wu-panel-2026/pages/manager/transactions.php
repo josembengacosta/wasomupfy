@@ -37,10 +37,10 @@ $stmt=$db->prepare("
 ");
 $stmt->execute($params); $transactions=$stmt->fetchAll();
 
-$types=['royalty_credit'=>'Crédito Royalty','withdrawal'=>'Saque','plan_payment'=>'Pagamento Plano','refund'=>'Reembolso','adjustment'=>'Ajuste','fee'=>'Taxa'];
+$types=['royalty_credit'=>'Crédito Royalty','withdrawal'=>'Saque','plan_payment'=>'Pagamento Plano','adjustment'=>'Ajuste','fee'=>'Taxa'];
 $payment_sidebar_active='transactions';
 require_once __DIR__.'/include/payment-sidebar.php';
-function tx_icon2(string $t): string { return match($t){'royalty_credit'=>'<i class="bi bi-music-note-beamed text-success"></i>','withdrawal'=>'<i class="bi bi-arrow-up-circle text-danger"></i>','plan_payment'=>'<i class="bi bi-credit-card text-primary"></i>','refund'=>'<i class="bi bi-arrow-counterclockwise text-warning"></i>','adjustment'=>'<i class="bi bi-sliders text-info"></i>','fee'=>'<i class="bi bi-percent text-secondary"></i>',default=>'<i class="bi bi-arrow-left-right text-muted"></i>'}; }
+function tx_icon2(string $t): string { return match($t){'royalty_credit'=>'<i class="bi bi-music-note-beamed text-success"></i>','withdrawal'=>'<i class="bi bi-arrow-up-circle text-danger"></i>','plan_payment'=>'<i class="bi bi-credit-card text-primary"></i>','adjustment'=>'<i class="bi bi-sliders text-info"></i>','fee'=>'<i class="bi bi-percent text-secondary"></i>',default=>'<i class="bi bi-arrow-left-right text-muted"></i>'}; }
 ?>
 <!DOCTYPE html>
 <html lang="pt-ao">

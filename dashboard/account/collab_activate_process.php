@@ -76,7 +76,7 @@ try {
 
 // Send welcome email to collaborator with login link
 try {
-    $login_url = rtrim(APP_URL,'/') . '/dashboard/account/collab-login';
+    $login_url = APP_URL .'/' . APP_URL_PANEL .'/account/collab-login';
     $body = "<div style='font-family:Arial,sans-serif;max-width:540px;margin:auto'>
         <div style='background:linear-gradient(135deg,#FF0089,#FF4D4D);padding:28px 32px;border-radius:8px 8px 0 0'>
             <h1 style='color:#fff;margin:0;font-size:1.2rem'>".APP_NAME."</h1>
@@ -101,4 +101,4 @@ try {
     sendEmail($collab['email_collab'], 'Conta activada — '.APP_NAME, $body);
 } catch (Exception $e) {}
 
-jsonOut(true, 'Conta activada com sucesso!', ['login_url' => rtrim(APP_URL,'/') . '/dashboard/account/collab-login']);
+jsonOut(true, 'Conta activada com sucesso!', ['login_url' => APP_URL.'/' . APP_URL_PANEL . '/account/collab-login']);
