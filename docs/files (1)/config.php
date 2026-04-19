@@ -5,7 +5,7 @@
 // ══════════════════════════════════════════════
 
 // ─── Banco de Dados ───────────────────────────
-define('DB_HOST',    'localhost');
+define('DB_HOST',    'ftpupload.net');
 define('DB_NAME',    'wasomupfy');
 define('DB_USER',    'root');
 define('DB_PASS',    'Amoreterno@123...1');
@@ -14,7 +14,7 @@ define('DB_CHARSET', 'utf8mb4');
 // ─── Aplicação ────────────────────────────────
 define('APP_NAME',    'Wasom Upfy');
 define('APP_VERSION', '2.0');
-define('APP_URL',     'http://localhost/wasomupfy'); // Mudar em produção
+define('APP_URL',     'https://wasomupfy.rf.gd'); // Mudar em produção
 define('APP_ENV',     'development');                // 'production' no servidor
 
 // ─── Segurança de Login ───────────────────────

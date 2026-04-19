@@ -138,8 +138,8 @@ $storesCount = (int)$platform['stores_count'];
             "@context": "https://schema.org",
             "@type": "Organization",
             "name": "<?php echo cfg('site_name', 'Wasom Upfy'); ?>",
-            "url": "https://www.wasomupfy.com",
-            "logo": "https://www.wasomupfy.com/logo.png",
+            "url": "https://wasomupfy.rf.gd",
+            "logo": "https://wasomupfy.rf.gd/logo.png",
             "sameAs": [
                 <?php
                 $sameAs = array_filter([

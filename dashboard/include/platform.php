@@ -13,7 +13,7 @@
 //
 // INCLUIR logo após functions.php em cada página do dashboard:
 //   require_once __DIR__ . '//dashboard/authentic/include/functions.php';
-//   require_once __DIR__ . '/http://localhost/wasomupfy/dashboard/include/platform.php';
+//   require_once __DIR__ . '/https://wasomupfy.rf.gd/dashboard/include/platform.php';
 //   startSecureSession();
 //   checkRememberMe();
 //   requireLogin();
@@ -389,8 +389,7 @@ function markUserOffline(
     int $id_users,
     string $activity_type = 'logout',
     string $last_page = '/dashboard/logout'
-): void
-{
+): void {
     try {
         getDB()->prepare("
             UPDATE _user_presence

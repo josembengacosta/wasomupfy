@@ -122,7 +122,7 @@ class Mailer
 
     private function ehlo(): void
     {
-        $host = $_SERVER['SERVER_NAME'] ?? gethostname() ?: 'localhost';
+        $host = $_SERVER['SERVER_NAME'] ?? gethostname() ?: 'wasomupfy.rf.gd';
         $resp = $this->command("EHLO $host", 250);
         $this->debug("EHLO response: $resp");
     }

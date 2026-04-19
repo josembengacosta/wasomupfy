@@ -12,31 +12,36 @@
 // ══════════════════════════════════════════════════════════════════════
 
 (function () {
-    'use strict';
+  "use strict";
 
-    // Service Workers requerem HTTPS ou localhost
-    if (!('serviceWorker' in navigator)) return;
+  // Service Workers requerem HTTPS ou wasomupfy.rf.gd
+  if (!("serviceWorker" in navigator)) return;
 
-    window.addEventListener('load', function () {
-        navigator.serviceWorker
-            .register('/wasomupfy/sw.js', { scope: '/wasomupfy/' })
-            .then(function (reg) {
-                // Verificar se há uma versão nova disponível
-                reg.addEventListener('updatefound', function () {
-                    var newWorker = reg.installing;
-                    if (!newWorker) return;
+  window.addEventListener("load", function () {
+    navigator.serviceWorker
+      .register("/wasomupfy/sw.js", { scope: "/wasomupfy/" })
+      .then(function (reg) {
+        // Verificar se há uma versão nova disponível
+        reg.addEventListener("updatefound", function () {
+          var newWorker = reg.installing;
+          if (!newWorker) return;
 
-                    newWorker.addEventListener('statechange', function () {
-                        // Nova versão instalada e pronta — activar na próxima navegação
-                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                            console.info('[SW] Nova versão disponível — activa no próximo reload.');
-                        }
-                    });
-                });
-            })
-            .catch(function (err) {
-                // Falha no registo não deve quebrar a página
-                console.warn('[SW] Registo falhou:', err);
-            });
-    });
+          newWorker.addEventListener("statechange", function () {
+            // Nova versão instalada e pronta — activar na próxima navegação
+            if (
+              newWorker.state === "installed" &&
+              navigator.serviceWorker.controller
+            ) {
+              console.info(
+                "[SW] Nova versão disponível — activa no próximo reload."
+              );
+            }
+          });
+        });
+      })
+      .catch(function (err) {
+        // Falha no registo não deve quebrar a página
+        console.warn("[SW] Registo falhou:", err);
+      });
+  });
 })();

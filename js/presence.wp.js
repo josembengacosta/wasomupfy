@@ -19,7 +19,7 @@
     }
 
     const match = window.location.pathname.match(
-      /^(.*?)(?:\/dashboard\/|\/authentic\/|\/wu-panel-2026\/|\/js\/|$)/
+      /^(.*?)(?:\/dashboard\/|\/authentic\/|\/wu-panel\/|\/js\/|$)/
     );
 
     return window.location.origin + (match && match[1] ? match[1] : "");
@@ -44,92 +44,149 @@
 
   let unloadHandled = false;
 
-function getCurrentActivity() {
+  function getCurrentActivity() {
     const path = window.location.pathname.toLowerCase();
 
     // Lançamentos (releases)
-    if (path.includes("/releases") || path.includes("/creat-release") || path.includes("/draft-release") || path.includes("/edit-release") || path.includes("/release_process") || path.includes("/creat_release_process")) {
-        return "releases";
+    if (
+      path.includes("/releases") ||
+      path.includes("/creat-release") ||
+      path.includes("/draft-release") ||
+      path.includes("/edit-release") ||
+      path.includes("/release_process") ||
+      path.includes("/creat_release_process")
+    ) {
+      return "releases";
     }
 
     // Finanças
-    if (path.includes("/finances") || path.includes("/overview") || path.includes("/transactions") || path.includes("/withdraw") || path.includes("/payment/pay") || path.includes("/_modal_withdrawal") || path.includes("/account_process") || path.includes("/split_process")) {
-        return "finances";
+    if (
+      path.includes("/finances") ||
+      path.includes("/overview") ||
+      path.includes("/transactions") ||
+      path.includes("/withdraw") ||
+      path.includes("/payment/pay") ||
+      path.includes("/_modal_withdrawal") ||
+      path.includes("/account_process") ||
+      path.includes("/split_process")
+    ) {
+      return "finances";
     }
 
     // Artistas
-    if (path.includes("/artists") || path.includes("/add-artist") || path.includes("/add_artist_process") || path.includes("/youtube/ucy")) {
-        return "artists";
+    if (
+      path.includes("/artists") ||
+      path.includes("/add-artist") ||
+      path.includes("/add_artist_process") ||
+      path.includes("/youtube/ucy")
+    ) {
+      return "artists";
     }
 
     // Analytics / Estatísticas
-    if (path.includes("/analytics") || path.includes("/statistics") || path.includes("/artist-details") || path.includes("/country-details") || path.includes("/playlist-details") || path.includes("/compare") || path.includes("/report") || path.includes("/export")) {
-        return "analytics";
+    if (
+      path.includes("/analytics") ||
+      path.includes("/statistics") ||
+      path.includes("/artist-details") ||
+      path.includes("/country-details") ||
+      path.includes("/playlist-details") ||
+      path.includes("/compare") ||
+      path.includes("/report") ||
+      path.includes("/export")
+    ) {
+      return "analytics";
     }
 
     // Perfil do usuário
     if (path.includes("/user/profile")) {
-        return "profile";
+      return "profile";
     }
 
     // Configurações da conta (manage-account)
-    if (path.includes("/account/manage-account") || path.includes("/account/add-user")) {
-        return "account_settings";
+    if (
+      path.includes("/account/manage-account") ||
+      path.includes("/account/add-user")
+    ) {
+      return "account_settings";
     }
 
     // Configurações gerais (settings)
     if (path.includes("/page/settings")) {
-        return "settings";
+      return "settings";
     }
 
     // Suporte
-    if (path.includes("/support") || path.includes("/page/support") || path.includes("/ajax/support_dashboard")) {
-        return "support";
+    if (
+      path.includes("/support") ||
+      path.includes("/page/support") ||
+      path.includes("/ajax/support_dashboard")
+    ) {
+      return "support";
     }
 
     // Notificações
-    if (path.includes("/notifications") || path.includes("/page/notifications") || path.includes("/ajax/notifications_api")) {
-        return "notifications";
+    if (
+      path.includes("/notifications") ||
+      path.includes("/page/notifications") ||
+      path.includes("/ajax/notifications_api")
+    ) {
+      return "notifications";
     }
 
     // Planos
     if (path.includes("/all-plans")) {
-        return "plans";
+      return "plans";
     }
 
     // FAQ / Ajuda
     if (path.includes("/faq") || path.includes("/help")) {
-        return "help";
+      return "help";
     }
 
     // Serviços disponíveis
     if (path.includes("/services/available-services")) {
-        return "services";
+      return "services";
     }
 
     // Páginas de erro
-    if (path.includes("/error/403") || path.includes("/error/404") || path.includes("/error/500") || path.includes("/error/503") || path.includes("/maintenance")) {
-        return "error_page";
+    if (
+      path.includes("/error/403") ||
+      path.includes("/error/404") ||
+      path.includes("/error/500") ||
+      path.includes("/error/503") ||
+      path.includes("/maintenance")
+    ) {
+      return "error_page";
     }
 
     // Páginas de políticas
-    if (path.includes("/politicies/terms") || path.includes("/politicies/privacy")) {
-        return "policies";
+    if (
+      path.includes("/politicies/terms") ||
+      path.includes("/politicies/privacy")
+    ) {
+      return "policies";
     }
 
     // Offline
     if (path.includes("/offline")) {
-        return "offline";
+      return "offline";
     }
 
     // Painel principal (dashboard/painel)
-    if (path === "/dashboard/" || path === "/dashboard/painel" || path.endsWith("/dashboard") || path.endsWith("/painel") || path === "/dashboard" || path.includes("/dashboard")) {
-        return "dashboard";
+    if (
+      path === "/dashboard/" ||
+      path === "/dashboard/painel" ||
+      path.endsWith("/dashboard") ||
+      path.endsWith("/painel") ||
+      path === "/dashboard" ||
+      path.includes("/dashboard")
+    ) {
+      return "dashboard";
     }
 
     // Fallback
     return "dashboard";
-}
+  }
 
   function readJsonStorage(key, fallback) {
     try {
@@ -212,7 +269,9 @@ function getCurrentActivity() {
       return manual;
     }
 
-    const hasVisibleTab = Object.values(safeTabs).some((tab) => tab && tab.visible);
+    const hasVisibleTab = Object.values(safeTabs).some(
+      (tab) => tab && tab.visible
+    );
     return hasVisibleTab ? "online" : "away";
   }
 
@@ -327,7 +386,9 @@ function getCurrentActivity() {
   document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll("[data-presence-status]").forEach((element) => {
       element.addEventListener("click", function () {
-        const status = String(element.getAttribute("data-presence-status") || "").toLowerCase();
+        const status = String(
+          element.getAttribute("data-presence-status") || ""
+        ).toLowerCase();
         if (status === "auto" || status === "default") {
           window.WUPresence.clearStatus();
           return;

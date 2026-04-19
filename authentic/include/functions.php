@@ -763,9 +763,9 @@ function sendEmail(string $to, string $subject, string $body, string $altBody = 
     }
 
     // ── Produção: WasomMailer (SMTP nativo) → PHPMailer → mail() ────
-    // Prioridade: WasomMailer (sempre disponível, funciona em localhost via SMTP)
+    // Prioridade: WasomMailer (sempre disponível, funciona em wasomupfy.rf.gd via SMTP)
     // Fallback 1: PHPMailer (se Composer instalado)
-    // Fallback 2: mail() nativo (não funciona em localhost sem MTA)
+    // Fallback 2: mail() nativo (não funciona em wasomupfy.rf.gd sem MTA)
 
     // ── 1. WasomMailer — SMTP nativo, sem dependências externas ─────
     if (MAIL_USER !== '') {
@@ -833,7 +833,7 @@ function sendEmail(string $to, string $subject, string $body, string $altBody = 
         }
     }
 
-    // ── 3. Fallback nativo — último recurso, não funciona em localhost
+    // ── 3. Fallback nativo — último recurso, não funciona em wasomupfy.rf.gd
     $headers  = "MIME-Version: 1.0\r\n";
     $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
     $headers .= "From: " . MAIL_FROM_NAME . " <" . MAIL_FROM . ">\r\n";
@@ -924,10 +924,10 @@ function logActivity(int $id_users, string $type, string $desc, ?string $entity 
 // ════════════════════════════════════════════════
 
 if (!function_exists('sanitize')) {
-function sanitize(string $value): string
-{
-    return htmlspecialchars(strip_tags(trim($value)), ENT_QUOTES, 'UTF-8');
-}
+    function sanitize(string $value): string
+    {
+        return htmlspecialchars(strip_tags(trim($value)), ENT_QUOTES, 'UTF-8');
+    }
 }
 
 function redirect(string $path, array $params = []): void

@@ -7,13 +7,13 @@
 // ══════════════════════════════════════════════
 
 // ── 1. Config base ────────────────────────────
-define('APP_ENV', 'development'); // trocar para 'production' no servidor
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'wasomupfy');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+define('APP_ENV', 'production'); // trocar para 'production' no servidor
+define('DB_HOST', 'ftpupload.net');
+define('DB_NAME', 'if0_37624434_wasomupfy');
+define('DB_USER', 'if0_37624434');
+define('DB_PASS', 'WasomUpfy');
 define('DB_CHARSET', 'utf8mb4');
-define('APP_URL', 'http://localhost/wasomupfy'); // sem barra no fim
+define('APP_URL', 'https://wasomupfy.rf.gd'); // sem barra no fim
 
 // ── 2. Ligação à BD (singleton) ───────────────
 function getSiteDB(): PDO
@@ -455,12 +455,12 @@ function getVisitorIp(): string
 
 function getGeoData(string $ip): array
 {
-    // Localhost/privado — sem geolocalização
+    // wasomupfy.rf.gd/privado — sem geolocalização
     if (
         in_array($ip, ['127.0.0.1', '::1', '0.0.0.0']) ||
         !filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)
     ) {
-        return ['country' => 'Local', 'city' => 'Localhost', 'countryCode' => 'XX'];
+        return ['country' => 'Local', 'city' => 'wasomupfy.rf.gd', 'countryCode' => 'XX'];
     }
 
     // Cache na sessão para não repetir o pedido na mesma sessão

@@ -104,7 +104,7 @@ function getDB(): PDO
       Não foi possível conectar ao servidor.<br>
       Por favor, tente novamente mais tarde.
     </div>
-    <a href='/home.php' class='btn-retry'>Voltar para Wasom Upfy</a>
+    <a href='https://wasomupfy.rf.gd/' class='btn-retry'>Voltar para Wasom Upfy</a>
     <div class='error-footer'>Plataforma Wasom Upfy</div>
   </div>
 </body>

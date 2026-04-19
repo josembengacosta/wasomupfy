@@ -5,16 +5,16 @@
 // ══════════════════════════════════════════════
 
 // ─── Banco de Dados ───────────────────────────
-define('DB_HOST',    'localhost');
+define('DB_HOST',    'ftpupload.net');
 define('DB_NAME',    'wasomupfy');
-define('DB_USER',    'root');
-define('DB_PASS',    '');
+define('DB_USER',    'if0_37624434');
+define('DB_PASS',    'WasomUpfy');
 define('DB_CHARSET', 'utf8mb4');
 
 // ─── Aplicação ────────────────────────────────
 define('APP_NAME',    'Wasom Upfy');
 define('APP_VERSION', '2.0');
-define('APP_URL',     'http://localhost/wasomupfy'); // Mudar em produção
+define('APP_URL',     'https://wasomupfy.rf.gd'); // Mudar em produção
 define('APP_URL_PANEL',     'dashboard');
 define('APP_ENV',     'production');                 // 'development' = debug local | 'production' = envio real
 define('VAPID_PUBLIC_KEY',  'BKGIW47bet8LzqCcTTV3B_pJLgUxA1xdJgtlYEU9LcJArBrZRmKipIlYblrVDMBX54bn-5T7hydeuXGB1NxGVl4'); // a chave Public Key
@@ -68,4 +68,4 @@ define('TERMS_DATE',    '11 de Março de 2026');
 //   3. As rotas no .htaccess raiz (^ADMIN_PATH/...)
 // Para rodar o caminho: alterar aqui + renomear pasta + executar
 // o gerador de .htaccess em admin/pages/settings/security.php
-define('ADMIN_PATH', 'wu-panel-2026'); // Exemplo: 'admin' ou 'admin-panel' ou 'wu-panel-2026'
+define('ADMIN_PATH', 'wu-panel'); // Exemplo: 'admin' ou 'admin-panel' ou 'wu-panel'
