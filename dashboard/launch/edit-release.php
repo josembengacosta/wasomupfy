@@ -247,7 +247,7 @@ if (!empty($album['copyright_p'])) {
                     <div class="row">
                         <?php if (!empty($album['img_cover'])): ?>
                         <div class="col-md-2 mb-3">
-                            <img src="/wasomupfy/assets/comprovantes/uploads/covers/<?php echo $album['img_cover']; ?>"
+                            <img src="/assets/comprovantes/uploads/covers/<?php echo $album['img_cover']; ?>"
                                 class="cover-preview" alt="Capa">
                         </div>
                         <div class="col-md-10">

@@ -14,11 +14,11 @@ jobs:
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server:   ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USER }}
-          password: ${{ secrets.FTP_PASS }}
+          server: "${{ secrets.FTP_HOST }}"
+          username: "${{ secrets.FTP_USER }}"
+          password: "${{ secrets.FTP_PASS }}"
           local-dir: ./          # raiz do projecto
-          server-dir: /htdocs/wasomupfy/  # pasta no servidor
+          server-dir: /htdocs/latest-wasomupfy  # pasta no servidor
           exclude: |
             **/.git*
             **/.github*

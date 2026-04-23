@@ -900,7 +900,7 @@ $state_map = [
                     <i class="bi bi-arrow-left"></i>
                     Tentar aceder ao site
                 </a>
-                <a href="/wasomupfy/login" class="btn-dash">
+                <a href="<?php echo APP_URL  ?>/login" class="btn-dash">
                     <i class="bi bi-grid-1x2"></i>
                     Painel
                 </a>

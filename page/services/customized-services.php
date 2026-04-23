@@ -258,11 +258,11 @@ $whatsNum    = preg_replace('/[^0-9]/', '', cfg('whatsapp_number', '244922030116
                         </ul>
 
                         <div class="mt-3 mt-lg-0 d-flex align-items-center">
-                            <a title="Sign-in" href="/wasomupfy/login" class="btn btn-secondary mx-2">
+                            <a title="Sign-in" href="<?php echo APP_URL  ?>/login" class="btn btn-secondary mx-2">
                                 Entrar <i data-feather="log-in"></i>
                             </a>
                             <?php if ($canRegister): ?>
-                                <a title="Sign-up" href="/wasomupfy/register" class="btn btn-wasomupfy">Inscreva-se</a>
+                                <a title="Sign-up" href="<?php echo APP_URL  ?>/register" class="btn btn-wasomupfy">Inscreva-se</a>
                             <?php else: ?>
                                 <span class="btn btn-secondary disabled">Inscrições fechadas</span>
                             <?php endif; ?>

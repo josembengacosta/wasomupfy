@@ -418,9 +418,8 @@ $seoDesc  = $cfg['subtitle'];
                             </li>
                         </ul>
                         <div class="mt-3 mt-lg-0 d-flex align-items-center">
-                            <a href="/wasomupfy/login" class="btn btn-secondary mx-2">Entrar <i
-                                    data-feather="log-in"></i></a>
-                            <?php if ($canRegister): ?><a href="/wasomupfy/register"
+                            <a href="<?php echo APP_URL  ?>/login" class="btn btn-secondary mx-2">Entrar <i data-feather="log-in"></i></a>
+                            <?php if ($canRegister): ?><a href="<?php echo APP_URL  ?>/register"
                                     class="btn btn-wasomupfy">Inscreva-se</a><?php else: ?><span
                                     class="btn btn-secondary disabled">Inscrições fechadas</span><?php endif; ?>
                         </div>
@@ -730,9 +729,8 @@ $seoDesc  = $cfg['subtitle'];
                                         echo $msgLabels[$mode]; ?>
                                     </label>
                                     <textarea class="form-control" id="fc_message" name="message" rows="5"
-                                        maxlength="2000"
-                                        placeholder="<?php $ph = ['free_analysis' => 'Link da tua música, género, público-alvo...', 'consultant_initial' => 'Objectivos de alcance, data de lançamento prevista...', 'consultant_talk' => 'Plataformas prioritárias, orçamento estimado em ads...', 'meeting_schedule' => 'Descreve a label, artistas activos, estratégia actual...', 'general' => 'Como podemos ajudar?'];
-                                                        echo htmlspecialchars($ph[$mode]); ?>"></textarea>
+                                        maxlength="2000" placeholder="<?php $ph = ['free_analysis' => 'Link da tua música, género, público-alvo...', 'consultant_initial' => 'Objectivos de alcance, data de lançamento prevista...', 'consultant_talk' => 'Plataformas prioritárias, orçamento estimado em ads...', 'meeting_schedule' => 'Descreve a label, artistas activos, estratégia actual...', 'general' => 'Como podemos ajudar?'];
+                                                                        echo htmlspecialchars($ph[$mode]); ?>"></textarea>
                                     <div class="form-text text-end"><span id="msgCounter">0</span>/2000</div>
                                 </div>
 
@@ -1198,7 +1196,7 @@ $seoDesc  = $cfg['subtitle'];
                 btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>A enviar…';
                 if (alert) alert.classList.add('d-none');
 
-                fetch('/wasomupfy/ajax/service-contact.php', {
+                fetch('/ajax/service-contact.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

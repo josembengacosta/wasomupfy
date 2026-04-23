@@ -511,6 +511,82 @@ body.light-mode .dropdown-item-text {
   transform: scale(1.05);
 }
 
+/* Dropdown do utilizador com scroll em telas pequenas */
+.user-dropdown {
+    max-height: 80vh;               /* Altura máxima relativa à viewport */
+    overflow-y: auto;               /* Scroll vertical quando necessário */
+    overscroll-behavior: contain;   /* Evita scroll da página por trás */
+    background-color: #000;
+    border: none;
+    border-radius: 12px;
+    padding: 0.5rem 0;
+    min-width: 280px;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.6);
+}
+
+/* Ajuste para dispositivos móveis */
+@media (max-width: 575.98px) {
+    .user-dropdown {
+        max-height: 70vh;
+        width: calc(100vw - 2rem);
+        margin-right: 0.5rem;
+    }
+}
+
+/* Itens do dropdown */
+.user-dropdown .dropdown-item {
+    color: #fff;
+    display: flex;
+    align-items: center;
+    padding: 0.7rem 1.25rem;
+    font-size: 0.95rem;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.user-dropdown .dropdown-item i {
+    width: 1.4rem;
+    font-size: 1.1rem;
+    margin-right: 0.5rem;
+    color: #FF0089;
+}
+
+.user-dropdown .dropdown-item:hover {
+    background-color: #FF0089;
+    color: white;
+}
+
+.user-dropdown .dropdown-item:hover i {
+    color: white;
+}
+
+.user-dropdown .dropdown-divider {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    margin: 0.25rem 0;
+}
+
+.user-dropdown .dropdown-header {
+    color: #fff;
+    font-size: 0.9rem;
+    white-space: normal;
+}
+
+.user-dropdown .dropdown-item-text {
+    color: #aaa;
+    padding: 0.5rem 1.25rem;
+}
+
+/* Melhorias de acessibilidade */
+.user-dropdown .dropdown-item:focus {
+    background-color: #FF0089;
+    color: white;
+    outline: none;
+}
+
+/* Avatar trigger */
+.user-menu .border-danger {
+    border-color: #FF0089 !important;
+}
+
 .user-menu {
   position: relative;
 }

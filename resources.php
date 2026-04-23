@@ -246,11 +246,11 @@ $csrf_page = getSiteCsrf();
                             </li>
                         </ul>
                         <div class="mt-3 mt-lg-0 d-flex align-items-center">
-                            <a title="Sign-in" href="/wasomupfy/login" class="btn btn-secondary mx-2">
+                            <a title="Sign-in" href="login" class="btn btn-secondary mx-2">
                                 Entrar <i data-feather="log-in"></i>
                             </a>
                             <?php if ($canRegister): ?>
-                                <a title="Sign-up" href="/wasomupfy/register" class="btn btn-wasomupfy">Inscreva-se</a>
+                                <a title="Sign-up" href="register" class="btn btn-wasomupfy">Inscreva-se</a>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -500,12 +500,12 @@ $csrf_page = getSiteCsrf();
                                 <div class="col-lg-6 mt-3 text-lg-center">
                                     <div class="d-grid d-md-flex justify-content-lg-center gap-3">
                                         <?php if ($canRegister): ?>
-                                            <a href="/wasomupfy/register"
+                                            <a href="register"
                                                 class="btn btn-wasomupfy btn-lg px-4 py-3 fw-bold">
                                                 Começar Agora <i class="fa-solid fa-chevron-right ms-2 small"></i>
                                             </a>
                                         <?php else: ?>
-                                            <a href="/wasomupfy/login" class="btn btn-wasomupfy btn-lg px-4 py-3 fw-bold">
+                                            <a href="login" class="btn btn-wasomupfy btn-lg px-4 py-3 fw-bold">
                                                 Começar Agora <i class="fa-solid fa-chevron-right ms-2 small"></i>
                                             </a>
                                         <?php endif; ?>

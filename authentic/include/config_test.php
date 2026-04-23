@@ -5,10 +5,10 @@
 // ══════════════════════════════════════════════
 
 // ─── Banco de Dados ───────────────────────────
-define('DB_HOST',    'sql200.infinityfree.com');
-define('DB_NAME',    'if0_37624434_wasomupfy');
-define('DB_USER',    'if0_37624434');
-define('DB_PASS',    'WasomUpfy');
+define('DB_HOST',    'localhost');
+define('DB_NAME',    'wasomupfy');
+define('DB_USER',    'root');
+define('DB_PASS',    '');
 define('DB_CHARSET', 'utf8mb4');
 
 // ─── Aplicação ────────────────────────────────

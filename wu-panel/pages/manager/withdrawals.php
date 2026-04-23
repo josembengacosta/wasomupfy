@@ -108,45 +108,45 @@ function biz_fmt_w(float $v): string
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="<?php echo htmlspecialchars($csrf); ?>">
     <title>Pedidos de Saque — Wasom Upfy for Business</title>
-    <link rel="shortcut icon" href="<?php echo APP_URL; ?>/assets/img/icones/wasomupfy_fiv.png" type="image/x-icon" />
+    <link rel="shortcut icon" href="<?php echo APP_URL ?>/assets/img/icones/wasomupfy_fiv.png" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap"
         rel="stylesheet">
     <style>
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-        }
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-        }
+    body {
+        font-family: 'Inter', sans-serif;
+        margin: 0;
+    }
 
-        .filter-card {
-            background: #fff;
-            border-radius: 16px;
-            padding: 16px 20px;
-            border: 1px solid rgba(0, 0, 0, .04);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, .03);
-            margin-bottom: 20px;
-        }
+    .filter-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 16px 20px;
+        border: 1px solid rgba(0, 0, 0, .04);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, .03);
+        margin-bottom: 20px;
+    }
 
-        .filter-card .form-label {
-            font-size: .75rem;
-            font-weight: 600;
-            margin-bottom: 3px;
-            color: #555;
-        }
+    .filter-card .form-label {
+        font-size: .75rem;
+        font-weight: 600;
+        margin-bottom: 3px;
+        color: #555;
+    }
 
-        .pag-link {
-            border-radius: 8px !important;
-            margin: 0 2px;
-            font-size: .8rem;
-        }
+    .pag-link {
+        border-radius: 8px !important;
+        margin: 0 2px;
+        font-size: .8rem;
+    }
     </style>
 </head>
 
@@ -182,21 +182,21 @@ function biz_fmt_w(float $v): string
                 ];
                 foreach ($mini as $m):
                 ?>
-                    <div class="col-6 col-md-4 col-xl">
-                        <div class="biz-stat" style="padding:14px 16px">
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="biz-stat-icon"
-                                    style="width:40px;height:40px;background:<?php echo $m['color']; ?>18">
-                                    <i class="bi <?php echo $m['icon']; ?>" style="color:<?php echo $m['color']; ?>"></i>
+                <div class="col-6 col-md-4 col-xl">
+                    <div class="biz-stat" style="padding:14px 16px">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="biz-stat-icon"
+                                style="width:40px;height:40px;background:<?php echo $m['color']; ?>18">
+                                <i class="bi <?php echo $m['icon']; ?>" style="color:<?php echo $m['color']; ?>"></i>
+                            </div>
+                            <div>
+                                <div style="font-size:1.2rem;font-weight:800;color:#1a1a2e"><?php echo $m['val']; ?>
                                 </div>
-                                <div>
-                                    <div style="font-size:1.2rem;font-weight:800;color:#1a1a2e"><?php echo $m['val']; ?>
-                                    </div>
-                                    <div class="biz-stat-lbl"><?php echo $m['lbl']; ?></div>
-                                </div>
+                                <div class="biz-stat-lbl"><?php echo $m['lbl']; ?></div>
                             </div>
                         </div>
                     </div>
+                </div>
                 <?php endforeach; ?>
             </div>
 
@@ -214,8 +214,8 @@ function biz_fmt_w(float $v): string
                             <select name="status" class="form-select form-select-sm">
                                 <option value="">Todos</option>
                                 <?php foreach (['pending' => 'Pendente', 'processing' => 'A processar', 'approved' => 'Aprovado', 'rejected' => 'Rejeitado', 'cancelled' => 'Cancelado'] as $v => $l): ?>
-                                    <option value="<?php echo $v; ?>" <?php echo $f_status === $v ? 'selected' : ''; ?>>
-                                        <?php echo $l; ?></option>
+                                <option value="<?php echo $v; ?>" <?php echo $f_status === $v ? 'selected' : ''; ?>>
+                                    <?php echo $l; ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -224,8 +224,8 @@ function biz_fmt_w(float $v): string
                             <select name="type" class="form-select form-select-sm">
                                 <option value="">Todos</option>
                                 <?php foreach (['IBAN' => 'IBAN', 'Express' => 'Express', 'PayPal' => 'PayPal', 'Multicaixa' => 'Multicaixa', 'TPA' => 'TPA'] as $v => $l): ?>
-                                    <option value="<?php echo $v; ?>" <?php echo $f_type === $v ? 'selected' : ''; ?>>
-                                        <?php echo $l; ?></option>
+                                <option value="<?php echo $v; ?>" <?php echo $f_type === $v ? 'selected' : ''; ?>>
+                                    <?php echo $l; ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -267,84 +267,84 @@ function biz_fmt_w(float $v): string
                         </thead>
                         <tbody>
                             <?php if (empty($withdrawals)): ?>
-                                <tr>
-                                    <td colspan="8" class="text-center py-5 text-muted">
-                                        <i class="bi bi-inbox fs-1 d-block mb-2"></i>Nenhum pedido encontrado
-                                    </td>
-                                </tr>
+                            <tr>
+                                <td colspan="8" class="text-center py-5 text-muted">
+                                    <i class="bi bi-inbox fs-1 d-block mb-2"></i>Nenhum pedido encontrado
+                                </td>
+                            </tr>
                             <?php else: ?>
-                                <?php foreach ($withdrawals as $w):
+                            <?php foreach ($withdrawals as $w):
                                     $user_name = trim($w['first_name'] . ' ' . ($w['second_name'] ?? ''));
                                     $is_active = in_array($w['status_withdrawal'], ['pending', 'processing']);
                                 ?>
-                                    <tr class="<?php echo $w['status_withdrawal'] === 'pending' ? 'table-warning' : ''; ?>">
-                                        <td><span
-                                                style="font-family:monospace;font-size:.73rem;opacity:.55">#<?php echo $w['id_withdrawal']; ?></span>
-                                        </td>
-                                        <td>
-                                            <div style="font-weight:600;font-size:.82rem">
-                                                <?php echo htmlspecialchars($user_name); ?></div>
-                                            <div style="font-size:.72rem;color:#888">
-                                                <?php echo htmlspecialchars($w['email_user']); ?></div>
-                                        </td>
-                                        <td>
-                                            <?php if ($w['full_name_account']): ?>
-                                                <div style="font-size:.8rem;font-weight:600">
-                                                    <?php echo htmlspecialchars($w['full_name_account']); ?></div>
-                                                <div style="font-size:.72rem;color:#888">
-                                                    <?php echo $w['type_account']; ?> ·
-                                                    <?php
+                            <tr class="<?php echo $w['status_withdrawal'] === 'pending' ? 'table-warning' : ''; ?>">
+                                <td><span
+                                        style="font-family:monospace;font-size:.73rem;opacity:.55">#<?php echo $w['id_withdrawal']; ?></span>
+                                </td>
+                                <td>
+                                    <div style="font-weight:600;font-size:.82rem">
+                                        <?php echo htmlspecialchars($user_name); ?></div>
+                                    <div style="font-size:.72rem;color:#888">
+                                        <?php echo htmlspecialchars($w['email_user']); ?></div>
+                                </td>
+                                <td>
+                                    <?php if ($w['full_name_account']): ?>
+                                    <div style="font-size:.8rem;font-weight:600">
+                                        <?php echo htmlspecialchars($w['full_name_account']); ?></div>
+                                    <div style="font-size:.72rem;color:#888">
+                                        <?php echo $w['type_account']; ?> ·
+                                        <?php
                                                     if ($w['type_account'] === 'IBAN' && $w['iban']) echo '···' . substr($w['iban'], -6);
                                                     elseif ($w['express_number']) echo $w['express_number'];
                                                     ?>
-                                                </div>
-                                            <?php else: echo '<span style="opacity:.4">—</span>';
+                                    </div>
+                                    <?php else: echo '<span style="opacity:.4">—</span>';
                                             endif; ?>
-                                        </td>
-                                        <td style="font-weight:700;white-space:nowrap;color:#FF0089">
-                                            <?php echo biz_fmt_w((float)$w['amount_requested']); ?>
-                                        </td>
-                                        <td style="font-weight:600;white-space:nowrap;color:#22c55e">
-                                            <?php echo $w['amount_net'] ? biz_fmt_w((float)$w['amount_net']) : '—'; ?>
-                                        </td>
-                                        <td><?php echo wd_status_badge($w['status_withdrawal']); ?></td>
-                                        <td style="font-size:.76rem;white-space:nowrap">
-                                            <?php echo date('d/m/Y', strtotime($w['creat_withdrawal'])); ?>
-                                            <div style="color:#aaa">
-                                                <?php echo date('H:i', strtotime($w['creat_withdrawal'])); ?>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex gap-1 justify-content-center">
-                                                <!-- Detalhes -->
-                                                <button class="btn btn-sm btn-outline-info" title="Ver detalhes"
-                                                    onclick="viewWithdrawal(<?php echo (int)$w['id_withdrawal']; ?>)">
-                                                    <i class="bi bi-eye"></i>
-                                                </button>
-                                                <?php if ($is_active): ?>
-                                                    <!-- Processar -->
-                                                    <?php if ($w['status_withdrawal'] === 'pending'): ?>
-                                                        <button class="btn btn-sm btn-outline-primary" title="Marcar a processar"
-                                                            onclick="setProcessing(<?php echo (int)$w['id_withdrawal']; ?>)">
-                                                            <i class="bi bi-arrow-repeat"></i>
-                                                        </button>
-                                                    <?php endif; ?>
-                                                    <!-- Aprovar -->
-                                                    <button class="btn btn-sm btn-outline-success"
-                                                        title="Aprovar e marcar como pago"
-                                                        onclick="approveWithdrawal(<?php echo (int)$w['id_withdrawal']; ?>)">
-                                                        <i class="bi bi-check-lg"></i>
-                                                    </button>
-                                                    <!-- Rejeitar -->
-                                                    <button class="btn btn-sm btn-outline-danger" title="Rejeitar"
-                                                        onclick="rejectWithdrawal(<?php echo (int)$w['id_withdrawal']; ?>)">
-                                                        <i class="bi bi-x-lg"></i>
-                                                    </button>
-                                                <?php endif; ?>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
+                                </td>
+                                <td style="font-weight:700;white-space:nowrap;color:#FF0089">
+                                    <?php echo biz_fmt_w((float)$w['amount_requested']); ?>
+                                </td>
+                                <td style="font-weight:600;white-space:nowrap;color:#22c55e">
+                                    <?php echo $w['amount_net'] ? biz_fmt_w((float)$w['amount_net']) : '—'; ?>
+                                </td>
+                                <td><?php echo wd_status_badge($w['status_withdrawal']); ?></td>
+                                <td style="font-size:.76rem;white-space:nowrap">
+                                    <?php echo date('d/m/Y', strtotime($w['creat_withdrawal'])); ?>
+                                    <div style="color:#aaa">
+                                        <?php echo date('H:i', strtotime($w['creat_withdrawal'])); ?>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-1 justify-content-center">
+                                        <!-- Detalhes -->
+                                        <button class="btn btn-sm btn-outline-info" title="Ver detalhes"
+                                            onclick="viewWithdrawal(<?php echo (int)$w['id_withdrawal']; ?>)">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <?php if ($is_active): ?>
+                                        <!-- Processar -->
+                                        <?php if ($w['status_withdrawal'] === 'pending'): ?>
+                                        <button class="btn btn-sm btn-outline-primary" title="Marcar a processar"
+                                            onclick="setProcessing(<?php echo (int)$w['id_withdrawal']; ?>)">
+                                            <i class="bi bi-arrow-repeat"></i>
+                                        </button>
+                                        <?php endif; ?>
+                                        <!-- Aprovar -->
+                                        <button class="btn btn-sm btn-outline-success"
+                                            title="Aprovar e marcar como pago"
+                                            onclick="approveWithdrawal(<?php echo (int)$w['id_withdrawal']; ?>)">
+                                            <i class="bi bi-check-lg"></i>
+                                        </button>
+                                        <!-- Rejeitar -->
+                                        <button class="btn btn-sm btn-outline-danger" title="Rejeitar"
+                                            onclick="rejectWithdrawal(<?php echo (int)$w['id_withdrawal']; ?>)">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                        <?php endif; ?>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
                             <?php endif; ?>
                         </tbody>
                     </table>
@@ -352,30 +352,30 @@ function biz_fmt_w(float $v): string
 
                 <!-- Paginação -->
                 <?php if ($total_pages > 1): ?>
-                    <div class="d-flex justify-content-center py-3">
-                        <nav>
-                            <ul class="pagination pagination-sm mb-0">
-                                <li class="page-item <?php echo $page <= 1 ? 'disabled' : ''; ?>">
-                                    <a class="page-link pag-link"
-                                        href="?page=<?php echo $page - 1; ?>&user=<?php echo urlencode($f_user); ?>&status=<?php echo urlencode($f_status); ?>">
-                                        <i class="bi bi-chevron-left"></i>
-                                    </a>
-                                </li>
-                                <?php for ($pi = max(1, $page - 2); $pi <= min($total_pages, $page + 2); $pi++): ?>
-                                    <li class="page-item <?php echo $pi === $page ? 'active' : ''; ?>">
-                                        <a class="page-link pag-link"
-                                            href="?page=<?php echo $pi; ?>&user=<?php echo urlencode($f_user); ?>&status=<?php echo urlencode($f_status); ?>"><?php echo $pi; ?></a>
-                                    </li>
-                                <?php endfor; ?>
-                                <li class="page-item <?php echo $page >= $total_pages ? 'disabled' : ''; ?>">
-                                    <a class="page-link pag-link"
-                                        href="?page=<?php echo $page + 1; ?>&user=<?php echo urlencode($f_user); ?>&status=<?php echo urlencode($f_status); ?>">
-                                        <i class="bi bi-chevron-right"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
+                <div class="d-flex justify-content-center py-3">
+                    <nav>
+                        <ul class="pagination pagination-sm mb-0">
+                            <li class="page-item <?php echo $page <= 1 ? 'disabled' : ''; ?>">
+                                <a class="page-link pag-link"
+                                    href="?page=<?php echo $page - 1; ?>&user=<?php echo urlencode($f_user); ?>&status=<?php echo urlencode($f_status); ?>">
+                                    <i class="bi bi-chevron-left"></i>
+                                </a>
+                            </li>
+                            <?php for ($pi = max(1, $page - 2); $pi <= min($total_pages, $page + 2); $pi++): ?>
+                            <li class="page-item <?php echo $pi === $page ? 'active' : ''; ?>">
+                                <a class="page-link pag-link"
+                                    href="?page=<?php echo $pi; ?>&user=<?php echo urlencode($f_user); ?>&status=<?php echo urlencode($f_status); ?>"><?php echo $pi; ?></a>
+                            </li>
+                            <?php endfor; ?>
+                            <li class="page-item <?php echo $page >= $total_pages ? 'disabled' : ''; ?>">
+                                <a class="page-link pag-link"
+                                    href="?page=<?php echo $page + 1; ?>&user=<?php echo urlencode($f_user); ?>&status=<?php echo urlencode($f_status); ?>">
+                                    <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
                 <?php endif; ?>
             </div>
 
@@ -445,217 +445,217 @@ function biz_fmt_w(float $v): string
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        (function() {
-            'use strict';
-            const CSRF = document.querySelector('meta[name="csrf-token"]').content;
-            const PROCESS = '<?php echo APP_URL . '/' . ADMIN_PATH; ?>/manager/process';
+    (function() {
+        'use strict';
+        const CSRF = document.querySelector('meta[name="csrf-token"]').content;
+        const PROCESS = '<?php echo APP_URL . '/' . ADMIN_PATH; ?>/manager/process';
 
-            async function post(payload) {
-                const fd = new FormData();
-                Object.entries(payload).forEach(([k, v]) => fd.append(k, v));
-                fd.append('csrf_token', CSRF);
+        async function post(payload) {
+            const fd = new FormData();
+            Object.entries(payload).forEach(([k, v]) => fd.append(k, v));
+            fd.append('csrf_token', CSRF);
+            const r = await fetch(PROCESS, {
+                method: 'POST',
+                body: fd
+            });
+            return r.json();
+        }
+
+        // ── Visualizar ──────────────────────────────────────────────
+        window.viewWithdrawal = async function(id) {
+            document.getElementById('viewModalBody').innerHTML =
+                '<div class="text-center py-5"><div class="spinner-border text-primary"></div></div>';
+            document.getElementById('viewModalFooter').innerHTML = '';
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('viewModal')).show();
+            try {
+                const data = await post({
+                    action: 'get_withdrawal_details',
+                    id_withdrawal: id
+                });
+                if (data.ok) {
+                    document.getElementById('viewModalBody').innerHTML = data.html;
+                    document.getElementById('viewModalFooter').innerHTML = data.footer_html || '';
+                } else {
+                    document.getElementById('viewModalBody').innerHTML =
+                        '<div class="alert alert-danger">' + data.message + '</div>';
+                }
+            } catch {
+                document.getElementById('viewModalBody').innerHTML =
+                    '<div class="alert alert-danger">Erro de ligação.</div>';
+            }
+        };
+
+        // ── Marcar a processar ───────────────────────────────────────
+        window.setProcessing = async function(id) {
+            const {
+                isConfirmed
+            } = await Swal.fire({
+                title: 'Marcar como "A processar"?',
+                text: 'O utilizador será notificado que o pagamento está em curso.',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#3b82f6',
+                confirmButtonText: 'Sim, marcar',
+                cancelButtonText: 'Cancelar'
+            });
+            if (!isConfirmed) return;
+            Swal.fire({
+                title: 'A processar...',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+            try {
+                const data = await post({
+                    action: 'set_processing_withdrawal',
+                    id_withdrawal: id
+                });
+                if (data.ok) {
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Actualizado!',
+                        text: data.message,
+                        confirmButtonColor: '#FF0089'
+                    });
+                    location.reload();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erro',
+                        text: data.message,
+                        confirmButtonColor: '#FF0089'
+                    });
+                }
+            } catch {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro de ligação',
+                    confirmButtonColor: '#FF0089'
+                });
+            }
+        };
+
+        // ── Aprovar ──────────────────────────────────────────────────
+        window.approveWithdrawal = function(id) {
+            document.getElementById('approve_wd_id').value = id;
+            document.getElementById('approve_comprovante').value = '';
+            document.getElementById('approve_notes').value = '';
+            document.getElementById('approve_error').classList.add('d-none');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('approveModal')).show();
+        };
+
+        document.getElementById('btn_confirm_approve').addEventListener('click', async function() {
+            const id = document.getElementById('approve_wd_id').value;
+            const file = document.getElementById('approve_comprovante').files[0];
+            const notes = document.getElementById('approve_notes').value;
+            const errEl = document.getElementById('approve_error');
+            errEl.classList.add('d-none');
+
+            if (file && file.size > 5 * 1024 * 1024) {
+                errEl.textContent = 'O ficheiro excede 5MB.';
+                errEl.classList.remove('d-none');
+                return;
+            }
+
+            setLoading(this, true);
+            const fd = new FormData();
+            fd.append('action', 'approve_withdrawal');
+            fd.append('id_withdrawal', id);
+            fd.append('notes', notes);
+            fd.append('csrf_token', CSRF);
+            if (file) fd.append('comprovante', file);
+
+            try {
                 const r = await fetch(PROCESS, {
                     method: 'POST',
                     body: fd
                 });
-                return r.json();
-            }
-
-            // ── Visualizar ──────────────────────────────────────────────
-            window.viewWithdrawal = async function(id) {
-                document.getElementById('viewModalBody').innerHTML =
-                    '<div class="text-center py-5"><div class="spinner-border text-primary"></div></div>';
-                document.getElementById('viewModalFooter').innerHTML = '';
-                bootstrap.Modal.getOrCreateInstance(document.getElementById('viewModal')).show();
-                try {
-                    const data = await post({
-                        action: 'get_withdrawal_details',
-                        id_withdrawal: id
-                    });
-                    if (data.ok) {
-                        document.getElementById('viewModalBody').innerHTML = data.html;
-                        document.getElementById('viewModalFooter').innerHTML = data.footer_html || '';
-                    } else {
-                        document.getElementById('viewModalBody').innerHTML =
-                            '<div class="alert alert-danger">' + data.message + '</div>';
-                    }
-                } catch {
-                    document.getElementById('viewModalBody').innerHTML =
-                        '<div class="alert alert-danger">Erro de ligação.</div>';
-                }
-            };
-
-            // ── Marcar a processar ───────────────────────────────────────
-            window.setProcessing = async function(id) {
-                const {
-                    isConfirmed
-                } = await Swal.fire({
-                    title: 'Marcar como "A processar"?',
-                    text: 'O utilizador será notificado que o pagamento está em curso.',
-                    icon: 'info',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3b82f6',
-                    confirmButtonText: 'Sim, marcar',
-                    cancelButtonText: 'Cancelar'
-                });
-                if (!isConfirmed) return;
-                Swal.fire({
-                    title: 'A processar...',
-                    allowOutsideClick: false,
-                    didOpen: () => Swal.showLoading()
-                });
-                try {
-                    const data = await post({
-                        action: 'set_processing_withdrawal',
-                        id_withdrawal: id
-                    });
-                    if (data.ok) {
-                        await Swal.fire({
-                            icon: 'success',
-                            title: 'Actualizado!',
-                            text: data.message,
-                            confirmButtonColor: '#FF0089'
-                        });
-                        location.reload();
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Erro',
-                            text: data.message,
-                            confirmButtonColor: '#FF0089'
-                        });
-                    }
-                } catch {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Erro de ligação',
+                const data = await r.json();
+                if (data.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('approveModal')).hide();
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Aprovado!',
+                        text: data.message,
                         confirmButtonColor: '#FF0089'
                     });
-                }
-            };
-
-            // ── Aprovar ──────────────────────────────────────────────────
-            window.approveWithdrawal = function(id) {
-                document.getElementById('approve_wd_id').value = id;
-                document.getElementById('approve_comprovante').value = '';
-                document.getElementById('approve_notes').value = '';
-                document.getElementById('approve_error').classList.add('d-none');
-                bootstrap.Modal.getOrCreateInstance(document.getElementById('approveModal')).show();
-            };
-
-            document.getElementById('btn_confirm_approve').addEventListener('click', async function() {
-                const id = document.getElementById('approve_wd_id').value;
-                const file = document.getElementById('approve_comprovante').files[0];
-                const notes = document.getElementById('approve_notes').value;
-                const errEl = document.getElementById('approve_error');
-                errEl.classList.add('d-none');
-
-                if (file && file.size > 5 * 1024 * 1024) {
-                    errEl.textContent = 'O ficheiro excede 5MB.';
+                    location.reload();
+                } else {
+                    errEl.textContent = data.message;
                     errEl.classList.remove('d-none');
-                    return;
                 }
+            } catch {
+                errEl.textContent = 'Erro de ligação.';
+                errEl.classList.remove('d-none');
+            }
+            setLoading(this, false);
+        });
 
-                setLoading(this, true);
-                const fd = new FormData();
-                fd.append('action', 'approve_withdrawal');
-                fd.append('id_withdrawal', id);
-                fd.append('notes', notes);
-                fd.append('csrf_token', CSRF);
-                if (file) fd.append('comprovante', file);
-
-                try {
-                    const r = await fetch(PROCESS, {
-                        method: 'POST',
-                        body: fd
-                    });
-                    const data = await r.json();
-                    if (data.ok) {
-                        bootstrap.Modal.getInstance(document.getElementById('approveModal')).hide();
-                        await Swal.fire({
-                            icon: 'success',
-                            title: 'Aprovado!',
-                            text: data.message,
-                            confirmButtonColor: '#FF0089'
-                        });
-                        location.reload();
-                    } else {
-                        errEl.textContent = data.message;
-                        errEl.classList.remove('d-none');
+        // ── Rejeitar ─────────────────────────────────────────────────
+        window.rejectWithdrawal = async function(id) {
+            const {
+                value: reason
+            } = await Swal.fire({
+                title: 'Rejeitar pedido de saque',
+                html: '<p class="text-muted small mb-3">Explica o motivo. Será visível ao utilizador e enviada uma notificação.</p>' +
+                    '<textarea id="swal-reason" class="form-control" rows="3" placeholder="Ex: IBAN inválido; documentos ilegíveis..."></textarea>',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                confirmButtonText: 'Rejeitar',
+                cancelButtonText: 'Cancelar',
+                preConfirm: () => {
+                    const r = document.getElementById('swal-reason').value.trim();
+                    if (!r) {
+                        Swal.showValidationMessage('O motivo é obrigatório.');
+                        return false;
                     }
-                } catch {
-                    errEl.textContent = 'Erro de ligação.';
-                    errEl.classList.remove('d-none');
+                    return r;
                 }
-                setLoading(this, false);
             });
+            if (!reason) return;
 
-            // ── Rejeitar ─────────────────────────────────────────────────
-            window.rejectWithdrawal = async function(id) {
-                const {
-                    value: reason
-                } = await Swal.fire({
-                    title: 'Rejeitar pedido de saque',
-                    html: '<p class="text-muted small mb-3">Explica o motivo. Será visível ao utilizador e enviada uma notificação.</p>' +
-                        '<textarea id="swal-reason" class="form-control" rows="3" placeholder="Ex: IBAN inválido; documentos ilegíveis..."></textarea>',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#ef4444',
-                    confirmButtonText: 'Rejeitar',
-                    cancelButtonText: 'Cancelar',
-                    preConfirm: () => {
-                        const r = document.getElementById('swal-reason').value.trim();
-                        if (!r) {
-                            Swal.showValidationMessage('O motivo é obrigatório.');
-                            return false;
-                        }
-                        return r;
-                    }
+            Swal.fire({
+                title: 'A processar...',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+            try {
+                const data = await post({
+                    action: 'reject_withdrawal',
+                    id_withdrawal: id,
+                    reject_reason: reason
                 });
-                if (!reason) return;
-
-                Swal.fire({
-                    title: 'A processar...',
-                    allowOutsideClick: false,
-                    didOpen: () => Swal.showLoading()
-                });
-                try {
-                    const data = await post({
-                        action: 'reject_withdrawal',
-                        id_withdrawal: id,
-                        reject_reason: reason
+                if (data.ok) {
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Rejeitado',
+                        text: data.message,
+                        confirmButtonColor: '#FF0089'
                     });
-                    if (data.ok) {
-                        await Swal.fire({
-                            icon: 'success',
-                            title: 'Rejeitado',
-                            text: data.message,
-                            confirmButtonColor: '#FF0089'
-                        });
-                        location.reload();
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Erro',
-                            text: data.message,
-                            confirmButtonColor: '#FF0089'
-                        });
-                    }
-                } catch {
+                    location.reload();
+                } else {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Erro de ligação',
+                        title: 'Erro',
+                        text: data.message,
                         confirmButtonColor: '#FF0089'
                     });
                 }
-            };
-
-            function setLoading(btn, state) {
-                btn.querySelector('.normal-lbl').classList.toggle('d-none', state);
-                btn.querySelector('.loading-lbl').classList.toggle('d-none', !state);
-                btn.disabled = state;
+            } catch {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro de ligação',
+                    confirmButtonColor: '#FF0089'
+                });
             }
-        })();
+        };
+
+        function setLoading(btn, state) {
+            btn.querySelector('.normal-lbl').classList.toggle('d-none', state);
+            btn.querySelector('.loading-lbl').classList.toggle('d-none', !state);
+            btn.disabled = state;
+        }
+    })();
     </script>
 </body>
 

@@ -52,11 +52,11 @@ $csrf_page = getSiteCsrf();
     <title><?php echo $siteName; ?> | Perguntas Frequentes</title>
 
     <script>
-        window.addEventListener("load", function() {
-            setTimeout(function() {
-                document.querySelector("body").classList.add("loaded");
-            }, 200);
-        });
+    window.addEventListener("load", function() {
+        setTimeout(function() {
+            document.querySelector("body").classList.add("loaded");
+        }, 200);
+    });
     </script>
 
     <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv1.png" type="image/x-icon" />
@@ -124,19 +124,19 @@ $csrf_page = getSiteCsrf();
                                         $nPrc  = number_format($p['price_plan'], 0, ',', '.');
                                         $nPer  = $p['type_plan'] === 'subscription' ? '/ano' : '';
                                     ?>
-                                        <a title="<?php echo htmlspecialchars($p['name_plan']); ?>"
-                                            class="dropdown-item mb-3 text-body" href="../../plan/<?php echo $nSlug; ?>">
-                                            <div class="d-flex align-items-center">
-                                                <i class="fa-solid <?php echo $nIcon; ?> text-wasomupfy fs-3"
-                                                    style="width: 35px"></i>
-                                                <div class="ms-3 lh-1">
-                                                    <h5 class="mb-1"><?php echo htmlspecialchars($p['name_plan']); ?></h5>
-                                                    <p class="mb-0 fs-6">Nosso plano
-                                                        <?php echo htmlspecialchars($p['name_plan']); ?> —
-                                                        <?php echo $nPrc; ?> Kz<?php echo $nPer; ?></p>
-                                                </div>
+                                    <a title="<?php echo htmlspecialchars($p['name_plan']); ?>"
+                                        class="dropdown-item mb-3 text-body" href="../../plan/<?php echo $nSlug; ?>">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fa-solid <?php echo $nIcon; ?> text-wasomupfy fs-3"
+                                                style="width: 35px"></i>
+                                            <div class="ms-3 lh-1">
+                                                <h5 class="mb-1"><?php echo htmlspecialchars($p['name_plan']); ?></h5>
+                                                <p class="mb-0 fs-6">Nosso plano
+                                                    <?php echo htmlspecialchars($p['name_plan']); ?> —
+                                                    <?php echo $nPrc; ?> Kz<?php echo $nPer; ?></p>
                                             </div>
-                                        </a>
+                                        </div>
+                                    </a>
                                     <?php endforeach; ?>
                                     <a title="Todos os planos" class="dropdown-item mb-3 text-body"
                                         href="../../plan/all-plans">
@@ -237,25 +237,26 @@ $csrf_page = getSiteCsrf();
                                     <li><a title="Caixa de mensagem" class="dropdown-item" href="../../contact">Caixa de
                                             mensagem</a></li>
                                     <?php if (cfg('support_email')): ?>
-                                        <li><a title="E-mail" class="dropdown-item"
-                                                href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>">
-                                                <?php echo htmlspecialchars(cfg('support_email')); ?></a>
-                                        </li>
+                                    <li><a title="E-mail" class="dropdown-item"
+                                            href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>">
+                                            <?php echo htmlspecialchars(cfg('support_email')); ?></a>
+                                    </li>
                                     <?php endif; ?>
                                     <?php if ($whatsNum): ?>
-                                        <li><a title="WhatsApp" class="dropdown-item"
-                                                href="https://wa.me/<?php echo $whatsNum; ?>">WhatsApp</a>
-                                        </li>
+                                    <li><a title="WhatsApp" class="dropdown-item"
+                                            href="https://wa.me/<?php echo $whatsNum; ?>">WhatsApp</a>
+                                    </li>
                                     <?php endif; ?>
                                 </ul>
                             </li>
                         </ul>
                         <div class="mt-3 mt-lg-0 d-flex align-items-center">
-                            <a title="Sign-in" href="/wasomupfy/login" class="btn btn-secondary mx-2">
+                            <a title="Sign-in" href="<?php echo APP_URL  ?>/login" class="btn btn-secondary mx-2">
                                 Entrar <i data-feather="log-in"></i>
                             </a>
                             <?php if ($canRegister): ?>
-                                <a title="Sign-up" href="/wasomupfy/register" class="btn btn-wasomupfy">Inscreva-se</a>
+                            <a title="Sign-up" href="<?php echo APP_URL  ?>/register"
+                                class="btn btn-wasomupfy">Inscreva-se</a>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -402,7 +403,7 @@ $csrf_page = getSiteCsrf();
                                 <i class="bi bi-chevron-down toggle-icon"></i>
                             </div>
                             <div class="answer" id="faq1-answer" data-i18n="faq1_answer">
-                                Aceda a <a href="/wasomupfy/register"
+                                Aceda a <a href="<?php echo APP_URL  ?>/register"
                                     class="text-wasomupfy fw-bold">wasomupfy/register</a> e preencha o formulário com o
                                 seu nome, e-mail e uma senha segura. Após submeter, receberá um e-mail de verificação —
                                 clique no link para activar a conta. Feito isso, já pode entrar no dashboard e começar a
@@ -823,16 +824,16 @@ $csrf_page = getSiteCsrf();
                 <div class="modal-body">
                     <div class="ratio ratio-16x9">
                         <?php if ($youtubeId && $youtubeId !== 'SEU_VIDEO_AQUI'): ?>
-                            <iframe id="tutorialIframe"
-                                src="https://www.youtube.com/embed/<?php echo htmlspecialchars($youtubeId); ?>"
-                                title="Tutorial <?php echo $siteName; ?>" frameborder="0" allowfullscreen></iframe>
+                        <iframe id="tutorialIframe"
+                            src="https://www.youtube.com/embed/<?php echo htmlspecialchars($youtubeId); ?>"
+                            title="Tutorial <?php echo $siteName; ?>" frameborder="0" allowfullscreen></iframe>
                         <?php else: ?>
-                            <div class="d-flex align-items-center justify-content-center bg-light rounded">
-                                <div class="text-center text-muted p-5">
-                                    <i class="fa-brands fa-youtube fs-1 mb-3 d-block"></i>
-                                    <p class="mb-0">Vídeo tutorial em breve disponível.</p>
-                                </div>
+                        <div class="d-flex align-items-center justify-content-center bg-light rounded">
+                            <div class="text-center text-muted p-5">
+                                <i class="fa-brands fa-youtube fs-1 mb-3 d-block"></i>
+                                <p class="mb-0">Vídeo tutorial em breve disponível.</p>
                             </div>
+                        </div>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -879,39 +880,39 @@ $csrf_page = getSiteCsrf();
                             digital, marketing e gestão de carreira num só lugar.</p>
                         <div class="d-flex gap-3" role="list" aria-label="Redes sociais">
                             <?php if (cfg('instagram_url')): ?>
-                                <a href="<?php echo htmlspecialchars(cfg('instagram_url')); ?>" target="_blank"
-                                    rel="external noopener noreferrer" aria-label="Instagram"
-                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                    <i class="fa-brands fa-instagram"></i>
-                                </a>
+                            <a href="<?php echo htmlspecialchars(cfg('instagram_url')); ?>" target="_blank"
+                                rel="external noopener noreferrer" aria-label="Instagram"
+                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                <i class="fa-brands fa-instagram"></i>
+                            </a>
                             <?php endif; ?>
                             <?php if (cfg('facebook_url')): ?>
-                                <a href="<?php echo htmlspecialchars(cfg('facebook_url')); ?>" target="_blank"
-                                    rel="external noopener noreferrer" aria-label="Facebook"
-                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                    <i class="fa-brands fa-facebook-f"></i>
-                                </a>
+                            <a href="<?php echo htmlspecialchars(cfg('facebook_url')); ?>" target="_blank"
+                                rel="external noopener noreferrer" aria-label="Facebook"
+                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                <i class="fa-brands fa-facebook-f"></i>
+                            </a>
                             <?php endif; ?>
                             <?php if (cfg('youtube_url')): ?>
-                                <a href="<?php echo htmlspecialchars(cfg('youtube_url')); ?>" target="_blank"
-                                    rel="external noopener noreferrer" aria-label="YouTube"
-                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                    <i class="fa-brands fa-youtube"></i>
-                                </a>
+                            <a href="<?php echo htmlspecialchars(cfg('youtube_url')); ?>" target="_blank"
+                                rel="external noopener noreferrer" aria-label="YouTube"
+                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                <i class="fa-brands fa-youtube"></i>
+                            </a>
                             <?php endif; ?>
                             <?php if (cfg('linkedin_url')): ?>
-                                <a href="<?php echo htmlspecialchars(cfg('linkedin_url')); ?>" target="_blank"
-                                    rel="external noopener noreferrer" aria-label="LinkedIn"
-                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                    <i class="fa-brands fa-linkedin-in"></i>
-                                </a>
+                            <a href="<?php echo htmlspecialchars(cfg('linkedin_url')); ?>" target="_blank"
+                                rel="external noopener noreferrer" aria-label="LinkedIn"
+                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                <i class="fa-brands fa-linkedin-in"></i>
+                            </a>
                             <?php endif; ?>
                             <?php if ($whatsNum): ?>
-                                <a href="https://wa.me/<?php echo $whatsNum; ?>" target="_blank"
-                                    rel="external noopener noreferrer" aria-label="WhatsApp"
-                                    class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
-                                    <i class="fa-brands fa-whatsapp"></i>
-                                </a>
+                            <a href="https://wa.me/<?php echo $whatsNum; ?>" target="_blank"
+                                rel="external noopener noreferrer" aria-label="WhatsApp"
+                                class="btn btn-wasomupfy btn-social rounded-circle p-2" role="listitem">
+                                <i class="fa-brands fa-whatsapp"></i>
+                            </a>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -943,8 +944,8 @@ $csrf_page = getSiteCsrf();
                             <li class="mb-2"><a href="../../contact"
                                     class="text-reset text-decoration-none hover-white">Contacta-nos</a></li>
                             <?php if ($whatsNum): ?>
-                                <li class="mb-2"><a href="https://wa.me/<?php echo $whatsNum; ?>"
-                                        class="text-reset text-decoration-none hover-white">WhatsApp</a></li>
+                            <li class="mb-2"><a href="https://wa.me/<?php echo $whatsNum; ?>"
+                                    class="text-reset text-decoration-none hover-white">WhatsApp</a></li>
                             <?php endif; ?>
                         </ul>
                     </div>
@@ -957,16 +958,16 @@ $csrf_page = getSiteCsrf();
                                     <?php echo htmlspecialchars(cfg('company_city', 'Luanda')); ?></span>
                             </li>
                             <?php if (cfg('info_email')): ?>
-                                <li class="mb-3 d-flex">
-                                    <a href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
-                                        class="text-reset text-decoration-none"><?php echo htmlspecialchars(cfg('info_email')); ?></a>
-                                </li>
+                            <li class="mb-3 d-flex">
+                                <a href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
+                                    class="text-reset text-decoration-none"><?php echo htmlspecialchars(cfg('info_email')); ?></a>
+                            </li>
                             <?php endif; ?>
                             <?php if (cfg('support_email')): ?>
-                                <li class="mb-3 d-flex">
-                                    <a href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
-                                        class="text-reset text-decoration-none"><?php echo htmlspecialchars(cfg('support_email')); ?></a>
-                                </li>
+                            <li class="mb-3 d-flex">
+                                <a href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
+                                    class="text-reset text-decoration-none"><?php echo htmlspecialchars(cfg('support_email')); ?></a>
+                            </li>
                             <?php endif; ?>
                             <li class="d-flex">
                                 <span>Seg — Sex: 08h às 17h</span>
@@ -1098,100 +1099,100 @@ $csrf_page = getSiteCsrf();
     <script src="<?php echo APP_URL  ?>/js/cookies.js"></script>
 
     <script>
-        feather.replace({
-            width: "1em",
-            height: "1em"
-        });
+    feather.replace({
+        width: "1em",
+        height: "1em"
+    });
     </script>
 
     <!-- Parar vídeo ao fechar modal -->
     <script>
-        document.getElementById('tutorialModal').addEventListener('hidden.bs.modal', function() {
-            var iframe = document.getElementById('tutorialIframe');
-            if (iframe) {
-                iframe.src = iframe.src;
-            }
-        });
+    document.getElementById('tutorialModal').addEventListener('hidden.bs.modal', function() {
+        var iframe = document.getElementById('tutorialIframe');
+        if (iframe) {
+            iframe.src = iframe.src;
+        }
+    });
     </script>
 
     <!-- GTM -->
     <script>
-        !(function(e, t, a, n, g) {
-            (e[n] = e[n] || []), e[n].push({
-                "gtm.start": new Date().getTime(),
-                event: "gtm.js"
-            });
-            var m = t.getElementsByTagName(a)[0],
-                r = t.createElement(a);
-            (r.async = !0), (r.src = "https://www.googletagmanager.com/gtm.js?id=GTM-MF4DZVH"), m.parentNode
-                .insertBefore(r, m);
-        })(window, document, "script", "dataLayer");
+    !(function(e, t, a, n, g) {
+        (e[n] = e[n] || []), e[n].push({
+            "gtm.start": new Date().getTime(),
+            event: "gtm.js"
+        });
+        var m = t.getElementsByTagName(a)[0],
+            r = t.createElement(a);
+        (r.async = !0), (r.src = "https://www.googletagmanager.com/gtm.js?id=GTM-MF4DZVH"), m.parentNode
+            .insertBefore(r, m);
+    })(window, document, "script", "dataLayer");
     </script>
 
     <!-- Modal Feedback AJAX -->
     <script>
-        (function() {
-            function syncAllCsrf(token) {
-                if (!token) return;
-                document.querySelectorAll('[name="csrf_token"]').forEach(function(el) {
-                    el.value = token;
-                });
-            }
-            var fModal = document.getElementById('formFeedback');
-            if (!fModal) return;
-            fModal.addEventListener('submit', function(e) {
-                e.preventDefault();
-                if (!fModal.checkValidity()) {
-                    fModal.classList.add('was-validated');
-                    return;
-                }
-                var btn = document.getElementById('btn-feedback-modal');
-                var msgBox = document.getElementById('feedback-modal-msg');
-                var base = document.body.dataset.basePath || '../..';
-                btn.disabled = true;
-                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>A enviar…';
-                fetch(base + '/ajax/feedback.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            csrf: fModal.querySelector('[name="csrf_token"]').value,
-                            name: fModal.querySelector('[name="name_fb"]').value.trim(),
-                            subject: fModal.querySelector('[name="subject_fb"]').value.trim(),
-                            message: fModal.querySelector('[name="message_fb"]').value.trim(),
-                            page: window.location.pathname
-                        })
-                    })
-                    .then(function(r) {
-                        return r.json();
-                    })
-                    .then(function(data) {
-                        msgBox.className = 'alert ' + (data.success ? 'alert-success' : 'alert-danger');
-                        msgBox.textContent = data.message || (data.success ? 'Obrigado pelo feedback!' :
-                            'Erro ao enviar.');
-                        msgBox.classList.remove('d-none');
-                        if (data.new_csrf) syncAllCsrf(data.new_csrf);
-                        if (data.success) {
-                            fModal.reset();
-                            setTimeout(function() {
-                                var m = bootstrap.Modal.getInstance(document.getElementById(
-                                    'modalFeedback'));
-                                if (m) m.hide();
-                            }, 2500);
-                        }
-                    })
-                    .catch(function() {
-                        msgBox.className = 'alert alert-danger';
-                        msgBox.textContent = 'Erro de ligação. Tenta novamente.';
-                        msgBox.classList.remove('d-none');
-                    })
-                    .finally(function() {
-                        btn.disabled = false;
-                        btn.innerHTML = 'Enviar Feedback <i class="fa-solid fa-paper-plane ms-2"></i>';
-                    });
+    (function() {
+        function syncAllCsrf(token) {
+            if (!token) return;
+            document.querySelectorAll('[name="csrf_token"]').forEach(function(el) {
+                el.value = token;
             });
-        })();
+        }
+        var fModal = document.getElementById('formFeedback');
+        if (!fModal) return;
+        fModal.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (!fModal.checkValidity()) {
+                fModal.classList.add('was-validated');
+                return;
+            }
+            var btn = document.getElementById('btn-feedback-modal');
+            var msgBox = document.getElementById('feedback-modal-msg');
+            var base = document.body.dataset.basePath || '../..';
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>A enviar…';
+            fetch(base + '/ajax/feedback.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        csrf: fModal.querySelector('[name="csrf_token"]').value,
+                        name: fModal.querySelector('[name="name_fb"]').value.trim(),
+                        subject: fModal.querySelector('[name="subject_fb"]').value.trim(),
+                        message: fModal.querySelector('[name="message_fb"]').value.trim(),
+                        page: window.location.pathname
+                    })
+                })
+                .then(function(r) {
+                    return r.json();
+                })
+                .then(function(data) {
+                    msgBox.className = 'alert ' + (data.success ? 'alert-success' : 'alert-danger');
+                    msgBox.textContent = data.message || (data.success ? 'Obrigado pelo feedback!' :
+                        'Erro ao enviar.');
+                    msgBox.classList.remove('d-none');
+                    if (data.new_csrf) syncAllCsrf(data.new_csrf);
+                    if (data.success) {
+                        fModal.reset();
+                        setTimeout(function() {
+                            var m = bootstrap.Modal.getInstance(document.getElementById(
+                                'modalFeedback'));
+                            if (m) m.hide();
+                        }, 2500);
+                    }
+                })
+                .catch(function() {
+                    msgBox.className = 'alert alert-danger';
+                    msgBox.textContent = 'Erro de ligação. Tenta novamente.';
+                    msgBox.classList.remove('d-none');
+                })
+                .finally(function() {
+                    btn.disabled = false;
+                    btn.innerHTML = 'Enviar Feedback <i class="fa-solid fa-paper-plane ms-2"></i>';
+                });
+        });
+    })();
     </script>
 
 </body>

@@ -33,7 +33,7 @@ $drafts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Construir URL da capa
 foreach ($drafts as &$draft) {
     if ($draft['img_cover']) {
-        $draft['cover_url'] = '/wasomupfy/assets/comprovantes/uploads/covers/' . $draft['img_cover'];
+        $draft['cover_url'] = 'https://wasomupfy.rf.gd/assets/comprovantes/uploads/covers/' . $draft['img_cover'];
     } else {
         $draft['cover_url'] = null;
     }

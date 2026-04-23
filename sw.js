@@ -12,7 +12,7 @@
 
 const SW_VERSION   = 'wu-v1';
 const CACHE_NAME   = 'wu-offline-' + SW_VERSION;
-const OFFLINE_PAGE = '/wasomupfy/status/offline';
+const OFFLINE_PAGE = '/status/offline';
 
 // Recursos a cachear no install — o mínimo necessário para a offline.php
 // funcionar sem rede. Não adicionar CDNs (não são acessíveis offline).

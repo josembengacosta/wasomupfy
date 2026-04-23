@@ -146,591 +146,591 @@ foreach ($perm_map as $perm => $granted) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
     <style>
-        /* ═══════════════════════════════════════════════════════
+    /* ═══════════════════════════════════════════════════════
    WASOM UPFY v2.0 — view.php styles
    Funcionário · Página de visualização
    ═══════════════════════════════════════════════════════ */
 
-        /* ── Status badges ── */
-        .vw-s-active {
-            background: rgba(34, 197, 94, .15);
-            color: #166534;
-        }
+    /* ── Status badges ── */
+    .vw-s-active {
+        background: rgba(34, 197, 94, .15);
+        color: #166534;
+    }
 
-        .vw-s-inactive {
-            background: rgba(107, 114, 128, .15);
-            color: #374151;
-        }
+    .vw-s-inactive {
+        background: rgba(107, 114, 128, .15);
+        color: #374151;
+    }
 
-        .vw-s-blocked {
-            background: rgba(239, 68, 68, .15);
-            color: #991b1b;
-        }
+    .vw-s-blocked {
+        background: rgba(239, 68, 68, .15);
+        color: #991b1b;
+    }
 
-        .vw-s-suspended {
-            background: rgba(234, 179, 8, .15);
-            color: #92400e;
-        }
+    .vw-s-suspended {
+        background: rgba(234, 179, 8, .15);
+        color: #92400e;
+    }
 
-        .vw-s-processing {
-            background: rgba(59, 130, 246, .15);
-            color: #1e40af;
-        }
+    .vw-s-processing {
+        background: rgba(59, 130, 246, .15);
+        color: #1e40af;
+    }
 
-        /* Dark mode — status badges */
-        .dark-mode .vw-s-active {
-            background: rgba(34, 197, 94, .18);
-            color: #4ade80;
-        }
+    /* Dark mode — status badges */
+    .dark-mode .vw-s-active {
+        background: rgba(34, 197, 94, .18);
+        color: #4ade80;
+    }
 
-        .dark-mode .vw-s-inactive {
-            background: rgba(107, 114, 128, .18);
-            color: #9ca3af;
-        }
+    .dark-mode .vw-s-inactive {
+        background: rgba(107, 114, 128, .18);
+        color: #9ca3af;
+    }
 
-        .dark-mode .vw-s-blocked {
-            background: rgba(239, 68, 68, .18);
-            color: #f87171;
-        }
+    .dark-mode .vw-s-blocked {
+        background: rgba(239, 68, 68, .18);
+        color: #f87171;
+    }
 
-        .dark-mode .vw-s-suspended {
-            background: rgba(234, 179, 8, .18);
-            color: #facc15;
-        }
+    .dark-mode .vw-s-suspended {
+        background: rgba(234, 179, 8, .18);
+        color: #facc15;
+    }
 
-        .dark-mode .vw-s-processing {
-            background: rgba(59, 130, 246, .18);
-            color: #93c5fd;
-        }
+    .dark-mode .vw-s-processing {
+        background: rgba(59, 130, 246, .18);
+        color: #93c5fd;
+    }
 
-        /* ── Hero header ── */
+    /* ── Hero header ── */
+    .emp-hero {
+        background: linear-gradient(135deg, #0f0f17 0%, #1a1a2e 60%, #16213e 100%);
+        border-radius: 16px;
+        padding: 28px 32px;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 24px;
+        border: 1px solid rgba(255, 255, 255, .06);
+    }
+
+    /* Blob rosa */
+    .emp-hero::before {
+        content: '';
+        position: absolute;
+        top: -60px;
+        right: -60px;
+        width: 260px;
+        height: 260px;
+        background: radial-gradient(circle, rgba(255, 0, 137, .18) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    /* Blob roxo */
+    .emp-hero::after {
+        content: '';
+        position: absolute;
+        bottom: -40px;
+        left: 30%;
+        width: 180px;
+        height: 180px;
+        background: radial-gradient(circle, rgba(108, 99, 255, .14) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    /* ── Avatar ── */
+    .emp-avatar-wrap {
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .emp-avatar-lg {
+        width: 88px;
+        height: 88px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid rgba(255, 0, 137, .45);
+        box-shadow: 0 0 0 6px rgba(255, 0, 137, .1), 0 8px 24px rgba(0, 0, 0, .3);
+        display: block;
+    }
+
+    .emp-avatar-ini-lg {
+        width: 88px;
+        height: 88px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 1.65rem;
+        color: #fff;
+        border: 3px solid rgba(255, 0, 137, .45);
+        box-shadow: 0 0 0 6px rgba(255, 0, 137, .1), 0 8px 24px rgba(0, 0, 0, .3);
+        flex-shrink: 0;
+    }
+
+    /* Dot de estado */
+    .emp-status-dot {
+        position: absolute;
+        bottom: 3px;
+        right: 3px;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        border: 2.5px solid #1a1a2e;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, .4);
+    }
+
+    .emp-status-dot.active {
+        background: #22c55e;
+    }
+
+    .emp-status-dot.blocked {
+        background: #ef4444;
+    }
+
+    .emp-status-dot.suspended {
+        background: #eab308;
+    }
+
+    .emp-status-dot.processing {
+        background: #3b82f6;
+    }
+
+    .emp-status-dot.inactive {
+        background: #6b7280;
+    }
+
+    /* ── Hero texto ── */
+    .emp-hero-name {
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: 6px;
+        line-height: 1.25;
+    }
+
+    .emp-hero-meta {
+        font-size: .81rem;
+        color: rgba(255, 255, 255, .5);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 0;
+        margin-top: 8px;
+    }
+
+    .emp-hero-meta span {
+        margin-right: 16px;
+        white-space: nowrap;
+    }
+
+    .emp-hero-meta i {
+        margin-right: 4px;
+        color: rgba(255, 0, 137, .75);
+    }
+
+    /* ── Info cards ── */
+    .info-card {
+        background: var(--card-bg, #fff);
+        border: 1px solid var(--border-color, #e8e8f0);
+        border-radius: 14px;
+        padding: 20px 22px;
+        transition: box-shadow .2s;
+    }
+
+    .dark-mode .info-card {
+        background: var(--dark-card, #1a1a27);
+        border-color: var(--dark-border, #2e2e42);
+        color: var(--text-light, #e8e8f5);
+    }
+
+    .info-card-title {
+        font-size: .78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .55px;
+        color: #FF0089;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border-color, #e8e8f0);
+    }
+
+    .dark-mode .info-card-title {
+        border-bottom-color: var(--dark-border, #2e2e42);
+    }
+
+    /* ── Detail rows ── */
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 9px 0;
+        border-bottom: 1px solid var(--border-color, #f0f0f8);
+        font-size: .84rem;
+        gap: 14px;
+    }
+
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        color: var(--text-muted, #888);
+        flex-shrink: 0;
+        min-width: 115px;
+        line-height: 1.5;
+    }
+
+    .detail-value {
+        font-weight: 600;
+        text-align: right;
+        word-break: break-all;
+        line-height: 1.5;
+    }
+
+    .dark-mode .detail-row {
+        border-bottom-color: var(--dark-border, #2e2e42);
+    }
+
+    .dark-mode .detail-label {
+        color: var(--text-muted-dark, #7b7b9a);
+    }
+
+    .dark-mode .detail-value {
+        color: var(--text-light, #e8e8f5);
+    }
+
+    /* ── Bloco "Sobre" ── */
+    .about-block {
+        margin-top: 14px;
+        padding: 14px 16px;
+        border-radius: 10px;
+        background: var(--border-color, #f8f7fc);
+        border: 1px solid var(--border-color, #e8e8f0);
+        font-size: .84rem;
+        line-height: 1.7;
+        color: var(--text, #1a1a2e);
+    }
+
+    .dark-mode .about-block {
+        background: rgba(255, 255, 255, .04);
+        border-color: var(--dark-border, #2e2e42);
+        color: var(--text-light, #e8e8f5);
+    }
+
+    .about-block-label {
+        font-size: .72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        color: #FF0089;
+        margin-bottom: 6px;
+    }
+
+    /* ── Permissões ── */
+    .perm-group {
+        margin-bottom: 12px;
+        border: 1px solid var(--border-color, #e8e8f0);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .dark-mode .perm-group {
+        border-color: var(--dark-border, #2e2e42);
+    }
+
+    .perm-group-header {
+        background: var(--border-color, #f4f4f8);
+        padding: 8px 14px;
+        font-size: .75rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-transform: uppercase;
+        letter-spacing: .45px;
+        color: var(--text, #1a1a2e);
+    }
+
+    .dark-mode .perm-group-header {
+        background: rgba(255, 255, 255, .04);
+        color: var(--text-light, #e8e8f5);
+    }
+
+    .perm-group-header i {
+        color: #FF0089;
+        font-size: .9rem;
+    }
+
+    .perm-tags {
+        padding: 10px 14px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .perm-tag {
+        font-size: .73rem;
+        padding: 3px 10px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .perm-tag.granted {
+        background: rgba(34, 197, 94, .12);
+        color: #166534;
+        border: 1px solid rgba(34, 197, 94, .25);
+    }
+
+    .perm-tag.denied {
+        background: rgba(239, 68, 68, .1);
+        color: #991b1b;
+        border: 1px solid rgba(239, 68, 68, .2);
+    }
+
+    .perm-tag.default {
+        background: rgba(107, 114, 128, .1);
+        color: #374151;
+        border: 1px solid rgba(107, 114, 128, .2);
+    }
+
+    .dark-mode .perm-tag.granted {
+        background: rgba(34, 197, 94, .15);
+        color: #4ade80;
+        border-color: rgba(34, 197, 94, .25);
+    }
+
+    .dark-mode .perm-tag.denied {
+        background: rgba(239, 68, 68, .15);
+        color: #f87171;
+        border-color: rgba(239, 68, 68, .25);
+    }
+
+    .dark-mode .perm-tag.default {
+        background: rgba(107, 114, 128, .12);
+        color: #9ca3af;
+        border-color: rgba(107, 114, 128, .2);
+    }
+
+    /* ── Audit log ── */
+    .audit-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--border-color, #f0f0f8);
+        font-size: .82rem;
+    }
+
+    .audit-row:last-child {
+        border-bottom: none;
+    }
+
+    .dark-mode .audit-row {
+        border-bottom-color: var(--dark-border, #2e2e42);
+    }
+
+    .audit-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .85rem;
+        flex-shrink: 0;
+        background: rgba(255, 0, 137, .1);
+        color: #FF0089;
+    }
+
+    .audit-action {
+        font-weight: 600;
+        font-size: .81rem;
+        color: var(--text, #1a1a2e);
+    }
+
+    .audit-meta {
+        font-size: .74rem;
+        color: var(--text-muted, #888);
+        margin-top: 2px;
+    }
+
+    .dark-mode .audit-action {
+        color: var(--text-light, #e8e8f5);
+    }
+
+    .dark-mode .audit-meta {
+        color: var(--text-muted-dark, #7b7b9a);
+    }
+
+    /* ── Botões de acção no hero ── */
+    .status-action-btn {
+        padding: 7px 16px;
+        border-radius: 8px;
+        font-size: .81rem;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all .2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .status-action-btn:hover {
+        filter: brightness(1.1);
+        transform: translateY(-1px);
+    }
+
+    /* ── Indicadores de segurança ── */
+    .sec-indicator {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 11px 14px;
+        border-radius: 10px;
+        font-size: .82rem;
+        margin-bottom: 8px;
+        border: 1px solid;
+        transition: box-shadow .2s;
+    }
+
+    .sec-indicator:last-child {
+        margin-bottom: 0;
+    }
+
+    .sec-indicator i {
+        font-size: 1rem;
+        flex-shrink: 0;
+    }
+
+    .sec-indicator>div>div:first-child {
+        font-weight: 600;
+    }
+
+    .sec-indicator>div>div:last-child {
+        font-size: .74rem;
+        opacity: .75;
+        margin-top: 1px;
+    }
+
+    .sec-indicator.ok {
+        background: rgba(34, 197, 94, .07);
+        border-color: rgba(34, 197, 94, .2);
+        color: #166534;
+    }
+
+    .sec-indicator.warn {
+        background: rgba(234, 179, 8, .07);
+        border-color: rgba(234, 179, 8, .25);
+        color: #92400e;
+    }
+
+    .sec-indicator.danger {
+        background: rgba(239, 68, 68, .07);
+        border-color: rgba(239, 68, 68, .2);
+        color: #991b1b;
+    }
+
+    .sec-indicator.neutral {
+        background: rgba(107, 114, 128, .07);
+        border-color: rgba(107, 114, 128, .2);
+        color: #374151;
+    }
+
+    .dark-mode .sec-indicator.ok {
+        background: rgba(34, 197, 94, .1);
+        border-color: rgba(34, 197, 94, .25);
+        color: #4ade80;
+    }
+
+    .dark-mode .sec-indicator.warn {
+        background: rgba(234, 179, 8, .1);
+        border-color: rgba(234, 179, 8, .25);
+        color: #facc15;
+    }
+
+    .dark-mode .sec-indicator.danger {
+        background: rgba(239, 68, 68, .1);
+        border-color: rgba(239, 68, 68, .25);
+        color: #f87171;
+    }
+
+    .dark-mode .sec-indicator.neutral {
+        background: rgba(107, 114, 128, .1);
+        border-color: rgba(107, 114, 128, .2);
+        color: #9ca3af;
+    }
+
+    /* ── Aviso de sem permissões explícitas ── */
+    .perms-default-notice {
+        padding: 14px 16px;
+        border-radius: 10px;
+        font-size: .82rem;
+        background: rgba(59, 130, 246, .07);
+        border: 1px solid rgba(59, 130, 246, .18);
+        color: #1e40af;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        line-height: 1.5;
+    }
+
+    .dark-mode .perms-default-notice {
+        background: rgba(59, 130, 246, .1);
+        border-color: rgba(59, 130, 246, .25);
+        color: #93c5fd;
+    }
+
+    /* ── Empty audit state ── */
+    .audit-empty {
+        text-align: center;
+        padding: 36px 20px;
+        opacity: .45;
+        font-size: .84rem;
+    }
+
+    .audit-empty i {
+        font-size: 2rem;
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
         .emp-hero {
-            background: linear-gradient(135deg, #0f0f17 0%, #1a1a2e 60%, #16213e 100%);
-            border-radius: 16px;
-            padding: 28px 32px;
-            position: relative;
-            overflow: hidden;
-            margin-bottom: 24px;
-            border: 1px solid rgba(255, 255, 255, .06);
+            padding: 20px;
         }
 
-        /* Blob rosa */
-        .emp-hero::before {
-            content: '';
-            position: absolute;
-            top: -60px;
-            right: -60px;
-            width: 260px;
-            height: 260px;
-            background: radial-gradient(circle, rgba(255, 0, 137, .18) 0%, transparent 70%);
-            pointer-events: none;
-        }
-
-        /* Blob roxo */
-        .emp-hero::after {
-            content: '';
-            position: absolute;
-            bottom: -40px;
-            left: 30%;
-            width: 180px;
-            height: 180px;
-            background: radial-gradient(circle, rgba(108, 99, 255, .14) 0%, transparent 70%);
-            pointer-events: none;
-        }
-
-        /* ── Avatar ── */
-        .emp-avatar-wrap {
-            position: relative;
-            flex-shrink: 0;
-        }
-
-        .emp-avatar-lg {
-            width: 88px;
-            height: 88px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid rgba(255, 0, 137, .45);
-            box-shadow: 0 0 0 6px rgba(255, 0, 137, .1), 0 8px 24px rgba(0, 0, 0, .3);
-            display: block;
-        }
-
-        .emp-avatar-ini-lg {
-            width: 88px;
-            height: 88px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 1.65rem;
-            color: #fff;
-            border: 3px solid rgba(255, 0, 137, .45);
-            box-shadow: 0 0 0 6px rgba(255, 0, 137, .1), 0 8px 24px rgba(0, 0, 0, .3);
-            flex-shrink: 0;
-        }
-
-        /* Dot de estado */
-        .emp-status-dot {
-            position: absolute;
-            bottom: 3px;
-            right: 3px;
-            width: 15px;
-            height: 15px;
-            border-radius: 50%;
-            border: 2.5px solid #1a1a2e;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, .4);
-        }
-
-        .emp-status-dot.active {
-            background: #22c55e;
-        }
-
-        .emp-status-dot.blocked {
-            background: #ef4444;
-        }
-
-        .emp-status-dot.suspended {
-            background: #eab308;
-        }
-
-        .emp-status-dot.processing {
-            background: #3b82f6;
-        }
-
-        .emp-status-dot.inactive {
-            background: #6b7280;
-        }
-
-        /* ── Hero texto ── */
         .emp-hero-name {
-            font-size: 1.35rem;
-            font-weight: 800;
-            color: #fff;
-            margin-bottom: 6px;
-            line-height: 1.25;
+            font-size: 1.1rem;
         }
 
-        .emp-hero-meta {
-            font-size: .81rem;
-            color: rgba(255, 255, 255, .5);
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px 0;
-            margin-top: 8px;
-        }
-
-        .emp-hero-meta span {
-            margin-right: 16px;
-            white-space: nowrap;
-        }
-
-        .emp-hero-meta i {
-            margin-right: 4px;
-            color: rgba(255, 0, 137, .75);
-        }
-
-        /* ── Info cards ── */
-        .info-card {
-            background: var(--card-bg, #fff);
-            border: 1px solid var(--border-color, #e8e8f0);
-            border-radius: 14px;
-            padding: 20px 22px;
-            transition: box-shadow .2s;
-        }
-
-        .dark-mode .info-card {
-            background: var(--dark-card, #1a1a27);
-            border-color: var(--dark-border, #2e2e42);
-            color: var(--text-light, #e8e8f5);
-        }
-
-        .info-card-title {
-            font-size: .78rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: .55px;
-            color: #FF0089;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border-color, #e8e8f0);
-        }
-
-        .dark-mode .info-card-title {
-            border-bottom-color: var(--dark-border, #2e2e42);
-        }
-
-        /* ── Detail rows ── */
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            padding: 9px 0;
-            border-bottom: 1px solid var(--border-color, #f0f0f8);
-            font-size: .84rem;
-            gap: 14px;
-        }
-
-        .detail-row:last-child {
-            border-bottom: none;
+        .emp-avatar-lg,
+        .emp-avatar-ini-lg {
+            width: 70px;
+            height: 70px;
+            font-size: 1.3rem;
         }
 
         .detail-label {
-            color: var(--text-muted, #888);
-            flex-shrink: 0;
-            min-width: 115px;
-            line-height: 1.5;
+            min-width: 90px;
         }
 
-        .detail-value {
-            font-weight: 600;
-            text-align: right;
-            word-break: break-all;
-            line-height: 1.5;
-        }
-
-        .dark-mode .detail-row {
-            border-bottom-color: var(--dark-border, #2e2e42);
-        }
-
-        .dark-mode .detail-label {
-            color: var(--text-muted-dark, #7b7b9a);
-        }
-
-        .dark-mode .detail-value {
-            color: var(--text-light, #e8e8f5);
-        }
-
-        /* ── Bloco "Sobre" ── */
-        .about-block {
-            margin-top: 14px;
-            padding: 14px 16px;
-            border-radius: 10px;
-            background: var(--border-color, #f8f7fc);
-            border: 1px solid var(--border-color, #e8e8f0);
-            font-size: .84rem;
-            line-height: 1.7;
-            color: var(--text, #1a1a2e);
-        }
-
-        .dark-mode .about-block {
-            background: rgba(255, 255, 255, .04);
-            border-color: var(--dark-border, #2e2e42);
-            color: var(--text-light, #e8e8f5);
-        }
-
-        .about-block-label {
-            font-size: .72rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: .5px;
-            color: #FF0089;
-            margin-bottom: 6px;
-        }
-
-        /* ── Permissões ── */
-        .perm-group {
-            margin-bottom: 12px;
-            border: 1px solid var(--border-color, #e8e8f0);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .dark-mode .perm-group {
-            border-color: var(--dark-border, #2e2e42);
-        }
-
-        .perm-group-header {
-            background: var(--border-color, #f4f4f8);
-            padding: 8px 14px;
-            font-size: .75rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            text-transform: uppercase;
-            letter-spacing: .45px;
-            color: var(--text, #1a1a2e);
-        }
-
-        .dark-mode .perm-group-header {
-            background: rgba(255, 255, 255, .04);
-            color: var(--text-light, #e8e8f5);
-        }
-
-        .perm-group-header i {
-            color: #FF0089;
-            font-size: .9rem;
-        }
-
-        .perm-tags {
-            padding: 10px 14px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-
-        .perm-tag {
-            font-size: .73rem;
-            padding: 3px 10px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-
-        .perm-tag.granted {
-            background: rgba(34, 197, 94, .12);
-            color: #166534;
-            border: 1px solid rgba(34, 197, 94, .25);
-        }
-
-        .perm-tag.denied {
-            background: rgba(239, 68, 68, .1);
-            color: #991b1b;
-            border: 1px solid rgba(239, 68, 68, .2);
-        }
-
-        .perm-tag.default {
-            background: rgba(107, 114, 128, .1);
-            color: #374151;
-            border: 1px solid rgba(107, 114, 128, .2);
-        }
-
-        .dark-mode .perm-tag.granted {
-            background: rgba(34, 197, 94, .15);
-            color: #4ade80;
-            border-color: rgba(34, 197, 94, .25);
-        }
-
-        .dark-mode .perm-tag.denied {
-            background: rgba(239, 68, 68, .15);
-            color: #f87171;
-            border-color: rgba(239, 68, 68, .25);
-        }
-
-        .dark-mode .perm-tag.default {
-            background: rgba(107, 114, 128, .12);
-            color: #9ca3af;
-            border-color: rgba(107, 114, 128, .2);
-        }
-
-        /* ── Audit log ── */
-        .audit-row {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border-color, #f0f0f8);
-            font-size: .82rem;
-        }
-
-        .audit-row:last-child {
-            border-bottom: none;
-        }
-
-        .dark-mode .audit-row {
-            border-bottom-color: var(--dark-border, #2e2e42);
-        }
-
-        .audit-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: .85rem;
-            flex-shrink: 0;
-            background: rgba(255, 0, 137, .1);
-            color: #FF0089;
-        }
-
-        .audit-action {
-            font-weight: 600;
-            font-size: .81rem;
-            color: var(--text, #1a1a2e);
-        }
-
-        .audit-meta {
-            font-size: .74rem;
-            color: var(--text-muted, #888);
-            margin-top: 2px;
-        }
-
-        .dark-mode .audit-action {
-            color: var(--text-light, #e8e8f5);
-        }
-
-        .dark-mode .audit-meta {
-            color: var(--text-muted-dark, #7b7b9a);
-        }
-
-        /* ── Botões de acção no hero ── */
         .status-action-btn {
-            padding: 7px 16px;
-            border-radius: 8px;
-            font-size: .81rem;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            transition: all .2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            text-decoration: none;
-            white-space: nowrap;
+            padding: 6px 12px;
+            font-size: .78rem;
         }
-
-        .status-action-btn:hover {
-            filter: brightness(1.1);
-            transform: translateY(-1px);
-        }
-
-        /* ── Indicadores de segurança ── */
-        .sec-indicator {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 11px 14px;
-            border-radius: 10px;
-            font-size: .82rem;
-            margin-bottom: 8px;
-            border: 1px solid;
-            transition: box-shadow .2s;
-        }
-
-        .sec-indicator:last-child {
-            margin-bottom: 0;
-        }
-
-        .sec-indicator i {
-            font-size: 1rem;
-            flex-shrink: 0;
-        }
-
-        .sec-indicator>div>div:first-child {
-            font-weight: 600;
-        }
-
-        .sec-indicator>div>div:last-child {
-            font-size: .74rem;
-            opacity: .75;
-            margin-top: 1px;
-        }
-
-        .sec-indicator.ok {
-            background: rgba(34, 197, 94, .07);
-            border-color: rgba(34, 197, 94, .2);
-            color: #166534;
-        }
-
-        .sec-indicator.warn {
-            background: rgba(234, 179, 8, .07);
-            border-color: rgba(234, 179, 8, .25);
-            color: #92400e;
-        }
-
-        .sec-indicator.danger {
-            background: rgba(239, 68, 68, .07);
-            border-color: rgba(239, 68, 68, .2);
-            color: #991b1b;
-        }
-
-        .sec-indicator.neutral {
-            background: rgba(107, 114, 128, .07);
-            border-color: rgba(107, 114, 128, .2);
-            color: #374151;
-        }
-
-        .dark-mode .sec-indicator.ok {
-            background: rgba(34, 197, 94, .1);
-            border-color: rgba(34, 197, 94, .25);
-            color: #4ade80;
-        }
-
-        .dark-mode .sec-indicator.warn {
-            background: rgba(234, 179, 8, .1);
-            border-color: rgba(234, 179, 8, .25);
-            color: #facc15;
-        }
-
-        .dark-mode .sec-indicator.danger {
-            background: rgba(239, 68, 68, .1);
-            border-color: rgba(239, 68, 68, .25);
-            color: #f87171;
-        }
-
-        .dark-mode .sec-indicator.neutral {
-            background: rgba(107, 114, 128, .1);
-            border-color: rgba(107, 114, 128, .2);
-            color: #9ca3af;
-        }
-
-        /* ── Aviso de sem permissões explícitas ── */
-        .perms-default-notice {
-            padding: 14px 16px;
-            border-radius: 10px;
-            font-size: .82rem;
-            background: rgba(59, 130, 246, .07);
-            border: 1px solid rgba(59, 130, 246, .18);
-            color: #1e40af;
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            line-height: 1.5;
-        }
-
-        .dark-mode .perms-default-notice {
-            background: rgba(59, 130, 246, .1);
-            border-color: rgba(59, 130, 246, .25);
-            color: #93c5fd;
-        }
-
-        /* ── Empty audit state ── */
-        .audit-empty {
-            text-align: center;
-            padding: 36px 20px;
-            opacity: .45;
-            font-size: .84rem;
-        }
-
-        .audit-empty i {
-            font-size: 2rem;
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        /* ── Responsive ── */
-        @media (max-width: 768px) {
-            .emp-hero {
-                padding: 20px;
-            }
-
-            .emp-hero-name {
-                font-size: 1.1rem;
-            }
-
-            .emp-avatar-lg,
-            .emp-avatar-ini-lg {
-                width: 70px;
-                height: 70px;
-                font-size: 1.3rem;
-            }
-
-            .detail-label {
-                min-width: 90px;
-            }
-
-            .status-action-btn {
-                padding: 6px 12px;
-                font-size: .78rem;
-            }
-        }
+    }
     </style>
 </head>
 
@@ -767,10 +767,10 @@ foreach ($perm_map as $perm => $granted) {
                     </div>
                     <div class="col-auto ms-auto d-flex gap-2 flex-wrap mt-2">
                         <?php if (hasPermission($admin_id, 'employees.edit') && !$is_me): ?>
-                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees/edit?id=<?php echo $id; ?>"
-                                class="btn btn-sm btn-warning text-dark">
-                                <i class="bi bi-pencil me-1"></i>Editar
-                            </a>
+                        <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees/edit?id=<?php echo $id; ?>"
+                            class="btn btn-sm btn-warning text-dark">
+                            <i class="bi bi-pencil me-1"></i>Editar
+                        </a>
                         <?php endif; ?>
                         <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees"
                             class="btn btn-sm btn-outline-secondary">
@@ -780,12 +780,12 @@ foreach ($perm_map as $perm => $granted) {
                 </div>
 
                 <?php if ($feedback): ?>
-                    <div class="alert alert-<?php echo $feedback[0]; ?> alert-dismissible fade show mb-3" role="alert"
-                        style="border-radius:12px">
-                        <i class="bi <?php echo $feedback[1]; ?> me-2"></i>
-                        <?php echo htmlspecialchars($feedback[2]); ?>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
+                <div class="alert alert-<?php echo $feedback[0]; ?> alert-dismissible fade show mb-3" role="alert"
+                    style="border-radius:12px">
+                    <i class="bi <?php echo $feedback[1]; ?> me-2"></i>
+                    <?php echo htmlspecialchars($feedback[2]); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
                 <?php endif; ?>
 
                 <!-- ── Hero ── -->
@@ -794,16 +794,16 @@ foreach ($perm_map as $perm => $granted) {
                         <!-- Avatar -->
                         <div class="emp-avatar-wrap">
                             <?php if (!empty($emp['photo_employees'])): ?>
-                                <img src="<?php echo APP_URL; ?>/assets/comprovantes/uploads/employees/<?php echo htmlspecialchars($emp['photo_employees']); ?>"
-                                    alt="" class="emp-avatar-lg"
-                                    onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
-                                <div class="emp-avatar-ini-lg" style="background:<?php echo $color; ?>;display:none">
-                                    <?php echo $ini; ?>
-                                </div>
+                            <img src="<?php echo APP_URL; ?>/assets/comprovantes/uploads/employees/<?php echo htmlspecialchars($emp['photo_employees']); ?>"
+                                alt="" class="emp-avatar-lg"
+                                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+                            <div class="emp-avatar-ini-lg" style="background:<?php echo $color; ?>;display:none">
+                                <?php echo $ini; ?>
+                            </div>
                             <?php else: ?>
-                                <div class="emp-avatar-ini-lg" style="background:<?php echo $color; ?>">
-                                    <?php echo $ini; ?>
-                                </div>
+                            <div class="emp-avatar-ini-lg" style="background:<?php echo $color; ?>">
+                                <?php echo $ini; ?>
+                            </div>
                             <?php endif; ?>
                             <div class="emp-status-dot <?php echo $emp['status_employees']; ?>"></div>
                         </div>
@@ -813,17 +813,17 @@ foreach ($perm_map as $perm => $granted) {
                             <div class="emp-hero-name">
                                 <?php echo htmlspecialchars($fullname); ?>
                                 <?php if ($is_me): ?>
-                                    <span class="badge bg-primary ms-2"
-                                        style="font-size:.6rem;vertical-align:middle">Você</span>
+                                <span class="badge bg-primary ms-2"
+                                    style="font-size:.6rem;vertical-align:middle">Você</span>
                                 <?php endif; ?>
                             </div>
                             <div class="d-flex flex-wrap gap-2 mb-2">
                                 <?php echo view_role_badge($emp['role']); ?>
                                 <?php echo view_status_badge($emp['status_employees']); ?>
                                 <?php if ($emp['is_fraud_blocked']): ?>
-                                    <span class="badge bg-danger">
-                                        <i class="bi bi-shield-exclamation me-1"></i>Bloqueio anti-fraude
-                                    </span>
+                                <span class="badge bg-danger">
+                                    <i class="bi bi-shield-exclamation me-1"></i>Bloqueio anti-fraude
+                                </span>
                                 <?php endif; ?>
                             </div>
                             <div class="emp-hero-meta">
@@ -832,8 +832,8 @@ foreach ($perm_map as $perm => $granted) {
                                 <span><i
                                         class="bi bi-envelope"></i><?php echo htmlspecialchars($emp['email_employees']); ?></span>
                                 <?php if ($emp['tel_employees']): ?>
-                                    <span><i
-                                            class="bi bi-telephone"></i><?php echo htmlspecialchars($emp['tel_employees']); ?></span>
+                                <span><i
+                                        class="bi bi-telephone"></i><?php echo htmlspecialchars($emp['tel_employees']); ?></span>
                                 <?php endif; ?>
                                 <span><i class="bi bi-calendar3"></i>Desde
                                     <?php echo date('d/m/Y', strtotime($emp['creat_employees'])); ?></span>
@@ -842,26 +842,26 @@ foreach ($perm_map as $perm => $granted) {
 
                         <!-- Acções rápidas de estado (só super_admin, não em si próprio) -->
                         <?php if ($admin_role === 'super_admin' && !$is_me && $emp['role'] !== 'super_admin'): ?>
-                            <div class="d-flex flex-column gap-2">
-                                <?php if ($emp['status_employees'] === 'active'): ?>
-                                    <button type="button" class="status-action-btn"
-                                        style="background:rgba(234,179,8,.15);color:#92400e" data-bs-toggle="modal"
-                                        data-bs-target="#modalBlock">
-                                        <i class="bi bi-lock-fill"></i>Bloquear
-                                    </button>
-                                <?php else: ?>
-                                    <button type="button" class="status-action-btn"
-                                        style="background:rgba(34,197,94,.15);color:#166534" data-bs-toggle="modal"
-                                        data-bs-target="#modalUnblock">
-                                        <i class="bi bi-unlock-fill"></i>Desbloquear
-                                    </button>
-                                <?php endif; ?>
-                                <!-- Excluir — GET directo para delete.php que mostra confirmação -->
-                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees/delete?id=<?php echo $id; ?>"
-                                    class="status-action-btn" style="background:rgba(239,68,68,.12);color:#991b1b">
-                                    <i class="bi bi-trash-fill"></i>Excluir
-                                </a>
-                            </div>
+                        <div class="d-flex flex-column gap-2">
+                            <?php if ($emp['status_employees'] === 'active'): ?>
+                            <button type="button" class="status-action-btn"
+                                style="background:rgba(234,179,8,.15);color:#92400e" data-bs-toggle="modal"
+                                data-bs-target="#modalBlock">
+                                <i class="bi bi-lock-fill"></i>Bloquear
+                            </button>
+                            <?php else: ?>
+                            <button type="button" class="status-action-btn"
+                                style="background:rgba(34,197,94,.15);color:#166534" data-bs-toggle="modal"
+                                data-bs-target="#modalUnblock">
+                                <i class="bi bi-unlock-fill"></i>Desbloquear
+                            </button>
+                            <?php endif; ?>
+                            <!-- Excluir — GET directo para delete.php que mostra confirmação -->
+                            <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees/delete?id=<?php echo $id; ?>"
+                                class="status-action-btn" style="background:rgba(239,68,68,.12);color:#991b1b">
+                                <i class="bi bi-trash-fill"></i>Excluir
+                            </a>
+                        </div>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -923,11 +923,11 @@ foreach ($perm_map as $perm => $granted) {
                                         <span class="detail-label">Website</span>
                                         <span class="detail-value" style="font-size:.8rem">
                                             <?php if ($emp['url_employees']): ?>
-                                                <a href="<?php echo htmlspecialchars($emp['url_employees']); ?>"
-                                                    target="_blank" style="color:#FF0089">
-                                                    <?php echo htmlspecialchars($emp['url_employees']); ?>
-                                                </a>
-                                                <?php else: ?>—<?php endif; ?>
+                                            <a href="<?php echo htmlspecialchars($emp['url_employees']); ?>"
+                                                target="_blank" style="color:#FF0089">
+                                                <?php echo htmlspecialchars($emp['url_employees']); ?>
+                                            </a>
+                                            <?php else: ?>—<?php endif; ?>
                                         </span>
                                     </div>
                                     <div class="detail-row">
@@ -953,14 +953,14 @@ foreach ($perm_map as $perm => $granted) {
                             </div>
 
                             <?php if ($emp['about_employees']): ?>
-                                <div class="mt-3 p-3 rounded"
-                                    style="background:var(--border-color,#f8f7fc);font-size:.84rem;line-height:1.7">
-                                    <div
-                                        style="font-size:.76rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#FF0089;margin-bottom:6px">
-                                        Sobre
-                                    </div>
-                                    <?php echo nl2br(htmlspecialchars($emp['about_employees'])); ?>
+                            <div class="mt-3 p-3 rounded"
+                                style="background:var(--border-color,#f8f7fc);font-size:.84rem;line-height:1.7">
+                                <div
+                                    style="font-size:.76rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#FF0089;margin-bottom:6px">
+                                    Sobre
                                 </div>
+                                <?php echo nl2br(htmlspecialchars($emp['about_employees'])); ?>
+                            </div>
                             <?php endif; ?>
                         </div>
 
@@ -974,32 +974,32 @@ foreach ($perm_map as $perm => $granted) {
                             </div>
 
                             <?php if (count($perms_rows) === 0): ?>
-                                <div class="p-3 rounded text-center"
-                                    style="background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.15);font-size:.83rem;color:#1e40af">
-                                    <i class="bi bi-info-circle me-2"></i>
-                                    Sem regras explícitas — a usar os padrões do role
-                                    <strong><?php echo ucfirst($emp['role']); ?></strong>.
-                                </div>
+                            <div class="p-3 rounded text-center"
+                                style="background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.15);font-size:.83rem;color:#1e40af">
+                                <i class="bi bi-info-circle me-2"></i>
+                                Sem regras explícitas — a usar os padrões do role
+                                <strong><?php echo ucfirst($emp['role']); ?></strong>.
+                            </div>
                             <?php else: ?>
-                                <?php foreach ($perm_groups as $group_key => $group):
+                            <?php foreach ($perm_groups as $group_key => $group):
                                     if (empty($group['perms'])) continue;
                                 ?>
-                                    <div class="perm-group">
-                                        <div class="perm-group-header">
-                                            <i class="bi <?php echo $group['icon']; ?>"></i>
-                                            <?php echo $group['label']; ?>
-                                        </div>
-                                        <div class="perm-tags">
-                                            <?php foreach ($group['perms'] as $action => $granted): ?>
-                                                <span class="perm-tag <?php echo $granted ? 'granted' : 'denied'; ?>">
-                                                    <i
-                                                        class="bi bi-<?php echo $granted ? 'check-circle-fill' : 'x-circle-fill'; ?>"></i>
-                                                    <?php echo htmlspecialchars($action); ?>
-                                                </span>
-                                            <?php endforeach; ?>
-                                        </div>
-                                    </div>
-                                <?php endforeach; ?>
+                            <div class="perm-group">
+                                <div class="perm-group-header">
+                                    <i class="bi <?php echo $group['icon']; ?>"></i>
+                                    <?php echo $group['label']; ?>
+                                </div>
+                                <div class="perm-tags">
+                                    <?php foreach ($group['perms'] as $action => $granted): ?>
+                                    <span class="perm-tag <?php echo $granted ? 'granted' : 'denied'; ?>">
+                                        <i
+                                            class="bi bi-<?php echo $granted ? 'check-circle-fill' : 'x-circle-fill'; ?>"></i>
+                                        <?php echo htmlspecialchars($action); ?>
+                                    </span>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
                             <?php endif; ?>
                         </div>
 
@@ -1012,12 +1012,12 @@ foreach ($perm_map as $perm => $granted) {
                                 </span>
                             </div>
                             <?php if (empty($audit_list)): ?>
-                                <div class="text-center py-4" style="opacity:.4;font-size:.84rem">
-                                    <i class="bi bi-journal-x d-block mb-2" style="font-size:1.8rem"></i>
-                                    Nenhuma actividade registada ainda.
-                                </div>
+                            <div class="text-center py-4" style="opacity:.4;font-size:.84rem">
+                                <i class="bi bi-journal-x d-block mb-2" style="font-size:1.8rem"></i>
+                                Nenhuma actividade registada ainda.
+                            </div>
                             <?php else: ?>
-                                <?php foreach ($audit_list as $log):
+                            <?php foreach ($audit_list as $log):
                                     // Ícone baseado na acção
                                     $aicon = match (true) {
                                         str_starts_with($log['action'], 'auth.')       => 'bi-shield-check',
@@ -1029,28 +1029,28 @@ foreach ($perm_map as $perm => $granted) {
                                         default                                         => 'bi-activity',
                                     };
                                 ?>
-                                    <div class="audit-row">
-                                        <div class="audit-icon">
-                                            <i class="bi <?php echo $aicon; ?>"></i>
-                                        </div>
-                                        <div class="flex-grow-1">
-                                            <div class="audit-action"><?php echo htmlspecialchars($log['action']); ?></div>
-                                            <div class="audit-meta">
-                                                <?php if ($log['entity']): ?>
-                                                    <span class="badge bg-secondary me-1" style="font-size:.65rem">
-                                                        <?php echo htmlspecialchars($log['entity']); ?>
-                                                        <?php echo $log['entity_id'] ? ' #' . $log['entity_id'] : ''; ?>
-                                                    </span>
-                                                <?php endif; ?>
-                                                <?php if ($log['ip_address']): ?>
-                                                    <span class="me-2"><i
-                                                            class="bi bi-geo-alt"></i><?php echo htmlspecialchars($log['ip_address']); ?></span>
-                                                <?php endif; ?>
-                                                <span><?php echo adm_fmt_date($log['creat_log']); ?></span>
-                                            </div>
-                                        </div>
+                            <div class="audit-row">
+                                <div class="audit-icon">
+                                    <i class="bi <?php echo $aicon; ?>"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="audit-action"><?php echo htmlspecialchars($log['action']); ?></div>
+                                    <div class="audit-meta">
+                                        <?php if ($log['entity']): ?>
+                                        <span class="badge bg-secondary me-1" style="font-size:.65rem">
+                                            <?php echo htmlspecialchars($log['entity']); ?>
+                                            <?php echo $log['entity_id'] ? ' #' . $log['entity_id'] : ''; ?>
+                                        </span>
+                                        <?php endif; ?>
+                                        <?php if ($log['ip_address']): ?>
+                                        <span class="me-2"><i
+                                                class="bi bi-geo-alt"></i><?php echo htmlspecialchars($log['ip_address']); ?></span>
+                                        <?php endif; ?>
+                                        <span><?php echo adm_fmt_date($log['creat_log']); ?></span>
                                     </div>
-                                <?php endforeach; ?>
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
                             <?php endif; ?>
                         </div>
 
@@ -1083,22 +1083,22 @@ foreach ($perm_map as $perm => $granted) {
                                 </span>
                             </div>
                             <?php if ($emp['deactivation_at']): ?>
-                                <div class="detail-row">
-                                    <span class="detail-label">Desactivada</span>
-                                    <span class="detail-value text-danger" style="font-size:.82rem">
-                                        <?php echo date('d/m/Y H:i', strtotime($emp['deactivation_at'])); ?>
-                                    </span>
-                                </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Desactivada</span>
+                                <span class="detail-value text-danger" style="font-size:.82rem">
+                                    <?php echo date('d/m/Y H:i', strtotime($emp['deactivation_at'])); ?>
+                                </span>
+                            </div>
                             <?php endif; ?>
                             <div class="detail-row">
                                 <span class="detail-label">Convite</span>
                                 <span class="detail-value">
                                     <?php if ($emp['invite_used'] === null): ?>
-                                        <span class="badge vw-s-processing">Sem convite</span>
+                                    <span class="badge vw-s-processing">Sem convite</span>
                                     <?php elseif ($emp['invite_used']): ?>
-                                        <span class="badge vw-s-active">Activado</span>
+                                    <span class="badge vw-s-active">Activado</span>
                                     <?php else: ?>
-                                        <span class="badge vw-s-suspended">Pendente</span>
+                                    <span class="badge vw-s-suspended">Pendente</span>
                                     <?php endif; ?>
                                 </span>
                             </div>
@@ -1141,16 +1141,16 @@ foreach ($perm_map as $perm => $granted) {
 
                                 <!-- Bloqueio temporário -->
                                 <?php if ($emp['block_until'] && strtotime($emp['block_until']) > time()): ?>
-                                    <div class="sec-indicator danger">
-                                        <i class="bi bi-clock-fill"></i>
-                                        <div>
-                                            <div style="font-weight:600">Bloqueado temporariamente</div>
-                                            <div style="font-size:.76rem;opacity:.8">
-                                                Até <?php echo date('H:i d/m', strtotime($emp['block_until'])); ?>
-                                                · Nível <?php echo $emp['block_level']; ?>
-                                            </div>
+                                <div class="sec-indicator danger">
+                                    <i class="bi bi-clock-fill"></i>
+                                    <div>
+                                        <div style="font-weight:600">Bloqueado temporariamente</div>
+                                        <div style="font-size:.76rem;opacity:.8">
+                                            Até <?php echo date('H:i d/m', strtotime($emp['block_until'])); ?>
+                                            · Nível <?php echo $emp['block_level']; ?>
                                         </div>
                                     </div>
+                                </div>
                                 <?php endif; ?>
 
                                 <!-- Anti-fraude -->
@@ -1185,10 +1185,10 @@ foreach ($perm_map as $perm => $granted) {
                             </div>
                             <div class="d-flex flex-column gap-2">
                                 <?php if (hasPermission($admin_id, 'employees.edit') && !$is_me): ?>
-                                    <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees/edit?id=<?php echo $id; ?>"
-                                        class="btn btn-sm btn-warning text-dark w-100 text-start">
-                                        <i class="bi bi-pencil me-2"></i>Editar este funcionário
-                                    </a>
+                                <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees/edit?id=<?php echo $id; ?>"
+                                    class="btn btn-sm btn-warning text-dark w-100 text-start">
+                                    <i class="bi bi-pencil me-2"></i>Editar este funcionário
+                                </a>
                                 <?php endif; ?>
                                 <a href="mailto:<?php echo htmlspecialchars($emp['email_employees']); ?>"
                                     class="btn btn-sm btn-outline-secondary w-100 text-start">
@@ -1236,46 +1236,46 @@ foreach ($perm_map as $perm => $granted) {
                         até ser desbloqueado manualmente.
                     </p>
                     <?php if ($admin_role !== 'super_admin'): ?>
-                        <!-- Admins que não são super_admin precisam de confirmar com senha -->
-                        <div class="mb-0">
-                            <label class="form-label" style="font-size:.8rem;font-weight:600">
-                                Confirma a tua senha para continuar
-                            </label>
-                            <input type="password" class="form-control" id="block-password-inp"
-                                placeholder="A tua senha de acesso" autocomplete="current-password" />
-                            <div id="block-pw-err" style="font-size:.76rem;color:#ef4444;margin-top:4px;display:none">
-                                <i class="bi bi-x-circle me-1"></i>Senha incorrecta.
-                            </div>
+                    <!-- Admins que não são super_admin precisam de confirmar com senha -->
+                    <div class="mb-0">
+                        <label class="form-label" style="font-size:.8rem;font-weight:600">
+                            Confirma a tua senha para continuar
+                        </label>
+                        <input type="password" class="form-control" id="block-password-inp"
+                            placeholder="A tua senha de acesso" autocomplete="current-password" />
+                        <div id="block-pw-err" style="font-size:.76rem;color:#ef4444;margin-top:4px;display:none">
+                            <i class="bi bi-x-circle me-1"></i>Senha incorrecta.
                         </div>
+                    </div>
                     <?php endif; ?>
                 </div>
                 <div class="modal-footer border-0 pt-0">
                     <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <?php if ($admin_role === 'super_admin'): ?>
-                        <!-- Super admin — submete directamente sem senha -->
-                        <form method="POST" action="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees/delete"
-                            style="display:inline">
-                            <input type="hidden" name="csrf_token"
-                                value="<?php echo htmlspecialchars($_SESSION['admin_csrf_token']); ?>" />
-                            <input type="hidden" name="action" value="block" />
-                            <input type="hidden" name="id" value="<?php echo $id; ?>" />
-                            <button type="submit" class="btn btn-sm btn-warning text-dark">
-                                <i class="bi bi-lock me-1"></i>Confirmar bloqueio
-                            </button>
-                        </form>
+                    <!-- Super admin — submete directamente sem senha -->
+                    <form method="POST" action="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees/delete"
+                        style="display:inline">
+                        <input type="hidden" name="csrf_token"
+                            value="<?php echo htmlspecialchars($_SESSION['admin_csrf_token']); ?>" />
+                        <input type="hidden" name="action" value="block" />
+                        <input type="hidden" name="id" value="<?php echo $id; ?>" />
+                        <button type="submit" class="btn btn-sm btn-warning text-dark">
+                            <i class="bi bi-lock me-1"></i>Confirmar bloqueio
+                        </button>
+                    </form>
                     <?php else: ?>
-                        <!-- Outros roles — verificação de senha via JS antes de submeter -->
-                        <form method="POST" action="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees/delete"
-                            id="form-block" style="display:inline">
-                            <input type="hidden" name="csrf_token"
-                                value="<?php echo htmlspecialchars($_SESSION['admin_csrf_token']); ?>" />
-                            <input type="hidden" name="action" value="block" />
-                            <input type="hidden" name="id" value="<?php echo $id; ?>" />
-                            <input type="hidden" name="confirm_password" id="block-pw-hidden" />
-                            <button type="button" class="btn btn-sm btn-warning text-dark" id="btn-confirm-block">
-                                <i class="bi bi-lock me-1"></i>Confirmar bloqueio
-                            </button>
-                        </form>
+                    <!-- Outros roles — verificação de senha via JS antes de submeter -->
+                    <form method="POST" action="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees/delete"
+                        id="form-block" style="display:inline">
+                        <input type="hidden" name="csrf_token"
+                            value="<?php echo htmlspecialchars($_SESSION['admin_csrf_token']); ?>" />
+                        <input type="hidden" name="action" value="block" />
+                        <input type="hidden" name="id" value="<?php echo $id; ?>" />
+                        <input type="hidden" name="confirm_password" id="block-pw-hidden" />
+                        <button type="button" class="btn btn-sm btn-warning text-dark" id="btn-confirm-block">
+                            <i class="bi bi-lock me-1"></i>Confirmar bloqueio
+                        </button>
+                    </form>
                     <?php endif; ?>
                 </div>
             </div>
@@ -1308,43 +1308,43 @@ foreach ($perm_map as $perm => $granted) {
                         O funcionário voltará a ter acesso ao painel com o seu role e permissões anteriores.
                     </p>
                     <?php if ($admin_role !== 'super_admin'): ?>
-                        <div class="mb-0">
-                            <label class="form-label" style="font-size:.8rem;font-weight:600">
-                                Confirma a tua senha para continuar
-                            </label>
-                            <input type="password" class="form-control" id="unblock-password-inp"
-                                placeholder="A tua senha de acesso" autocomplete="current-password" />
-                            <div id="unblock-pw-err" style="font-size:.76rem;color:#ef4444;margin-top:4px;display:none">
-                                <i class="bi bi-x-circle me-1"></i>Senha incorrecta.
-                            </div>
+                    <div class="mb-0">
+                        <label class="form-label" style="font-size:.8rem;font-weight:600">
+                            Confirma a tua senha para continuar
+                        </label>
+                        <input type="password" class="form-control" id="unblock-password-inp"
+                            placeholder="A tua senha de acesso" autocomplete="current-password" />
+                        <div id="unblock-pw-err" style="font-size:.76rem;color:#ef4444;margin-top:4px;display:none">
+                            <i class="bi bi-x-circle me-1"></i>Senha incorrecta.
                         </div>
+                    </div>
                     <?php endif; ?>
                 </div>
                 <div class="modal-footer border-0 pt-0">
                     <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <?php if ($admin_role === 'super_admin'): ?>
-                        <form method="POST" action="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees/delete"
-                            style="display:inline">
-                            <input type="hidden" name="csrf_token"
-                                value="<?php echo htmlspecialchars($_SESSION['admin_csrf_token']); ?>" />
-                            <input type="hidden" name="action" value="unblock" />
-                            <input type="hidden" name="id" value="<?php echo $id; ?>" />
-                            <button type="submit" class="btn btn-sm btn-success">
-                                <i class="bi bi-unlock me-1"></i>Confirmar desbloqueio
-                            </button>
-                        </form>
+                    <form method="POST" action="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees/delete"
+                        style="display:inline">
+                        <input type="hidden" name="csrf_token"
+                            value="<?php echo htmlspecialchars($_SESSION['admin_csrf_token']); ?>" />
+                        <input type="hidden" name="action" value="unblock" />
+                        <input type="hidden" name="id" value="<?php echo $id; ?>" />
+                        <button type="submit" class="btn btn-sm btn-success">
+                            <i class="bi bi-unlock me-1"></i>Confirmar desbloqueio
+                        </button>
+                    </form>
                     <?php else: ?>
-                        <form method="POST" action="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees/delete"
-                            id="form-unblock" style="display:inline">
-                            <input type="hidden" name="csrf_token"
-                                value="<?php echo htmlspecialchars($_SESSION['admin_csrf_token']); ?>" />
-                            <input type="hidden" name="action" value="unblock" />
-                            <input type="hidden" name="id" value="<?php echo $id; ?>" />
-                            <input type="hidden" name="confirm_password" id="unblock-pw-hidden" />
-                            <button type="button" class="btn btn-sm btn-success" id="btn-confirm-unblock">
-                                <i class="bi bi-unlock me-1"></i>Confirmar desbloqueio
-                            </button>
-                        </form>
+                    <form method="POST" action="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/employees/delete"
+                        id="form-unblock" style="display:inline">
+                        <input type="hidden" name="csrf_token"
+                            value="<?php echo htmlspecialchars($_SESSION['admin_csrf_token']); ?>" />
+                        <input type="hidden" name="action" value="unblock" />
+                        <input type="hidden" name="id" value="<?php echo $id; ?>" />
+                        <input type="hidden" name="confirm_password" id="unblock-pw-hidden" />
+                        <button type="button" class="btn btn-sm btn-success" id="btn-confirm-unblock">
+                            <i class="bi bi-unlock me-1"></i>Confirmar desbloqueio
+                        </button>
+                    </form>
                     <?php endif; ?>
                 </div>
             </div>
@@ -1356,10 +1356,8 @@ foreach ($perm_map as $perm => $granted) {
         <div class="container">
             <div class="row">
                 <div class="col-12 text-center">
-                    <p class="mb-2">© <?php echo date('Y'); ?> <?php echo APP_NAME; ?>. Todos os direitos reservados.</p>
-                    <a href="<?php echo APP_URL; ?>/page/politicies/terms" class="me-2">Termos de Uso</a>
-                    <a href="<?php echo APP_URL; ?>/page/politicies/privacy" class="me-2">Privacidade</a>
-                    <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/messages/inbox">Suporte</a>
+                    <p class="mb-2">© <?php echo date('Y'); ?> <?php echo APP_NAME; ?>. Todos os direitos reservados.
+                    </p>
                 </div>
             </div>
         </div>
@@ -1376,86 +1374,86 @@ foreach ($perm_map as $perm => $granted) {
     <script src="<?php echo APP_URL; ?>/js/lastest.js"></script>
     <script src="<?php echo APP_URL; ?>/js/lastest.min.js"></script>
     <script>
-        window.__BASE_URL__ = '<?php echo APP_URL; ?>';
-        window.__ADMIN_PATH__ = '<?php echo ADMIN_PATH; ?>';
+    window.__BASE_URL__ = '<?php echo APP_URL; ?>';
+    window.__ADMIN_PATH__ = '<?php echo ADMIN_PATH; ?>';
     </script>
 
     <script>
-        // ── Lógica dos modais de bloquear/desbloquear (só para não-super_admin) ──
-        // Super admin: form submete directamente, sem JS necessário.
-        // Outros: copiar senha para hidden input antes de submeter.
+    // ── Lógica dos modais de bloquear/desbloquear (só para não-super_admin) ──
+    // Super admin: form submete directamente, sem JS necessário.
+    // Outros: copiar senha para hidden input antes de submeter.
 
-        (function() {
-            // ── Bloquear ──
-            var btnBlock = document.getElementById('btn-confirm-block');
-            if (btnBlock) {
-                btnBlock.addEventListener('click', function() {
-                    var pw = (document.getElementById('block-password-inp') || {}).value || '';
-                    var err = document.getElementById('block-pw-err');
-                    if (!pw.trim()) {
-                        if (err) {
-                            err.style.display = 'block';
-                            err.textContent = 'A senha é obrigatória.';
-                        }
-                        document.getElementById('block-password-inp').focus();
-                        return;
+    (function() {
+        // ── Bloquear ──
+        var btnBlock = document.getElementById('btn-confirm-block');
+        if (btnBlock) {
+            btnBlock.addEventListener('click', function() {
+                var pw = (document.getElementById('block-password-inp') || {}).value || '';
+                var err = document.getElementById('block-pw-err');
+                if (!pw.trim()) {
+                    if (err) {
+                        err.style.display = 'block';
+                        err.textContent = 'A senha é obrigatória.';
                     }
-                    document.getElementById('block-pw-hidden').value = pw;
-                    document.getElementById('form-block').submit();
-                });
-                // Esconder erro ao escrever
-                var inp = document.getElementById('block-password-inp');
-                if (inp) inp.addEventListener('input', function() {
-                    var e = document.getElementById('block-pw-err');
-                    if (e) e.style.display = 'none';
-                });
-                // Enter no campo de senha = confirmar
-                if (inp) inp.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter') btnBlock.click();
-                });
-            }
+                    document.getElementById('block-password-inp').focus();
+                    return;
+                }
+                document.getElementById('block-pw-hidden').value = pw;
+                document.getElementById('form-block').submit();
+            });
+            // Esconder erro ao escrever
+            var inp = document.getElementById('block-password-inp');
+            if (inp) inp.addEventListener('input', function() {
+                var e = document.getElementById('block-pw-err');
+                if (e) e.style.display = 'none';
+            });
+            // Enter no campo de senha = confirmar
+            if (inp) inp.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') btnBlock.click();
+            });
+        }
 
-            // ── Desbloquear ──
-            var btnUnblock = document.getElementById('btn-confirm-unblock');
-            if (btnUnblock) {
-                btnUnblock.addEventListener('click', function() {
-                    var pw = (document.getElementById('unblock-password-inp') || {}).value || '';
-                    var err = document.getElementById('unblock-pw-err');
-                    if (!pw.trim()) {
-                        if (err) {
-                            err.style.display = 'block';
-                            err.textContent = 'A senha é obrigatória.';
-                        }
-                        document.getElementById('unblock-password-inp').focus();
-                        return;
+        // ── Desbloquear ──
+        var btnUnblock = document.getElementById('btn-confirm-unblock');
+        if (btnUnblock) {
+            btnUnblock.addEventListener('click', function() {
+                var pw = (document.getElementById('unblock-password-inp') || {}).value || '';
+                var err = document.getElementById('unblock-pw-err');
+                if (!pw.trim()) {
+                    if (err) {
+                        err.style.display = 'block';
+                        err.textContent = 'A senha é obrigatória.';
                     }
-                    document.getElementById('unblock-pw-hidden').value = pw;
-                    document.getElementById('form-unblock').submit();
-                });
-                var inp2 = document.getElementById('unblock-password-inp');
-                if (inp2) inp2.addEventListener('input', function() {
-                    var e = document.getElementById('unblock-pw-err');
-                    if (e) e.style.display = 'none';
-                });
-                if (inp2) inp2.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter') btnUnblock.click();
-                });
-            }
+                    document.getElementById('unblock-password-inp').focus();
+                    return;
+                }
+                document.getElementById('unblock-pw-hidden').value = pw;
+                document.getElementById('form-unblock').submit();
+            });
+            var inp2 = document.getElementById('unblock-password-inp');
+            if (inp2) inp2.addEventListener('input', function() {
+                var e = document.getElementById('unblock-pw-err');
+                if (e) e.style.display = 'none';
+            });
+            if (inp2) inp2.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') btnUnblock.click();
+            });
+        }
 
-            // Limpar campos de senha ao fechar os modais
-            ['modalBlock', 'modalUnblock'].forEach(function(id) {
-                var el = document.getElementById(id);
-                if (!el) return;
-                el.addEventListener('hidden.bs.modal', function() {
-                    el.querySelectorAll('input[type="password"]').forEach(function(i) {
-                        i.value = '';
-                    });
-                    el.querySelectorAll('[id$="-pw-err"]').forEach(function(e) {
-                        e.style.display = 'none';
-                    });
+        // Limpar campos de senha ao fechar os modais
+        ['modalBlock', 'modalUnblock'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            el.addEventListener('hidden.bs.modal', function() {
+                el.querySelectorAll('input[type="password"]').forEach(function(i) {
+                    i.value = '';
+                });
+                el.querySelectorAll('[id$="-pw-err"]').forEach(function(e) {
+                    e.style.display = 'none';
                 });
             });
-        })();
+        });
+    })();
     </script>
 </body>
 

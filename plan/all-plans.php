@@ -377,11 +377,11 @@ $storesCount = (int)$platform['stores_count'];
                         </ul>
 
                         <div class="mt-3 mt-lg-0 d-flex align-items-center">
-                            <a title="Entrar" href="/wasomupfy/login" class="btn btn-secondary mx-2">
+                            <a title="Entrar" href="<?php echo APP_URL  ?>/login" class="btn btn-secondary mx-2">
                                 Entrar <i data-feather="log-in"></i>
                             </a>
                             <?php if ($canRegister): ?>
-                                <a title="Inscreva-se" href="/wasomupfy/register" class="btn btn-wasomupfy">Inscreva-se</a>
+                                <a title="Inscreva-se" href="<?php echo APP_URL  ?>/register" class="btn btn-wasomupfy">Inscreva-se</a>
                             <?php else: ?>
                                 <span class="btn btn-secondary disabled"
                                     title="Inscrições temporariamente fechadas">Inscrições fechadas</span>
@@ -545,7 +545,7 @@ $storesCount = (int)$platform['stores_count'];
 
                                     <div class="d-grid">
                                         <?php if ($canRegister): ?>
-                                            <a href="/wasomupfy/register?plan=<?php echo urlencode($slug); ?>"
+                                            <a href="<?php echo APP_URL  ?>/register?plan=<?php echo urlencode($slug); ?>"
                                                 class="btn <?php echo $meta['btn_class']; ?> btn-lg">
                                                 Escolher <?php echo htmlspecialchars($plan['name_plan']); ?>
                                             </a>
@@ -663,7 +663,7 @@ $storesCount = (int)$platform['stores_count'];
                                 ?>
                                     <td class="text-center pt-4<?php echo $isFeat ? ' bg-wasom-light' : ''; ?>">
                                         <?php if ($canRegister): ?>
-                                            <a href="/wasomupfy/register?plan=<?php echo urlencode($p['slug_plan']); ?>"
+                                            <a href="<?php echo APP_URL  ?>/register?plan=<?php echo urlencode($p['slug_plan']); ?>"
                                                 class="btn <?php echo $btnCls; ?> btn-sm w-100 py-2">Escolher</a>
                                         <?php else: ?>
                                             <span class="btn btn-secondary btn-sm w-100 disabled">Fechado</span>
@@ -738,7 +738,7 @@ $storesCount = (int)$platform['stores_count'];
                         </p>
                         <div class="d-flex flex-wrap justify-content-center gap-3">
                             <?php if ($canRegister): ?>
-                                <a href="/wasomupfy/register" class="btn btn-secondary btn-lg px-5 text-wasom fw-semibold">
+                                <a href="<?php echo APP_URL  ?>/register" class="btn btn-secondary btn-lg px-5 text-wasom fw-semibold">
                                     Começar Agora <i class="bi bi-arrow-right ms-2"></i>
                                 </a>
                             <?php endif; ?>

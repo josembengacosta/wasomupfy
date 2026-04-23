@@ -1200,14 +1200,12 @@ $all_permissions = [
         </div>
     </div>
 
-    <footer>
+  <footer>
         <div class="container">
             <div class="row">
                 <div class="col-12 text-center">
-                    <p class="mb-2">© <?php echo date('Y'); ?> <?php echo APP_NAME; ?>. Todos os direitos reservados.</p>
-                    <a href="<?php echo APP_URL; ?>/page/politicies/terms" class="me-2">Termos de Uso</a>
-                    <a href="<?php echo APP_URL; ?>/page/politicies/privacy" class="me-2">Privacidade</a>
-                    <a href="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/messages/inbox">Suporte</a>
+                    <p class="mb-2">© <?php echo date('Y'); ?> <?php echo APP_NAME; ?>. Todos os direitos reservados.
+                    </p>
                 </div>
             </div>
         </div>

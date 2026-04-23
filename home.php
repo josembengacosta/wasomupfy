@@ -3,7 +3,7 @@
 // WASOM UPFY — Home (Página Principal)
 // Arquivo: home.php  (raiz do site)
 // ══════════════════════════════════════════════
-require_once __DIR__ . '/include/site.php';
+require_once __DIR__ . '/include/site.php';               // Funções públicas (tracking, FAQs)
 
 checkPlatformStatus('home');
 trackVisitor('/home', 'Home — Wasom Upfy');
@@ -80,7 +80,7 @@ $planFeatures = [
     'single' => [
         [true,  'Upload de uma faixa'],
         [true,  '1 Artista'],
-        [true,  'Colaboradores Ilimitados'],
+        [true,  '1 Colaborador'],
         [true,  'Análise de dados avançados'],
         [true,  'ISRC e UPC grátis'],
         [true,  'Smartlink e pre-salve'],
@@ -92,7 +92,7 @@ $planFeatures = [
     'album' => [
         [true, 'Upload de 15 faixas'],
         [true, '1 Artista'],
-        [true, 'Colaboradores Ilimitados'],
+        [true, '1 Colaborador'],
         [true, 'Análise de dados avançados'],
         [true, 'ISRC e UPC grátis'],
         [true, 'Smartlink e pre-salve'],
@@ -104,7 +104,7 @@ $planFeatures = [
     'artist' => [
         [true, 'Upload de faixas ilimitadas'],
         [true, '1 Artista'],
-        [true, 'Colaboradores Ilimitados'],
+        [true, '1 Colaborador'],
         [true, 'Análise de dados avançados'],
         [true, 'ISRC e UPC grátis'],
         [true, 'Smartlink e pre-salve'],
@@ -116,7 +116,7 @@ $planFeatures = [
     'label' => [
         [true, 'Upload de faixas ilimitadas'],
         [true, '10 Artistas'],
-        [true, 'Colaboradores Ilimitados'],
+        [true, '5 Colaboradores'],
         [true, 'Análise de dados avançados'],
         [true, 'ISRC e UPC grátis'],
         [true, 'Smartlink e pre-salve'],
@@ -220,6 +220,185 @@ $planFeatures = [
         }
     }
     </script>
+    <style>
+    /* ══ Cookie Consent Banner — Wasom Upfy ══ */
+    .cookie-consent-banner {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #ffffff;
+        box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.12);
+        z-index: 9999;
+        transform: translateY(100%);
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        border-top: 3px solid #FF0089;
+        padding: 0;
+        font-family: 'Poppins', system-ui, sans-serif;
+    }
+
+    .cookie-consent-banner.visible {
+        transform: translateY(0);
+    }
+
+    .cookie-consent-container {
+        display: flex;
+        align-items: flex-start;
+        gap: 20px;
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 20px 24px;
+        flex-wrap: wrap;
+    }
+
+    .cookie-icon {
+        flex-shrink: 0;
+        width: 48px;
+        height: 48px;
+        background: rgba(255, 0, 137, 0.08);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #FF0089;
+        font-size: 1.5rem;
+    }
+
+    .cookie-content {
+        flex: 1;
+        min-width: 260px;
+    }
+
+    .cookie-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin: 0 0 6px 0;
+        color: #1a1a1a;
+    }
+
+    .cookie-text {
+        font-size: 0.9rem;
+        line-height: 1.6;
+        color: #4a4a4a;
+        margin: 0 0 8px 0;
+    }
+
+    .cookie-text-small {
+        font-size: 0.8rem;
+        color: #888;
+        margin: 0;
+    }
+
+    .cookie-actions {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-shrink: 0;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .cookie-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #666;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 500;
+        padding: 8px 0;
+        transition: color 0.2s;
+    }
+
+    .cookie-link:hover {
+        color: #FF0089;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+    }
+
+    .cookie-accept-btn {
+        background: linear-gradient(135deg, #FF0089, #cc006e);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: 12px 28px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 12px rgba(255, 0, 137, 0.25);
+        white-space: nowrap;
+    }
+
+    .cookie-accept-btn:hover {
+        background: #cc006e;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(255, 0, 137, 0.35);
+    }
+
+    .cookie-accept-btn:active {
+        transform: translateY(0);
+    }
+
+    /* Tema escuro */
+    [data-bs-theme="dark"] .cookie-consent-banner {
+        background: #1e1e2f;
+        border-top-color: #FF0089;
+    }
+
+    [data-bs-theme="dark"] .cookie-title {
+        color: #ffffff;
+    }
+
+    [data-bs-theme="dark"] .cookie-text {
+        color: #b0b0c0;
+    }
+
+    [data-bs-theme="dark"] .cookie-text-small {
+        color: #777;
+    }
+
+    [data-bs-theme="dark"] .cookie-icon {
+        background: rgba(255, 0, 137, 0.15);
+    }
+
+    [data-bs-theme="dark"] .cookie-link {
+        color: #aaa;
+    }
+
+    [data-bs-theme="dark"] .cookie-link:hover {
+        color: #FF0089;
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+        .cookie-consent-container {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+        }
+
+        .cookie-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 1.3rem;
+        }
+
+        .cookie-actions {
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .cookie-accept-btn {
+            padding: 10px 20px;
+            font-size: 0.9rem;
+        }
+    }
+    </style>
 </head>
 
 <body data-base-path=".">
@@ -405,11 +584,11 @@ $planFeatures = [
                         </ul>
 
                         <div class="mt-3 mt-lg-0 d-flex align-items-center">
-                            <a title="Sign-in" href="/wasomupfy/login" class="btn btn-secondary mx-2">
+                            <a title="Sign-in" href="login" class="btn btn-secondary mx-2">
                                 Entrar <i data-feather="log-in"></i>
                             </a>
                             <?php if ($canRegister): ?>
-                            <a title="Sign-up" href="/wasomupfy/register" class="btn btn-wasomupfy">Inscreva-se</a>
+                            <a title="Sign-up" href="register" class="btn btn-wasomupfy">Inscreva-se</a>
                             <?php else: ?>
                             <span class="btn btn-secondary disabled">Inscrições fechadas</span>
                             <?php endif; ?>
@@ -458,7 +637,7 @@ $planFeatures = [
                                 </div>
                                 <div class="d-flex flex-row gap-2 justify-content-left">
                                     <?php if ($canRegister): ?>
-                                    <a href="/wasomupfy/register" title="Junta-se agora"
+                                    <a href="register" title="Junta-se agora"
                                         class="btn btn-wasomupfy hover-scale-x-105 icon-link icon-link-hover"
                                         rel="internal">
                                         Junta-se agora
@@ -682,7 +861,7 @@ $planFeatures = [
                             </div>
                             <div class="mt-5 pt-3">
                                 <?php if ($canRegister): ?>
-                                <a href="/wasomupfy/register?new_account"
+                                <a href="register?new_account"
                                     class="btn btn-wasomupfy btn-lg w-100 py-3 d-flex align-items-center justify-content-center">
                                     <i class="bi bi-music-note-beamed me-2 fs-5"></i>
                                     Comece a distribuir agora
@@ -756,7 +935,7 @@ $planFeatures = [
                             <p>Junte-se a milhares de artistas que já transformaram as suas carreiras com a
                                 <?php echo $siteName; ?>.</p>
                             <?php if ($canRegister): ?>
-                            <a href="/wasomupfy/register?new_account"
+                            <a href="register?new_account"
                                 class="btn btn-wasomupfy btn-lg w-100 py-3 d-flex align-items-center justify-content-center">
                                 Cadastra-se agora
                             </a>
@@ -862,7 +1041,7 @@ $planFeatures = [
                                 </ul>
                                 <div class="text-center mt-auto">
                                     <?php if ($canRegister): ?>
-                                    <a href="/wasomupfy/register?plan=<?php echo $slug; ?>"
+                                    <a href="register?plan=<?php echo $slug; ?>"
                                         class="btn <?php echo $cfg_plan['btnCls']; ?> w-100">
                                         <i class="bi <?php echo $cfg_plan['btnIcon']; ?> me-2"></i>
                                         <?php echo $cfg_plan['btnLabel']; ?>
@@ -1002,7 +1181,7 @@ $planFeatures = [
                                     ideal.</p>
                                 <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
                                     <?php if ($canRegister): ?>
-                                    <a href="/wasomupfy/register" class="btn btn-wasomupfy btn-lg">
+                                    <a href="register" class="btn btn-wasomupfy btn-lg">
                                         <i class="bi bi-rocket-takeoff-fill me-2"></i> Começar Agora
                                     </a>
                                     <?php endif; ?>
@@ -1099,7 +1278,7 @@ $planFeatures = [
                     <div class="col-lg-12">
                         <div class="text-center mt-lg-6">
                             <?php if ($canRegister): ?>
-                            <a href="/wasomupfy/register" title="Inscreva-se agora"
+                            <a href="register" title="Inscreva-se agora"
                                 class="btn btn-wasomupfy btn-lg px-5 py-3 hover-scale-x-105 icon-link icon-link-hover">
                                 Inscreve-se agora
                             </a>
@@ -1270,7 +1449,7 @@ $planFeatures = [
                         </p>
                         <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
                             <?php if ($canRegister): ?>
-                            <a href="/wasomupfy/register" class="btn btn-wasomupfy btn-lg px-5 py-3">
+                            <a href="register" class="btn btn-wasomupfy btn-lg px-5 py-3">
                                 <i class="bi bi-rocket-takeoff-fill me-2"></i> Começar Agora
                             </a>
                             <?php endif; ?>
@@ -1467,7 +1646,7 @@ $planFeatures = [
                                                 <i class="bi bi-info-circle-fill me-2"></i> Conheça Mais
                                             </a>
                                             <?php if ($canRegister): ?>
-                                            <a href="/wasomupfy/register" class="btn btn-wasomupfy btn-lg">
+                                            <a href="register" class="btn btn-wasomupfy btn-lg">
                                                 <i class="bi bi-rocket-takeoff-fill me-2"></i> Começar Agora
                                             </a>
                                             <?php endif; ?>
@@ -1962,38 +2141,33 @@ $planFeatures = [
     <div class="divider-fade"></div>
     <?php require_once __DIR__ . '/include/components/footer.php'; ?>
 
-    <!-- Cookie Consent -->
-    <div id="cookie-alert" class="cookie-alert" role="alertdialog" aria-labelledby="cookie-alert-title"
-        aria-describedby="cookie-alert-description">
-        <div class="cookie-alert-content">
-            <div class="cookie-alert-header">
-                <h3 id="cookie-alert-title" class="cookie-alert-title">
-                    <i data-feather="cookie" aria-hidden="true"></i> Uso de Cookies
-                </h3>
-                <button type="button" class="cookie-alert-close" id="cookie-alert-close"
-                    aria-label="Fechar banner de cookies">
-                    <i data-feather="x" aria-hidden="true"></i>
-                </button>
+    <!-- Cookie Consent — Wasom Upfy (apenas cookies essenciais/funcionais) -->
+    <div id="cookie-consent" class="cookie-consent-banner" role="dialog" aria-labelledby="cookie-title"
+        aria-describedby="cookie-desc" aria-modal="false">
+        <div class="cookie-consent-container">
+            <div class="cookie-icon">
+                <i class="fa-solid fa-cookie-bite"></i>
             </div>
-            <div class="cookie-alert-body">
-                <p id="cookie-alert-description" class="cookie-alert-text">
-                    A <?php echo $siteName; ?> utiliza cookies e tecnologias similares para melhorar a sua experiência
-                    de navegação,
-                    personalizar conteúdo e anúncios, fornecer recursos de mídia social e analisar o nosso tráfego.
-                    Ao clicar em "Aceitar todos", concorda com o uso de todos os cookies.
+            <div class="cookie-content">
+                <h3 id="cookie-title" class="cookie-title">A Wasom Upfy utiliza cookies</h3>
+                <p id="cookie-desc" class="cookie-text">
+                    Utilizamos apenas cookies <strong>essenciais e funcionais</strong> para garantir a segurança da tua
+                    conta, manter a sessão activa e lembrar as tuas preferências (como tema claro/escuro).
+                    <strong>Não utilizamos cookies de publicidade nem de rastreamento de terceiros.</strong>
                 </p>
-                <div class="cookie-alert-links">
-                    <a href="page/politicies/cookies" class="cookie-alert-link" target="_blank"
-                        rel="noopener noreferrer">Política de Cookies</a>
-                    <a href="page/politicies/privacy" class="cookie-alert-link" target="_blank"
-                        rel="noopener noreferrer">Política de Privacidade</a>
-                </div>
-                <div class="cookie-alert-actions">
-                    <button type="button" class="btn btn-outline-light cookie-alert-btn" id="reject-cookies">Rejeitar
-                        todos</button>
-                    <button type="button" class="btn btn-primary cookie-alert-btn" id="accept-cookies">Aceitar
-                        todos</button>
-                </div>
+                <p class="cookie-text-small">
+                    Ao continuares a navegar, aceitas estes cookies necessários. Podes geri-los nas definições do teu
+                    navegador a qualquer momento.
+                </p>
+            </div>
+            <div class="cookie-actions">
+                <a href="<?php echo APP_URL; ?>/page/politicies/cookies" class="cookie-link" target="_blank"
+                    rel="noopener">
+                    <i class="fa-regular fa-file-lines"></i> Política de Cookies
+                </a>
+                <button type="button" class="cookie-accept-btn" id="cookie-accept">
+                    <i class="fa-solid fa-check"></i> Compreendi e aceito
+                </button>
             </div>
         </div>
     </div>

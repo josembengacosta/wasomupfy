@@ -330,10 +330,10 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/label';
                             </li>
                         </ul>
                         <div class="mt-3 mt-lg-0 d-flex align-items-center">
-                            <a title="Sign-in" href="/wasomupfy/login" class="btn btn-secondary mx-2">Entrar
+                            <a title="Sign-in" href="<?php echo APP_URL  ?>/login" class="btn btn-secondary mx-2">Entrar
                                 <i data-feather="log-in"></i>
                             </a>
-                            <a title="Sign-up" href="/wasomupfy/register" class="btn btn-wasomupfy">Inscreva-se
+                            <a title="Sign-up" href="<?php echo APP_URL  ?>/register" class="btn btn-wasomupfy">Inscreva-se
                             </a>
                         </div>
                     </div>
@@ -594,7 +594,7 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/label';
                                                 dedicado</p>
                                         </div>
                                         <div class="col-md-4 text-md-end">
-                                            <?php if ($canRegister): ?><a href="/wasomupfy/register?plan=label"
+                                            <?php if ($canRegister): ?><a href="<?php echo APP_URL  ?>/register?plan=label"
                                                     class="btn btn-wasomupfy btn-lg px-5">
                                                     Solicitar Demonstração <i class="bi bi-arrow-right ms-2"></i>
                                                 </a><?php else: ?><span
@@ -919,7 +919,7 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/label';
                         <p class="lead mb-5 opacity-90">Dashboard centralizado, economia de 38% e suporte empresarial
                         </p>
                         <div class="d-flex flex-wrap justify-content-center gap-3">
-                            <?php if ($canRegister): ?><a href="/wasomupfy/register?plan=label"
+                            <?php if ($canRegister): ?><a href="<?php echo APP_URL  ?>/register?plan=label"
                                     class="btn btn-wasomupfy btn-lg px-5 text-wasom fw-semibold">
                                     Solicitar Demonstração <i class="bi bi-arrow-right ms-2"></i>
                                 </a><?php else: ?><span class="btn btn-secondary btn-lg px-5 disabled">Inscrições

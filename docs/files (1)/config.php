@@ -5,7 +5,7 @@
 // ══════════════════════════════════════════════
 
 // ─── Banco de Dados ───────────────────────────
-define('DB_HOST',    'ftpupload.net');
+define('DB_HOST',    'sql200.infinityfree.com');
 define('DB_NAME',    'wasomupfy');
 define('DB_USER',    'root');
 define('DB_PASS',    'Amoreterno@123...1');

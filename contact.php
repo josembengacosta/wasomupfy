@@ -149,13 +149,13 @@ li:hover .icon-shape {
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-md" aria-labelledby="navbarDropdown">
                                     <?php
-                  $navIcons = ['single'=>'fa-music','album'=>'fa-compact-disc','artist'=>'fa-microphone-lines','label'=>'fa-tags'];
-                  foreach ($plans as $p):
-                    $nSlug = $p['slug_plan'];
-                    $nIcon = $navIcons[$nSlug] ?? 'fa-music';
-                    $nPrc  = number_format($p['price_plan'], 0, ',', '.');
-                    $nPer  = $p['type_plan']==='subscription' ? '/ano' : '';
-                  ?>
+                                    $navIcons = ['single' => 'fa-music', 'album' => 'fa-compact-disc', 'artist' => 'fa-microphone-lines', 'label' => 'fa-tags'];
+                                    foreach ($plans as $p):
+                                        $nSlug = $p['slug_plan'];
+                                        $nIcon = $navIcons[$nSlug] ?? 'fa-music';
+                                        $nPrc  = number_format($p['price_plan'], 0, ',', '.');
+                                        $nPer  = $p['type_plan'] === 'subscription' ? '/ano' : '';
+                                    ?>
                                     <a title="<?php echo htmlspecialchars($p['name_plan']); ?>"
                                         class="dropdown-item mb-3 text-body" href="plan/<?php echo $nSlug; ?>">
                                         <div class="d-flex align-items-center">
@@ -292,11 +292,11 @@ li:hover .icon-shape {
                         </ul>
 
                         <div class="mt-3 mt-lg-0 d-flex align-items-center">
-                            <a title="Sign-in" href="/wasomupfy/login" class="btn btn-secondary mx-2">
+                            <a title="Sign-in" href="login" class="btn btn-secondary mx-2">
                                 Entrar <i data-feather="log-in"></i>
                             </a>
                             <?php if ($canRegister): ?>
-                            <a title="Sign-up" href="/wasomupfy/register" class="btn btn-wasomupfy">Inscreva-se</a>
+                            <a title="Sign-up" href="register" class="btn btn-wasomupfy">Inscreva-se</a>
                             <?php else: ?>
                             <span class="btn btn-secondary disabled">Inscrições fechadas</span>
                             <?php endif; ?>

@@ -336,10 +336,10 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/single';
                             </li>
                         </ul>
                         <div class="mt-3 mt-lg-0 d-flex align-items-center">
-                            <a title="Sign-in" href="/wasomupfy/login" class="btn btn-secondary mx-2">Entrar
+                            <a title="Sign-in" href="<?php echo APP_URL  ?>/login" class="btn btn-secondary mx-2">Entrar
                                 <i data-feather="log-in"></i>
                             </a>
-                            <a title="Sign-up" href="/wasomupfy/register" class="btn btn-wasomupfy">Inscreva-se
+                            <a title="Sign-up" href="<?php echo APP_URL  ?>/register" class="btn btn-wasomupfy">Inscreva-se
                             </a>
                         </div>
                     </div>
@@ -492,7 +492,7 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/single';
                                             </li>
                                             <li class="d-flex align-items-start mb-3">
                                                 <i class="bi bi-check-lg text-success mt-1 me-3"></i>
-                                                <span><strong>Colaboradores Ilimitados</strong></span>
+                                                <span><strong>1 Colaborador</strong></span>
                                             </li>
                                             <li class="d-flex align-items-start mb-3">
                                                 <i class="bi bi-check-lg text-success mt-1 me-3"></i>
@@ -542,7 +542,7 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/single';
                                                 plataformas em 48h-72h</p>
                                         </div>
                                         <div class="col-md-4 text-md-end">
-                                            <?php if ($canRegister): ?><a href="/wasomupfy/register?plan=single"
+                                            <?php if ($canRegister): ?><a href="<?php echo APP_URL  ?>/register?plan=single"
                                                     class="btn btn-wasomupfy btn-lg px-5">
                                                     Começar Agora <i class="bi bi-arrow-right ms-2"></i>
                                                 </a><?php else: ?><span
@@ -725,7 +725,7 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/single';
                                 </h3>
                                 <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#singleFaqAccordion">
                                     <div class="accordion-body">
-                                        Sim! O plano Single permite colaboradores Ilimitados. Você pode
+                                        Sim! O plano Single permite 1 colaborador. Você pode
                                         adicionar
                                         admininistrador, analista, editor, etc.
                                     </div>
@@ -870,7 +870,7 @@ $period = $plan['type_plan'] === 'subscription' ? 'Kz/ano' : 'Kz/single';
                         <p class="lead mb-5 opacity-90">Comece agora com o Plano Single e tenha seu próximo hit em todas
                             as plataformas em 72 horas</p>
                         <div class="d-flex flex-wrap justify-content-center gap-3">
-                            <?php if ($canRegister): ?><a href="/wasomupfy/register?plan=single"
+                            <?php if ($canRegister): ?><a href="<?php echo APP_URL  ?>/register?plan=single"
                                     class="btn btn-wasomupfy btn-lg px-5 text-wasom fw-semibold">
                                     Começar Agora <i class="bi bi-arrow-right ms-2"></i>
                                 </a><?php else: ?><span class="btn btn-secondary btn-lg px-5 disabled">Inscrições

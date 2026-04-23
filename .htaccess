@@ -5,6 +5,9 @@
 
 Options -Indexes
 RewriteEngine On
+RewriteBase /
+
+RewriteRule ^$ /home [L,R=302]
 
 # ══════════════════════════════════════════════
 # PÁGINAS DE ERRO PERSONALIZADAS (Apache)
@@ -16,34 +19,24 @@ RewriteEngine On
 # próprio código via http_response_code().
 # ══════════════════════════════════════════════
 
-ErrorDocument 400 /wasomupfy/status/404.php
-ErrorDocument 403 /wasomupfy/status/403.php
-ErrorDocument 404 /wasomupfy/status/404.php
-ErrorDocument 405 /wasomupfy/status/404.php
-ErrorDocument 500 /wasomupfy/status/500.php
-ErrorDocument 502 /wasomupfy/status/503.php
-ErrorDocument 503 /wasomupfy/status/503.php
-ErrorDocument 504 /wasomupfy/status/503.php
-RewriteBase /wasomupfy/
+ErrorDocument 400 /status/404.php
+ErrorDocument 403 /status/403.php
+ErrorDocument 404 /status/404.php
+ErrorDocument 405 /status/404.php
+ErrorDocument 500 /status/500.php
+ErrorDocument 502 /status/503.php
+ErrorDocument 503 /status/503.php
+ErrorDocument 504 /status/503.php
+RewriteBase /
 
-# ══════════════════════════════════════════════
-# PÁGINAS DE ERRO PERSONALIZADAS (Apache)
-# Activa quando o Apache gera o erro directamente
-# (ficheiro não encontrado, PHP fatal, forbidden
-#  por regra .htaccess, servidor sobrecarregado)
-# As páginas PHP tratam dos erros gerados pelo
-# próprio código via http_response_code().
-# PARA AS PAGINAS QUANDO O USUARIO ESTIVER LOGADO
-# ══════════════════════════════════════════════
-
-ErrorDocument 400 /wasomupfy/dashboard/status/404.php
-ErrorDocument 403 /wasomupfy/dashboard/status/403.php
-ErrorDocument 404 /wasomupfy/dashboard/status/404.php
-ErrorDocument 405 /wasomupfy/dashboard/status/404.php
-ErrorDocument 500 /wasomupfy/dashboard/status/500.php
-ErrorDocument 502 /wasomupfy/dashboard/status/503.php
-ErrorDocument 503 /wasomupfy/dashboard/status/503.php
-ErrorDocument 504 /wasomupfy/dashboard/status/503.php
+ErrorDocument 400 /dashboard/status/404.php
+ErrorDocument 403 /dashboard/status/403.php
+ErrorDocument 404 /dashboard/status/404.php
+ErrorDocument 405 /dashboard/status/404.php
+ErrorDocument 500 /dashboard/status/500.php
+ErrorDocument 502 /dashboard/status/503.php
+ErrorDocument 503 /dashboard/status/503.php
+ErrorDocument 504 /dashboard/status/503.php
 
 # ─── Bloquear ficheiros sensíveis ─────────────
 RewriteRule \.(sql|log|env|sh|bak)$ - [F,L]

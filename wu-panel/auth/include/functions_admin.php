@@ -1,7 +1,7 @@
 <?php
 // ══════════════════════════════════════════════
 // WASOM UPFY v2.0 — Funções do Painel Admin
-// Arquivo: admin/auth/include/functions_admin.php
+// Arquivo: wu-panel/auth/include/functions_admin.php
 // Tabela central: _employees + _employees_security
 //                 + _employees_permissions
 // ══════════════════════════════════════════════
