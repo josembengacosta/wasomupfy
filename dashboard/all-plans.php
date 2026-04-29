@@ -173,7 +173,7 @@ $plan_meta = [
                 <span class="text-light"
                     style="font-weight:bold;font-family:Arial,sans-serif;text-transform:uppercase"><?php echo APP_NAME; ?></span>
             </a>
-            <div class="ms-auto d-flex align-items-center gap-2">
+            <div class="ms-auto d-flex align-items-center gap-3">
                 <?php if ($logged_in): ?>
                 <a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/painel" class="back-link"><i
                         class="bi bi-arrow-left me-1"></i>Voltar ao
@@ -560,7 +560,7 @@ $plan_meta = [
         <div class="container">
             Tens dúvidas? <a
                 href="<?php echo $logged_in ? APP_URL . '/' . APP_URL_PANEL . '/help' : APP_URL . '/' . 'contact'; ?>"
-                class="text-wasom">Consulta-nos</a> &nbsp;·&nbsp;
+                class="text-wasom">Consulta-nos</a> </br>
             &copy; <?php echo date('Y'); ?> <?php echo APP_NAME; ?>
         </div>
     </footer>

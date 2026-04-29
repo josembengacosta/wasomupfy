@@ -3,25 +3,30 @@ name: Deploy para InfinityFree
 on:
   push:
     branches:
-      - main  # só faz deploy quando push para main
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout código
+        uses: actions/checkout@v4
 
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: "${{ secrets.FTP_HOST }}"
-          username: "${{ secrets.FTP_USER }}"
-          password: "${{ secrets.FTP_PASS }}"
-          local-dir: ./          # raiz do projecto
-          server-dir: /htdocs/latest-wasomupfy  # pasta no servidor
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
+          local-dir: ./
+          server-dir: /htdocs/wasomupfy/
+          protocol: ftps  # Use FTPS em vez de FTP simples
           exclude: |
             **/.git*
             **/.github*
             **/node_modules/**
-            **/.env
+            **/vendor/**
+            **/.env*
             **/README.md
+            **/.DS_Store
+            **/composer.lock

@@ -48,11 +48,11 @@ $csrf_page = getSiteCsrf();
     <meta property="og:image:alt" content="<?php echo $siteName; ?>" />
     <title><?php echo $siteName; ?> | Política de Cookies</title>
     <script>
-        window.addEventListener("load", function() {
-            setTimeout(function() {
-                document.querySelector("body").classList.add("loaded");
-            }, 200);
-        });
+    window.addEventListener("load", function() {
+        setTimeout(function() {
+            document.querySelector("body").classList.add("loaded");
+        }, 200);
+    });
     </script>
     <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv1.png" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
@@ -63,424 +63,424 @@ $csrf_page = getSiteCsrf();
     <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/framework.css" />
     <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/main.css" />
     <style>
-        /* ── Progress bar ── */
-        #reading-progress {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 0%;
-            height: 3px;
-            background: linear-gradient(90deg, #f39c12, #e67e22);
-            z-index: 9999;
-            transition: width .1s linear
-        }
+    /* ── Progress bar ── */
+    #reading-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 0%;
+        height: 3px;
+        background: linear-gradient(90deg, #f39c12, #e67e22);
+        z-index: 9999;
+        transition: width .1s linear
+    }
 
-        /* ── Layout ── */
-        .terms-layout {
-            display: flex;
-            gap: 2rem;
-            align-items: flex-start
-        }
+    /* ── Layout ── */
+    .terms-layout {
+        display: flex;
+        gap: 2rem;
+        align-items: flex-start
+    }
 
+    .terms-index {
+        position: sticky;
+        top: 90px;
+        width: 240px;
+        flex-shrink: 0;
+        background: var(--bs-body-bg, #fff);
+        border-radius: 12px;
+        box-shadow: 0 2px 14px rgba(0, 0, 0, .08);
+        padding: 1.25rem 1rem;
+        max-height: calc(100vh - 110px);
+        overflow-y: auto;
+        scrollbar-width: thin
+    }
+
+    .terms-index h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #f39c12;
+        margin-bottom: 1rem;
+        padding-bottom: .5rem;
+        border-bottom: 2px solid rgba(243, 156, 18, .2)
+    }
+
+    .terms-index ul {
+        list-style: none;
+        padding: 0;
+        margin: 0
+    }
+
+    .terms-index li {
+        margin-bottom: .3rem
+    }
+
+    .terms-index a {
+        display: flex;
+        align-items: flex-start;
+        gap: .4rem;
+        font-size: .82rem;
+        color: var(--bs-body-color, #444);
+        text-decoration: none;
+        line-height: 1.4;
+        padding: .3rem .4rem;
+        border-radius: 6px;
+        transition: background .15s, color .15s
+    }
+
+    .terms-index a:hover,
+    .terms-index a.active {
+        background: rgba(243, 156, 18, .1);
+        color: #e67e22
+    }
+
+    .terms-index .num {
+        flex-shrink: 0;
+        font-weight: 700;
+        color: #f39c12;
+        min-width: 22px
+    }
+
+    .terms-index .idx-divider {
+        margin: .6rem 0;
+        border-color: rgba(243, 156, 18, .15)
+    }
+
+    .terms-content {
+        flex: 1;
+        min-width: 0
+    }
+
+    /* ── Sections ── */
+    .term-section {
+        background: var(--bs-body-bg, #fff);
+        border-radius: 14px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, .07);
+        padding: 1.75rem 2rem;
+        margin-bottom: 1.5rem;
+        scroll-margin-top: 90px;
+        border-left: 4px solid transparent;
+        transition: border-color .3s
+    }
+
+    .term-section:hover {
+        border-left-color: rgba(243, 156, 18, .4)
+    }
+
+    .term-section:target {
+        border-left-color: #f39c12
+    }
+
+    .term-section h2 {
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #e67e22;
+        margin-bottom: 1rem;
+        padding-bottom: .6rem;
+        border-bottom: 1px solid rgba(243, 156, 18, .15)
+    }
+
+    .sec-num {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 34px;
+        height: 34px;
+        background: linear-gradient(135deg, #f39c12, #e67e22);
+        color: #fff;
+        font-weight: 700;
+        font-size: .85rem;
+        border-radius: 8px;
+        flex-shrink: 0
+    }
+
+    .term-section h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        margin-top: 1.25rem;
+        margin-bottom: .5rem
+    }
+
+    .term-section p {
+        line-height: 1.75
+    }
+
+    .term-section ul {
+        padding-left: 1.2rem
+    }
+
+    .term-section ul li {
+        margin-bottom: .45rem;
+        line-height: 1.7
+    }
+
+    /* ── Callout boxes ── */
+    .term-box {
+        border-radius: 10px;
+        padding: 1rem 1.25rem;
+        margin: 1rem 0;
+        font-size: .93rem;
+        line-height: 1.65
+    }
+
+    .term-box strong {
+        display: block;
+        margin-bottom: .35rem
+    }
+
+    .term-box.danger {
+        background: rgba(220, 53, 69, .08);
+        border-left: 4px solid #dc3545
+    }
+
+    .term-box.warning {
+        background: rgba(243, 156, 18, .1);
+        border-left: 4px solid #f39c12
+    }
+
+    .term-box.success {
+        background: rgba(25, 135, 84, .08);
+        border-left: 4px solid #198754
+    }
+
+    .term-box.info {
+        background: rgba(13, 202, 240, .08);
+        border-left: 4px solid #0dcaf0
+    }
+
+    .term-box.pink {
+        background: rgba(255, 0, 157, .07);
+        border-left: 4px solid #ff009d
+    }
+
+    .term-box.neutral {
+        background: rgba(108, 117, 125, .07);
+        border-left: 4px solid #6c757d
+    }
+
+    /* ── Cookie table ── */
+    .cookie-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: .88rem;
+        margin: 1rem 0;
+        border-radius: 10px;
+        overflow: hidden
+    }
+
+    .cookie-table thead tr {
+        background: rgba(243, 156, 18, .12)
+    }
+
+    .cookie-table thead th {
+        padding: .7rem 1rem;
+        font-weight: 700;
+        text-align: left;
+        white-space: nowrap
+    }
+
+    .cookie-table tbody tr {
+        border-bottom: 1px solid rgba(0, 0, 0, .06);
+        transition: background .15s
+    }
+
+    .cookie-table tbody tr:last-child {
+        border-bottom: none
+    }
+
+    .cookie-table tbody tr:hover {
+        background: rgba(243, 156, 18, .04)
+    }
+
+    .cookie-table td {
+        padding: .65rem 1rem;
+        vertical-align: top
+    }
+
+    .cookie-table code {
+        background: rgba(243, 156, 18, .1);
+        padding: .15rem .4rem;
+        border-radius: 4px;
+        font-size: .82rem;
+        color: #e67e22
+    }
+
+    .cookie-badge {
+        display: inline-block;
+        padding: .2rem .6rem;
+        border-radius: 50px;
+        font-size: .75rem;
+        font-weight: 700;
+        white-space: nowrap
+    }
+
+    .badge-essential {
+        background: rgba(220, 53, 69, .12);
+        color: #dc3545
+    }
+
+    .badge-functional {
+        background: rgba(13, 110, 253, .1);
+        color: #0d6efd
+    }
+
+    .badge-security {
+        background: rgba(25, 135, 84, .1);
+        color: #198754
+    }
+
+    .badge-analytics {
+        background: rgba(243, 156, 18, .15);
+        color: #cc8400
+    }
+
+    .badge-none {
+        background: rgba(108, 117, 125, .1);
+        color: #6c757d
+    }
+
+    /* ── Browser guide ── */
+    .browser-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: .75rem;
+        margin: 1rem 0
+    }
+
+    .browser-card {
+        background: var(--bs-body-bg, #fff);
+        border: 1px solid rgba(0, 0, 0, .08);
+        border-radius: 10px;
+        padding: 1rem;
+        text-align: center;
+        transition: box-shadow .2s, transform .2s
+    }
+
+    .browser-card:hover {
+        box-shadow: 0 4px 16px rgba(243, 156, 18, .15);
+        transform: translateY(-2px)
+    }
+
+    .browser-card a {
+        text-decoration: none;
+        color: inherit;
+        display: block
+    }
+
+    .browser-card i {
+        font-size: 2rem;
+        margin-bottom: .5rem;
+        display: block
+    }
+
+    .browser-card span {
+        font-size: .82rem;
+        font-weight: 600
+    }
+
+    /* ── Consent banner preview ── */
+    .consent-preview {
+        background: rgba(243, 156, 18, .06);
+        border: 2px dashed rgba(243, 156, 18, .3);
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin: 1rem 0
+    }
+
+    .consent-preview-bar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 1rem;
+        justify-content: space-between;
+        font-size: .88rem
+    }
+
+    .consent-preview-bar .btns {
+        display: flex;
+        gap: .5rem;
+        flex-wrap: wrap
+    }
+
+    /* ── Action buttons ── */
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: .75rem;
+        flex-wrap: wrap;
+        margin-bottom: 2rem
+    }
+
+    .action-buttons .btn {
+        border-radius: 50px;
+        font-size: .88rem;
+        padding: .5rem 1.4rem
+    }
+
+    /* ── Hero badges ── */
+    .terms-badges a {
+        font-size: .8rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: transform .2s, opacity .2s
+    }
+
+    .terms-badges a:hover {
+        transform: scale(1.06);
+        opacity: .85
+    }
+
+    /* ── Policy cards ── */
+    .policy-cards .card {
+        border-radius: 12px;
+        transition: transform .2s, box-shadow .2s;
+        text-decoration: none
+    }
+
+    .policy-cards .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(243, 156, 18, .15) !important
+    }
+
+    /* ── Dark mode ── */
+    [data-bs-theme="dark"] .term-section,
+    [data-bs-theme="dark"] .terms-index,
+    [data-bs-theme="dark"] .browser-card {
+        background: var(--bs-body-bg);
+        box-shadow: 0 2px 14px rgba(0, 0, 0, .25)
+    }
+
+    [data-bs-theme="dark"] .cookie-table tbody tr:hover {
+        background: rgba(243, 156, 18, .06)
+    }
+
+    /* ── Responsive ── */
+    @media(max-width:991.98px) {
         .terms-index {
-            position: sticky;
-            top: 90px;
-            width: 240px;
-            flex-shrink: 0;
-            background: var(--bs-body-bg, #fff);
-            border-radius: 12px;
-            box-shadow: 0 2px 14px rgba(0, 0, 0, .08);
-            padding: 1.25rem 1rem;
-            max-height: calc(100vh - 110px);
-            overflow-y: auto;
-            scrollbar-width: thin
+            display: none !important
         }
 
-        .terms-index h3 {
-            font-size: 1rem;
-            font-weight: 700;
-            color: #f39c12;
-            margin-bottom: 1rem;
-            padding-bottom: .5rem;
-            border-bottom: 2px solid rgba(243, 156, 18, .2)
+        .terms-layout {
+            display: block
         }
 
-        .terms-index ul {
-            list-style: none;
-            padding: 0;
-            margin: 0
-        }
-
-        .terms-index li {
-            margin-bottom: .3rem
-        }
-
-        .terms-index a {
-            display: flex;
-            align-items: flex-start;
-            gap: .4rem;
-            font-size: .82rem;
-            color: var(--bs-body-color, #444);
-            text-decoration: none;
-            line-height: 1.4;
-            padding: .3rem .4rem;
-            border-radius: 6px;
-            transition: background .15s, color .15s
-        }
-
-        .terms-index a:hover,
-        .terms-index a.active {
-            background: rgba(243, 156, 18, .1);
-            color: #e67e22
-        }
-
-        .terms-index .num {
-            flex-shrink: 0;
-            font-weight: 700;
-            color: #f39c12;
-            min-width: 22px
-        }
-
-        .terms-index .idx-divider {
-            margin: .6rem 0;
-            border-color: rgba(243, 156, 18, .15)
-        }
-
-        .terms-content {
-            flex: 1;
-            min-width: 0
-        }
-
-        /* ── Sections ── */
         .term-section {
-            background: var(--bs-body-bg, #fff);
-            border-radius: 14px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, .07);
-            padding: 1.75rem 2rem;
-            margin-bottom: 1.5rem;
-            scroll-margin-top: 90px;
-            border-left: 4px solid transparent;
-            transition: border-color .3s
+            padding: 1.25rem
         }
+    }
 
-        .term-section:hover {
-            border-left-color: rgba(243, 156, 18, .4)
-        }
-
-        .term-section:target {
-            border-left-color: #f39c12
-        }
-
+    @media(max-width:575.98px) {
         .term-section h2 {
-            display: flex;
-            align-items: center;
-            gap: .75rem;
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #e67e22;
-            margin-bottom: 1rem;
-            padding-bottom: .6rem;
-            border-bottom: 1px solid rgba(243, 156, 18, .15)
+            font-size: 1.1rem
         }
 
-        .sec-num {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 34px;
-            height: 34px;
-            background: linear-gradient(135deg, #f39c12, #e67e22);
-            color: #fff;
-            font-weight: 700;
-            font-size: .85rem;
-            border-radius: 8px;
-            flex-shrink: 0
-        }
-
-        .term-section h3 {
-            font-size: 1rem;
-            font-weight: 700;
-            margin-top: 1.25rem;
-            margin-bottom: .5rem
-        }
-
-        .term-section p {
-            line-height: 1.75
-        }
-
-        .term-section ul {
-            padding-left: 1.2rem
-        }
-
-        .term-section ul li {
-            margin-bottom: .45rem;
-            line-height: 1.7
-        }
-
-        /* ── Callout boxes ── */
-        .term-box {
-            border-radius: 10px;
-            padding: 1rem 1.25rem;
-            margin: 1rem 0;
-            font-size: .93rem;
-            line-height: 1.65
-        }
-
-        .term-box strong {
-            display: block;
-            margin-bottom: .35rem
-        }
-
-        .term-box.danger {
-            background: rgba(220, 53, 69, .08);
-            border-left: 4px solid #dc3545
-        }
-
-        .term-box.warning {
-            background: rgba(243, 156, 18, .1);
-            border-left: 4px solid #f39c12
-        }
-
-        .term-box.success {
-            background: rgba(25, 135, 84, .08);
-            border-left: 4px solid #198754
-        }
-
-        .term-box.info {
-            background: rgba(13, 202, 240, .08);
-            border-left: 4px solid #0dcaf0
-        }
-
-        .term-box.pink {
-            background: rgba(255, 0, 157, .07);
-            border-left: 4px solid #ff009d
-        }
-
-        .term-box.neutral {
-            background: rgba(108, 117, 125, .07);
-            border-left: 4px solid #6c757d
-        }
-
-        /* ── Cookie table ── */
-        .cookie-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: .88rem;
-            margin: 1rem 0;
-            border-radius: 10px;
-            overflow: hidden
-        }
-
-        .cookie-table thead tr {
-            background: rgba(243, 156, 18, .12)
-        }
-
-        .cookie-table thead th {
-            padding: .7rem 1rem;
-            font-weight: 700;
-            text-align: left;
-            white-space: nowrap
-        }
-
-        .cookie-table tbody tr {
-            border-bottom: 1px solid rgba(0, 0, 0, .06);
-            transition: background .15s
-        }
-
-        .cookie-table tbody tr:last-child {
-            border-bottom: none
-        }
-
-        .cookie-table tbody tr:hover {
-            background: rgba(243, 156, 18, .04)
-        }
-
-        .cookie-table td {
-            padding: .65rem 1rem;
-            vertical-align: top
-        }
-
-        .cookie-table code {
-            background: rgba(243, 156, 18, .1);
-            padding: .15rem .4rem;
-            border-radius: 4px;
-            font-size: .82rem;
-            color: #e67e22
-        }
-
-        .cookie-badge {
-            display: inline-block;
-            padding: .2rem .6rem;
-            border-radius: 50px;
-            font-size: .75rem;
-            font-weight: 700;
-            white-space: nowrap
-        }
-
-        .badge-essential {
-            background: rgba(220, 53, 69, .12);
-            color: #dc3545
-        }
-
-        .badge-functional {
-            background: rgba(13, 110, 253, .1);
-            color: #0d6efd
-        }
-
-        .badge-security {
-            background: rgba(25, 135, 84, .1);
-            color: #198754
-        }
-
-        .badge-analytics {
-            background: rgba(243, 156, 18, .15);
-            color: #cc8400
-        }
-
-        .badge-none {
-            background: rgba(108, 117, 125, .1);
-            color: #6c757d
-        }
-
-        /* ── Browser guide ── */
         .browser-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: .75rem;
-            margin: 1rem 0
+            grid-template-columns: repeat(3, 1fr)
         }
-
-        .browser-card {
-            background: var(--bs-body-bg, #fff);
-            border: 1px solid rgba(0, 0, 0, .08);
-            border-radius: 10px;
-            padding: 1rem;
-            text-align: center;
-            transition: box-shadow .2s, transform .2s
-        }
-
-        .browser-card:hover {
-            box-shadow: 0 4px 16px rgba(243, 156, 18, .15);
-            transform: translateY(-2px)
-        }
-
-        .browser-card a {
-            text-decoration: none;
-            color: inherit;
-            display: block
-        }
-
-        .browser-card i {
-            font-size: 2rem;
-            margin-bottom: .5rem;
-            display: block
-        }
-
-        .browser-card span {
-            font-size: .82rem;
-            font-weight: 600
-        }
-
-        /* ── Consent banner preview ── */
-        .consent-preview {
-            background: rgba(243, 156, 18, .06);
-            border: 2px dashed rgba(243, 156, 18, .3);
-            border-radius: 12px;
-            padding: 1.25rem;
-            margin: 1rem 0
-        }
-
-        .consent-preview-bar {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 1rem;
-            justify-content: space-between;
-            font-size: .88rem
-        }
-
-        .consent-preview-bar .btns {
-            display: flex;
-            gap: .5rem;
-            flex-wrap: wrap
-        }
-
-        /* ── Action buttons ── */
-        .action-buttons {
-            display: flex;
-            justify-content: center;
-            gap: .75rem;
-            flex-wrap: wrap;
-            margin-bottom: 2rem
-        }
-
-        .action-buttons .btn {
-            border-radius: 50px;
-            font-size: .88rem;
-            padding: .5rem 1.4rem
-        }
-
-        /* ── Hero badges ── */
-        .terms-badges a {
-            font-size: .8rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: transform .2s, opacity .2s
-        }
-
-        .terms-badges a:hover {
-            transform: scale(1.06);
-            opacity: .85
-        }
-
-        /* ── Policy cards ── */
-        .policy-cards .card {
-            border-radius: 12px;
-            transition: transform .2s, box-shadow .2s;
-            text-decoration: none
-        }
-
-        .policy-cards .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(243, 156, 18, .15) !important
-        }
-
-        /* ── Dark mode ── */
-        [data-bs-theme="dark"] .term-section,
-        [data-bs-theme="dark"] .terms-index,
-        [data-bs-theme="dark"] .browser-card {
-            background: var(--bs-body-bg);
-            box-shadow: 0 2px 14px rgba(0, 0, 0, .25)
-        }
-
-        [data-bs-theme="dark"] .cookie-table tbody tr:hover {
-            background: rgba(243, 156, 18, .06)
-        }
-
-        /* ── Responsive ── */
-        @media(max-width:991.98px) {
-            .terms-index {
-                display: none !important
-            }
-
-            .terms-layout {
-                display: block
-            }
-
-            .term-section {
-                padding: 1.25rem
-            }
-        }
-
-        @media(max-width:575.98px) {
-            .term-section h2 {
-                font-size: 1.1rem
-            }
-
-            .browser-grid {
-                grid-template-columns: repeat(3, 1fr)
-            }
-        }
+    }
     </style>
 </head>
 
@@ -527,18 +527,18 @@ $csrf_page = getSiteCsrf();
                                         $nPrc = number_format($p['price_plan'], 0, ',', '.');
                                         $nPer = $p['type_plan'] === 'subscription' ? '/ano' : '';
                                     ?>
-                                        <a class="dropdown-item mb-3 text-body" href="../../plan/<?php echo $nSlug; ?>">
-                                            <div class="d-flex align-items-center">
-                                                <i class="fa-solid <?php echo $nIcon; ?> text-wasomupfy fs-3"
-                                                    style="width:35px"></i>
-                                                <div class="ms-3 lh-1">
-                                                    <h5 class="mb-1"><?php echo htmlspecialchars($p['name_plan']); ?></h5>
-                                                    <p class="mb-0 fs-6">Plano
-                                                        <?php echo htmlspecialchars($p['name_plan']); ?> —
-                                                        <?php echo $nPrc; ?> Kz<?php echo $nPer; ?></p>
-                                                </div>
+                                    <a class="dropdown-item mb-3 text-body" href="../../plan/<?php echo $nSlug; ?>">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fa-solid <?php echo $nIcon; ?> text-wasomupfy fs-3"
+                                                style="width:35px"></i>
+                                            <div class="ms-3 lh-1">
+                                                <h5 class="mb-1"><?php echo htmlspecialchars($p['name_plan']); ?></h5>
+                                                <p class="mb-0 fs-6">Plano
+                                                    <?php echo htmlspecialchars($p['name_plan']); ?> —
+                                                    <?php echo $nPrc; ?> Kz<?php echo $nPer; ?></p>
                                             </div>
-                                        </a>
+                                        </div>
+                                    </a>
                                     <?php endforeach; ?>
                                     <a class="dropdown-item mb-3 text-body" href="../../plan/all-plans">
                                         <div class="d-flex align-items-center">
@@ -626,10 +626,10 @@ $csrf_page = getSiteCsrf();
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item" href="../../contact">Caixa de mensagem</a></li>
                                     <?php if (cfg('support_email')): ?><li><a class="dropdown-item"
-                                                href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"><?php echo htmlspecialchars(cfg('support_email')); ?></a>
-                                        </li><?php endif; ?>
+                                            href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"><?php echo htmlspecialchars(cfg('support_email')); ?></a>
+                                    </li><?php endif; ?>
                                     <?php if ($whatsNum): ?><li><a class="dropdown-item"
-                                                href="https://wa.me/<?php echo $whatsNum; ?>">WhatsApp</a></li>
+                                            href="https://wa.me/<?php echo $whatsNum; ?>">WhatsApp</a></li>
                                     <?php endif; ?>
                                 </ul>
                             </li>
@@ -638,7 +638,7 @@ $csrf_page = getSiteCsrf();
                             <a href="<?php echo APP_URL  ?>/login" class="btn btn-secondary mx-2">Entrar <i
                                     data-feather="log-in"></i></a>
                             <?php if ($canRegister): ?><a href="<?php echo APP_URL  ?>/register"
-                                    class="btn btn-wasomupfy">Inscreva-se</a><?php endif; ?>
+                                class="btn btn-wasomupfy">Inscreva-se</a><?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -698,8 +698,8 @@ $csrf_page = getSiteCsrf();
             <div class="container" data-cue="fadeIn">
 
                 <div class="action-buttons">
-                    <a href="cookies.pdf" class="btn btn-outline-warning" download><i
-                            class="fa-solid fa-file-pdf me-2"></i>Baixar PDF</a>
+                    <a href="../../assets/docs/Politica-de-Cookies-WasomUpfy140226.pdf"
+                        class="btn btn-outline-warning" download><i class="fa-solid fa-file-pdf me-2"></i>Baixar PDF</a>
                     <button class="btn btn-outline-secondary" onclick="window.print()"><i
                             class="fa-solid fa-print me-2"></i>Imprimir</button>
                     <a href="privacy" class="btn btn-outline-secondary"><i
@@ -1240,9 +1240,9 @@ $csrf_page = getSiteCsrf();
                                         class="fw-bold" style="color:#e67e22">Enviar pedido de suporte</a> — resposta em
                                     até 48 horas úteis;</li>
                                 <?php if (cfg('info_email')): ?><li><strong>E-mail:</strong> <a
-                                            href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
-                                            style="color:#e67e22"><?php echo htmlspecialchars(cfg('info_email')); ?></a>;
-                                    </li><?php endif; ?>
+                                        href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
+                                        style="color:#e67e22"><?php echo htmlspecialchars(cfg('info_email')); ?></a>;
+                                </li><?php endif; ?>
                                 <li><strong>Horário de atendimento:</strong> Segunda a Sexta, das 08h às 17h (WAT).</li>
                             </ul>
 
@@ -1325,29 +1325,29 @@ $csrf_page = getSiteCsrf();
                             digital, marketing e gestão de carreira num só lugar.</p>
                         <div class="d-flex gap-3" role="list" aria-label="Redes sociais">
                             <?php if (cfg('instagram_url')): ?><a
-                                    href="<?php echo htmlspecialchars(cfg('instagram_url')); ?>" target="_blank"
-                                    rel="external noopener noreferrer" aria-label="Instagram"
-                                    class="btn btn-wasomupfy btn-social rounded-circle p-2"><i
-                                        class="fa-brands fa-instagram"></i></a><?php endif; ?>
+                                href="<?php echo htmlspecialchars(cfg('instagram_url')); ?>" target="_blank"
+                                rel="external noopener noreferrer" aria-label="Instagram"
+                                class="btn btn-wasomupfy btn-social rounded-circle p-2"><i
+                                    class="fa-brands fa-instagram"></i></a><?php endif; ?>
                             <?php if (cfg('facebook_url')): ?><a
-                                    href="<?php echo htmlspecialchars(cfg('facebook_url')); ?>" target="_blank"
-                                    rel="external noopener noreferrer" aria-label="Facebook"
-                                    class="btn btn-wasomupfy btn-social rounded-circle p-2"><i
-                                        class="fa-brands fa-facebook-f"></i></a><?php endif; ?>
+                                href="<?php echo htmlspecialchars(cfg('facebook_url')); ?>" target="_blank"
+                                rel="external noopener noreferrer" aria-label="Facebook"
+                                class="btn btn-wasomupfy btn-social rounded-circle p-2"><i
+                                    class="fa-brands fa-facebook-f"></i></a><?php endif; ?>
                             <?php if (cfg('youtube_url')): ?><a
-                                    href="<?php echo htmlspecialchars(cfg('youtube_url')); ?>" target="_blank"
-                                    rel="external noopener noreferrer" aria-label="YouTube"
-                                    class="btn btn-wasomupfy btn-social rounded-circle p-2"><i
-                                        class="fa-brands fa-youtube"></i></a><?php endif; ?>
+                                href="<?php echo htmlspecialchars(cfg('youtube_url')); ?>" target="_blank"
+                                rel="external noopener noreferrer" aria-label="YouTube"
+                                class="btn btn-wasomupfy btn-social rounded-circle p-2"><i
+                                    class="fa-brands fa-youtube"></i></a><?php endif; ?>
                             <?php if (cfg('linkedin_url')): ?><a
-                                    href="<?php echo htmlspecialchars(cfg('linkedin_url')); ?>" target="_blank"
-                                    rel="external noopener noreferrer" aria-label="LinkedIn"
-                                    class="btn btn-wasomupfy btn-social rounded-circle p-2"><i
-                                        class="fa-brands fa-linkedin-in"></i></a><?php endif; ?>
+                                href="<?php echo htmlspecialchars(cfg('linkedin_url')); ?>" target="_blank"
+                                rel="external noopener noreferrer" aria-label="LinkedIn"
+                                class="btn btn-wasomupfy btn-social rounded-circle p-2"><i
+                                    class="fa-brands fa-linkedin-in"></i></a><?php endif; ?>
                             <?php if ($whatsNum): ?><a href="https://wa.me/<?php echo $whatsNum; ?>" target="_blank"
-                                    rel="external noopener noreferrer" aria-label="WhatsApp"
-                                    class="btn btn-wasomupfy btn-social rounded-circle p-2"><i
-                                        class="fa-brands fa-whatsapp"></i></a><?php endif; ?>
+                                rel="external noopener noreferrer" aria-label="WhatsApp"
+                                class="btn btn-wasomupfy btn-social rounded-circle p-2"><i
+                                    class="fa-brands fa-whatsapp"></i></a><?php endif; ?>
                         </div>
                     </div>
                     <div class="col-lg-3 col-6">
@@ -1374,7 +1374,7 @@ $csrf_page = getSiteCsrf();
                             <li class="mb-2"><a href="../../contact"
                                     class="text-reset text-decoration-none hover-white">Contacta-nos</a></li>
                             <?php if ($whatsNum): ?><li class="mb-2"><a href="https://wa.me/<?php echo $whatsNum; ?>"
-                                        class="text-reset text-decoration-none hover-white">WhatsApp</a></li><?php endif; ?>
+                                    class="text-reset text-decoration-none hover-white">WhatsApp</a></li><?php endif; ?>
                         </ul>
                     </div>
                     <div class="col-lg-3 col-12">
@@ -1383,13 +1383,13 @@ $csrf_page = getSiteCsrf();
                             <li class="mb-3"><span><?php echo htmlspecialchars(cfg('company_country', 'Angola')); ?> —
                                     <?php echo htmlspecialchars(cfg('company_city', 'Luanda')); ?></span></li>
                             <?php if (cfg('info_email')): ?><li class="mb-3"><a
-                                        href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
-                                        class="text-reset text-decoration-none"><?php echo htmlspecialchars(cfg('info_email')); ?></a>
-                                </li><?php endif; ?>
+                                    href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
+                                    class="text-reset text-decoration-none"><?php echo htmlspecialchars(cfg('info_email')); ?></a>
+                            </li><?php endif; ?>
                             <?php if (cfg('support_email')): ?><li class="mb-3"><a
-                                        href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
-                                        class="text-reset text-decoration-none"><?php echo htmlspecialchars(cfg('support_email')); ?></a>
-                                </li><?php endif; ?>
+                                    href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
+                                    class="text-reset text-decoration-none"><?php echo htmlspecialchars(cfg('support_email')); ?></a>
+                            </li><?php endif; ?>
                             <li><span>Seg — Sex: 08h às 17h</span></li>
                         </ul>
                     </div>
@@ -1497,129 +1497,129 @@ $csrf_page = getSiteCsrf();
     <script src="https://cdn.jsdelivr.net/npm/jarallax@2.2.0/dist/jarallax.min.js"></script>
     <script src="<?php echo APP_URL  ?>/js/cookies.js"></script>
     <script>
-        feather.replace({
-            width: "1em",
-            height: "1em"
+    feather.replace({
+        width: "1em",
+        height: "1em"
+    });
+    </script>
+    <script>
+    !(function(e, t, a, n, g) {
+        (e[n] = e[n] || []), e[n].push({
+            "gtm.start": new Date().getTime(),
+            event: "gtm.js"
         });
+        var m = t.getElementsByTagName(a)[0],
+            r = t.createElement(a);
+        (r.async = !0), (r.src = "https://www.googletagmanager.com/gtm.js?id=GTM-MF4DZVH"), m.parentNode
+            .insertBefore(r, m);
+    })(window, document, "script", "dataLayer");
     </script>
     <script>
-        !(function(e, t, a, n, g) {
-            (e[n] = e[n] || []), e[n].push({
-                "gtm.start": new Date().getTime(),
-                event: "gtm.js"
-            });
-            var m = t.getElementsByTagName(a)[0],
-                r = t.createElement(a);
-            (r.async = !0), (r.src = "https://www.googletagmanager.com/gtm.js?id=GTM-MF4DZVH"), m.parentNode
-                .insertBefore(r, m);
-        })(window, document, "script", "dataLayer");
-    </script>
-    <script>
-        (function() {
-            /* ── Progress bar ── */
-            var bar = document.getElementById('reading-progress');
-            window.addEventListener('scroll', function() {
-                var st = document.documentElement.scrollTop || document.body.scrollTop,
-                    sh = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-                if (bar) bar.style.width = (sh > 0 ? (st / sh) * 100 : 0) + '%';
-            }, {
-                passive: true
-            });
+    (function() {
+        /* ── Progress bar ── */
+        var bar = document.getElementById('reading-progress');
+        window.addEventListener('scroll', function() {
+            var st = document.documentElement.scrollTop || document.body.scrollTop,
+                sh = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            if (bar) bar.style.width = (sh > 0 ? (st / sh) * 100 : 0) + '%';
+        }, {
+            passive: true
+        });
 
-            /* ── Scroll spy ── */
-            var sections = document.querySelectorAll('.term-section[id]'),
-                links = document.querySelectorAll('.terms-index a[href^="#"]');
+        /* ── Scroll spy ── */
+        var sections = document.querySelectorAll('.term-section[id]'),
+            links = document.querySelectorAll('.terms-index a[href^="#"]');
 
-            function spy() {
-                var sy = window.pageYOffset + 120,
-                    cur = '';
-                sections.forEach(function(s) {
-                    if (s.offsetTop <= sy) cur = s.id;
-                });
-                links.forEach(function(a) {
-                    a.classList.toggle('active', a.getAttribute('href') === '#' + cur);
-                });
-            }
-            window.addEventListener('scroll', spy, {
-                passive: true
+        function spy() {
+            var sy = window.pageYOffset + 120,
+                cur = '';
+            sections.forEach(function(s) {
+                if (s.offsetTop <= sy) cur = s.id;
             });
-            spy();
-
-            /* ── Smooth scroll ── */
-            document.querySelectorAll('.terms-index a[href^="#"], .smooth-scroll').forEach(function(a) {
-                a.addEventListener('click', function(e) {
-                    var t = document.querySelector(this.getAttribute('href'));
-                    if (t) {
-                        e.preventDefault();
-                        window.scrollTo({
-                            top: t.offsetTop - 90,
-                            behavior: 'smooth'
-                        });
-                    }
-                });
+            links.forEach(function(a) {
+                a.classList.toggle('active', a.getAttribute('href') === '#' + cur);
             });
+        }
+        window.addEventListener('scroll', spy, {
+            passive: true
+        });
+        spy();
 
-            /* ── Feedback modal ── */
-            function syncCsrf(token) {
-                if (!token) return;
-                document.querySelectorAll('[name="csrf_token"]').forEach(function(el) {
-                    el.value = token;
-                });
-            }
-            var fm = document.getElementById('formFeedback');
-            if (fm) {
-                fm.addEventListener('submit', function(e) {
+        /* ── Smooth scroll ── */
+        document.querySelectorAll('.terms-index a[href^="#"], .smooth-scroll').forEach(function(a) {
+            a.addEventListener('click', function(e) {
+                var t = document.querySelector(this.getAttribute('href'));
+                if (t) {
                     e.preventDefault();
-                    if (!fm.checkValidity()) {
-                        fm.classList.add('was-validated');
-                        return;
-                    }
-                    var btn = document.getElementById('btn-feedback-modal'),
-                        msg = document.getElementById('feedback-modal-msg'),
-                        base = document.body.dataset.basePath || '../..';
-                    btn.disabled = true;
-                    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>A enviar…';
-                    fetch(base + '/ajax/feedback.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                csrf: fm.querySelector('[name="csrf_token"]').value,
-                                name: fm.querySelector('[name="name_fb"]').value.trim(),
-                                subject: fm.querySelector('[name="subject_fb"]').value.trim(),
-                                message: fm.querySelector('[name="message_fb"]').value.trim(),
-                                page: window.location.pathname
-                            })
+                    window.scrollTo({
+                        top: t.offsetTop - 90,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        /* ── Feedback modal ── */
+        function syncCsrf(token) {
+            if (!token) return;
+            document.querySelectorAll('[name="csrf_token"]').forEach(function(el) {
+                el.value = token;
+            });
+        }
+        var fm = document.getElementById('formFeedback');
+        if (fm) {
+            fm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (!fm.checkValidity()) {
+                    fm.classList.add('was-validated');
+                    return;
+                }
+                var btn = document.getElementById('btn-feedback-modal'),
+                    msg = document.getElementById('feedback-modal-msg'),
+                    base = document.body.dataset.basePath || '../..';
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>A enviar…';
+                fetch(base + '/ajax/feedback.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            csrf: fm.querySelector('[name="csrf_token"]').value,
+                            name: fm.querySelector('[name="name_fb"]').value.trim(),
+                            subject: fm.querySelector('[name="subject_fb"]').value.trim(),
+                            message: fm.querySelector('[name="message_fb"]').value.trim(),
+                            page: window.location.pathname
                         })
-                        .then(function(r) {
-                            return r.json();
-                        }).then(function(d) {
-                            msg.className = 'alert ' + (d.success ? 'alert-success' : 'alert-danger');
-                            msg.textContent = d.message || (d.success ? 'Obrigado!' : 'Erro.');
-                            msg.classList.remove('d-none');
-                            if (d.new_csrf) syncCsrf(d.new_csrf);
-                            if (d.success) {
-                                fm.reset();
-                                setTimeout(function() {
-                                    var m = bootstrap.Modal.getInstance(document.getElementById(
-                                        'modalFeedback'));
-                                    if (m) m.hide();
-                                }, 2500);
-                            }
-                        })
-                        .catch(function() {
-                            msg.className = 'alert alert-danger';
-                            msg.textContent = 'Erro de ligação. Tenta novamente.';
-                            msg.classList.remove('d-none');
-                        })
-                        .finally(function() {
-                            btn.disabled = false;
-                            btn.innerHTML = 'Enviar Feedback <i class="fa-solid fa-paper-plane ms-2"></i>';
-                        });
-                });
-            }
-        })();
+                    })
+                    .then(function(r) {
+                        return r.json();
+                    }).then(function(d) {
+                        msg.className = 'alert ' + (d.success ? 'alert-success' : 'alert-danger');
+                        msg.textContent = d.message || (d.success ? 'Obrigado!' : 'Erro.');
+                        msg.classList.remove('d-none');
+                        if (d.new_csrf) syncCsrf(d.new_csrf);
+                        if (d.success) {
+                            fm.reset();
+                            setTimeout(function() {
+                                var m = bootstrap.Modal.getInstance(document.getElementById(
+                                    'modalFeedback'));
+                                if (m) m.hide();
+                            }, 2500);
+                        }
+                    })
+                    .catch(function() {
+                        msg.className = 'alert alert-danger';
+                        msg.textContent = 'Erro de ligação. Tenta novamente.';
+                        msg.classList.remove('d-none');
+                    })
+                    .finally(function() {
+                        btn.disabled = false;
+                        btn.innerHTML = 'Enviar Feedback <i class="fa-solid fa-paper-plane ms-2"></i>';
+                    });
+            });
+        }
+    })();
     </script>
 </body>
 

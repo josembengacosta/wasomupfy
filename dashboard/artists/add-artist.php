@@ -193,190 +193,190 @@ $photo_base = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/artists/';
     <?php require_once __DIR__ . '/../include/head.php'; ?>
     <title><?php echo $edit_artist ? 'Editar Artista' : 'Criar Artista'; ?> — <?php echo APP_NAME; ?></title>
     <style>
-        :root {
-            --wasom: #FF0089;
-            --wasom-dark: #cc006d;
-        }
+    :root {
+        --wasom: #FF0089;
+        --wasom-dark: #cc006d;
+    }
 
-        /* ── Photo upload ── */
-        .artist-photo-wrap {
-            position: relative;
-            width: 130px;
-            height: 130px;
-            margin: 0 auto 12px;
-        }
+    /* ── Photo upload ── */
+    .artist-photo-wrap {
+        position: relative;
+        width: 130px;
+        height: 130px;
+        margin: 0 auto 12px;
+    }
 
-        .artist-photo-circle {
-            width: 130px;
-            height: 130px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid var(--wasom);
-            box-shadow: 0 4px 16px rgba(255, 0, 137, .25);
-            display: block;
-            background: #f1f3f5;
-            transition: filter .2s;
-        }
+    .artist-photo-circle {
+        width: 130px;
+        height: 130px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--wasom);
+        box-shadow: 0 4px 16px rgba(255, 0, 137, .25);
+        display: block;
+        background: #f1f3f5;
+        transition: filter .2s;
+    }
 
-        .artist-photo-circle.placeholder {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            color: #ccc;
-        }
+    .artist-photo-circle.placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: #ccc;
+    }
 
-        .artist-photo-overlay {
-            position: absolute;
-            bottom: 4px;
-            right: 4px;
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            background: var(--wasom);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, .3);
-            transition: transform .2s, background .2s;
-            border: 2px solid #fff;
-        }
+    .artist-photo-overlay {
+        position: absolute;
+        bottom: 4px;
+        right: 4px;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--wasom);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, .3);
+        transition: transform .2s, background .2s;
+        border: 2px solid #fff;
+    }
 
-        .artist-photo-overlay:hover {
-            transform: scale(1.1);
-            background: var(--wasom-dark);
-        }
+    .artist-photo-overlay:hover {
+        transform: scale(1.1);
+        background: var(--wasom-dark);
+    }
 
-        /* ── Artist card in list ── */
-        .artist-card {
-            border-radius: 16px;
-            overflow: visible;
-            position: relative;
-            border: 1px solid rgba(0, 0, 0, .08);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, .06);
-            transition: transform .2s, box-shadow .2s;
-        }
+    /* ── Artist card in list ── */
+    .artist-card {
+        border-radius: 16px;
+        overflow: visible;
+        position: relative;
+        border: 1px solid rgba(0, 0, 0, .08);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, .06);
+        transition: transform .2s, box-shadow .2s;
+    }
 
-        .artist-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, .12);
-        }
+    .artist-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, .12);
+    }
 
-        .artist-card-cover {
-            height: 60px;
-            background: linear-gradient(135deg, #FF0089, #FF4D4D);
-            position: relative;
-            border-radius: 16px 16px 0 0;
-            overflow: hidden;
-        }
+    .artist-card-cover {
+        height: 60px;
+        background: linear-gradient(135deg, #FF0089, #FF4D4D);
+        position: relative;
+        border-radius: 16px 16px 0 0;
+        overflow: hidden;
+    }
 
-        .artist-card-avatar {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            border: 3px solid #fff;
-            object-fit: cover;
-            position: absolute;
-            bottom: -35px;
-            left: 50%;
-            transform: translateX(-50%);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, .2);
-            background: #eee;
-        }
+    .artist-card-avatar {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        border: 3px solid #fff;
+        object-fit: cover;
+        position: absolute;
+        bottom: -35px;
+        left: 50%;
+        transform: translateX(-50%);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, .2);
+        background: #eee;
+    }
 
-        .artist-card-body {
-            padding: 44px 16px 16px;
-            text-align: center;
-        }
+    .artist-card-body {
+        padding: 44px 16px 16px;
+        text-align: center;
+    }
 
-        .artist-card-name {
-            font-weight: 700;
-            font-size: .95rem;
-            margin-bottom: 2px;
-            color: #888;
-        }
+    .artist-card-name {
+        font-weight: 700;
+        font-size: .95rem;
+        margin-bottom: 2px;
+        color: #888;
+    }
 
-        .artist-card-real {
-            font-size: .78rem;
-            color: #888;
-            margin-bottom: 8px;
-        }
+    .artist-card-real {
+        font-size: .78rem;
+        color: #888;
+        margin-bottom: 8px;
+    }
 
-        .artist-card-genre {
-            font-size: .72rem;
-        }
+    .artist-card-genre {
+        font-size: .72rem;
+    }
 
-        .artist-card-actions {
-            display: flex;
-            gap: 6px;
-            justify-content: center;
-            margin-top: 12px;
-        }
+    .artist-card-actions {
+        display: flex;
+        gap: 6px;
+        justify-content: center;
+        margin-top: 12px;
+    }
 
-        .artist-status-dot {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            border: 2px solid #fff;
-        }
+    .artist-status-dot {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+    }
 
-        .dot-active {
-            background: #28a745;
-        }
+    .dot-active {
+        background: #28a745;
+    }
 
-        .dot-processing {
-            background: #ffc107;
-        }
+    .dot-processing {
+        background: #ffc107;
+    }
 
-        .dot-inactive {
-            background: #6c757d;
-        }
+    .dot-inactive {
+        background: #6c757d;
+    }
 
-        .dot-blocked {
-            background: #dc3545;
-        }
+    .dot-blocked {
+        background: #dc3545;
+    }
 
-        /* ── Social links ── */
-        .social-input-group .input-group-text {
-            width: 42px;
-            justify-content: center;
-        }
+    /* ── Social links ── */
+    .social-input-group .input-group-text {
+        width: 42px;
+        justify-content: center;
+    }
 
-        /* ── Plan limit banner ── */
-        .plan-limit-bar {
-            background: rgba(255, 0, 137, .08);
-            border: 1px solid rgba(255, 0, 137, .2);
-            border-radius: 12px;
-            padding: 12px 16px;
-        }
+    /* ── Plan limit banner ── */
+    .plan-limit-bar {
+        background: rgba(255, 0, 137, .08);
+        border: 1px solid rgba(255, 0, 137, .2);
+        border-radius: 12px;
+        padding: 12px 16px;
+    }
 
-        /* ── Section divider ── */
-        .section-divider {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin: 24px 0 16px;
-        }
+    /* ── Section divider ── */
+    .section-divider {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 24px 0 16px;
+    }
 
-        .section-divider span {
-            font-weight: 700;
-            font-size: .85rem;
-            color: var(--wasom);
-            white-space: nowrap;
-        }
+    .section-divider span {
+        font-weight: 700;
+        font-size: .85rem;
+        color: var(--wasom);
+        white-space: nowrap;
+    }
 
-        .section-divider::before,
-        .section-divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: rgba(0, 0, 0, .08);
-        }
+    .section-divider::before,
+    .section-divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: rgba(0, 0, 0, .08);
+    }
     </style>
 </head>
 
@@ -435,7 +435,7 @@ $photo_base = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/artists/';
         <?php /* ── NÍVEL 1: Crítico — bloqueia distribuição ── */ ?>
 
         <?php if (!$email_verified): ?>
-            <?php wuAlert(
+        <?php wuAlert(
                 'danger',
                 'bi-envelope-exclamation-fill',
                 '<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta e receber notificações de pagamentos.',
@@ -446,7 +446,7 @@ $photo_base = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/artists/';
         <?php endif; ?>
 
         <?php if ($plan && !$plan_paid): ?>
-            <?php wuAlert(
+        <?php wuAlert(
                 'warning',
                 'bi-clock-history',
                 '<strong>Pagamento pendente — ' . htmlspecialchars($plan['name_plan']) . '.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados até confirmação.',
@@ -455,7 +455,7 @@ $photo_base = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/artists/';
                 'banner-plan-pending'
             ); ?>
         <?php elseif (!$plan): ?>
-            <?php wuAlert(
+        <?php wuAlert(
                 'danger',
                 'bi-credit-card-fill',
                 '<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir a tua música para +150 plataformas.',
@@ -468,7 +468,7 @@ $photo_base = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/artists/';
         <?php /* ── NÍVEL 2: Importante — perfil incompleto ── */ ?>
 
         <?php if ($plan_paid && !$has_artist): ?>
-            <?php wuAlert(
+        <?php wuAlert(
                 'info',
                 'bi-person-plus-fill',
                 '<strong>Cria o teu perfil artístico.</strong> Tens plano activo mas ainda não criaste um perfil artístico. Precisas de um para poder lançar música.',
@@ -481,7 +481,7 @@ $photo_base = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/artists/';
         <?php /* ── NÍVEL 3: Informativo — conta bancária ── */ ?>
 
         <?php if ($plan_paid && $has_artist && !$bank_account): ?>
-            <?php wuAlert(
+        <?php wuAlert(
                 'info',
                 'bi-bank',
                 '<strong>Conta bancária não registada.</strong> Para poder sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.',
@@ -502,7 +502,7 @@ $photo_base = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/artists/';
         }
         ?>
         <?php if ($rejected_account): ?>
-            <?php
+        <?php
             $rej_msg = '<strong>Conta ' . htmlspecialchars($rejected_account['type_account']) . ' rejeitada.</strong>';
             if ($rejected_account['reject_reason']) {
                 $rej_msg .= ' Motivo: <em>' . htmlspecialchars($rejected_account['reject_reason']) . '</em>.';
@@ -529,9 +529,9 @@ $photo_base = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/artists/';
                         </h1>
                         <p class="lead">
                             <?php if ($edit_artist): ?>
-                                Actualiza as informações do perfil artístico.
+                            Actualiza as informações do perfil artístico.
                             <?php else: ?>
-                                Cria e gere os perfis artísticos da tua conta.
+                            Cria e gere os perfis artísticos da tua conta.
                             <?php endif; ?>
                         </p>
                     </div>
@@ -541,19 +541,19 @@ $photo_base = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/artists/';
                         <i class="bi bi-arrow-left me-1"></i> Lista de Artistas
                     </button>
                     <?php if (!$edit_artist && $can_add): ?>
-                        <button class="btn btn-sm" style="background:var(--wasom);color:#fff" data-bs-toggle="modal"
-                            data-bs-target="#createArtistModal">
-                            <i class="bi bi-plus me-1"></i>Novo Artista
-                        </button>
+                    <button class="btn btn-sm" style="background:var(--wasom);color:#fff" data-bs-toggle="modal"
+                        data-bs-target="#createArtistModal">
+                        <i class="bi bi-plus me-1"></i>Novo Artista
+                    </button>
                     <?php endif; ?>
                 </div>
             </div>
 
             <style>
-                .page-header::before {
-                    content: '\F4E6';
-                    /* bi-person-plus-fill */
-                }
+            .page-header::before {
+                content: '\F4E6';
+                /* bi-person-plus-fill */
+            }
             </style>
         </div>
 
@@ -576,243 +576,288 @@ $photo_base = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/artists/';
                 <span class="fw-bold small" style="color:var(--wasom)"><?php echo $artist_count; ?> /
                     <?php echo $max_artists; ?></span>
                 <?php if (!$can_add): ?>
-                    <span class="badge bg-warning text-dark"><i class="bi bi-lock-fill me-1"></i>Limite
-                        atingido</span>
+                <span class="badge bg-warning text-dark"><i class="bi bi-lock-fill me-1"></i>Limite
+                    atingido</span>
                 <?php endif; ?>
             </div>
         </div>
 
         <?php if ($success === 'created'): ?>
-            <div class="alert alert-success alert-dismissible d-flex gap-2 mb-4">
-                <i class="bi bi-check-circle-fill flex-shrink-0"></i>
-                <div><strong>Artista criado com sucesso!</strong> Um email de boas-vindas foi enviado.</div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+        <div class="alert alert-success alert-dismissible d-flex gap-2 mb-4">
+            <i class="bi bi-check-circle-fill flex-shrink-0"></i>
+            <div><strong>Artista criado com sucesso!</strong> Um email de boas-vindas foi enviado.</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
         <?php elseif ($success === 'updated'): ?>
-            <div class="alert alert-success alert-dismissible d-flex gap-2 mb-4">
-                <i class="bi bi-check-circle-fill flex-shrink-0"></i>
-                <div><strong>Artista actualizado com sucesso!</strong></div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+        <div class="alert alert-success alert-dismissible d-flex gap-2 mb-4">
+            <i class="bi bi-check-circle-fill flex-shrink-0"></i>
+            <div><strong>Artista actualizado com sucesso!</strong></div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
         <?php elseif ($success === 'deleted'): ?>
-            <div class="alert alert-info alert-dismissible d-flex gap-2 mb-4">
-                <i class="bi bi-trash-fill flex-shrink-0"></i>
-                <div><strong>Artista eliminado.</strong></div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+        <div class="alert alert-info alert-dismissible d-flex gap-2 mb-4">
+            <i class="bi bi-trash-fill flex-shrink-0"></i>
+            <div><strong>Artista eliminado.</strong></div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
         <?php endif; ?>
         <?php if ($error): ?>
-            <div class="alert alert-danger alert-dismissible d-flex gap-2 mb-4">
-                <i class="bi bi-exclamation-circle-fill flex-shrink-0"></i>
-                <div><?php echo htmlspecialchars($error); ?></div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+        <div class="alert alert-danger alert-dismissible d-flex gap-2 mb-4">
+            <i class="bi bi-exclamation-circle-fill flex-shrink-0"></i>
+            <div><?php echo htmlspecialchars($error); ?></div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
         <?php endif; ?>
 
         <!-- ══ EDIT FORM (only when ?edit=) ══ -->
         <?php if ($edit_artist): ?>
-            <div class="card p-4 mb-4">
-                <h5 class="fw-bold mb-4"><i class="bi bi-pencil-square me-2" style="color:var(--wasom)"></i>Editar:
-                    <?php echo htmlspecialchars($edit_artist['stage_name']); ?></h5>
-                <form id="edit-form" enctype="multipart/form-data">
-                    <input type="hidden" name="action" value="update_artist" />
-                    <input type="hidden" name="csrf_token" value="<?php echo $csrf; ?>" />
-                    <input type="hidden" name="id_artist" value="<?php echo $edit_artist['id_artist']; ?>" />
+        <div class="card p-4 mb-4">
+            <h5 class="fw-bold mb-4"><i class="bi bi-pencil-square me-2" style="color:var(--wasom)"></i>Editar:
+                <?php echo htmlspecialchars($edit_artist['stage_name']); ?></h5>
+            <form id="edit-form" enctype="multipart/form-data">
+                <input type="hidden" name="action" value="update_artist" />
+                <input type="hidden" name="csrf_token" value="<?php echo $csrf; ?>" />
+                <input type="hidden" name="id_artist" value="<?php echo $edit_artist['id_artist']; ?>" />
 
-                    <!-- Photo -->
-                    <div class="text-center mb-4">
-                        <div class="artist-photo-wrap d-inline-block" style="width:130px;height:130px;position:relative">
-                            <?php $ep = $edit_artist['photo_artist'] ? $photo_base . $edit_artist['photo_artist'] : null; ?>
-                            <?php if ($ep): ?>
-                                <img id="edit-photo-preview" src="<?php echo htmlspecialchars($ep); ?>"
-                                    class="artist-photo-circle" alt="Foto" />
-                            <?php else: ?>
-                                <div id="edit-photo-placeholder" class="artist-photo-circle placeholder"><i
-                                        class="bi bi-person"></i></div>
-                                <img id="edit-photo-preview" src="" class="artist-photo-circle d-none" alt="Foto" />
-                            <?php endif; ?>
-                            <div class="artist-photo-overlay" onclick="document.getElementById('edit-photo-input').click()">
-                                <i class="bi bi-camera-fill" style="font-size:.9rem"></i>
-                            </div>
-                        </div>
-                        <input type="file" id="edit-photo-input" name="photo" accept="image/jpeg,image/png,image/webp"
-                            class="d-none" />
-                        <div class="text-muted" style="font-size:.72rem;margin-top:6px">JPG/PNG/WebP · Máx. 5MB
+                <!-- Photo -->
+                <div class="text-center mb-4">
+                    <div class="artist-photo-wrap d-inline-block" style="width:130px;height:130px;position:relative">
+                        <?php $ep = $edit_artist['photo_artist'] ? $photo_base . $edit_artist['photo_artist'] : null; ?>
+                        <?php if ($ep): ?>
+                        <img id="edit-photo-preview" src="<?php echo htmlspecialchars($ep); ?>"
+                            class="artist-photo-circle" alt="Foto" />
+                        <?php else: ?>
+                        <div id="edit-photo-placeholder" class="artist-photo-circle placeholder"><i
+                                class="bi bi-person"></i></div>
+                        <img id="edit-photo-preview" src="" class="artist-photo-circle d-none" alt="Foto" />
+                        <?php endif; ?>
+                        <div class="artist-photo-overlay" onclick="document.getElementById('edit-photo-input').click()">
+                            <i class="bi bi-camera-fill" style="font-size:.9rem"></i>
                         </div>
                     </div>
+                    <input type="file" id="edit-photo-input" name="photo" accept="image/jpeg,image/png,image/webp"
+                        class="d-none" />
+                    <div class="text-muted" style="font-size:.72rem;margin-top:6px">JPG/PNG/WebP · Máx. 5MB
+                    </div>
+                </div>
 
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold small">Nome Artístico <span
-                                    class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="stage_name" maxlength="100"
-                                value="<?php echo htmlspecialchars($edit_artist['stage_name']); ?>" required />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold small">Nome Real</label>
-                            <input type="text" class="form-control" name="real_name" maxlength="150"
-                                value="<?php echo htmlspecialchars($edit_artist['real_name'] ?? ''); ?>" />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold small">Email do Artista <span
-                                    class="text-danger">*</span></label>
-                            <input type="email" class="form-control" name="artist_email" maxlength="255"
-                                value="<?php echo htmlspecialchars($edit_artist['artist_email'] ?? ''); ?>"
-                                placeholder="email@artista.com" required />
-                            <div class="form-text">Usado para notificações enviadas ao artista.</div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold small">Género Musical</label>
-                            <select class="form-select" name="genre_main">
-                                <option value="">Selecionar...</option>
-                                <?php
-                                foreach ($genres as $g):
-                                    $val = strtolower(str_replace([' ', '/', '-'], ['_', '', ''], $g));
-                                    $sel = ($edit_artist['genre_main'] === $val) ? 'selected' : '';
-                                ?>
-                                    <option value="<?php echo $val; ?>" <?php echo $sel; ?>><?php echo $g; ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold small">País</label>
-                            <input type="text" class="form-control" name="country" maxlength="60"
-                                value="<?php echo htmlspecialchars($edit_artist['country'] ?? ''); ?>"
-                                placeholder="ex: Angola" />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold small">Cidade</label>
-                            <input type="text" class="form-control" name="city" maxlength="60"
-                                value="<?php echo htmlspecialchars($edit_artist['city'] ?? ''); ?>"
-                                placeholder="ex: Luanda" />
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label fw-semibold small">Bio</label>
-                            <textarea class="form-control" name="bio" rows="3" maxlength="1000"
-                                placeholder="Breve descrição do artista..."><?php echo htmlspecialchars($edit_artist['bio'] ?? ''); ?></textarea>
-                        </div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold small">Nome Artístico <span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="stage_name" maxlength="100"
+                            value="<?php echo htmlspecialchars($edit_artist['stage_name']); ?>" required />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold small">Nome Real</label>
+                        <input type="text" class="form-control" name="real_name" maxlength="150"
+                            value="<?php echo htmlspecialchars($edit_artist['real_name'] ?? ''); ?>" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold small">Email do Artista <span
+                                class="text-danger">*</span></label>
+                        <input type="email" class="form-control" name="artist_email" maxlength="255"
+                            value="<?php echo htmlspecialchars($edit_artist['artist_email'] ?? ''); ?>"
+                            placeholder="email@artista.com" required />
+                        <div class="form-text">Usado para notificações enviadas ao artista.</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold small">Género Musical</label>
+                        <select class="form-select" name="genre_main">
+                            <?php foreach ($genres as $g): $val = strtolower(str_replace([' ', '/', '-'], ['_', '', ''], $g));
+              $sel = ($edit_artist['genre_main'] === $val) ? 'selected' : ''; ?>
+                            <option value="<?php echo $val; ?>" <?php echo $sel; ?>><?php echo $g; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold small">Género Secundário</label>
+                        <select class="form-select" name="genre_secondary">
+                            <?php foreach ($genres as $g): $val = strtolower(str_replace([' ', '/', '-'], ['_', '', ''], $g));
+              $sel = ($edit_artist['genre_secondary'] === $val) ? 'selected' : ''; ?>
+                            <option value="<?php echo $val; ?>" <?php echo $sel; ?>><?php echo $g; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold small">Função Habitual</label>
+                        <select class="form-select" name="default_role">
+                            <option value="">Seleciona a função principal</option>
+                            <?php
+        $roles = [
+            'main_artist' => 'Artista Principal',
+            'featured' => 'Artista Convidado (Feat.)',
+            'composer' => 'Compositor',
+            'producer' => 'Produtor',
+            'lyricist' => 'Letrista',
+            'arranger' => 'Arranjador',
+            'executive_producer' => 'Produtor Executivo',
+            'co_producer' => 'Co-Produtor',
+            'beatmaker' => 'Beatmaker',
+            'recording_engineer' => 'Engenheiro de Gravação',
+            'mixing_engineer' => 'Engenheiro de Mistura',
+            'mastering_engineer' => 'Engenheiro de Masterização',
+            'sound_designer' => 'Designer de Som',
+            'publisher' => 'Editora',
+            'copyright_holder' => 'Detentor dos Direitos',
+            'label' => 'Selo/Gravadora',
+            'cover_designer' => 'Designer da Capa',
+            'photographer' => 'Fotógrafo',
+            'guitarist' => 'Guitarrista',
+            'bassist' => 'Baixista',
+            'drummer' => 'Baterista',
+            'keyboardist' => 'Tecladista',
+            'percussionist' => 'Percussionista',
+            'strings' => 'Cordas',
+            'brass' => 'Metais',
+            'other' => 'Outro',
+        ];
+        foreach ($roles as $val => $label):
+            $sel = ($edit_artist['default_role'] === $val) ? 'selected' : '';
+        ?>
+                            <option value="<?php echo $val; ?>" <?php echo $sel; ?>><?php echo $label; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold small">País</label>
+                        <input type="text" class="form-control" name="country" maxlength="60"
+                            value="<?php echo htmlspecialchars($edit_artist['country'] ?? ''); ?>"
+                            placeholder="ex: Angola" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold small">Cidade</label>
+                        <input type="text" class="form-control" name="city" maxlength="60"
+                            value="<?php echo htmlspecialchars($edit_artist['city'] ?? ''); ?>"
+                            placeholder="ex: Luanda" />
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-semibold small">Bio</label>
+                        <textarea class="form-control" name="bio" rows="3" maxlength="1000"
+                            placeholder="Breve descrição do artista..."><?php echo htmlspecialchars($edit_artist['bio'] ?? ''); ?></textarea>
+                    </div>
 
-                        <!-- Social links -->
-                        <div class="col-12">
-                            <div class="section-divider"><span><i class="bi bi-share me-1"></i>Redes Sociais &
-                                    Links</span></div>
-                        </div>
-                        <?php
+                    <!-- Social links -->
+                    <div class="col-12">
+                        <div class="section-divider"><span><i class="bi bi-share me-1"></i>Redes Sociais &
+                                Links</span></div>
+                    </div>
+                    <?php
                         foreach ($socials as $s):
                         ?>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold small"><?php echo $s['label']; ?></label>
-                                <div class="input-group social-input-group">
-                                    <span class="input-group-text"
-                                        style="background:<?php echo $s['color']; ?>;border-color:<?php echo $s['color']; ?>">
-                                        <i class="bi <?php echo $s['icon']; ?> text-white"></i>
-                                    </span>
-                                    <input type="url" class="form-control" name="<?php echo $s['name']; ?>"
-                                        value="<?php echo htmlspecialchars($edit_artist[$s['name']] ?? ''); ?>"
-                                        placeholder="<?php echo $s['ph']; ?>" />
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-
-                        <!-- Password confirm -->
-                        <div class="col-12">
-                            <div class="section-divider"><span><i class="bi bi-shield-lock me-1"></i>Confirmação de
-                                    Segurança</span></div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold small">A tua senha <span
-                                    class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" name="password_confirm" id="edit-password"
-                                    placeholder="Confirma com a tua senha actual" required />
-                                <button class="btn btn-outline-secondary" type="button"
-                                    onclick="togglePwd('edit-password',this)"><i class="bi bi-eye"></i></button>
-                            </div>
-                            <div class="form-text">Por segurança, confirma a tua senha para guardar alterações.
-                            </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold small"><?php echo $s['label']; ?></label>
+                        <div class="input-group social-input-group">
+                            <span class="input-group-text"
+                                style="background:<?php echo $s['color']; ?>;border-color:<?php echo $s['color']; ?>">
+                                <i class="bi <?php echo $s['icon']; ?> text-white"></i>
+                            </span>
+                            <input type="url" class="form-control" name="<?php echo $s['name']; ?>"
+                                value="<?php echo htmlspecialchars($edit_artist[$s['name']] ?? ''); ?>"
+                                placeholder="<?php echo $s['ph']; ?>" />
                         </div>
                     </div>
+                    <?php endforeach; ?>
 
-                    <div class="d-flex gap-2 mt-4">
-                        <button type="button" class="btn btn-sm px-4" style="background:var(--wasom);color:#fff"
-                            onclick="submitEdit()">
-                            <i class="bi bi-check-lg me-1"></i>Guardar Alterações
-                        </button>
-                        <a href="add-artist" class="btn btn-outline-secondary btn-sm px-4">Cancelar</a>
+                    <!-- Password confirm -->
+                    <div class="col-12">
+                        <div class="section-divider"><span><i class="bi bi-shield-lock me-1"></i>Confirmação de
+                                Segurança</span></div>
                     </div>
-                </form>
-            </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold small">A tua senha <span
+                                class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" name="password_confirm" id="edit-password"
+                                placeholder="Confirma com a tua senha actual" required />
+                            <button class="btn btn-outline-secondary" type="button"
+                                onclick="togglePwd('edit-password',this)"><i class="bi bi-eye"></i></button>
+                        </div>
+                        <div class="form-text">Por segurança, confirma a tua senha para guardar alterações.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <button type="button" class="btn btn-sm px-4" style="background:var(--wasom);color:#fff"
+                        onclick="submitEdit()">
+                        <i class="bi bi-check-lg me-1"></i>Guardar Alterações
+                    </button>
+                    <a href="add-artist" class="btn btn-outline-secondary btn-sm px-4">Cancelar</a>
+                </div>
+            </form>
+        </div>
         <?php endif; ?>
 
         <!-- ══ ARTISTS GRID ══ -->
         <?php if (!empty($artists) && !$edit_artist): ?>
-            <div class="section-divider mb-3"><span><i class="bi bi-people me-1"></i>Os Teus Artistas
-                    (<?php echo $artist_count; ?>)</span></div>
-            <div class="row g-3 mb-4">
-                <?php foreach ($artists as $a): ?>
-                    <?php
+        <div class="section-divider mb-3"><span><i class="bi bi-people me-1"></i>Os Teus Artistas
+                (<?php echo $artist_count; ?>)</span></div>
+        <div class="row g-3 mb-4">
+            <?php foreach ($artists as $a): ?>
+            <?php
                     $photo_url = $a['photo_artist'] ? $photo_base . htmlspecialchars($a['photo_artist']) : null;
                     $dot_class = 'dot-' . ($a['status_artist'] ?? 'inactive');
                     $status_labels = ['active' => 'Activo', 'processing' => 'Em análise', 'inactive' => 'Inactivo', 'blocked' => 'Bloqueado'];
                     $status_label = $status_labels[$a['status_artist']] ?? 'Desconhecido';
                     ?>
-                    <div class="col-xl-3 col-lg-4 col-md-6 col-6">
-                        <div class="artist-card">
-                            <div class="artist-card-cover">
-                                <span class="artist-status-dot <?php echo $dot_class; ?>"
-                                    title="<?php echo $status_label; ?>"></span>
-                            </div>
-                            <?php if ($photo_url): ?>
-                                <img src="<?php echo $photo_url; ?>" class="artist-card-avatar"
-                                    alt="<?php echo htmlspecialchars($a['stage_name']); ?>" />
-                            <?php else: ?>
-                                <div class="artist-card-avatar d-flex align-items-center justify-content-center"
-                                    style="background:#f1f3f5">
-                                    <i class="bi bi-person" style="font-size:1.5rem;color:#ccc"></i>
-                                </div>
-                            <?php endif; ?>
-                            <div class="artist-card-body">
-                                <div class="artist-card-name text-truncate">
-                                    <?php echo htmlspecialchars($a['stage_name']); ?></div>
-                                <?php if ($a['real_name']): ?>
-                                    <div class="artist-card-real text-truncate">
-                                        <?php echo htmlspecialchars($a['real_name']); ?></div>
-                                <?php endif; ?>
-                                <?php if ($a['genre_main']): ?>
-                                    <span
-                                        class="badge bg-secondary artist-card-genre"><?php echo htmlspecialchars($a['genre_main']); ?></span>
-                                <?php endif; ?>
-                                <div class="artist-card-actions">
-                                    <a href="add-artist?edit=<?php echo $a['id_artist']; ?>"
-                                        class="btn btn-outline-secondary btn-sm" title="Editar">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <button class="btn btn-outline-danger btn-sm" title="Eliminar"
-                                        onclick="confirmDelete(<?php echo $a['id_artist']; ?>, '<?php echo htmlspecialchars(addslashes($a['stage_name'])); ?>')">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                    <a href="artists-list?id=<?php echo $a['id_artist']; ?>"
-                                        class="btn btn-outline-secondary btn-sm" title="Ver perfil">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                </div>
-                            </div>
+            <div class="col-xl-3 col-lg-4 col-md-6 col-6">
+                <div class="artist-card">
+                    <div class="artist-card-cover">
+                        <span class="artist-status-dot <?php echo $dot_class; ?>"
+                            title="<?php echo $status_label; ?>"></span>
+                    </div>
+                    <?php if ($photo_url): ?>
+                    <img src="<?php echo $photo_url; ?>" class="artist-card-avatar"
+                        alt="<?php echo htmlspecialchars($a['stage_name']); ?>" />
+                    <?php else: ?>
+                    <div class="artist-card-avatar d-flex align-items-center justify-content-center"
+                        style="background:#f1f3f5">
+                        <i class="bi bi-person" style="font-size:1.5rem;color:#ccc"></i>
+                    </div>
+                    <?php endif; ?>
+                    <div class="artist-card-body">
+                        <div class="artist-card-name text-truncate">
+                            <?php echo htmlspecialchars($a['stage_name']); ?></div>
+                        <?php if ($a['real_name']): ?>
+                        <div class="artist-card-real text-truncate">
+                            <?php echo htmlspecialchars($a['real_name']); ?></div>
+                        <?php endif; ?>
+                        <?php if ($a['genre_main']): ?>
+                        <span
+                            class="badge bg-secondary artist-card-genre"><?php echo htmlspecialchars($a['genre_main']); ?></span>
+                        <?php endif; ?>
+                        <div class="artist-card-actions">
+                            <a href="add-artist?edit=<?php echo $a['id_artist']; ?>"
+                                class="btn btn-outline-secondary btn-sm" title="Editar">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <button class="btn btn-outline-danger btn-sm" title="Eliminar"
+                                onclick="confirmDelete(<?php echo $a['id_artist']; ?>, '<?php echo htmlspecialchars(addslashes($a['stage_name'])); ?>')">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                            <a href="artists-list?id=<?php echo $a['id_artist']; ?>"
+                                class="btn btn-outline-secondary btn-sm" title="Ver perfil">
+                                <i class="bi bi-eye"></i>
+                            </a>
                         </div>
                     </div>
-                <?php endforeach; ?>
+                </div>
             </div>
+            <?php endforeach; ?>
+        </div>
         <?php elseif (!$edit_artist): ?>
-            <div class="text-center py-5 text-muted">
-                <i class="bi bi-person-plus" style="font-size:3.5rem;opacity:.3;display:block;margin-bottom:12px"></i>
-                <h5>Ainda não tens artistas</h5>
-                <p class="small mb-3">Cria o primeiro perfil artístico para começar a distribuir música.</p>
-                <?php if ($can_add): ?>
-                    <button class="btn btn-sm px-4" style="background:var(--wasom);color:#fff" data-bs-toggle="modal"
-                        data-bs-target="#createArtistModal">
-                        <i class="bi bi-plus me-1"></i>Criar primeiro artista
-                    </button>
-                <?php endif; ?>
-            </div>
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-person-plus" style="font-size:3.5rem;opacity:.3;display:block;margin-bottom:12px"></i>
+            <h5>Ainda não tens artistas</h5>
+            <p class="small mb-3">Cria o primeiro perfil artístico para começar a distribuir música.</p>
+            <?php if ($can_add): ?>
+            <button class="btn btn-sm px-4" style="background:var(--wasom);color:#fff" data-bs-toggle="modal"
+                data-bs-target="#createArtistModal">
+                <i class="bi bi-plus me-1"></i>Criar primeiro artista
+            </button>
+            <?php endif; ?>
+        </div>
         <?php endif; ?>
 
     </div><!-- /container -->
@@ -838,120 +883,170 @@ $photo_base = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/artists/';
                 </div>
                 <div class="modal-body p-4">
                     <?php if (!$can_add): ?>
-                        <div class="alert alert-warning text-center">
-                            <i class="bi bi-lock-fill me-2"></i>
-                            <strong>Limite atingido.</strong> O teu plano
-                            <?php echo $plan ? htmlspecialchars($plan['name_plan']) : ''; ?>
-                            permite <?php echo $max_artists; ?> artista(s).
-                            <a href="../all-plans" class="alert-link ms-1">Fazer upgrade →</a>
-                        </div>
+                    <div class="alert alert-warning text-center">
+                        <i class="bi bi-lock-fill me-2"></i>
+                        <strong>Limite atingido.</strong> O teu plano
+                        <?php echo $plan ? htmlspecialchars($plan['name_plan']) : ''; ?>
+                        permite <?php echo $max_artists; ?> artista(s).
+                        <a href="../all-plans" class="alert-link ms-1">Fazer upgrade →</a>
+                    </div>
                     <?php else: ?>
 
-                        <!-- Photo upload -->
-                        <div class="text-center mb-4">
-                            <div style="position:relative;display:inline-block">
-                                <div id="create-photo-placeholder" class="artist-photo-circle placeholder"
-                                    style="cursor:pointer" onclick="document.getElementById('create-photo-input').click()">
-                                    <i class="bi bi-person"></i>
-                                </div>
-                                <img id="create-photo-preview" src="" alt="Foto" class="artist-photo-circle d-none"
-                                    style="cursor:pointer"
-                                    onclick="document.getElementById('create-photo-input').click()" />
-                                <div class="artist-photo-overlay"
-                                    onclick="document.getElementById('create-photo-input').click()">
-                                    <i class="bi bi-camera-fill" style="font-size:.9rem"></i>
-                                </div>
+                    <!-- Photo upload -->
+                    <div class="text-center mb-4">
+                        <div style="position:relative;display:inline-block">
+                            <div id="create-photo-placeholder" class="artist-photo-circle placeholder"
+                                style="cursor:pointer" onclick="document.getElementById('create-photo-input').click()">
+                                <i class="bi bi-person"></i>
                             </div>
-                            <input type="file" id="create-photo-input" accept="image/jpeg,image/png,image/webp"
-                                class="d-none" />
-                            <div class="text-muted mt-1" style="font-size:.72rem">Foto de perfil do artista
-                                (opcional)</div>
+                            <img id="create-photo-preview" src="" alt="Foto" class="artist-photo-circle d-none"
+                                style="cursor:pointer"
+                                onclick="document.getElementById('create-photo-input').click()" />
+                            <div class="artist-photo-overlay"
+                                onclick="document.getElementById('create-photo-input').click()">
+                                <i class="bi bi-camera-fill" style="font-size:.9rem"></i>
+                            </div>
                         </div>
+                        <input type="file" id="create-photo-input" accept="image/jpeg,image/png,image/webp"
+                            class="d-none" />
+                        <div class="text-muted mt-1" style="font-size:.72rem">Foto de perfil do artista
+                            (opcional)</div>
+                    </div>
 
-                        <form id="create-form">
-                            <input type="hidden" name="action" value="create_artist" />
-                            <input type="hidden" name="csrf_token" value="<?php echo $csrf; ?>" />
+                    <form id="create-form">
+                        <input type="hidden" name="action" value="create_artist" />
+                        <input type="hidden" name="csrf_token" value="<?php echo $csrf; ?>" />
 
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold small">Nome Artístico <span
-                                            class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="c-stage-name" name="stage_name"
-                                        maxlength="100" placeholder="ex: Ghostface, DJ KP, Ana Lima" required />
-                                    <div class="form-text">Como aparecerá em todas as plataformas.</div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold small">Nome Real</label>
-                                    <input type="text" class="form-control" name="real_name" maxlength="150"
-                                        placeholder="Nome legal (opcional)" />
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold small">Email do Artista <span
-                                            class="text-danger">*</span></label>
-                                    <input type="email" class="form-control" name="artist_email"
-                                        placeholder="email@artista.com" required />
-                                    <div class="form-text">Um email de boas-vindas será enviado para este endereço.
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold small">Género Musical</label>
-                                    <select class="form-select" name="genre_main">
-                                        <option value="">Selecionar...</option>
-                                        <?php foreach ($genres as $g): $val = strtolower(str_replace([' ', '/', '-'], ['_', '', ''], $g)); ?>
-                                            <option value="<?php echo $val; ?>"><?php echo $g; ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold small">País</label>
-                                    <input type="text" class="form-control" name="country" maxlength="60"
-                                        placeholder="ex: Angola" />
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold small">Cidade</label>
-                                    <input type="text" class="form-control" name="city" maxlength="60"
-                                        placeholder="ex: Luanda" />
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label fw-semibold small">Bio</label>
-                                    <textarea class="form-control" name="bio" rows="2" maxlength="1000"
-                                        placeholder="Breve descrição do artista (opcional)..."></textarea>
-                                </div>
-
-                                <!-- Social links -->
-                                <div class="col-12">
-                                    <div class="section-divider"><span><i class="bi bi-share me-1"></i>Links &
-                                            Redes</span></div>
-                                </div>
-                                <?php foreach ($socials as $s): ?>
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-semibold small"><?php echo $s['label']; ?></label>
-                                        <div class="input-group social-input-group">
-                                            <span class="input-group-text"
-                                                style="background:<?php echo $s['color']; ?>;border-color:<?php echo $s['color']; ?>">
-                                                <i class="bi <?php echo $s['icon']; ?> text-white"></i>
-                                            </span>
-                                            <input type="url" class="form-control" name="<?php echo $s['name']; ?>"
-                                                placeholder="<?php echo $s['ph']; ?>" />
-                                        </div>
-                                    </div>
-                                <?php endforeach; ?>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small">Nome Artístico <span
+                                        class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="c-stage-name" name="stage_name"
+                                    maxlength="100" placeholder="ex: Ghostface, DJ KP, Ana Lima" required />
+                                <div class="form-text">Como aparecerá em todas as plataformas.</div>
                             </div>
-                        </form>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small">Nome Real</label>
+                                <input type="text" class="form-control" name="real_name" maxlength="150"
+                                    placeholder="Nome legal (opcional)" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small">Email do Artista <span
+                                        class="text-danger">*</span></label>
+                                <input type="email" class="form-control" name="artist_email"
+                                    placeholder="email@artista.com" required />
+                                <div class="form-text">Um email de boas-vindas será enviado para este endereço.
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small">Género Musical</label>
+                                <select class="form-select" name="genre_main">
+                                    <option value="">Selecionar...</option>
+                                    <?php foreach ($genres as $g): $val = strtolower(str_replace([' ', '/', '-'], ['_', '', ''], $g)); ?>
+                                    <option value="<?php echo $val; ?>"><?php echo $g; ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small">Género Musical</label>
+                                <select class="form-select" name="genre_main">
+                                    <option value="">Selecionar...</option>
+                                    <?php foreach ($genres as $g): $val = strtolower(str_replace([' ', '/', '-'], ['_', '', ''], $g)); ?>
+                                    <option value="<?php echo $val; ?>"><?php echo $g; ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small">Género Secundário</label>
+                                <select class="form-select" name="genre_secondary">
+                                    <option value="">Selecionar...</option>
+                                    <?php foreach ($genres as $g): $val = strtolower(str_replace([' ', '/', '-'], ['_', '', ''], $g)); ?>
+                                    <option value="<?php echo $val; ?>"><?php echo $g; ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small">Função Habitual</label>
+                                <select class="form-select" name="default_role">
+                                    <option value="">Seleciona a função principal</option>
+                                    <option value="main_artist">Artista Principal</option>
+                                    <option value="featured">Artista Convidado (Feat.)</option>
+                                    <option value="composer">Compositor</option>
+                                    <option value="producer">Produtor</option>
+                                    <option value="lyricist">Letrista</option>
+                                    <option value="arranger">Arranjador</option>
+                                    <option value="executive_producer">Produtor Executivo</option>
+                                    <option value="co_producer">Co-Produtor</option>
+                                    <option value="beatmaker">Beatmaker</option>
+                                    <option value="recording_engineer">Engenheiro de Gravação</option>
+                                    <option value="mixing_engineer">Engenheiro de Mistura</option>
+                                    <option value="mastering_engineer">Engenheiro de Masterização</option>
+                                    <option value="sound_designer">Designer de Som</option>
+                                    <option value="publisher">Editora</option>
+                                    <option value="copyright_holder">Detentor dos Direitos</option>
+                                    <option value="label">Selo/Gravadora</option>
+                                    <option value="cover_designer">Designer da Capa</option>
+                                    <option value="photographer">Fotógrafo</option>
+                                    <option value="guitarist">Guitarrista</option>
+                                    <option value="bassist">Baixista</option>
+                                    <option value="drummer">Baterista</option>
+                                    <option value="keyboardist">Tecladista</option>
+                                    <option value="percussionist">Percussionista</option>
+                                    <option value="strings">Cordas</option>
+                                    <option value="brass">Metais</option>
+                                    <option value="other">Outro</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small">País</label>
+                                <input type="text" class="form-control" name="country" maxlength="60"
+                                    placeholder="ex: Angola" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small">Cidade</label>
+                                <input type="text" class="form-control" name="city" maxlength="60"
+                                    placeholder="ex: Luanda" />
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold small">Bio</label>
+                                <textarea class="form-control" name="bio" rows="2" maxlength="1000"
+                                    placeholder="Breve descrição do artista (opcional)..."></textarea>
+                            </div>
+
+                            <!-- Social links -->
+                            <div class="col-12">
+                                <div class="section-divider"><span><i class="bi bi-share me-1"></i>Links &
+                                        Redes</span></div>
+                            </div>
+                            <?php foreach ($socials as $s): ?>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small"><?php echo $s['label']; ?></label>
+                                <div class="input-group social-input-group">
+                                    <span class="input-group-text"
+                                        style="background:<?php echo $s['color']; ?>;border-color:<?php echo $s['color']; ?>">
+                                        <i class="bi <?php echo $s['icon']; ?> text-white"></i>
+                                    </span>
+                                    <input type="url" class="form-control" name="<?php echo $s['name']; ?>"
+                                        placeholder="<?php echo $s['ph']; ?>" />
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </form>
                     <?php endif; ?>
                     <div id="create-feedback" class="mt-3 d-none"></div>
                 </div>
                 <?php if ($can_add): ?>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-secondary btn-sm"
-                            data-bs-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-wasomupfy" style="background:var(--wasom);color:#fff"
-                            id="btn-create-artist" onclick="submitCreate()">
-                            <span id="create-btn-text"><i class="bi bi-check me-1"></i>Criar Artista</span>
-                            <span id="create-btn-load" class="d-none"><span
-                                    class="spinner-border spinner-border-sm me-1"></span>A criar...</span>
-                        </button>
-                    </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary btn-sm"
+                        data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-wasomupfy" style="background:var(--wasom);color:#fff"
+                        id="btn-create-artist" onclick="submitCreate()">
+                        <span id="create-btn-text"><i class="bi bi-check me-1"></i>Criar Artista</span>
+                        <span id="create-btn-load" class="d-none"><span
+                                class="spinner-border spinner-border-sm me-1"></span>A criar...</span>
+                    </button>
+                </div>
                 <?php endif; ?>
             </div>
         </div>
@@ -1039,228 +1134,229 @@ $photo_base = rtrim(APP_URL, '/') . '/assets/comprovantes/uploads/artists/';
     <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
 
     <script>
-        const CSRF = '<?php echo $csrf; ?>';
-        const BASE = '<?php echo (APP_URL . '/' . APP_URL_PANEL); ?>';
-        const PROCESS = BASE + '/artists/add_artist_process';
+    const CSRF = '<?php echo $csrf; ?>';
+    const BASE = '<?php echo (APP_URL . '/' . APP_URL_PANEL); ?>';
+    const PROCESS = BASE + '/artists/add_artist_process';
 
-        toastr.options = {
-            progressBar: true,
-            closeButton: true,
-            positionClass: 'toast-top-right',
-            timeOut: 4000
+    toastr.options = {
+        progressBar: true,
+        closeButton: true,
+        positionClass: 'toast-top-right',
+        timeOut: 4000
+    };
+
+    // ── Shared helpers ──────────────────────────
+    function togglePwd(id, btn) {
+        const inp = document.getElementById(id);
+        const isPass = inp.type === 'password';
+        inp.type = isPass ? 'text' : 'password';
+        btn.querySelector('i').className = isPass ? 'bi bi-eye-slash' : 'bi bi-eye';
+    }
+
+    function setLoading(btnTextId, btnLoadId, btnEl, loading) {
+        document.getElementById(btnTextId).classList.toggle('d-none', loading);
+        document.getElementById(btnLoadId).classList.toggle('d-none', !loading);
+        if (btnEl) btnEl.disabled = loading;
+    }
+
+    // ── Photo preview for CREATE modal ─────────
+    document.getElementById('create-photo-input').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        if (file.size > 5 * 1024 * 1024) {
+            toastr.error('Imagem demasiado grande (máx. 5MB).');
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = ev => {
+            document.getElementById('create-photo-placeholder').classList.add('d-none');
+            const img = document.getElementById('create-photo-preview');
+            img.src = ev.target.result;
+            img.classList.remove('d-none');
         };
+        reader.readAsDataURL(file);
+    });
 
-        // ── Shared helpers ──────────────────────────
-        function togglePwd(id, btn) {
-            const inp = document.getElementById(id);
-            const isPass = inp.type === 'password';
-            inp.type = isPass ? 'text' : 'password';
-            btn.querySelector('i').className = isPass ? 'bi bi-eye-slash' : 'bi bi-eye';
+    // ── Photo preview for EDIT form ─────────────
+    document.getElementById('edit-photo-input')?.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        if (file.size > 5 * 1024 * 1024) {
+            toastr.error('Imagem demasiado grande (máx. 5MB).');
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = ev => {
+            const ph = document.getElementById('edit-photo-placeholder');
+            if (ph) ph.classList.add('d-none');
+            const img = document.getElementById('edit-photo-preview');
+            img.src = ev.target.result;
+            img.classList.remove('d-none');
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // ── CREATE ARTIST ───────────────────────────
+    async function submitCreate() {
+        const stageName = document.getElementById('c-stage-name').value.trim();
+        if (!stageName) {
+            toastr.error('O nome artístico é obrigatório.');
+            return;
         }
 
-        function setLoading(btnTextId, btnLoadId, btnEl, loading) {
-            document.getElementById(btnTextId).classList.toggle('d-none', loading);
-            document.getElementById(btnLoadId).classList.toggle('d-none', !loading);
-            if (btnEl) btnEl.disabled = loading;
+        const emailField = document.querySelector('#create-form [name="artist_email"]');
+        if (!emailField.value.trim()) {
+            toastr.error('O email do artista é obrigatório.');
+            return;
         }
 
-        // ── Photo preview for CREATE modal ─────────
-        document.getElementById('create-photo-input').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            if (file.size > 5 * 1024 * 1024) {
-                toastr.error('Imagem demasiado grande (máx. 5MB).');
-                return;
-            }
-            const reader = new FileReader();
-            reader.onload = ev => {
-                document.getElementById('create-photo-placeholder').classList.add('d-none');
-                const img = document.getElementById('create-photo-preview');
-                img.src = ev.target.result;
-                img.classList.remove('d-none');
-            };
-            reader.readAsDataURL(file);
-        });
+        const btn = document.getElementById('btn-create-artist');
+        setLoading('create-btn-text', 'create-btn-load', btn, true);
 
-        // ── Photo preview for EDIT form ─────────────
-        document.getElementById('edit-photo-input')?.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            if (file.size > 5 * 1024 * 1024) {
-                toastr.error('Imagem demasiado grande (máx. 5MB).');
-                return;
-            }
-            const reader = new FileReader();
-            reader.onload = ev => {
-                const ph = document.getElementById('edit-photo-placeholder');
-                if (ph) ph.classList.add('d-none');
-                const img = document.getElementById('edit-photo-preview');
-                img.src = ev.target.result;
-                img.classList.remove('d-none');
-            };
-            reader.readAsDataURL(file);
-        });
+        const fd = new FormData(document.getElementById('create-form'));
+        const photoFile = document.getElementById('create-photo-input').files[0];
+        if (photoFile) fd.set('photo', photoFile);
+        fd.set('csrf_token', CSRF);
 
-        // ── CREATE ARTIST ───────────────────────────
-        async function submitCreate() {
-            const stageName = document.getElementById('c-stage-name').value.trim();
-            if (!stageName) {
-                toastr.error('O nome artístico é obrigatório.');
-                return;
-            }
-
-            const emailField = document.querySelector('#create-form [name="artist_email"]');
-            if (!emailField.value.trim()) {
-                toastr.error('O email do artista é obrigatório.');
-                return;
-            }
-
-            const btn = document.getElementById('btn-create-artist');
-            setLoading('create-btn-text', 'create-btn-load', btn, true);
-
-            const fd = new FormData(document.getElementById('create-form'));
-            const photoFile = document.getElementById('create-photo-input').files[0];
-            if (photoFile) fd.set('photo', photoFile);
-            fd.set('csrf_token', CSRF);
-
-            try {
-                const res = await fetch(PROCESS, {
-                    method: 'POST',
-                    body: fd
-                });
-                const data = await res.json();
-                if (data.ok) {
-                    bootstrap.Modal.getInstance(document.getElementById('createArtistModal')).hide();
-                    await Swal.fire({
-                        icon: 'success',
-                        iconColor: '#FF0089',
-                        title: 'Artista criado!',
-                        html: `<p>O perfil de <strong>${stageName}</strong> foi criado com sucesso.</p>
+        try {
+            const res = await fetch(PROCESS, {
+                method: 'POST',
+                body: fd
+            });
+            const data = await res.json();
+            if (data.ok) {
+                bootstrap.Modal.getInstance(document.getElementById('createArtistModal')).hide();
+                await Swal.fire({
+                    icon: 'success',
+                    iconColor: '#FF0089',
+                    title: 'Artista criado!',
+                    html: `<p>O perfil de <strong>${stageName}</strong> foi criado com sucesso.</p>
                        <p class="text-muted small">Um email de boas-vindas foi enviado para o artista.</p>`,
-                        confirmButtonText: 'Ok',
-                        confirmButtonColor: '#FF0089'
-                    });
-                    window.location.reload();
-                } else {
-                    const fb = document.getElementById('create-feedback');
-                    fb.innerHTML =
-                        `<div class="alert alert-danger small py-2">${data.message || 'Erro ao criar artista.'}</div>`;
-                    fb.classList.remove('d-none');
-                }
-            } catch {
-                toastr.error('Erro de ligação. Tenta novamente.');
-            } finally {
-                setLoading('create-btn-text', 'create-btn-load', btn, false);
+                    confirmButtonText: 'Ok',
+                    confirmButtonColor: '#FF0089'
+                });
+                window.location.reload();
+            } else {
+                const fb = document.getElementById('create-feedback');
+                fb.innerHTML =
+                    `<div class="alert alert-danger small py-2">${data.message || 'Erro ao criar artista.'}</div>`;
+                fb.classList.remove('d-none');
             }
+        } catch {
+            toastr.error('Erro de ligação. Tenta novamente.');
+        } finally {
+            setLoading('create-btn-text', 'create-btn-load', btn, false);
+        }
+    }
+
+    // ── EDIT ARTIST ─────────────────────────────
+    async function submitEdit() {
+        const pwd = document.getElementById('edit-password').value.trim();
+        if (!pwd) {
+            toastr.error('Confirma a tua senha para guardar.');
+            return;
         }
 
-        // ── EDIT ARTIST ─────────────────────────────
-        async function submitEdit() {
-            const pwd = document.getElementById('edit-password').value.trim();
-            if (!pwd) {
-                toastr.error('Confirma a tua senha para guardar.');
-                return;
-            }
+        const fd = new FormData(document.getElementById('edit-form'));
+        const photoFile = document.getElementById('edit-photo-input').files[0];
+        if (photoFile) fd.set('photo', photoFile);
+        fd.set('csrf_token', CSRF);
 
-            const fd = new FormData(document.getElementById('edit-form'));
-            const photoFile = document.getElementById('edit-photo-input').files[0];
-            if (photoFile) fd.set('photo', photoFile);
-            fd.set('csrf_token', CSRF);
+        const btn = document.querySelector('#edit-form button[onclick="submitEdit()"]');
+        const origHtml = btn.innerHTML;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>A guardar...';
+        btn.disabled = true;
 
-            const btn = document.querySelector('#edit-form button[onclick="submitEdit()"]');
-            const origHtml = btn.innerHTML;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>A guardar...';
-            btn.disabled = true;
-
-            try {
-                const res = await fetch(PROCESS, {
-                    method: 'POST',
-                    body: fd
-                });
-                const data = await res.json();
-                if (data.ok) {
-                    toastr.success('Artista actualizado com sucesso!');
-                    setTimeout(() => window.location.href = 'add-artist?success=updated', 1000);
-                } else {
-                    toastr.error(data.message || 'Erro ao actualizar.');
-                    btn.innerHTML = origHtml;
-                    btn.disabled = false;
-                }
-            } catch {
-                toastr.error('Erro de ligação. Tenta novamente.');
+        try {
+            const res = await fetch(PROCESS, {
+                method: 'POST',
+                body: fd
+            });
+            const data = await res.json();
+            if (data.ok) {
+                toastr.success('Artista actualizado com sucesso!');
+                setTimeout(() => window.location.href = 'add-artist?success=updated', 1000);
+            } else {
+                toastr.error(data.message || 'Erro ao actualizar.');
                 btn.innerHTML = origHtml;
                 btn.disabled = false;
             }
+        } catch {
+            toastr.error('Erro de ligação. Tenta novamente.');
+            btn.innerHTML = origHtml;
+            btn.disabled = false;
+        }
+    }
+
+    // ── DELETE ARTIST ────────────────────────────
+    function confirmDelete(id, name) {
+        document.getElementById('del-artist-id').value = id;
+        document.getElementById('del-artist-name').textContent = name;
+        document.getElementById('del-password').value = '';
+        document.getElementById('del-feedback').classList.add('d-none');
+        new bootstrap.Modal(document.getElementById('deleteModal')).show();
+    }
+
+    async function submitDelete() {
+        const id = document.getElementById('del-artist-id').value;
+        const pwd = document.getElementById('del-password').value.trim();
+        const notify = document.querySelector('input[name="del-notify"]:checked').value;
+        const fb = document.getElementById('del-feedback');
+
+        if (!pwd) {
+            fb.innerHTML = '<div class="alert alert-danger small py-2">A senha é obrigatória.</div>';
+            fb.classList.remove('d-none');
+            return;
         }
 
-        // ── DELETE ARTIST ────────────────────────────
-        function confirmDelete(id, name) {
-            document.getElementById('del-artist-id').value = id;
-            document.getElementById('del-artist-name').textContent = name;
-            document.getElementById('del-password').value = '';
-            document.getElementById('del-feedback').classList.add('d-none');
-            new bootstrap.Modal(document.getElementById('deleteModal')).show();
-        }
+        const btn = document.getElementById('btn-confirm-delete');
+        setLoading('del-btn-text', 'del-btn-load', btn, true);
 
-        async function submitDelete() {
-            const id = document.getElementById('del-artist-id').value;
-            const pwd = document.getElementById('del-password').value.trim();
-            const notify = document.querySelector('input[name="del-notify"]:checked').value;
-            const fb = document.getElementById('del-feedback');
+        const fd = new FormData();
+        fd.append('action', 'delete_artist');
+        fd.append('csrf_token', CSRF);
+        fd.append('id_artist', id);
+        fd.append('password_confirm', pwd);
+        fd.append('notify_artist', notify);
 
-            if (!pwd) {
-                fb.innerHTML = '<div class="alert alert-danger small py-2">A senha é obrigatória.</div>';
-                fb.classList.remove('d-none');
-                return;
-            }
-
-            const btn = document.getElementById('btn-confirm-delete');
-            setLoading('del-btn-text', 'del-btn-load', btn, true);
-
-            const fd = new FormData();
-            fd.append('action', 'delete_artist');
-            fd.append('csrf_token', CSRF);
-            fd.append('id_artist', id);
-            fd.append('password_confirm', pwd);
-            fd.append('notify_artist', notify);
-
-            try {
-                const res = await fetch(PROCESS, {
-                    method: 'POST',
-                    body: fd
-                });
-                const data = await res.json();
-                if (data.ok) {
-                    bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
-                    await Swal.fire({
-                        icon: 'success',
-                        iconColor: '#FF0089',
-                        title: 'Artista eliminado',
-                        text: notify === '1' ? 'O artista foi notificado por email.' : 'Eliminado silenciosamente.',
-                        confirmButtonColor: '#FF0089',
-                        timer: 2500,
-                        showConfirmButton: false
-                    });
-                    window.location.href = 'add-artist?success=deleted';
-                } else {
-                    fb.innerHTML =
-                        `<div class="alert alert-danger small py-2">${data.message || 'Erro ao eliminar.'}</div>`;
-                    fb.classList.remove('d-none');
-                }
-            } catch {
-                fb.innerHTML = '<div class="alert alert-danger small py-2">Erro de ligação.</div>';
-                fb.classList.remove('d-none');
-            } finally {
-                setLoading('del-btn-text', 'del-btn-load', btn, false);
-            }
-        }
-
-        // Auto-open create modal if just loaded and no artists and can_add
-        <?php if ($can_add && $artist_count === 0 && !$edit_artist && !$success && !$error): ?>
-            document.addEventListener('DOMContentLoaded', () => {
-                setTimeout(() => new bootstrap.Modal(document.getElementById('createArtistModal')).show(), 400);
+        try {
+            const res = await fetch(PROCESS, {
+                method: 'POST',
+                body: fd
             });
-        <?php endif; ?>
+            const data = await res.json();
+            if (data.ok) {
+                bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
+                await Swal.fire({
+                    icon: 'success',
+                    iconColor: '#FF0089',
+                    title: 'Artista eliminado',
+                    text: notify === '1' ? 'O artista foi notificado por email.' :
+                        'Eliminado silenciosamente.',
+                    confirmButtonColor: '#FF0089',
+                    timer: 2500,
+                    showConfirmButton: false
+                });
+                window.location.href = 'add-artist?success=deleted';
+            } else {
+                fb.innerHTML =
+                    `<div class="alert alert-danger small py-2">${data.message || 'Erro ao eliminar.'}</div>`;
+                fb.classList.remove('d-none');
+            }
+        } catch {
+            fb.innerHTML = '<div class="alert alert-danger small py-2">Erro de ligação.</div>';
+            fb.classList.remove('d-none');
+        } finally {
+            setLoading('del-btn-text', 'del-btn-load', btn, false);
+        }
+    }
+
+    // Auto-open create modal if just loaded and no artists and can_add
+    <?php if ($can_add && $artist_count === 0 && !$edit_artist && !$success && !$error): ?>
+    document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => new bootstrap.Modal(document.getElementById('createArtistModal')).show(), 400);
+    });
+    <?php endif; ?>
     </script>
 </body>
 

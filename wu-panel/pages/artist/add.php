@@ -46,54 +46,54 @@ $users = $db->query("
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="<?php echo APP_URL; ?>/css/lastest-style.css" />
     <style>
-        .aa-card {
-            background: var(--card-bg, #fff);
-            border: 1px solid var(--border-color, #e8e8f0);
-            border-radius: 14px;
-            padding: 22px 24px;
-            margin-bottom: 20px;
-        }
+    .aa-card {
+        background: var(--card-bg, #fff);
+        border: 1px solid var(--border-color, #e8e8f0);
+        border-radius: 14px;
+        padding: 22px 24px;
+        margin-bottom: 20px;
+    }
 
-        .aa-card-title {
-            font-size: .72rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: .6px;
-            opacity: .5;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+    .aa-card-title {
+        font-size: .72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .6px;
+        opacity: .5;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
 
-        .aa-form-label {
-            font-size: .78rem;
-            font-weight: 600;
-            margin-bottom: 5px;
-            opacity: .7;
-        }
+    .aa-form-label {
+        font-size: .78rem;
+        font-weight: 600;
+        margin-bottom: 5px;
+        opacity: .7;
+    }
 
-        .aa-hint {
-            font-size: .72rem;
-            opacity: .45;
-            margin-top: 3px;
-        }
+    .aa-hint {
+        font-size: .72rem;
+        opacity: .45;
+        margin-top: 3px;
+    }
 
-        .select2-container--default .select2-selection--single {
-            background-color: var(--input-bg, #fff);
-            border-color: var(--border-color, #ced4da);
-            border-radius: 0.375rem;
-            height: calc(2.25rem + 2px);
-        }
+    .select2-container--default .select2-selection--single {
+        background-color: var(--input-bg, #fff);
+        border-color: var(--border-color, #ced4da);
+        border-radius: 0.375rem;
+        height: calc(2.25rem + 2px);
+    }
 
-        .select2-container--default .select2-selection--single .select2-selection__rendered {
-            line-height: 2.25rem;
-            color: var(--text-color, #212529);
-        }
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 2.25rem;
+        color: var(--text-color, #212529);
+    }
 
-        .select2-container--default .select2-selection--single .select2-selection__arrow {
-            height: 2.25rem;
-        }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 2.25rem;
+    }
     </style>
 </head>
 
@@ -126,11 +126,11 @@ $users = $db->query("
                 </div>
 
                 <?php if ($feedback): ?>
-                    <div class="alert alert-<?php echo $feedback[0]; ?> alert-dismissible fade show mb-3">
-                        <i class="bi <?php echo $feedback[1]; ?> me-2"></i>
-                        <?php echo htmlspecialchars($feedback[2]); ?>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
+                <div class="alert alert-<?php echo $feedback[0]; ?> alert-dismissible fade show mb-3">
+                    <i class="bi <?php echo $feedback[1]; ?> me-2"></i>
+                    <?php echo htmlspecialchars($feedback[2]); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
                 <?php endif; ?>
 
                 <form method="POST" action="<?php echo APP_URL . '/' . ADMIN_PATH; ?>/artist/add-process"
@@ -152,6 +152,49 @@ $users = $db->query("
                                     <div class="col-md-6">
                                         <label class="aa-form-label">Nome real</label>
                                         <input type="text" class="form-control" name="real_name" />
+                                    </div>
+                                    <!-- Email do Artista -->
+                                    <div class="col-md-6">
+                                        <label class="aa-form-label">Email do Artista <span
+                                                class="text-danger">*</span></label>
+                                        <input type="email" class="form-control" name="artist_email"
+                                            placeholder="email@artista.com" required />
+                                        <div class="aa-hint">Um email de boas-vindas será enviado para este endereço.
+                                        </div>
+                                    </div>
+
+                                    <!-- Função Habitual -->
+                                    <div class="col-md-6">
+                                        <label class="aa-form-label">Função Habitual</label>
+                                        <select class="form-select" name="default_role">
+                                            <option value="">Seleciona a função principal</option>
+                                            <option value="main_artist">Artista Principal</option>
+                                            <option value="featured">Artista Convidado (Feat.)</option>
+                                            <option value="composer">Compositor</option>
+                                            <option value="producer">Produtor</option>
+                                            <option value="lyricist">Letrista</option>
+                                            <option value="arranger">Arranjador</option>
+                                            <option value="executive_producer">Produtor Executivo</option>
+                                            <option value="co_producer">Co-Produtor</option>
+                                            <option value="beatmaker">Beatmaker</option>
+                                            <option value="recording_engineer">Engenheiro de Gravação</option>
+                                            <option value="mixing_engineer">Engenheiro de Mistura</option>
+                                            <option value="mastering_engineer">Engenheiro de Masterização</option>
+                                            <option value="sound_designer">Designer de Som</option>
+                                            <option value="publisher">Editora</option>
+                                            <option value="copyright_holder">Detentor dos Direitos</option>
+                                            <option value="label">Selo/Gravadora</option>
+                                            <option value="cover_designer">Designer da Capa</option>
+                                            <option value="photographer">Fotógrafo</option>
+                                            <option value="guitarist">Guitarrista</option>
+                                            <option value="bassist">Baixista</option>
+                                            <option value="drummer">Baterista</option>
+                                            <option value="keyboardist">Tecladista</option>
+                                            <option value="percussionist">Percussionista</option>
+                                            <option value="strings">Cordas</option>
+                                            <option value="brass">Metais</option>
+                                            <option value="other">Outro</option>
+                                        </select>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="aa-form-label">Género principal</label>
@@ -242,10 +285,10 @@ $users = $db->query("
                                 <select class="form-select select2" name="id_users" required>
                                     <option value="">Selecionar utilizador</option>
                                     <?php foreach ($users as $u): ?>
-                                        <option value="<?php echo $u['id_users']; ?>">
-                                            <?php echo htmlspecialchars($u['name'] ?: $u['email_user']); ?>
-                                            (<?php echo htmlspecialchars($u['email_user']); ?>)
-                                        </option>
+                                    <option value="<?php echo $u['id_users']; ?>">
+                                        <?php echo htmlspecialchars($u['name'] ?: $u['email_user']); ?>
+                                        (<?php echo htmlspecialchars($u['email_user']); ?>)
+                                    </option>
                                     <?php endforeach; ?>
                                 </select>
                                 <div class="aa-hint mt-2">O utilizador dono do artista.</div>
@@ -287,14 +330,14 @@ $users = $db->query("
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="<?php echo APP_URL; ?>/js/lastest.js"></script>
     <script>
-        $(document).ready(function() {
-            $('.select2').select2({
-                theme: 'bootstrap-5',
-                width: '100%',
-                placeholder: 'Selecionar utilizador',
-                allowClear: true
-            });
+    $(document).ready(function() {
+        $('.select2').select2({
+            theme: 'bootstrap-5',
+            width: '100%',
+            placeholder: 'Selecionar utilizador',
+            allowClear: true
         });
+    });
     </script>
 </body>
 

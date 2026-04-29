@@ -1487,7 +1487,7 @@ $planFeatures = [
                         <div class="row g-4 mb-5">
                             <?php
                             $aboutStats = [
-                                ['val' => '2022',    'tipo' => '',         'label' => 'Fundação'],
+                                ['val' => '2021',    'tipo' => '',         'label' => 'Fundação'],
                                 ['val' => '1500',     'tipo' => 'contagem', 'label' => 'Artistas'],
                                 ['val' => (string)$stores, 'tipo' => 'contagem', 'label' => 'Plataformas'],
                                 ['val' => '50000000', 'tipo' => 'contagem', 'label' => 'Streams'],

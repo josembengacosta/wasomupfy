@@ -917,16 +917,16 @@ $is_upgrade = $current_active_plan && $current_active_plan['slug_plan'] !== $pla
                     <div class="info-row">
                         <div>
                             <div class="info-row-label">Número Multicaixa Express</div>
-                            <div class="info-row-value">+244 9XX XXX XXX</div>
+                            <div class="info-row-value">+244 935 288 300</div>
                         </div>
-                        <button class="copy-btn" onclick="copyText('+244900000000', this)">
+                        <button class="copy-btn" onclick="copyText('+244935288300', this)">
                             <i class="bi bi-clipboard me-1"></i>Copiar
                         </button>
                     </div>
                     <div class="info-row">
                         <div>
                             <div class="info-row-label">Nome do destinatário</div>
-                            <div class="info-row-value">Wasom Upfy Lda</div>
+                            <div class="info-row-value">Cristiano Wasambuka José Amadeu</div>
                         </div>
                     </div>
                     <div class="info-row">
@@ -951,17 +951,17 @@ $is_upgrade = $current_active_plan && $current_active_plan['slug_plan'] !== $pla
                     <div class="info-row">
                         <div>
                             <div class="info-row-label">IBAN</div>
-                            <div class="info-row-value" style="font-size:.85rem;letter-spacing:1px">AO06 XXXX XXXX XXXX
-                                XXXX XXXX X</div>
+                            <div class="info-row-value" style="font-size:.85rem;letter-spacing:1px">AO06 0006 0000
+                                97079431301 47</div>
                         </div>
-                        <button class="copy-btn" onclick="copyText('AO06XXXXXXXXXXXXXXXXXXXX', this)">
+                        <button class="copy-btn" onclick="copyText('AO06000600009707943130147', this)">
                             <i class="bi bi-clipboard me-1"></i>Copiar
                         </button>
                     </div>
                     <div class="info-row">
                         <div>
                             <div class="info-row-label">Titular da conta</div>
-                            <div class="info-row-value">Wasom Upfy Lda</div>
+                            <div class="info-row-value">Cristiano Wasambuka José Amadeu</div>
                         </div>
                     </div>
                     <div class="info-row">

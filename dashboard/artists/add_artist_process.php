@@ -265,6 +265,8 @@ switch ($action) {
         $tiktok_url   = trim($_POST['tiktok_url']    ?? '');
         $facebook_url = trim($_POST['facebook_url']  ?? '');
         $website_url  = trim($_POST['website_url']   ?? '');
+        $default_role    = trim($_POST['default_role']     ?? '');
+        $genre_secondary = trim($_POST['genre_secondary']  ?? '');
 
         // Validações
         if (empty($stage_name) || strlen($stage_name) > 100)
@@ -294,27 +296,30 @@ switch ($action) {
         // INSERT
         $db->prepare("
     INSERT INTO _artist
-        (id_users, stage_name, real_name, genre_main, country, city, bio,
+        (id_users, stage_name, real_name, artist_email, default_role,
+         genre_main, genre_secondary, country, city, bio,
          photo_artist, spotify_url, youtube_url, instagram_url,
-         tiktok_url, facebook_url, website_url, artist_email, status_artist)
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'processing')
+         tiktok_url, facebook_url, website_url, status_artist)
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'processing')
 ")->execute([
-            $id_users,
-            $stage_name,
-            $real_name ?: null,
-            $genre_main ?: null,
-            $country ?: null,
-            $city ?: null,
-            $bio ?: null,
-            $photo_path,
-            $spotify_url ?: null,
-            $youtube_url ?: null,
-            $instagram_url ?: null,
-            $tiktok_url ?: null,
-            $facebook_url ?: null,
-            $website_url ?: null,
-            $artist_email ?: null
-        ]);
+    $id_users,
+    $stage_name,
+    $real_name ?: null,
+    $artist_email,
+    $default_role ?: null,
+    $genre_main ?: null,
+    $genre_secondary ?: null,
+    $country ?: null,
+    $city ?: null,
+    $bio ?: null,
+    $photo_path,
+    $spotify_url ?: null,
+    $youtube_url ?: null,
+    $instagram_url ?: null,
+    $tiktok_url ?: null,
+    $facebook_url ?: null,
+    $website_url ?: null,
+]);
         $new_id = (int)$db->lastInsertId();
         logActivity($id_users, 'artist_created', "Artista criado: {$stage_name} (#{$new_id})", 'artist', $new_id);
 
@@ -347,6 +352,8 @@ switch ($action) {
         $tiktok_url    = trim($_POST['tiktok_url']      ?? '');
         $facebook_url  = trim($_POST['facebook_url']    ?? '');
         $website_url   = trim($_POST['website_url']     ?? '');
+        $default_role    = trim($_POST['default_role']     ?? '');
+        $genre_secondary = trim($_POST['genre_secondary']  ?? '');
         $pwd           = $_POST['password_confirm']     ?? '';
 
         if (!$id_artist) jsonOut(false, 'ID de artista inválido.');
@@ -385,31 +392,34 @@ switch ($action) {
 
         // UPDATE
         $db->prepare("
-            UPDATE _artist SET
-                stage_name = ?, real_name = ?, artist_email = ?, genre_main = ?,
-                country = ?, city = ?, bio = ?,
-                photo_artist = ?, spotify_url = ?, youtube_url = ?, instagram_url = ?,
-                tiktok_url = ?, facebook_url = ?, website_url = ?,
-                modif_artist = NOW()
-            WHERE id_artist = ? AND id_users = ?
-        ")->execute([
-            $stage_name,
-            $real_name ?: null,
-            $artist_email,
-            $genre_main ?: null,
-            $country ?: null,
-            $city ?: null,
-            $bio ?: null,
-            $photo_path,
-            $spotify_url ?: null,
-            $youtube_url ?: null,
-            $instagram_url ?: null,
-            $tiktok_url ?: null,
-            $facebook_url ?: null,
-            $website_url ?: null,
-            $id_artist,
-            $id_users
-        ]);
+    UPDATE _artist SET
+        stage_name = ?, real_name = ?, artist_email = ?, default_role = ?,
+        genre_main = ?, genre_secondary = ?,
+        country = ?, city = ?, bio = ?,
+        photo_artist = ?, spotify_url = ?, youtube_url = ?, instagram_url = ?,
+        tiktok_url = ?, facebook_url = ?, website_url = ?,
+        modif_artist = NOW()
+    WHERE id_artist = ? AND id_users = ?
+")->execute([
+    $stage_name,
+    $real_name ?: null,
+    $artist_email,
+    $default_role ?: null,
+    $genre_main ?: null,
+    $genre_secondary ?: null,
+    $country ?: null,
+    $city ?: null,
+    $bio ?: null,
+    $photo_path,
+    $spotify_url ?: null,
+    $youtube_url ?: null,
+    $instagram_url ?: null,
+    $tiktok_url ?: null,
+    $facebook_url ?: null,
+    $website_url ?: null,
+    $id_artist,
+    $id_users
+]);
 
         logActivity($id_users, 'artist_updated', "Artista actualizado: {$stage_name} (#{$id_artist})", 'artist', $id_artist);
 

@@ -560,7 +560,7 @@ $csrf_page = getSiteCsrf();
             <div class="container" data-cue="fadeIn">
 
                 <div class="action-buttons">
-                    <a href="terms.pdf" class="btn btn-outline-wasomupfy" download><i
+                    <a href="../../assets/docs/Termos-de-Uso-e-de-Condicoes-WasomUpfy140226.pdf" class="btn btn-outline-wasomupfy" download><i
                             class="fa-solid fa-file-pdf me-2"></i>Baixar PDF</a>
                     <button class="btn btn-outline-secondary" onclick="window.print()"><i
                             class="fa-solid fa-print me-2"></i>Imprimir</button>

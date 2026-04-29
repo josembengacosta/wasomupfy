@@ -201,7 +201,7 @@ if (!empty($album['copyright_p'])) {
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
-            <a class="navbar-brand" href="../painel">
+            <a class="navbar-brand" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/painel">
                 <span class="text-light" style="
               font-weight: bold;
               box-sizing: border-box;

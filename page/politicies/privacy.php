@@ -48,11 +48,11 @@ $csrf_page = getSiteCsrf();
     <meta property="og:image:alt" content="<?php echo $siteName; ?>" />
     <title><?php echo $siteName; ?> | Política de Privacidade</title>
     <script>
-        window.addEventListener("load", function() {
-            setTimeout(function() {
-                document.querySelector("body").classList.add("loaded");
-            }, 200);
-        });
+    window.addEventListener("load", function() {
+        setTimeout(function() {
+            document.querySelector("body").classList.add("loaded");
+        }, 200);
+    });
     </script>
     <link rel="shortcut icon" href="../../assets/img/icones/wasomupfy_fiv1.png" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
@@ -63,340 +63,340 @@ $csrf_page = getSiteCsrf();
     <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/framework.css" />
     <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/main.css" />
     <style>
-        #reading-progress {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 0%;
-            height: 3px;
-            background: linear-gradient(90deg, #ff009d, #9b59b6);
-            z-index: 9999;
-            transition: width .1s linear
-        }
+    #reading-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 0%;
+        height: 3px;
+        background: linear-gradient(90deg, #ff009d, #9b59b6);
+        z-index: 9999;
+        transition: width .1s linear
+    }
 
-        .terms-badges a {
-            font-size: .8rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: transform .2s, opacity .2s
-        }
+    .terms-badges a {
+        font-size: .8rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: transform .2s, opacity .2s
+    }
 
-        .terms-badges a:hover {
-            transform: scale(1.06);
-            opacity: .85
+    .terms-badges a:hover {
+        transform: scale(1.06);
+        opacity: .85
+    }
+
+    .terms-layout {
+        display: flex;
+        gap: 2rem;
+        align-items: flex-start
+    }
+
+    .terms-index {
+        position: sticky;
+        top: 90px;
+        width: 240px;
+        flex-shrink: 0;
+        background: var(--bs-body-bg, #fff);
+        border-radius: 12px;
+        box-shadow: 0 2px 14px rgba(0, 0, 0, .08);
+        padding: 1.25rem 1rem;
+        max-height: calc(100vh - 110px);
+        overflow-y: auto;
+        scrollbar-width: thin
+    }
+
+    .terms-index h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #ff009d;
+        margin-bottom: 1rem;
+        padding-bottom: .5rem;
+        border-bottom: 2px solid rgba(255, 0, 157, .15)
+    }
+
+    .terms-index ul {
+        list-style: none;
+        padding: 0;
+        margin: 0
+    }
+
+    .terms-index li {
+        margin-bottom: .3rem
+    }
+
+    .terms-index a {
+        display: flex;
+        align-items: flex-start;
+        gap: .4rem;
+        font-size: .82rem;
+        color: var(--bs-body-color, #444);
+        text-decoration: none;
+        line-height: 1.4;
+        padding: .3rem .4rem;
+        border-radius: 6px;
+        transition: background .15s, color .15s
+    }
+
+    .terms-index a:hover,
+    .terms-index a.active {
+        background: rgba(255, 0, 157, .08);
+        color: #ff009d
+    }
+
+    .terms-index .num {
+        flex-shrink: 0;
+        font-weight: 700;
+        color: #ff009d;
+        min-width: 22px
+    }
+
+    .terms-index .idx-divider {
+        margin: .6rem 0;
+        border-color: rgba(255, 0, 157, .12)
+    }
+
+    .terms-content {
+        flex: 1;
+        min-width: 0
+    }
+
+    .term-section {
+        background: var(--bs-body-bg, #fff);
+        border-radius: 14px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, .07);
+        padding: 1.75rem 2rem;
+        margin-bottom: 1.5rem;
+        scroll-margin-top: 90px;
+        border-left: 4px solid transparent;
+        transition: border-color .3s
+    }
+
+    .term-section:hover {
+        border-left-color: rgba(255, 0, 157, .35)
+    }
+
+    .term-section:target {
+        border-left-color: #ff009d
+    }
+
+    .term-section h2 {
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #ff009d;
+        margin-bottom: 1rem;
+        padding-bottom: .6rem;
+        border-bottom: 1px solid rgba(255, 0, 157, .12)
+    }
+
+    .sec-num {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 34px;
+        height: 34px;
+        background: linear-gradient(135deg, #ff009d, #9b59b6);
+        color: #fff;
+        font-weight: 700;
+        font-size: .85rem;
+        border-radius: 8px;
+        flex-shrink: 0
+    }
+
+    .term-section h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        margin-top: 1.25rem;
+        margin-bottom: .5rem
+    }
+
+    .term-section p {
+        line-height: 1.75
+    }
+
+    .term-section ul {
+        padding-left: 1.2rem
+    }
+
+    .term-section ul li {
+        margin-bottom: .45rem;
+        line-height: 1.7
+    }
+
+    .term-box {
+        border-radius: 10px;
+        padding: 1rem 1.25rem;
+        margin: 1rem 0;
+        font-size: .93rem;
+        line-height: 1.65
+    }
+
+    .term-box strong {
+        display: block;
+        margin-bottom: .35rem
+    }
+
+    .term-box.danger {
+        background: rgba(220, 53, 69, .08);
+        border-left: 4px solid #dc3545
+    }
+
+    .term-box.warning {
+        background: rgba(255, 193, 7, .1);
+        border-left: 4px solid #ffc107
+    }
+
+    .term-box.success {
+        background: rgba(25, 135, 84, .08);
+        border-left: 4px solid #198754
+    }
+
+    .term-box.info {
+        background: rgba(13, 202, 240, .08);
+        border-left: 4px solid #0dcaf0
+    }
+
+    .term-box.pink {
+        background: rgba(255, 0, 157, .07);
+        border-left: 4px solid #ff009d
+    }
+
+    .term-box.purple {
+        background: rgba(155, 89, 182, .07);
+        border-left: 4px solid #9b59b6
+    }
+
+    .data-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: .75rem;
+        margin: 1rem 0
+    }
+
+    .data-card {
+        background: rgba(255, 0, 157, .04);
+        border: 1px solid rgba(255, 0, 157, .1);
+        border-radius: 10px;
+        padding: .85rem 1rem;
+        display: flex;
+        gap: .6rem;
+        align-items: flex-start
+    }
+
+    .data-card i {
+        color: #ff009d;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+        margin-top: .1rem
+    }
+
+    .data-card p {
+        margin: 0;
+        font-size: .88rem;
+        line-height: 1.5
+    }
+
+    .rights-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: .75rem;
+        margin: 1rem 0
+    }
+
+    .right-card {
+        background: var(--bs-body-bg, #fff);
+        border-radius: 10px;
+        box-shadow: 0 1px 8px rgba(0, 0, 0, .06);
+        padding: 1rem;
+        text-align: center;
+        border-top: 3px solid #ff009d
+    }
+
+    .right-card i {
+        font-size: 1.5rem;
+        color: #ff009d;
+        margin-bottom: .5rem;
+        display: block
+    }
+
+    .right-card h6 {
+        font-size: .88rem;
+        font-weight: 700;
+        margin-bottom: .25rem
+    }
+
+    .right-card p {
+        font-size: .8rem;
+        color: var(--bs-secondary-color, #666);
+        margin: 0
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: .75rem;
+        flex-wrap: wrap;
+        margin-bottom: 2rem
+    }
+
+    .action-buttons .btn {
+        border-radius: 50px;
+        font-size: .88rem;
+        padding: .5rem 1.4rem
+    }
+
+    .policy-cards .card {
+        border-radius: 12px;
+        transition: transform .2s, box-shadow .2s;
+        text-decoration: none
+    }
+
+    .policy-cards .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(255, 0, 157, .15) !important
+    }
+
+    [data-bs-theme="dark"] .term-section,
+    [data-bs-theme="dark"] .terms-index {
+        background: var(--bs-body-bg);
+        box-shadow: 0 2px 14px rgba(0, 0, 0, .25)
+    }
+
+    [data-bs-theme="dark"] .data-card {
+        background: rgba(255, 0, 157, .06)
+    }
+
+    [data-bs-theme="dark"] .right-card {
+        background: var(--bs-body-bg)
+    }
+
+    @media(max-width:991.98px) {
+        .terms-index {
+            display: none !important
         }
 
         .terms-layout {
-            display: flex;
-            gap: 2rem;
-            align-items: flex-start
-        }
-
-        .terms-index {
-            position: sticky;
-            top: 90px;
-            width: 240px;
-            flex-shrink: 0;
-            background: var(--bs-body-bg, #fff);
-            border-radius: 12px;
-            box-shadow: 0 2px 14px rgba(0, 0, 0, .08);
-            padding: 1.25rem 1rem;
-            max-height: calc(100vh - 110px);
-            overflow-y: auto;
-            scrollbar-width: thin
-        }
-
-        .terms-index h3 {
-            font-size: 1rem;
-            font-weight: 700;
-            color: #ff009d;
-            margin-bottom: 1rem;
-            padding-bottom: .5rem;
-            border-bottom: 2px solid rgba(255, 0, 157, .15)
-        }
-
-        .terms-index ul {
-            list-style: none;
-            padding: 0;
-            margin: 0
-        }
-
-        .terms-index li {
-            margin-bottom: .3rem
-        }
-
-        .terms-index a {
-            display: flex;
-            align-items: flex-start;
-            gap: .4rem;
-            font-size: .82rem;
-            color: var(--bs-body-color, #444);
-            text-decoration: none;
-            line-height: 1.4;
-            padding: .3rem .4rem;
-            border-radius: 6px;
-            transition: background .15s, color .15s
-        }
-
-        .terms-index a:hover,
-        .terms-index a.active {
-            background: rgba(255, 0, 157, .08);
-            color: #ff009d
-        }
-
-        .terms-index .num {
-            flex-shrink: 0;
-            font-weight: 700;
-            color: #ff009d;
-            min-width: 22px
-        }
-
-        .terms-index .idx-divider {
-            margin: .6rem 0;
-            border-color: rgba(255, 0, 157, .12)
-        }
-
-        .terms-content {
-            flex: 1;
-            min-width: 0
-        }
-
-        .term-section {
-            background: var(--bs-body-bg, #fff);
-            border-radius: 14px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, .07);
-            padding: 1.75rem 2rem;
-            margin-bottom: 1.5rem;
-            scroll-margin-top: 90px;
-            border-left: 4px solid transparent;
-            transition: border-color .3s
-        }
-
-        .term-section:hover {
-            border-left-color: rgba(255, 0, 157, .35)
-        }
-
-        .term-section:target {
-            border-left-color: #ff009d
-        }
-
-        .term-section h2 {
-            display: flex;
-            align-items: center;
-            gap: .75rem;
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #ff009d;
-            margin-bottom: 1rem;
-            padding-bottom: .6rem;
-            border-bottom: 1px solid rgba(255, 0, 157, .12)
-        }
-
-        .sec-num {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 34px;
-            height: 34px;
-            background: linear-gradient(135deg, #ff009d, #9b59b6);
-            color: #fff;
-            font-weight: 700;
-            font-size: .85rem;
-            border-radius: 8px;
-            flex-shrink: 0
-        }
-
-        .term-section h3 {
-            font-size: 1rem;
-            font-weight: 700;
-            margin-top: 1.25rem;
-            margin-bottom: .5rem
-        }
-
-        .term-section p {
-            line-height: 1.75
-        }
-
-        .term-section ul {
-            padding-left: 1.2rem
-        }
-
-        .term-section ul li {
-            margin-bottom: .45rem;
-            line-height: 1.7
-        }
-
-        .term-box {
-            border-radius: 10px;
-            padding: 1rem 1.25rem;
-            margin: 1rem 0;
-            font-size: .93rem;
-            line-height: 1.65
-        }
-
-        .term-box strong {
-            display: block;
-            margin-bottom: .35rem
-        }
-
-        .term-box.danger {
-            background: rgba(220, 53, 69, .08);
-            border-left: 4px solid #dc3545
-        }
-
-        .term-box.warning {
-            background: rgba(255, 193, 7, .1);
-            border-left: 4px solid #ffc107
-        }
-
-        .term-box.success {
-            background: rgba(25, 135, 84, .08);
-            border-left: 4px solid #198754
-        }
-
-        .term-box.info {
-            background: rgba(13, 202, 240, .08);
-            border-left: 4px solid #0dcaf0
-        }
-
-        .term-box.pink {
-            background: rgba(255, 0, 157, .07);
-            border-left: 4px solid #ff009d
-        }
-
-        .term-box.purple {
-            background: rgba(155, 89, 182, .07);
-            border-left: 4px solid #9b59b6
-        }
-
-        .data-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: .75rem;
-            margin: 1rem 0
-        }
-
-        .data-card {
-            background: rgba(255, 0, 157, .04);
-            border: 1px solid rgba(255, 0, 157, .1);
-            border-radius: 10px;
-            padding: .85rem 1rem;
-            display: flex;
-            gap: .6rem;
-            align-items: flex-start
-        }
-
-        .data-card i {
-            color: #ff009d;
-            font-size: 1.1rem;
-            flex-shrink: 0;
-            margin-top: .1rem
-        }
-
-        .data-card p {
-            margin: 0;
-            font-size: .88rem;
-            line-height: 1.5
-        }
-
-        .rights-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: .75rem;
-            margin: 1rem 0
-        }
-
-        .right-card {
-            background: var(--bs-body-bg, #fff);
-            border-radius: 10px;
-            box-shadow: 0 1px 8px rgba(0, 0, 0, .06);
-            padding: 1rem;
-            text-align: center;
-            border-top: 3px solid #ff009d
-        }
-
-        .right-card i {
-            font-size: 1.5rem;
-            color: #ff009d;
-            margin-bottom: .5rem;
             display: block
         }
 
-        .right-card h6 {
-            font-size: .88rem;
-            font-weight: 700;
-            margin-bottom: .25rem
+        .term-section {
+            padding: 1.25rem
+        }
+    }
+
+    @media(max-width:575.98px) {
+        .term-section h2 {
+            font-size: 1.1rem
         }
 
-        .right-card p {
-            font-size: .8rem;
-            color: var(--bs-secondary-color, #666);
-            margin: 0
+        .data-grid,
+        .rights-grid {
+            grid-template-columns: 1fr 1fr
         }
-
-        .action-buttons {
-            display: flex;
-            justify-content: center;
-            gap: .75rem;
-            flex-wrap: wrap;
-            margin-bottom: 2rem
-        }
-
-        .action-buttons .btn {
-            border-radius: 50px;
-            font-size: .88rem;
-            padding: .5rem 1.4rem
-        }
-
-        .policy-cards .card {
-            border-radius: 12px;
-            transition: transform .2s, box-shadow .2s;
-            text-decoration: none
-        }
-
-        .policy-cards .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(255, 0, 157, .15) !important
-        }
-
-        [data-bs-theme="dark"] .term-section,
-        [data-bs-theme="dark"] .terms-index {
-            background: var(--bs-body-bg);
-            box-shadow: 0 2px 14px rgba(0, 0, 0, .25)
-        }
-
-        [data-bs-theme="dark"] .data-card {
-            background: rgba(255, 0, 157, .06)
-        }
-
-        [data-bs-theme="dark"] .right-card {
-            background: var(--bs-body-bg)
-        }
-
-        @media(max-width:991.98px) {
-            .terms-index {
-                display: none !important
-            }
-
-            .terms-layout {
-                display: block
-            }
-
-            .term-section {
-                padding: 1.25rem
-            }
-        }
-
-        @media(max-width:575.98px) {
-            .term-section h2 {
-                font-size: 1.1rem
-            }
-
-            .data-grid,
-            .rights-grid {
-                grid-template-columns: 1fr 1fr
-            }
-        }
+    }
     </style>
 </head>
 
@@ -443,18 +443,18 @@ $csrf_page = getSiteCsrf();
                                         $nPrc = number_format($p['price_plan'], 0, ',', '.');
                                         $nPer = $p['type_plan'] === 'subscription' ? '/ano' : '';
                                     ?>
-                                        <a class="dropdown-item mb-3 text-body" href="../../plan/<?php echo $nSlug; ?>">
-                                            <div class="d-flex align-items-center">
-                                                <i class="fa-solid <?php echo $nIcon; ?> text-wasomupfy fs-3"
-                                                    style="width:35px"></i>
-                                                <div class="ms-3 lh-1">
-                                                    <h5 class="mb-1"><?php echo htmlspecialchars($p['name_plan']); ?></h5>
-                                                    <p class="mb-0 fs-6">Plano
-                                                        <?php echo htmlspecialchars($p['name_plan']); ?> —
-                                                        <?php echo $nPrc; ?> Kz<?php echo $nPer; ?></p>
-                                                </div>
+                                    <a class="dropdown-item mb-3 text-body" href="../../plan/<?php echo $nSlug; ?>">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fa-solid <?php echo $nIcon; ?> text-wasomupfy fs-3"
+                                                style="width:35px"></i>
+                                            <div class="ms-3 lh-1">
+                                                <h5 class="mb-1"><?php echo htmlspecialchars($p['name_plan']); ?></h5>
+                                                <p class="mb-0 fs-6">Plano
+                                                    <?php echo htmlspecialchars($p['name_plan']); ?> —
+                                                    <?php echo $nPrc; ?> Kz<?php echo $nPer; ?></p>
                                             </div>
-                                        </a>
+                                        </div>
+                                    </a>
                                     <?php endforeach; ?>
                                     <a class="dropdown-item mb-3 text-body" href="../../plan/all-plans">
                                         <div class="d-flex align-items-center">
@@ -542,10 +542,10 @@ $csrf_page = getSiteCsrf();
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item" href="../../contact">Caixa de mensagem</a></li>
                                     <?php if (cfg('support_email')): ?><li><a class="dropdown-item"
-                                                href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"><?php echo htmlspecialchars(cfg('support_email')); ?></a>
-                                        </li><?php endif; ?>
+                                            href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"><?php echo htmlspecialchars(cfg('support_email')); ?></a>
+                                    </li><?php endif; ?>
                                     <?php if ($whatsNum): ?><li><a class="dropdown-item"
-                                                href="https://wa.me/<?php echo $whatsNum; ?>">WhatsApp</a></li>
+                                            href="https://wa.me/<?php echo $whatsNum; ?>">WhatsApp</a></li>
                                     <?php endif; ?>
                                 </ul>
                             </li>
@@ -554,7 +554,7 @@ $csrf_page = getSiteCsrf();
                             <a href="<?php echo APP_URL  ?>/login" class="btn btn-secondary mx-2">Entrar <i
                                     data-feather="log-in"></i></a>
                             <?php if ($canRegister): ?><a href="<?php echo APP_URL  ?>/register"
-                                    class="btn btn-wasomupfy">Inscreva-se</a><?php endif; ?>
+                                class="btn btn-wasomupfy">Inscreva-se</a><?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -611,7 +611,7 @@ $csrf_page = getSiteCsrf();
             <div class="container" data-cue="fadeIn">
 
                 <div class="action-buttons">
-                    <a href="privacy.pdf" class="btn btn-outline-wasomupfy" download><i
+                    <a href="../../assets/docs/Politica-de-Privacidade-WasomUpfy140226.pdf" class="btn btn-outline-wasomupfy" download><i
                             class="fa-solid fa-file-pdf me-2"></i>Baixar PDF</a>
                     <button class="btn btn-outline-secondary" onclick="window.print()"><i
                             class="fa-solid fa-print me-2"></i>Imprimir</button>
@@ -907,9 +907,9 @@ $csrf_page = getSiteCsrf();
                                 <li>Enviar um <a href="../support/support" class="text-wasomupfy fw-bold">pedido de
                                         suporte</a> com o assunto "Protecção de Dados — [direito pretendido]";</li>
                                 <?php if (cfg('info_email')): ?><li>Contactar-nos por e-mail: <a
-                                            href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
-                                            class="text-wasomupfy"><?php echo htmlspecialchars(cfg('info_email')); ?></a>.
-                                    </li><?php endif; ?>
+                                        href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
+                                        class="text-wasomupfy"><?php echo htmlspecialchars(cfg('info_email')); ?></a>.
+                                </li><?php endif; ?>
                             </ul>
                             <p>Os pedidos serão respondidos no prazo máximo de <strong>30 dias úteis</strong> a contar
                                 da recepção. Em casos complexos, este prazo pode ser prorrogado por mais 30 dias, com
@@ -1096,13 +1096,13 @@ $csrf_page = getSiteCsrf();
                                         class="text-wasomupfy fw-bold">Enviar pedido de suporte</a> — resposta em até 30
                                     dias úteis;</li>
                                 <?php if (cfg('info_email')): ?><li><strong>E-mail:</strong> <a
-                                            href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
-                                            class="text-wasomupfy"><?php echo htmlspecialchars(cfg('info_email')); ?></a>;
-                                    </li><?php endif; ?>
+                                        href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
+                                        class="text-wasomupfy"><?php echo htmlspecialchars(cfg('info_email')); ?></a>;
+                                </li><?php endif; ?>
                                 <?php if (cfg('support_email')): ?><li><strong>E-mail de suporte:</strong> <a
-                                            href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
-                                            class="text-wasomupfy"><?php echo htmlspecialchars(cfg('support_email')); ?></a>;
-                                    </li><?php endif; ?>
+                                        href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
+                                        class="text-wasomupfy"><?php echo htmlspecialchars(cfg('support_email')); ?></a>;
+                                </li><?php endif; ?>
                                 <li><strong>Localização:</strong>
                                     <?php echo htmlspecialchars(cfg('company_city', 'Luanda')); ?>,
                                     <?php echo htmlspecialchars(cfg('company_country', 'Angola')); ?>;</li>
@@ -1185,29 +1185,29 @@ $csrf_page = getSiteCsrf();
                             digital, marketing e gestão de carreira num só lugar.</p>
                         <div class="d-flex gap-3" role="list" aria-label="Redes sociais">
                             <?php if (cfg('instagram_url')): ?><a
-                                    href="<?php echo htmlspecialchars(cfg('instagram_url')); ?>" target="_blank"
-                                    rel="external noopener noreferrer" aria-label="Instagram"
-                                    class="btn btn-wasomupfy btn-social rounded-circle p-2"><i
-                                        class="fa-brands fa-instagram"></i></a><?php endif; ?>
+                                href="<?php echo htmlspecialchars(cfg('instagram_url')); ?>" target="_blank"
+                                rel="external noopener noreferrer" aria-label="Instagram"
+                                class="btn btn-wasomupfy btn-social rounded-circle p-2"><i
+                                    class="fa-brands fa-instagram"></i></a><?php endif; ?>
                             <?php if (cfg('facebook_url')): ?><a
-                                    href="<?php echo htmlspecialchars(cfg('facebook_url')); ?>" target="_blank"
-                                    rel="external noopener noreferrer" aria-label="Facebook"
-                                    class="btn btn-wasomupfy btn-social rounded-circle p-2"><i
-                                        class="fa-brands fa-facebook-f"></i></a><?php endif; ?>
+                                href="<?php echo htmlspecialchars(cfg('facebook_url')); ?>" target="_blank"
+                                rel="external noopener noreferrer" aria-label="Facebook"
+                                class="btn btn-wasomupfy btn-social rounded-circle p-2"><i
+                                    class="fa-brands fa-facebook-f"></i></a><?php endif; ?>
                             <?php if (cfg('youtube_url')): ?><a
-                                    href="<?php echo htmlspecialchars(cfg('youtube_url')); ?>" target="_blank"
-                                    rel="external noopener noreferrer" aria-label="YouTube"
-                                    class="btn btn-wasomupfy btn-social rounded-circle p-2"><i
-                                        class="fa-brands fa-youtube"></i></a><?php endif; ?>
+                                href="<?php echo htmlspecialchars(cfg('youtube_url')); ?>" target="_blank"
+                                rel="external noopener noreferrer" aria-label="YouTube"
+                                class="btn btn-wasomupfy btn-social rounded-circle p-2"><i
+                                    class="fa-brands fa-youtube"></i></a><?php endif; ?>
                             <?php if (cfg('linkedin_url')): ?><a
-                                    href="<?php echo htmlspecialchars(cfg('linkedin_url')); ?>" target="_blank"
-                                    rel="external noopener noreferrer" aria-label="LinkedIn"
-                                    class="btn btn-wasomupfy btn-social rounded-circle p-2"><i
-                                        class="fa-brands fa-linkedin-in"></i></a><?php endif; ?>
+                                href="<?php echo htmlspecialchars(cfg('linkedin_url')); ?>" target="_blank"
+                                rel="external noopener noreferrer" aria-label="LinkedIn"
+                                class="btn btn-wasomupfy btn-social rounded-circle p-2"><i
+                                    class="fa-brands fa-linkedin-in"></i></a><?php endif; ?>
                             <?php if ($whatsNum): ?><a href="https://wa.me/<?php echo $whatsNum; ?>" target="_blank"
-                                    rel="external noopener noreferrer" aria-label="WhatsApp"
-                                    class="btn btn-wasomupfy btn-social rounded-circle p-2"><i
-                                        class="fa-brands fa-whatsapp"></i></a><?php endif; ?>
+                                rel="external noopener noreferrer" aria-label="WhatsApp"
+                                class="btn btn-wasomupfy btn-social rounded-circle p-2"><i
+                                    class="fa-brands fa-whatsapp"></i></a><?php endif; ?>
                         </div>
                     </div>
                     <div class="col-lg-3 col-6">
@@ -1234,7 +1234,7 @@ $csrf_page = getSiteCsrf();
                             <li class="mb-2"><a href="../../contact"
                                     class="text-reset text-decoration-none hover-white">Contacta-nos</a></li>
                             <?php if ($whatsNum): ?><li class="mb-2"><a href="https://wa.me/<?php echo $whatsNum; ?>"
-                                        class="text-reset text-decoration-none hover-white">WhatsApp</a></li><?php endif; ?>
+                                    class="text-reset text-decoration-none hover-white">WhatsApp</a></li><?php endif; ?>
                         </ul>
                     </div>
                     <div class="col-lg-3 col-12">
@@ -1243,13 +1243,13 @@ $csrf_page = getSiteCsrf();
                             <li class="mb-3"><span><?php echo htmlspecialchars(cfg('company_country', 'Angola')); ?> —
                                     <?php echo htmlspecialchars(cfg('company_city', 'Luanda')); ?></span></li>
                             <?php if (cfg('info_email')): ?><li class="mb-3"><a
-                                        href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
-                                        class="text-reset text-decoration-none"><?php echo htmlspecialchars(cfg('info_email')); ?></a>
-                                </li><?php endif; ?>
+                                    href="mailto:<?php echo htmlspecialchars(cfg('info_email')); ?>"
+                                    class="text-reset text-decoration-none"><?php echo htmlspecialchars(cfg('info_email')); ?></a>
+                            </li><?php endif; ?>
                             <?php if (cfg('support_email')): ?><li class="mb-3"><a
-                                        href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
-                                        class="text-reset text-decoration-none"><?php echo htmlspecialchars(cfg('support_email')); ?></a>
-                                </li><?php endif; ?>
+                                    href="mailto:<?php echo htmlspecialchars(cfg('support_email')); ?>"
+                                    class="text-reset text-decoration-none"><?php echo htmlspecialchars(cfg('support_email')); ?></a>
+                            </li><?php endif; ?>
                             <li><span>Seg — Sex: 08h às 17h</span></li>
                         </ul>
                     </div>
@@ -1358,123 +1358,123 @@ $csrf_page = getSiteCsrf();
     <script src="https://cdn.jsdelivr.net/npm/jarallax@2.2.0/dist/jarallax.min.js"></script>
     <script src="<?php echo APP_URL  ?>/js/cookies.js"></script>
     <script>
-        feather.replace({
-            width: "1em",
-            height: "1em"
+    feather.replace({
+        width: "1em",
+        height: "1em"
+    });
+    </script>
+    <script>
+    !(function(e, t, a, n, g) {
+        (e[n] = e[n] || []), e[n].push({
+            "gtm.start": new Date().getTime(),
+            event: "gtm.js"
         });
+        var m = t.getElementsByTagName(a)[0],
+            r = t.createElement(a);
+        (r.async = !0), (r.src = "https://www.googletagmanager.com/gtm.js?id=GTM-MF4DZVH"), m.parentNode
+            .insertBefore(r, m);
+    })(window, document, "script", "dataLayer");
     </script>
     <script>
-        !(function(e, t, a, n, g) {
-            (e[n] = e[n] || []), e[n].push({
-                "gtm.start": new Date().getTime(),
-                event: "gtm.js"
-            });
-            var m = t.getElementsByTagName(a)[0],
-                r = t.createElement(a);
-            (r.async = !0), (r.src = "https://www.googletagmanager.com/gtm.js?id=GTM-MF4DZVH"), m.parentNode
-                .insertBefore(r, m);
-        })(window, document, "script", "dataLayer");
-    </script>
-    <script>
-        (function() {
-            var bar = document.getElementById('reading-progress');
-            window.addEventListener('scroll', function() {
-                var st = document.documentElement.scrollTop || document.body.scrollTop,
-                    sh = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-                if (bar) bar.style.width = (sh > 0 ? (st / sh) * 100 : 0) + '%';
-            }, {
-                passive: true
-            });
-            var sections = document.querySelectorAll('.term-section[id]'),
-                links = document.querySelectorAll('.terms-index a[href^="#"]');
+    (function() {
+        var bar = document.getElementById('reading-progress');
+        window.addEventListener('scroll', function() {
+            var st = document.documentElement.scrollTop || document.body.scrollTop,
+                sh = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            if (bar) bar.style.width = (sh > 0 ? (st / sh) * 100 : 0) + '%';
+        }, {
+            passive: true
+        });
+        var sections = document.querySelectorAll('.term-section[id]'),
+            links = document.querySelectorAll('.terms-index a[href^="#"]');
 
-            function spy() {
-                var sy = window.pageYOffset + 120,
-                    cur = '';
-                sections.forEach(function(s) {
-                    if (s.offsetTop <= sy) cur = s.id;
-                });
-                links.forEach(function(a) {
-                    a.classList.toggle('active', a.getAttribute('href') === '#' + cur);
-                });
-            }
-            window.addEventListener('scroll', spy, {
-                passive: true
+        function spy() {
+            var sy = window.pageYOffset + 120,
+                cur = '';
+            sections.forEach(function(s) {
+                if (s.offsetTop <= sy) cur = s.id;
             });
-            spy();
-            document.querySelectorAll('.terms-index a[href^="#"], .smooth-scroll').forEach(function(a) {
-                a.addEventListener('click', function(e) {
-                    var t = document.querySelector(this.getAttribute('href'));
-                    if (t) {
-                        e.preventDefault();
-                        window.scrollTo({
-                            top: t.offsetTop - 90,
-                            behavior: 'smooth'
-                        });
-                    }
-                });
+            links.forEach(function(a) {
+                a.classList.toggle('active', a.getAttribute('href') === '#' + cur);
             });
-
-            function syncCsrf(token) {
-                if (!token) return;
-                document.querySelectorAll('[name="csrf_token"]').forEach(function(el) {
-                    el.value = token;
-                });
-            }
-            var fm = document.getElementById('formFeedback');
-            if (fm) {
-                fm.addEventListener('submit', function(e) {
+        }
+        window.addEventListener('scroll', spy, {
+            passive: true
+        });
+        spy();
+        document.querySelectorAll('.terms-index a[href^="#"], .smooth-scroll').forEach(function(a) {
+            a.addEventListener('click', function(e) {
+                var t = document.querySelector(this.getAttribute('href'));
+                if (t) {
                     e.preventDefault();
-                    if (!fm.checkValidity()) {
-                        fm.classList.add('was-validated');
-                        return;
-                    }
-                    var btn = document.getElementById('btn-feedback-modal'),
-                        msg = document.getElementById('feedback-modal-msg'),
-                        base = document.body.dataset.basePath || '../..';
-                    btn.disabled = true;
-                    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>A enviar…';
-                    fetch(base + '/ajax/feedback.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                csrf: fm.querySelector('[name="csrf_token"]').value,
-                                name: fm.querySelector('[name="name_fb"]').value.trim(),
-                                subject: fm.querySelector('[name="subject_fb"]').value.trim(),
-                                message: fm.querySelector('[name="message_fb"]').value.trim(),
-                                page: window.location.pathname
-                            })
+                    window.scrollTo({
+                        top: t.offsetTop - 90,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        function syncCsrf(token) {
+            if (!token) return;
+            document.querySelectorAll('[name="csrf_token"]').forEach(function(el) {
+                el.value = token;
+            });
+        }
+        var fm = document.getElementById('formFeedback');
+        if (fm) {
+            fm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (!fm.checkValidity()) {
+                    fm.classList.add('was-validated');
+                    return;
+                }
+                var btn = document.getElementById('btn-feedback-modal'),
+                    msg = document.getElementById('feedback-modal-msg'),
+                    base = document.body.dataset.basePath || '../..';
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>A enviar…';
+                fetch(base + '/ajax/feedback.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            csrf: fm.querySelector('[name="csrf_token"]').value,
+                            name: fm.querySelector('[name="name_fb"]').value.trim(),
+                            subject: fm.querySelector('[name="subject_fb"]').value.trim(),
+                            message: fm.querySelector('[name="message_fb"]').value.trim(),
+                            page: window.location.pathname
                         })
-                        .then(function(r) {
-                            return r.json();
-                        }).then(function(d) {
-                            msg.className = 'alert ' + (d.success ? 'alert-success' : 'alert-danger');
-                            msg.textContent = d.message || (d.success ? 'Obrigado!' : 'Erro.');
-                            msg.classList.remove('d-none');
-                            if (d.new_csrf) syncCsrf(d.new_csrf);
-                            if (d.success) {
-                                fm.reset();
-                                setTimeout(function() {
-                                    var m = bootstrap.Modal.getInstance(document.getElementById(
-                                        'modalFeedback'));
-                                    if (m) m.hide();
-                                }, 2500);
-                            }
-                        })
-                        .catch(function() {
-                            msg.className = 'alert alert-danger';
-                            msg.textContent = 'Erro de ligação. Tenta novamente.';
-                            msg.classList.remove('d-none');
-                        })
-                        .finally(function() {
-                            btn.disabled = false;
-                            btn.innerHTML = 'Enviar Feedback <i class="fa-solid fa-paper-plane ms-2"></i>';
-                        });
-                });
-            }
-        })();
+                    })
+                    .then(function(r) {
+                        return r.json();
+                    }).then(function(d) {
+                        msg.className = 'alert ' + (d.success ? 'alert-success' : 'alert-danger');
+                        msg.textContent = d.message || (d.success ? 'Obrigado!' : 'Erro.');
+                        msg.classList.remove('d-none');
+                        if (d.new_csrf) syncCsrf(d.new_csrf);
+                        if (d.success) {
+                            fm.reset();
+                            setTimeout(function() {
+                                var m = bootstrap.Modal.getInstance(document.getElementById(
+                                    'modalFeedback'));
+                                if (m) m.hide();
+                            }, 2500);
+                        }
+                    })
+                    .catch(function() {
+                        msg.className = 'alert alert-danger';
+                        msg.textContent = 'Erro de ligação. Tenta novamente.';
+                        msg.classList.remove('d-none');
+                    })
+                    .finally(function() {
+                        btn.disabled = false;
+                        btn.innerHTML = 'Enviar Feedback <i class="fa-solid fa-paper-plane ms-2"></i>';
+                    });
+            });
+        }
+    })();
     </script>
 </body>
 

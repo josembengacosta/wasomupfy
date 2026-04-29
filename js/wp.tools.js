@@ -24,12 +24,11 @@ const APP_VERSION = "2.0";
 document.addEventListener("DOMContentLoaded", () => {
   // Tela de Carregamento
   const loadingScreen = document.getElementById("loadingScreen");
-  const hideLoadingScreen = () => {
-    loadingScreen.style.opacity = "0";
-    setTimeout(() => {
-      loadingScreen.style.display = "none";
-    }, 300);
-  };
+  function hideLoadingScreen() {
+    const loader = document.getElementById('loadingScreen');
+    if (!loader) return; // sai se não existir
+    loader.style.display = 'none';
+};
   setTimeout(hideLoadingScreen, 3000);
   window.addEventListener("load", hideLoadingScreen);
 const versionDropdown = document.getElementById("versionDropdown");
@@ -93,27 +92,6 @@ const versionDropdown = document.getElementById("versionDropdown");
     window.addEventListener("online", updateConnectionStatus);
     window.addEventListener("offline", updateConnectionStatus);
   });
-
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker
-      .register("../dashboard/sw.js")
-      .then((registration) => {
-        registration.addEventListener("updatefound", () => {
-          const newWorker = registration.installing;
-          newWorker.addEventListener("statechange", () => {
-            if (
-              newWorker.state === "installed" &&
-              navigator.serviceWorker.controller
-            ) {
-              const toast = new bootstrap.Toast(
-                document.getElementById("updateToast")
-              );
-              toast.show();
-            }
-          });
-        });
-      });
-  }
 });
 
 // Highlight active link in bottom navigation and offcanvas

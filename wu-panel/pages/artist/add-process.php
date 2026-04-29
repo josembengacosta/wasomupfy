@@ -89,40 +89,47 @@ if (isset($_FILES['photo_artist']) && $_FILES['photo_artist']['error'] === UPLOA
 try {
     $db->beginTransaction();
 
-    $stmt = $db->prepare("
-        INSERT INTO _artist (
-            id_users, stage_name, real_name, genre_main, genre_secondary,
-            bio, country, city,
-            facebook_url, instagram_url, youtube_url, spotify_url,
-            apple_music_url, tiktok_url, website_url,
-            photo_artist, status_artist
-        ) VALUES (
-            ?, ?, ?, ?, ?,
-            ?, ?, ?,
-            ?, ?, ?, ?,
-            ?, ?, ?,
-            ?, ?
-        )
-    ");
-    $stmt->execute([
-        $id_users,
-        $stage_name,
-        $real_name ?: null,
-        $genre_main ?: null,
-        $genre_secondary ?: null,
-        $bio ?: null,
-        $country ?: null,
-        $city ?: null,
-        $facebook_url ?: null,
-        $instagram_url ?: null,
-        $youtube_url ?: null,
-        $spotify_url ?: null,
-        $apple_music_url ?: null,
-        $tiktok_url ?: null,
-        $website_url ?: null,
-        null, // photo_artist (será atualizado após obter o ID)
-        $status_artist
-    ]);
+   $artist_email = trim($_POST['artist_email'] ?? '');
+$default_role = trim($_POST['default_role'] ?? '');
+
+$stmt = $db->prepare("
+    INSERT INTO _artist (
+        id_users, stage_name, real_name, artist_email, default_role,
+        genre_main, genre_secondary,
+        bio, country, city,
+        facebook_url, instagram_url, youtube_url, spotify_url,
+        apple_music_url, tiktok_url, website_url,
+        photo_artist, status_artist
+    ) VALUES (
+        ?, ?, ?, ?, ?,
+        ?, ?,
+        ?, ?, ?,
+        ?, ?, ?, ?,
+        ?, ?, ?,
+        ?, ?
+    )
+");
+$stmt->execute([
+    $id_users,
+    $stage_name,
+    $real_name ?: null,
+    $artist_email ?: null,
+    $default_role ?: null,
+    $genre_main ?: null,
+    $genre_secondary ?: null,
+    $bio ?: null,
+    $country ?: null,
+    $city ?: null,
+    $facebook_url ?: null,
+    $instagram_url ?: null,
+    $youtube_url ?: null,
+    $spotify_url ?: null,
+    $apple_music_url ?: null,
+    $tiktok_url ?: null,
+    $website_url ?: null,
+    null, // photo_artist
+    $status_artist
+]);
 
     $id_artist = (int)$db->lastInsertId();
 

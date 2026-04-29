@@ -63,15 +63,64 @@ if (!in_array($urgency, $allowed_urgency, true)) {
 }
 
 $issue_labels = [
-    'login'   => 'Problema com login ou senha',
-    'plan'    => 'Alterar ou questão sobre o plano',
-    'payment' => 'Problema com pagamento',
-    'stats'   => 'Erro nas estatísticas',
-    'upload'  => 'Falha ao enviar ficheiros',
-    'royalty' => 'Questão sobre royalties',
-    'account' => 'Conta suspensa ou bloqueada',
-    'other'   => 'Outro assunto',
+    // Conta e Acesso
+    'login'              => 'Problema com login ou senha',
+    '2fa'                => 'Autenticação de dois factores (2FA)',
+    'account_suspended'  => 'Conta suspensa ou bloqueada',
+    'account_recovery'   => 'Recuperação de conta',
+    'email_verification' => 'Verificação de email',
+
+    // Planos e Pagamentos
+    'plan'               => 'Alterar ou questão sobre o plano',
+    'plan_activation'    => 'Activar plano após pagamento',
+    'plan_change'        => 'Mudar de plano',
+    'payment'            => 'Problema com pagamento',
+    'refund'             => 'Pedido de reembolso',
+
+    // Lançamentos e Distribuição
+    'upload'              => 'Falha ao enviar ficheiros',
+    'release_create'      => 'Como criar um novo lançamento',
+    'release_format'      => 'Formatos de áudio aceites',
+    'release_cover'       => 'Requisitos da capa',
+    'release_schedule'    => 'Agendar data de lançamento',
+    'release_edit'        => 'Editar lançamento após envio',
+    'release_distribution'=> 'Tempo de distribuição',
+
+    // Finanças e Royalties
+    'royalty'             => 'Questão sobre royalties',
+    'royalty_calculation' => 'Como funcionam os royalties',
+    'royalty_payment'     => 'Quando recebo os pagamentos',
+    'royalty_split'       => 'Divisão de royalties entre colaboradores',
+    'balance'             => 'Ver saldo disponível',
+    'withdrawal'          => 'Como efectuar um levantamento',
+    'withdrawal_min'      => 'Valor mínimo para levantamento',
+
+    // Estatísticas e Dados
+    'stats'               => 'Erro nas estatísticas',
+    'stats_view'          => 'Como ver estatísticas das músicas',
+    'stats_platforms'     => 'Plataformas nas estatísticas',
+    'stats_export'        => 'Exportar dados de estatísticas',
+    'stats_update'        => 'Frequência de actualização',
+
+    // Artistas e Perfil
+    'artist_add'          => 'Como cadastrar um novo artista',
+    'artist_multiple'     => 'Vários artistas na mesma conta',
+    'collaborator_add'    => 'Adicionar colaborador',
+    'social_link'         => 'Vincular redes sociais',
+    'profile_update'      => 'Actualizar dados de perfil',
+    'dark_mode'           => 'Modo escuro',
+
+    // YouTube e Art Track
+    'youtube_unify'       => 'Unificação de canal YouTube',
+    'youtube_verify'      => 'Verificar canal YouTube',
+    'art_track'           => 'O que é um Art Track?',
+
+    // Suporte e Outros
+    'support_how'         => 'Como enviar um pedido de suporte',
+    'support_response'    => 'Prazo de resposta do suporte',
+    'other'               => 'Outro assunto',
 ];
+
 if (!array_key_exists($issue_type, $issue_labels)) {
     jsonErr('Selecciona um tipo de problema válido.');
 }

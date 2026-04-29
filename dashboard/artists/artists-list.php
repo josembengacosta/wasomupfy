@@ -59,6 +59,13 @@ $as = $db->prepare('SELECT COUNT(*) AS total FROM _artist WHERE id_users = ?');
 $as->execute([$id_users]);
 $has_artist = (int)($as->fetch()['total'] ?? 0) > 0;
 
+$status_labels = [
+    'active'     => 'Activo',
+    'processing' => 'Em análise',
+    'inactive'   => 'Inactivo',
+    'blocked'    => 'Bloqueado'
+];
+
 // ── Conta bancária ────────────────────────────
 $ba = $db->prepare("SELECT id_account FROM _account WHERE id_users = ? AND status_account = 'verified' LIMIT 1");
 $ba->execute([$id_users]);
@@ -860,7 +867,6 @@ $albums_json        = json_encode($albums_by_artist, JSON_HEX_TAG | JSON_HEX_APO
                 <?php foreach ($artists as $a): ?>
                 <?php
                         $photo = $a['photo_artist'] ? $photo_base . htmlspecialchars($a['photo_artist']) : null;
-                        $status_labels = ['active' => 'Activo', 'processing' => 'Em análise', 'inactive' => 'Inactivo', 'blocked' => 'Bloqueado'];
                         $s_label  = $status_labels[$a['status_artist']] ?? 'Desconhecido';
                         $s_class  = 'status-' . $a['status_artist'];
                         $socials = [];
@@ -900,15 +906,26 @@ $albums_json        = json_encode($albums_by_artist, JSON_HEX_TAG | JSON_HEX_APO
                                 <?php echo htmlspecialchars(implode(', ', array_filter([$a['city'], $a['country']]))); ?>
                             </div>
                             <?php endif; ?>
-                            <?php if ($a['genre_main']): ?>
-                            <div class="mt-1">
+                            <div class="mt-1 d-flex flex-wrap justify-content-center gap-1">
+                                <?php if ($a['default_role']): ?>
+                                <span class="badge"
+                                    style="background:rgba(13,110,253,.12);color:#0d6efd;font-size:.62rem">
+                                    <i
+                                        class="bi bi-person-badge me-1"></i><?php echo htmlspecialchars(str_replace('_', ' ', $a['default_role'])); ?>
+                                </span>
+                                <?php endif; ?>
+                                <?php if ($a['genre_main']): ?>
                                 <span class="badge"
                                     style="background:rgba(255,0,137,.12);color:var(--wasom);font-size:.65rem">
                                     <?php echo htmlspecialchars($a['genre_main']); ?>
                                 </span>
+                                <?php endif; ?>
+                                <?php if ($a['genre_secondary']): ?>
+                                <span class="badge bg-light text-dark" style="font-size:.62rem">
+                                    <?php echo htmlspecialchars($a['genre_secondary']); ?>
+                                </span>
+                                <?php endif; ?>
                             </div>
-                            <?php endif; ?>
-
                             <!-- Stats -->
                             <div class="artist-card-stats">
                                 <div class="artist-card-stat">
@@ -989,11 +1006,20 @@ $albums_json        = json_encode($albums_by_artist, JSON_HEX_TAG | JSON_HEX_APO
                             </span>
                         </div>
                         <div class="artist-list-meta">
+                            <?php if ($a['default_role']): ?>
+                            <span class="badge me-1"
+                                style="background:rgba(13,110,253,.1);color:#0d6efd;font-size:.6rem">
+                                <?php echo htmlspecialchars(str_replace('_', ' ', $a['default_role'])); ?>
+                            </span>
+                            <?php endif; ?>
                             <?php if ($a['real_name']): ?>
                             <span><?php echo htmlspecialchars($a['real_name']); ?></span>
                             <?php endif; ?>
                             <?php if ($a['genre_main']): ?>
                             <span class="ms-1">· <?php echo htmlspecialchars($a['genre_main']); ?></span>
+                            <?php endif; ?>
+                            <?php if ($a['genre_secondary']): ?>
+                            <span class="ms-1">· <?php echo htmlspecialchars($a['genre_secondary']); ?></span>
                             <?php endif; ?>
                             <?php if ($a['city'] || $a['country']): ?>
                             <span class="ms-1">· <i class="bi bi-geo-alt-fill" style="font-size:.6rem"></i>
@@ -1297,10 +1323,18 @@ $albums_json        = json_encode($albums_by_artist, JSON_HEX_TAG | JSON_HEX_APO
         document.getElementById('det-real').textContent = artist.real_name || '';
         const badgesEl = document.getElementById('det-badges');
         let badges = '';
-        if (artist.genre_main) badges +=
-            `<span class="badge me-1" style="background:rgba(255,0,137,.12);color:var(--wasom)">${artist.genre_main}</span>`;
-        if (artist.genre_secondary) badges +=
-            `<span class="badge me-1 bg-light">${artist.genre_secondary}</span>`;
+        if (artist.default_role) {
+            badges += `<span class="badge me-1" style="background:rgba(13,110,253,.12);color:#0d6efd">
+        <i class="bi bi-person-badge me-1"></i>${artist.default_role.replace('_', ' ')}
+    </span>`;
+        }
+        if (artist.genre_main) {
+            badges +=
+                `<span class="badge me-1" style="background:rgba(255,0,137,.12);color:var(--wasom)">${artist.genre_main}</span>`;
+        }
+        if (artist.genre_secondary) {
+            badges += `<span class="badge me-1 bg-secondary text-white">${artist.genre_secondary}</span>`;
+        }
         const sc = STATUS_BADGE[artist.status_artist] || 'sb-draft';
         badges += `<span class="status-badge ${sc}">${STATUS_MAP[artist.status_artist] || '—'}</span>`;
         badgesEl.innerHTML = badges;

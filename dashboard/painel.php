@@ -800,7 +800,7 @@ $chart_json_datasets = json_encode($chart_datasets); ?>
                         <?php if (!$plan_paid): ?>
                         <h5>Activa o teu plano para lançar música</h5>
                         <p>Tens de completar o pagamento do plano antes de poder distribuir música nas plataformas.</p>
-                        <a href="payment" class="btn btn-pink w-100">
+                        <a href="payment/pay" class="btn btn-pink w-100">
                             <i class="bi bi-credit-card me-2"></i> Finalizar Pagamento
                         </a>
                         <?php elseif (!$has_any_artist): ?>
@@ -835,7 +835,7 @@ $chart_json_datasets = json_encode($chart_datasets); ?>
                 <i class="bi bi-lock fs-1 text-muted mb-3"></i>
                 <h6 class="text-muted">Estatísticas bloqueadas</h6>
                 <p class="text-muted small">Activa o teu plano para começar a distribuir e ver os teus streams.</p>
-                <a href="payment" class="btn btn-pink btn-sm mt-2">
+                <a href="payment/pay" class="btn btn-pink btn-sm mt-2">
                     <i class="bi bi-credit-card me-1"></i>Activar Plano
                 </a>
             </div>
@@ -1090,7 +1090,7 @@ $chart_json_datasets = json_encode($chart_datasets); ?>
                             <h6>Plano não activo</h6>
                             <p class="text-muted small">Activa o teu plano para começar a receber royalties e fazer
                                 saques.</p>
-                            <a href="payment" class="btn btn-pink btn-sm">Activar Plano</a>
+                            <a href="payment/pay" class="btn btn-pink btn-sm">Activar Plano</a>
                             <?php elseif (!$bank_account): ?>
                             <h6>Sem conta bancária registada</h6>
                             <p class="text-muted small">Para sacar os teus royalties, primeiro regista uma conta
@@ -1150,6 +1150,25 @@ $chart_json_datasets = json_encode($chart_datasets); ?>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="<?php echo APP_URL  ?>/js/theme.wp.js"></script>
     <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
+
+    <!-- ── Passar dados do PHP para o PWA JS ────── -->
+    <script>
+    window.WASOM_CONFIG = {
+        userId: <?php echo (int)($_SESSION['id_users'] ?? 0); ?>,
+        userName: <?php echo json_encode($_SESSION['first_name'] ?? ''); ?>,
+        userPlan: <?php echo json_encode($_SESSION['plan_selected'] ?? ''); ?>,
+        notifCount: <?php echo (int)($notif_count ?? 0); ?>,
+        appUrl: <?php echo json_encode(APP_URL); ?>,
+        appEnv: <?php echo json_encode(APP_ENV); ?>,
+    };
+
+    // Sincronizar badge de notificações ao carregar a página
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.WASOM_CONFIG.notifCount > 0 && 'setAppBadge' in navigator) {
+            navigator.setAppBadge(window.WASOM_CONFIG.notifCount).catch(function() {});
+        }
+    });
+    </script>
     <script>
     const tooltipTriggerList = document.querySelectorAll(
         '[data-bs-toggle="tooltip"]'

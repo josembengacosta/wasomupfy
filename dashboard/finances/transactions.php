@@ -176,216 +176,216 @@ $role_colors = [
     <?php require_once __DIR__ . '/../include/head.php'; ?>
     <title>Divisão de Royalties — <?php echo APP_NAME; ?></title>
     <style>
-        .split-artist-card {
-            background: var(--card-bg, #fff);
-            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
-            border-radius: 20px;
-            overflow: hidden;
-            margin-bottom: 24px;
-            transition: box-shadow .2s;
-        }
+    .split-artist-card {
+        background: var(--card-bg, #fff);
+        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
+        border-radius: 20px;
+        overflow: hidden;
+        margin-bottom: 24px;
+        transition: box-shadow .2s;
+    }
 
-        .split-artist-card:hover {
-            box-shadow: 0 6px 32px rgba(255, 0, 137, .08);
-        }
+    .split-artist-card:hover {
+        box-shadow: 0 6px 32px rgba(255, 0, 137, .08);
+    }
 
-        .artist-header {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 20px 24px;
-            border-bottom: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
-            background: linear-gradient(135deg, rgba(255, 0, 137, .03), transparent);
-        }
+    .artist-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 20px 24px;
+        border-bottom: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
+        background: linear-gradient(135deg, rgba(255, 0, 137, .03), transparent);
+    }
 
-        .artist-avatar {
-            width: 52px;
-            height: 52px;
-            border-radius: 14px;
-            object-fit: cover;
-            flex-shrink: 0;
-            background: rgba(255, 0, 137, .08);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            overflow: hidden;
-        }
+    .artist-avatar {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        object-fit: cover;
+        flex-shrink: 0;
+        background: rgba(255, 0, 137, .08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        overflow: hidden;
+    }
 
-        .artist-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+    .artist-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 
-        .royalty-bar-wrap {
-            padding: 16px 24px;
-        }
+    .royalty-bar-wrap {
+        padding: 16px 24px;
+    }
 
-        .royalty-bar-label {
-            display: flex;
-            justify-content: space-between;
-            font-size: .75rem;
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
+    .royalty-bar-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: .75rem;
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
 
-        .royalty-bar {
-            height: 8px;
-            border-radius: 10px;
-            background: var(--border-color, rgba(0, 0, 0, .07));
-            overflow: hidden;
-        }
+    .royalty-bar {
+        height: 8px;
+        border-radius: 10px;
+        background: var(--border-color, rgba(0, 0, 0, .07));
+        overflow: hidden;
+    }
 
-        .royalty-bar-fill {
-            height: 100%;
-            border-radius: 10px;
-            background: linear-gradient(90deg, #FF0089, #FF4D4D);
-            transition: width .5s ease;
-        }
+    .royalty-bar-fill {
+        height: 100%;
+        border-radius: 10px;
+        background: linear-gradient(90deg, #FF0089, #FF4D4D);
+        transition: width .5s ease;
+    }
 
-        .royalty-bar-fill.over {
-            background: linear-gradient(90deg, #dc3545, #ff6b6b);
-        }
+    .royalty-bar-fill.over {
+        background: linear-gradient(90deg, #dc3545, #ff6b6b);
+    }
 
-        .beneficiary-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: .84rem;
-        }
+    .beneficiary-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: .84rem;
+    }
 
-        .beneficiary-table th {
-            font-size: .68rem;
-            font-weight: 700;
-            color: var(--text-muted, #6c757d);
-            text-transform: uppercase;
-            letter-spacing: .5px;
-            padding: 8px 24px;
-            border-bottom: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
-            white-space: nowrap;
-        }
+    .beneficiary-table th {
+        font-size: .68rem;
+        font-weight: 700;
+        color: var(--text-muted, #6c757d);
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        padding: 8px 24px;
+        border-bottom: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
+        white-space: nowrap;
+    }
 
-        .beneficiary-table td {
-            padding: 12px 24px;
-            border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .05));
-            vertical-align: middle;
-        }
+    .beneficiary-table td {
+        padding: 12px 24px;
+        border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .05));
+        vertical-align: middle;
+    }
 
-        .beneficiary-table tr:last-child td {
-            border-bottom: none;
-        }
+    .beneficiary-table tr:last-child td {
+        border-bottom: none;
+    }
 
-        .beneficiary-table tr:hover td {
-            background: rgba(255, 0, 137, .02);
-        }
+    .beneficiary-table tr:hover td {
+        background: rgba(255, 0, 137, .02);
+    }
 
-        .role-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: .67rem;
-            font-weight: 700;
-        }
+    .role-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: .67rem;
+        font-weight: 700;
+    }
 
-        .pct-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: rgba(255, 0, 137, .08);
-            font-size: .85rem;
-            font-weight: 800;
-            color: #FF0089;
-            border: 2px solid rgba(255, 0, 137, .15);
-        }
+    .pct-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: rgba(255, 0, 137, .08);
+        font-size: .85rem;
+        font-weight: 800;
+        color: #FF0089;
+        border: 2px solid rgba(255, 0, 137, .15);
+    }
 
-        .btn-split-del {
-            background: none;
-            border: none;
-            color: #dc3545;
-            font-size: .85rem;
-            cursor: pointer;
-            padding: 4px 8px;
-            border-radius: 8px;
-            transition: background .15s;
-        }
+    .btn-split-del {
+        background: none;
+        border: none;
+        color: #dc3545;
+        font-size: .85rem;
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: 8px;
+        transition: background .15s;
+    }
 
-        .btn-split-del:hover {
-            background: rgba(220, 53, 69, .08);
-        }
+    .btn-split-del:hover {
+        background: rgba(220, 53, 69, .08);
+    }
 
-        .empty-splits {
-            text-align: center;
-            padding: 32px 24px;
-            color: var(--text-muted, #6c757d);
-        }
+    .empty-splits {
+        text-align: center;
+        padding: 32px 24px;
+        color: var(--text-muted, #6c757d);
+    }
 
-        .empty-splits .icon {
-            font-size: 2.5rem;
-            opacity: .18;
-            margin-bottom: 8px;
-        }
+    .empty-splits .icon {
+        font-size: 2.5rem;
+        opacity: .18;
+        margin-bottom: 8px;
+    }
 
-        .pct-remaining-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: .78rem;
-            font-weight: 700;
-            background: rgba(25, 135, 84, .1);
-            color: #198754;
-            border: 1.5px solid rgba(25, 135, 84, .2);
-        }
+    .pct-remaining-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: .78rem;
+        font-weight: 700;
+        background: rgba(25, 135, 84, .1);
+        color: #198754;
+        border: 1.5px solid rgba(25, 135, 84, .2);
+    }
 
-        .pct-remaining-badge.warn {
-            background: rgba(255, 193, 7, .1);
-            color: #856404;
-            border-color: rgba(255, 193, 7, .3);
-        }
+    .pct-remaining-badge.warn {
+        background: rgba(255, 193, 7, .1);
+        color: #856404;
+        border-color: rgba(255, 193, 7, .3);
+    }
 
-        .pct-remaining-badge.danger {
-            background: rgba(220, 53, 69, .08);
-            color: #dc3545;
-            border-color: rgba(220, 53, 69, .2);
-        }
+    .pct-remaining-badge.danger {
+        background: rgba(220, 53, 69, .08);
+        color: #dc3545;
+        border-color: rgba(220, 53, 69, .2);
+    }
 
-        .finances-hero {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            border-radius: 20px;
-            padding: 28px 32px;
-            color: #fff;
-            position: relative;
-            overflow: hidden;
-            margin-bottom: 28px;
-        }
+    .finances-hero {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        border-radius: 20px;
+        padding: 28px 32px;
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 28px;
+    }
 
-        .finances-hero::after {
-            content: '';
-            position: absolute;
-            right: -60px;
-            top: -60px;
-            width: 260px;
-            height: 260px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255, 0, 137, .18), transparent 70%);
-        }
+    .finances-hero::after {
+        content: '';
+        position: absolute;
+        right: -60px;
+        top: -60px;
+        width: 260px;
+        height: 260px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255, 0, 137, .18), transparent 70%);
+    }
 
-        .finances-hero::before {
-            content: '';
-            position: absolute;
-            left: -40px;
-            bottom: -40px;
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255, 77, 77, .1), transparent 70%);
-        }
+    .finances-hero::before {
+        content: '';
+        position: absolute;
+        left: -40px;
+        bottom: -40px;
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255, 77, 77, .1), transparent 70%);
+    }
     </style>
 </head>
 
@@ -443,7 +443,7 @@ $role_colors = [
         <?php /* ── NÍVEL 1: Crítico — bloqueia distribuição ── */ ?>
 
         <?php if (!$email_verified): ?>
-            <?php wuAlert(
+        <?php wuAlert(
                 'danger',
                 'bi-envelope-exclamation-fill',
                 '<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta e receber notificações de pagamentos.',
@@ -454,7 +454,7 @@ $role_colors = [
         <?php endif; ?>
 
         <?php if ($plan && !$plan_paid): ?>
-            <?php wuAlert(
+        <?php wuAlert(
                 'warning',
                 'bi-clock-history',
                 '<strong>Pagamento pendente — ' . htmlspecialchars($plan['name_plan']) . '.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados até confirmação.',
@@ -463,7 +463,7 @@ $role_colors = [
                 'banner-plan-pending'
             ); ?>
         <?php elseif (!$plan): ?>
-            <?php wuAlert(
+        <?php wuAlert(
                 'danger',
                 'bi-credit-card-fill',
                 '<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir a tua música para +150 plataformas.',
@@ -476,7 +476,7 @@ $role_colors = [
         <?php /* ── NÍVEL 2: Importante — perfil incompleto ── */ ?>
 
         <?php if ($plan_paid && !$has_artist): ?>
-            <?php wuAlert(
+        <?php wuAlert(
                 'info',
                 'bi-person-plus-fill',
                 '<strong>Cria o teu perfil artístico.</strong> Tens plano activo mas ainda não criaste um perfil artístico. Precisas de um para poder lançar música.',
@@ -489,7 +489,7 @@ $role_colors = [
         <?php /* ── NÍVEL 3: Informativo — conta bancária ── */ ?>
 
         <?php if ($plan_paid && $has_artist && !$bank_account): ?>
-            <?php wuAlert(
+        <?php wuAlert(
                 'info',
                 'bi-bank',
                 '<strong>Conta bancária não registada.</strong> Para poder sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.',
@@ -510,7 +510,7 @@ $role_colors = [
         }
         ?>
         <?php if ($rejected_account): ?>
-            <?php
+        <?php
             $rej_msg = '<strong>Conta ' . htmlspecialchars($rejected_account['type_account']) . ' rejeitada.</strong>';
             if ($rejected_account['reject_reason']) {
                 $rej_msg .= ' Motivo: <em>' . htmlspecialchars($rejected_account['reject_reason']) . '</em>.';
@@ -532,7 +532,7 @@ $role_colors = [
                 <div class="col-md-8">
                     <nav aria-label="breadcrumb" style="margin-bottom:8px">
                         <ol class="breadcrumb mb-0" style="font-size:.75rem;opacity:.6">
-                            <li class="breadcrumb-item"><a href="../painel"
+                            <li class="breadcrumb-item"><a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/painel"
                                     class="text-white text-decoration-none">Dashboard</a></li>
                             <li class="breadcrumb-item"><a href="overview"
                                     class="text-white text-decoration-none">Finanças</a></li>
@@ -548,11 +548,11 @@ $role_colors = [
                 </div>
                 <div class="col-md-4 text-md-end mt-3 mt-md-0">
                     <?php if (!empty($artists)): ?>
-                        <button class="btn btn-sm fw-bold"
-                            style="background:#FF0089;color:#fff;border:none;border-radius:20px;padding:10px 24px"
-                            data-bs-toggle="modal" data-bs-target="#modalNewSplit">
-                            <i class="bi bi-plus me-1"></i>Nova divisão
-                        </button>
+                    <button class="btn btn-sm fw-bold"
+                        style="background:#FF0089;color:#fff;border:none;border-radius:20px;padding:10px 24px"
+                        data-bs-toggle="modal" data-bs-target="#modalNewSplit">
+                        <i class="bi bi-plus me-1"></i>Nova divisão
+                    </button>
                     <?php endif; ?>
                     <a href="overview" class="btn btn-sm ms-2"
                         style="background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:20px">
@@ -564,161 +564,161 @@ $role_colors = [
 
         <!-- Alertas -->
         <?php if ($success === 'created'): ?>
-            <div class="alert alert-success d-flex align-items-center gap-2 mb-4" style="border-radius:14px">
-                <i class="bi bi-check-circle-fill"></i> Divisão criada com sucesso.
-                <button class="btn-close ms-auto" data-bs-dismiss="alert"></button>
-            </div>
+        <div class="alert alert-success d-flex align-items-center gap-2 mb-4" style="border-radius:14px">
+            <i class="bi bi-check-circle-fill"></i> Divisão criada com sucesso.
+            <button class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        </div>
         <?php elseif ($success === 'deleted'): ?>
-            <div class="alert alert-info d-flex align-items-center gap-2 mb-4" style="border-radius:14px">
-                <i class="bi bi-info-circle-fill"></i> Divisão removida.
-                <button class="btn-close ms-auto" data-bs-dismiss="alert"></button>
-            </div>
+        <div class="alert alert-info d-flex align-items-center gap-2 mb-4" style="border-radius:14px">
+            <i class="bi bi-info-circle-fill"></i> Divisão removida.
+            <button class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        </div>
         <?php elseif (!empty($error) && isset($errs[$error])): ?>
-            <div class="alert alert-danger d-flex align-items-center gap-2 mb-4" style="border-radius:14px">
-                <i class="bi bi-exclamation-triangle-fill"></i> <?php echo htmlspecialchars($errs[$error]); ?>
-                <button class="btn-close ms-auto" data-bs-dismiss="alert"></button>
-            </div>
+        <div class="alert alert-danger d-flex align-items-center gap-2 mb-4" style="border-radius:14px">
+            <i class="bi bi-exclamation-triangle-fill"></i> <?php echo htmlspecialchars($errs[$error]); ?>
+            <button class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        </div>
         <?php endif; ?>
 
         <!-- Sem artistas -->
         <?php if (empty($artists)): ?>
-            <div class="split-artist-card text-center p-5">
-                <div style="font-size:3rem;opacity:.2;margin-bottom:12px">🎤</div>
-                <h5 class="fw-bold">Nenhum artista encontrado</h5>
-                <p class="text-muted small mb-4">Precisas de ter pelo menos um artista registado para criar divisões de
-                    royalties.</p>
-                <a href="../artists/add-artist" class="btn btn-sm fw-bold px-4"
-                    style="background:#FF0089;color:#fff;border:none;border-radius:20px">
-                    <i class="bi bi-plus me-1"></i>Adicionar artista
-                </a>
-            </div>
+        <div class="split-artist-card text-center p-5">
+            <div style="font-size:3rem;opacity:.2;margin-bottom:12px">🎤</div>
+            <h5 class="fw-bold">Nenhum artista encontrado</h5>
+            <p class="text-muted small mb-4">Precisas de ter pelo menos um artista registado para criar divisões de
+                royalties.</p>
+            <a href="../artists/add-artist" class="btn btn-sm fw-bold px-4"
+                style="background:#FF0089;color:#fff;border:none;border-radius:20px">
+                <i class="bi bi-plus me-1"></i>Adicionar artista
+            </a>
+        </div>
 
         <?php else: ?>
 
-            <!-- Cards por artista -->
-            <?php foreach ($artists as $art):
+        <!-- Cards por artista -->
+        <?php foreach ($artists as $art):
                 $aid     = $art['id_artist'];
                 $splits  = $splits_by_artist[$aid] ?? [];
                 $used    = (float)($total_pct_by_artist[$aid] ?? 0);
                 $free    = max(0.0, 100.0 - $used);
                 $bar_pct = min(100, $used);
             ?>
-                <div class="split-artist-card" id="artist-card-<?php echo $aid; ?>">
+        <div class="split-artist-card" id="artist-card-<?php echo $aid; ?>">
 
-                    <!-- Header artista -->
-                    <div class="artist-header">
-                        <div class="artist-avatar">
-                            <?php if ($art['photo_artist']): ?>
-                                <img src="<?php echo htmlspecialchars($cover_url . $art['photo_artist']); ?>"
-                                    onerror="this.parentElement.innerHTML='🎤'" alt="" />
-                                <?php else: ?>🎤<?php endif; ?>
-                        </div>
-                        <div style="flex:1;min-width:0">
-                            <div class="fw-bold" style="font-size:.97rem"><?php echo htmlspecialchars($art['stage_name']); ?>
-                            </div>
-                            <div class="text-muted" style="font-size:.75rem">
-                                <?php echo count($splits); ?> colaborador<?php echo count($splits) !== 1 ? 'es' : ''; ?>
-                                &nbsp;·&nbsp;
-                                <?php if ($used > 100): ?>
-                                    <span style="color:#dc3545;font-weight:600">Excede 100% — revê os valores</span>
-                                <?php elseif ($used >= 100): ?>
-                                    <span style="color:#856404;font-weight:600">100% distribuído</span>
-                                <?php else: ?>
-                                    <span style="color:#198754;font-weight:600"><?php echo number_format($free, 1); ?>%
-                                        disponível</span>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                        <button class="btn btn-sm"
-                            style="background:rgba(255,0,137,.08);color:#FF0089;border:1px solid rgba(255,0,137,.2);border-radius:10px;font-size:.75rem;font-weight:700;flex-shrink:0"
-                            onclick="openSplitModal(<?php echo $aid; ?>, '<?php echo addslashes(htmlspecialchars($art['stage_name'])); ?>', <?php echo number_format($free, 2, '.', ''); ?>)">
-                            <i class="bi bi-plus me-1"></i>Adicionar
-                        </button>
+            <!-- Header artista -->
+            <div class="artist-header">
+                <div class="artist-avatar">
+                    <?php if ($art['photo_artist']): ?>
+                    <img src="<?php echo htmlspecialchars($cover_url . $art['photo_artist']); ?>"
+                        onerror="this.parentElement.innerHTML='🎤'" alt="" />
+                    <?php else: ?>🎤<?php endif; ?>
+                </div>
+                <div style="flex:1;min-width:0">
+                    <div class="fw-bold" style="font-size:.97rem"><?php echo htmlspecialchars($art['stage_name']); ?>
                     </div>
-
-                    <!-- Barra progresso -->
-                    <div class="royalty-bar-wrap">
-                        <div class="royalty-bar-label">
-                            <span class="text-muted" style="font-size:.72rem">Royalties distribuídos</span>
-                            <span
-                                style="font-weight:800;font-size:.82rem;color:<?php echo $used > 100 ? '#dc3545' : ($used >= 100 ? '#856404' : '#FF0089'); ?>">
-                                <?php echo number_format($used, 1); ?>%
-                            </span>
-                        </div>
-                        <div class="royalty-bar">
-                            <div class="royalty-bar-fill <?php echo $used > 100 ? 'over' : ''; ?>"
-                                style="width:<?php echo $bar_pct; ?>%"></div>
-                        </div>
+                    <div class="text-muted" style="font-size:.75rem">
+                        <?php echo count($splits); ?> colaborador<?php echo count($splits) !== 1 ? 'es' : ''; ?>
+                        &nbsp;·&nbsp;
+                        <?php if ($used > 100): ?>
+                        <span style="color:#dc3545;font-weight:600">Excede 100% — revê os valores</span>
+                        <?php elseif ($used >= 100): ?>
+                        <span style="color:#856404;font-weight:600">100% distribuído</span>
+                        <?php else: ?>
+                        <span style="color:#198754;font-weight:600"><?php echo number_format($free, 1); ?>%
+                            disponível</span>
+                        <?php endif; ?>
                     </div>
+                </div>
+                <button class="btn btn-sm"
+                    style="background:rgba(255,0,137,.08);color:#FF0089;border:1px solid rgba(255,0,137,.2);border-radius:10px;font-size:.75rem;font-weight:700;flex-shrink:0"
+                    onclick="openSplitModal(<?php echo $aid; ?>, '<?php echo addslashes(htmlspecialchars($art['stage_name'])); ?>', <?php echo number_format($free, 2, '.', ''); ?>)">
+                    <i class="bi bi-plus me-1"></i>Adicionar
+                </button>
+            </div>
 
-                    <!-- Tabela beneficiários -->
-                    <?php if (empty($splits)): ?>
-                        <div class="empty-splits">
-                            <div class="icon">🤝</div>
-                            <div class="small">Nenhuma divisão criada para este artista.</div>
-                            <div class="text-muted" style="font-size:.72rem;margin-top:4px">Clica em "Adicionar" para criar a
-                                primeira divisão.</div>
-                        </div>
-                    <?php else: ?>
-                        <div class="table-responsive">
-                            <table class="beneficiary-table">
-                                <thead>
-                                    <tr>
-                                        <th>Colaborador</th>
-                                        <th>Função</th>
-                                        <th>Conta Wasom</th>
-                                        <th class="text-center">%</th>
-                                        <th class="text-center">Acções</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($splits as $sp):
+            <!-- Barra progresso -->
+            <div class="royalty-bar-wrap">
+                <div class="royalty-bar-label">
+                    <span class="text-muted" style="font-size:.72rem">Royalties distribuídos</span>
+                    <span
+                        style="font-weight:800;font-size:.82rem;color:<?php echo $used > 100 ? '#dc3545' : ($used >= 100 ? '#856404' : '#FF0089'); ?>">
+                        <?php echo number_format($used, 1); ?>%
+                    </span>
+                </div>
+                <div class="royalty-bar">
+                    <div class="royalty-bar-fill <?php echo $used > 100 ? 'over' : ''; ?>"
+                        style="width:<?php echo $bar_pct; ?>%"></div>
+                </div>
+            </div>
+
+            <!-- Tabela beneficiários -->
+            <?php if (empty($splits)): ?>
+            <div class="empty-splits">
+                <div class="icon">🤝</div>
+                <div class="small">Nenhuma divisão criada para este artista.</div>
+                <div class="text-muted" style="font-size:.72rem;margin-top:4px">Clica em "Adicionar" para criar a
+                    primeira divisão.</div>
+            </div>
+            <?php else: ?>
+            <div class="table-responsive">
+                <table class="beneficiary-table">
+                    <thead>
+                        <tr>
+                            <th>Colaborador</th>
+                            <th>Função</th>
+                            <th>Conta Wasom</th>
+                            <th class="text-center">%</th>
+                            <th class="text-center">Acções</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($splits as $sp):
                                         $rc = $role_colors[$sp['role_collab']] ?? $role_colors['other'];
                                         $rl = $role_labels[$sp['role_collab']] ?? 'Outro';
                                     ?>
-                                        <tr>
-                                            <td>
-                                                <div class="fw-semibold"><?php echo htmlspecialchars($sp['name_collab']); ?></div>
-                                                <?php if ($sp['email_collab']): ?>
-                                                    <div class="text-muted" style="font-size:.72rem">
-                                                        <?php echo htmlspecialchars($sp['email_collab']); ?></div>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td>
-                                                <span class="role-chip"
-                                                    style="background:<?php echo $rc['bg']; ?>;color:<?php echo $rc['color']; ?>">
-                                                    <?php echo $rl; ?>
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <?php if ($sp['id_users']): ?>
-                                                    <span class="role-chip" style="background:rgba(25,135,84,.1);color:#198754">
-                                                        <i class="bi bi-check-circle-fill" style="font-size:.7rem"></i> Verificado
-                                                    </span>
-                                                <?php else: ?>
-                                                    <span class="role-chip" style="background:rgba(108,117,125,.08);color:#6c757d">
-                                                        <i class="bi bi-dash-circle" style="font-size:.7rem"></i> Externo
-                                                    </span>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td class="text-center">
-                                                <div class="pct-badge"><?php echo number_format((float)$sp['royalty_share'], 1); ?>%
-                                                </div>
-                                            </td>
-                                            <td class="text-center">
-                                                <button class="btn-split-del" title="Remover"
-                                                    onclick="confirmDelete(<?php echo (int)$sp['id_collab']; ?>, <?php echo $aid; ?>, '<?php echo addslashes(htmlspecialchars($sp['name_collab'])); ?>')">
-                                                    <i class="bi bi-trash3"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    <?php endif; ?>
-                </div>
-            <?php endforeach; ?>
+                        <tr>
+                            <td>
+                                <div class="fw-semibold"><?php echo htmlspecialchars($sp['name_collab']); ?></div>
+                                <?php if ($sp['email_collab']): ?>
+                                <div class="text-muted" style="font-size:.72rem">
+                                    <?php echo htmlspecialchars($sp['email_collab']); ?></div>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <span class="role-chip"
+                                    style="background:<?php echo $rc['bg']; ?>;color:<?php echo $rc['color']; ?>">
+                                    <?php echo $rl; ?>
+                                </span>
+                            </td>
+                            <td>
+                                <?php if ($sp['id_users']): ?>
+                                <span class="role-chip" style="background:rgba(25,135,84,.1);color:#198754">
+                                    <i class="bi bi-check-circle-fill" style="font-size:.7rem"></i> Verificado
+                                </span>
+                                <?php else: ?>
+                                <span class="role-chip" style="background:rgba(108,117,125,.08);color:#6c757d">
+                                    <i class="bi bi-dash-circle" style="font-size:.7rem"></i> Externo
+                                </span>
+                                <?php endif; ?>
+                            </td>
+                            <td class="text-center">
+                                <div class="pct-badge"><?php echo number_format((float)$sp['royalty_share'], 1); ?>%
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <button class="btn-split-del" title="Remover"
+                                    onclick="confirmDelete(<?php echo (int)$sp['id_collab']; ?>, <?php echo $aid; ?>, '<?php echo addslashes(htmlspecialchars($sp['name_collab'])); ?>')">
+                                    <i class="bi bi-trash3"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+            <?php endif; ?>
+        </div>
+        <?php endforeach; ?>
         <?php endif; ?>
 
     </div><!-- /container -->
@@ -751,10 +751,10 @@ $role_colors = [
                                 onchange="updateRemainingPct(this.value)">
                                 <option value="">— Selecciona um artista —</option>
                                 <?php foreach ($artists as $a): ?>
-                                    <option value="<?php echo $a['id_artist']; ?>"
-                                        data-free="<?php echo number_format(max(0, 100 - ($total_pct_by_artist[$a['id_artist']] ?? 0)), 2, '.', ''); ?>">
-                                        <?php echo htmlspecialchars($a['stage_name']); ?>
-                                    </option>
+                                <option value="<?php echo $a['id_artist']; ?>"
+                                    data-free="<?php echo number_format(max(0, 100 - ($total_pct_by_artist[$a['id_artist']] ?? 0)), 2, '.', ''); ?>">
+                                    <?php echo htmlspecialchars($a['stage_name']); ?>
+                                </option>
                                 <?php endforeach; ?>
                             </select>
                             <div class="invalid-feedback">Selecciona um artista.</div>
@@ -783,7 +783,7 @@ $role_colors = [
                                 <select name="role_collab" class="form-select" required>
                                     <option value="">— Selecciona —</option>
                                     <?php foreach ($role_labels as $val => $lbl): ?>
-                                        <option value="<?php echo $val; ?>"><?php echo $lbl; ?></option>
+                                    <option value="<?php echo $val; ?>"><?php echo $lbl; ?></option>
                                     <?php endforeach; ?>
                                 </select>
                                 <div class="invalid-feedback">Selecciona uma função.</div>
@@ -875,81 +875,81 @@ $role_colors = [
     <script src="<?php echo APP_URL  ?>/js/theme.wp.js"></script>
     <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
     <script>
-        // Actualizar % disponível ao mudar artista
-        function updateRemainingPct(artistId) {
-            const sel = document.getElementById('selectArtist');
-            const opt = sel.options[sel.selectedIndex];
-            const free = parseFloat(opt?.dataset?.free ?? 100);
-            const wrap = document.getElementById('pctRemainingWrap');
-            const badge = document.getElementById('pctRemainingBadge');
-            const val = document.getElementById('pctRemainingVal');
-            const inp = document.getElementById('inputPct');
+    // Actualizar % disponível ao mudar artista
+    function updateRemainingPct(artistId) {
+        const sel = document.getElementById('selectArtist');
+        const opt = sel.options[sel.selectedIndex];
+        const free = parseFloat(opt?.dataset?.free ?? 100);
+        const wrap = document.getElementById('pctRemainingWrap');
+        const badge = document.getElementById('pctRemainingBadge');
+        const val = document.getElementById('pctRemainingVal');
+        const inp = document.getElementById('inputPct');
 
-            if (!artistId) {
-                wrap.style.display = 'none';
-                return;
-            }
-
-            wrap.style.display = 'block';
-            val.textContent = free.toFixed(1);
-            badge.className = 'pct-remaining-badge' + (free <= 0 ? ' danger' : free < 20 ? ' warn' : '');
-            inp.max = free > 0 ? free : 0;
-            inp.disabled = free <= 0;
-            inp.placeholder = free <= 0 ? 'Sem % disponível' : '0.0';
+        if (!artistId) {
+            wrap.style.display = 'none';
+            return;
         }
 
-        // Abrir modal pré-seleccionado para artista específico
-        function openSplitModal(artistId, artistName, free) {
-            const sel = document.getElementById('selectArtist');
-            sel.value = artistId;
-            updateRemainingPct(artistId);
-            new bootstrap.Modal(document.getElementById('modalNewSplit')).show();
-        }
+        wrap.style.display = 'block';
+        val.textContent = free.toFixed(1);
+        badge.className = 'pct-remaining-badge' + (free <= 0 ? ' danger' : free < 20 ? ' warn' : '');
+        inp.max = free > 0 ? free : 0;
+        inp.disabled = free <= 0;
+        inp.placeholder = free <= 0 ? 'Sem % disponível' : '0.0';
+    }
 
-        // Confirmar delete
-        function confirmDelete(collabId, artistId, name) {
-            document.getElementById('deleteCollabId').value = collabId;
-            document.getElementById('deleteArtistId').value = artistId;
-            document.getElementById('deleteCollabName').textContent = name;
-            new bootstrap.Modal(document.getElementById('modalDeleteSplit')).show();
-        }
+    // Abrir modal pré-seleccionado para artista específico
+    function openSplitModal(artistId, artistName, free) {
+        const sel = document.getElementById('selectArtist');
+        sel.value = artistId;
+        updateRemainingPct(artistId);
+        new bootstrap.Modal(document.getElementById('modalNewSplit')).show();
+    }
 
-        // Validação do form
-        document.getElementById('formNewSplit').addEventListener('submit', function(e) {
-            const sel = document.getElementById('selectArtist');
-            const pct = document.getElementById('inputPct');
-            const pctVal = parseFloat(pct.value);
-            let ok = true;
+    // Confirmar delete
+    function confirmDelete(collabId, artistId, name) {
+        document.getElementById('deleteCollabId').value = collabId;
+        document.getElementById('deleteArtistId').value = artistId;
+        document.getElementById('deleteCollabName').textContent = name;
+        new bootstrap.Modal(document.getElementById('modalDeleteSplit')).show();
+    }
 
-            sel.classList.toggle('is-invalid', !sel.value);
-            if (!sel.value) ok = false;
+    // Validação do form
+    document.getElementById('formNewSplit').addEventListener('submit', function(e) {
+        const sel = document.getElementById('selectArtist');
+        const pct = document.getElementById('inputPct');
+        const pctVal = parseFloat(pct.value);
+        let ok = true;
 
-            const pctOk = pct.value && !isNaN(pctVal) && pctVal >= 0.1 && pctVal <= parseFloat(pct.max || 100);
-            pct.classList.toggle('is-invalid', !pctOk);
-            if (!pctOk) ok = false;
+        sel.classList.toggle('is-invalid', !sel.value);
+        if (!sel.value) ok = false;
 
-            if (!this.checkValidity()) ok = false;
-            this.classList.add('was-validated');
-            if (!ok) e.preventDefault();
-        });
+        const pctOk = pct.value && !isNaN(pctVal) && pctVal >= 0.1 && pctVal <= parseFloat(pct.max || 100);
+        pct.classList.toggle('is-invalid', !pctOk);
+        if (!pctOk) ok = false;
 
-        // Toastr feedback
-        <?php if ($success === 'created'): ?>
-            toastr.success('Divisão criada com sucesso!', '', {
-                timeOut: 4000,
-                positionClass: 'toast-top-right'
-            });
-        <?php elseif ($success === 'deleted'): ?>
-            toastr.info('Divisão removida.', '', {
-                timeOut: 3000,
-                positionClass: 'toast-top-right'
-            });
-        <?php elseif (!empty($error) && isset($errs[$error])): ?>
-            toastr.error('<?php echo addslashes($errs[$error]); ?>', 'Erro', {
-                timeOut: 5000,
-                positionClass: 'toast-top-right'
-            });
-        <?php endif; ?>
+        if (!this.checkValidity()) ok = false;
+        this.classList.add('was-validated');
+        if (!ok) e.preventDefault();
+    });
+
+    // Toastr feedback
+    <?php if ($success === 'created'): ?>
+    toastr.success('Divisão criada com sucesso!', '', {
+        timeOut: 4000,
+        positionClass: 'toast-top-right'
+    });
+    <?php elseif ($success === 'deleted'): ?>
+    toastr.info('Divisão removida.', '', {
+        timeOut: 3000,
+        positionClass: 'toast-top-right'
+    });
+    <?php elseif (!empty($error) && isset($errs[$error])): ?>
+    toastr.error('<?php echo addslashes($errs[$error]); ?>', 'Erro', {
+        timeOut: 5000,
+        positionClass: 'toast-top-right'
+    });
+    <?php endif; ?>
     </script>
 </body>
 
