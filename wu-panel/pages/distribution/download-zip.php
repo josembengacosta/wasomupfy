@@ -1,6 +1,6 @@
 <?php
 // ══════════════════════════════════════════════════════════════
-// WASOM UPFY v2.0 — Download ZIP de Álbum
+// WASOM UPFY v2.0 — Download ZIP de Álbum (com créditos detalhados)
 // Arquivo: wu-panel/pages/distribution/download-zip.php
 // Rota:    wu-panel/releases/download-zip?id=X
 // ══════════════════════════════════════════════════════════════
@@ -39,9 +39,9 @@ if (!$album) {
     exit('Álbum não encontrado.');
 }
 
-// ── Buscar faixas com áudio ───────────────────────────────────
+// ── Buscar faixas com TODOS os dados, incluindo créditos ──
 $tracks = $db->prepare("
-    SELECT id_track, title_track, track_number, audio_file
+    SELECT *
     FROM _track
     WHERE id_album = ? AND audio_file IS NOT NULL AND audio_file != ''
     ORDER BY track_number ASC, creat_track ASC
@@ -112,24 +112,24 @@ foreach ($tracks as $track_idx => $t) {
     $files_added++;
 }
 
-// ── Adicionar ficheiro de informações ─────────────────────────
+// ── Gerar conteúdo de info.txt ───────────────────────────────
 $info_lines = [
-    'WASOM UPFY — Informações do Álbum',
+    'WASOM UPFY — INFORMAÇÕES DO ÁLBUM',
     str_repeat('=', 50),
     '',
-    'ARTISTA:   ' . ($album['artist_name'] ?? 'Independente'),
-    'TÍTULO:    ' . $album['title_album'],
-    'TIPO:      ' . ucfirst($album['type_album']),
-    'GÉNERO:    ' . ($album['genre_main'] ?? '—'),
-    'IDIOMA:    ' . ($album['language'] ?? '—'),
-    'TERRITÓRIO:' . ($album['territory'] ?? 'Worldwide'),
-    'UPC:       ' . ($album['upc'] ?? 'Não atribuído'),
-    'LANÇAMENTO:' . ($album['release_date'] ? date('d/m/Y', strtotime($album['release_date'])) : '—'),
-    'ESTADO:    ' . ucfirst($album['status_album']),
+    'ARTISTA:        ' . ($album['artist_name'] ?? 'Independente'),
+    'TÍTULO:         ' . $album['title_album'],
+    'TIPO:           ' . ucfirst($album['type_album']),
+    'GÉNERO:         ' . ($album['genre_main'] ?? '—'),
+    'IDIOMA:         ' . ($album['language'] ?? '—'),
+    'TERRITÓRIO:     ' . ($album['territory'] ?? 'Worldwide'),
+    'UPC:            ' . ($album['upc'] ?? 'Não atribuído'),
+    'LANÇAMENTO:     ' . ($album['release_date'] ? date('d/m/Y', strtotime($album['release_date'])) : '—'),
+    'ESTADO:         ' . ucfirst($album['status_album']),
     '',
-    'GRAVADORA: ' . ($album['label_name'] ?? 'Independente'),
-    'COPYRIGHT ©:' . ($album['copyright_c'] ?? '—'),
-    'FONOGRAMA ℗:' . ($album['copyright_p'] ?? '—'),
+    'GRAVADORA:      ' . ($album['label_name'] ?? 'Independente'),
+    'COPYRIGHT ©:    ' . ($album['copyright_c'] ?? '—'),
+    'FONOGRAMA ℗:    ' . ($album['copyright_p'] ?? '—'),
     '',
     'FAIXAS NO ZIP:',
     str_repeat('-', 50),
@@ -138,6 +138,10 @@ $info_lines = [
 foreach ($tracks as $track_idx => $t) {
     $track_num = str_pad((int)($t['track_number'] ?: $track_idx + 1), 2, '0', STR_PAD_LEFT);
     $info_lines[] = sprintf('%s. %s', $track_num, $t['title_track']);
+    if ($t['name_author'])   $info_lines[] = '    Autor: ' . $t['name_author'];
+    if ($t['name_author_feat']) $info_lines[] = '    Feat: ' . $t['name_author_feat'];
+    if ($t['name_composer']) $info_lines[] = '    Compositor: ' . $t['name_composer'];
+    if ($t['name_producer']) $info_lines[] = '    Produtor: ' . $t['name_producer'];
 }
 
 $info_lines[] = '';
@@ -146,6 +150,36 @@ $info_lines[] = 'Gerado em: ' . date('d/m/Y H:i:s');
 $info_lines[] = 'Por: Wasom Upfy Admin Panel';
 
 $zip->addFromString('info.txt', implode(PHP_EOL, $info_lines));
+
+// ── Gerar conteúdo de creditos.txt (detalhado) ───────────────
+$credits_lines = [
+    'WASOM UPFY — CRÉDITOS DAS FAIXAS',
+    str_repeat('=', 60),
+    'Álbum: ' . $album['title_album'],
+    'Artista: ' . ($album['artist_name'] ?? 'Independente'),
+    '',
+];
+
+foreach ($tracks as $track_idx => $t) {
+    $track_num = str_pad((int)($t['track_number'] ?: $track_idx + 1), 2, '0', STR_PAD_LEFT);
+    $credits_lines[] = str_repeat('-', 60);
+    $credits_lines[] = $track_num . '. ' . $t['title_track'];
+    $credits_lines[] = str_repeat('-', 60);
+    $credits_lines[] = '    Autor/Intérprete: ' . ($t['name_author'] ?: '—');
+    $credits_lines[] = '    Featuring:         ' . ($t['name_author_feat'] ?: '—');
+    $credits_lines[] = '    Compositor:        ' . ($t['name_composer'] ?: '—');
+    $credits_lines[] = '    Produtor:          ' . ($t['name_producer'] ?: '—');
+    $credits_lines[] = '    ISRC:              ' . ($t['isrc'] ?: '—');
+    $credits_lines[] = '    Idioma:            ' . ($t['language'] ?: '—');
+    $credits_lines[] = '    Duração:           ' . (isset($t['duration_seconds']) ? gmdate('i:s', (int)$t['duration_seconds']) : '—');
+    $credits_lines[] = '    Explícito:         ' . ($t['explicit'] === 'YES' ? 'Sim' : 'Não');
+    $credits_lines[] = '';
+}
+
+$credits_lines[] = str_repeat('=', 60);
+$credits_lines[] = 'Ficheiro gerado em: ' . date('d/m/Y H:i:s') . ' — Wasom Upfy Admin Panel';
+
+$zip->addFromString('creditos.txt', implode(PHP_EOL, $credits_lines));
 
 $zip->close();
 

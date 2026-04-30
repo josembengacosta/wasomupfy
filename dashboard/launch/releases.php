@@ -134,11 +134,6 @@ $sess_ip       = $current_session['ip_address'] ?? ($sec['last_login_ip'] ?? '�
 // ══════════════════════════════════════════════
 // LANÇAMENTOS DA BASE DE DADOS
 // ══════════════════════════════════════════════
-// Buscar todos os álbuns do utilizador com info do artista e contagem de faixas
-// ══════════════════════════════════════════════
-// LANÇAMENTOS DA BASE DE DADOS
-// ══════════════════════════════════════════════
-// Buscar todos os álbuns do utilizador (incluindo 'deleting')
 $albums_stmt = $db->prepare("
     SELECT
         a.id_album,
@@ -170,37 +165,52 @@ $albums_stmt = $db->prepare("
 $albums_stmt->execute([$id_users]);
 $albums_raw = $albums_stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Debug - ver todos os status
-error_log('STATUS ENCONTRADOS: ' . implode(', ', array_column($albums_raw, 'status_album')));
-
-// Para cada álbum, buscar as faixas
 $albums_data = [];
 foreach ($albums_raw as $alb) {
+
+    // ── Faixas ──────────────────────────────────
     $trk_stmt = $db->prepare("
-         SELECT 
-        title_track, 
-        isrc, 
-        audio_file,
-        name_author,                     
-        name_composer,                    
-        name_producer,                     
-        explicit,                           
-        language,                            
-        name_author_feat AS featuring_track,
-        track_number AS position_track,
-        CASE WHEN duration_seconds IS NOT NULL
-            THEN CONCAT(FLOOR(duration_seconds/60), ':', LPAD(duration_seconds%60,2,'0'))
-            ELSE NULL END AS duration_track
-    FROM _track 
-    WHERE id_album = ?
-    ORDER BY track_number ASC, id_track ASC
-");
+        SELECT 
+            title_track, 
+            isrc, 
+            audio_file,
+            name_author,                     
+            name_composer,                    
+            name_producer,                     
+            explicit,                           
+            language,                            
+            name_author_feat AS featuring_track,
+            track_number AS position_track,
+            CASE WHEN duration_seconds IS NOT NULL
+                THEN CONCAT(FLOOR(duration_seconds/60), ':', LPAD(duration_seconds%60,2,'0'))
+                ELSE NULL END AS duration_track
+        FROM _track 
+        WHERE id_album = ?
+        ORDER BY track_number ASC, id_track ASC
+    ");
     $trk_stmt->execute([$alb['id_album']]);
     $alb['tracks'] = $trk_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // ── Lojas (_album_store JOIN _store) ─────────
+    $st_stmt = $db->prepare("
+        SELECT
+            s.id_store,
+            s.name_store,
+            s.slug_store,
+            als.status           AS store_status,
+            als.store_release_url,
+            als.distributed_at
+        FROM _album_store als
+        INNER JOIN _store s ON s.id_store = als.id_store
+        WHERE als.id_album = ?
+        ORDER BY s.display_order ASC
+    ");
+    $st_stmt->execute([$alb['id_album']]);
+    $alb['stores'] = $st_stmt->fetchAll(PDO::FETCH_ASSOC);
+
     $albums_data[] = $alb;
 }
 
-// Codificar para JS de forma segura
 $albums_json = json_encode($albums_data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
 
 // CSRF token para os processos Ajax
@@ -411,6 +421,48 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
     /* ── Modal de revisão ─── */
     #reviewModal .form-label {
         font-size: .85rem;
+    }
+
+    /* ── Acordeão de faixas no modal escuro ── */
+    .accordion-button {
+        background-color: #2c2c2c !important;
+        color: #fff !important;
+        border: 1px solid rgba(255, 255, 255, .1) !important;
+    }
+
+    .accordion-button:not(.collapsed) {
+        background-color: #3a3a3a !important;
+        color: #FF0089 !important;
+    }
+
+    .accordion-button::after {
+        filter: brightness(0) invert(1);
+    }
+
+    .accordion-item {
+        background-color: transparent;
+        border-color: rgba(255, 255, 255, .08);
+    }
+
+    .accordion-body {
+        background-color: #1e1e1e;
+        color: #ddd;
+        font-size: .82rem;
+    }
+
+    .track-detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 4px 0;
+    }
+
+    .track-detail-label {
+        opacity: .6;
+        font-size: .75rem;
+    }
+
+    .track-detail-value {
+        font-weight: 500;
     }
     </style>
 </head>
@@ -761,10 +813,12 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
                                 </div>
                             </div>
 
-                            <!-- LISTAGEM DE FAIXAS MELHORADA -->
+                            <!-- LISTAGEM DE FAIXAS (ACORDEÃO) -->
                             <div id="m-tracks-wrap">
                                 <p class="text-reset small mb-2">Faixas:</p>
-                                <div id="m-tracks-list" class="mb-3"></div>
+                                <div class="accordion" id="tracksAccordion">
+
+                                </div>
                             </div>
 
                             <!-- INFORMAÇÃO DE DISTRIBUIÇÃO -->

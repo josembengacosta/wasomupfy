@@ -292,6 +292,16 @@ if ($action === 'approve') {
             ['status_album' => 'approved', 'upc' => $upc, 'smartlink' => $smartlink]
         );
 
+        // Se existir um pedido de revisão pendente, marcá-lo como resolvido
+$rev_stmt = $db->prepare("
+    UPDATE _album_review_request
+    SET status_request = 'resolved',
+        resolved_by = ?,
+        resolved_at = NOW()
+    WHERE id_album = ? AND status_request = 'pending'
+");
+$rev_stmt->execute([$admin_id, $id_album]);
+
         jOut(true, 'Álbum aprovado com sucesso! UPC: ' . $upc . '. Utilizador notificado.');
     } catch (Exception $e) {
         $db->rollBack();
@@ -362,6 +372,15 @@ if ($action === 'reject') {
             ['status_album' => 'under_review'],
             ['status_album' => 'rejected', 'reason' => $reason]
         );
+        // Se existir pedido de revisão pendente, fechá-lo como resolvido (ou rejeitado, conforme o fluxo)
+$rev_stmt = $db->prepare("
+    UPDATE _album_review_request
+    SET status_request = 'resolved',
+        resolved_by = ?,
+        resolved_at = NOW()
+    WHERE id_album = ? AND status_request = 'pending'
+");
+$rev_stmt->execute([$admin_id, $id_album]);
 
         jOut(true, 'Álbum rejeitado. O utilizador foi notificado com o motivo.');
     } catch (Exception $e) {
@@ -665,4 +684,73 @@ if ($action === 'undelete_album') {
     }
 }
 
+// ════════════════════════════════════════════════════════════════════════════
+// ELIMINAR PERMANENTEMENTE (hard delete) — só após expiração
+// ════════════════════════════════════════════════════════════════════════════
+if ($action === 'permanent_delete_album') {
+    requirePermission($admin_id, 'music.delete');
+
+    if ($album['status_album'] !== 'deleting') {
+        jOut(false, 'Só é possível eliminar permanentemente álbuns que já estão marcados para eliminação.');
+    }
+
+    // Opcional: verificar se a data de expiração já passou
+    if (strtotime($album['delete_expires_at']) > time()) {
+        jOut(false, 'O período de espera ainda não expirou. Eliminação manual permitida apenas após expiração.');
+    }
+
+    // Verificar senha do admin
+    $admin_password = $_POST['admin_password'] ?? '';
+    if (empty($admin_password)) {
+        jOut(false, 'A senha é obrigatória para confirmar a eliminação permanente.');
+    }
+
+    $pw_stmt = $db->prepare("SELECT password_employees FROM _employees WHERE id_employees = ? LIMIT 1");
+    $pw_stmt->execute([$admin_id]);
+    $pw_row = $pw_stmt->fetch();
+
+    if (!$pw_row || !password_verify($admin_password, $pw_row['password_employees'])) {
+        jOut(false, 'Senha incorrecta. Tenta novamente.');
+    }
+
+    try {
+        // Apagar ficheiros físicos
+        $audio_base = dirname(__DIR__, 3) . '/assets/uploads/audio/';
+        $cover_base = dirname(__DIR__, 3) . '/assets/comprovantes/uploads/covers/';
+
+        $track_files = $db->prepare("SELECT audio_file FROM _track WHERE id_album = ?");
+        $track_files->execute([$id_album]);
+        $tracks = $track_files->fetchAll(PDO::FETCH_COLUMN);
+
+        foreach ($tracks as $audio_file) {
+            if ($audio_file) {
+                $path = $audio_base . $audio_file;
+                if (file_exists($path)) @unlink($path);
+            }
+        }
+
+        if (!empty($album['img_cover'])) {
+            $cover_path = $cover_base . $album['img_cover'];
+            if (file_exists($cover_path)) @unlink($cover_path);
+        }
+
+        // Remover registos da BD
+        $db->beginTransaction();
+        $db->prepare("DELETE FROM _track WHERE id_album = ?")->execute([$id_album]);
+        $db->prepare("DELETE FROM _album_store WHERE id_album = ?")->execute([$id_album]);
+        $db->prepare("DELETE FROM _album_review_request WHERE id_album = ?")->execute([$id_album]);
+        $db->prepare("DELETE FROM _takedown_request WHERE id_album = ?")->execute([$id_album]);
+        $db->prepare("DELETE FROM _album WHERE id_album = ?")->execute([$id_album]);
+        $db->commit();
+
+        al_logAudit($db, $admin_id, 'album.permanently_deleted', '_album', $id_album, $ip,
+            ['status_album' => 'deleting'], null);
+
+        jOut(true, 'Álbum eliminado permanentemente com sucesso.');
+    } catch (Exception $e) {
+        $db->rollBack();
+        error_log('[PERM DELETE] ' . $e->getMessage());
+        jOut(false, 'Erro ao eliminar o álbum. Tenta novamente.');
+    }
+}
 jOut(false, 'Acção desconhecida.');

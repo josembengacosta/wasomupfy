@@ -42,7 +42,6 @@ switch ($action) {
             jsonOut(false, 'A justificação deve ter pelo menos 20 caracteres.');
         }
 
-        // Verificar que o álbum pertence ao utilizador e está reprovado
         $alb = $db->prepare("
             SELECT id_album, title_album, status_album
             FROM _album
@@ -58,7 +57,6 @@ switch ($action) {
             jsonOut(false, 'Só é possível solicitar revisão de lançamentos reprovados.');
         }
 
-        // Verificar se já existe pedido pendente para este álbum
         $existing = $db->prepare("
             SELECT id_review FROM _album_review_request
             WHERE id_album = ? AND status_request = 'pending'
@@ -69,14 +67,12 @@ switch ($action) {
             jsonOut(false, 'Já existe uma solicitação de revisão pendente para este lançamento. Aguarda a resposta da equipa.');
         }
 
-        // Inserir pedido de revisão
         $db->prepare("
             INSERT INTO _album_review_request
                 (id_album, id_users, reason_request, status_request, creat_request)
             VALUES (?, ?, ?, 'pending', NOW())
         ")->execute([$id_album, $id_users, $reason]);
 
-        // Actualizar o álbum para 'under_review' (estado intermediário)
         $db->prepare("
             UPDATE _album
             SET status_album = 'under_review', modif_album = NOW()
@@ -93,9 +89,9 @@ switch ($action) {
 
         jsonOut(true, 'Solicitação enviada! A nossa equipa irá rever o teu lançamento em breve.');
 
-        // ══════════════════════════════════════════
-        // ELIMINAR rascunho da BD (se foi guardado)
-        // ══════════════════════════════════════════
+    // ══════════════════════════════════════════
+    // ELIMINAR rascunho da BD (se foi guardado)
+    // ══════════════════════════════════════════
     case 'delete_draft':
         $id_album = (int)($_POST['id_album'] ?? 0);
         if (!$id_album) jsonOut(false, 'ID inválido.');
@@ -110,25 +106,22 @@ switch ($action) {
             jsonOut(false, 'Rascunho não encontrado ou já não é rascunho.');
         }
 
-        // Eliminar faixas associadas
         $db->prepare("DELETE FROM _track WHERE id_album = ?")->execute([$id_album]);
 
         logActivity($id_users, 'draft_deleted', "Rascunho #{$id_album} eliminado.", 'album', $id_album);
         jsonOut(true, 'Rascunho eliminado com sucesso.');
 
-        // ──────────────────────────────────────────
+    // ──────────────────────────────────────────
     // SOLICITAR ELIMINAÇÃO DE LANÇAMENTO PUBLICADO
     // ──────────────────────────────────────────
     case 'delete_release_request':
         $id_album = (int)($_POST['id_album'] ?? 0);
         $password = $_POST['password'] ?? '';
         
-        // Verificar senha
         if (!verifyUserPassword($id_users, $password)) {
             jsonOut(false, 'Senha incorreta.');
         }
         
-        // Verificar se o álbum existe, pertence ao user e está publicado
         $check = $db->prepare("
             SELECT id_album, title_album, status_album 
             FROM _album 
@@ -146,7 +139,6 @@ switch ($action) {
             
             $expires_at = date('Y-m-d H:i:s', strtotime('+72 hours'));
             
-            // Inserir pedido na tabela _takedown_request
             $stmt = $db->prepare("
                 INSERT INTO _takedown_request 
                     (id_users, id_album, reason, status_takedown)
@@ -154,7 +146,6 @@ switch ($action) {
             ");
             $stmt->execute([$id_users, $id_album]);
             
-            // Guardar status anterior e atualizar para 'deleting'
             $db->prepare("
                 UPDATE _album SET 
                     previous_status = status_album,
@@ -185,9 +176,8 @@ switch ($action) {
     case 'cancel_delete_request':
         $id_album = (int)($_POST['id_album'] ?? 0);
         
-        // Verificar se o álbum existe e está em deleting
         $check = $db->prepare("
-            SELECT id_album, previous_status 
+            SELECT id_album, previous_status, delete_expires_at
             FROM _album 
             WHERE id_album = ? AND id_users = ? AND status_album = 'deleting'
         ");
@@ -197,11 +187,15 @@ switch ($action) {
         if (!$album) {
             jsonOut(false, 'Não há pedido de eliminação ativo para este lançamento.');
         }
+
+        // Bloquear cancelamento após expiração
+        if (strtotime($album['delete_expires_at']) <= time()) {
+            jsonOut(false, 'O prazo para cancelamento já expirou. Não é possível cancelar o pedido.');
+        }
         
         try {
             $db->beginTransaction();
             
-            // Reverter para o status anterior
             $db->prepare("
                 UPDATE _album SET 
                     status_album = previous_status,
@@ -211,7 +205,6 @@ switch ($action) {
                 WHERE id_album = ? AND id_users = ?
             ")->execute([$id_album, $id_users]);
             
-            // Cancelar pedidos pendentes
             $db->prepare("
                 UPDATE _delete_requests SET status = 'cancelled' 
                 WHERE id_album = ? AND status = 'pending'

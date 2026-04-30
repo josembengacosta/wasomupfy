@@ -1115,43 +1115,12 @@ $chart_json_datasets = json_encode($chart_datasets); ?>
     </div>
 
 
-    <script>
-    // ── Badge de notificações — polling leve a cada 60s ──────────
-    (function() {
-        function refreshNotifBadge() {
-            fetch('ajax/notifications_api?action=count', {
-                    credentials: 'same-origin'
-                })
-                .then(r => r.json())
-                .then(data => {
-                    var badge = document.getElementById('navNotifBadge');
-                    if (!badge) return;
-                    var count = parseInt(data.unread || 0);
-                    if (count > 0) {
-                        badge.textContent = count > 99 ? '99+' : count;
-                        badge.style.display = '';
-                    } else {
-                        badge.style.display = 'none';
-                    }
-                })
-                .catch(function() {});
-        }
-        // Primeira actualização após 30s para não sobrecarregar o load inicial
-        setTimeout(function() {
-            refreshNotifBadge();
-            setInterval(refreshNotifBadge, 60000);
-        }, 30000);
-    })();
-    </script>
 
-    <!-- Bootstrap JS and Popper.js -->
+    <!-- Bootstrap JS + libs -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Chart.js para gráficos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="<?php echo APP_URL  ?>/js/theme.wp.js"></script>
-    <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
-
-    <!-- ── Passar dados do PHP para o PWA JS ────── -->
+    <script src="<?php echo APP_URL ?>/js/theme.wp.js"></script>
+    <script src="<?php echo APP_URL ?>/js/wp.tools.js"></script>
     <script>
     window.WASOM_CONFIG = {
         userId: <?php echo (int)($_SESSION['id_users'] ?? 0); ?>,
@@ -1161,192 +1130,12 @@ $chart_json_datasets = json_encode($chart_datasets); ?>
         appUrl: <?php echo json_encode(APP_URL); ?>,
         appEnv: <?php echo json_encode(APP_ENV); ?>,
     };
-
-    // Sincronizar badge de notificações ao carregar a página
-    document.addEventListener('DOMContentLoaded', function() {
-        if (window.WASOM_CONFIG.notifCount > 0 && 'setAppBadge' in navigator) {
-            navigator.setAppBadge(window.WASOM_CONFIG.notifCount).catch(function() {});
-        }
-    });
+    const HAS_STREAMS = <?php echo ($has_streams && !empty($chart_datasets)) ? 'true' : 'false'; ?>;
+    const CHART_LABELS = <?php echo $has_streams ? $chart_json_labels   : 'null'; ?>;
+    const CHART_DATASETS = <?php echo $has_streams ? $chart_json_datasets : 'null'; ?>;
     </script>
-    <script>
-    const tooltipTriggerList = document.querySelectorAll(
-        '[data-bs-toggle="tooltip"]'
-    );
-    const tooltipList = [...tooltipTriggerList].map(
-        (tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl)
-    );
-    </script>
-    <script>
-    // ── Gráfico de streams — dados reais da BD ──────────────
-    <?php if ($has_streams && !empty($chart_datasets)): ?>
-        (function() {
-            const canvas = document.getElementById('streamChart');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
+    <script src="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/js/painel.js"></script>
 
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: <?php echo $chart_json_labels; ?>,
-                    datasets: <?php echo $chart_json_datasets; ?>
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            stacked: true,
-                            ticks: {
-                                callback: v => v >= 1000 ? (v / 1000).toFixed(1) + 'k' : v
-                            },
-                            title: {
-                                display: true,
-                                text: 'Streams'
-                            }
-                        },
-                        x: {
-                            stacked: true,
-                            title: {
-                                display: true,
-                                text: 'Período'
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            position: 'top'
-                        },
-                        tooltip: {
-                            mode: 'index',
-                            intersect: false,
-                            callbacks: {
-                                label: ctx =>
-                                    ` ${ctx.dataset.label}: ${ctx.parsed.y.toLocaleString('pt-AO')} streams`
-                            }
-                        }
-                    },
-                    interaction: {
-                        mode: 'nearest',
-                        axis: 'x',
-                        intersect: false
-                    }
-                }
-            });
-        })();
-    <?php endif; ?>
-    </script>
-
-    <script>
-    // ══════════════════════════════════════════════════
-    // ONBOARDING — lógica (TOTAL agora é 5)
-    // CSRF lido do meta tag — não hardcoded em PHP inline
-    // ══════════════════════════════════════════════════
-    (function() {
-        const TOTAL = 5;
-        let current = 1;
-
-        const modal = document.getElementById('onboardingModal');
-        if (!modal) return;
-
-        const btnNext = document.getElementById('ob-next');
-        const btnPrev = document.getElementById('ob-prev');
-        const btnSkip = document.getElementById('ob-skip-artist');
-        const dots = document.querySelectorAll('.ob-dot');
-        const progBar = document.getElementById('ob-progress-bar');
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')
-            ?.getAttribute('content') ?? '';
-
-        const bsModal = new bootstrap.Modal(modal, {
-            backdrop: 'static'
-        });
-        bsModal.show();
-
-        function goTo(n) {
-            document.getElementById('ob-' + current).classList.add('d-none');
-            current = n;
-            document.getElementById('ob-' + current).classList.remove('d-none');
-
-            // Dots
-            dots.forEach((d, i) => d.classList.toggle('active', i + 1 === current));
-
-            // Barra de progresso
-            if (progBar) progBar.style.width = ((current / TOTAL) * 100) + '%';
-
-            // Botões do footer
-            btnPrev.classList.toggle('d-none', current === 1);
-            btnNext.classList.toggle('d-none', current === TOTAL);
-        }
-
-        btnNext.addEventListener('click', () => {
-            if (current < TOTAL) goTo(current + 1);
-        });
-        btnPrev.addEventListener('click', () => {
-            if (current > 1) goTo(current - 1);
-        });
-
-        // "Criar mais tarde" — salta para o step final
-        if (btnSkip) btnSkip.addEventListener('click', () => goTo(TOTAL));
-
-        // Push notifications — pedido de permissão
-        window.obRequestPush = function(btn) {
-            if (!('Notification' in window) || !('serviceWorker' in navigator)) {
-                document.getElementById('ob-push-status').textContent = 'Não suportado neste dispositivo.';
-                btn.disabled = true;
-                return;
-            }
-            if (Notification.permission === 'granted') {
-                document.getElementById('ob-push-status').innerHTML =
-                    '<i class="bi bi-check-circle-fill text-success"></i> Já activadas';
-                btn.disabled = true;
-                return;
-            }
-            Notification.requestPermission().then(function(perm) {
-                if (perm === 'granted') {
-                    document.getElementById('ob-push-status').innerHTML =
-                        '<i class="bi bi-check-circle-fill text-success"></i> Activadas!';
-                    btn.disabled = true;
-                    btn.innerHTML = '<i class="bi bi-bell-fill me-1"></i>Notificações activas';
-                    btn.classList.replace('btn-outline-secondary', 'btn-outline-success');
-                } else {
-                    document.getElementById('ob-push-status').textContent =
-                        'Podes activar nas definições do browser.';
-                    btn.disabled = true;
-                }
-            });
-        };
-
-        // finishOnboarding — chamado pelo botão no step 5
-        window.finishOnboarding = function() {
-            var btn = document.getElementById('ob-finish');
-            if (btn) {
-                btn.disabled = true;
-                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>A guardar…';
-            }
-            fetch('onboarding_done', {
-                    method: 'POST',
-                    credentials: 'same-origin',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        csrf: csrfToken
-                    }),
-                })
-                .then(r => r.json())
-                .then(data => {
-                    if (data.ok) {
-                        bsModal.hide();
-                        window.location.reload();
-                    } else {
-                        bsModal.hide();
-                    }
-                })
-                .catch(() => bsModal.hide());
-        };
-    })();
-    </script>
 </body>
 
 </html>

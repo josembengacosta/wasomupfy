@@ -147,25 +147,88 @@ foreach ($stores as &$s) {
 }
 unset($s);
 
-// ── Mapeamento de ícones por slug da loja ──────────────────────────────
+/// ── Mapeamento de ícones por slug da loja ──────────────────────────────
 $storeIcons = [
-    'spotify'       => 'bi-spotify',
-    'apple-music'   => 'bi-apple',
-    'amazon-music'  => 'bi-amazon',
-    'deezer'        => 'bi-music-note-beamed',
-    'tidal'         => 'bi-droplet',
-    'boomplay'      => 'bi-play-circle',
-    'youtube-music' => 'bi-youtube',
-    'youtube'       => 'bi-youtube',
-    'itunes'        => 'bi-apple',
-    'tiktok'        => 'bi-music-note',
-    'facebook'      => 'bi-facebook',
-    'snapchat'      => 'bi-camera',
-    'pandora'       => 'bi-headphones',
-    'resso'         => 'bi-music-note-list',
-    'claro-music'   => 'bi-brightness-alt-high',
-    'default'       => 'bi-shop',
+
+    // ── Streaming Global ──────────────────────────────────────────────────
+    'spotify'              => 'bi-spotify',
+    'apple-music'          => 'bi-apple',
+    'amazon-music'         => 'bi-amazon',
+    'deezer'               => 'bi-music-note-beamed',
+    'tidal'                => 'bi-water',
+    'boomplay'             => 'bi-play-circle-fill',
+    'youtube-music'        => 'bi-youtube',
+    'soundcloud'           => 'bi-soundwave',
+    'napster'              => 'bi-music-note-list',
+    'iheart-radio'         => 'bi-broadcast',
+    'audiomack'            => 'bi-soundwave',
+    'qobuz'                => 'bi-vinyl-fill',
+
+    // ── Streaming Ásia ────────────────────────────────────────────────────
+    'jiosaavn'             => 'bi-music-note-list',
+    'gaana'                => 'bi-music-note-beamed',
+    'wynk-music'           => 'bi-headphones',
+    'hungama'              => 'bi-collection-play-fill',
+    'netease-cloud-music'  => 'bi-cloud-fill',
+    'qq-music'             => 'bi-music-player-fill',
+    'kugou'                => 'bi-disc-fill',
+    'kuwo-music'           => 'bi-music-note-beamed',
+    'melon'                => 'bi-circle-fill',
+    'genie'                => 'bi-stars',
+    'bugs'                 => 'bi-music-note',
+    'flo'                  => 'bi-play-btn-fill',
+    'kkbox'                => 'bi-grid-fill',
+    'joox'                 => 'bi-play-circle-fill',
+    'line-music'           => 'bi-chat-fill',
+    'awa'                  => 'bi-soundwave',
+    'recochoku'            => 'bi-headset',
+    'anghami'              => 'bi-music-note-beamed',
+    'yandex-music'         => 'bi-music-note-list',
+    'vk-music'             => 'bi-person-fill',
+    'fizy'                 => 'bi-music-note-beamed',
+
+    // ── Streaming LATAM / Brasil ──────────────────────────────────────────
+    'imusica'              => 'bi-music-note-beamed',
+    'tim-music'            => 'bi-phone-fill',
+    'triller'              => 'bi-camera-video-fill',
+    'claro-music'          => 'bi-reception-4',
+
+    // ── Streaming Rússia / Outros ─────────────────────────────────────────
+    'zvuk'                 => 'bi-vinyl',
+    'pandora'              => 'bi-broadcast',
+    'resso'                => 'bi-music-player',
+
+    // ── Download ──────────────────────────────────────────────────────────
+    'itunes'               => 'bi-bag-music-fill',
+    'beatport'             => 'bi-headphones-fill',
+    'traxsource'           => 'bi-vinyl-fill',
+    'bandcamp'             => 'bi-bandcamp',
+    '7digital'             => 'bi-7-circle-fill',
+    'hdtracks'             => 'bi-soundwave',
+    'juno-download'        => 'bi-cloud-arrow-down-fill',
+    'emusic'               => 'bi-download',
+
+    // ── Social ────────────────────────────────────────────────────────────
+    'tiktok'               => 'bi-tiktok',
+    'facebook'             => 'bi-facebook',
+    'snapchat'             => 'bi-snapchat',
+    'instagram'            => 'bi-instagram',
+    'x-twitter'            => 'bi-twitter-x',
+    'twitch'               => 'bi-twitch',
+    'kwai'                 => 'bi-camera-reels-fill',
+    'vk'                   => 'bi-person-video3',
+    'likee'                => 'bi-heart-fill',
+
+    // ── Vídeo ─────────────────────────────────────────────────────────────
+    'youtube'              => 'bi-youtube',
+    'vevo'                 => 'bi-play-btn-fill',
+    'dailymotion'          => 'bi-play-circle-fill',
+    'vimeo'                => 'bi-vimeo',
+
+    // ── Fallback ──────────────────────────────────────────────────────────
+    'default'              => 'bi-shop',
 ];
+
 foreach ($stores as &$store) {
     $store['icon_class'] = $storeIcons[$store['slug_store']] ?? $storeIcons['default'];
 }
@@ -191,155 +254,157 @@ $csrf = $_SESSION['admin_csrf_token'];
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+    <!-- Font Awesome 6 Free (Brands) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="<?php echo APP_URL; ?>/css/lastest-style.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.css" />
     <style>
-        /* Reutilizamos os estilos de artists.php */
-        .an-s-active {
-            background: rgba(34, 197, 94, .15);
-            color: #166534;
-        }
+    /* Reutilizamos os estilos de artists.php */
+    .an-s-active {
+        background: rgba(34, 197, 94, .15);
+        color: #166534;
+    }
 
-        .an-s-inactive {
-            background: rgba(107, 114, 128, .15);
-            color: #374151;
-        }
+    .an-s-inactive {
+        background: rgba(107, 114, 128, .15);
+        color: #374151;
+    }
 
-        .dark-mode .an-s-active {
-            background: rgba(34, 197, 94, .18);
-            color: #4ade80;
-        }
+    .dark-mode .an-s-active {
+        background: rgba(34, 197, 94, .18);
+        color: #4ade80;
+    }
 
-        .dark-mode .an-s-inactive {
-            background: rgba(107, 114, 128, .18);
-            color: #9ca3af;
-        }
+    .dark-mode .an-s-inactive {
+        background: rgba(107, 114, 128, .18);
+        color: #9ca3af;
+    }
 
-        .an-stat {
-            background: var(--card-bg, #fff);
-            border: 1px solid var(--border-color, #e8e8f0);
-            border-radius: 12px;
-            padding: 14px 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            transition: transform .2s, box-shadow .2s;
-        }
+    .an-stat {
+        background: var(--card-bg, #fff);
+        border: 1px solid var(--border-color, #e8e8f0);
+        border-radius: 12px;
+        padding: 14px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: transform .2s, box-shadow .2s;
+    }
 
-        .an-stat:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, .06);
-        }
+    .an-stat:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, .06);
+    }
 
-        .an-stat-icon {
-            width: 42px;
-            height: 42px;
-            border-radius: 10px;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.15rem;
-        }
+    .an-stat-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+    }
 
-        .an-stat-val {
-            font-size: 1.25rem;
-            font-weight: 800;
-            line-height: 1;
-        }
+    .an-stat-val {
+        font-size: 1.25rem;
+        font-weight: 800;
+        line-height: 1;
+    }
 
-        .an-stat-lbl {
-            font-size: .7rem;
-            text-transform: uppercase;
-            letter-spacing: .5px;
-            opacity: .6;
-            margin-top: 2px;
-        }
+    .an-stat-lbl {
+        font-size: .7rem;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        opacity: .6;
+        margin-top: 2px;
+    }
 
-        .an-filter {
-            background: var(--card-bg, #fff);
-            border: 1px solid var(--border-color, #e8e8f0);
-            border-radius: 12px;
-            padding: 14px 16px;
-            margin-bottom: 16px;
-        }
+    .an-filter {
+        background: var(--card-bg, #fff);
+        border: 1px solid var(--border-color, #e8e8f0);
+        border-radius: 12px;
+        padding: 14px 16px;
+        margin-bottom: 16px;
+    }
 
-        .an-filter .form-label {
-            font-size: .75rem;
-            font-weight: 600;
-            margin-bottom: 3px;
-        }
+    .an-filter .form-label {
+        font-size: .75rem;
+        font-weight: 600;
+        margin-bottom: 3px;
+    }
 
-        .an-table th {
-            font-size: .72rem;
-            text-transform: uppercase;
-            letter-spacing: .4px;
-            font-weight: 700;
-            white-space: nowrap;
-            cursor: pointer;
-        }
+    .an-table th {
+        font-size: .72rem;
+        text-transform: uppercase;
+        letter-spacing: .4px;
+        font-weight: 700;
+        white-space: nowrap;
+        cursor: pointer;
+    }
 
-        .an-table td {
-            font-size: .8rem;
-            vertical-align: middle;
-        }
+    .an-table td {
+        font-size: .8rem;
+        vertical-align: middle;
+    }
 
-        .actions-dropdown .dropdown-menu {
-            position: fixed !important;
-            z-index: 9999;
-            min-width: 190px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, .18);
-            padding: 6px;
-        }
+    .actions-dropdown .dropdown-menu {
+        position: fixed !important;
+        z-index: 9999;
+        min-width: 190px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, .18);
+        padding: 6px;
+    }
 
-        .actions-dropdown .dropdown-item {
-            font-size: .82rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 14px;
-            border-radius: 8px;
-        }
+    .actions-dropdown .dropdown-item {
+        font-size: .82rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 14px;
+        border-radius: 8px;
+    }
 
-        .store-logo {
-            width: 30px;
-            height: 30px;
-            object-fit: contain;
-            border-radius: 6px;
-            background: #fff;
-            padding: 4px;
-        }
+    .store-logo {
+        width: 30px;
+        height: 30px;
+        object-fit: contain;
+        border-radius: 6px;
+        background: #fff;
+        padding: 4px;
+    }
 
-        .an-empty {
-            text-align: center;
-            padding: 48px 24px;
-            opacity: .4;
-        }
+    .an-empty {
+        text-align: center;
+        padding: 48px 24px;
+        opacity: .4;
+    }
 
-        .view-info-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid var(--border-color, #e8e8f0);
-        }
+    .view-info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border-color, #e8e8f0);
+    }
 
-        .view-info-lbl {
-            font-size: .78rem;
-            font-weight: 600;
-            opacity: .6;
-            min-width: 130px;
-        }
+    .view-info-lbl {
+        font-size: .78rem;
+        font-weight: 600;
+        opacity: .6;
+        min-width: 130px;
+    }
 
-        .view-info-val {
-            font-size: .82rem;
-            text-align: right;
-        }
+    .view-info-val {
+        font-size: .82rem;
+        text-align: right;
+    }
 
-        .toast-container {
-            z-index: 9999;
-        }
+    .toast-container {
+        z-index: 9999;
+    }
     </style>
 </head>
 
@@ -363,26 +428,26 @@ $csrf = $_SESSION['admin_csrf_token'];
                         </nav>
                     </div>
                     <?php if (hasPermission($admin_id, 'analytics.edit')): ?>
-                        <div class="col-auto ms-auto">
-                            <?php if (hasPermission($admin_id, 'analytics.edit')): ?>
-                                <button class="btn btn-sm text-white me-2" style="background:#22c55e;border-color:#22c55e"
-                                    data-bs-toggle="modal" data-bs-target="#modalAddStore">
-                                    <i class="bi bi-plus-lg me-1"></i> Nova Loja
-                                </button>
-                                <button class="btn btn-sm text-white" style="background:#FF0089;border-color:#FF0089"
-                                    id="exportDataBtn">
-                                    <i class="bi bi-download me-1"></i> Exportar (CSV/PDF)
-                                </button>
-                            <?php endif; ?>
-                        </div>
+                    <div class="col-auto ms-auto">
+                        <?php if (hasPermission($admin_id, 'analytics.edit')): ?>
+                        <button class="btn btn-sm text-white me-2" style="background:#22c55e;border-color:#22c55e"
+                            data-bs-toggle="modal" data-bs-target="#modalAddStore">
+                            <i class="bi bi-plus-lg me-1"></i> Nova Loja
+                        </button>
+                        <button class="btn btn-sm text-white" style="background:#FF0089;border-color:#FF0089"
+                            id="exportDataBtn">
+                            <i class="bi bi-download me-1"></i> Exportar (CSV/PDF)
+                        </button>
+                        <?php endif; ?>
+                    </div>
                     <?php endif; ?>
                 </div>
 
                 <?php if ($feedback): ?>
-                    <div class="alert alert-<?php echo $feedback[0]; ?> alert-dismissible fade show mb-3">
-                        <i class="bi <?php echo $feedback[1]; ?> me-2"></i><?php echo htmlspecialchars($feedback[2]); ?>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
+                <div class="alert alert-<?php echo $feedback[0]; ?> alert-dismissible fade show mb-3">
+                    <i class="bi <?php echo $feedback[1]; ?> me-2"></i><?php echo htmlspecialchars($feedback[2]); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
                 <?php endif; ?>
 
                 <!-- Stat cards -->
@@ -396,20 +461,20 @@ $csrf = $_SESSION['admin_csrf_token'];
                         ['icon' => 'bi-globe2', 'color' => '#22c55e', 'val' => number_format($unique_territories), 'lbl' => 'Países', 'sub' => null],
                     ];
                     foreach ($cards as $c): ?>
-                        <div class="col-6 col-md-4 col-xl">
-                            <div class="an-stat">
-                                <div class="an-stat-icon" style="background:<?php echo $c['color']; ?>22">
-                                    <i class="bi <?php echo $c['icon']; ?>" style="color:<?php echo $c['color']; ?>"></i>
-                                </div>
-                                <div>
-                                    <div class="an-stat-val"><?php echo $c['val']; ?></div>
-                                    <div class="an-stat-lbl"><?php echo $c['lbl']; ?></div>
-                                    <?php if ($c['sub']): ?><div class="an-stat-sub"
-                                            style="color:<?php echo $c['color']; ?>"><?php echo $c['sub']; ?></div>
-                                    <?php endif; ?>
-                                </div>
+                    <div class="col-6 col-md-4 col-xl">
+                        <div class="an-stat">
+                            <div class="an-stat-icon" style="background:<?php echo $c['color']; ?>22">
+                                <i class="bi <?php echo $c['icon']; ?>" style="color:<?php echo $c['color']; ?>"></i>
+                            </div>
+                            <div>
+                                <div class="an-stat-val"><?php echo $c['val']; ?></div>
+                                <div class="an-stat-lbl"><?php echo $c['lbl']; ?></div>
+                                <?php if ($c['sub']): ?><div class="an-stat-sub"
+                                    style="color:<?php echo $c['color']; ?>"><?php echo $c['sub']; ?></div>
+                                <?php endif; ?>
                             </div>
                         </div>
+                    </div>
                     <?php endforeach; ?>
                 </div>
 
@@ -428,8 +493,8 @@ $csrf = $_SESSION['admin_csrf_token'];
                                 <select class="form-select form-select-sm filter-instant" name="type">
                                     <option value="">Todos</option>
                                     <?php foreach ($store_types as $t): ?>
-                                        <option value="<?php echo $t; ?>" <?php echo $f_type === $t ? 'selected' : ''; ?>>
-                                            <?php echo ucfirst($t); ?></option>
+                                    <option value="<?php echo $t; ?>" <?php echo $f_type === $t ? 'selected' : ''; ?>>
+                                        <?php echo ucfirst($t); ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -470,8 +535,8 @@ $csrf = $_SESSION['admin_csrf_token'];
                         style="border-bottom:1px solid var(--border-color,#e8e8f0)">
                         <span style="font-size:.82rem;font-weight:600">
                             <?php if ($total_filtered < $total_stores): ?>
-                                <span style="color:#FF0089"><?php echo number_format($total_filtered); ?></span> de
-                                <?php echo number_format($total_stores); ?> lojas
+                            <span style="color:#FF0089"><?php echo number_format($total_filtered); ?></span> de
+                            <?php echo number_format($total_stores); ?> lojas
                             <?php else: echo number_format($total_filtered); ?> lojas<?php endif; ?>
                         </span>
                         <span style="font-size:.75rem;opacity:.5">Pág. <?php echo $page; ?> /
@@ -506,101 +571,101 @@ $csrf = $_SESSION['admin_csrf_token'];
                             </thead>
                             <tbody>
                                 <?php if (empty($stores)): ?>
-                                    <tr>
-                                        <td colspan="9">
-                                            <div class="an-empty"><i class="bi bi-shop"></i>
-                                                <p class="mb-0 mt-2">Nenhuma loja encontrada.</p>
+                                <tr>
+                                    <td colspan="9">
+                                        <div class="an-empty"><i class="bi bi-shop"></i>
+                                            <p class="mb-0 mt-2">Nenhuma loja encontrada.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <?php else: foreach ($stores as $i => $s): $is_even = $i % 2 === 1; ?>
+                                <tr
+                                    <?php echo $is_even ? 'style="background:var(--table-stripe,rgba(0,0,0,.015))"' : ''; ?>>
+                                    <td><span
+                                            style="font-family:monospace;font-size:.73rem;opacity:.55">#<?php echo $s['id_store']; ?></span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <i class="bi <?php echo $s['icon_class']; ?> fs-4"
+                                                style="color:#FF0089"></i>
+                                            <div>
+                                                <div style="font-size:.8rem;font-weight:600">
+                                                    <?php echo htmlspecialchars($s['name_store']); ?></div>
+                                                <div style="font-size:.7rem;opacity:.5">
+                                                    <?php echo htmlspecialchars($s['slug_store']); ?></div>
                                             </div>
-                                        </td>
-                                    </tr>
-                                    <?php else: foreach ($stores as $i => $s): $is_even = $i % 2 === 1; ?>
-                                        <tr
-                                            <?php echo $is_even ? 'style="background:var(--table-stripe,rgba(0,0,0,.015))"' : ''; ?>>
-                                            <td><span
-                                                    style="font-family:monospace;font-size:.73rem;opacity:.55">#<?php echo $s['id_store']; ?></span>
-                                            </td>
-                                            <td>
-                                                <div class="d-flex align-items-center gap-2">
-                                                    <i class="bi <?php echo $s['icon_class']; ?> fs-4"
-                                                        style="color:#FF0089"></i>
-                                                    <div>
-                                                        <div style="font-size:.8rem;font-weight:600">
-                                                            <?php echo htmlspecialchars($s['name_store']); ?></div>
-                                                        <div style="font-size:.7rem;opacity:.5">
-                                                            <?php echo htmlspecialchars($s['slug_store']); ?></div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td><?php echo ucfirst($s['type_store']); ?></td>
-                                            <td style="font-size:.85rem;font-weight:700;color:#FF0089">
-                                                <?php echo an_fmt_num((int)$s['total_streams']); ?></td>
-                                            <td><?php echo an_fmt_aoa((float)$s['total_revenue_aoa']); ?></td>
-                                            <td><?php echo (int)$s['artist_count']; ?></td>
-                                            <td><?php echo (int)$s['track_count']; ?></td>
-                                            <td><?php echo an_status_badge($s['is_active'] ? 'active' : 'inactive'); ?></td>
-                                            <td class="text-center">
-                                                <div class="actions-dropdown dropdown">
-                                                    <button class="btn btn-sm btn-outline-secondary" type="button"
-                                                        data-bs-toggle="dropdown"><i
-                                                            class="bi bi-three-dots-vertical"></i></button>
-                                                    <ul class="dropdown-menu dropdown-menu-end">
-                                                        <li><a class="dropdown-item" href="#"
-                                                                onclick="viewStore(<?php echo htmlspecialchars(json_encode($s)); ?>, event); return false"><i
-                                                                    class="bi bi-eye text-info"></i> Visualizar</a></li>
-                                                        <?php if (hasPermission($admin_id, 'analytics.edit')): ?>
-                                                            <?php if ($s['is_active']): ?>
-                                                                <li><a class="dropdown-item" href="#"
-                                                                        onclick="toggleStore(<?php echo (int)$s['id_store']; ?>,'block'); return false"><i
-                                                                            class="bi bi-lock text-warning"></i> Desactivar</a></li>
-                                                            <?php else: ?>
-                                                                <li><a class="dropdown-item" href="#"
-                                                                        onclick="toggleStore(<?php echo (int)$s['id_store']; ?>,'unblock'); return false"><i
-                                                                            class="bi bi-unlock text-success"></i> Reactivar</a></li>
-                                                            <?php endif; ?>
-                                                        <?php endif; ?>
-                                                    </ul>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                        </div>
+                                    </td>
+                                    <td><?php echo ucfirst($s['type_store']); ?></td>
+                                    <td style="font-size:.85rem;font-weight:700;color:#FF0089">
+                                        <?php echo an_fmt_num((int)$s['total_streams']); ?></td>
+                                    <td><?php echo an_fmt_aoa((float)$s['total_revenue_aoa']); ?></td>
+                                    <td><?php echo (int)$s['artist_count']; ?></td>
+                                    <td><?php echo (int)$s['track_count']; ?></td>
+                                    <td><?php echo an_status_badge($s['is_active'] ? 'active' : 'inactive'); ?></td>
+                                    <td class="text-center">
+                                        <div class="actions-dropdown dropdown">
+                                            <button class="btn btn-sm btn-outline-secondary" type="button"
+                                                data-bs-toggle="dropdown"><i
+                                                    class="bi bi-three-dots-vertical"></i></button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li><a class="dropdown-item" href="#"
+                                                        onclick="viewStore(<?php echo htmlspecialchars(json_encode($s)); ?>, event); return false"><i
+                                                            class="bi bi-eye text-info"></i> Visualizar</a></li>
+                                                <?php if (hasPermission($admin_id, 'analytics.edit')): ?>
+                                                <?php if ($s['is_active']): ?>
+                                                <li><a class="dropdown-item" href="#"
+                                                        onclick="toggleStore(<?php echo (int)$s['id_store']; ?>,'block'); return false"><i
+                                                            class="bi bi-lock text-warning"></i> Desactivar</a></li>
+                                                <?php else: ?>
+                                                <li><a class="dropdown-item" href="#"
+                                                        onclick="toggleStore(<?php echo (int)$s['id_store']; ?>,'unblock'); return false"><i
+                                                            class="bi bi-unlock text-success"></i> Reactivar</a></li>
+                                                <?php endif; ?>
+                                                <?php endif; ?>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
                                 <?php endforeach;
                                 endif; ?>
                             </tbody>
                         </table>
                     </div>
                     <?php if ($total_pages > 1): ?>
-                        <div class="d-flex justify-content-center py-3">
-                            <ul class="pagination pagination-sm an-pag mb-0">
-                                <li class="page-item <?php echo $page <= 1 ? 'disabled' : ''; ?>"><a class="page-link"
-                                        href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page - 1])); ?>"><i
-                                            class="bi bi-chevron-left"></i></a></li>
-                                <?php
+                    <div class="d-flex justify-content-center py-3">
+                        <ul class="pagination pagination-sm an-pag mb-0">
+                            <li class="page-item <?php echo $page <= 1 ? 'disabled' : ''; ?>"><a class="page-link"
+                                    href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page - 1])); ?>"><i
+                                        class="bi bi-chevron-left"></i></a></li>
+                            <?php
                                 $ps = max(1, $page - 2);
                                 $pe = min($total_pages, $page + 2);
                                 if ($ps > 1): ?>
-                                    <li class="page-item"><a class="page-link"
-                                            href="?<?php echo http_build_query(array_merge($_GET, ['page' => 1])); ?>">1</a>
-                                    </li>
-                                    <?php if ($ps > 2): ?><li class="page-item disabled"><span class="page-link">…</span></li>
-                                    <?php endif; ?>
-                                <?php endif; ?>
-                                <?php for ($pi = $ps; $pi <= $pe; $pi++): ?>
-                                    <li class="page-item <?php echo $pi === $page ? 'active' : ''; ?>"><a class="page-link"
-                                            href="?<?php echo http_build_query(array_merge($_GET, ['page' => $pi])); ?>"><?php echo $pi; ?></a>
-                                    </li>
-                                <?php endfor; ?>
-                                <?php if ($pe < $total_pages): ?>
-                                    <?php if ($pe < $total_pages - 1): ?><li class="page-item disabled"><span
-                                                class="page-link">…</span></li><?php endif; ?>
-                                    <li class="page-item"><a class="page-link"
-                                            href="?<?php echo http_build_query(array_merge($_GET, ['page' => $total_pages])); ?>"><?php echo $total_pages; ?></a>
-                                    </li>
-                                <?php endif; ?>
-                                <li class="page-item <?php echo $page >= $total_pages ? 'disabled' : ''; ?>"><a
-                                        class="page-link"
-                                        href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page + 1])); ?>"><i
-                                            class="bi bi-chevron-right"></i></a></li>
-                            </ul>
-                        </div>
+                            <li class="page-item"><a class="page-link"
+                                    href="?<?php echo http_build_query(array_merge($_GET, ['page' => 1])); ?>">1</a>
+                            </li>
+                            <?php if ($ps > 2): ?><li class="page-item disabled"><span class="page-link">…</span></li>
+                            <?php endif; ?>
+                            <?php endif; ?>
+                            <?php for ($pi = $ps; $pi <= $pe; $pi++): ?>
+                            <li class="page-item <?php echo $pi === $page ? 'active' : ''; ?>"><a class="page-link"
+                                    href="?<?php echo http_build_query(array_merge($_GET, ['page' => $pi])); ?>"><?php echo $pi; ?></a>
+                            </li>
+                            <?php endfor; ?>
+                            <?php if ($pe < $total_pages): ?>
+                            <?php if ($pe < $total_pages - 1): ?><li class="page-item disabled"><span
+                                    class="page-link">…</span></li><?php endif; ?>
+                            <li class="page-item"><a class="page-link"
+                                    href="?<?php echo http_build_query(array_merge($_GET, ['page' => $total_pages])); ?>"><?php echo $total_pages; ?></a>
+                            </li>
+                            <?php endif; ?>
+                            <li class="page-item <?php echo $page >= $total_pages ? 'disabled' : ''; ?>"><a
+                                    class="page-link"
+                                    href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page + 1])); ?>"><i
+                                        class="bi bi-chevron-right"></i></a></li>
+                        </ul>
+                    </div>
                     <?php endif; ?>
                 </div>
             </div>
@@ -827,43 +892,43 @@ $csrf = $_SESSION['admin_csrf_token'];
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="<?php echo APP_URL; ?>/js/lastest.js"></script>
     <script>
-        (function() {
-            const BASE_URL = '<?php echo APP_URL; ?>';
-            const ADMIN_PATH = '<?php echo ADMIN_PATH; ?>';
-            const CSRF = document.querySelector('meta[name="csrf-token"]').content;
-            const PROCESS = BASE_URL + '/' + ADMIN_PATH + '/analytics/process-stores';
+    (function() {
+        const BASE_URL = '<?php echo APP_URL; ?>';
+        const ADMIN_PATH = '<?php echo ADMIN_PATH; ?>';
+        const CSRF = document.querySelector('meta[name="csrf-token"]').content;
+        const PROCESS = BASE_URL + '/' + ADMIN_PATH + '/analytics/process-stores';
 
-            // ── Filtros com debounce ─────────────────────────────────────────────
-            let dbt;
-            document.querySelectorAll('.filter-debounce').forEach(el => el.addEventListener('input', () => {
-                clearTimeout(dbt);
-                dbt = setTimeout(() => document.getElementById('filter-form').submit(), 500);
-            }));
-            document.querySelectorAll('.filter-instant').forEach(el => el.addEventListener('change', () => document
-                .getElementById('filter-form').submit()));
+        // ── Filtros com debounce ─────────────────────────────────────────────
+        let dbt;
+        document.querySelectorAll('.filter-debounce').forEach(el => el.addEventListener('input', () => {
+            clearTimeout(dbt);
+            dbt = setTimeout(() => document.getElementById('filter-form').submit(), 500);
+        }));
+        document.querySelectorAll('.filter-instant').forEach(el => el.addEventListener('change', () => document
+            .getElementById('filter-form').submit()));
 
-            // ── AJAX helper ──────────────────────────────────────────────────────
-            async function postAction(payload) {
-                const fd = new FormData();
-                Object.entries(payload).forEach(([k, v]) => fd.append(k, v));
-                fd.append('csrf_token', CSRF);
-                const r = await fetch(PROCESS, {
-                    method: 'POST',
-                    body: fd
-                });
-                return r.json();
-            }
+        // ── AJAX helper ──────────────────────────────────────────────────────
+        async function postAction(payload) {
+            const fd = new FormData();
+            Object.entries(payload).forEach(([k, v]) => fd.append(k, v));
+            fd.append('csrf_token', CSRF);
+            const r = await fetch(PROCESS, {
+                method: 'POST',
+                body: fd
+            });
+            return r.json();
+        }
 
-            // ── Visualizar loja ──────────────────────────────────────────────────
-            let currentStoreData = null;
-            window.viewStore = function(data, event) {
-                if (event) event.preventDefault();
-                currentStoreData = data;
-                const fmtNum = v => parseInt(v || 0).toLocaleString('pt-AO');
-                const fmtAOA = v => 'Kz ' + parseFloat(v || 0).toLocaleString('pt-AO', {
-                    minimumFractionDigits: 2
-                });
-                document.getElementById('viewStoreBody').innerHTML = `
+        // ── Visualizar loja ──────────────────────────────────────────────────
+        let currentStoreData = null;
+        window.viewStore = function(data, event) {
+            if (event) event.preventDefault();
+            currentStoreData = data;
+            const fmtNum = v => parseInt(v || 0).toLocaleString('pt-AO');
+            const fmtAOA = v => 'Kz ' + parseFloat(v || 0).toLocaleString('pt-AO', {
+                minimumFractionDigits: 2
+            });
+            document.getElementById('viewStoreBody').innerHTML = `
         <div class="row g-4">
             <div class="col-md-4 text-center">
                 ${data.logo_store ? `<img src="${BASE_URL}/${data.logo_store}" class="img-fluid rounded-3 shadow mb-3" style="max-height:150px;object-fit:contain">` : `<div class="rounded-3 bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center mb-3" style="height:150px"><i class="bi bi-shop" style="font-size:3rem;opacity:.3"></i></div>`}
@@ -882,20 +947,20 @@ $csrf = $_SESSION['admin_csrf_token'];
                 <div class="view-info-row"><span class="view-info-lbl">Ordem de exibição</span><span class="view-info-val">${data.display_order}</span></div>
             </div>
         </div>`;
-                bootstrap.Modal.getOrCreateInstance(document.getElementById('modalViewStore')).show();
-            };
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('modalViewStore')).show();
+        };
 
-            // ── PDF da loja ──────────────────────────────────────────────────────
-            document.getElementById('printStoreBtn')?.addEventListener('click', async function() {
-                if (!currentStoreData) return;
-                const d = currentStoreData;
-                const fmtNum = v => parseInt(v || 0).toLocaleString('pt-AO');
-                const fmtAOA = v => 'Kz ' + parseFloat(v || 0).toLocaleString('pt-AO', {
-                    minimumFractionDigits: 2
-                });
-                const safe = (val) => val === null || val === undefined ? '—' : escapeHtml(String(val));
+        // ── PDF da loja ──────────────────────────────────────────────────────
+        document.getElementById('printStoreBtn')?.addEventListener('click', async function() {
+            if (!currentStoreData) return;
+            const d = currentStoreData;
+            const fmtNum = v => parseInt(v || 0).toLocaleString('pt-AO');
+            const fmtAOA = v => 'Kz ' + parseFloat(v || 0).toLocaleString('pt-AO', {
+                minimumFractionDigits: 2
+            });
+            const safe = (val) => val === null || val === undefined ? '—' : escapeHtml(String(val));
 
-                const pdfHtml = `
+            const pdfHtml = `
         <div style="font-family:Arial,sans-serif;max-width:680px;margin:auto;padding:24px">
             <div style="text-align:center;margin-bottom:24px;border-bottom:3px solid #FF0089;padding-bottom:16px">
                 <h1 style="color:#FF0089;margin:0;font-size:1.4rem">WASOM UPFY</h1>
@@ -920,169 +985,170 @@ $csrf = $_SESSION['admin_csrf_token'];
             <\/table>
             <p style="color:#bbb;font-size:.72rem;margin-top:20px;text-align:center">Wasom Upfy v2.0 — Documento gerado automaticamente. Ref. #${d.id_store}</p>
         </div>`;
-                const opt = {
-                    margin: 10,
-                    filename: `loja_${safe(d.name_store).replace(/[^a-z0-9]/gi, '_')}.pdf`,
-                    image: {
-                        type: 'jpeg',
-                        quality: 0.98
-                    },
-                    html2canvas: {
-                        scale: 2
-                    },
-                    jsPDF: {
-                        unit: 'mm',
-                        format: 'a4',
-                        orientation: 'portrait'
-                    }
-                };
-                try {
-                    await html2pdf().set(opt).from(pdfHtml).save();
-                    showToast('success', 'PDF Gerado', 'Relatório da loja descarregado.');
-                } catch (e) {
-                    console.error(e);
-                    showToast('error', 'Erro', 'Não foi possível gerar o PDF.');
+            const opt = {
+                margin: 10,
+                filename: `loja_${safe(d.name_store).replace(/[^a-z0-9]/gi, '_')}.pdf`,
+                image: {
+                    type: 'jpeg',
+                    quality: 0.98
+                },
+                html2canvas: {
+                    scale: 2
+                },
+                jsPDF: {
+                    unit: 'mm',
+                    format: 'a4',
+                    orientation: 'portrait'
                 }
-            });
-
-            // ── Editar/Desactivar Loja ──────────────────────────────────────────
-            window.toggleStore = async function(id, action) {
-                const result = await Swal.fire({
-                    title: action === 'block' ? 'Desactivar loja?' : 'Reactivar loja?',
-                    text: action === 'block' ? 'A loja deixará de aparecer nas estatísticas.' : 'A loja voltará a aparecer nas estatísticas.',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: action === 'block' ? '#ef4444' : '#22c55e',
-                    confirmButtonText: 'Sim, ' + (action === 'block' ? 'desactivar' : 'reactivar'),
-                    cancelButtonText: 'Cancelar'
-                });
-                if (!result.isConfirmed) return;
-                document.getElementById('edit_store_id').value = id;
-                document.getElementById('edit_store_status').value = action === 'block' ? 0 : 1;
-                document.getElementById('editStoreMsg').innerHTML = action === 'block' ? 'Desactivar loja' :
-                    'Reactivar loja';
-                document.getElementById('edit_store_password').value = '';
-                document.getElementById('edit_store_error').classList.add('d-none');
-                bootstrap.Modal.getOrCreateInstance(document.getElementById('modalEditStore')).show();
             };
-
-            document.getElementById('btn_save_edit_store')?.addEventListener('click', async function() {
-                const id = document.getElementById('edit_store_id').value;
-                const newStatus = document.getElementById('edit_store_status').value;
-                const password = document.getElementById('edit_store_password').value;
-                const errEl = document.getElementById('edit_store_error');
-                if (!password) {
-                    errEl.textContent = 'A senha é obrigatória.';
-                    errEl.classList.remove('d-none');
-                    return;
-                }
-                errEl.classList.add('d-none');
-                setLoading(this, true);
-                try {
-                    const data = await postAction({
-                        action: 'update_store',
-                        id_store: id,
-                        is_active: newStatus,
-                        password_confirm: password
-                    });
-                    if (data.ok) {
-                        bootstrap.Modal.getInstance(document.getElementById('modalEditStore')).hide();
-                        location.href = location.pathname + '?msg=' + (newStatus == 1 ? 'store_unblocked' :
-                            'store_blocked');
-                    } else {
-                        errEl.textContent = data.message;
-                        errEl.classList.remove('d-none');
-                    }
-                } catch {
-                    errEl.textContent = 'Erro de ligação.';
-                    errEl.classList.remove('d-none');
-                }
-                setLoading(this, false);
-            });
-
-            document.getElementById('btn_save_add_store')?.addEventListener('click', async function() {
-                const name = document.getElementById('add_name').value.trim();
-                const slug = document.getElementById('add_slug').value.trim();
-                const type = document.getElementById('add_type').value;
-                const url = document.getElementById('add_url').value.trim();
-                const displayOrder = parseInt(document.getElementById('add_display_order').value) || 0;
-                const isActive = document.getElementById('add_is_active').checked ? 1 : 0;
-                const password = document.getElementById('add_password').value;
-                const errEl = document.getElementById('add_store_error');
-
-                if (!name || !slug) {
-                    errEl.textContent = 'Nome e slug são obrigatórios.';
-                    errEl.classList.remove('d-none');
-                    return;
-                }
-                if (!/^[a-z0-9-]+$/.test(slug)) {
-                    errEl.textContent = 'Slug inválido. Use apenas letras minúsculas, números e hífen.';
-                    errEl.classList.remove('d-none');
-                    return;
-                }
-                if (!password) {
-                    errEl.textContent = 'A senha é obrigatória.';
-                    errEl.classList.remove('d-none');
-                    return;
-                }
-                errEl.classList.add('d-none');
-                setLoading(this, true);
-
-                try {
-                    const data = await postAction({
-                        action: 'add_store',
-                        name: name,
-                        slug: slug,
-                        type: type,
-                        url: url,
-                        display_order: displayOrder,
-                        is_active: isActive,
-                        password_confirm: password
-                    });
-                    if (data.ok) {
-                        bootstrap.Modal.getInstance(document.getElementById('modalAddStore')).hide();
-                        location.reload();
-                    } else {
-                        errEl.textContent = data.message;
-                        errEl.classList.remove('d-none');
-                    }
-                } catch {
-                    errEl.textContent = 'Erro de ligação.';
-                    errEl.classList.remove('d-none');
-                } finally {
-                    setLoading(this, false);
-                }
-            });
-
-            // ── Exportação ───────────────────────────────────────────────────────
-            document.getElementById('exportDataBtn')?.addEventListener('click', function() {
-                const count = <?php echo $total_filtered; ?>;
-                document.getElementById('exportCount').innerText = count.toLocaleString('pt-BR');
-                bootstrap.Modal.getOrCreateInstance(document.getElementById('modalExport')).show();
-            });
-
-            function exportToCSV(data, columns, filename) {
-                const headers = columns.map(col => col.label);
-                const rows = data.map(row => columns.map(col => row[col.key] ?? ''));
-                const csv = [headers.join(';'), ...rows.map(row => row.map(cell =>
-                    `"${String(cell).replace(/"/g, '""')}"`).join(';'))].join('\n');
-                const blob = new Blob(["\uFEFF" + csv], {
-                    type: 'text/csv;charset=utf-8;'
-                });
-                const link = document.createElement('a');
-                const url = URL.createObjectURL(blob);
-                link.href = url;
-                link.download = filename;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                URL.revokeObjectURL(url);
+            try {
+                await html2pdf().set(opt).from(pdfHtml).save();
+                showToast('success', 'PDF Gerado', 'Relatório da loja descarregado.');
+            } catch (e) {
+                console.error(e);
+                showToast('error', 'Erro', 'Não foi possível gerar o PDF.');
             }
+        });
 
-            async function exportToPDF(data, columns, filename) {
-                const headers = columns.map(col => col.label);
-                const rows = data.map(row => columns.map(col => row[col.key] ?? ''));
-                const html = `
+        // ── Editar/Desactivar Loja ──────────────────────────────────────────
+        window.toggleStore = async function(id, action) {
+            const result = await Swal.fire({
+                title: action === 'block' ? 'Desactivar loja?' : 'Reactivar loja?',
+                text: action === 'block' ? 'A loja deixará de aparecer nas estatísticas.' :
+                    'A loja voltará a aparecer nas estatísticas.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: action === 'block' ? '#ef4444' : '#22c55e',
+                confirmButtonText: 'Sim, ' + (action === 'block' ? 'desactivar' : 'reactivar'),
+                cancelButtonText: 'Cancelar'
+            });
+            if (!result.isConfirmed) return;
+            document.getElementById('edit_store_id').value = id;
+            document.getElementById('edit_store_status').value = action === 'block' ? 0 : 1;
+            document.getElementById('editStoreMsg').innerHTML = action === 'block' ? 'Desactivar loja' :
+                'Reactivar loja';
+            document.getElementById('edit_store_password').value = '';
+            document.getElementById('edit_store_error').classList.add('d-none');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('modalEditStore')).show();
+        };
+
+        document.getElementById('btn_save_edit_store')?.addEventListener('click', async function() {
+            const id = document.getElementById('edit_store_id').value;
+            const newStatus = document.getElementById('edit_store_status').value;
+            const password = document.getElementById('edit_store_password').value;
+            const errEl = document.getElementById('edit_store_error');
+            if (!password) {
+                errEl.textContent = 'A senha é obrigatória.';
+                errEl.classList.remove('d-none');
+                return;
+            }
+            errEl.classList.add('d-none');
+            setLoading(this, true);
+            try {
+                const data = await postAction({
+                    action: 'update_store',
+                    id_store: id,
+                    is_active: newStatus,
+                    password_confirm: password
+                });
+                if (data.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('modalEditStore')).hide();
+                    location.href = location.pathname + '?msg=' + (newStatus == 1 ? 'store_unblocked' :
+                        'store_blocked');
+                } else {
+                    errEl.textContent = data.message;
+                    errEl.classList.remove('d-none');
+                }
+            } catch {
+                errEl.textContent = 'Erro de ligação.';
+                errEl.classList.remove('d-none');
+            }
+            setLoading(this, false);
+        });
+
+        document.getElementById('btn_save_add_store')?.addEventListener('click', async function() {
+            const name = document.getElementById('add_name').value.trim();
+            const slug = document.getElementById('add_slug').value.trim();
+            const type = document.getElementById('add_type').value;
+            const url = document.getElementById('add_url').value.trim();
+            const displayOrder = parseInt(document.getElementById('add_display_order').value) || 0;
+            const isActive = document.getElementById('add_is_active').checked ? 1 : 0;
+            const password = document.getElementById('add_password').value;
+            const errEl = document.getElementById('add_store_error');
+
+            if (!name || !slug) {
+                errEl.textContent = 'Nome e slug são obrigatórios.';
+                errEl.classList.remove('d-none');
+                return;
+            }
+            if (!/^[a-z0-9-]+$/.test(slug)) {
+                errEl.textContent = 'Slug inválido. Use apenas letras minúsculas, números e hífen.';
+                errEl.classList.remove('d-none');
+                return;
+            }
+            if (!password) {
+                errEl.textContent = 'A senha é obrigatória.';
+                errEl.classList.remove('d-none');
+                return;
+            }
+            errEl.classList.add('d-none');
+            setLoading(this, true);
+
+            try {
+                const data = await postAction({
+                    action: 'add_store',
+                    name: name,
+                    slug: slug,
+                    type: type,
+                    url: url,
+                    display_order: displayOrder,
+                    is_active: isActive,
+                    password_confirm: password
+                });
+                if (data.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('modalAddStore')).hide();
+                    location.reload();
+                } else {
+                    errEl.textContent = data.message;
+                    errEl.classList.remove('d-none');
+                }
+            } catch {
+                errEl.textContent = 'Erro de ligação.';
+                errEl.classList.remove('d-none');
+            } finally {
+                setLoading(this, false);
+            }
+        });
+
+        // ── Exportação ───────────────────────────────────────────────────────
+        document.getElementById('exportDataBtn')?.addEventListener('click', function() {
+            const count = <?php echo $total_filtered; ?>;
+            document.getElementById('exportCount').innerText = count.toLocaleString('pt-BR');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('modalExport')).show();
+        });
+
+        function exportToCSV(data, columns, filename) {
+            const headers = columns.map(col => col.label);
+            const rows = data.map(row => columns.map(col => row[col.key] ?? ''));
+            const csv = [headers.join(';'), ...rows.map(row => row.map(cell =>
+                `"${String(cell).replace(/"/g, '""')}"`).join(';'))].join('\n');
+            const blob = new Blob(["\uFEFF" + csv], {
+                type: 'text/csv;charset=utf-8;'
+            });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        async function exportToPDF(data, columns, filename) {
+            const headers = columns.map(col => col.label);
+            const rows = data.map(row => columns.map(col => row[col.key] ?? ''));
+            const html = `
         <div style="font-family:Arial,sans-serif;padding:20px">
             <div style="text-align:center;margin-bottom:30px">
                 <h1 style="color:#FF0089">WASOM UPFY</h1>
@@ -1097,129 +1163,129 @@ $csrf = $_SESSION['admin_csrf_token'];
             </table>
             <p style="margin-top:20px;font-size:12px;color:#666">© Wasom Upfy – Documento gerado automaticamente</p>
         </div>`;
-                const opt = {
-                    margin: 10,
-                    filename,
-                    image: {
-                        type: 'jpeg',
-                        quality: 0.98
-                    },
-                    html2canvas: {
-                        scale: 2
-                    },
-                    jsPDF: {
-                        unit: 'mm',
-                        format: 'a4',
-                        orientation: 'landscape'
-                    }
-                };
-                await html2pdf().set(opt).from(html).save();
-            }
-
-            document.getElementById('btn_do_export')?.addEventListener('click', async function() {
-                const format = document.getElementById('export_format').value;
-                const columns = [];
-                if (document.getElementById('col_id').checked) columns.push({
-                    key: 'id_store',
-                    label: 'ID'
-                });
-                if (document.getElementById('col_name').checked) columns.push({
-                    key: 'name_store',
-                    label: 'Loja'
-                });
-                if (document.getElementById('col_type').checked) columns.push({
-                    key: 'type_store',
-                    label: 'Tipo'
-                });
-                if (document.getElementById('col_streams').checked) columns.push({
-                    key: 'total_streams',
-                    label: 'Streams'
-                });
-                if (document.getElementById('col_revenue').checked) columns.push({
-                    key: 'total_revenue_aoa',
-                    label: 'Receita (AOA)'
-                });
-                if (document.getElementById('col_artists').checked) columns.push({
-                    key: 'artist_count',
-                    label: 'Artistas'
-                });
-                if (document.getElementById('col_tracks').checked) columns.push({
-                    key: 'track_count',
-                    label: 'Faixas'
-                });
-                if (document.getElementById('col_status').checked) columns.push({
-                    key: 'is_active',
-                    label: 'Estado'
-                });
-
-                if (columns.length === 0) {
-                    showToast('warning', 'Nenhuma coluna selecionada', 'Seleccione pelo menos uma coluna.');
-                    return;
+            const opt = {
+                margin: 10,
+                filename,
+                image: {
+                    type: 'jpeg',
+                    quality: 0.98
+                },
+                html2canvas: {
+                    scale: 2
+                },
+                jsPDF: {
+                    unit: 'mm',
+                    format: 'a4',
+                    orientation: 'landscape'
                 }
+            };
+            await html2pdf().set(opt).from(html).save();
+        }
 
-                setLoading(this, true);
-                try {
-                    const response = await postAction({
-                        action: 'export_data',
-                        filters: <?php echo json_encode($_GET); ?>
-                    });
-                    if (response.ok && response.data) {
-                        const exportData = response.data;
-                        if (format === 'csv') {
-                            exportToCSV(exportData, columns, 'desempenho_lojas.csv');
-                        } else if (format === 'pdf') {
-                            await exportToPDF(exportData, columns, 'desempenho_lojas.pdf');
-                        }
-                        showToast('success', 'Exportação concluída', 'Ficheiro descarregado.');
-                        bootstrap.Modal.getInstance(document.getElementById('modalExport')).hide();
-                    } else {
-                        showToast('error', 'Erro', response.message || 'Falha ao obter dados.');
-                    }
-                } catch (e) {
-                    console.error(e);
-                    showToast('error', 'Erro', 'Não foi possível comunicar com o servidor.');
-                } finally {
-                    setLoading(this, false);
-                }
+        document.getElementById('btn_do_export')?.addEventListener('click', async function() {
+            const format = document.getElementById('export_format').value;
+            const columns = [];
+            if (document.getElementById('col_id').checked) columns.push({
+                key: 'id_store',
+                label: 'ID'
+            });
+            if (document.getElementById('col_name').checked) columns.push({
+                key: 'name_store',
+                label: 'Loja'
+            });
+            if (document.getElementById('col_type').checked) columns.push({
+                key: 'type_store',
+                label: 'Tipo'
+            });
+            if (document.getElementById('col_streams').checked) columns.push({
+                key: 'total_streams',
+                label: 'Streams'
+            });
+            if (document.getElementById('col_revenue').checked) columns.push({
+                key: 'total_revenue_aoa',
+                label: 'Receita (AOA)'
+            });
+            if (document.getElementById('col_artists').checked) columns.push({
+                key: 'artist_count',
+                label: 'Artistas'
+            });
+            if (document.getElementById('col_tracks').checked) columns.push({
+                key: 'track_count',
+                label: 'Faixas'
+            });
+            if (document.getElementById('col_status').checked) columns.push({
+                key: 'is_active',
+                label: 'Estado'
             });
 
-            // ── Helpers ──────────────────────────────────────────────────────────
-            function setLoading(btn, state) {
-                const normal = btn.querySelector('.normal-label');
-                const loading = btn.querySelector('.loading-label');
-                if (normal) normal.classList.toggle('d-none', state);
-                if (loading) loading.classList.toggle('d-none', !state);
-                btn.disabled = state;
+            if (columns.length === 0) {
+                showToast('warning', 'Nenhuma coluna selecionada', 'Seleccione pelo menos uma coluna.');
+                return;
             }
 
-            function escapeHtml(str) {
-                if (str === null || str === undefined) return '';
-                return String(str).replace(/[&<>]/g, function(m) {
-                    if (m === '&') return '&amp;';
-                    if (m === '<') return '&lt;';
-                    if (m === '>') return '&gt;';
-                    return m;
+            setLoading(this, true);
+            try {
+                const response = await postAction({
+                    action: 'export_data',
+                    filters: <?php echo json_encode($_GET); ?>
                 });
+                if (response.ok && response.data) {
+                    const exportData = response.data;
+                    if (format === 'csv') {
+                        exportToCSV(exportData, columns, 'desempenho_lojas.csv');
+                    } else if (format === 'pdf') {
+                        await exportToPDF(exportData, columns, 'desempenho_lojas.pdf');
+                    }
+                    showToast('success', 'Exportação concluída', 'Ficheiro descarregado.');
+                    bootstrap.Modal.getInstance(document.getElementById('modalExport')).hide();
+                } else {
+                    showToast('error', 'Erro', response.message || 'Falha ao obter dados.');
+                }
+            } catch (e) {
+                console.error(e);
+                showToast('error', 'Erro', 'Não foi possível comunicar com o servidor.');
+            } finally {
+                setLoading(this, false);
             }
+        });
 
-            function showToast(type, title, message) {
-                const toastContainer = document.querySelector('.toast-container');
-                const toastId = 'toast-' + Date.now();
-                const bgClass = type === 'success' ? 'bg-success' : (type === 'warning' ? 'bg-warning' : 'bg-danger');
-                const html = `
+        // ── Helpers ──────────────────────────────────────────────────────────
+        function setLoading(btn, state) {
+            const normal = btn.querySelector('.normal-label');
+            const loading = btn.querySelector('.loading-label');
+            if (normal) normal.classList.toggle('d-none', state);
+            if (loading) loading.classList.toggle('d-none', !state);
+            btn.disabled = state;
+        }
+
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str).replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        function showToast(type, title, message) {
+            const toastContainer = document.querySelector('.toast-container');
+            const toastId = 'toast-' + Date.now();
+            const bgClass = type === 'success' ? 'bg-success' : (type === 'warning' ? 'bg-warning' : 'bg-danger');
+            const html = `
         <div id="${toastId}" class="toast align-items-center text-white ${bgClass} border-0" role="alert" data-bs-autohide="true" data-bs-delay="5000">
             <div class="d-flex">
                 <div class="toast-body"><strong>${escapeHtml(title)}</strong><br>${escapeHtml(message)}</div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
             </div>
         </div>`;
-                toastContainer.insertAdjacentHTML('beforeend', html);
-                const toastEl = document.getElementById(toastId);
-                const toast = new bootstrap.Toast(toastEl);
-                toast.show();
-                toastEl.addEventListener('hidden.bs.toast', () => toastEl.remove());
-            }
-        })();
+            toastContainer.insertAdjacentHTML('beforeend', html);
+            const toastEl = document.getElementById(toastId);
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+            toastEl.addEventListener('hidden.bs.toast', () => toastEl.remove());
+        }
+    })();
     </script>
 </body>
 

@@ -85,14 +85,104 @@ function cover_url(path) {
     return COVER_BASE + path;
 }
 
-const PLATFORM_ICONS = {
-    spotify: { icon: 'bi-spotify',    color: '#1db954', label: 'Spotify'     },
-    apple:   { icon: 'bi-apple',      color: '#fc3c44', label: 'Apple Music' },
-    youtube: { icon: 'bi-youtube',    color: '#ff0000', label: 'YouTube'     },
-    deezer:  { icon: 'bi-music-note', color: '#ef5466', label: 'Deezer'      },
-    amazon:  { icon: 'bi-amazon',     color: '#ff9900', label: 'Amazon'      },
-    tidal:   { icon: 'bi-water',      color: '#00ffff', label: 'Tidal'       },
+// ════════════════════════════════════════════════
+// STORE ICONS — 100% Bootstrap Icons (slug → ícone + cor)
+// ════════════════════════════════════════════════
+const STORE_ICONS = {
+    // Streaming Global
+    'spotify':              { icon: 'bi-spotify',               color: '#1db954' },
+    'apple-music':          { icon: 'bi-apple',                 color: '#fc3c44' },
+    'amazon-music':         { icon: 'bi-amazon',                color: '#ff9900' },
+    'deezer':               { icon: 'bi-music-note-beamed',     color: '#ef5466' },
+    'tidal':                { icon: 'bi-water',                 color: '#00ffff' },
+    'boomplay':             { icon: 'bi-play-circle-fill',      color: '#f85d2f' },
+    'youtube-music':        { icon: 'bi-youtube',               color: '#ff0000' },
+    'soundcloud':           { icon: 'bi-soundwave',             color: '#ff5500' },
+    'napster':              { icon: 'bi-music-note-list',       color: '#009bd9' },
+    'iheart-radio':         { icon: 'bi-broadcast',             color: '#c6002b' },
+    'audiomack':            { icon: 'bi-soundwave',             color: '#ffa500' },
+    'qobuz':                { icon: 'bi-vinyl-fill',            color: '#003d7a' },
+    // Streaming Ásia
+    'jiosaavn':             { icon: 'bi-music-note-list',       color: '#2bc5b4' },
+    'gaana':                { icon: 'bi-music-note-beamed',     color: '#e72a2a' },
+    'wynk-music':           { icon: 'bi-headphones',            color: '#5a50f0' },
+    'hungama':              { icon: 'bi-collection-play-fill',  color: '#e31837' },
+    'netease-cloud-music':  { icon: 'bi-cloud-fill',            color: '#e60026' },
+    'qq-music':             { icon: 'bi-music-player-fill',     color: '#fcb900' },
+    'kugou':                { icon: 'bi-disc-fill',             color: '#1677ff' },
+    'kuwo-music':           { icon: 'bi-music-note-beamed',     color: '#e60012' },
+    'melon':                { icon: 'bi-circle-fill',           color: '#00cd3c' },
+    'genie':                { icon: 'bi-stars',                 color: '#005bac' },
+    'bugs':                 { icon: 'bi-music-note',            color: '#ff4f00' },
+    'flo':                  { icon: 'bi-play-btn-fill',         color: '#7b2fff' },
+    'kkbox':                { icon: 'bi-grid-fill',             color: '#009fee' },
+    'joox':                 { icon: 'bi-play-circle-fill',      color: '#00c040' },
+    'line-music':           { icon: 'bi-chat-fill',             color: '#00b900' },
+    'awa':                  { icon: 'bi-soundwave',             color: '#111111' },
+    'recochoku':            { icon: 'bi-headset',               color: '#e60020' },
+    'anghami':              { icon: 'bi-music-note-beamed',     color: '#5b35d5' },
+    'yandex-music':         { icon: 'bi-music-note-list',       color: '#fc3f1d' },
+    'vk-music':             { icon: 'bi-person-fill',           color: '#0077ff' },
+    'fizy':                 { icon: 'bi-music-note-beamed',     color: '#6b00d7' },
+    // Streaming LATAM / Brasil
+    'imusica':              { icon: 'bi-music-note-beamed',     color: '#e4002b' },
+    'tim-music':            { icon: 'bi-phone-fill',            color: '#0033a0' },
+    'triller':              { icon: 'bi-camera-video-fill',     color: '#ff3b30' },
+    'claro-music':          { icon: 'bi-reception-4',           color: '#e30613' },
+    // Streaming Rússia / Outros
+    'zvuk':                 { icon: 'bi-vinyl',                 color: '#7b2fff' },
+    'pandora':              { icon: 'bi-broadcast',             color: '#3668ff' },
+    'resso':                { icon: 'bi-music-player',          color: '#ff4040' },
+    // Download
+    'itunes':               { icon: 'bi-bag-music-fill',        color: '#ea4cc0' },
+    'beatport':             { icon: 'bi-headphones-fill',       color: '#02e75c' },
+    'traxsource':           { icon: 'bi-vinyl-fill',            color: '#e4002b' },
+    'bandcamp':             { icon: 'bi-bandcamp',              color: '#1da0c3' },
+    '7digital':             { icon: 'bi-7-circle-fill',         color: '#e4002b' },
+    'hdtracks':             { icon: 'bi-soundwave',             color: '#333333' },
+    'juno-download':        { icon: 'bi-cloud-arrow-down-fill', color: '#e4002b' },
+    'emusic':               { icon: 'bi-download',              color: '#2c7be5' },
+    // Social
+    'tiktok':               { icon: 'bi-tiktok',               color: '#010101' },
+    'facebook':             { icon: 'bi-facebook',             color: '#1877f2' },
+    'snapchat':             { icon: 'bi-snapchat',             color: '#f7c300' },
+    'instagram':            { icon: 'bi-instagram',            color: '#e1306c' },
+    'x-twitter':            { icon: 'bi-twitter-x',           color: '#000000' },
+    'twitch':               { icon: 'bi-twitch',               color: '#9146ff' },
+    'kwai':                 { icon: 'bi-camera-reels-fill',    color: '#ff5c00' },
+    'vk':                   { icon: 'bi-person-video3',        color: '#0077ff' },
+    'likee':                { icon: 'bi-heart-fill',           color: '#ff2d55' },
+    // Vídeo
+    'youtube':              { icon: 'bi-youtube',              color: '#ff0000' },
+    'vevo':                 { icon: 'bi-play-btn-fill',        color: '#e4002b' },
+    'dailymotion':          { icon: 'bi-play-circle-fill',     color: '#003f8a' },
+    'vimeo':                { icon: 'bi-vimeo',                color: '#1ab7ea' },
+    // Fallback
+    'default':              { icon: 'bi-shop',                 color: '#6c757d' },
 };
+
+// Helper: devolve o ícone+cor para um slug, com fallback
+function getStoreIcon(slug) {
+    return STORE_ICONS[slug] ?? STORE_ICONS['default'];
+}
+
+// Helper: renderiza um badge de loja (ícone + nome + link opcional)
+function renderStoreBadge(store, size = '1.4rem', showLabel = false) {
+    const si    = getStoreIcon(store.slug_store);
+    const url   = store.store_release_url || '#';
+    const title = store.name_store;
+    const label = showLabel ? `<span style="font-size:.65rem;display:block;line-height:1;margin-top:2px">${title}</span>` : '';
+    const live  = store.store_status === 'live';
+    const opacity = live ? '1' : '0.4';
+    const tooltip = live ? title : `${title} (pendente)`;
+
+    return `<a href="${url}" target="_blank" rel="noopener"
+               title="${tooltip}"
+               style="color:${si.color};font-size:${size};opacity:${opacity};text-decoration:none;display:inline-flex;flex-direction:column;align-items:center">
+                <i class="bi ${si.icon}"></i>
+                ${label}
+            </a>`;
+}
 
 // ════════════════════════════════════════════════
 // ESTADO
@@ -307,99 +397,116 @@ function openModal(albumId) {
         rejWrap.classList.add('d-none');
     }
 
-    // Faixas
-    const tracks = alb.tracks || [];
-    document.getElementById('m-track-count').textContent = tracks.length;
+    // Faixas — Acordeão
+const tracks = alb.tracks || [];
+document.getElementById('m-track-count').textContent = tracks.length;
+let totalSeconds = 0;
+const accordion = document.getElementById('tracksAccordion');
 
-    let totalSeconds = 0;
-    let explicitCount = 0;
-
-    const tracksList = document.getElementById('m-tracks-list');
-    tracksList.innerHTML = tracks.length
-        ? tracks.map((t, i) => {
-            if (t.duration_track) {
-                const parts = t.duration_track.split(':');
-                if (parts.length === 2) {
-                    totalSeconds += parseInt(parts[0]) * 60 + parseInt(parts[1]);
-                }
+if (tracks.length === 0) {
+    accordion.innerHTML = '<p class="text-reset small">Nenhuma faixa registada.</p>';
+} else {
+    accordion.innerHTML = tracks.map((t, i) => {
+        // Calcular duração
+        if (t.duration_track) {
+            const parts = t.duration_track.split(':');
+            if (parts.length === 2) {
+                totalSeconds += parseInt(parts[0]) * 60 + parseInt(parts[1]);
             }
-            return `
-            <div class="track-row">
-                <div class="d-flex align-items-center gap-2 overflow-hidden">
-                    <span class="track-num">${t.position_track || i + 1}</span>
-                    <div class="overflow-hidden">
-                        <div class="fw-semibold text-truncate">${t.title_track}</div>
-                        <div class="d-flex gap-2 small">
-                            ${t.isrc ? `<span class="track-isrc">ISRC: ${t.isrc}</span>` : ''}
-                        </div>
-                        ${t.featuring_track ? `<div class="track-isrc text-reset small">com ${t.featuring_track}</div>` : ''}
-                        ${t.audio_file ? `<div class="track-isrc text-reset small"><i class="bi bi-file-music"></i> Áudio: ${t.audio_file}</div>` : ''}
-                    </div>
+        }
+
+        const trackId    = `track-${alb.id_album}-${i}`;
+        const headerId   = `heading-${trackId}`;
+        const collapseId = `collapse-${trackId}`;
+        const trackNum   = t.position_track || (i + 1);
+        const explicitBadge = t.explicit === 'YES' ? '<span class="badge bg-danger ms-2" style="font-size:.65rem">Explícito</span>' : '';
+
+        return `
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="${headerId}">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#${collapseId}" aria-expanded="false" aria-controls="${collapseId}">
+                    <span class="track-num me-3">${trackNum}</span>
+                    <span>${t.title_track}</span>${explicitBadge}
+                    <span class="ms-auto me-3 text-muted small">${t.duration_track || ''}</span>
+                </button>
+            </h2>
+            <div id="${collapseId}" class="accordion-collapse collapse" aria-labelledby="${headerId}" data-bs-parent="#tracksAccordion">
+                <div class="accordion-body">
+                    <div class="track-detail-row"><span class="track-detail-label">Título</span><span class="track-detail-value">${t.title_track}</span></div>
+                    <div class="track-detail-row"><span class="track-detail-label">Artista Principal</span><span class="track-detail-value">${t.name_author || '—'}</span></div>
+                    ${t.featuring_track ? `<div class="track-detail-row"><span class="track-detail-label">Feat.</span><span class="track-detail-value">${t.featuring_track}</span></div>` : ''}
+                    <div class="track-detail-row"><span class="track-detail-label">Compositor</span><span class="track-detail-value">${t.name_composer || '—'}</span></div>
+                    <div class="track-detail-row"><span class="track-detail-label">Produtor</span><span class="track-detail-value">${t.name_producer || '—'}</span></div>
+                    <div class="track-detail-row"><span class="track-detail-label">ISRC</span><span class="track-detail-value">${t.isrc || '—'}</span></div>
+                    <div class="track-detail-row"><span class="track-detail-label">Idioma</span><span class="track-detail-value">${t.language || '—'}</span></div>
+                    <div class="track-detail-row"><span class="track-detail-label">Duração</span><span class="track-detail-value">${t.duration_track || '—'}</span></div>
+                    <div class="track-detail-row"><span class="track-detail-label">Explícito</span><span class="track-detail-value">${t.explicit === 'YES' ? 'Sim' : 'Não'}</span></div>
+                    ${t.audio_file ? `<div class="track-detail-row"><span class="track-detail-label">Ficheiro de áudio</span><span class="track-detail-value">${t.audio_file}</span></div>` : ''}
                 </div>
-                <span class="text-reset small flex-shrink-0">${t.duration_track || ''}</span>
-            </div>`;
-        }).join('')
-        : '<p class="text-reset small">Nenhuma faixa registada.</p>';
+            </div>
+        </div>`;
+    }).join('');
+}
 
-    // Duração total
-    const hours   = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-    let durationStr = '';
-    if (hours > 0)           durationStr += `${hours}h `;
-    if (minutes > 0 || hours > 0) durationStr += `${minutes}min `;
-    durationStr += `${seconds}s`;
-    document.getElementById('m-total-duration').textContent = durationStr;
-    document.getElementById('m-explicit-count').textContent = explicitCount;
+// Atualizar duração total
+const hours   = Math.floor(totalSeconds / 3600);
+const minutes = Math.floor((totalSeconds % 3600) / 60);
+const secs    = totalSeconds % 60;
+let durStr = '';
+if (hours > 0) durStr += `${hours}h `;
+if (minutes > 0 || hours > 0) durStr += `${minutes}min `;
+durStr += `${secs}s`;
+document.getElementById('m-total-duration').textContent = durStr;
+document.getElementById('m-explicit-count').textContent = tracks.filter(t => t.explicit === 'YES').length;
 
-    // Streaming links (só approved)
-    const streamWrap = document.getElementById('m-streaming-wrap');
-    if (alb.status_album === 'approved') {
-        streamWrap.classList.remove('d-none');
-        document.getElementById('m-streaming-links').innerHTML =
-            Object.entries(PLATFORM_ICONS).map(([, p]) =>
-                `<a href="#" title="${p.label}" style="font-size:1.5rem;color:${p.color}"><i class="bi ${p.icon}"></i></a>`
-            ).join('');
-    } else {
-        streamWrap.classList.add('d-none');
-    }
+   // ── Streaming links (aprovado) ────────────────────────────
+const streamWrap = document.getElementById('m-streaming-wrap');
+if (alb.status_album === 'approved' && alb.stores && alb.stores.length > 0) {
+    streamWrap.classList.remove('d-none');
+    document.getElementById('m-streaming-links').innerHTML =
+        alb.stores.map(s => renderStoreBadge(s, '1.6rem', false)).join('');
+} else {
+    streamWrap.classList.add('d-none');
+}
 
-    // Plataformas de distribuição
-    const platformsList = document.getElementById('m-platforms-list');
-    if (alb.status_album === 'approved') {
-        platformsList.innerHTML = Object.entries(PLATFORM_ICONS).map(([, p]) =>
-            `<a href="#" title="${p.label}" style="font-size:1.2rem;color:${p.color}" class="me-2">
-                <i class="bi ${p.icon}"></i>
-            </a>`
-        ).join('');
-    } else {
-        platformsList.innerHTML = '<span class="text-muted">Disponível após aprovação</span>';
-    }
+// ── Plataformas de distribuição ───────────────────────────
+const platformsList = document.getElementById('m-platforms-list');
+if (alb.stores && alb.stores.length > 0) {
+    platformsList.innerHTML = alb.stores
+        .map(s => renderStoreBadge(s, '1.2rem', true))
+        .join('');
+} else {
+    platformsList.innerHTML = '<span class="text-muted small">Sem plataformas associadas</span>';
+}
 
     // Botões do footer
     const btnEdit   = document.getElementById('m-btn-edit');
-    const btnReview = document.getElementById('m-btn-review');
-    btnEdit.classList.add('d-none');
-    btnReview.classList.add('d-none');
+const btnReview = document.getElementById('m-btn-review');
+btnEdit.classList.add('d-none');
+btnReview.classList.add('d-none');
 
-    if (alb.status_album === 'rejected') {
-        btnEdit.href = `${BASE_URL}/dashboard/edit-release?id=${alb.id_album}`;
-        btnEdit.innerHTML = '<i class="bi bi-pencil me-1"></i>Editar';
-        btnEdit.classList.remove('d-none');
-        btnReview.classList.remove('d-none');
-        btnReview.onclick = () => {
-            bootstrap.Modal.getInstance(document.getElementById('albumModal')).hide();
-            openReview(albumId);
-        };
-    } else if (alb.status_album === 'draft') {
-        btnEdit.href = `${BASE_URL}/dashboard/creat-release?draft=${alb.id_album}`;
-        btnEdit.innerHTML = '<i class="bi bi-play-fill me-1"></i>Continuar rascunho';
-        btnEdit.classList.remove('d-none');
-    } else if (alb.status_album !== 'pending') {
-        btnEdit.href = `${BASE_URL}/dashboard/edit-release?id=${alb.id_album}`;
-        btnEdit.innerHTML = '<i class="bi bi-pencil me-1"></i>Editar';
-        btnEdit.classList.remove('d-none');
-    }
+// Estados que permitem editar: draft, pending, rejected, approved
+const editableStatuses = ['draft', 'pending', 'rejected', 'approved'];
+if (editableStatuses.includes(alb.status_album)) {
+    btnEdit.href = alb.status_album === 'draft' 
+        ? `${BASE_URL}/dashboard/creat-release?draft=${alb.id_album}`
+        : `${BASE_URL}/dashboard/edit-release?id=${alb.id_album}`;
+    btnEdit.innerHTML = alb.status_album === 'draft'
+        ? '<i class="bi bi-play-fill me-1"></i>Continuar rascunho'
+        : '<i class="bi bi-pencil me-1"></i>Editar';
+    btnEdit.classList.remove('d-none');
+}
+
+// Botão de revisão apenas para rejected
+if (alb.status_album === 'rejected') {
+    btnReview.classList.remove('d-none');
+    btnReview.onclick = () => {
+        bootstrap.Modal.getInstance(document.getElementById('albumModal')).hide();
+        openReview(albumId);
+    };
+}
+
+    // Modal
 
     new bootstrap.Modal(document.getElementById('albumModal')).show();
 }

@@ -152,10 +152,24 @@ $art_stmt->execute([$id_users]);
 $user_artists = $art_stmt->fetchAll(PDO::FETCH_ASSOC);
 $artists_json = json_encode($user_artists, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
 
-// ── Lojas digitais ────────────────────────────
-$stores_stmt = $db->query("SELECT id_store, name_store, slug_store FROM _store WHERE is_active = 1 ORDER BY display_order");
-$stores = $stores_stmt->fetchAll(PDO::FETCH_ASSOC);
-$stores_json = json_encode($stores);
+
+// ── Lojas digitais agrupadas por região ─────
+$stores_stmt = $db->query("
+    SELECT id_store, name_store, slug_store, region_store
+    FROM _store
+    WHERE is_active = 1
+    ORDER BY FIELD(region_store, 'África','Europa','América do Norte','América do Sul','Ásia','Oceania','Global'),
+             region_store, display_order
+");
+$stores_raw = $stores_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Agrupar manualmente
+$stores_by_region = [];
+foreach ($stores_raw as $store) {
+    $region = $store['region_store'] ?: 'Global';
+    $stores_by_region[$region][] = $store;
+}
+$stores_json = json_encode($stores_raw); // mantém todas as lojas para o JS
 
 // ── Session data (logout modal) ───────────────
 $ls = $db->prepare('SELECT last_login_at FROM _users_security WHERE id_users = ?');
@@ -167,21 +181,84 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
 
 // ── Store icons map ───────────────────────────
 $store_icons = [
-    'spotify'       => ['icon' => 'bi-spotify',      'color' => '#1db954'],
-    'apple-music'   => ['icon' => 'bi-apple',         'color' => '#fc3c44'],
-    'amazon-music'  => ['icon' => 'bi-amazon',        'color' => '#ff9900'],
-    'deezer'        => ['icon' => 'bi-music-note',    'color' => '#ef5466'],
-    'tidal'         => ['icon' => 'bi-water',         'color' => '#00ffff'],
-    'boomplay'      => ['icon' => 'bi-headphones',    'color' => '#f85d2f'],
-    'youtube-music' => ['icon' => 'bi-youtube',       'color' => '#ff0000'],
-    'itunes'        => ['icon' => 'bi-bag-music',     'color' => '#ea4cc0'],
-    'pandora'       => ['icon' => 'bi-broadcast',     'color' => '#3668ff'],
-    'resso'         => ['icon' => 'bi-music-player',  'color' => '#ff4040'],
-    'claro-music'   => ['icon' => 'bi-music-note-beamed', 'color' => '#e30613'],
-    'tiktok'        => ['icon' => 'bi-tiktok',        'color' => '#000000'],
-    'facebook'      => ['icon' => 'bi-facebook',      'color' => '#1877f2'],
-    'snapchat'      => ['icon' => 'bi-snapchat',      'color' => '#fffc00'],
-    'youtube'       => ['icon' => 'bi-youtube',       'color' => '#ff0000'],
+
+    // ── Streaming Global ──────────────────────────────────────────────────
+    'spotify'              => ['icon' => 'bi-spotify',               'color' => '#1db954'],
+    'apple-music'          => ['icon' => 'bi-apple',                 'color' => '#fc3c44'],
+    'amazon-music'         => ['icon' => 'bi-amazon',                'color' => '#ff9900'],
+    'deezer'               => ['icon' => 'bi-music-note-beamed',     'color' => '#ef5466'],
+    'tidal'                => ['icon' => 'bi-water',                 'color' => '#00ffff'],
+    'boomplay'             => ['icon' => 'bi-play-circle-fill',      'color' => '#f85d2f'],
+    'youtube-music'        => ['icon' => 'bi-youtube',               'color' => '#ff0000'],
+    'soundcloud'           => ['icon' => 'bi-soundwave',             'color' => '#ff5500'],
+    'napster'              => ['icon' => 'bi-music-note-list',       'color' => '#009bd9'],
+    'iheart-radio'         => ['icon' => 'bi-broadcast',             'color' => '#c6002b'],
+    'audiomack'            => ['icon' => 'bi-soundwave',             'color' => '#ffa500'],
+    'qobuz'                => ['icon' => 'bi-vinyl-fill',            'color' => '#003d7a'],
+
+    // ── Streaming Ásia ────────────────────────────────────────────────────
+    'jiosaavn'             => ['icon' => 'bi-music-note-list',       'color' => '#2bc5b4'],
+    'gaana'                => ['icon' => 'bi-music-note-beamed',     'color' => '#e72a2a'],
+    'wynk-music'           => ['icon' => 'bi-headphones',            'color' => '#5a50f0'],
+    'hungama'              => ['icon' => 'bi-collection-play-fill',  'color' => '#e31837'],
+    'netease-cloud-music'  => ['icon' => 'bi-cloud-fill',            'color' => '#e60026'],
+    'qq-music'             => ['icon' => 'bi-music-player-fill',     'color' => '#fcb900'],
+    'kugou'                => ['icon' => 'bi-disc-fill',             'color' => '#1677ff'],
+    'kuwo-music'           => ['icon' => 'bi-music-note-beamed',     'color' => '#e60012'],
+    'melon'                => ['icon' => 'bi-circle-fill',           'color' => '#00cd3c'],
+    'genie'                => ['icon' => 'bi-stars',                 'color' => '#005bac'],
+    'bugs'                 => ['icon' => 'bi-music-note',            'color' => '#ff4f00'],
+    'flo'                  => ['icon' => 'bi-play-btn-fill',         'color' => '#7b2fff'],
+    'kkbox'                => ['icon' => 'bi-grid-fill',             'color' => '#009fee'],
+    'joox'                 => ['icon' => 'bi-play-circle-fill',      'color' => '#00c040'],
+    'line-music'           => ['icon' => 'bi-chat-fill',             'color' => '#00b900'],
+    'awa'                  => ['icon' => 'bi-soundwave',             'color' => '#111111'],
+    'recochoku'            => ['icon' => 'bi-headset',               'color' => '#e60020'],
+    'anghami'              => ['icon' => 'bi-music-note-beamed',     'color' => '#5b35d5'],
+    'yandex-music'         => ['icon' => 'bi-music-note-list',       'color' => '#fc3f1d'],
+    'vk-music'             => ['icon' => 'bi-person-fill',           'color' => '#0077ff'],
+    'fizy'                 => ['icon' => 'bi-music-note-beamed',     'color' => '#6b00d7'],
+
+    // ── Streaming LATAM / Brasil ──────────────────────────────────────────
+    'imusica'              => ['icon' => 'bi-music-note-beamed',     'color' => '#e4002b'],
+    'tim-music'            => ['icon' => 'bi-phone-fill',            'color' => '#0033a0'],
+    'triller'              => ['icon' => 'bi-camera-video-fill',     'color' => '#ff3b30'],
+    'claro-music'          => ['icon' => 'bi-reception-4',           'color' => '#e30613'],
+
+    // ── Streaming Rússia / Outros ─────────────────────────────────────────
+    'zvuk'                 => ['icon' => 'bi-vinyl',                 'color' => '#7b2fff'],
+    'pandora'              => ['icon' => 'bi-broadcast',             'color' => '#3668ff'],
+    'resso'                => ['icon' => 'bi-music-player',          'color' => '#ff4040'],
+
+    // ── Download ──────────────────────────────────────────────────────────
+    'itunes'               => ['icon' => 'bi-bag-music-fill',        'color' => '#ea4cc0'],
+    'beatport'             => ['icon' => 'bi-headphones-fill',       'color' => '#02e75c'],
+    'traxsource'           => ['icon' => 'bi-vinyl-fill',            'color' => '#e4002b'],
+    'bandcamp'             => ['icon' => 'bi-bandcamp',              'color' => '#1da0c3'],
+    '7digital'             => ['icon' => 'bi-7-circle-fill',         'color' => '#e4002b'],
+    'hdtracks'             => ['icon' => 'bi-soundwave',             'color' => '#333333'],
+    'juno-download'        => ['icon' => 'bi-cloud-arrow-down-fill', 'color' => '#e4002b'],
+    'emusic'               => ['icon' => 'bi-download',              'color' => '#2c7be5'],
+
+    // ── Social ────────────────────────────────────────────────────────────
+    'tiktok'               => ['icon' => 'bi-tiktok',               'color' => '#010101'],
+    'facebook'             => ['icon' => 'bi-facebook',             'color' => '#1877f2'],
+    'snapchat'             => ['icon' => 'bi-snapchat',             'color' => '#f7c300'],
+    'instagram'            => ['icon' => 'bi-instagram',            'color' => '#e1306c'],
+    'x-twitter'            => ['icon' => 'bi-twitter-x',           'color' => '#000000'],
+    'twitch'               => ['icon' => 'bi-twitch',               'color' => '#9146ff'],
+    'kwai'                 => ['icon' => 'bi-camera-reels-fill',    'color' => '#ff5c00'],
+    'vk'                   => ['icon' => 'bi-person-video3',        'color' => '#0077ff'],
+    'likee'                => ['icon' => 'bi-heart-fill',           'color' => '#ff2d55'],
+
+    // ── Vídeo ─────────────────────────────────────────────────────────────
+    'youtube'              => ['icon' => 'bi-youtube',              'color' => '#ff0000'],
+    'vevo'                 => ['icon' => 'bi-play-btn-fill',        'color' => '#e4002b'],
+    'dailymotion'          => ['icon' => 'bi-play-circle-fill',     'color' => '#003f8a'],
+    'vimeo'                => ['icon' => 'bi-vimeo',                'color' => '#1ab7ea'],
+
+    // ── Fallback ──────────────────────────────────────────────────────────
+    'default'              => ['icon' => 'bi-shop',                 'color' => '#6c757d'],
 ];
 
 ini_set('display_errors', 1);
@@ -945,8 +1022,8 @@ error_reporting(E_ALL);
             </div><!-- /panel-3 -->
 
             <!-- ════════════════════════════════════
-         STEP 4 — Distribuição
-    ════════════════════════════════════ -->
+     STEP 4 — Distribuição
+════════════════════════════════════ -->
             <div class="step-panel" id="panel-4">
                 <h5 class="fw-bold mb-1"><i class="bi bi-calendar-event me-2"
                         style="color:var(--wasom)"></i>Distribuição</h5>
@@ -1012,27 +1089,60 @@ error_reporting(E_ALL);
                             </button>
                         </div>
                     </div>
-                    <div class="row g-2" id="stores-grid">
-                        <?php foreach ($stores as $store): ?>
-                        <?php
-                            $slug = $store['slug_store'];
-                            $icon = $store_icons[$slug] ?? ['icon' => 'bi-music-note', 'color' => '#888'];
-                            ?>
-                        <div class="col-4 col-md-3 col-lg-2">
-                            <div class="store-card selected" data-store-id="<?php echo $store['id_store']; ?>"
-                                onclick="toggleStore(this)">
-                                <i class="store-check bi bi-check-circle-fill"></i>
-                                <div class="store-icon"><i class="bi <?php echo $icon['icon']; ?>"
-                                        style="color:<?php echo $icon['color']; ?>"></i></div>
-                                <div class="store-name"><?php echo htmlspecialchars($store['name_store']); ?></div>
-                                <input type="checkbox" class="d-none store-checkbox" checked
-                                    value="<?php echo $store['id_store']; ?>" />
+
+                    <!-- Navegação por regiões -->
+                    <ul class="nav nav-tabs mb-3" id="storeRegionsTab" role="tablist">
+                        <?php $active = 'active'; ?>
+                        <?php foreach ($stores_by_region as $region => $stores_list): ?>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link <?php echo $active; ?>" id="tab-<?php echo md5($region); ?>"
+                                data-bs-toggle="tab" data-bs-target="#region-<?php echo md5($region); ?>" type="button"
+                                role="tab" aria-controls="region-<?php echo md5($region); ?>"
+                                aria-selected="<?php echo $active === 'active' ? 'true' : 'false'; ?>">
+                                <?php echo htmlspecialchars($region); ?>
+                            </button>
+                        </li>
+                        <?php $active = ''; ?>
+                        <?php endforeach; ?>
+                    </ul>
+
+                    <!-- Conteúdo das abas -->
+                    <div class="tab-content" id="storeRegionsTabContent">
+                        <?php $active = 'show active'; ?>
+                        <?php foreach ($stores_by_region as $region => $stores_list): ?>
+                        <div class="tab-pane fade <?php echo $active; ?>" id="region-<?php echo md5($region); ?>"
+                            role="tabpanel" aria-labelledby="tab-<?php echo md5($region); ?>">
+                            <div class="row g-2" id="stores-grid-<?php echo md5($region); ?>">
+                                <?php foreach ($stores_list as $store): ?>
+                                <?php
+$slug  = $store['slug_store'];
+$si    = $store_icons[$slug] ?? $store_icons['default'];
+?>
+                                <div class="col-4 col-md-3 col-lg-2">
+                                    <div class="store-card selected" data-store-id="<?php echo $store['id_store']; ?>"
+                                        onclick="toggleStore(this)">
+                                        <i class="store-check bi bi-check-circle-fill"></i>
+                                        <div class="store-icon">
+                                            <i class="bi <?php echo $si['icon']; ?>"
+                                                style="color:<?php echo $si['color']; ?>"></i>
+                                        </div>
+                                        <div class="store-name"><?php echo htmlspecialchars($store['name_store']); ?>
+                                        </div>
+                                        <input type="checkbox" class="d-none store-checkbox" checked
+                                            value="<?php echo $store['id_store']; ?>" />
+                                    </div>
+                                </div>
+                                <?php endforeach; ?>
                             </div>
                         </div>
+                        <?php $active = ''; ?>
                         <?php endforeach; ?>
                     </div>
-                    <div class="form-text mt-2"><span id="stores-selected-count"><?php echo count($stores); ?></span>
-                        plataforma(s) seleccionada(s)</div>
+
+                    <div class="form-text mt-2">
+                        <span id="stores-selected-count"><?php echo count($stores_raw); ?></span> plataforma(s)
+                        seleccionada(s)
+                    </div>
                 </div>
 
                 <div class="step-nav">

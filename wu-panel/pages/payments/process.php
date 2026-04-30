@@ -189,9 +189,9 @@ if ($action === 'generate_receipt') {
     $company_name = APP_NAME ?? 'Wasom Upfy';
     $company_nif = '5417020235';
     $company_address = 'Luanda, Angola';
-    $company_phone = '+244 923 000 000';
+    $company_phone = '+244 975 818 046';
     $company_email = 'suporte@wasomupfy.com';
-    $company_website = 'wasomupfy.com';
+    $company_website = 'wasomupfy.rf.gd';
     $current_date = date('d/m/Y H:i:s');
 
     // Usar Heredoc para construir o HTML sem problemas de escape
@@ -410,9 +410,9 @@ if ($action === 'email_receipt') {
     $company_name = APP_NAME ?? 'Wasom Upfy';
     $company_nif = '5417020235';
     $company_address = 'Luanda, Angola';
-    $company_phone = '+244 923 000 000';
+    $company_phone = '+244 975 818 046';
     $company_email = 'suporte@wasomupfy.com';
-    $company_website = 'wasomupfy.com';
+    $company_website = 'wasomupfy.rf.gd';
     $current_date = date('d/m/Y H:i:s');
 
     // Construir HTML do recibo (versão compacta para e-mail, sem botão de impressão)

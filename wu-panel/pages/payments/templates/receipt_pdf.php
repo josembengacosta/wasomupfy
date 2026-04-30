@@ -15,9 +15,9 @@
 $company_name = APP_NAME ?? 'Wasom Upfy';
 $company_nif = '5417020235'; // NIF fictício, ajustar conforme real
 $company_address = 'Luanda, Angola';
-$company_phone = '+244 923 000 000';
+$company_phone = '+244 975 818 046';
 $company_email = 'suporte@wasomupfy.com';
-$company_website = 'wasomupfy.com';
+$company_website = 'wasomupfy.rf.gd';
 
 $fullname = trim(($user['first_name'] ?? '') . ' ' . ($user['second_name'] ?? ''));
 $payment_date = date('d/m/Y H:i', strtotime($pay['creat_payment']));
