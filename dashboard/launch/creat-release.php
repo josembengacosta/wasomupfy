@@ -976,10 +976,12 @@ error_reporting(E_ALL);
                     <i class="bi bi-info-circle-fill me-2"></i>
                     <strong>Requisitos dos áudios:</strong>
                     <ul class="mb-0 mt-1">
-                        <li>Formato: <strong>WAV ou FLAC</strong></li>
+                        <li>Formatos aceites: <strong>WAV ou FLAC</strong> (sem perdas)</li>
                         <li>Taxa de amostragem: <strong>44.1 kHz</strong></li>
                         <li>Resolução: <strong>16 ou 24 bit</strong></li>
-                        <li>Tamanho máximo: <strong>200 MB por faixa</strong></li>
+                        <li>Tamanho máximo por faixa: <strong>20 MB</strong></li>
+                        <li>Tamanho máximo do envio total: <strong>25 MB</strong></li>
+                        <li><em>Dica: usa FLAC para reduzir o tamanho dos ficheiros mantendo a qualidade.</em></li>
                     </ul>
                 </div>
                 <div class="d-flex align-items-center justify-content-between mb-1">
@@ -1626,10 +1628,14 @@ $si    = $store_icons[$slug] ?? $store_icons['default'];
                 <!-- Dentro do template, após o ISRC -->
                 <div class="col-md-6">
                     <label class="form-label fw-semibold small">
-                        Arquivo de Áudio <span class="text-danger">* (WAV/FLAC)</span>
+                        Arquivo de Áudio <span class="text-danger">* (WAV/FLAC, máx. 20 MB)</span>
                         <i class="bi bi-info-circle ms-1" data-bs-toggle="tooltip"
-                            title="Formato WAV ou FLAC, 16/24 bit, 44.1kHz"></i>
+                            title="Formato WAV ou FLAC (sem perdas), 16/24 bit, 44.1kHz, máximo 20 MB por faixa"></i>
                     </label>
+                    <div class="form-text progress-track" style="font-size:.7rem">
+                        <span class="audio-filename"></span>
+                        <span class="audio-size text-muted"></span>
+                    </div>
                     <div class="input-group">
                         <input type="file" class="form-control form-control-sm track-audio"
                             accept=".wav,.flac,audio/wav,audio/flac,audio/x-flac" required />

@@ -124,6 +124,7 @@ function usr_status_badge(string $s): string
 {
     return match ($s) {
         'active'    => '<span class="badge usr-s-active">Activo</span>',
+        'pending_plan'   => '<span class="badge bg-secondary">Sem plano</span>',
         'inactive'  => '<span class="badge usr-s-inactive">Inactivo</span>',
         'suspended' => '<span class="badge usr-s-suspended">Suspenso</span>',
         'processing'    => '<span class="badge usr-s-processing">Em revisão</span>',

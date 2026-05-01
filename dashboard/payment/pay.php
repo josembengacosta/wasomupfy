@@ -1,7 +1,7 @@
 <?php
 // ══════════════════════════════════════════════════════
 // WASOM UPFY v2.0 — Página de Pagamento
-// Arquivo: dashboard/payment.php
+// Arquivo: dashboard/payment/pay.php
 // ══════════════════════════════════════════════════════
 require_once __DIR__ . '/../../authentic/include/functions.php';
 require_once __DIR__ . '/../include/platform.php';
@@ -22,9 +22,7 @@ $name_artist_band = htmlspecialchars($user['name_artist_band'] ?? 'Cria Perfil A
 $notif_count    = getUnreadNotifCount($id_users);
 $db             = getDB();
 
-
 // ─── Determinar plano ──────────────────────────────────
-// Aceita ?plan=single|album|artist|label ou usa o plano guardado no utilizador
 $plan_slug           = $_GET['plan'] ?? null;
 $requested_intent_id = (int)($_GET['intent'] ?? 0);
 $plan                = null;
@@ -37,7 +35,6 @@ if ($plan_slug) {
     $plan = $ps->fetch();
 }
 
-// Sem plano → redirecionar para página de planos
 if (!$plan) {
     redirect('/all-plans');
 }
@@ -73,10 +70,9 @@ if (!$intent) {
     $intent = $existing->fetch() ?: null;
 }
 
-// ─── Criar novo Payment Intent se não existir ────────────
 if (!$intent) {
     $ref_code = 'WUF-' . strtoupper(substr(base_convert(bin2hex(random_bytes(6)), 16, 36), 0, 9));
-    $expires  = date('Y-m-d H:i:s', time() + 3600); // 60 minutos
+    $expires  = date('Y-m-d H:i:s', time() + 3600);
 
     $ins = getDB()->prepare("
         INSERT INTO _payment_intent
@@ -95,7 +91,6 @@ if (!$intent) {
 
     $intent_id = (int)getDB()->lastInsertId();
 
-    // Guardar plan_selected no utilizador se ainda não estava
     if (!$user['plan_selected']) {
         getDB()->prepare("UPDATE _users SET plan_selected = ? WHERE id_users = ?")
             ->execute([$plan['id_plan'], $id_users]);
@@ -152,6 +147,23 @@ $auto_approve_ts = $is_processing ? (strtotime($proof['uploaded_at']) + 1800) : 
 $pay_page_url    = APP_URL . '/' . APP_URL_PANEL . '/payment/pay?plan=' . urlencode((string)$plan['slug_plan']);
 $intent_page_url = $pay_page_url . '&intent=' . $intent_id;
 
+// ─── AUTO-APROVAÇÃO AUTOMÁTICA (30 min) ─────────────
+// Agora as variáveis $pay_page_url e $intent_page_url já estão definidas
+if ($proof && ($proof['status'] === 'pending') && $payment_row && ($payment_row['status_payment'] === 'pending')) {
+    $autoApproveDeadline = strtotime($proof['uploaded_at']) + 1800;
+    if (time() >= $autoApproveDeadline) {
+        require_once __DIR__ . '/../../authentic/include/payment_workflow.php';
+        try {
+            paymentWorkflowActivatePlan(getDB(), $intent, $proof);
+            header('Location: ' . $intent_page_url);
+            exit;
+        } catch (Exception $e) {
+            error_log('[AUTO-APPROVE] ' . $e->getMessage());
+        }
+    }
+}
+
+// ─── Textos de aviso ──────────────────────────────────
 if ($plan['slug_plan'] === 'label') {
     $review_notice = 'O teu plano so sera activado apos validacao manual da nossa equipa.';
 } elseif ($trust_score < 30) {
@@ -176,9 +188,9 @@ $plan_icon = $plan_icons[$plan_slug_] ?? 'bi-star';
 // Determinar step inicial
 $initial_step = 1;
 if ($proof || in_array($intent['status'], ['approved', 'rejected'], true)) {
-    $initial_step = 4; // Já enviou comprovativo
+    $initial_step = 4;
 } elseif ($intent['status'] === 'waiting_payment') {
-    $initial_step = 3; // Já viu as instruções
+    $initial_step = 3;
 }
 
 // Buscar plano ativo atual do usuário (se houver)

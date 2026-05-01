@@ -324,8 +324,8 @@ function validateStep(step) {
             } else if (!audioFile.type.includes('wav') && !audioFile.type.includes('flac')) {
                 toastr.error(`Faixa ${i + 1}: formato inválido. Use WAV ou FLAC.`);
                 ok = false;
-            } else if (audioFile.size > 200 * 1024 * 1024) {
-                toastr.error(`Faixa ${i + 1}: arquivo muito grande (máx. 200MB).`);
+            } else if (audioFile.size > 20 * 1024 * 1024) {
+                toastr.error(`Faixa ${i + 1}: arquivo muito grande (máx. 20MB).`);
                 ok = false;
             }
         });
@@ -818,8 +818,8 @@ async function submitRelease() {
             btn.disabled  = false;
             return;
         }
-        if (audioFile.size > 200 * 1024 * 1024) {
-            toastr.error(`Faixa ${i + 1}: arquivo muito grande (máx. 200MB).`);
+        if (audioFile.size > 20 * 1024 * 1024) {
+            toastr.error(`Faixa ${i + 1}: arquivo muito grande (máx. 20MB).`);
             btn.innerHTML = '<i class="bi bi-send-fill me-2"></i>Distribuir';
             btn.disabled  = false;
             return;
@@ -838,6 +838,22 @@ async function submitRelease() {
             explicit:        card.querySelector('.track-explicit').value,
             isrc:            card.querySelector('.track-isrc').value.trim().toUpperCase()
         });
+    }
+
+    // ══════════════════════════════════════════════
+    // NOVA VALIDAÇÃO: tamanho total dos áudios
+    // ══════════════════════════════════════════════
+    let totalAudioSize = 0;
+    trackCards.forEach(card => {
+        const file = card.querySelector('.track-audio').files[0];
+        if (file) totalAudioSize += file.size;
+    });
+    const maxTotalSize = 25 * 1024 * 1024; // 25 MB (margem de segurança)
+    if (totalAudioSize > maxTotalSize) {
+        toastr.error(`O tamanho total das faixas é de ${(totalAudioSize / (1024*1024)).toFixed(1)} MB, mas o máximo permitido é 25 MB. Reduz o tamanho dos ficheiros (usa FLAC).`);
+        btn.innerHTML = '<i class="bi bi-send-fill me-2"></i>Distribuir';
+        btn.disabled  = false;
+        return;
     }
 
     const stores = [];

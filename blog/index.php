@@ -179,7 +179,7 @@
     // ==================== CONTADOR REAL ====================
     // DATA FIXA: 30 de Abril de 2026
     // Usamos uma data no futuro que NÃO muda quando a página é recarregada
-    const launchDate = new Date('April 30, 2026 00:00:00').getTime();
+    const launchDate = new Date('June 30, 2026 00:00:00').getTime();
 
     function updateRealCounter() {
         const now = new Date().getTime();

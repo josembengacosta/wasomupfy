@@ -233,219 +233,219 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
     <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/playlist-details.css" />
     <style>
-        /* ══ Hero playlist ══ */
-        .playlist-hero {
-            border-radius: 20px;
-            overflow: hidden;
-            margin-bottom: 28px;
-            min-height: 150px;
-            background: linear-gradient(135deg, #1a003e 0%, #2d0060 50%, #1a1a2e 100%);
-            position: relative;
-        }
+    /* ══ Hero playlist ══ */
+    .playlist-hero {
+        border-radius: 20px;
+        overflow: hidden;
+        margin-bottom: 28px;
+        min-height: 150px;
+        background: linear-gradient(135deg, #1a003e 0%, #2d0060 50%, #1a1a2e 100%);
+        position: relative;
+    }
 
-        .playlist-hero .deco {
-            position: absolute;
-            inset: 0;
-            opacity: .06;
-            background: repeating-linear-gradient(45deg, #FF0089 0, #FF0089 1px, transparent 0, transparent 50%);
-            background-size: 20px 20px;
-        }
+    .playlist-hero .deco {
+        position: absolute;
+        inset: 0;
+        opacity: .06;
+        background: repeating-linear-gradient(45deg, #FF0089 0, #FF0089 1px, transparent 0, transparent 50%);
+        background-size: 20px 20px;
+    }
 
-        .playlist-hero .hero-body {
-            position: relative;
-            z-index: 1;
-            padding: 28px 28px 24px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
+    .playlist-hero .hero-body {
+        position: relative;
+        z-index: 1;
+        padding: 28px 28px 24px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
 
-        .playlist-icon-lg {
-            width: 80px;
-            height: 80px;
-            border-radius: 16px;
-            background: linear-gradient(135deg, #FF0089, #a000c8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.4rem;
-            flex-shrink: 0;
-            box-shadow: 0 4px 20px rgba(255, 0, 137, .4);
-        }
+    .playlist-icon-lg {
+        width: 80px;
+        height: 80px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #FF0089, #a000c8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.4rem;
+        flex-shrink: 0;
+        box-shadow: 0 4px 20px rgba(255, 0, 137, .4);
+    }
 
-        .playlist-hero-info h2 {
-            color: #fff;
-            font-weight: 800;
-            margin: 0 0 4px;
-        }
+    .playlist-hero-info h2 {
+        color: #fff;
+        font-weight: 800;
+        margin: 0 0 4px;
+    }
 
-        .playlist-hero-info .meta {
-            color: rgba(255, 255, 255, .6);
-            font-size: .82rem;
-        }
+    .playlist-hero-info .meta {
+        color: rgba(255, 255, 255, .6);
+        font-size: .82rem;
+    }
 
-        .playlist-hero-info .meta span {
-            margin-right: 14px;
-        }
+    .playlist-hero-info .meta span {
+        margin-right: 14px;
+    }
 
-        /* ══ Cards ══ */
-        .stat-hero-card {
-            border-radius: 16px;
-            padding: 18px 20px;
-            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
-            background: var(--card-bg, #fff);
-            position: relative;
-            overflow: hidden;
-        }
+    /* ══ Cards ══ */
+    .stat-hero-card {
+        border-radius: 16px;
+        padding: 18px 20px;
+        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
+        background: var(--card-bg, #fff);
+        position: relative;
+        overflow: hidden;
+    }
 
-        .stat-hero-card .stat-label {
-            font-size: .7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: .5px;
-            color: var(--text-muted, #6c757d);
-            margin-bottom: 5px;
-        }
+    .stat-hero-card .stat-label {
+        font-size: .7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        color: var(--text-muted, #6c757d);
+        margin-bottom: 5px;
+    }
 
-        .stat-hero-card .stat-value {
-            font-size: 1.65rem;
-            font-weight: 900;
-            line-height: 1;
-        }
+    .stat-hero-card .stat-value {
+        font-size: 1.65rem;
+        font-weight: 900;
+        line-height: 1;
+    }
 
-        .stat-hero-card .stat-icon {
-            position: absolute;
-            right: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 2.6rem;
-            opacity: .07;
-        }
+    .stat-hero-card .stat-icon {
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 2.6rem;
+        opacity: .07;
+    }
 
-        /* ══ Filtros ══ */
-        .filter-bar {
-            background: var(--card-bg, #fff);
-            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
-            border-radius: 14px;
-            padding: 14px 18px;
-            margin-bottom: 22px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            align-items: flex-end;
-        }
+    /* ══ Filtros ══ */
+    .filter-bar {
+        background: var(--card-bg, #fff);
+        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
+        border-radius: 14px;
+        padding: 14px 18px;
+        margin-bottom: 22px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: flex-end;
+    }
 
-        .filter-bar label {
-            font-size: .7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: .5px;
-            color: var(--text-muted, #6c757d);
-            display: block;
-            margin-bottom: 3px;
-        }
+    .filter-bar label {
+        font-size: .7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        color: var(--text-muted, #6c757d);
+        display: block;
+        margin-bottom: 3px;
+    }
 
-        /* ══ Plataformas ══ */
-        .platform-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .06));
-        }
+    /* ══ Plataformas ══ */
+    .platform-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .06));
+    }
 
-        .platform-row:last-child {
-            border-bottom: none;
-        }
+    .platform-row:last-child {
+        border-bottom: none;
+    }
 
-        .platform-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            flex-shrink: 0;
-        }
+    .platform-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
 
-        .platform-bar-bg {
-            flex: 1;
-            height: 6px;
-            border-radius: 6px;
-            background: var(--border-color, rgba(0, 0, 0, .07));
-            overflow: hidden;
-        }
+    .platform-bar-bg {
+        flex: 1;
+        height: 6px;
+        border-radius: 6px;
+        background: var(--border-color, rgba(0, 0, 0, .07));
+        overflow: hidden;
+    }
 
-        .platform-bar-fill {
-            height: 100%;
-            border-radius: 6px;
-            transition: width .5s ease;
-        }
+    .platform-bar-fill {
+        height: 100%;
+        border-radius: 6px;
+        transition: width .5s ease;
+    }
 
-        /* ══ Faixas ══ */
-        .track-cover {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            object-fit: cover;
-        }
+    /* ══ Faixas ══ */
+    .track-cover {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        object-fit: cover;
+    }
 
-        .track-cover-placeholder {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            background: rgba(255, 0, 137, .08);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-        }
+    .track-cover-placeholder {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        background: rgba(255, 0, 137, .08);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+    }
 
-        .explicit-badge {
-            font-size: .6rem;
-            background: #333;
-            color: #fff;
-            border-radius: 3px;
-            padding: 1px 4px;
-            vertical-align: middle;
-            margin-left: 4px;
-        }
+    .explicit-badge {
+        font-size: .6rem;
+        background: #333;
+        color: #fff;
+        border-radius: 3px;
+        padding: 1px 4px;
+        vertical-align: middle;
+        margin-left: 4px;
+    }
 
-        .rank-num {
-            font-size: .8rem;
-            font-weight: 900;
-            color: var(--text-muted, #6c757d);
-            min-width: 24px;
-            text-align: center;
-        }
+    .rank-num {
+        font-size: .8rem;
+        font-weight: 900;
+        color: var(--text-muted, #6c757d);
+        min-width: 24px;
+        text-align: center;
+    }
 
-        .rank-num.top3 {
-            color: #FF0089;
-        }
+    .rank-num.top3 {
+        color: #FF0089;
+    }
 
-        /* ══ Aviso ══ */
-        .data-notice {
-            background: rgba(255, 0, 137, .04);
-            border: 1px solid rgba(255, 0, 137, .14);
-            border-radius: 14px;
-            padding: 14px 18px;
-            margin-bottom: 22px;
-            display: flex;
-            gap: 10px;
-            align-items: flex-start;
-            font-size: .8rem;
-            color: var(--text-muted, #6c757d);
-        }
+    /* ══ Aviso ══ */
+    .data-notice {
+        background: rgba(255, 0, 137, .04);
+        border: 1px solid rgba(255, 0, 137, .14);
+        border-radius: 14px;
+        padding: 14px 18px;
+        margin-bottom: 22px;
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        font-size: .8rem;
+        color: var(--text-muted, #6c757d);
+    }
 
-        .empty-section {
-            text-align: center;
-            padding: 36px 20px;
-            color: var(--text-muted, #6c757d);
-        }
+    .empty-section {
+        text-align: center;
+        padding: 36px 20px;
+        color: var(--text-muted, #6c757d);
+    }
 
-        .empty-section .icon {
-            font-size: 2.2rem;
-            opacity: .15;
-            margin-bottom: 8px;
-        }
+    .empty-section .icon {
+        font-size: 2.2rem;
+        opacity: .15;
+        margin-bottom: 8px;
+    }
     </style>
 </head>
 
@@ -502,7 +502,7 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
         <?php /* ── NÍVEL 1: Crítico — bloqueia distribuição ── */ ?>
 
         <?php if (!$email_verified): ?>
-            <?php wuAlert(
+        <?php wuAlert(
                 'danger',
                 'bi-envelope-exclamation-fill',
                 '<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta e receber notificações de pagamentos.',
@@ -513,7 +513,7 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
         <?php endif; ?>
 
         <?php if ($plan && !$plan_paid): ?>
-            <?php wuAlert(
+        <?php wuAlert(
                 'warning',
                 'bi-clock-history',
                 '<strong>Pagamento pendente — ' . htmlspecialchars($plan['name_plan']) . '.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados até confirmação.',
@@ -522,7 +522,7 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
                 'banner-plan-pending'
             ); ?>
         <?php elseif (!$plan): ?>
-            <?php wuAlert(
+        <?php wuAlert(
                 'danger',
                 'bi-credit-card-fill',
                 '<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir a tua música para +150 plataformas.',
@@ -535,7 +535,7 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
         <?php /* ── NÍVEL 2: Importante — perfil incompleto ── */ ?>
 
         <?php if ($plan_paid && !$has_artist): ?>
-            <?php wuAlert(
+        <?php wuAlert(
                 'info',
                 'bi-person-plus-fill',
                 '<strong>Cria o teu perfil artístico.</strong> Tens plano activo mas ainda não criaste um perfil artístico. Precisas de um para poder lançar música.',
@@ -548,7 +548,7 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
         <?php /* ── NÍVEL 3: Informativo — conta bancária ── */ ?>
 
         <?php if ($plan_paid && $has_artist && !$bank_account): ?>
-            <?php wuAlert(
+        <?php wuAlert(
                 'info',
                 'bi-bank',
                 '<strong>Conta bancária não registada.</strong> Para poder sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.',
@@ -569,7 +569,7 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
         }
         ?>
         <?php if ($rejected_account): ?>
-            <?php
+        <?php
             $rej_msg = '<strong>Conta ' . htmlspecialchars($rejected_account['type_account']) . ' rejeitada.</strong>';
             if ($rejected_account['reject_reason']) {
                 $rej_msg .= ' Motivo: <em>' . htmlspecialchars($rejected_account['reject_reason']) . '</em>.';
@@ -619,8 +619,8 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
                     <select name="year" class="form-select form-select-sm" style="min-width:100px"
                         onchange="this.form.submit()">
                         <?php foreach ($available_years as $y): ?>
-                            <option value="<?php echo $y; ?>" <?php echo $y == $filter_year ? 'selected' : ''; ?>>
-                                <?php echo $y; ?></option>
+                        <option value="<?php echo $y; ?>" <?php echo $y == $filter_year ? 'selected' : ''; ?>>
+                            <?php echo $y; ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -630,9 +630,9 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
                         onchange="this.form.submit()">
                         <option value="0" <?php echo !$filter_store ? 'selected' : ''; ?>>Todas as plataformas</option>
                         <?php foreach ($stores as $st): ?>
-                            <option value="<?php echo $st['id_store']; ?>"
-                                <?php echo $st['id_store'] == $filter_store ? 'selected' : ''; ?>>
-                                <?php echo htmlspecialchars($st['name_store']); ?></option>
+                        <option value="<?php echo $st['id_store']; ?>"
+                            <?php echo $st['id_store'] == $filter_store ? 'selected' : ''; ?>>
+                            <?php echo htmlspecialchars($st['name_store']); ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -689,12 +689,12 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
 
         <!-- ── Streams por plataforma ── -->
         <?php if (!empty($platforms)): ?>
-            <div class="card mb-4" style="border-radius:16px">
-                <div class="card-header">
-                    <h6 class="mb-0"><i class="bi bi-collection me-2 text-pink"></i>Streams por plataforma</h6>
-                </div>
-                <div class="card-body pt-2">
-                    <?php
+        <div class="card mb-4" style="border-radius:16px">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="bi bi-collection me-2 text-pink"></i>Streams por plataforma</h6>
+            </div>
+            <div class="card-body pt-2">
+                <?php
                     $max_plat = max(array_column($platforms, 'total_streams') ?: [1]);
                     foreach ($platforms as $pd):
                         $slug   = $pd['slug_store'];
@@ -702,24 +702,24 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
                         $icon   = $store_icons[$slug]  ?? $store_icons['default'];
                         $pct    = $max_plat > 0 ? round(($pd['total_streams'] / $max_plat) * 100) : 0;
                     ?>
-                        <div class="platform-row">
-                            <div class="platform-dot" style="background:<?php echo $colors['border']; ?>"></div>
-                            <i class="<?php echo $icon; ?>"
-                                style="font-size:1rem;color:<?php echo $colors['border']; ?>;min-width:20px"></i>
-                            <div style="min-width:130px;font-size:.82rem;font-weight:600">
-                                <?php echo htmlspecialchars($pd['name_store']); ?></div>
-                            <div class="platform-bar-bg">
-                                <div class="platform-bar-fill"
-                                    style="width:<?php echo $pct; ?>%;background:<?php echo $colors['border']; ?>"></div>
-                            </div>
-                            <div style="font-size:.78rem;font-weight:700;min-width:90px;text-align:right">
-                                <?php echo number_format((int)$pd['total_streams']); ?> <span
-                                    style="font-size:.65rem;font-weight:400;color:var(--text-muted,#6c757d)">streams</span>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
+                <div class="platform-row">
+                    <div class="platform-dot" style="background:<?php echo $colors['border']; ?>"></div>
+                    <i class="<?php echo $icon; ?>"
+                        style="font-size:1rem;color:<?php echo $colors['border']; ?>;min-width:20px"></i>
+                    <div style="min-width:130px;font-size:.82rem;font-weight:600">
+                        <?php echo htmlspecialchars($pd['name_store']); ?></div>
+                    <div class="platform-bar-bg">
+                        <div class="platform-bar-fill"
+                            style="width:<?php echo $pct; ?>%;background:<?php echo $colors['border']; ?>"></div>
+                    </div>
+                    <div style="font-size:.78rem;font-weight:700;min-width:90px;text-align:right">
+                        <?php echo number_format((int)$pd['total_streams']); ?> <span
+                            style="font-size:.65rem;font-weight:400;color:var(--text-muted,#6c757d)">streams</span>
+                    </div>
                 </div>
+                <?php endforeach; ?>
             </div>
+        </div>
         <?php endif; ?>
 
         <!-- ── Top faixas ── -->
@@ -733,81 +733,81 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
                     <span class="badge bg-secondary"><?php echo $total_tracks; ?></span>
                 </div>
                 <?php if (empty($tracks)): ?>
-                    <div class="empty-section">
-                        <div class="icon"><i class="bi bi-music-note"></i></div>
-                        <div class="small fw-semibold mb-1">Nenhuma faixa activa encontrada.</div>
-                        <div class="small">As faixas aparecem aqui após aprovação pela equipa <?php echo APP_NAME ?>.</div>
-                        <a href="<?php echo APP_URL . "/" . APP_URL_PANEL ?>/releases" class="btn btn-sm btn-pink mt-3">Ver
-                            lançamentos</a>
-                    </div>
+                <div class="empty-section">
+                    <div class="icon"><i class="bi bi-music-note"></i></div>
+                    <div class="small fw-semibold mb-1">Nenhuma faixa activa encontrada.</div>
+                    <div class="small">As faixas aparecem aqui após aprovação pela equipa <?php echo APP_NAME ?>.</div>
+                    <a href="<?php echo APP_URL . "/" . APP_URL_PANEL ?>/releases" class="btn btn-sm btn-pink mt-3">Ver
+                        lançamentos</a>
+                </div>
                 <?php else: ?>
-                    <div class="table-responsive">
-                        <table id="tracksTable" class="table table-striped table-hover mb-0">
-                            <thead>
-                                <tr>
-                                    <th style="width:36px">#</th>
-                                    <th style="width:52px">Capa</th>
-                                    <th>Faixa</th>
-                                    <th>Artista</th>
-                                    <th>Álbum</th>
-                                    <th>Duração</th>
-                                    <th>Streams</th>
-                                    <th>Receita (USD)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($tracks as $i => $track):
+                <div class="table-responsive">
+                    <table id="tracksTable" class="table table-striped table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width:36px">#</th>
+                                <th style="width:52px">Capa</th>
+                                <th>Faixa</th>
+                                <th>Artista</th>
+                                <th>Álbum</th>
+                                <th>Duração</th>
+                                <th>Streams</th>
+                                <th>Receita (USD)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($tracks as $i => $track):
                                     $rank = $i + 1;
                                 ?>
-                                    <tr>
-                                        <td>
-                                            <span class="rank-num <?php echo $rank <= 3 ? 'top3' : ''; ?>">
-                                                <?php if ($rank === 1): ?>🥇
-                                                <?php elseif ($rank === 2): ?>🥈
-                                                <?php elseif ($rank === 3): ?>🥉
-                                                <?php else: ?><?php echo $rank; ?>
-                                            <?php endif; ?>
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <?php if ($track['img_cover']): ?>
-                                                <img class="track-cover"
-                                                    src="<?php echo htmlspecialchars($cover_url . $track['img_cover']); ?>"
-                                                    onerror="this.outerHTML='<div class=\'track-cover-placeholder\'>🎵</div>'"
-                                                    alt="" />
-                                            <?php else: ?><div class="track-cover-placeholder">🎵</div><?php endif; ?>
-                                        </td>
-                                        <td>
-                                            <div class="fw-semibold" style="font-size:.87rem">
-                                                <?php echo htmlspecialchars($track['title_track']); ?>
-                                                <?php if ($track['explicit'] === 'YES'): ?>
-                                                    <span class="explicit-badge">E</span>
-                                                <?php endif; ?>
-                                            </div>
-                                            <?php if ($track['name_author_feat']): ?>
-                                                <div style="font-size:.7rem;color:var(--text-muted,#6c757d)">feat.
-                                                    <?php echo htmlspecialchars($track['name_author_feat']); ?></div>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td class="small">
-                                            <?php echo htmlspecialchars($track['stage_name'] ?? $track['name_author'] ?? '—'); ?>
-                                        </td>
-                                        <td style="font-size:.82rem">
-                                            <?php echo htmlspecialchars($track['title_album']); ?>
-                                            <span class="badge bg-light text-muted ms-1"
-                                                style="font-size:.6rem"><?php echo strtoupper($track['type_album']); ?></span>
-                                        </td>
-                                        <td class="small text-muted"><?php echo formatDuration($track['duration_seconds']); ?>
-                                        </td>
-                                        <td class="fw-bold" style="color:#FF0089">
-                                            <?php echo number_format((int)$track['total_streams']); ?></td>
-                                        <td class="small fw-semibold" style="color:#198754">
-                                            $<?php echo number_format((float)$track['total_revenue'], 4); ?></td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
+                            <tr>
+                                <td>
+                                    <span class="rank-num <?php echo $rank <= 3 ? 'top3' : ''; ?>">
+                                        <?php if ($rank === 1): ?>🥇
+                                        <?php elseif ($rank === 2): ?>🥈
+                                        <?php elseif ($rank === 3): ?>🥉
+                                        <?php else: ?><?php echo $rank; ?>
+                                        <?php endif; ?>
+                                    </span>
+                                </td>
+                                <td>
+                                    <?php if ($track['img_cover']): ?>
+                                    <img class="track-cover"
+                                        src="<?php echo htmlspecialchars($cover_url . $track['img_cover']); ?>"
+                                        onerror="this.outerHTML='<div class=\'track-cover-placeholder\'>🎵</div>'"
+                                        alt="" />
+                                    <?php else: ?><div class="track-cover-placeholder">🎵</div><?php endif; ?>
+                                </td>
+                                <td>
+                                    <div class="fw-semibold" style="font-size:.87rem">
+                                        <?php echo htmlspecialchars($track['title_track']); ?>
+                                        <?php if ($track['explicit'] === 'YES'): ?>
+                                        <span class="explicit-badge">E</span>
+                                        <?php endif; ?>
+                                    </div>
+                                    <?php if ($track['name_author_feat']): ?>
+                                    <div style="font-size:.7rem;color:var(--text-muted,#6c757d)">feat.
+                                        <?php echo htmlspecialchars($track['name_author_feat']); ?></div>
+                                    <?php endif; ?>
+                                </td>
+                                <td class="small">
+                                    <?php echo htmlspecialchars($track['stage_name'] ?? $track['name_author'] ?? '—'); ?>
+                                </td>
+                                <td style="font-size:.82rem">
+                                    <?php echo htmlspecialchars($track['title_album']); ?>
+                                    <span class="badge bg-light text-muted ms-1"
+                                        style="font-size:.6rem"><?php echo strtoupper($track['type_album']); ?></span>
+                                </td>
+                                <td class="small text-muted"><?php echo formatDuration($track['duration_seconds']); ?>
+                                </td>
+                                <td class="fw-bold" style="color:#FF0089">
+                                    <?php echo number_format((int)$track['total_streams']); ?></td>
+                                <td class="small fw-semibold" style="color:#198754">
+                                    $<?php echo number_format((float)$track['total_revenue'], 4); ?></td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
                 <?php endif; ?>
             </div>
         </div>
@@ -821,43 +821,11 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
     <script src="<?php echo APP_URL  ?>/js/theme.wp.js"></script>
     <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
+    <!-- ── Dados injectados pelo PHP para o JS ── -->
     <script>
-        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
-
-        <?php if (!empty($tracks)): ?>
-            $(document).ready(function() {
-                $('#tracksTable').DataTable({
-                    paging: true,
-                    searching: true,
-                    ordering: true,
-                    info: true,
-                    lengthChange: false,
-                    pageLength: 10,
-                    order: [
-                        [6, 'desc']
-                    ], // streams DESC
-                    columnDefs: [{
-                            orderable: false,
-                            targets: [0, 1]
-                        },
-                        {
-                            type: 'num-fmt',
-                            targets: [6, 7]
-                        }
-                    ],
-                    language: {
-                        search: 'Pesquisar faixa:',
-                        info: 'A mostrar _START_ a _END_ de _TOTAL_ faixas',
-                        paginate: {
-                            next: 'Próximo',
-                            previous: 'Anterior'
-                        },
-                        emptyTable: 'Nenhuma faixa encontrada.'
-                    }
-                });
-            });
-        <?php endif; ?>
+    const HAS_TRACKS = <?php echo !empty($tracks) ? 'true' : 'false'; ?>;
     </script>
+    <script src="<?php echo APP_URL ?>/<?php echo APP_URL_PANEL ?>/analytics/js/playlist-details.js"></script>
 </body>
 
 </html>

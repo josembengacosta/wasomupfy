@@ -1232,126 +1232,20 @@ $cover_url = $base_url . '/assets/comprovantes/uploads/covers/';
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="<?php echo APP_URL ?>/js/theme.wp.js"></script>
     <script src="<?php echo APP_URL ?>/js/wp.tools.js"></script>
+    <!-- ── Dados injectados pelo PHP para o JS ── -->
     <script>
-    (function() {
-        // Ativar tooltips do Bootstrap
-        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
-
-        // DataTable para álbuns
-        <?php if (!empty($albums)): ?>
-        $(document).ready(function() {
-            if ($('#albumsTable').length) {
-                $('#albumsTable').DataTable({
-                    paging: true,
-                    searching: true,
-                    ordering: true,
-                    info: true,
-                    lengthChange: false,
-                    pageLength: 10,
-                    order: [
-                        [5, 'desc']
-                    ],
-                    columnDefs: [{
-                        orderable: false,
-                        targets: [0, 7]
-                    }],
-                    language: {
-                        search: 'Pesquisar álbum:',
-                        info: 'A mostrar _START_ a _END_ de _TOTAL_ álbuns',
-                        paginate: {
-                            next: 'Próximo',
-                            previous: 'Anterior'
-                        },
-                        emptyTable: 'Nenhum álbum encontrado.'
-                    }
-                });
-            }
-        });
-        <?php endif; ?>
-
-        // DataTable para faixas
-        <?php if (!empty($tracks_in_country)): ?>
-        $(document).ready(function() {
-            if ($('#tracksTable').length) {
-                $('#tracksTable').DataTable({
-                    paging: true,
-                    searching: true,
-                    ordering: true,
-                    info: true,
-                    lengthChange: false,
-                    pageLength: 10,
-                    order: [
-                        [6, 'desc']
-                    ],
-                    columnDefs: [{
-                        orderable: false,
-                        targets: [0]
-                    }],
-                    language: {
-                        search: 'Pesquisar faixa:',
-                        info: 'A mostrar _START_ a _END_ de _TOTAL_ faixas',
-                        paginate: {
-                            next: 'Próximo',
-                            previous: 'Anterior'
-                        },
-                        emptyTable: 'Nenhuma faixa encontrada.'
-                    }
-                });
-            }
-        });
-        <?php endif; ?>
-
-        // Mapa Leaflet
-        var map = null;
-        var mapElement = document.getElementById('country-map');
-        if (mapElement) {
-            <?php if (!$is_worldwide && ($meta['lat'] != 0 || $meta['lng'] != 0)): ?>
-            map = L.map('country-map', {
-                    zoomControl: true,
-                    scrollWheelZoom: false
-                })
-                .setView([<?php echo (float)$meta['lat']; ?>, <?php echo (float)$meta['lng']; ?>], 4);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            }).addTo(map);
-            L.circleMarker([<?php echo (float)$meta['lat']; ?>, <?php echo (float)$meta['lng']; ?>], {
-                    color: '#FF0089',
-                    fillColor: '#FF0089',
-                    fillOpacity: 0.5,
-                    radius: 14
-                }).addTo(map)
-                .bindPopup(
-                    '<b><?php echo htmlspecialchars($country_name, ENT_QUOTES); ?></b><br><?php echo $total_albums; ?> álbum<?php echo $total_albums != 1 ? 'ns' : ''; ?> distribuídos'
-                )
-                .openPopup();
-            <?php elseif ($is_worldwide && !empty($map_countries)): ?>
-            map = L.map('country-map', {
-                    zoomControl: true,
-                    scrollWheelZoom: false
-                })
-                .setView([20, 0], 2);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            }).addTo(map);
-            var countries = <?php echo json_encode($map_countries) ?: '[]'; ?>;
-            if (Array.isArray(countries)) {
-                countries.forEach(function(c) {
-                    if (c.lat && c.lng) {
-                        var size = Math.min(20, 8 + Math.log(c.streams + 1) * 2);
-                        L.circleMarker([c.lat, c.lng], {
-                            color: '#FF0089',
-                            fillColor: '#FF0089',
-                            fillOpacity: 0.5,
-                            radius: size
-                        }).addTo(map).bindPopup('<b>' + c.name + '</b><br>' + c.streams
-                            .toLocaleString() + ' streams');
-                    }
-                });
-            }
-            <?php endif; ?>
-        }
-    })();
+    const HAS_ALBUMS = <?php echo !empty($albums)              ? 'true' : 'false'; ?>;
+    const HAS_TRACKS = <?php echo !empty($tracks_in_country)   ? 'true' : 'false'; ?>;
+    const IS_WORLDWIDE = <?php echo $is_worldwide                ? 'true' : 'false'; ?>;
+    const MAP_HAS_COORDS = <?php echo ($meta['lat'] != 0 || $meta['lng'] != 0) ? 'true' : 'false'; ?>;
+    const MAP_LAT = <?php echo (float)$meta['lat']; ?>;
+    const MAP_LNG = <?php echo (float)$meta['lng']; ?>;
+    const COUNTRY_NAME = <?php echo json_encode(htmlspecialchars($country_name, ENT_QUOTES)); ?>;
+    const TOTAL_ALBUMS = <?php echo (int)$total_albums; ?>;
+    const MAP_COUNTRIES = <?php echo json_encode($map_countries ?: []); ?>;
     </script>
+    <!-- ── Lógica da página ── -->
+    <script src="<?php echo APP_URL ?>/<?php echo APP_URL_PANEL ?>/analytics/js/country-details.js"></script>
 </body>
 
 </html>

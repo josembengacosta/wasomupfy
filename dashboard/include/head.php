@@ -112,4 +112,9 @@ document.addEventListener('DOMContentLoaded', function() {
     color: #FF0089 !important;
     background-color: rgba(255, 0, 137, 0.1) !important;
 }
+
+.user-dropdown {
+    max-height: 80vh;
+    overflow-y: auto;
+}
 </style>

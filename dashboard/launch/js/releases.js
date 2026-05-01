@@ -176,7 +176,7 @@ function renderStoreBadge(store, size = '1.4rem', showLabel = false) {
     const opacity = live ? '1' : '0.4';
     const tooltip = live ? title : `${title} (pendente)`;
 
-    return `<a href="${url}" target="_blank" rel="noopener"
+    return `<a href="${ url}" target="_blank" rel="noopener"
                title="${tooltip}"
                style="color:${si.color};font-size:${size};opacity:${opacity};text-decoration:none;display:inline-flex;flex-direction:column;align-items:center">
                 <i class="bi ${si.icon}"></i>

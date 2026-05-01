@@ -409,8 +409,8 @@ switch ($action) {
                         throw new Exception("Formato de áudio inválido na faixa {$i}. Use WAV ou FLAC.");
                     }
 
-                    if ($file['size'] > 200 * 1024 * 1024) {
-                        throw new Exception("Arquivo de áudio muito grande na faixa {$i} (máx. 200MB).");
+                    if ($file['size'] > 20 * 1024 * 1024) {
+                        throw new Exception("Arquivo de áudio muito grande na faixa {$i} (máx. 20MB).");
                     }
 
                     $dir = __DIR__ . '/../../assets/uploads/audio/';

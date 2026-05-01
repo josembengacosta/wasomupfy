@@ -164,9 +164,10 @@ function is_active_dash($page, $current)
                     class="rounded-circle flex-shrink-0" style="object-fit:cover;" alt="Avatar">
                 <?php endif; ?>
             </a>
-            <ul class="dropdown-menu dropdown-menu-end">
+            <ul class="dropdown-menu dropdown-menu-end user-dropdown" aria-labelledby="userDropdown">
                 <li>
-                    <a class="dropdown-item d-flex align-items-center gap-2 py-2 <?php echo is_active_dash('profile', $active_page); ?>"
+                    <a class=" dropdown-item d-flex align-items-center gap-2 py-2
+                <?php echo is_active_dash('profile', $active_page); ?>"
                         href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/user/profile">
                         <?php if ($user_photo): ?>
                         <img src="<?php echo APP_URL  ?>/assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"

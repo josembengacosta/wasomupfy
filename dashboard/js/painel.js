@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
 // ── Badge de notificações — polling 60s ───────────────
 (function () {
     function refreshNotifBadge() {
-        fetch('../ajax/notifications_api?action=count', { credentials: 'same-origin' })
+        fetch('https://wasomupfy.rf.gd/dashboard/ajax/notifications_api?action=count', { credentials: 'same-origin' })
             .then(r => r.json())
             .then(data => {
                 const badge = document.getElementById('navNotifBadge');
