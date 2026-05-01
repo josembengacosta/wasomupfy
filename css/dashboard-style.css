@@ -650,75 +650,76 @@ body.light-mode .dropdown-item-text {
   transform: scale(1.05);
 }
 
-/* Dropdown do utilizador com scroll em telas pequenas */
+/* ── Dropdown do utilizador com scroll ── */
 .user-dropdown {
-  max-height: 80vh; /* Altura máxima relativa à viewport */
-  overflow-y: auto; /* Scroll vertical quando necessário */
-  overscroll-behavior: contain; /* Evita scroll da página por trás */
-  background-color: #000;
-  border: none;
-  border-radius: 12px;
-  padding: 0.5rem 0;
-  min-width: 280px;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
+    max-height: 80vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background-color: #000;
+    border: none;
+    border-radius: 12px;
+    padding: 0.5rem 0;
+    min-width: 280px;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
+    position: absolute !important;   /* garante que o Bootstrap não o reposicione mal */
+    right: 0 !important;
+    left: auto !important;
+    transform: none !important;      /* evita deslocamentos estranhos em mobile */
 }
 
-/* Ajuste para dispositivos móveis */
-@media (max-width: 575.98px) {
-  .user-dropdown {
-    max-height: 70vh;
-    width: calc(100vw - 2rem);
-    margin-right: 0.5rem;
-  }
-}
-
-/* Itens do dropdown */
 .user-dropdown .dropdown-item {
-  color: #fff;
-  display: flex;
-  align-items: center;
-  padding: 0.7rem 1.25rem;
-  font-size: 0.95rem;
-  transition: background-color 0.2s, color 0.2s;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    padding: 0.7rem 1.25rem;
+    font-size: 0.95rem;
+    transition: background-color 0.2s, color 0.2s;
 }
 
 .user-dropdown .dropdown-item i {
-  width: 1.4rem;
-  font-size: 1.1rem;
-  margin-right: 0.5rem;
-  color: #ff0089;
+    width: 1.4rem;
+    font-size: 1.1rem;
+    margin-right: 0.5rem;
+    color: #FF0089;
 }
 
 .user-dropdown .dropdown-item:hover {
-  background-color: #ff0089;
-  color: white;
+    background-color: #FF0089;
+    color: white;
 }
 
 .user-dropdown .dropdown-item:hover i {
-  color: white;
+    color: white;
 }
 
 .user-dropdown .dropdown-divider {
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  margin: 0.25rem 0;
-}
-
-.user-dropdown .dropdown-header {
-  color: #fff;
-  font-size: 0.9rem;
-  white-space: normal;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 0.25rem 0;
 }
 
 .user-dropdown .dropdown-item-text {
-  color: #aaa;
-  padding: 0.5rem 1.25rem;
+    color: #aaa;
+    padding: 0.5rem 1.25rem;
 }
 
-/* Melhorias de acessibilidade */
 .user-dropdown .dropdown-item:focus {
-  background-color: #ff0089;
-  color: white;
-  outline: none;
+    background-color: #FF0089;
+    color: white;
+    outline: none;
+}
+
+@media (max-width: 991.98px) {
+    .user-dropdown {
+        right: 0 !important;
+        left: auto !important;
+        transform: none !important;
+        margin-right: 10px; /* pequeno espaço da borda */
+    }
+}
+
+/* Mantém apenas o necessário do .user-menu (se ainda o usares) */
+.user-menu {
+    position: relative;
 }
 
 /* Avatar trigger */

@@ -225,6 +225,15 @@ function is_active_dash($page, $current)
                     <hr class="dropdown-divider" />
                 </li>
                 <li>
+                    <a class="dropdown-item <?php echo is_active_dash('services', $active_page); ?>"
+                        href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/services/available-services">
+                        <i class="bi bi-star me-2"></i> Conta e Serviços Disponíveis
+                    </a>
+                </li>
+                <li>
+                    <hr class="dropdown-divider" />
+                </li>
+                <li>
                     <a class="dropdown-item <?php echo is_active_dash('support', $active_page); ?>"
                         href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/support">
                         <i class="bi bi-headset me-2"></i> Enviar pedido de suporte
@@ -234,6 +243,12 @@ function is_active_dash($page, $current)
                     <a class="dropdown-item <?php echo is_active_dash('faq', $active_page); ?>"
                         href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/faq">
                         <i class="bi bi-chat-left-text me-2"></i> Perguntas frequentes
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item <?php echo is_active_dash('help', $active_page); ?>"
+                        href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/help">
+                        <i class="bi bi-question-circle me-2"></i> Ajuda
                     </a>
                 </li>
                 <li>
@@ -329,7 +344,7 @@ function is_active_dash($page, $current)
             </li>
             <!-- Meu Perfil -->
             <li class="nav-item">
-                <a class="nav-link <?php echo is_active_dash('profile', $active_page); ?>"
+                <a class="nav-link me-2 <?php echo is_active_dash('profile', $active_page); ?>"
                     href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/user/profile">
                     <?php if ($user_photo): ?>
                     <img src="<?php echo APP_URL  ?>/assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"

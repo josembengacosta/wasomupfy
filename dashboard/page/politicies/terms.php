@@ -342,13 +342,32 @@ $sess_ip       = $current_session['ip_address'] ?? ($sec['last_login_ip'] ?? '�
     }
 
     /* ── Responsivo para mobile ── */
-    @media (max-width: 576px) {
 
-        .privacy-content,
+    @media (max-width: 576px) {
+        .terms-hero {
+            padding: 1.8rem 1rem 1.5rem;
+            border-radius: 16px;
+        }
+
+        .terms-hero h1 {
+            font-size: 1.6rem;
+        }
+
         .terms-content {
             padding: 1.2rem;
         }
+
+        .action-btns {
+            flex-direction: column;
+        }
+
+        .action-btns a,
+        .action-btns button {
+            width: 100%;
+            justify-content: center;
+        }
     }
+
 
     .term-section {
         margin-bottom: 2.5rem;
@@ -519,6 +538,39 @@ $sess_ip       = $current_session['ip_address'] ?? ($sec['last_login_ip'] ?? '�
         opacity: 1;
         pointer-events: auto;
     }
+
+    /* Evitar que o conteúdo ultrapasse os limites */
+    .privacy-content,
+    .terms-content {
+        overflow-x: auto;
+        /* barra de scroll horizontal só se for mesmo preciso */
+        word-wrap: break-word;
+        /* quebra palavras longas */
+        max-width: 100%;
+        /* nunca ultrapassa o container pai */
+    }
+
+    @media (max-width: 576px) {
+
+        /* Tabelas com scroll horizontal */
+        .data-table,
+        .plan-table {
+            display: block;
+            /* transforma a tabela em bloco */
+            width: 100%;
+            overflow-x: auto;
+            /* scroll horizontal se necessário */
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Opcional: garantir que imagens e iframes também não escapam */
+
+        iframe {
+            max-width: 100%;
+            height: auto;
+        }
+    }
+
 
     /* ══ Print ══ */
     @media print {

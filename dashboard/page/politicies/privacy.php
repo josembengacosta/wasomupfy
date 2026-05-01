@@ -686,7 +686,6 @@ $sess_ip       = $current_session['ip_address'] ?? ($sec['last_login_ip'] ?? '�
         }
 
         /* Opcional: garantir que imagens e iframes também não escapam */
-        img,
         iframe {
             max-width: 100%;
             height: auto;
