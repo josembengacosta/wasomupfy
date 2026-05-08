@@ -125,9 +125,9 @@ $pendingAccountsCount = $canFinancesView
                 aria-expanded="<?php echo $usrOpen ? 'true' : 'false'; ?>" aria-controls="collapseUsers">
                 <i class="bi bi-person-gear"></i>
                 <span>Gestão de Usuários</span>
-                <?php if ($adm_unavailable_users > 0): ?>
+                <?php if ($adm_unavailable_users > 0 || $adm_users_without_active_plan > 0): ?>
                 <span class="badge bg-warning text-dark ms-1" style="font-size:.6rem">
-                    <?php echo $adm_unavailable_users; ?>
+                    <?php echo ($adm_unavailable_users + $adm_users_without_active_plan); ?>
                 </span>
                 <?php endif; ?>
                 <i class="bi bi-chevron-down ms-auto" style="font-size:.8rem"></i>
@@ -155,8 +155,18 @@ $pendingAccountsCount = $canFinancesView
                     <i class="bi bi-person-exclamation"></i>
                     <span>Contas Indisponíveis</span>
                     <?php if ($adm_unavailable_users > 0): ?>
-                    <span class="badge bg-warning text-dark ms-auto" style="font-size:.6rem">
+                    <span class="badge bg-danger text-dark ms-auto" style="font-size:.6rem">
                         <?php echo $adm_unavailable_users; ?>
+                    </span>
+                    <?php endif; ?>
+                </a>
+                <a href="#" onclick="return false;" aria-disabled="true" class="nav-link disabled"
+                    style="cursor:default;opacity:.85">
+                    <i class="bi bi-person-slash"></i>
+                    <span>Sem Planos Ativos</span>
+                    <?php if ($adm_users_without_active_plan > 0): ?>
+                    <span class="badge bg-info text-dark ms-auto" style="font-size:.6rem">
+                        <?php echo $adm_users_without_active_plan; ?>
                     </span>
                     <?php endif; ?>
                 </a>
@@ -172,6 +182,11 @@ $pendingAccountsCount = $canFinancesView
                 aria-controls="collapseArtist">
                 <i class="bi bi-mic"></i>
                 <span>Artistas</span>
+                <?php if ($adm_pending_artists >  0): ?>
+                <span class="badge bg-warning text-dark ms-1" style="font-size:.6rem">
+                    <?php echo ($adm_pending_artists); ?>
+                </span>
+                <?php endif; ?>
                 <i class="bi bi-chevron-down ms-auto"></i>
             </a>
             <div class="collapse<?php echo $artistOpen ? ' show' : ''; ?>" id="collapseArtist">
@@ -187,6 +202,14 @@ $pendingAccountsCount = $canFinancesView
                     <span>Adicionar</span>
                 </a>
                 <?php endif; ?>
+                <a href="#" onclick="return false;" aria-disabled="true" class="nav-link disabled"
+                    style="cursor:default;opacity:.85">
+                    <i class="bi bi-hourglass-split"></i>
+                    <span>Artistas Pendentes</span>
+                    <span class="badge bg-warning text-dark ms-auto" style="font-size:.6rem">
+                        <?php echo $adm_pending_artists; ?>
+                    </span>
+                </a>
             </div>
         </li>
         <?php endif; ?>
@@ -240,6 +263,14 @@ $pendingAccountsCount = $canFinancesView
                     <span>Lançamentos Pendentes</span>
                     <span class="badge bg-danger ms-auto" style="font-size:.6rem">
                         <?php echo $adm_pending_releases; ?>
+                    </span>
+                </a>
+                <a href="#" onclick="return false;" aria-disabled="true" class="nav-link disabled"
+                    style="cursor:default;opacity:.85">
+                    <i class="bi bi-trash"></i>
+                    <span>Pedido de Eliminação</span>
+                    <span class="badge bg-danger ms-auto" style="font-size:.6rem">
+                        <?php echo $adm_delete_requests; ?>
                     </span>
                 </a>
             </div>

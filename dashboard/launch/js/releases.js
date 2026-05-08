@@ -238,9 +238,12 @@ function renderCard(alb) {
             <i class="bi bi-trash"></i>
         </button>`;
     } else if (alb.status_album === 'deleting') {
+        const deleteExpired = alb.delete_expires_at && new Date(alb.delete_expires_at) <= new Date();
+        const deleteBtnClass = deleteExpired ? 'btn-outline-secondary' : 'btn-warning';
+        const deleteBtnLabel = deleteExpired ? 'Em processamento' : 'Pedido pendente';
         actionBtns = `
-        <button class="btn btn-warning btn-sm flex-fill" onclick="openDeleteStatusModal(${alb.id_album})">
-            <i class="bi bi-hourglass-split me-1"></i>Pedido pendente
+        <button class="btn ${deleteBtnClass} btn-sm flex-fill" onclick="openDeleteStatusModal(${alb.id_album})">
+            <i class="bi bi-hourglass-split me-1"></i>${deleteBtnLabel}
         </button>`;
     }
 
@@ -882,6 +885,13 @@ function removerRascunhoLocal(draftId) {
 function openDeleteStatusModal(albumId) {
     const alb = ALBUMS_DB.find(a => a.id_album == albumId);
     if (!alb) return;
+    const titleEl         = document.getElementById('deleteStatusTitle');
+    const subtitleEl      = document.getElementById('deleteStatusSubtitle');
+    const timerAlertEl    = document.getElementById('deleteStatusTimerAlert');
+    const recoveryAlertEl = document.getElementById('deleteStatusRecoveryAlert');
+    const recoveryTextEl  = document.getElementById('deleteStatusRecoveryText');
+    const cancelBtnEl     = document.getElementById('cancelDeleteRequestBtn');
+    const progressBarEl   = document.getElementById('deleteProgressBar');
 
     document.getElementById('statusAlbumTitle').textContent  = alb.title_album || 'Sem título';
     document.getElementById('statusAlbumArtist').textContent = alb.stage_name || alb.real_name || '—';
@@ -891,6 +901,12 @@ function openDeleteStatusModal(albumId) {
     document.getElementById('statusAlbumCover').src = coverUrl || '../assets/img/placeholder-album.png';
 
     document.getElementById('deleteStatusAlbumId').value = albumId;
+    titleEl.textContent = 'Pedido de eliminação';
+    subtitleEl.textContent = 'Ainda podes cancelar este pedido dentro do prazo.';
+    timerAlertEl.className = 'alert alert-info d-flex gap-3 align-items-center';
+    recoveryAlertEl.className = 'alert alert-warning small';
+    recoveryTextEl.innerHTML = 'Se mudaste de ideia, podes cancelar este pedido. Apos <strong>72 horas</strong>, o lancamento sera eliminado permanentemente.';
+    cancelBtnEl.classList.remove('d-none');
 
     if (alb.delete_requested_at && alb.delete_expires_at) {
         const requested = new Date(alb.delete_requested_at);
@@ -904,7 +920,7 @@ function openDeleteStatusModal(albumId) {
         const elapsedTime = now - requested;
         const progress    = Math.min(100, Math.max(0, (elapsedTime / totalTime) * 100));
 
-        document.getElementById('deleteProgressBar').style.width = progress + '%';
+        progressBarEl.style.width = progress + '%';
 
         const timeLeft = expires - now;
         if (timeLeft > 0) {
@@ -915,7 +931,14 @@ function openDeleteStatusModal(albumId) {
             document.getElementById('deleteTimeDetail').textContent =
                 `A eliminação automática ocorrerá em ${hoursLeft}h ${minutesLeft}min`;
         } else {
-            document.getElementById('deleteTimeRemaining').textContent = 'A processar...';
+            titleEl.textContent = 'Eliminação em processamento';
+            subtitleEl.textContent = 'O prazo de recuperação expirou para este lancamento.';
+            timerAlertEl.className = 'alert alert-secondary d-flex gap-3 align-items-center';
+            recoveryAlertEl.className = 'alert alert-danger small';
+            recoveryTextEl.innerHTML = 'O prazo para cancelar este pedido ja expirou. <strong>Ja nao e possivel recuperar</strong> este lancamento e a eliminação permanente sera concluida em breve.';
+            cancelBtnEl.classList.add('d-none');
+            progressBarEl.style.width = '100%';
+            document.getElementById('deleteTimeRemaining').textContent = 'Prazo expirado';
             document.getElementById('deleteTimeDetail').textContent =
                 'O prazo expirou. A eliminação será processada em breve.';
         }
@@ -924,7 +947,7 @@ function openDeleteStatusModal(albumId) {
         document.getElementById('deleteExpiresAt').textContent    = '—';
         document.getElementById('deleteTimeRemaining').textContent = 'Em processamento';
         document.getElementById('deleteTimeDetail').textContent   = 'O pedido está a ser processado.';
-        document.getElementById('deleteProgressBar').style.width  = '50%';
+        progressBarEl.style.width  = '50%';
     }
 
     new bootstrap.Modal(document.getElementById('deleteStatusModal')).show();

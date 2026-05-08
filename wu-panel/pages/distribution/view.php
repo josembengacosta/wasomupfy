@@ -1292,6 +1292,7 @@ $can_approve = hasPermission($admin_id, 'music.approve');
 
         const CSRF = document.querySelector('meta[name="csrf-token"]').content;
         const PROCESS = window.__BASE_URL__ + '/' + window.__ADMIN_PATH__ + '/releases/view-process';
+        const RELEASES_URL = window.__BASE_URL__ + '/' + window.__ADMIN_PATH__ + '/releases/';
 
         const albumIdHolder = document.getElementById('album-id-holder');
         const ALBUM_ID = albumIdHolder ? parseInt(albumIdHolder.value, 10) :
@@ -1347,6 +1348,10 @@ $can_approve = hasPermission($admin_id, 'music.approve');
                         text: data.message || 'Operação concluída com sucesso.',
                         confirmButtonColor: '#FF0089'
                     });
+                    if (action === 'permanent_delete_album') {
+                        window.location.href = RELEASES_URL;
+                        return {};
+                    }
                     location.reload();
                 } else {
                     return {
@@ -1366,7 +1371,8 @@ $can_approve = hasPermission($admin_id, 'music.approve');
         if (btnProcess) {
             btnProcess.addEventListener('click', async function() {
                 const {
-                    isConfirmed
+                    isConfirmed,
+                    value: password
                 } = await swalFire({
                     title: 'Colocar em revisão?',
                     text: 'O utilizador será notificado que o álbum está a ser analisado.',
@@ -1447,7 +1453,8 @@ $can_approve = hasPermission($admin_id, 'music.approve');
         if (btnReopen) {
             btnReopen.addEventListener('click', async function() {
                 const {
-                    isConfirmed
+                    isConfirmed,
+                    value: password
                 } = await swalFire({
                     title: 'Reabrir pedido?',
                     text: 'O álbum voltará ao estado "Pendente" para ser corrigido e reenviado.',
@@ -1608,7 +1615,8 @@ $can_approve = hasPermission($admin_id, 'music.approve');
         if (btnPermDelete) {
             btnPermDelete.addEventListener('click', async function() {
                 const {
-                    isConfirmed
+                    isConfirmed,
+                    value: password
                 } = await swalFire({
                     title: 'Eliminar permanentemente?',
                     html: `<p class="mb-2">Esta acção é <strong>irreversível</strong> e apagará todos os ficheiros e dados associados.</p>
@@ -1620,7 +1628,7 @@ $can_approve = hasPermission($admin_id, 'music.approve');
                     confirmButtonText: 'Sim, eliminar permanentemente',
                     cancelButtonText: 'Cancelar',
                     preConfirm: () => {
-                        const pwd = document.getElementById('swal-pwd').value;
+                        const pwd = document.getElementById('swal-pwd').value.trim();
                         if (!pwd) {
                             Swal.showValidationMessage('A senha é obrigatória.');
                             return false;
@@ -1629,7 +1637,6 @@ $can_approve = hasPermission($admin_id, 'music.approve');
                     }
                 });
                 if (!isConfirmed) return;
-                const password = isConfirmed;
 
                 swalFire({
                     title: 'A eliminar...',

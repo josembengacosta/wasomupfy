@@ -600,7 +600,7 @@ if ($action === 'delete_album') {
     }
 
     // Verificar senha do admin
-    $admin_password = $_POST['admin_password'] ?? '';
+    $admin_password = trim((string)($_POST['admin_password'] ?? ''));
     if (empty($admin_password)) {
         jOut(false, 'A senha é obrigatória para confirmar a eliminação.');
     }
@@ -700,7 +700,7 @@ if ($action === 'permanent_delete_album') {
     }
 
     // Verificar senha do admin
-    $admin_password = $_POST['admin_password'] ?? '';
+    $admin_password = trim((string)($_POST['admin_password'] ?? ''));
     if (empty($admin_password)) {
         jOut(false, 'A senha é obrigatória para confirmar a eliminação permanente.');
     }

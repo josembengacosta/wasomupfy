@@ -1082,7 +1082,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
                     </div>
 
                     <!-- Timer e informações -->
-                    <div class="alert alert-info d-flex gap-3 align-items-center">
+                    <div class="alert alert-info d-flex gap-3 align-items-center" id="deleteStatusTimerAlert">
                         <i class="bi bi-clock-history fs-2"></i>
                         <div>
                             <strong id="deleteTimeRemaining">A calcular...</strong>
@@ -1105,10 +1105,10 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
                         </div>
                     </div>
 
-                    <div class="alert alert-warning small">
+                    <div class="alert alert-warning small" id="deleteStatusRecoveryAlert">
                         <i class="bi bi-exclamation-triangle me-1"></i>
-                        Se mudaste de ideia, podes cancelar este pedido. Após <strong>72 horas</strong>, o lançamento
-                        será eliminado permanentemente.
+                        <span id="deleteStatusRecoveryText">Se mudaste de ideia, podes cancelar este pedido. Após <strong>72 horas</strong>, o lançamento
+                        será eliminado permanentemente.</span>
                     </div>
 
                     <div id="deleteStatusFeedback" class="d-none"></div>

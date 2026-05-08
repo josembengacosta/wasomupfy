@@ -137,13 +137,103 @@ if (!function_exists('adm_is_active')) {
 
 // ── Badges globais ──
 if (!isset($adm_badges_loaded)) {
-    $adm_badges_loaded    = true;
-    $adm_pending_releases = (int)$db->query("SELECT COUNT(*) FROM _album WHERE status_album IN ('pending','under_review')")->fetchColumn();
-    $adm_pending_payments = (int)$db->query("SELECT COUNT(*) FROM _payment WHERE status_payment='pending'")->fetchColumn();
-    $adm_open_tickets     = (int)$db->query("SELECT COUNT(*) FROM _support_ticket WHERE status_ticket NOT IN ('closed','resolved')")->fetchColumn();
-    $adm_unavailable_users = (int)$db->query("SELECT COUNT(*) FROM _users WHERE status_user NOT IN ('active')")->fetchColumn();
-    $adm_pending_channels = (int)$db->query("SELECT COUNT(*) FROM _youtube_channel WHERE status_youtube IN ('pending','unverified')")->fetchColumn();
-    $adm_total_notifs     = $adm_pending_releases + $adm_pending_payments + $adm_open_tickets;
+    $adm_badges_loaded = true;
+
+    // Inicializar todas as variáveis primeiro
+    $adm_pending_releases      = 0;
+    $adm_delete_requests       = 0;
+    $adm_pending_payments      = 0;
+    $adm_open_tickets          = 0;
+    $adm_available_users       = 0;
+    $adm_unavailable_users     = 0;
+    $adm_users_without_active_plan = 0;
+    $adm_user_alerts           = 0;
+    $adm_pending_artists       = 0;
+    $adm_pending_channels      = 0;
+    $adm_total_notifs          = 0;
+
+    try {
+        // ═══════════════════════════════════════
+        // DISTRIBUIÇÃO (música/lançamentos)
+        // ═══════════════════════════════════════
+        $result = $db->query("SELECT COUNT(*) FROM _album WHERE status_album IN ('pending','under_review')");
+        $adm_pending_releases = $result ? (int)$result->fetchColumn() : 0;
+
+        $result = $db->query("SELECT COUNT(*) FROM _album WHERE status_album = 'deleting'");
+        $adm_delete_requests = $result ? (int)$result->fetchColumn() : 0;
+
+        // ═══════════════════════════════════════
+        // FINANÇAS (pagamentos)
+        // ═══════════════════════════════════════
+        $result = $db->query("SELECT COUNT(*) FROM _payment WHERE status_payment='pending'");
+        $adm_pending_payments = $result ? (int)$result->fetchColumn() : 0;
+
+        // ═══════════════════════════════════════
+        // SUPORTE (tickets abertos)
+        // ═══════════════════════════════════════
+        $result = $db->query("SELECT COUNT(*) FROM _support_ticket WHERE status_ticket NOT IN ('closed','resolved')");
+        $adm_open_tickets = $result ? (int)$result->fetchColumn() : 0;
+
+        // ═══════════════════════════════════════
+        // UTILIZADORES
+        // ═══════════════════════════════════════
+        // Utilizadores com plano activo e status ativo
+        $result = $db->query("
+            SELECT COUNT(*)
+            FROM _users u
+            WHERE u.status_user = 'active'
+              AND EXISTS (
+                  SELECT 1
+                  FROM _user_plan up
+                  WHERE up.id_users = u.id_users
+                    AND up.status_plan = 'active'
+                    AND (up.expires_at IS NULL OR up.expires_at >= NOW())
+              )
+        ");
+        $adm_available_users = $result ? (int)$result->fetchColumn() : 0;
+
+        // Utilizadores com status inactivo/suspenso/bloqueado
+        $result = $db->query("SELECT COUNT(*) FROM _users WHERE status_user NOT IN ('active', 'pending_plan')");
+        $adm_unavailable_users = $result ? (int)$result->fetchColumn() : 0;
+
+        // Utilizadores activos/pending SEM plano activo
+        $result = $db->query("
+            SELECT COUNT(*)
+            FROM _users u
+            WHERE u.status_user IN ('active', 'pending_plan')
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM _user_plan up
+                  WHERE up.id_users = u.id_users
+                    AND up.status_plan = 'active'
+                    AND (up.expires_at IS NULL OR up.expires_at >= NOW())
+              )
+        ");
+        $adm_users_without_active_plan = $result ? (int)$result->fetchColumn() : 0;
+
+        // Total de alertas de utilizadores
+        $adm_user_alerts = $adm_unavailable_users + $adm_users_without_active_plan;
+
+        // ═══════════════════════════════════════
+        // ARTISTAS
+        // ═══════════════════════════════════════
+        $result = $db->query("SELECT COUNT(*) FROM _artist WHERE status_artist IN ('processing')");
+        $adm_pending_artists = $result ? (int)$result->fetchColumn() : 0;
+
+        // ═══════════════════════════════════════
+        // INTEGRAÇÕES (YouTube)
+        // ═══════════════════════════════════════
+        $result = $db->query("SELECT COUNT(*) FROM _youtube_channel WHERE status_youtube IN ('pending','unverified')");
+        $adm_pending_channels = $result ? (int)$result->fetchColumn() : 0;
+
+        // ═══════════════════════════════════════
+        // TOTAL DE NOTIFICAÇÕES
+        // ═══════════════════════════════════════
+        $adm_total_notifs = $adm_pending_releases + $adm_pending_payments + $adm_open_tickets;
+    } catch (Exception $e) {
+        // Fallback — se a BD falhar, badges já estão inicializados a 0
+        error_log('[ADMIN BADGES] Erro ao carregar badges: ' . $e->getMessage());
+    }
 }
 
 // ── Info de sessão (logout modal) ──

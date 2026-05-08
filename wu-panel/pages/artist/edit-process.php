@@ -51,7 +51,6 @@ if ($action === 'update_profile') {
     $apple_music_url = trim($_POST['apple_music_url'] ?? '');
     $tiktok_url   = trim($_POST['tiktok_url'] ?? '');
     $website_url  = trim($_POST['website_url'] ?? '');
-    $photo_artist = trim($_POST['photo_artist'] ?? '');
     $status_artist = trim($_POST['status_artist'] ?? 'active');
 
     if (empty($stage_name)) {
@@ -99,7 +98,6 @@ $db->prepare("
         apple_music_url = ?,
         tiktok_url   = ?,
         website_url  = ?,
-        photo_artist = ?,
         status_artist= ?
     WHERE id_artist = ?
 ")->execute([
@@ -119,7 +117,6 @@ $db->prepare("
     $apple_music_url ?: null,
     $tiktok_url ?: null,
     $website_url ?: null,
-    $photo_artist ?: null,
     $status_artist,
     $id
 ]);
