@@ -57,87 +57,87 @@ switch ($action) {
     // ──────────────────────────────────────────
     // CREATE ARTIST
     // ──────────────────────────────────────────
-   case 'create_artist':
-    $stage_name     = trim($_POST['stage_name']     ?? '');
-    $real_name      = trim($_POST['real_name']      ?? '');
-    $artist_email   = trim($_POST['artist_email']   ?? '');
-    $default_role   = trim($_POST['default_role']    ?? '');
-    $genre_main     = trim($_POST['genre_main']     ?? '');
-    $genre_secondary = trim($_POST['genre_secondary'] ?? '');
-    $country        = trim($_POST['country']        ?? '');
-    $city           = trim($_POST['city']           ?? '');
-    $bio            = trim($_POST['bio']            ?? '');
-    $spotify        = trim($_POST['spotify_url']    ?? '');
-    $website        = trim($_POST['website_url']    ?? '');
-    $youtube        = trim($_POST['youtube_url']    ?? '');
+    case 'create_artist':
+        $stage_name     = trim($_POST['stage_name']     ?? '');
+        $real_name      = trim($_POST['real_name']      ?? '');
+        $artist_email   = trim($_POST['artist_email']   ?? '');
+        $default_role   = trim($_POST['default_role']    ?? '');
+        $genre_main     = trim($_POST['genre_main']     ?? '');
+        $genre_secondary = trim($_POST['genre_secondary'] ?? '');
+        $country        = trim($_POST['country']        ?? '');
+        $city           = trim($_POST['city']           ?? '');
+        $bio            = trim($_POST['bio']            ?? '');
+        $spotify        = trim($_POST['spotify_url']    ?? '');
+        $website        = trim($_POST['website_url']    ?? '');
+        $youtube        = trim($_POST['youtube_url']    ?? '');
 
-    if (empty($stage_name) || strlen($stage_name) > 100) {
-        jsonOut(false, 'Nome artístico obrigatório (máx. 100 caracteres).');
-    }
-    if (empty($artist_email) || !filter_var($artist_email, FILTER_VALIDATE_EMAIL)) {
-        jsonOut(false, 'Email do artista inválido ou em falta.');
-    }
-
-    // Verificar limite do plano
-    $max_artists = (int)($plan['max_artists'] ?? 1);
-    $cnt = $db->prepare("SELECT COUNT(*) FROM _artist WHERE id_users = ?");
-    $cnt->execute([$id_users]);
-    if ((int)$cnt->fetchColumn() >= $max_artists) {
-        jsonOut(false, "Limite de {$max_artists} artista(s) atingido. Faz upgrade do teu plano.");
-    }
-
-    // Verificar duplicado
-    $dup = $db->prepare("SELECT id_artist FROM _artist WHERE id_users = ? AND stage_name = ?");
-    $dup->execute([$id_users, $stage_name]);
-    if ($dup->fetch()) {
-        jsonOut(false, "Já tens um artista com o nome «{$stage_name}».");
-    }
-
-    // Upload foto
-    $photo_path = null;
-    if (!empty($_FILES['photo']['name']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
-        $file    = $_FILES['photo'];
-        $mime    = mime_content_type($file['tmp_name']);
-        $allowed = ['image/jpeg', 'image/png', 'image/webp'];
-        if (!in_array($mime, $allowed)) {
-            jsonOut(false, 'Formato de imagem inválido. Usa JPG, PNG ou WebP.');
+        if (empty($stage_name) || strlen($stage_name) > 100) {
+            jsonOut(false, 'Nome artístico obrigatório (máx. 100 caracteres).');
         }
-        if ($file['size'] > 5 * 1024 * 1024) {
-            jsonOut(false, 'Imagem muito grande (máx. 5 MB).');
+        if (empty($artist_email) || !filter_var($artist_email, FILTER_VALIDATE_EMAIL)) {
+            jsonOut(false, 'Email do artista inválido ou em falta.');
         }
-        $ext        = $mime === 'image/png' ? 'png' : ($mime === 'image/webp' ? 'webp' : 'jpg');
-        $dir        = __DIR__ . '/../../assets/comprovantes/uploads/artists/';
-        if (!is_dir($dir)) mkdir($dir, 0750, true);
-        $filename   = 'artist_' . $id_users . '_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
-        $photo_path = $filename;
-        move_uploaded_file($file['tmp_name'], $dir . $filename);
-    }
 
-    // INSERT com novos campos
-    $db->prepare("
+        // Verificar limite do plano
+        $max_artists = (int)($plan['max_artists'] ?? 1);
+        $cnt = $db->prepare("SELECT COUNT(*) FROM _artist WHERE id_users = ?");
+        $cnt->execute([$id_users]);
+        if ((int)$cnt->fetchColumn() >= $max_artists) {
+            jsonOut(false, "Limite de {$max_artists} artista(s) atingido. Faz upgrade do teu plano.");
+        }
+
+        // Verificar duplicado
+        $dup = $db->prepare("SELECT id_artist FROM _artist WHERE id_users = ? AND stage_name = ?");
+        $dup->execute([$id_users, $stage_name]);
+        if ($dup->fetch()) {
+            jsonOut(false, "Já tens um artista com o nome «{$stage_name}».");
+        }
+
+        // Upload foto
+        $photo_path = null;
+        if (!empty($_FILES['photo']['name']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
+            $file    = $_FILES['photo'];
+            $mime    = mime_content_type($file['tmp_name']);
+            $allowed = ['image/jpeg', 'image/png', 'image/webp'];
+            if (!in_array($mime, $allowed)) {
+                jsonOut(false, 'Formato de imagem inválido. Usa JPG, PNG ou WebP.');
+            }
+            if ($file['size'] > 5 * 1024 * 1024) {
+                jsonOut(false, 'Imagem muito grande (máx. 5 MB).');
+            }
+            $ext        = $mime === 'image/png' ? 'png' : ($mime === 'image/webp' ? 'webp' : 'jpg');
+            $dir        = __DIR__ . '/../../assets/comprovantes/uploads/artists/';
+            if (!is_dir($dir)) mkdir($dir, 0750, true);
+            $filename   = 'artist_' . $id_users . '_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+            $photo_path = $filename;
+            move_uploaded_file($file['tmp_name'], $dir . $filename);
+        }
+
+        // INSERT com novos campos
+        $db->prepare("
         INSERT INTO _artist
             (id_users, stage_name, real_name, artist_email, default_role,
              genre_main, genre_secondary, country, city, bio,
              spotify_url, website_url, youtube_url, photo_artist, status_artist)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active')
     ")->execute([
-        $id_users,
-        $stage_name,
-        $real_name    ?: null,
-        $artist_email,
-        $default_role ?: null,
-        $genre_main   ?: null,
-        $genre_secondary ?: null,
-        $country      ?: null,
-        $city         ?: null,
-        $bio          ?: null,
-        $spotify      ?: null,
-        $website      ?: null,
-        $youtube      ?: null,
-        $photo_path,
-    ]);
+            $id_users,
+            $stage_name,
+            $real_name    ?: null,
+            $artist_email,
+            $default_role ?: null,
+            $genre_main   ?: null,
+            $genre_secondary ?: null,
+            $country      ?: null,
+            $city         ?: null,
+            $bio          ?: null,
+            $spotify      ?: null,
+            $website      ?: null,
+            $youtube      ?: null,
+            $photo_path,
+        ]);
 
-    $new_id     = (int)$db->lastInsertId();
+        $new_id     = (int)$db->lastInsertId();
         $user_name  = trim($user['first_name'] . ' ' . ($user['second_name'] ?? ''));
         $user_email = $user['email_user'];
         $label_name = $plan['name_plan'] ?? APP_NAME;
@@ -300,8 +300,8 @@ switch ($action) {
             if (!in_array($mime, $allowed)) {
                 jsonOut(false, 'Formato de capa inválido. Usa JPG, PNG ou WebP.');
             }
-            if ($file['size'] > 15 * 1024 * 1024) {
-                jsonOut(false, 'Imagem de capa demasiado grande (máx. 15 MB).');
+            if ($file['size'] > 5 * 1024 * 1024) {
+                jsonOut(false, 'Imagem de capa demasiado grande (máx. 5 MB).');
             }
 
             // Validate dimensions
@@ -405,12 +405,12 @@ switch ($action) {
 
                     // Validar por extensão (mais seguro)
                     $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-                    if (!in_array($ext, ['wav', 'flac'])) {
-                        throw new Exception("Formato de áudio inválido na faixa {$i}. Use WAV ou FLAC.");
+                    if ($ext !== 'mp3') {
+                        throw new Exception("Formato de áudio inválido na faixa {$i}. Use MP3.");
                     }
 
                     if ($file['size'] > 20 * 1024 * 1024) {
-                        throw new Exception("Arquivo de áudio muito grande na faixa {$i} (máx. 20MB).");
+                        throw new Exception("Arquivo de áudio muito grande na faixa {$i} (máx. 20 MB).");
                     }
 
                     $dir = __DIR__ . '/../../assets/uploads/audio/';

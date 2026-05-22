@@ -1,6 +1,6 @@
 <?php
 // ══════════════════════════════════════════════════════
-// WASOM UPFY v2.0 — Comparar Períodos
+// WASOM UPFY v2.0.1.1 — Comparar Períodos
 // Arquivo: dashboard/analytics/compare.php
 // ══════════════════════════════════════════════════════
 require_once __DIR__ . '/../../authentic/include/functions.php';
@@ -722,26 +722,47 @@ $photo_url = $base_url . '/assets/comprovantes/uploads/artists/';
             );
             ?>
         <?php endif; ?>
-        <!-- Cabeçalho -->
-        <div class="comparison-header">
-            <div class="row align-items-center">
+        <!-- header -->
+        <div class="page-header mb-4">
+            <div class="row align-items-center" style="position:relative;z-index:1">
                 <div class="col-md-8">
-                    <h1><i class="bi bi-calendar-range me-3"></i>Comparar Períodos</h1>
-                    <p class="lead mb-0">Compare o desempenho das tuas músicas entre dois períodos distintos e visualiza
-                        o crescimento mês a mês.</p>
+                    <nav aria-label="breadcrumb" style="margin-bottom:8px">
+                        <ol class="breadcrumb mb-0" style="font-size:.90rem;opacity:.6">
+                            <li class="breadcrumb-item"><a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/painel"
+                                    class="text-white text-decoration-none">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="statistics"
+                                    class="text-white text-decoration-none">Estatísticas</a></li>
+                            <li class="breadcrumb-item active text-white">Comparar Períodos</li>
+                        </ol>
+                    </nav>
+                    <h1 class="fw-bold mb-1" style="font-size:1.6rem">
+                        <i class="bi bi-calendar-range me-2" style="color:#FF0089"></i>Comparar Períodos
+                    </h1>
+                    <p class="mb-0" style="font-size:.99rem;opacity:.7">
+                        Compare o desempenho das tuas músicas entre dois períodos distintos e visualiza
+                        o crescimento mês a mês.
+                    </p>
                 </div>
                 <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                    <a href="statistics" class="btn btn-pink me-2">
+                    <button class="btn btn-secondary me-2" onclick="window.history.back()" style="border:none;border-radius:20px;">
                         <i class="bi bi-arrow-left"></i> Voltar
-                    </a>
+                    </button>
                     <?php if ($has_data && (!empty($rows_a) || !empty($rows_b))): ?>
+
                         <a href="export?context=compare&ya_start=<?php echo $ya_start; ?>&ma_start=<?php echo $ma_start; ?>&ya_end=<?php echo $ya_end; ?>&ma_end=<?php echo $ma_end; ?>&yb_start=<?php echo $yb_start; ?>&mb_start=<?php echo $mb_start; ?>&yb_end=<?php echo $yb_end; ?>&mb_end=<?php echo $mb_end; ?>"
-                            class="btn btn-secondary">
-                            <i class="bi bi-download"></i> Exportar
+                            class="btn btn-pink ms-2" style="border-radius:20px">
+                            <i class="bi bi-download me-1"></i> Exportar
                         </a>
                     <?php endif; ?>
                 </div>
             </div>
+            <!-- Ícone decorativo: range -->
+            <style>
+                .page-header::before {
+                    content: '\F428';
+                    /* bi bi-calendar-range */
+                }
+            </style>
         </div>
 
         <!-- ── Formulário de comparação ── -->

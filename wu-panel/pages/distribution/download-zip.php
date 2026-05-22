@@ -69,10 +69,26 @@ $date_str    = $album['release_date']
 $zip_name    = $artist_slug . '_' . $date_str . '.zip';
 
 // ── Criar ZIP em memória (tmp) ────────────────────────────────
-$tmp_file = tempnam(sys_get_temp_dir(), 'wasom_zip_');
+$temp_dir = sys_get_temp_dir();
+$tmp_file = @tempnam($temp_dir, 'wasom_zip_');
+
+if (!$tmp_file) {
+    $fallback_dir = $root . '/assets/uploads/tmp/';
+    if (!is_dir($fallback_dir)) {
+        @mkdir($fallback_dir, 0755, true);
+    }
+
+    if (!is_dir($fallback_dir) || !is_writable($fallback_dir)) {
+        http_response_code(500);
+        exit('Erro ao criar ficheiro temporário. O servidor não permite escrita em diretórios temporários.');
+    }
+
+    $tmp_file = @tempnam($fallback_dir, 'wasom_zip_');
+}
+
 if (!$tmp_file) {
     http_response_code(500);
-    exit('Erro ao criar ficheiro temporário.');
+    exit('Erro ao criar ficheiro temporário. Verifica as permissões de escrita no servidor.');
 }
 
 $zip = new ZipArchive();

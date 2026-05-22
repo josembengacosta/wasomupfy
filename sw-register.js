@@ -1,5 +1,5 @@
 // ══════════════════════════════════════════════════════════════════════
-// WASOM UPFY v2.0 — Registo do Service Worker
+// WASOM UPFY v2.0.1.1 — Registo do Service Worker
 // Ficheiro: /js/sw-register.js
 //
 // Incluir em TODAS as páginas públicas antes de </body>:

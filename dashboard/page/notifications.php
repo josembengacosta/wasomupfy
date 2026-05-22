@@ -1,6 +1,6 @@
 <?php
 // ══════════════════════════════════════════════════════
-// WASOM UPFY v2.0 — Notificações
+// WASOM UPFY v2.0.1.1 — Notificações
 // Arquivo: dashboard/page/notifications.php
 // ══════════════════════════════════════════════════════
 require_once __DIR__ . '/../../authentic/include/functions.php';
@@ -252,509 +252,511 @@ foreach ($all as $n) {
     <?php require_once __DIR__ . '/../include/head.php'; ?>
     <title>Notificações — <?php echo APP_NAME; ?></title>
     <style>
-    /* ══ Hero ══ */
-    .notif-hero {
-        background: linear-gradient(135deg, #FF0089 0%, #c8006e 55%, #7b0044 100%);
-        border-radius: 20px;
-        padding: 2rem 2.4rem;
-        margin-bottom: 2rem;
-        color: #fff;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .notif-hero::after {
-        content: '\F0B5';
-        font-family: 'bootstrap-icons';
-        position: absolute;
-        right: -15px;
-        bottom: -25px;
-        font-size: 9rem;
-        opacity: .07;
-    }
-
-    .notif-hero .hero-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        background: rgba(255, 255, 255, .18);
-        border: 1px solid rgba(255, 255, 255, .3);
-        border-radius: 999px;
-        padding: 4px 14px;
-        font-size: .76rem;
-        font-weight: 700;
-        backdrop-filter: blur(4px);
-        margin-bottom: .7rem;
-    }
-
-    .notif-hero h1 {
-        font-size: 1.9rem;
-        font-weight: 800;
-        margin-bottom: .3rem;
-    }
-
-    .notif-hero p {
-        opacity: .85;
-        font-size: .92rem;
-        margin: 0;
-    }
-
-    /* ══ Quick action bar ══ */
-    .quick-bar {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        margin-bottom: 1.4rem;
-    }
-
-    .quick-bar .btn {
-        border-radius: 10px;
-        font-size: .8rem;
-        font-weight: 600;
-        padding: .45rem 1rem;
-    }
-
-    /* ══ Filter tabs ══ */
-    .filter-tabs {
-        display: flex;
-        gap: 6px;
-        flex-wrap: wrap;
-        margin-bottom: 1.5rem;
-    }
-
-    .btn-filter {
-        padding: .38rem 1rem;
-        border-radius: 999px;
-        font-size: .78rem;
-        font-weight: 700;
-        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .12));
-        background: var(--card-bg, #fff);
-        color: var(--text-muted, #6c757d);
-        cursor: pointer;
-        transition: all .15s;
-        white-space: nowrap;
-    }
-
-    .btn-filter:hover {
-        border-color: #FF0089;
-        color: #FF0089;
-    }
-
-    .btn-filter.active {
-        background: #FF0089;
-        border-color: #FF0089;
-        color: #fff;
-    }
-
-    .btn-filter .badge {
-        font-size: .65rem;
-        padding: .2rem .45rem;
-    }
-
-    /* ══ Date group header ══ */
-    .notif-group-date {
-        font-size: .72rem;
-        font-weight: 800;
-        color: var(--text-muted, #6c757d);
-        text-transform: uppercase;
-        letter-spacing: .08em;
-        padding: .5rem 0 .4rem;
-        margin-top: .4rem;
-        border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .07));
-        margin-bottom: .4rem;
-    }
-
-    /* ══ Notification card ══ */
-    .notification-card {
-        background: var(--card-bg, #fff);
-        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
-        border-left: 4px solid transparent;
-        border-radius: 14px;
-        padding: 1rem 1.2rem;
-        margin-bottom: .6rem;
-        cursor: pointer;
-        transition: all .18s;
-        position: relative;
-    }
-
-    .notification-card:hover {
-        box-shadow: 0 4px 16px rgba(255, 0, 137, .1);
-        border-left-color: #FF0089;
-        transform: translateX(2px);
-    }
-
-    .notification-card.unread {
-        border-left-color: #FF0089;
-        background: var(--card-bg, #fff);
-    }
-
-    .notification-card.unread::before {
-        content: '';
-        position: absolute;
-        top: 14px;
-        right: 14px;
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: #FF0089;
-        box-shadow: 0 0 0 2px rgba(255, 0, 137, .2);
-    }
-
-    /* ══ Notification icon ══ */
-    .notif-icon-wrap {
-        width: 44px;
-        height: 44px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
-        flex-shrink: 0;
-    }
-
-    .icon-info {
-        background: rgba(13, 110, 253, .12);
-        color: #0d6efd;
-    }
-
-    .icon-success {
-        background: rgba(25, 135, 84, .12);
-        color: #198754;
-    }
-
-    .icon-warning {
-        background: rgba(255, 193, 7, .15);
-        color: #856404;
-    }
-
-    .icon-error {
-        background: rgba(220, 53, 69, .12);
-        color: #dc3545;
-    }
-
-    .icon-payment {
-        background: rgba(255, 193, 7, .15);
-        color: #fd7e14;
-    }
-
-    .icon-music {
-        background: rgba(255, 0, 137, .1);
-        color: #FF0089;
-    }
-
-    .icon-system {
-        background: rgba(108, 117, 125, .12);
-        color: #6c757d;
-    }
-
-    .icon-broadcast {
-        background: rgba(111, 66, 193, .12);
-        color: #6f42c1;
-    }
-
-    /* ══ Card content ══ */
-    .notif-title {
-        font-weight: 700;
-        font-size: .88rem;
-        margin-bottom: .2rem;
-    }
-
-    .notif-body {
-        font-size: .8rem;
-        color: var(--text-muted, #6c757d);
-        margin-bottom: .4rem;
-        display: -webkit-box;
-        line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-    .notif-meta {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
-    }
-
-    .notif-time {
-        font-size: .72rem;
-        color: var(--text-muted, #6c757d);
-    }
-
-    /* ══ Badge types ══ */
-    .notif-badge {
-        font-size: .65rem;
-        font-weight: 700;
-        padding: .2rem .6rem;
-        border-radius: 999px;
-    }
-
-    .badge-music {
-        background: rgba(255, 0, 137, .12);
-        color: #FF0089;
-    }
-
-    .badge-payment {
-        background: rgba(253, 126, 20, .12);
-        color: #fd7e14;
-    }
-
-    .badge-system {
-        background: rgba(108, 117, 125, .12);
-        color: #6c757d;
-    }
-
-    .badge-warning {
-        background: rgba(255, 193, 7, .18);
-        color: #856404;
-    }
-
-    .badge-error {
-        background: rgba(220, 53, 69, .12);
-        color: #dc3545;
-    }
-
-    .badge-success {
-        background: rgba(25, 135, 84, .12);
-        color: #198754;
-    }
-
-    .badge-info {
-        background: rgba(13, 110, 253, .1);
-        color: #0d6efd;
-    }
-
-    .badge-broadcast {
-        background: rgba(111, 66, 193, .12);
-        color: #6f42c1;
-    }
-
-    /* ══ Card action buttons ══ */
-    .card-actions {
-        display: flex;
-        gap: 4px;
-        margin-left: auto;
-        flex-shrink: 0;
-        align-self: flex-start;
-    }
-
-    .action-btn {
-        width: 30px;
-        height: 30px;
-        border-radius: 8px;
-        border: none;
-        background: var(--metric-bg, rgba(0, 0, 0, .04));
-        color: var(--text-muted, #6c757d);
-        font-size: .85rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all .15s;
-        cursor: pointer;
-    }
-
-    .action-btn:hover {
-        background: #FF0089;
-        color: #fff;
-    }
-
-    .action-btn.danger:hover {
-        background: #dc3545;
-    }
-
-    /* ══ Empty state ══ */
-    .notif-empty {
-        text-align: center;
-        padding: 3rem 1rem;
-        display: none;
-    }
-
-    .notif-empty i {
-        font-size: 3rem;
-        color: #FF0089;
-        opacity: .3;
-        display: block;
-        margin-bottom: 1rem;
-    }
-
-    /* ══ Settings card ══ */
-    .settings-card {
-        background: var(--card-bg, #fff);
-        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
-        border-radius: 16px;
-        padding: 1.3rem;
-        margin-bottom: 1rem;
-    }
-
-    .settings-card h6 {
-        font-weight: 800;
-        font-size: .9rem;
-        color: #FF0089;
-        margin-bottom: 1rem;
-    }
-
-    /* ══ Preference row ══ */
-    .pref-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: .6rem 0;
-        border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .06));
-    }
-
-    .pref-row:last-of-type {
-        border-bottom: none;
-    }
-
-    .pref-row span {
-        font-size: .84rem;
-        font-weight: 600;
-    }
-
-    .pref-row small {
-        font-size: .73rem;
-        color: var(--text-muted, #6c757d);
-    }
-
-    .form-check-input:checked {
-        background-color: #FF0089;
-        border-color: #FF0089;
-    }
-
-    /* ══ Push notification permission card ══ */
-    .push-card {
-        background: linear-gradient(135deg, rgba(255, 0, 137, .07), rgba(200, 0, 110, .04));
-        border: 1.5px solid rgba(255, 0, 137, .2);
-        border-radius: 14px;
-        padding: 1.2rem;
-        margin-bottom: 1rem;
-        text-align: center;
-    }
-
-    .push-card i {
-        font-size: 2rem;
-        color: #FF0089;
-        display: block;
-        margin-bottom: .6rem;
-    }
-
-    .push-card h6 {
-        font-weight: 800;
-        font-size: .88rem;
-        margin-bottom: .4rem;
-    }
-
-    .push-card p {
-        font-size: .78rem;
-        color: var(--text-muted, #6c757d);
-        margin-bottom: .8rem;
-    }
-
-    .btn-push {
-        background: #FF0089;
-        border: none;
-        color: #fff;
-        border-radius: 10px;
-        font-size: .82rem;
-        font-weight: 700;
-        padding: .5rem 1.2rem;
-        transition: all .2s;
-    }
-
-    .btn-push:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 14px rgba(255, 0, 137, .35);
-        color: #fff;
-    }
-
-    .btn-push:disabled {
-        opacity: .6;
-    }
-
-    /* ══ Modal notification ══ */
-    #notificationModal .modal-header {
-        border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .08));
-    }
-
-    #notificationModal .modal-footer {
-        border-top: 1px solid var(--border-color, rgba(0, 0, 0, .08));
-    }
-
-    .modal-notif-icon {
-        width: 54px;
-        height: 54px;
-        border-radius: 14px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        margin: 0 auto 1rem;
-    }
-
-    .modal-action-area {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        margin-top: 1rem;
-    }
-
-    .btn-action-primary {
-        background: #FF0089;
-        border: none;
-        color: #fff;
-        padding: .45rem 1.2rem;
-        border-radius: 10px;
-        font-weight: 700;
-        font-size: .82rem;
-        transition: all .2s;
-    }
-
-    .btn-action-primary:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(255, 0, 137, .3);
-        color: #fff;
-    }
-
-    .btn-action-later {
-        background: transparent;
-        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .12));
-        color: var(--text-muted, #6c757d);
-        padding: .45rem 1.2rem;
-        border-radius: 10px;
-        font-weight: 600;
-        font-size: .82rem;
-        transition: all .15s;
-    }
-
-    .btn-action-later:hover {
-        border-color: #FF0089;
-        color: #FF0089;
-    }
-
-    /* ══ Progress bar read ══ */
-    .read-ratio-bar {
-        height: 6px;
-        border-radius: 999px;
-        overflow: hidden;
-        background: var(--border-color, rgba(0, 0, 0, .08));
-    }
-
-    .read-ratio-fill {
-        height: 100%;
-        background: linear-gradient(90deg, #FF0089, #c8006e);
-        border-radius: 999px;
-        transition: width .4s;
-    }
-
-    @media(max-width:768px) {
+        /* ══ Hero ══ */
         .notif-hero {
-            padding: 1.4rem;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 20px;
+            padding: 28px 32px;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 28px;
+        }
+
+        .notif-hero::after {
+            content: '\F0B5';
+            font-family: "bootstrap-icons";
+            position: absolute;
+            right: -60px;
+            top: -60px;
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 0, 137, .18), transparent 70%);
+        }
+
+        .notif-hero .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, .18);
+            border: 1px solid rgba(255, 255, 255, .3);
+            border-radius: 999px;
+            padding: 4px 14px;
+            font-size: .76rem;
+            font-weight: 700;
+            backdrop-filter: blur(4px);
+            margin-bottom: .7rem;
         }
 
         .notif-hero h1 {
-            font-size: 1.5rem;
+            font-size: 1.9rem;
+            font-weight: 800;
+            margin-bottom: .3rem;
         }
-    }
+
+        .notif-hero p {
+            opacity: .85;
+            font-size: .92rem;
+            margin: 0;
+        }
+
+        /* ══ Quick action bar ══ */
+        .quick-bar {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 1.4rem;
+        }
+
+        .quick-bar .btn {
+            border-radius: 10px;
+            font-size: .8rem;
+            font-weight: 600;
+            padding: .45rem 1rem;
+        }
+
+        /* ══ Filter tabs ══ */
+        .filter-tabs {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-filter {
+            padding: .38rem 1rem;
+            border-radius: 999px;
+            font-size: .78rem;
+            font-weight: 700;
+            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .12));
+            background: var(--card-bg, #fff);
+            color: var(--text-muted, #6c757d);
+            cursor: pointer;
+            transition: all .15s;
+            white-space: nowrap;
+        }
+
+        .btn-filter:hover {
+            border-color: #FF0089;
+            color: #FF0089;
+        }
+
+        .btn-filter.active {
+            background: #FF0089;
+            border-color: #FF0089;
+            color: #fff;
+        }
+
+        .btn-filter .badge {
+            font-size: .65rem;
+            padding: .2rem .45rem;
+        }
+
+        /* ══ Date group header ══ */
+        .notif-group-date {
+            font-size: .72rem;
+            font-weight: 800;
+            color: var(--text-muted, #6c757d);
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            padding: .5rem 0 .4rem;
+            margin-top: .4rem;
+            border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .07));
+            margin-bottom: .4rem;
+        }
+
+        /* ══ Notification card ══ */
+        .notification-card {
+            background: var(--card-bg, #fff);
+            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .07));
+            border-left: 4px solid transparent;
+            border-radius: 14px;
+            padding: 1rem 1.2rem;
+            margin-bottom: .6rem;
+            cursor: pointer;
+            transition: all .18s;
+            position: relative;
+        }
+
+        .notification-card:hover {
+            box-shadow: 0 4px 16px rgba(255, 0, 137, .1);
+            border-left-color: #FF0089;
+            transform: translateX(2px);
+        }
+
+        .notification-card.unread {
+            border-left-color: #FF0089;
+            background: var(--card-bg, #fff);
+        }
+
+        .notification-card.unread::before {
+            content: '';
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #FF0089;
+            box-shadow: 0 0 0 2px rgba(255, 0, 137, .2);
+        }
+
+        /* ══ Notification icon ══ */
+        .notif-icon-wrap {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .icon-info {
+            background: rgba(13, 110, 253, .12);
+            color: #0d6efd;
+        }
+
+        .icon-success {
+            background: rgba(25, 135, 84, .12);
+            color: #198754;
+        }
+
+        .icon-warning {
+            background: rgba(255, 193, 7, .15);
+            color: #856404;
+        }
+
+        .icon-error {
+            background: rgba(220, 53, 69, .12);
+            color: #dc3545;
+        }
+
+        .icon-payment {
+            background: rgba(255, 193, 7, .15);
+            color: #fd7e14;
+        }
+
+        .icon-music {
+            background: rgba(255, 0, 137, .1);
+            color: #FF0089;
+        }
+
+        .icon-system {
+            background: rgba(108, 117, 125, .12);
+            color: #6c757d;
+        }
+
+        .icon-broadcast {
+            background: rgba(111, 66, 193, .12);
+            color: #6f42c1;
+        }
+
+        /* ══ Card content ══ */
+        .notif-title {
+            font-weight: 700;
+            font-size: .88rem;
+            margin-bottom: .2rem;
+        }
+
+        .notif-body {
+            font-size: .8rem;
+            color: var(--text-muted, #6c757d);
+            margin-bottom: .4rem;
+            display: -webkit-box;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .notif-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .notif-time {
+            font-size: .72rem;
+            color: var(--text-muted, #6c757d);
+        }
+
+        /* ══ Badge types ══ */
+        .notif-badge {
+            font-size: .65rem;
+            font-weight: 700;
+            padding: .2rem .6rem;
+            border-radius: 999px;
+        }
+
+        .badge-music {
+            background: rgba(255, 0, 137, .12);
+            color: #FF0089;
+        }
+
+        .badge-payment {
+            background: rgba(253, 126, 20, .12);
+            color: #fd7e14;
+        }
+
+        .badge-system {
+            background: rgba(108, 117, 125, .12);
+            color: #6c757d;
+        }
+
+        .badge-warning {
+            background: rgba(255, 193, 7, .18);
+            color: #856404;
+        }
+
+        .badge-error {
+            background: rgba(220, 53, 69, .12);
+            color: #dc3545;
+        }
+
+        .badge-success {
+            background: rgba(25, 135, 84, .12);
+            color: #198754;
+        }
+
+        .badge-info {
+            background: rgba(13, 110, 253, .1);
+            color: #0d6efd;
+        }
+
+        .badge-broadcast {
+            background: rgba(111, 66, 193, .12);
+            color: #6f42c1;
+        }
+
+        /* ══ Card action buttons ══ */
+        .card-actions {
+            display: flex;
+            gap: 4px;
+            margin-left: auto;
+            flex-shrink: 0;
+            align-self: flex-start;
+        }
+
+        .action-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            border: none;
+            background: var(--metric-bg, rgba(0, 0, 0, .04));
+            color: var(--text-muted, #6c757d);
+            font-size: .85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .15s;
+            cursor: pointer;
+        }
+
+        .action-btn:hover {
+            background: #FF0089;
+            color: #fff;
+        }
+
+        .action-btn.danger:hover {
+            background: #dc3545;
+        }
+
+        /* ══ Empty state ══ */
+        .notif-empty {
+            text-align: center;
+            padding: 3rem 1rem;
+            display: none;
+        }
+
+        .notif-empty i {
+            font-size: 3rem;
+            color: #FF0089;
+            opacity: .3;
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        /* ══ Settings card ══ */
+        .settings-card {
+            background: var(--card-bg, #fff);
+            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
+            border-radius: 16px;
+            padding: 1.3rem;
+            margin-bottom: 1rem;
+        }
+
+        .settings-card h6 {
+            font-weight: 800;
+            font-size: .9rem;
+            color: #FF0089;
+            margin-bottom: 1rem;
+        }
+
+        /* ══ Preference row ══ */
+        .pref-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: .6rem 0;
+            border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .06));
+        }
+
+        .pref-row:last-of-type {
+            border-bottom: none;
+        }
+
+        .pref-row span {
+            font-size: .84rem;
+            font-weight: 600;
+        }
+
+        .pref-row small {
+            font-size: .73rem;
+            color: var(--text-muted, #6c757d);
+        }
+
+        .form-check-input:checked {
+            background-color: #FF0089;
+            border-color: #FF0089;
+        }
+
+        /* ══ Push notification permission card ══ */
+        .push-card {
+            background: linear-gradient(135deg, rgba(255, 0, 137, .07), rgba(200, 0, 110, .04));
+            border: 1.5px solid rgba(255, 0, 137, .2);
+            border-radius: 14px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .push-card i {
+            font-size: 2rem;
+            color: #FF0089;
+            display: block;
+            margin-bottom: .6rem;
+        }
+
+        .push-card h6 {
+            font-weight: 800;
+            font-size: .88rem;
+            margin-bottom: .4rem;
+        }
+
+        .push-card p {
+            font-size: .78rem;
+            color: var(--text-muted, #6c757d);
+            margin-bottom: .8rem;
+        }
+
+        .btn-push {
+            background: #FF0089;
+            border: none;
+            color: #fff;
+            border-radius: 10px;
+            font-size: .82rem;
+            font-weight: 700;
+            padding: .5rem 1.2rem;
+            transition: all .2s;
+        }
+
+        .btn-push:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px rgba(255, 0, 137, .35);
+            color: #fff;
+        }
+
+        .btn-push:disabled {
+            opacity: .6;
+        }
+
+        /* ══ Modal notification ══ */
+        #notificationModal .modal-header {
+            border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .08));
+        }
+
+        #notificationModal .modal-footer {
+            border-top: 1px solid var(--border-color, rgba(0, 0, 0, .08));
+        }
+
+        .modal-notif-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 1rem;
+        }
+
+        .modal-action-area {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .btn-action-primary {
+            background: #FF0089;
+            border: none;
+            color: #fff;
+            padding: .45rem 1.2rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: .82rem;
+            transition: all .2s;
+        }
+
+        .btn-action-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 0, 137, .3);
+            color: #fff;
+        }
+
+        .btn-action-later {
+            background: transparent;
+            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .12));
+            color: var(--text-muted, #6c757d);
+            padding: .45rem 1.2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: .82rem;
+            transition: all .15s;
+        }
+
+        .btn-action-later:hover {
+            border-color: #FF0089;
+            color: #FF0089;
+        }
+
+        /* ══ Progress bar read ══ */
+        .read-ratio-bar {
+            height: 6px;
+            border-radius: 999px;
+            overflow: hidden;
+            background: var(--border-color, rgba(0, 0, 0, .08));
+        }
+
+        .read-ratio-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FF0089, #c8006e);
+            border-radius: 999px;
+            transition: width .4s;
+        }
+
+        @media(max-width:768px) {
+            .notif-hero {
+                padding: 1.4rem;
+            }
+
+            .notif-hero h1 {
+                font-size: 1.5rem;
+            }
+        }
     </style>
 </head>
 
@@ -811,7 +813,7 @@ foreach ($all as $n) {
         <?php /* ── NÍVEL 1: Crítico — bloqueia distribuição ── */ ?>
 
         <?php if (!$email_verified): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'danger',
                 'bi-envelope-exclamation-fill',
                 '<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta e receber notificações de pagamentos.',
@@ -822,7 +824,7 @@ foreach ($all as $n) {
         <?php endif; ?>
 
         <?php if ($plan && !$plan_paid): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'warning',
                 'bi-clock-history',
                 '<strong>Pagamento pendente — ' . htmlspecialchars($plan['name_plan']) . '.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados até confirmação.',
@@ -831,7 +833,7 @@ foreach ($all as $n) {
                 'banner-plan-pending'
             ); ?>
         <?php elseif (!$plan): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'danger',
                 'bi-credit-card-fill',
                 '<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir a tua música para +150 plataformas.',
@@ -844,7 +846,7 @@ foreach ($all as $n) {
         <?php /* ── NÍVEL 2: Importante — perfil incompleto ── */ ?>
 
         <?php if ($plan_paid && !$has_artist): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'info',
                 'bi-person-plus-fill',
                 '<strong>Cria o teu perfil artístico.</strong> Tens plano activo mas ainda não criaste um perfil artístico. Precisas de um para poder lançar música.',
@@ -857,7 +859,7 @@ foreach ($all as $n) {
         <?php /* ── NÍVEL 3: Informativo — conta bancária ── */ ?>
 
         <?php if ($plan_paid && $has_artist && !$bank_account): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'info',
                 'bi-bank',
                 '<strong>Conta bancária não registada.</strong> Para poder sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.',
@@ -878,7 +880,7 @@ foreach ($all as $n) {
         }
         ?>
         <?php if ($rejected_account): ?>
-        <?php
+            <?php
             $rej_msg = '<strong>Conta ' . htmlspecialchars($rejected_account['type_account']) . ' rejeitada.</strong>';
             if ($rejected_account['reject_reason']) {
                 $rej_msg .= ' Motivo: <em>' . htmlspecialchars($rejected_account['reject_reason']) . '</em>.';
@@ -899,9 +901,9 @@ foreach ($all as $n) {
             <div class="hero-badge">
                 <i class="bi bi-bell-fill"></i>
                 <?php if ($unread_count > 0): ?>
-                <?php echo $unread_count; ?> não lida<?php echo $unread_count !== 1 ? 's' : ''; ?>
+                    <?php echo $unread_count; ?> não lida<?php echo $unread_count !== 1 ? 's' : ''; ?>
                 <?php else: ?>
-                Tudo em dia!
+                    Tudo em dia!
                 <?php endif; ?>
             </div>
             <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
@@ -959,21 +961,21 @@ foreach ($all as $n) {
             <div class="col-lg-8">
                 <div id="notifList">
                     <?php if (empty($all)): ?>
-                    <div class="notif-empty" style="display:block">
-                        <i class="bi bi-bell-slash"></i>
-                        <p class="fw-semibold mb-1">Sem notificações</p>
-                        <small class="text-muted">Quando houver novidades, aparecerão aqui.</small>
-                    </div>
+                        <div class="notif-empty" style="display:block">
+                            <i class="bi bi-bell-slash"></i>
+                            <p class="fw-semibold mb-1">Sem notificações</p>
+                            <small class="text-muted">Quando houver novidades, aparecerão aqui.</small>
+                        </div>
                     <?php else: ?>
 
-                    <?php
+                        <?php
                         foreach ($grouped as $groupName => $items):
                         ?>
-                    <div class="notif-group-date group-label" data-group="<?php echo htmlspecialchars($groupName); ?>">
-                        <i class="bi bi-calendar3 me-2"></i><?php echo htmlspecialchars($groupName); ?>
-                    </div>
+                            <div class="notif-group-date group-label" data-group="<?php echo htmlspecialchars($groupName); ?>">
+                                <i class="bi bi-calendar3 me-2"></i><?php echo htmlspecialchars($groupName); ?>
+                            </div>
 
-                    <?php foreach ($items as $n):
+                            <?php foreach ($items as $n):
                                 [$icon, $iconClass] = notif_icon($n['type']);
                                 $isUnread  = !$n['is_read'];
                                 $nid       = htmlspecialchars($n['id']);
@@ -985,45 +987,45 @@ foreach ($all as $n) {
                                 $badge     = notif_badge($n['type']);
                                 $actionUrl = htmlspecialchars($n['action_url'] ?? '');
                             ?>
-                    <div class="notification-card <?php echo $isUnread ? 'unread' : ''; ?>"
-                        data-id="<?php echo $nid; ?>" data-source="<?php echo $source; ?>"
-                        data-type="<?php echo htmlspecialchars($n['type']); ?>" data-title="<?php echo $title; ?>"
-                        data-body="<?php echo $body; ?>" data-ago="<?php echo $ago; ?>"
-                        data-action="<?php echo $actionUrl; ?>" data-read="<?php echo $isUnread ? '0' : '1'; ?>">
+                                <div class="notification-card <?php echo $isUnread ? 'unread' : ''; ?>"
+                                    data-id="<?php echo $nid; ?>" data-source="<?php echo $source; ?>"
+                                    data-type="<?php echo htmlspecialchars($n['type']); ?>" data-title="<?php echo $title; ?>"
+                                    data-body="<?php echo $body; ?>" data-ago="<?php echo $ago; ?>"
+                                    data-action="<?php echo $actionUrl; ?>" data-read="<?php echo $isUnread ? '0' : '1'; ?>">
 
-                        <div class="d-flex gap-3 align-items-start">
-                            <div class="notif-icon-wrap <?php echo $iconClass; ?>">
-                                <i class="bi <?php echo $icon; ?>"></i>
-                            </div>
-                            <div class="flex-grow-1 min-w-0">
-                                <div class="notif-title"><?php echo $title; ?></div>
-                                <div class="notif-body"><?php echo htmlspecialchars($bodyShort); ?></div>
-                                <div class="notif-meta">
-                                    <?php echo $badge; ?>
-                                    <span class="notif-time"><i class="bi bi-clock me-1"></i><?php echo $ago; ?></span>
+                                    <div class="d-flex gap-3 align-items-start">
+                                        <div class="notif-icon-wrap <?php echo $iconClass; ?>">
+                                            <i class="bi <?php echo $icon; ?>"></i>
+                                        </div>
+                                        <div class="flex-grow-1 min-w-0">
+                                            <div class="notif-title"><?php echo $title; ?></div>
+                                            <div class="notif-body"><?php echo htmlspecialchars($bodyShort); ?></div>
+                                            <div class="notif-meta">
+                                                <?php echo $badge; ?>
+                                                <span class="notif-time"><i class="bi bi-clock me-1"></i><?php echo $ago; ?></span>
+                                            </div>
+                                        </div>
+                                        <div class="card-actions">
+                                            <!-- Toggle lida/não lida -->
+                                            <button class="action-btn btn-toggle-read"
+                                                title="<?php echo $isUnread ? 'Marcar como lida' : 'Marcar como não lida'; ?>">
+                                                <i class="bi <?php echo $isUnread ? 'bi-check-lg' : 'bi-envelope'; ?>"></i>
+                                            </button>
+                                            <!-- Eliminar -->
+                                            <button class="action-btn btn-delete danger" title="Eliminar">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="card-actions">
-                                <!-- Toggle lida/não lida -->
-                                <button class="action-btn btn-toggle-read"
-                                    title="<?php echo $isUnread ? 'Marcar como lida' : 'Marcar como não lida'; ?>">
-                                    <i class="bi <?php echo $isUnread ? 'bi-check-lg' : 'bi-envelope'; ?>"></i>
-                                </button>
-                                <!-- Eliminar -->
-                                <button class="action-btn btn-delete danger" title="Eliminar">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <?php endforeach; ?>
-                    <?php endforeach; ?>
+                            <?php endforeach; ?>
+                        <?php endforeach; ?>
 
-                    <div class="notif-empty" id="emptyState">
-                        <i class="bi bi-search"></i>
-                        <p class="fw-semibold mb-1">Sem resultados</p>
-                        <small class="text-muted">Nenhuma notificação nesta categoria.</small>
-                    </div>
+                        <div class="notif-empty" id="emptyState">
+                            <i class="bi bi-search"></i>
+                            <p class="fw-semibold mb-1">Sem resultados</p>
+                            <small class="text-muted">Nenhuma notificação nesta categoria.</small>
+                        </div>
 
                     <?php endif; ?>
                 </div>
@@ -1060,13 +1062,13 @@ foreach ($all as $n) {
                         <span class="fw-bold" id="statRead"><?php echo $read_count; ?></span>
                     </div>
                     <?php if ($total_count > 0): ?>
-                    <div class="read-ratio-bar">
-                        <div class="read-ratio-fill" id="ratioFill"
-                            style="width:<?php echo round($read_count / $total_count * 100); ?>%"></div>
-                    </div>
-                    <small class="text-muted d-block mt-1" style="font-size:.72rem">
-                        <?php echo round($read_count / $total_count * 100); ?>% lidas
-                    </small>
+                        <div class="read-ratio-bar">
+                            <div class="read-ratio-fill" id="ratioFill"
+                                style="width:<?php echo round($read_count / $total_count * 100); ?>%"></div>
+                        </div>
+                        <small class="text-muted d-block mt-1" style="font-size:.72rem">
+                            <?php echo round($read_count / $total_count * 100); ?>% lidas
+                        </small>
                     <?php endif; ?>
                 </div>
 
@@ -1219,10 +1221,10 @@ foreach ($all as $n) {
     <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
     <!-- ── Variáveis de configuração injectadas pelo PHP ── -->
     <script>
-    const CSRF_TOKEN = <?php echo json_encode($_SESSION['csrf_token'] ?? ''); ?>;
-    const BASE_URL = <?php echo json_encode(APP_URL . '/' . APP_URL_PANEL); ?>;
-    const API_URL = BASE_URL + '/ajax/notifications_api';
-    const VAPID_PUBLIC_KEY = <?php echo json_encode(defined('VAPID_PUBLIC_KEY') ? VAPID_PUBLIC_KEY : ''); ?>;
+        const CSRF_TOKEN = <?php echo json_encode($_SESSION['csrf_token'] ?? ''); ?>;
+        const BASE_URL = <?php echo json_encode(APP_URL . '/' . APP_URL_PANEL); ?>;
+        const API_URL = BASE_URL + '/ajax/notifications_api';
+        const VAPID_PUBLIC_KEY = <?php echo json_encode(defined('VAPID_PUBLIC_KEY') ? VAPID_PUBLIC_KEY : ''); ?>;
     </script>
     <script src="<?php echo APP_URL ?>/<?php echo APP_URL_PANEL ?>/page/js/notifications.js"></script>
 </body>

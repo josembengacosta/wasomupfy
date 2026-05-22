@@ -249,6 +249,11 @@ $pendingAccountsCount = $canFinancesView
                 aria-controls="collapseDistribution">
                 <i class="bi bi-globe"></i>
                 <span>Distribuição</span>
+                <?php if ($adm_pending_releases >  0): ?>
+                <span class="badge bg-warning text-dark ms-1" style="font-size:.6rem">
+                    <?php echo ($adm_pending_releases); ?>
+                </span>
+                <?php endif; ?>
                 <i class="bi bi-chevron-down ms-auto" style="font-size:.8rem"></i>
             </a>
             <div class="collapse<?php echo $distOpen ? ' show' : ''; ?>" id="collapseDistribution">

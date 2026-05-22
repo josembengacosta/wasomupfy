@@ -1,6 +1,6 @@
 <?php
 // ══════════════════════════════════════════════════════
-// WASOM UPFY v2.0 — Relatórios Financeiros
+// WASOM UPFY v2.0.1.1 — Relatórios Financeiros
 // Arquivo: dashboard/analytics/report.php
 // ══════════════════════════════════════════════════════
 require_once __DIR__ . '/../../authentic/include/functions.php';
@@ -224,7 +224,7 @@ $reports_url = $base_url . '/';
         <?php /* ── NÍVEL 1: Crítico — bloqueia distribuição ── */ ?>
 
         <?php if (!$email_verified): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'danger',
                 'bi-envelope-exclamation-fill',
                 '<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta e receber notificações de pagamentos.',
@@ -235,7 +235,7 @@ $reports_url = $base_url . '/';
         <?php endif; ?>
 
         <?php if ($plan && !$plan_paid): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'warning',
                 'bi-clock-history',
                 '<strong>Pagamento pendente — ' . htmlspecialchars($plan['name_plan']) . '.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados até confirmação.',
@@ -244,7 +244,7 @@ $reports_url = $base_url . '/';
                 'banner-plan-pending'
             ); ?>
         <?php elseif (!$plan): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'danger',
                 'bi-credit-card-fill',
                 '<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir a tua música para +150 plataformas.',
@@ -257,7 +257,7 @@ $reports_url = $base_url . '/';
         <?php /* ── NÍVEL 2: Importante — perfil incompleto ── */ ?>
 
         <?php if ($plan_paid && !$has_artist): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'info',
                 'bi-person-plus-fill',
                 '<strong>Cria o teu perfil artístico.</strong> Tens plano activo mas ainda não criaste um perfil artístico. Precisas de um para poder lançar música.',
@@ -270,7 +270,7 @@ $reports_url = $base_url . '/';
         <?php /* ── NÍVEL 3: Informativo — conta bancária ── */ ?>
 
         <?php if ($plan_paid && $has_artist && !$bank_account): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'info',
                 'bi-bank',
                 '<strong>Conta bancária não registada.</strong> Para poder sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.',
@@ -291,7 +291,7 @@ $reports_url = $base_url . '/';
         }
         ?>
         <?php if ($rejected_account): ?>
-        <?php
+            <?php
             $rej_msg = '<strong>Conta ' . htmlspecialchars($rejected_account['type_account']) . ' rejeitada.</strong>';
             if ($rejected_account['reject_reason']) {
                 $rej_msg .= ' Motivo: <em>' . htmlspecialchars($rejected_account['reject_reason']) . '</em>.';
@@ -307,69 +307,79 @@ $reports_url = $base_url . '/';
             );
             ?>
         <?php endif; ?>
-        <!-- Cabeçalho -->
-        <div class="page-header">
-            <div class="row align-items-center mb-4">
+        <!-- header -->
+        <div class="page-header mb-4">
+            <div class="row align-items-center" style="position:relative;z-index:1">
                 <div class="col-md-8">
-                    <div class="page-header-compact">
-                        <h1><i class="bi bi-file-earmark-text-fill me-3"></i>Relatórios Financeiros</h1>
-                        <p class="lead">
-                            Todos os relatórios mensais dos conteúdos distribuídos por esta conta estão disponíveis
-                            aqui.
-                            Faz o download para análise detalhada no teu dispositivo.
-                        </p>
-                    </div>
+                    <nav aria-label="breadcrumb" style="margin-bottom:8px">
+                        <ol class="breadcrumb mb-0" style="font-size:.90rem;opacity:.6">
+                            <li class="breadcrumb-item"><a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/painel"
+                                    class="text-white text-decoration-none">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="statistics"
+                                    class="text-white text-decoration-none">Estatísticas</a></li>
+                            <li class="breadcrumb-item active text-white">Relatórios Financeiros</li>
+                        </ol>
+                    </nav>
+                    <h1 class="fw-bold mb-1" style="font-size:1.6rem">
+                        <i class="bi bi-file-earmark-text-fill me-2" style="color:#FF0089"></i>Relatórios Financeiros
+                    </h1>
+                    <p class="mb-0" style="font-size:.99rem;opacity:.7">
+                        Todos os relatórios mensais dos conteúdos distribuídos por esta conta estão disponíveis
+                        aqui.
+                        Faz o download para análise detalhada no teu dispositivo.
+                    </p>
                 </div>
                 <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                    <a href="overview" class="btn btn-light">
-                        <i class="bi bi-arrow-left-circle me-2"></i>Voltar às Finanças
-                    </a>
+                    <button class="btn btn-secondary me-2" onclick="window.history.back()"
+                        style="border:none;border-radius:20px;">
+                        <i class="bi bi-arrow-left-circle me-1"></i> Voltar às Finanças
+                    </button>
                 </div>
             </div>
-
+            <!-- Ícone decorativo: earmark -->
             <style>
-            .page-header::before {
-                content: '\F45D';
-                /* bi-file-earmark-text-fill */
-            }
+                .page-header::before {
+                    content: '\F45D';
+                    /* bi bi-file-earmark-text-fill */
+                }
             </style>
         </div>
 
         <?php if (!empty($reports)): ?>
-        <!-- Cards de resumo -->
-        <div class="row g-3 mb-4">
-            <div class="col-md-4">
-                <div class="card h-100"
-                    style="border-radius:16px;border:1.5px solid var(--border-color,rgba(0,0,0,.08))">
-                    <div class="card-body">
-                        <div class="text-muted small mb-1"><i class="bi bi-calendar-check me-1"></i>Períodos com
-                            royalties</div>
-                        <div class="fw-bold" style="font-size:1.6rem"><?php echo count($reports); ?></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card h-100"
-                    style="border-radius:16px;border:1.5px solid var(--border-color,rgba(0,0,0,.08))">
-                    <div class="card-body">
-                        <div class="text-muted small mb-1"><i class="bi bi-currency-dollar me-1"></i>Total pago (USD)
+            <!-- Cards de resumo -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <div class="card h-100"
+                        style="border-radius:16px;border:1.5px solid var(--border-color,rgba(0,0,0,.08))">
+                        <div class="card-body">
+                            <div class="text-muted small mb-1"><i class="bi bi-calendar-check me-1"></i>Períodos com
+                                royalties</div>
+                            <div class="fw-bold" style="font-size:1.6rem"><?php echo count($reports); ?></div>
                         </div>
-                        <div class="fw-bold" style="font-size:1.6rem">
-                            $<?php echo number_format((float)$totals['grand_usd'], 2); ?></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100"
+                        style="border-radius:16px;border:1.5px solid var(--border-color,rgba(0,0,0,.08))">
+                        <div class="card-body">
+                            <div class="text-muted small mb-1"><i class="bi bi-currency-dollar me-1"></i>Total pago (USD)
+                            </div>
+                            <div class="fw-bold" style="font-size:1.6rem">
+                                $<?php echo number_format((float)$totals['grand_usd'], 2); ?></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100"
+                        style="border-radius:16px;border:1.5px solid var(--border-color,rgba(0,0,0,.08))">
+                        <div class="card-body">
+                            <div class="text-muted small mb-1"><i class="bi bi-cash me-1"></i>Total pago (AOA)</div>
+                            <div class="fw-bold" style="font-size:1.6rem">
+                                <?php echo number_format((float)$totals['grand_aoa'], 2, ',', '.'); ?> Kz</div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card h-100"
-                    style="border-radius:16px;border:1.5px solid var(--border-color,rgba(0,0,0,.08))">
-                    <div class="card-body">
-                        <div class="text-muted small mb-1"><i class="bi bi-cash me-1"></i>Total pago (AOA)</div>
-                        <div class="fw-bold" style="font-size:1.6rem">
-                            <?php echo number_format((float)$totals['grand_aoa'], 2, ',', '.'); ?> Kz</div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <?php endif; ?>
 
         <!-- Tabela de relatórios -->
@@ -381,64 +391,64 @@ $reports_url = $base_url . '/';
                 </div>
                 <div class="table-responsive">
                     <?php if (empty($reports)): ?>
-                    <div class="text-center py-5 text-muted">
-                        <i class="bi bi-file-earmark-text fs-1 d-block mb-2 opacity-25"></i>
-                        <div class="small fw-semibold mb-1">Nenhum relatório disponível ainda.</div>
-                        <div class="small">Os relatórios aparecem aqui após o processamento mensal dos teus royalties
-                            pela equipa <?php echo APP_NAME ?>.</div>
-                    </div>
+                        <div class="text-center py-5 text-muted">
+                            <i class="bi bi-file-earmark-text fs-1 d-block mb-2 opacity-25"></i>
+                            <div class="small fw-semibold mb-1">Nenhum relatório disponível ainda.</div>
+                            <div class="small">Os relatórios aparecem aqui após o processamento mensal dos teus royalties
+                                pela equipa <?php echo APP_NAME ?>.</div>
+                        </div>
                     <?php else: ?>
-                    <table id="reportsWasomupfy" class="table table-striped table-hover mb-0">
-                        <thead>
-                            <tr>
-                                <th>Mês</th>
-                                <th>Ano</th>
-                                <th class="text-center">Faixas</th>
-                                <th>Valor (USD)</th>
-                                <th>Valor (AOA)</th>
-                                <th>Estado</th>
-                                <th class="text-center">Arquivo</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($reports as $rep):
+                        <table id="reportsWasomupfy" class="table table-striped table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Mês</th>
+                                    <th>Ano</th>
+                                    <th class="text-center">Faixas</th>
+                                    <th>Valor (USD)</th>
+                                    <th>Valor (AOA)</th>
+                                    <th>Estado</th>
+                                    <th class="text-center">Arquivo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($reports as $rep):
                                     $month_name = $months_pt[(int)$rep['month_royalty']] ?? '—';
                                     $st         = $status_map[$rep['status_royalty']] ?? $status_map['pending'];
                                     $has_file   = !empty($rep['report_file']);
                                 ?>
-                            <tr>
-                                <td class="fw-semibold small"><?php echo $month_name; ?></td>
-                                <td class="small"><?php echo (int)$rep['year_royalty']; ?></td>
-                                <td class="small text-center"><?php echo (int)$rep['num_tracks']; ?></td>
-                                <td class="small fw-semibold">$<?php echo number_format((float)$rep['total_usd'], 4); ?>
-                                </td>
-                                <td class="small fw-semibold">
-                                    <?php echo $rep['total_aoa']
+                                    <tr>
+                                        <td class="fw-semibold small"><?php echo $month_name; ?></td>
+                                        <td class="small"><?php echo (int)$rep['year_royalty']; ?></td>
+                                        <td class="small text-center"><?php echo (int)$rep['num_tracks']; ?></td>
+                                        <td class="small fw-semibold">$<?php echo number_format((float)$rep['total_usd'], 4); ?>
+                                        </td>
+                                        <td class="small fw-semibold">
+                                            <?php echo $rep['total_aoa']
                                                 ? number_format((float)$rep['total_aoa'], 2, ',', '.') . ' Kz'
                                                 : '—'; ?>
-                                </td>
-                                <td>
-                                    <span class="badge <?php echo $st['class']; ?>"><?php echo $st['label']; ?></span>
-                                </td>
-                                <td class="text-center">
-                                    <?php if ($has_file): ?>
-                                    <a href="<?php echo htmlspecialchars($reports_url . $rep['report_file']); ?>"
-                                        class="btn btn-sm btn-outline-pink" target="_blank" rel="noopener" download
-                                        data-bs-toggle="tooltip"
-                                        title="Descarregar <?php echo $month_name . ' ' . $rep['year_royalty']; ?>">
-                                        <i class="bi bi-download me-1"></i>PDF
-                                    </a>
-                                    <?php else: ?>
-                                    <span class="text-muted small" data-bs-toggle="tooltip"
-                                        title="O arquivo ainda não foi gerado pela equipa.">
-                                        <i class="bi bi-clock me-1"></i>A aguardar
-                                    </span>
-                                    <?php endif; ?>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                                        </td>
+                                        <td>
+                                            <span class="badge <?php echo $st['class']; ?>"><?php echo $st['label']; ?></span>
+                                        </td>
+                                        <td class="text-center">
+                                            <?php if ($has_file): ?>
+                                                <a href="<?php echo htmlspecialchars($reports_url . $rep['report_file']); ?>"
+                                                    class="btn btn-sm btn-outline-pink" target="_blank" rel="noopener" download
+                                                    data-bs-toggle="tooltip"
+                                                    title="Descarregar <?php echo $month_name . ' ' . $rep['year_royalty']; ?>">
+                                                    <i class="bi bi-download me-1"></i>PDF
+                                                </a>
+                                            <?php else: ?>
+                                                <span class="text-muted small" data-bs-toggle="tooltip"
+                                                    title="O arquivo ainda não foi gerado pela equipa.">
+                                                    <i class="bi bi-clock me-1"></i>A aguardar
+                                                </span>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
                     <?php endif; ?>
                 </div>
             </div>
@@ -470,7 +480,7 @@ $reports_url = $base_url . '/';
     <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
     <!-- ── Dados injectados pelo PHP para o JS ── -->
     <script>
-    const HAS_REPORTS = <?php echo !empty($reports) ? 'true' : 'false'; ?>;
+        const HAS_REPORTS = <?php echo !empty($reports) ? 'true' : 'false'; ?>;
     </script>
     <!-- ── Lógica da página ── -->
     <script src="<?php echo APP_URL ?>/<?php echo APP_URL_PANEL ?>/analytics/js/report.js"></script>

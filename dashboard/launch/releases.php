@@ -1,6 +1,6 @@
 <?php
 // ══════════════════════════════════════════════
-// WASOM UPFY v2.0 — Lançamentos
+// WASOM UPFY v2.0.1.1 — Lançamentos
 // Arquivo: dashboard/launch/releases.php
 // ══════════════════════════════════════════════
 require_once __DIR__ . '/../../authentic/include/functions.php';
@@ -231,239 +231,239 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
     <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/release-style.css" />
     <style>
-    /* ── Cards de lançamento ─── */
-    .release-card {
-        border-radius: 12px;
-        overflow: hidden;
-        position: relative;
-        border: 1px solid var(--border-color, rgba(0, 0, 0, .08));
-        box-shadow: 0 2px 8px rgba(0, 0, 0, .06);
-        transition: transform .2s, box-shadow .2s;
-        height: 100%;
-    }
+        /* ── Cards de lançamento ─── */
+        .release-card {
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid var(--border-color, rgba(0, 0, 0, .08));
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .06);
+            transition: transform .2s, box-shadow .2s;
+            height: 100%;
+        }
 
-    .release-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 32px rgba(255, 0, 137, .15);
-        border-color: rgba(255, 0, 137, .3);
-    }
+        .release-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(255, 0, 137, .15);
+            border-color: rgba(255, 0, 137, .3);
+        }
 
-    .release-cover {
-        width: 100%;
-        aspect-ratio: 1/1;
-        object-fit: cover;
-        cursor: pointer;
-        display: block;
-    }
+        .release-cover {
+            width: 100%;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            cursor: pointer;
+            display: block;
+        }
 
-    .release-cover-placeholder {
-        width: 100%;
-        aspect-ratio: 1/1;
-        background: linear-gradient(135deg, #2d2d2d, #1a1a1a);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        color: #555;
-    }
+        .release-cover-placeholder {
+            width: 100%;
+            aspect-ratio: 1/1;
+            background: linear-gradient(135deg, #2d2d2d, #1a1a1a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #555;
+        }
 
-    .release-body {
-        padding: 12px 14px;
-    }
+        .release-body {
+            padding: 12px 14px;
+        }
 
-    .release-title {
-        font-weight: 700;
-        font-size: .95rem;
-        margin: 0 0 2px;
-        line-height: 1.3;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+        .release-title {
+            font-weight: 700;
+            font-size: .95rem;
+            margin: 0 0 2px;
+            line-height: 1.3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
-    .release-artist {
-        font-size: .8rem;
-        color: #888;
-        margin-bottom: 6px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+        .release-artist {
+            font-size: .8rem;
+            color: #888;
+            margin-bottom: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
-    .release-meta {
-        font-size: .75rem;
-        color: #999;
-        margin-bottom: 8px;
-    }
+        .release-meta {
+            font-size: .75rem;
+            color: #999;
+            margin-bottom: 8px;
+        }
 
-    .release-actions {
-        display: flex;
-        gap: 6px;
-        flex-wrap: wrap;
-        padding: 0 14px 14px;
-    }
+        .release-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            padding: 0 14px 14px;
+        }
 
-    /* ── Status ribbon ─── */
-    .status-badge {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        font-size: .7rem;
-        font-weight: 700;
-        padding: 3px 9px;
-        border-radius: 20px;
-        text-transform: uppercase;
-        letter-spacing: .4px;
-        backdrop-filter: blur(6px);
-    }
+        /* ── Status ribbon ─── */
+        .status-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: .7rem;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            backdrop-filter: blur(6px);
+        }
 
-    .status-approved {
-        background: rgba(25, 135, 84, .85);
-        color: #fff;
-    }
+        .status-approved {
+            background: rgba(25, 135, 84, .85);
+            color: #fff;
+        }
 
-    .status-pending {
-        background: rgba(255, 193, 7, .9);
-        color: #000;
-    }
+        .status-pending {
+            background: rgba(255, 193, 7, .9);
+            color: #000;
+        }
 
-    .status-rejected {
-        background: rgba(220, 53, 69, .85);
-        color: #fff;
-    }
+        .status-rejected {
+            background: rgba(220, 53, 69, .85);
+            color: #fff;
+        }
 
-    .status-draft {
-        background: rgba(108, 117, 125, .8);
-        color: #fff;
-    }
+        .status-draft {
+            background: rgba(108, 117, 125, .8);
+            color: #fff;
+        }
 
-    .status-warning {
-        background: rgba(255, 193, 7, .9);
-        color: #000;
-    }
+        .status-warning {
+            background: rgba(255, 193, 7, .9);
+            color: #000;
+        }
 
-    /* Estilos para scroll suave nos tabs */
-    #status-tabs {
-        scrollbar-width: thin;
-        scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-    }
+        /* Estilos para scroll suave nos tabs */
+        #status-tabs {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+        }
 
-    #status-tabs::-webkit-scrollbar {
-        height: 4px;
-    }
+        #status-tabs::-webkit-scrollbar {
+            height: 4px;
+        }
 
-    #status-tabs::-webkit-scrollbar-track {
-        background: transparent;
-    }
+        #status-tabs::-webkit-scrollbar-track {
+            background: transparent;
+        }
 
-    #status-tabs::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.25);
-        border-radius: 4px;
-    }
+        #status-tabs::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 4px;
+        }
 
-    /* ── Modal do álbum ─── */
-    .album-modal-cover {
-        width: 100%;
-        max-width: 200px;
-        border-radius: 10px;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, .3);
-    }
+        /* ── Modal do álbum ─── */
+        .album-modal-cover {
+            width: 100%;
+            max-width: 200px;
+            border-radius: 10px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, .3);
+        }
 
-    .track-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 6px 0;
-        border-bottom: 1px solid rgba(255, 255, 255, .08);
-        font-size: .85rem;
-    }
+        .track-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            font-size: .85rem;
+        }
 
-    .track-row:last-child {
-        border-bottom: none;
-    }
+        .track-row:last-child {
+            border-bottom: none;
+        }
 
-    .track-num {
-        color: #ff0089;
-        font-weight: 700;
-        min-width: 24px;
-    }
+        .track-num {
+            color: #ff0089;
+            font-weight: 700;
+            min-width: 24px;
+        }
 
-    .track-isrc {
-        font-size: .7rem;
-        color: #888;
-    }
+        .track-isrc {
+            font-size: .7rem;
+            color: #888;
+        }
 
-    /* ── Estado vazio ─── */
-    .empty-state {
-        text-align: center;
-        padding: 60px 20px;
-    }
+        /* ── Estado vazio ─── */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
 
-    .empty-state i {
-        font-size: 4rem;
-        color: #dee2e6;
-        margin-bottom: 16px;
-    }
+        .empty-state i {
+            font-size: 4rem;
+            color: #dee2e6;
+            margin-bottom: 16px;
+        }
 
-    /* ── Streaming links no card ─── */
-    .streaming-links a {
-        font-size: 1.1rem;
-        color: #888;
-        margin-right: 6px;
-        transition: color .2s;
-        text-decoration: none;
-    }
+        /* ── Streaming links no card ─── */
+        .streaming-links a {
+            font-size: 1.1rem;
+            color: #888;
+            margin-right: 6px;
+            transition: color .2s;
+            text-decoration: none;
+        }
 
-    .streaming-links a:hover {
-        color: #ff0089;
-    }
+        .streaming-links a:hover {
+            color: #ff0089;
+        }
 
-    /* ── Modal de revisão ─── */
-    #reviewModal .form-label {
-        font-size: .85rem;
-    }
+        /* ── Modal de revisão ─── */
+        #reviewModal .form-label {
+            font-size: .85rem;
+        }
 
-    /* ── Acordeão de faixas no modal escuro ── */
-    .accordion-button {
-        background-color: #2c2c2c !important;
-        color: #fff !important;
-        border: 1px solid rgba(255, 255, 255, .1) !important;
-    }
+        /* ── Acordeão de faixas no modal escuro ── */
+        .accordion-button {
+            background-color: #2c2c2c !important;
+            color: #fff !important;
+            border: 1px solid rgba(255, 255, 255, .1) !important;
+        }
 
-    .accordion-button:not(.collapsed) {
-        background-color: #3a3a3a !important;
-        color: #FF0089 !important;
-    }
+        .accordion-button:not(.collapsed) {
+            background-color: #3a3a3a !important;
+            color: #FF0089 !important;
+        }
 
-    .accordion-button::after {
-        filter: brightness(0) invert(1);
-    }
+        .accordion-button::after {
+            filter: brightness(0) invert(1);
+        }
 
-    .accordion-item {
-        background-color: transparent;
-        border-color: rgba(255, 255, 255, .08);
-    }
+        .accordion-item {
+            background-color: transparent;
+            border-color: rgba(255, 255, 255, .08);
+        }
 
-    .accordion-body {
-        background-color: #1e1e1e;
-        color: #ddd;
-        font-size: .82rem;
-    }
+        .accordion-body {
+            background-color: #1e1e1e;
+            color: #ddd;
+            font-size: .82rem;
+        }
 
-    .track-detail-row {
-        display: flex;
-        justify-content: space-between;
-        padding: 4px 0;
-    }
+        .track-detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+        }
 
-    .track-detail-label {
-        opacity: .6;
-        font-size: .75rem;
-    }
+        .track-detail-label {
+            opacity: .6;
+            font-size: .75rem;
+        }
 
-    .track-detail-value {
-        font-weight: 500;
-    }
+        .track-detail-value {
+            font-weight: 500;
+        }
     </style>
 </head>
 
@@ -521,7 +521,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
         <?php /* ── NÍVEL 1: Crítico — bloqueia distribuição ── */ ?>
 
         <?php if (!$email_verified): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'danger',
                 'bi-envelope-exclamation-fill',
                 '<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta e receber notificações de pagamentos.',
@@ -532,7 +532,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
         <?php endif; ?>
 
         <?php if ($plan && !$plan_paid): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'warning',
                 'bi-clock-history',
                 '<strong>Pagamento pendente — ' . htmlspecialchars($plan['name_plan']) . '.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados até confirmação.',
@@ -541,7 +541,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
                 'banner-plan-pending'
             ); ?>
         <?php elseif (!$plan): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'danger',
                 'bi-credit-card-fill',
                 '<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir a tua música para +150 plataformas.',
@@ -554,7 +554,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
         <?php /* ── NÍVEL 2: Importante — perfil incompleto ── */ ?>
 
         <?php if ($plan_paid && !$has_artist): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'info',
                 'bi-person-plus-fill',
                 '<strong>Cria o teu perfil artístico.</strong> Tens plano activo mas ainda não criaste um perfil artístico. Precisas de um para poder lançar música.',
@@ -567,7 +567,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
         <?php /* ── NÍVEL 3: Informativo — conta bancária ── */ ?>
 
         <?php if ($plan_paid && $has_artist && !$bank_account): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'info',
                 'bi-bank',
                 '<strong>Conta bancária não registada.</strong> Para poder sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.',
@@ -588,7 +588,7 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
         }
         ?>
         <?php if ($rejected_account): ?>
-        <?php
+            <?php
             $rej_msg = '<strong>Conta ' . htmlspecialchars($rejected_account['type_account']) . ' rejeitada.</strong>';
             if ($rejected_account['reject_reason']) {
                 $rej_msg .= ' Motivo: <em>' . htmlspecialchars($rejected_account['reject_reason']) . '</em>.';
@@ -607,51 +607,57 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
 
         <!-- Header -->
         <div class="page-header mb-4">
-            <div class="row align-items-center mb-4">
+            <div class="row align-items-center" style="position:relative;z-index:1">
                 <div class="col-md-8">
-                    <div class="page-header-compact">
-                        <h1>
-                            <i class="bi bi-disc-fill me-3"></i>
-                            Meus Lançamentos
-                        </h1>
-                        <p class="lead">
-                            O <q>Meus Lançamentos</q> agrega todo o catálogo de lançamentos desta conta.
-                            Aqui você encontra todos os singles, EPs e álbuns distribuídos para as
-                            plataformas digitais. Utilize a busca para encontrar rapidamente o que procura.
-                        </p>
-                    </div>
+                    <nav aria-label="breadcrumb" style="margin-bottom:8px">
+                        <ol class="breadcrumb mb-0" style="font-size:.90rem;opacity:.6">
+                            <li class="breadcrumb-item"><a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/painel"
+                                    class="text-white text-decoration-none">Dashboard</a></li>
+                            <li class="breadcrumb-item active text-white">Lançamentos</li>
+                        </ol>
+                    </nav>
+                    <h1 class="fw-bold mb-1" style="font-size:1.6rem">
+                        <i class="bi bi-disc-fill me-2" style="color:#FF0089"></i>Meus Lançamentos
+                    </h1>
+                    <p class="mb-0" style="font-size:.99rem;opacity:.7">
+                        O <q>Meus Lançamentos</q> agrega todo o catálogo de lançamentos desta conta.
+                        Aqui você encontra todos os singles, EPs e álbuns distribuídos para as
+                        plataformas digitais. Utilize a busca para encontrar rapidamente o que procura.
+                    </p>
                 </div>
                 <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                    <button class="btn btn-secondary" id="btn-drafts">
+                    <button class="btn btn-secondary me-2" style="border:none;border-radius:20px;" id="btn-drafts">
                         <i class="bi bi-pencil"></i> Rascunhos
                         <span class="badge bg-warning" id="draft-count-badge">0</span>
                     </button>
                     <?php if ($can_create_release): ?>
-                    <button class="btn btn-pink" onclick="window.location='creat-release'">
-                        <i class="bi bi-plus"></i> Novo lançamento
-                    </button>
+                        <button class="btn fw-bold" style="background:#FF0089;color:#fff;border:none;border-radius:20px;"
+                            data-bs-toggle="modal" data-bs-target="#modalNewSplit"
+                            onclick="window.location='creat-release'">
+                            <i class="bi bi-plus me-1"></i> Novo lançamento
+                        </button>
                     <?php else: ?>
-                    <button class="btn btn-secondary" disabled data-bs-toggle="tooltip"
-                        title="<?php echo htmlspecialchars($limit_message); ?>">
-                        <i class="bi bi-plus"></i> Novo lançamento
-                    </button>
-                    <a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/all-plans" class="btn btn-pink ms-2">
-                        <i class="bi bi-arrow-up-circle"></i> Fazer Upgrade
-                    </a>
-                    <div class="small mt-2">
-
-                        <span class="text-dark badge bg-warning"> <i
-                                class="bi bi-exclamation-circle me-1"></i><?php echo htmlspecialchars($limit_message); ?></span>
-                    </div>
+                        <button class="btn btn-secondary me-2" disabled data-bs-toggle="tooltip"
+                            style="border:none;border-radius:20px;" title="<?php echo htmlspecialchars($limit_message); ?>">
+                            <i class="bi bi-plus me-1"></i> Novo lançamento
+                        </button>
+                        <a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/all-plans" class="btn btn-pink ms-2"
+                            style="border-radius:20px">
+                            <i class="bi bi-arrow-up-circle me-1"></i> Fazer Upgrade
+                        </a>
+                        <div class="small mt-2">
+                            <span class="text-dark badge bg-warning"> <i
+                                    class="bi bi-exclamation-circle me-1"></i><?php echo htmlspecialchars($limit_message); ?></span>
+                        </div>
                     <?php endif; ?>
                 </div>
             </div>
             <!-- Ícone decorativo: disco -->
             <style>
-            .page-header::before {
-                content: '\F428';
-                /* bi-disc-fill */
-            }
+                .page-header::before {
+                    content: '\F428';
+                    /* bi-disc-fill */
+                }
             </style>
         </div>
 
@@ -1107,8 +1113,9 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
 
                     <div class="alert alert-warning small" id="deleteStatusRecoveryAlert">
                         <i class="bi bi-exclamation-triangle me-1"></i>
-                        <span id="deleteStatusRecoveryText">Se mudaste de ideia, podes cancelar este pedido. Após <strong>72 horas</strong>, o lançamento
-                        será eliminado permanentemente.</span>
+                        <span id="deleteStatusRecoveryText">Se mudaste de ideia, podes cancelar este pedido. Após
+                            <strong>72 horas</strong>, o lançamento
+                            será eliminado permanentemente.</span>
                     </div>
 
                     <div id="deleteStatusFeedback" class="d-none"></div>
@@ -1133,11 +1140,11 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
     <script src="<?php echo APP_URL  ?>/js/theme.wp.js"></script>
     <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
     <script>
-    // ── Constantes injectadas pelo PHP ──────────────
-    const CSRF = '<?php echo $csrf; ?>';
-    const BASE_URL = '<?php echo APP_URL; ?>';
-    const ALBUMS_DB = <?php echo $albums_json; ?>;
-    const DRAFT_KEY = 'wasom_drafts_<?php echo $id_users; ?>';
+        // ── Constantes injectadas pelo PHP ──────────────
+        const CSRF = '<?php echo $csrf; ?>';
+        const BASE_URL = '<?php echo APP_URL; ?>';
+        const ALBUMS_DB = <?php echo $albums_json; ?>;
+        const DRAFT_KEY = 'wasom_drafts_<?php echo $id_users; ?>';
     </script>
     <script src="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/launch/js/releases.js"></script>
 

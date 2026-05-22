@@ -312,13 +312,13 @@ body.light-mode .dropdown-item-text {
 
 /* Item ativo no offcanvas */
 .offcanvas .nav-link.active {
-    color: #ff0089 !important;
-    font-weight: 600;
+  color: #ff0089 !important;
+  font-weight: 600;
 }
 
 /* Item ativo no bottom nav (garantir prioridade) */
 .bottom-nav .nav-link.active {
-    color: #ff0089 !important;
+  color: #ff0089 !important;
 }
 /* ══════════════════════════════════════════════════════
    MODO ESCURO – PÁGINAS DE TERMOS E PRIVACIDADE
@@ -473,28 +473,29 @@ body.light-mode .dropdown-item-text {
 
 /* Estilos base para todos os headers de página */
 .page-header {
-  background: linear-gradient(135deg, #ff0089 0%, #ff4d4d 100%);
-  border-radius: 15px;
-  padding: 2rem;
-  margin-bottom: 2rem;
-  color: white;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-radius: 20px;
+  padding: 28px 32px;
+  color: #fff;
   position: relative;
   overflow: hidden;
+  margin-bottom: 28px;
 }
 
-.page-header::before {
+.page-header::after {
   font-family: "bootstrap-icons";
+  content: "";
   position: absolute;
-  right: -20px;
-  top: -20px;
-  font-size: 10rem;
-  opacity: 0.1;
-  color: var(--text-light);
-  transform: rotate(15deg);
+  right: -60px;
+  top: -60px;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 0, 137, 0.18), transparent 70%);
 }
 
 .page-header h1 {
-  font-size: 2.5rem;
+  font-size: 1.6rem;
   font-weight: 800;
   margin-bottom: 0.5rem;
   position: relative;
@@ -652,74 +653,74 @@ body.light-mode .dropdown-item-text {
 
 /* ── Dropdown do utilizador com scroll ── */
 .user-dropdown {
-    max-height: 80vh;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    background-color: #000;
-    border: none;
-    border-radius: 12px;
-    padding: 0.5rem 0;
-    min-width: 280px;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
-    position: absolute !important;   /* garante que o Bootstrap não o reposicione mal */
-    right: 0 !important;
-    left: auto !important;
-    transform: none !important;      /* evita deslocamentos estranhos em mobile */
+  max-height: 80vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background-color: #000;
+  border: none;
+  border-radius: 12px;
+  padding: 0.5rem 0;
+  min-width: 280px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
+  position: absolute !important; /* garante que o Bootstrap não o reposicione mal */
+  right: 0 !important;
+  left: auto !important;
+  transform: none !important; /* evita deslocamentos estranhos em mobile */
 }
 
 .user-dropdown .dropdown-item {
-    color: #fff;
-    display: flex;
-    align-items: center;
-    padding: 0.7rem 1.25rem;
-    font-size: 0.95rem;
-    transition: background-color 0.2s, color 0.2s;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0.7rem 1.25rem;
+  font-size: 0.95rem;
+  transition: background-color 0.2s, color 0.2s;
 }
 
 .user-dropdown .dropdown-item i {
-    width: 1.4rem;
-    font-size: 1.1rem;
-    margin-right: 0.5rem;
-    color: #FF0089;
+  width: 1.4rem;
+  font-size: 1.1rem;
+  margin-right: 0.5rem;
+  color: #ff0089;
 }
 
 .user-dropdown .dropdown-item:hover {
-    background-color: #FF0089;
-    color: white;
+  background-color: #ff0089;
+  color: white;
 }
 
 .user-dropdown .dropdown-item:hover i {
-    color: white;
+  color: white;
 }
 
 .user-dropdown .dropdown-divider {
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    margin: 0.25rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 0.25rem 0;
 }
 
 .user-dropdown .dropdown-item-text {
-    color: #aaa;
-    padding: 0.5rem 1.25rem;
+  color: #aaa;
+  padding: 0.5rem 1.25rem;
 }
 
 .user-dropdown .dropdown-item:focus {
-    background-color: #FF0089;
-    color: white;
-    outline: none;
+  background-color: #ff0089;
+  color: white;
+  outline: none;
 }
 
 @media (max-width: 991.98px) {
-    .user-dropdown {
-        right: 0 !important;
-        left: auto !important;
-        transform: none !important;
-        margin-right: 10px; /* pequeno espaço da borda */
-    }
+  .user-dropdown {
+    right: 0 !important;
+    left: auto !important;
+    transform: none !important;
+    margin-right: 10px; /* pequeno espaço da borda */
+  }
 }
 
 /* Mantém apenas o necessário do .user-menu (se ainda o usares) */
 .user-menu {
-    position: relative;
+  position: relative;
 }
 
 /* Avatar trigger */

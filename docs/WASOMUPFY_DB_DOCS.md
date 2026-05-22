@@ -1,4 +1,4 @@
-# Wasom Upfy v2.0 — Documentação do Banco de Dados
+# Wasom Upfy v2.0.1.1 — Documentação do Banco de Dados
 
 **Versão:** 2.0  
 **Motor:** MySQL / MariaDB (InnoDB)  
@@ -56,7 +56,7 @@ _report_template → _report_history → _report_schedule
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                    WASOM UPFY v2.0                       │
+│                    WASOM UPFY v2.0.1.1                       │
 ├──────────────┬──────────────┬──────────────┬────────────┤
 │  PLATAFORMA  │  UTILIZADORES│  FUNCIONÁRIOS│   PLANOS   │
 │  _platform   │  _users      │  _employees  │  _plans    │
@@ -475,7 +475,7 @@ Os índices mais importantes para queries frequentes:
 
 ---
 
-## Migrações do banco antigo → v2.0
+## Migrações do banco antigo → v2.0.1.1
 
 | Tabela antiga | Tabela nova | O que mudou |
 |---|---|---|
@@ -523,4 +523,4 @@ Os índices mais importantes para queries frequentes:
 
 ---
 
-*Documentação gerada para Wasom Upfy v2.0 — atualizar este ficheiro sempre que novas tabelas forem adicionadas ao projeto.*
+*Documentação gerada para Wasom Upfy v2.0.1.1 — atualizar este ficheiro sempre que novas tabelas forem adicionadas ao projeto.*

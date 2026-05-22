@@ -1,6 +1,6 @@
 <?php
 // ══════════════════════════════════════════════════════
-// WASOM UPFY v2.0 — Finanças: Visão Geral
+// WASOM UPFY v2.0.1.1 — Finanças: Visão Geral
 // Arquivo: dashboard/finances/overview.php
 // ══════════════════════════════════════════════════════
 require_once __DIR__ . '/../../authentic/include/functions.php';
@@ -355,18 +355,27 @@ $user_artist_name = htmlspecialchars($user['name_artist_band'] ?? $user['first_n
         <?php endif; ?>
 
 
-        <!-- Cabeçalho -->
+        <!-- header -->
         <div class="page-header">
-            <div class="row align-items-center mb-4">
+            <div class="row align-items-center" style="position:relative;z-index:1">
                 <div class="col-md-8">
-                    <div class="page-header-compact">
-                        <h1><i class="bi bi-currency-dollar me-3"></i>Finanças</h1>
-                        <p class="lead">Acompanha o histórico de receitas, saques realizados e saldo disponível.</p>
-                    </div>
+                    <nav aria-label="breadcrumb" style="margin-bottom:8px">
+                        <ol class="breadcrumb mb-0" style="font-size:.90rem;opacity:.6">
+                            <li class="breadcrumb-item"><a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/painel"
+                                    class="text-white text-decoration-none">Dashboard</a></li>
+                            <li class="breadcrumb-item active text-white">Finanças</li>
+                        </ol>
+                    </nav>
+                    <h1 class="fw-bold mb-1" style="font-size:1.6rem">
+                        <i class="bi bi bi-currency-dollar me-2" style="color:#FF0089"></i>Finanças
+                    </h1>
+                    <p class="mb-0" style="font-size:.99rem;opacity:.7">
+                        Acompanha o histórico de receitas, saques realizados e saldo disponível.
+                    </p>
                 </div>
                 <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                    <a href="report" class="btn btn-pink">
-                        <i class="bi bi-file-text me-1"></i> Relatórios
+                    <a href="report" class="btn ms-2" style="background:#FF0089;color:#fff;border-radius:20px">
+                        <i class="bi bi-arrow-left me-1"></i>Relatórios
                     </a>
                 </div>
             </div>

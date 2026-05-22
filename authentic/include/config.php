@@ -1,6 +1,6 @@
 <?php
 // ══════════════════════════════════════════════
-// WASOM UPFY v2.0 — Configurações Globais
+// WASOM UPFY v2.0.1.1 — Configurações Globais
 // Arquivo: authentic/include/config.php
 // ══════════════════════════════════════════════
 
@@ -13,7 +13,7 @@ define('DB_CHARSET', 'utf8mb4');
 
 // ─── Aplicação ────────────────────────────────
 define('APP_NAME',    'Wasom Upfy');
-define('APP_VERSION', '2.0');
+define('APP_VERSION', '2.0.1');
 define('APP_URL',     'https://wasomupfy.rf.gd'); // Mudar em produção
 define('APP_URL_PANEL',     'dashboard');
 define('APP_ENV',     'production');                 // 'development' = debug local | 'production' = envio real

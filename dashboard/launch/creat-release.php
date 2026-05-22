@@ -631,15 +631,17 @@ error_reporting(E_ALL);
               font-family: Arial, sans-serif;
             "><?php echo APP_NAME; ?></span>
             </a>
-            <div class="d-flex align-items-center gap-3">
+            <div class="d-flex align-items-center gap-2">
                 <span class="text-white-50 small d-none d-md-block">
                     <i class="bi bi-disc me-1"></i>Novo Lançamento
                     <span class="badge ms-2"
                         style="background:rgba(255,0,137,.2);color:#ff0089"><?php echo htmlspecialchars($plan['name_plan']); ?></span>
                 </span>
-                <a href="releases" class="btn btn-outline-light btn-sm">
-                    <i class="bi bi-arrow-left me-1"></i>Cancelar
-                </a>
+                <div class="align-items-end">
+                    <a href="releases" class="btn btn-outline-light btn-sm">
+                        <i class="bi bi-arrow-left me-1"></i>Cancelar
+                    </a>
+                </div>
             </div>
         </div>
     </nav>
@@ -699,7 +701,7 @@ error_reporting(E_ALL);
                     <input type="file" id="cover-input" accept="image/jpeg,image/png,image/webp" class="d-none" />
                     <div class="cover-requirements text-muted" style="max-width:280px;margin:8px auto 0">
                         <i class="bi bi-info-circle me-1"></i>
-                        JPG ou PNG &nbsp;·&nbsp; Mínimo 1400×1400 px &nbsp;·&nbsp; Quadrada &nbsp;·&nbsp; Máx. 10 MB
+                        JPG ou PNG &nbsp;·&nbsp; Mínimo 3000×3000 px &nbsp;·&nbsp; Quadrada &nbsp;·&nbsp; Máx. 5 MB
                     </div>
                     <div id="cover-error" class="text-danger small mt-1 text-center d-none"></div>
                     <div class="text-center mt-2">
@@ -976,12 +978,14 @@ error_reporting(E_ALL);
                     <i class="bi bi-info-circle-fill me-2"></i>
                     <strong>Requisitos dos áudios:</strong>
                     <ul class="mb-0 mt-1">
-                        <li>Formatos aceites: <strong>WAV ou FLAC</strong> (sem perdas)</li>
-                        <li>Taxa de amostragem: <strong>44.1 kHz</strong></li>
-                        <li>Resolução: <strong>16 ou 24 bit</strong></li>
+                        <li>Formato aceite: <strong>MP3</strong> (320 kbps recomendado)</li>
                         <li>Tamanho máximo por faixa: <strong>20 MB</strong></li>
-                        <li>Tamanho máximo do envio total: <strong>25 MB</strong></li>
-                        <li><em>Dica: usa FLAC para reduzir o tamanho dos ficheiros mantendo a qualidade.</em></li>
+                        <li>Tamanho total máximo: <strong>24 MB</strong> (para todos os áudios juntos)</li>
+                        <li><em>1. Dica: a 320 kbps, uma música de 4 min ocupa ~9 MB — tens margem para 2 faixas
+                                confortavelmente.</em></li>
+                        <li><em>2. Dica: Os ficheiros são convertido em WAV pelo nosso sistema, com até taxa de
+                                amostragem: <strong>44.1 kHz</strong> e resolução: <strong>16 ou 24 bit</strong></em>
+                        </li>
                     </ul>
                 </div>
                 <div class="d-flex align-items-center justify-content-between mb-1">
@@ -1117,9 +1121,9 @@ error_reporting(E_ALL);
                             <div class="row g-2" id="stores-grid-<?php echo md5($region); ?>">
                                 <?php foreach ($stores_list as $store): ?>
                                 <?php
-$slug  = $store['slug_store'];
-$si    = $store_icons[$slug] ?? $store_icons['default'];
-?>
+                                        $slug  = $store['slug_store'];
+                                        $si    = $store_icons[$slug] ?? $store_icons['default'];
+                                        ?>
                                 <div class="col-4 col-md-3 col-lg-2">
                                     <div class="store-card selected" data-store-id="<?php echo $store['id_store']; ?>"
                                         onclick="toggleStore(this)">
@@ -1201,7 +1205,7 @@ $si    = $store_icons[$slug] ?? $store_icons['default'];
                     <i class="bi bi-shield-check flex-shrink-0 mt-1 fs-5"></i>
                     <div style="font-size:.85rem">
                         <strong>Ao distribuir este lançamento, concordas em cumprir todos os nossos
-                            <a href="<?php  echo APP_URL .'/'. APP_URL_PANEL ?>/page/politicies/terms"
+                            <a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/politicies/terms"
                                 style="color:var(--wasom)">Termos
                                 e
                                 Condições</a> bem como as nossas
@@ -1628,9 +1632,9 @@ $si    = $store_icons[$slug] ?? $store_icons['default'];
                 <!-- Dentro do template, após o ISRC -->
                 <div class="col-md-6">
                     <label class="form-label fw-semibold small">
-                        Arquivo de Áudio <span class="text-danger">* (WAV/FLAC, máx. 20 MB)</span>
+                        Arquivo de Áudio <span class="text-danger">* (MP3, máx. 20 MB)</span>
                         <i class="bi bi-info-circle ms-1" data-bs-toggle="tooltip"
-                            title="Formato WAV ou FLAC (sem perdas), 16/24 bit, 44.1kHz, máximo 20 MB por faixa"></i>
+                            title="Formato MP3, 320 kbps recomendado, máximo 20 MB por faixa"></i>
                     </label>
                     <div class="form-text progress-track" style="font-size:.7rem">
                         <span class="audio-filename"></span>
@@ -1638,7 +1642,7 @@ $si    = $store_icons[$slug] ?? $store_icons['default'];
                     </div>
                     <div class="input-group">
                         <input type="file" class="form-control form-control-sm track-audio"
-                            accept=".wav,.flac,audio/wav,audio/flac,audio/x-flac" required />
+                            accept=".mp3,audio/mpeg,audio/mp3" required />
                         <button class="btn btn-outline-secondary btn-sm track-audio-clear" type="button"
                             style="display:none" onclick="clearAudioFile(this)">
                             <i class="bi bi-x"></i>
@@ -1678,10 +1682,10 @@ $si    = $store_icons[$slug] ?? $store_icons['default'];
     const STORES_DATA = <?php echo $stores_json; ?>;
     const DRAFT_KEY = 'wasom_drafts_<?php echo $id_users; ?>';
     const DRAFT_FROM_DB = <?php echo $draft_from_db ? json_encode([
-        'album'  => $draft_from_db,
-        'tracks' => $draft_tracks ?? [],
-        'stores' => $draft_stores ?? []
-    ]) : 'null'; ?>;
+                                    'album'  => $draft_from_db,
+                                    'tracks' => $draft_tracks ?? [],
+                                    'stores' => $draft_stores ?? []
+                                ]) : 'null'; ?>;
     </script>
     <script src="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/launch/js/creat-release.js"></script>
 

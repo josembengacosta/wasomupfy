@@ -1,6 +1,6 @@
 <?php
 // ══════════════════════════════════════════════════════
-// WASOM UPFY v2.0 — Exportar Dados de Estatísticas
+// WASOM UPFY v2.0.1.1 — Exportar Dados de Estatísticas
 // Arquivo: dashboard/analytics/export.php
 // ══════════════════════════════════════════════════════
 require_once __DIR__ . '/../../authentic/include/functions.php';
@@ -588,19 +588,40 @@ $months_pt = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Ou
             ?>
         <?php endif; ?>
         <!-- Hero -->
-        <div class="export-hero">
-            <div class="row align-items-center">
+        <div class="page-header mb-4">
+            <div class="row align-items-center" style="position:relative;z-index:1">
                 <div class="col-md-8">
-                    <h1><i class="bi bi-download me-3"></i>Exportar Dados</h1>
-                    <p class="lead mb-0">Faz download dos teus dados de streams, royalties e faixas em formato CSV,
-                        compatível com Excel e Google Sheets.</p>
+                    <nav aria-label="breadcrumb" style="margin-bottom:8px">
+                        <ol class="breadcrumb mb-0" style="font-size:.90rem;opacity:.6">
+                            <li class="breadcrumb-item"><a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/painel"
+                                    class="text-white text-decoration-none">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="statistics"
+                                    class="text-white text-decoration-none">Estatísticas</a></li>
+                            <li class="breadcrumb-item active text-white">Exportar Dados</li>
+                        </ol>
+                    </nav>
+                    <h1 class="fw-bold mb-1" style="font-size:1.6rem">
+                        <i class="bi bi-download me-2" style="color:#FF0089"></i>Exportar Dados
+                    </h1>
+                    <p class="mb-0" style="font-size:.99rem;opacity:.7">
+                        Faz download dos teus dados de streams, royalties e faixas em formato CSV,
+                        compatível com Excel e Google Sheets
+                    </p>
                 </div>
                 <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                    <a href="<?php echo $context === 'compare' ? 'compare' : 'statistics'; ?>" class="btn btn-pink">
-                        <i class="bi bi-arrow-left"></i> Voltar
+                    <a href="<?php echo $context === 'compare' ? 'compare' : 'statistics'; ?>"
+                        class="btn btn-secondary me-2" style="border-radius:20px">
+                        <i class="bi bi-arrow-left me-1"></i> Voltar
                     </a>
                 </div>
             </div>
+            <!-- Ícone decorativo: download -->
+            <style>
+                .page-header::before {
+                    content: '\F428';
+                    /* bi bi-download */
+                }
+            </style>
         </div>
 
         <!-- Filtros -->

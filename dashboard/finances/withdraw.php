@@ -1,6 +1,6 @@
 <?php
 // ══════════════════════════════════════════════════════
-// WASOM UPFY v2.0 — Contas de Saque
+// WASOM UPFY v2.0.1.1 — Contas de Saque
 // Arquivo: dashboard/finances/withdraw.php
 // ══════════════════════════════════════════════════════
 require_once __DIR__ . '/../../authentic/include/functions.php';
@@ -141,58 +141,58 @@ $banks = ['Banco Angolano de Investimentos (BAI)', 'Banco de Fomento Angola (BFA
     <title>Conta de Saque — <?php echo APP_NAME; ?></title>
 
     <style>
-    .upload-zone {
-        border: 2px dashed #dee2e6;
-        border-radius: 10px;
-        padding: 1.25rem;
-        text-align: center;
-        cursor: pointer;
-        transition: all .2s;
-        position: relative;
-        background: #fafafa;
-    }
+        .upload-zone {
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 1.25rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all .2s;
+            position: relative;
+            background: #fafafa;
+        }
 
-    .upload-zone:hover,
-    .upload-zone.drag-over {
-        border-color: #FF0089;
-        background: rgba(255, 0, 137, .04);
-    }
+        .upload-zone:hover,
+        .upload-zone.drag-over {
+            border-color: #FF0089;
+            background: rgba(255, 0, 137, .04);
+        }
 
-    .upload-zone input[type=file] {
-        position: absolute;
-        inset: 0;
-        opacity: 0;
-        cursor: pointer;
-        width: 100%;
-        height: 100%;
-    }
+        .upload-zone input[type=file] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
 
-    .upload-zone .bi-prev {
-        max-height: 110px;
-        border-radius: 8px;
-        margin-top: .5rem;
-        object-fit: cover;
-    }
+        .upload-zone .bi-prev {
+            max-height: 110px;
+            border-radius: 8px;
+            margin-top: .5rem;
+            object-fit: cover;
+        }
 
-    .type-card-sel {
-        cursor: pointer;
-        border: 2px solid transparent;
-        border-radius: 10px;
-        padding: .5rem;
-        transition: .2s;
-    }
+        .type-card-sel {
+            cursor: pointer;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            padding: .5rem;
+            transition: .2s;
+        }
 
-    .type-card-sel.active {
-        border-color: #FF0089 !important;
-    }
+        .type-card-sel.active {
+            border-color: #FF0089 !important;
+        }
 
-    .type-card-sel .card {
-        transition: .2s;
-    }
+        .type-card-sel .card {
+            transition: .2s;
+        }
 
-    .type-card-sel.active .card i {
-        color: #FF0089 !important;
-    }
+        .type-card-sel.active .card i {
+            color: #FF0089 !important;
+        }
     </style>
 </head>
 
@@ -252,7 +252,7 @@ $banks = ['Banco Angolano de Investimentos (BAI)', 'Banco de Fomento Angola (BFA
         <?php /* ── NÍVEL 1: Crítico — bloqueia distribuição ── */ ?>
 
         <?php if (!$email_verified): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'danger',
                 'bi-envelope-exclamation-fill',
                 '<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta e receber notificações de pagamentos.',
@@ -263,7 +263,7 @@ $banks = ['Banco Angolano de Investimentos (BAI)', 'Banco de Fomento Angola (BFA
         <?php endif; ?>
 
         <?php if ($plan && !$plan_paid): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'warning',
                 'bi-clock-history',
                 '<strong>Pagamento pendente — ' . htmlspecialchars($plan['name_plan']) . '.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados até confirmação.',
@@ -272,7 +272,7 @@ $banks = ['Banco Angolano de Investimentos (BAI)', 'Banco de Fomento Angola (BFA
                 'banner-plan-pending'
             ); ?>
         <?php elseif (!$plan): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'danger',
                 'bi-credit-card-fill',
                 '<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir a tua música para +150 plataformas.',
@@ -285,7 +285,7 @@ $banks = ['Banco Angolano de Investimentos (BAI)', 'Banco de Fomento Angola (BFA
         <?php /* ── NÍVEL 2: Importante — perfil incompleto ── */ ?>
 
         <?php if ($plan_paid && !$has_artist): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'info',
                 'bi-person-plus-fill',
                 '<strong>Cria o teu perfil artístico.</strong> Tens plano activo mas ainda não criaste um perfil artístico. Precisas de um para poder lançar música.',
@@ -298,7 +298,7 @@ $banks = ['Banco Angolano de Investimentos (BAI)', 'Banco de Fomento Angola (BFA
         <?php /* ── NÍVEL 3: Informativo — conta bancária ── */ ?>
 
         <?php if ($plan_paid && $has_artist && !$bank_account): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'info',
                 'bi-bank',
                 '<strong>Conta bancária não registada.</strong> Para poder sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.',
@@ -319,7 +319,7 @@ $banks = ['Banco Angolano de Investimentos (BAI)', 'Banco de Fomento Angola (BFA
         }
         ?>
         <?php if ($rejected_account): ?>
-        <?php
+            <?php
             $rej_msg = '<strong>Conta ' . htmlspecialchars($rejected_account['type_account']) . ' rejeitada.</strong>';
             if ($rejected_account['reject_reason']) {
                 $rej_msg .= ' Motivo: <em>' . htmlspecialchars($rejected_account['reject_reason']) . '</em>.';
@@ -337,33 +337,50 @@ $banks = ['Banco Angolano de Investimentos (BAI)', 'Banco de Fomento Angola (BFA
         <?php endif; ?>
         <!-- Page Header -->
         <div class="page-header">
-            <div class="row align-items-center mb-4">
+            <div class="row align-items-center" style="position:relative;z-index:1">
                 <div class="col-md-8">
-                    <div class="page-header-compact">
-                        <h1><i class="bi bi-wallet2 me-3"></i>Saques de Fundos</h1>
-                        <p class="lead">Podes fazer o saque dos valores disponíveis na tua conta a partir desta sessão.
-                            Preenche todos os campos para não ocorrer nenhum erro na operação.</p>
-                    </div>
+                    <nav aria-label="breadcrumb" style="margin-bottom:8px">
+                        <ol class="breadcrumb mb-0" style="font-size:.90rem;opacity:.6">
+                            <li class="breadcrumb-item"><a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/painel"
+                                    class="text-white text-decoration-none">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="overview"
+                                    class="text-white text-decoration-none">Finanças</a></li>
+                            <li class="breadcrumb-item active text-white">Saques de Fundos</li>
+                        </ol>
+                    </nav>
+                    <h1 class="fw-bold mb-1" style="font-size:1.6rem">
+                        <i class="bi bi-wallet2 me-2" style="color:#FF0089"></i>Saques de Fundos
+                    </h1>
+                    <p class="mb-0" style="font-size:.99rem;opacity:.7">
+                        Podes fazer o saque dos valores disponíveis na tua conta a partir desta sessão.
+                        Preenche todos os campos para não ocorrer nenhum erro na operação
+                    </p>
                 </div>
                 <div class="col-md-4 text-md-end mt-3 mt-md-0">
                     <?php if ($can_add_express || $can_add_iban): ?>
-                    <button class="btn btn-pink" data-bs-toggle="modal" data-bs-target="#creatnewAccount">
-                        <i class="bi bi-plus"></i> Criar conta
-                    </button>
+
+                        <button class="btn fw-bold" style="background:#FF0089;color:#fff;border:none;border-radius:20px;"
+                            data-bs-toggle="modal" data-bs-target="#creatnewAccount">
+                            <i class="bi bi-plus me-1"></i>Criar conta
+                        </button>
                     <?php else: ?>
-                    <button class="btn btn-pink" disabled title="Já tens o máximo de 2 contas">
-                        <i class="bi bi-plus"></i> Criar conta
-                    </button>
+
+                        <button class="btn fw-bold" style="background:#FF0089;color:#fff;border:none;border-radius:20px;"
+                            disabled title="Já tens o máximo de 2 contas">
+                            <i class="bi bi-plus me-1"></i>Criar conta
+                        </button>
+
                     <?php endif; ?>
-                    <button class="btn btn-light ms-2" onclick="window.location='overview'">
-                        <i class="bi bi-arrow-left"></i> Voltar
-                    </button>
+                    <a href="overview" class="btn ms-2"
+                        style="background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:20px">
+                        <i class="bi bi-arrow-left me-1"></i>Voltar
+                    </a>
                 </div>
             </div>
             <style>
-            .page-header::before {
-                content: '\F5A8';
-            }
+                .page-header::before {
+                    content: '\F5A8';
+                }
             </style>
         </div>
 
@@ -399,67 +416,67 @@ $banks = ['Banco Angolano de Investimentos (BAI)', 'Banco de Fomento Angola (BFA
                             data-bs-parent="#accordionExample">
                             <div class="mt-3">
                                 <?php if ($acc_express): ?>
-                                <form action="finances/account_process" method="post"
-                                    class="needs-validation mb-2 row text-start g-3" id="form-express" novalidate>
-                                    <input type="hidden" name="csrf_token"
-                                        value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
-                                    <input type="hidden" name="action" value="edit">
-                                    <input type="hidden" name="id_account"
-                                        value="<?php echo $acc_express['id_account']; ?>">
-                                    <input type="hidden" name="account_type" value="express">
+                                    <form action="finances/account_process" method="post"
+                                        class="needs-validation mb-2 row text-start g-3" id="form-express" novalidate>
+                                        <input type="hidden" name="csrf_token"
+                                            value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
+                                        <input type="hidden" name="action" value="edit">
+                                        <input type="hidden" name="id_account"
+                                            value="<?php echo $acc_express['id_account']; ?>">
+                                        <input type="hidden" name="account_type" value="express">
 
-                                    <div class="mb-2 col-md-4">
-                                        <label class="form-label">Nome completo</label>
-                                        <input type="text" name="full_name" class="form-control" required minlength="4"
-                                            value="<?php echo htmlspecialchars($acc_express['full_name_account']); ?>"
-                                            placeholder="Nome do titular" />
-                                    </div>
-                                    <div class="mb-2 col-md-4">
-                                        <label class="form-label">Número Express</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text">+244</span>
-                                            <input type="tel" name="express_number" class="form-control" required
-                                                value="<?php echo preg_replace('/^\+?244/', '', $acc_express['tel_account'] ?? ''); ?>"
-                                                placeholder="9XX XXX XXX" maxlength="9"
-                                                oninput="this.value=this.value.replace(/\D/g,'')" />
+                                        <div class="mb-2 col-md-4">
+                                            <label class="form-label">Nome completo</label>
+                                            <input type="text" name="full_name" class="form-control" required minlength="4"
+                                                value="<?php echo htmlspecialchars($acc_express['full_name_account']); ?>"
+                                                placeholder="Nome do titular" />
                                         </div>
-                                    </div>
-                                    <div class="mb-2 col-md-4">
-                                        <label class="form-label">Telefone alternativo</label>
-                                        <input type="tel" name="tel_alt" class="form-control"
-                                            value="<?php echo htmlspecialchars($acc_express['email_account'] ?? ''); ?>"
-                                            placeholder="+244 9XX XXX XXX" />
-                                    </div>
-
-                                    <?php if (($acc_express['status_account'] ?? '') === 'rejected' && $acc_express['reject_reason']): ?>
-                                    <div class="col-12">
-                                        <div class="alert alert-danger py-2 small">
-                                            <i class="bi bi-x-circle me-1"></i>
-                                            <strong>Motivo de rejeição:</strong>
-                                            <?php echo htmlspecialchars($acc_express['reject_reason']); ?>
+                                        <div class="mb-2 col-md-4">
+                                            <label class="form-label">Número Express</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">+244</span>
+                                                <input type="tel" name="express_number" class="form-control" required
+                                                    value="<?php echo preg_replace('/^\+?244/', '', $acc_express['tel_account'] ?? ''); ?>"
+                                                    placeholder="9XX XXX XXX" maxlength="9"
+                                                    oninput="this.value=this.value.replace(/\D/g,'')" />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <?php endif; ?>
+                                        <div class="mb-2 col-md-4">
+                                            <label class="form-label">Telefone alternativo</label>
+                                            <input type="tel" name="tel_alt" class="form-control"
+                                                value="<?php echo htmlspecialchars($acc_express['email_account'] ?? ''); ?>"
+                                                placeholder="+244 9XX XXX XXX" />
+                                        </div>
 
-                                    <div class="mt-2 col-12 d-flex gap-2 justify-content-between">
-                                        <button type="button" class="btn btn-danger btn-sm"
-                                            onclick="confirmDelete(<?php echo $acc_express['id_account']; ?>, 'Express')">
-                                            <i class="bi bi-trash me-1"></i>Eliminar conta Express
-                                        </button>
-                                        <button type="submit" class="btn btn-pink btn-sm">
-                                            <i class="bi bi-save me-1"></i>Alterar
-                                        </button>
-                                    </div>
-                                </form>
+                                        <?php if (($acc_express['status_account'] ?? '') === 'rejected' && $acc_express['reject_reason']): ?>
+                                            <div class="col-12">
+                                                <div class="alert alert-danger py-2 small">
+                                                    <i class="bi bi-x-circle me-1"></i>
+                                                    <strong>Motivo de rejeição:</strong>
+                                                    <?php echo htmlspecialchars($acc_express['reject_reason']); ?>
+                                                </div>
+                                            </div>
+                                        <?php endif; ?>
+
+                                        <div class="mt-2 col-12 d-flex gap-2 justify-content-between">
+                                            <button type="button" class="btn btn-danger btn-sm"
+                                                onclick="confirmDelete(<?php echo $acc_express['id_account']; ?>, 'Express')">
+                                                <i class="bi bi-trash me-1"></i>Eliminar conta Express
+                                            </button>
+                                            <button type="submit" class="btn btn-pink btn-sm">
+                                                <i class="bi bi-save me-1"></i>Alterar
+                                            </button>
+                                        </div>
+                                    </form>
                                 <?php else: ?>
-                                <div class="text-center py-3 text-muted">
-                                    <i class="bi bi-phone fs-2 mb-2 d-block" style="opacity:.4"></i>
-                                    <p class="small mb-2">Sem conta Express registada.</p>
-                                    <button class="btn btn-pink btn-sm" data-bs-toggle="modal"
-                                        data-bs-target="#creatnewAccount" onclick="preselectType('express')">
-                                        <i class="bi bi-plus me-1"></i>Adicionar Express
-                                    </button>
-                                </div>
+                                    <div class="text-center py-3 text-muted">
+                                        <i class="bi bi-phone fs-2 mb-2 d-block" style="opacity:.4"></i>
+                                        <p class="small mb-2">Sem conta Express registada.</p>
+                                        <button class="btn btn-pink btn-sm" data-bs-toggle="modal"
+                                            data-bs-target="#creatnewAccount" onclick="preselectType('express')">
+                                            <i class="bi bi-plus me-1"></i>Adicionar Express
+                                        </button>
+                                    </div>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -493,76 +510,76 @@ $banks = ['Banco Angolano de Investimentos (BAI)', 'Banco de Fomento Angola (BFA
                             data-bs-parent="#accordionExample">
                             <div class="mt-3">
                                 <?php if ($acc_iban): ?>
-                                <form action="finances/account_process" method="post"
-                                    class="needs-validation mb-2 row text-start g-3" id="form-iban" novalidate>
-                                    <input type="hidden" name="csrf_token"
-                                        value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
-                                    <input type="hidden" name="action" value="edit">
-                                    <input type="hidden" name="id_account"
-                                        value="<?php echo $acc_iban['id_account']; ?>">
-                                    <input type="hidden" name="account_type" value="iban">
+                                    <form action="finances/account_process" method="post"
+                                        class="needs-validation mb-2 row text-start g-3" id="form-iban" novalidate>
+                                        <input type="hidden" name="csrf_token"
+                                            value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
+                                        <input type="hidden" name="action" value="edit">
+                                        <input type="hidden" name="id_account"
+                                            value="<?php echo $acc_iban['id_account']; ?>">
+                                        <input type="hidden" name="account_type" value="iban">
 
-                                    <div class="mb-2 col-md-6">
-                                        <label class="form-label">Nome completo do titular</label>
-                                        <input type="text" name="full_name" class="form-control" required minlength="4"
-                                            value="<?php echo htmlspecialchars($acc_iban['full_name_account']); ?>"
-                                            placeholder="Nome exacto como consta no banco" />
-                                    </div>
-                                    <div class="mb-2 col-md-6">
-                                        <label class="form-label">IBAN</label>
-                                        <input type="text" name="iban_number" class="form-control font-monospace"
-                                            required value="<?php echo htmlspecialchars($acc_iban['iban'] ?? ''); ?>"
-                                            placeholder="AO06 XXXX XXXX XXXX XXXX XXXX X" maxlength="31"
-                                            oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9 ]/g,'')" />
-                                    </div>
-                                    <div class="mb-2 col-md-6">
-                                        <label class="form-label">Banco</label>
-                                        <select class="form-select" name="bank_name">
-                                            <option value="">Seleccionar banco</option>
-                                            <?php foreach ($banks as $b): ?>
-                                            <option value="<?php echo $b; ?>"
-                                                <?php echo ($acc_iban['bank_name'] ?? '') === $b ? 'selected' : ''; ?>>
-                                                <?php echo $b; ?>
-                                            </option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
-                                    <div class="mb-2 col-md-6">
-                                        <label class="form-label">E-mail associado (opcional)</label>
-                                        <input type="email" name="email_account" class="form-control"
-                                            value="<?php echo htmlspecialchars($acc_iban['email_account'] ?? ''); ?>"
-                                            placeholder="email@banco.com" />
-                                    </div>
-
-                                    <?php if (($acc_iban['status_account'] ?? '') === 'rejected' && $acc_iban['reject_reason']): ?>
-                                    <div class="col-12">
-                                        <div class="alert alert-danger py-2 small">
-                                            <i class="bi bi-x-circle me-1"></i>
-                                            <strong>Motivo de rejeição:</strong>
-                                            <?php echo htmlspecialchars($acc_iban['reject_reason']); ?>
+                                        <div class="mb-2 col-md-6">
+                                            <label class="form-label">Nome completo do titular</label>
+                                            <input type="text" name="full_name" class="form-control" required minlength="4"
+                                                value="<?php echo htmlspecialchars($acc_iban['full_name_account']); ?>"
+                                                placeholder="Nome exacto como consta no banco" />
                                         </div>
-                                    </div>
-                                    <?php endif; ?>
+                                        <div class="mb-2 col-md-6">
+                                            <label class="form-label">IBAN</label>
+                                            <input type="text" name="iban_number" class="form-control font-monospace"
+                                                required value="<?php echo htmlspecialchars($acc_iban['iban'] ?? ''); ?>"
+                                                placeholder="AO06 XXXX XXXX XXXX XXXX XXXX X" maxlength="31"
+                                                oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9 ]/g,'')" />
+                                        </div>
+                                        <div class="mb-2 col-md-6">
+                                            <label class="form-label">Banco</label>
+                                            <select class="form-select" name="bank_name">
+                                                <option value="">Seleccionar banco</option>
+                                                <?php foreach ($banks as $b): ?>
+                                                    <option value="<?php echo $b; ?>"
+                                                        <?php echo ($acc_iban['bank_name'] ?? '') === $b ? 'selected' : ''; ?>>
+                                                        <?php echo $b; ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+                                        <div class="mb-2 col-md-6">
+                                            <label class="form-label">E-mail associado (opcional)</label>
+                                            <input type="email" name="email_account" class="form-control"
+                                                value="<?php echo htmlspecialchars($acc_iban['email_account'] ?? ''); ?>"
+                                                placeholder="email@banco.com" />
+                                        </div>
 
-                                    <div class="mt-2 col-12 d-flex gap-2 justify-content-between">
-                                        <button type="button" class="btn btn-danger btn-sm"
-                                            onclick="confirmDelete(<?php echo $acc_iban['id_account']; ?>, 'IBAN')">
-                                            <i class="bi bi-trash me-1"></i>Eliminar conta IBAN
-                                        </button>
-                                        <button type="submit" class="btn btn-pink btn-sm">
-                                            <i class="bi bi-save me-1"></i>Alterar
+                                        <?php if (($acc_iban['status_account'] ?? '') === 'rejected' && $acc_iban['reject_reason']): ?>
+                                            <div class="col-12">
+                                                <div class="alert alert-danger py-2 small">
+                                                    <i class="bi bi-x-circle me-1"></i>
+                                                    <strong>Motivo de rejeição:</strong>
+                                                    <?php echo htmlspecialchars($acc_iban['reject_reason']); ?>
+                                                </div>
+                                            </div>
+                                        <?php endif; ?>
+
+                                        <div class="mt-2 col-12 d-flex gap-2 justify-content-between">
+                                            <button type="button" class="btn btn-danger btn-sm"
+                                                onclick="confirmDelete(<?php echo $acc_iban['id_account']; ?>, 'IBAN')">
+                                                <i class="bi bi-trash me-1"></i>Eliminar conta IBAN
+                                            </button>
+                                            <button type="submit" class="btn btn-pink btn-sm">
+                                                <i class="bi bi-save me-1"></i>Alterar
+                                            </button>
+                                        </div>
+                                    </form>
+                                <?php else: ?>
+                                    <div class="text-center py-3 text-muted">
+                                        <i class="bi bi-bank fs-2 mb-2 d-block" style="opacity:.4"></i>
+                                        <p class="small mb-2">Sem conta IBAN registada.</p>
+                                        <button class="btn btn-pink btn-sm" data-bs-toggle="modal"
+                                            data-bs-target="#creatnewAccount" onclick="preselectType('iban')">
+                                            <i class="bi bi-plus me-1"></i>Adicionar IBAN
                                         </button>
                                     </div>
-                                </form>
-                                <?php else: ?>
-                                <div class="text-center py-3 text-muted">
-                                    <i class="bi bi-bank fs-2 mb-2 d-block" style="opacity:.4"></i>
-                                    <p class="small mb-2">Sem conta IBAN registada.</p>
-                                    <button class="btn btn-pink btn-sm" data-bs-toggle="modal"
-                                        data-bs-target="#creatnewAccount" onclick="preselectType('iban')">
-                                        <i class="bi bi-plus me-1"></i>Adicionar IBAN
-                                    </button>
-                                </div>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -595,28 +612,28 @@ $banks = ['Banco Angolano de Investimentos (BAI)', 'Banco de Fomento Angola (BFA
                     <!-- Selector de tipo -->
                     <div class="row g-3 mb-3" id="type-selector-modal">
                         <?php if ($can_add_express): ?>
-                        <div class="col-6">
-                            <div class="type-card-sel" id="tab-express-new" onclick="selectNewType('express')">
-                                <div class="launch-card">
-                                    <div class="card text-center py-3">
-                                        <i class="bi bi-phone-fill fs-2 mb-1" style="color:#aaa"></i>
-                                        <h6 class="mb-0 fw-bold">Express</h6>
+                            <div class="col-6">
+                                <div class="type-card-sel" id="tab-express-new" onclick="selectNewType('express')">
+                                    <div class="launch-card">
+                                        <div class="card text-center py-3">
+                                            <i class="bi bi-phone-fill fs-2 mb-1" style="color:#aaa"></i>
+                                            <h6 class="mb-0 fw-bold">Express</h6>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
                         <?php endif; ?>
                         <?php if ($can_add_iban): ?>
-                        <div class="col-6">
-                            <div class="type-card-sel" id="tab-iban-new" onclick="selectNewType('iban')">
-                                <div class="launch-card">
-                                    <div class="card text-center py-3">
-                                        <i class="bi bi-bank fs-2 mb-1" style="color:#aaa"></i>
-                                        <h6 class="mb-0 fw-bold">IBAN</h6>
+                            <div class="col-6">
+                                <div class="type-card-sel" id="tab-iban-new" onclick="selectNewType('iban')">
+                                    <div class="launch-card">
+                                        <div class="card text-center py-3">
+                                            <i class="bi bi-bank fs-2 mb-1" style="color:#aaa"></i>
+                                            <h6 class="mb-0 fw-bold">IBAN</h6>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
                         <?php endif; ?>
                     </div>
 
@@ -768,7 +785,7 @@ $banks = ['Banco Angolano de Investimentos (BAI)', 'Banco de Fomento Angola (BFA
                                                         <select class="form-select" name="bank_name">
                                                             <option value="">Seleccionar banco</option>
                                                             <?php foreach ($banks as $b): ?>
-                                                            <option value="<?php echo $b; ?>"><?php echo $b; ?></option>
+                                                                <option value="<?php echo $b; ?>"><?php echo $b; ?></option>
                                                             <?php endforeach; ?>
                                                         </select>
                                                     </div>
@@ -883,8 +900,8 @@ $banks = ['Banco Angolano de Investimentos (BAI)', 'Banco de Fomento Angola (BFA
     <script src="<?php echo APP_URL  ?>/js/theme.wp.js"></script>
     <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
     <script>
-    const CSRF = '<?php echo $_SESSION['csrf_token']; ?>';
-    const BASE_URL = '<?php echo APP_URL . '/' . APP_URL_PANEL; ?>';
+        const CSRF = '<?php echo $_SESSION['csrf_token']; ?>';
+        const BASE_URL = '<?php echo APP_URL . '/' . APP_URL_PANEL; ?>';
     </script>
     <script src="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/finances/js/withdraw.js"></script>
 

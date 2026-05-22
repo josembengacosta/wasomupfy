@@ -1,6 +1,6 @@
 <?php
 // ══════════════════════════════════════════════════════
-// WASOM UPFY v2.0 — Detalhes do Artista (Estatísticas)
+// WASOM UPFY v2.0.1.1 — Detalhes do Artista (Estatísticas)
 // Arquivo: dashboard/analytics/artist-details.php
 // ══════════════════════════════════════════════════════
 require_once __DIR__ . '/../../authentic/include/functions.php';
@@ -379,220 +379,220 @@ function wuAlert(string $type, string $icon, string $message, ?array $action = n
     <link rel="stylesheet" href="<?php echo APP_URL  ?>/css/artist-list.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
-    /* ══ Hero do artista ══ */
-    .artist-hero {
-        position: relative;
-        border-radius: 20px;
-        overflow: hidden;
-        margin-bottom: 28px;
-        min-height: 180px;
-        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
-    }
+        /* ══ Hero do artista ══ */
+        .artist-hero {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 28px;
+            min-height: 180px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+        }
 
-    .artist-hero .hero-cover {
-        position: absolute;
-        inset: 0;
-        background-size: cover;
-        background-position: center;
-        opacity: .22;
-        filter: blur(2px);
-    }
+        .artist-hero .hero-cover {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: .22;
+            filter: blur(2px);
+        }
 
-    .artist-hero .hero-body {
-        position: relative;
-        z-index: 1;
-        padding: 28px 28px 24px;
-        display: flex;
-        align-items: center;
-        gap: 24px;
-        flex-wrap: wrap;
-    }
+        .artist-hero .hero-body {
+            position: relative;
+            z-index: 1;
+            padding: 28px 28px 24px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
 
-    .artist-photo {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 3px solid rgba(255, 0, 137, .6);
-        background: rgba(255, 0, 137, .1);
-        flex-shrink: 0;
-    }
+        .artist-photo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(255, 0, 137, .6);
+            background: rgba(255, 0, 137, .1);
+            flex-shrink: 0;
+        }
 
-    .artist-photo-placeholder {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        border: 3px solid rgba(255, 0, 137, .4);
-        background: rgba(255, 0, 137, .08);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2.8rem;
-        flex-shrink: 0;
-    }
+        .artist-photo-placeholder {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 0, 137, .4);
+            background: rgba(255, 0, 137, .08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.8rem;
+            flex-shrink: 0;
+        }
 
-    .artist-hero-info h2 {
-        color: #fff;
-        font-weight: 800;
-        margin: 0 0 4px;
-    }
+        .artist-hero-info h2 {
+            color: #fff;
+            font-weight: 800;
+            margin: 0 0 4px;
+        }
 
-    .artist-hero-info .meta {
-        color: rgba(255, 255, 255, .6);
-        font-size: .82rem;
-    }
+        .artist-hero-info .meta {
+            color: rgba(255, 255, 255, .6);
+            font-size: .82rem;
+        }
 
-    .artist-hero-info .meta span {
-        margin-right: 14px;
-    }
+        .artist-hero-info .meta span {
+            margin-right: 14px;
+        }
 
-    /* ══ Stat cards ══ */
-    .stat-hero-card {
-        border-radius: 16px;
-        padding: 18px 20px;
-        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
-        position: relative;
-        overflow: hidden;
-    }
+        /* ══ Stat cards ══ */
+        .stat-hero-card {
+            border-radius: 16px;
+            padding: 18px 20px;
+            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
+            position: relative;
+            overflow: hidden;
+        }
 
-    .stat-hero-card .stat-label {
-        font-size: .7rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: .5px;
-        color: var(--text-muted, #6c757d);
-        margin-bottom: 5px;
-    }
+        .stat-hero-card .stat-label {
+            font-size: .7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            color: var(--text-muted, #6c757d);
+            margin-bottom: 5px;
+        }
 
-    .stat-hero-card .stat-value {
-        font-size: 1.65rem;
-        font-weight: 900;
-        line-height: 1;
-    }
+        .stat-hero-card .stat-value {
+            font-size: 1.65rem;
+            font-weight: 900;
+            line-height: 1;
+        }
 
-    .stat-hero-card .stat-icon {
-        position: absolute;
-        right: 16px;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 2.6rem;
-        opacity: .07;
-    }
+        .stat-hero-card .stat-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2.6rem;
+            opacity: .07;
+        }
 
-    /* ══ Filtros ══ */
-    .filter-bar {
-        border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
-        border-radius: 14px;
-        padding: 14px 18px;
-        margin-bottom: 22px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        align-items: flex-end;
-    }
+        /* ══ Filtros ══ */
+        .filter-bar {
+            border: 1.5px solid var(--border-color, rgba(0, 0, 0, .08));
+            border-radius: 14px;
+            padding: 14px 18px;
+            margin-bottom: 22px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: flex-end;
+        }
 
-    .filter-bar label {
-        font-size: .7rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: .5px;
-        color: var(--text-muted, #6c757d);
-        display: block;
-        margin-bottom: 3px;
-    }
+        .filter-bar label {
+            font-size: .7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            color: var(--text-muted, #6c757d);
+            display: block;
+            margin-bottom: 3px;
+        }
 
-    /* ══ Plataformas ══ */
-    .platform-row {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 10px 0;
-        border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .06));
-    }
+        /* ══ Plataformas ══ */
+        .platform-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, .06));
+        }
 
-    .platform-row:last-child {
-        border-bottom: none;
-    }
+        .platform-row:last-child {
+            border-bottom: none;
+        }
 
-    .platform-dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        flex-shrink: 0;
-    }
+        .platform-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
 
-    .platform-bar-bg {
-        flex: 1;
-        height: 6px;
-        border-radius: 6px;
-        background: var(--border-color, rgba(0, 0, 0, .07));
-        overflow: hidden;
-    }
+        .platform-bar-bg {
+            flex: 1;
+            height: 6px;
+            border-radius: 6px;
+            background: var(--border-color, rgba(0, 0, 0, .07));
+            overflow: hidden;
+        }
 
-    .platform-bar-fill {
-        height: 100%;
-        border-radius: 6px;
-        transition: width .5s ease;
-    }
+        .platform-bar-fill {
+            height: 100%;
+            border-radius: 6px;
+            transition: width .5s ease;
+        }
 
-    /* ══ Tabela de faixas ══ */
-    .track-cover {
-        width: 40px;
-        height: 40px;
-        border-radius: 8px;
-        object-fit: cover;
-    }
+        /* ══ Tabela de faixas ══ */
+        .track-cover {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
 
-    .track-cover-placeholder {
-        width: 40px;
-        height: 40px;
-        border-radius: 8px;
-        background: rgba(255, 0, 137, .08);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.1rem;
-    }
+        .track-cover-placeholder {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: rgba(255, 0, 137, .08);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
 
-    .explicit-badge {
-        font-size: .6rem;
-        background: #333;
-        color: #fff;
-        border-radius: 3px;
-        padding: 1px 4px;
-        vertical-align: middle;
-        margin-left: 4px;
-    }
+        .explicit-badge {
+            font-size: .6rem;
+            background: #333;
+            color: #fff;
+            border-radius: 3px;
+            padding: 1px 4px;
+            vertical-align: middle;
+            margin-left: 4px;
+        }
 
-    .feat-text {
-        font-size: .72rem;
-        color: var(--text-muted, #6c757d);
-    }
+        .feat-text {
+            font-size: .72rem;
+            color: var(--text-muted, #6c757d);
+        }
 
-    /* ══ Social links ══ */
-    .social-links a {
-        font-size: 1.3rem;
-        color: var(--text-muted, #6c757d);
-        margin-right: 10px;
-        transition: color .2s;
-    }
+        /* ══ Social links ══ */
+        .social-links a {
+            font-size: 1.3rem;
+            color: var(--text-muted, #6c757d);
+            margin-right: 10px;
+            transition: color .2s;
+        }
 
-    .social-links a:hover {
-        color: #FF0089;
-    }
+        .social-links a:hover {
+            color: #FF0089;
+        }
 
-    /* ══ Empty ══ */
-    .empty-section {
-        text-align: center;
-        padding: 36px 20px;
-        color: var(--text-muted, #6c757d);
-    }
+        /* ══ Empty ══ */
+        .empty-section {
+            text-align: center;
+            padding: 36px 20px;
+            color: var(--text-muted, #6c757d);
+        }
 
-    .empty-section .icon {
-        font-size: 2.2rem;
-        opacity: .15;
-        margin-bottom: 8px;
-    }
+        .empty-section .icon {
+            font-size: 2.2rem;
+            opacity: .15;
+            margin-bottom: 8px;
+        }
     </style>
 </head>
 
@@ -618,7 +618,7 @@ function wuAlert(string $type, string $icon, string $message, ?array $action = n
         <?php /* ── NÍVEL 1: Crítico — bloqueia distribuição ── */ ?>
 
         <?php if (!$email_verified): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'danger',
                 'bi-envelope-exclamation-fill',
                 '<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta e receber notificações de pagamentos.',
@@ -629,7 +629,7 @@ function wuAlert(string $type, string $icon, string $message, ?array $action = n
         <?php endif; ?>
 
         <?php if ($plan && !$plan_paid): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'warning',
                 'bi-clock-history',
                 '<strong>Pagamento pendente — ' . htmlspecialchars($plan['name_plan']) . '.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados até confirmação.',
@@ -638,7 +638,7 @@ function wuAlert(string $type, string $icon, string $message, ?array $action = n
                 'banner-plan-pending'
             ); ?>
         <?php elseif (!$plan): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'danger',
                 'bi-credit-card-fill',
                 '<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir a tua música para +150 plataformas.',
@@ -651,7 +651,7 @@ function wuAlert(string $type, string $icon, string $message, ?array $action = n
         <?php /* ── NÍVEL 2: Importante — perfil incompleto ── */ ?>
 
         <?php if ($plan_paid && !$has_artist): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'info',
                 'bi-person-plus-fill',
                 '<strong>Cria o teu perfil artístico.</strong> Tens plano activo mas ainda não criaste um perfil artístico. Precisas de um para poder lançar música.',
@@ -664,7 +664,7 @@ function wuAlert(string $type, string $icon, string $message, ?array $action = n
         <?php /* ── NÍVEL 3: Informativo — conta bancária ── */ ?>
 
         <?php if ($plan_paid && $has_artist && !$bank_account): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'info',
                 'bi-bank',
                 '<strong>Conta bancária não registada.</strong> Para poder sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.',
@@ -685,7 +685,7 @@ function wuAlert(string $type, string $icon, string $message, ?array $action = n
         }
         ?>
         <?php if ($rejected_account): ?>
-        <?php
+            <?php
             $rej_msg = '<strong>Conta ' . htmlspecialchars($rejected_account['type_account']) . ' rejeitada.</strong>';
             if ($rejected_account['reject_reason']) {
                 $rej_msg .= ' Motivo: <em>' . htmlspecialchars($rejected_account['reject_reason']) . '</em>.';
@@ -705,31 +705,31 @@ function wuAlert(string $type, string $icon, string $message, ?array $action = n
         <!-- ── Hero do artista ── -->
         <div class="artist-hero">
             <?php if ($artist['cover_artist']): ?>
-            <div class="hero-cover"
-                style="background-image:url('<?php echo htmlspecialchars($photo_url . $artist['cover_artist']); ?>')">
-            </div>
+                <div class="hero-cover"
+                    style="background-image:url('<?php echo htmlspecialchars($photo_url . $artist['cover_artist']); ?>')">
+                </div>
             <?php endif; ?>
             <div class="hero-body">
                 <?php if ($artist['photo_artist']): ?>
-                <img class="artist-photo" src="<?php echo htmlspecialchars($photo_url . $artist['photo_artist']); ?>"
-                    onerror="this.outerHTML='<div class=\'artist-photo-placeholder\'>🎤</div>'"
-                    alt="<?php echo htmlspecialchars($artist['stage_name']); ?>" />
+                    <img class="artist-photo" src="<?php echo htmlspecialchars($photo_url . $artist['photo_artist']); ?>"
+                        onerror="this.outerHTML='<div class=\'artist-photo-placeholder\'>🎤</div>'"
+                        alt="<?php echo htmlspecialchars($artist['stage_name']); ?>" />
                 <?php else: ?>
-                <div class="artist-photo-placeholder">🎤</div>
+                    <div class="artist-photo-placeholder">🎤</div>
                 <?php endif; ?>
                 <div class="artist-hero-info">
                     <h2><?php echo htmlspecialchars($artist['stage_name']); ?></h2>
                     <div class="meta">
                         <?php if ($artist['genre_main']): ?>
-                        <span><i
-                                class="bi bi-music-note me-1"></i><?php echo htmlspecialchars($artist['genre_main']); ?><?php if ($artist['genre_secondary']): ?>
-                            /
+                            <span><i
+                                    class="bi bi-music-note me-1"></i><?php echo htmlspecialchars($artist['genre_main']); ?><?php if ($artist['genre_secondary']): ?>
+                                /
                             <?php echo htmlspecialchars($artist['genre_secondary']);
                                                                                                                             endif; ?></span>
                         <?php endif; ?>
                         <?php if ($artist['country']): ?>
-                        <span><i
-                                class="bi bi-geo-alt me-1"></i><?php echo htmlspecialchars($artist['country']); ?><?php if ($artist['city']): ?>,
+                            <span><i
+                                    class="bi bi-geo-alt me-1"></i><?php echo htmlspecialchars($artist['country']); ?><?php if ($artist['city']): ?>,
                             <?php echo htmlspecialchars($artist['city']);
                                                                                                                         endif; ?></span>
                         <?php endif; ?>
@@ -737,21 +737,21 @@ function wuAlert(string $type, string $icon, string $message, ?array $action = n
                             faixa<?php echo $totals['total_tracks'] != 1 ? 's' : ''; ?></span>
                     </div>
                     <?php if ($artist['instagram_url'] || $artist['spotify_url'] || $artist['youtube_url']): ?>
-                    <div class="social-links mt-2">
-                        <?php if ($artist['instagram_url']): ?>
-                        <a href="<?php echo htmlspecialchars($artist['instagram_url']); ?>" target="_blank"
-                            rel="noopener" data-bs-toggle="tooltip" title="Instagram"><i
-                                class="bi bi-instagram"></i></a>
-                        <?php endif; ?>
-                        <?php if ($artist['spotify_url']): ?>
-                        <a href="<?php echo htmlspecialchars($artist['spotify_url']); ?>" target="_blank" rel="noopener"
-                            data-bs-toggle="tooltip" title="Spotify"><i class="bi bi-spotify"></i></a>
-                        <?php endif; ?>
-                        <?php if ($artist['youtube_url']): ?>
-                        <a href="<?php echo htmlspecialchars($artist['youtube_url']); ?>" target="_blank" rel="noopener"
-                            data-bs-toggle="tooltip" title="YouTube"><i class="bi bi-youtube"></i></a>
-                        <?php endif; ?>
-                    </div>
+                        <div class="social-links mt-2">
+                            <?php if ($artist['instagram_url']): ?>
+                                <a href="<?php echo htmlspecialchars($artist['instagram_url']); ?>" target="_blank"
+                                    rel="noopener" data-bs-toggle="tooltip" title="Instagram"><i
+                                        class="bi bi-instagram"></i></a>
+                            <?php endif; ?>
+                            <?php if ($artist['spotify_url']): ?>
+                                <a href="<?php echo htmlspecialchars($artist['spotify_url']); ?>" target="_blank" rel="noopener"
+                                    data-bs-toggle="tooltip" title="Spotify"><i class="bi bi-spotify"></i></a>
+                            <?php endif; ?>
+                            <?php if ($artist['youtube_url']): ?>
+                                <a href="<?php echo htmlspecialchars($artist['youtube_url']); ?>" target="_blank" rel="noopener"
+                                    data-bs-toggle="tooltip" title="YouTube"><i class="bi bi-youtube"></i></a>
+                            <?php endif; ?>
+                        </div>
                     <?php endif; ?>
                 </div>
 
@@ -778,8 +778,8 @@ function wuAlert(string $type, string $icon, string $message, ?array $action = n
                     <select name="year" class="form-select form-select-sm" style="min-width:100px"
                         onchange="this.form.submit()">
                         <?php foreach ($available_years as $y): ?>
-                        <option value="<?php echo $y; ?>" <?php echo $y == $filter_year ? 'selected' : ''; ?>>
-                            <?php echo $y; ?></option>
+                            <option value="<?php echo $y; ?>" <?php echo $y == $filter_year ? 'selected' : ''; ?>>
+                                <?php echo $y; ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -790,10 +790,10 @@ function wuAlert(string $type, string $icon, string $message, ?array $action = n
                         <option value="0" <?php echo !$filter_store ? 'selected' : ''; ?>>Todas as plataformas
                         </option>
                         <?php foreach ($stores as $st): ?>
-                        <option value="<?php echo $st['id_store']; ?>"
-                            <?php echo $st['id_store'] == $filter_store ? 'selected' : ''; ?>>
-                            <?php echo htmlspecialchars($st['name_store']); ?>
-                        </option>
+                            <option value="<?php echo $st['id_store']; ?>"
+                                <?php echo $st['id_store'] == $filter_store ? 'selected' : ''; ?>>
+                                <?php echo htmlspecialchars($st['name_store']); ?>
+                            </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -848,35 +848,35 @@ function wuAlert(string $type, string $icon, string $message, ?array $action = n
                         <?php echo $filter_year; ?></h6>
                 </div>
                 <?php if (empty($chart_datasets)): ?>
-                <div class="empty-section">
-                    <div class="icon"><i class="bi bi-bar-chart"></i></div>
-                    <div class="small fw-semibold mb-1">Sem dados de streams para <?php echo $filter_year; ?>.</div>
-                    <div class="small">Os streams são importados mensalmente após entrega dos relatórios pelas
-                        plataformas.</div>
-                </div>
+                    <div class="empty-section">
+                        <div class="icon"><i class="bi bi-bar-chart"></i></div>
+                        <div class="small fw-semibold mb-1">Sem dados de streams para <?php echo $filter_year; ?>.</div>
+                        <div class="small">Os streams são importados mensalmente após entrega dos relatórios pelas
+                            plataformas.</div>
+                    </div>
                 <?php else: ?>
-                <div class="p-3">
-                    <canvas id="streamChart" style="max-height:300px"></canvas>
-                </div>
+                    <div class="p-3">
+                        <canvas id="streamChart" style="max-height:300px"></canvas>
+                    </div>
                 <?php endif; ?>
             </div>
         </div>
 
         <!-- ── Plataformas ── -->
         <?php if (!empty($platforms_data)): ?>
-        <div class="card mb-4" style="border-radius:16px">
-            <div class="card-header">
-                <h6 class="mb-0">
-                    <i class="bi bi-collection me-2 text-pink"></i>
-                    <?php if ($filter_store && isset($store_map[$filter_store])): ?>
-                    Streams na <?php echo htmlspecialchars($store_map[$filter_store]['name_store']); ?>
-                    <?php else: ?>
-                    Streams por plataforma
-                    <?php endif; ?>
-                </h6>
-            </div>
-            <div class="card-body pt-2">
-                <?php
+            <div class="card mb-4" style="border-radius:16px">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="bi bi-collection me-2 text-pink"></i>
+                        <?php if ($filter_store && isset($store_map[$filter_store])): ?>
+                            Streams na <?php echo htmlspecialchars($store_map[$filter_store]['name_store']); ?>
+                        <?php else: ?>
+                            Streams por plataforma
+                        <?php endif; ?>
+                    </h6>
+                </div>
+                <div class="card-body pt-2">
+                    <?php
                     $max_plat = max(array_column($platforms_data, 'total_streams') ?: [1]);
                     foreach ($platforms_data as $pd):
                         $slug   = $pd['slug_store'];
@@ -884,28 +884,28 @@ function wuAlert(string $type, string $icon, string $message, ?array $action = n
                         $icon   = $store_icons[$slug]  ?? $store_icons['default'];
                         $pct    = $max_plat > 0 ? round(($pd['total_streams'] / $max_plat) * 100) : 0;
                     ?>
-                <div class="platform-row">
-                    <div class="platform-dot" style="background:<?php echo $colors['border']; ?>"></div>
-                    <i class="<?php echo $icon; ?>"
-                        style="font-size:1rem;color:<?php echo $colors['border']; ?>;min-width:20px"></i>
-                    <div style="min-width:130px;font-size:.82rem;font-weight:600">
-                        <?php echo htmlspecialchars($pd['name_store']); ?></div>
-                    <div class="platform-bar-bg">
-                        <div class="platform-bar-fill"
-                            style="width:<?php echo $pct; ?>%;background:<?php echo $colors['border']; ?>"></div>
-                    </div>
-                    <div style="font-size:.78rem;font-weight:700;min-width:80px;text-align:right">
-                        <?php echo number_format((int)$pd['total_streams']); ?>
-                        <span style="font-size:.65rem;font-weight:400;color:var(--text-muted,#6c757d)">
-                            streams</span>
-                    </div>
-                    <div style="font-size:.72rem;color:var(--text-muted,#6c757d);min-width:70px;text-align:right">
-                        $<?php echo number_format((float)$pd['total_revenue'], 2); ?>
-                    </div>
+                        <div class="platform-row">
+                            <div class="platform-dot" style="background:<?php echo $colors['border']; ?>"></div>
+                            <i class="<?php echo $icon; ?>"
+                                style="font-size:1rem;color:<?php echo $colors['border']; ?>;min-width:20px"></i>
+                            <div style="min-width:130px;font-size:.82rem;font-weight:600">
+                                <?php echo htmlspecialchars($pd['name_store']); ?></div>
+                            <div class="platform-bar-bg">
+                                <div class="platform-bar-fill"
+                                    style="width:<?php echo $pct; ?>%;background:<?php echo $colors['border']; ?>"></div>
+                            </div>
+                            <div style="font-size:.78rem;font-weight:700;min-width:80px;text-align:right">
+                                <?php echo number_format((int)$pd['total_streams']); ?>
+                                <span style="font-size:.65rem;font-weight:400;color:var(--text-muted,#6c757d)">
+                                    streams</span>
+                            </div>
+                            <div style="font-size:.72rem;color:var(--text-muted,#6c757d);min-width:70px;text-align:right">
+                                $<?php echo number_format((float)$pd['total_revenue'], 2); ?>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
-                <?php endforeach; ?>
             </div>
-        </div>
         <?php endif; ?>
 
         <!-- ── Tabela de faixas ── -->
@@ -916,86 +916,86 @@ function wuAlert(string $type, string $icon, string $message, ?array $action = n
                     <span class="badge bg-secondary"><?php echo count($tracks); ?></span>
                 </div>
                 <?php if (empty($tracks)): ?>
-                <div class="empty-section">
-                    <div class="icon"><i class="bi bi-music-note"></i></div>
-                    <div class="small fw-semibold mb-1">Nenhuma faixa activa encontrada.</div>
-                    <div class="small">As faixas aparecem aqui após aprovação pela equipa <?php echo APP_NAME ?>.</div>
-                </div>
+                    <div class="empty-section">
+                        <div class="icon"><i class="bi bi-music-note"></i></div>
+                        <div class="small fw-semibold mb-1">Nenhuma faixa activa encontrada.</div>
+                        <div class="small">As faixas aparecem aqui após aprovação pela equipa <?php echo APP_NAME ?>.</div>
+                    </div>
                 <?php else: ?>
-                <div class="table-responsive">
-                    <table id="tracksTable" class="table table-striped table-hover mb-0">
-                        <thead>
-                            <tr>
-                                <th style="width:52px">Capa</th>
-                                <th>Faixa</th>
-                                <th>Álbum</th>
-                                <th>Duração</th>
-                                <th>Streams <?php echo $filter_year; ?></th>
-                                <th>Downloads</th>
-                                <th>Receita (Kz)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($tracks as $track): ?>
-                            <tr>
-                                <td>
-                                    <?php if ($track['img_cover']): ?>
-                                    <img class="track-cover"
-                                        src="<?php echo htmlspecialchars($cover_url . $track['img_cover']); ?>"
-                                        onerror="this.outerHTML='<div class=\'track-cover-placeholder\'>🎵</div>'"
-                                        alt="" />
-                                    <?php else: ?>
-                                    <div class="track-cover-placeholder">🎵</div>
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <div class="fw-semibold" style="font-size:.87rem">
-                                        <?php echo htmlspecialchars($track['title_track']); ?>
-                                        <?php if ($track['explicit'] === 'YES'): ?>
-                                        <span class="explicit-badge">E</span>
-                                        <?php endif; ?>
-                                    </div>
-                                    <?php if ($track['name_author']): ?>
-                                    <div class="feat-text">
-                                        <?php echo htmlspecialchars($track['name_author']); ?><?php if ($track['name_author_feat']): ?>
-                                        feat.
-                                        <?php echo htmlspecialchars($track['name_author_feat']);
+                    <div class="table-responsive">
+                        <table id="tracksTable" class="table table-striped table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th style="width:52px">Capa</th>
+                                    <th>Faixa</th>
+                                    <th>Álbum</th>
+                                    <th>Duração</th>
+                                    <th>Streams <?php echo $filter_year; ?></th>
+                                    <th>Downloads</th>
+                                    <th>Receita (Kz)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($tracks as $track): ?>
+                                    <tr>
+                                        <td>
+                                            <?php if ($track['img_cover']): ?>
+                                                <img class="track-cover"
+                                                    src="<?php echo htmlspecialchars($cover_url . $track['img_cover']); ?>"
+                                                    onerror="this.outerHTML='<div class=\'track-cover-placeholder\'> 🎵</div>'"
+                                                    alt="" />
+                                            <?php else: ?>
+                                                <div class="track-cover-placeholder"> 🎵</div>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <div class="fw-semibold" style="font-size:.87rem">
+                                                <?php echo htmlspecialchars($track['title_track']); ?>
+                                                <?php if ($track['explicit'] === 'YES'): ?>
+                                                    <span class="explicit-badge">E</span>
+                                                <?php endif; ?>
+                                            </div>
+                                            <?php if ($track['name_author']): ?>
+                                                <div class="feat-text">
+                                                    <?php echo htmlspecialchars($track['name_author']); ?><?php if ($track['name_author_feat']): ?>
+                                                    feat.
+                                                <?php echo htmlspecialchars($track['name_author_feat']);
                                                                                                             endif; ?>
-                                    </div>
-                                    <?php endif; ?>
-                                </td>
-                                <td style="font-size:.82rem">
-                                    <?php echo htmlspecialchars($track['title_album']); ?>
-                                    <span class="badge bg-light text-muted ms-1"
-                                        style="font-size:.6rem"><?php echo strtoupper($track['type_album']); ?></span>
-                                </td>
-                                <td class="small text-muted">
-                                    <?php echo formatDuration($track['duration_seconds']); ?>
-                                </td>
-                                <td class="fw-bold" style="color:#FF0089">
-                                    <?php echo number_format((int)$track['total_streams']); ?></td>
-                                <td class="small"><?php echo number_format((int)$track['total_downloads']); ?></td>
-                                <td class="small fw-semibold" style="color:#198754">
-                                    $<?php echo number_format((float)$track['total_revenue'], 4); ?></td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
+                                                </div>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td style="font-size:.82rem">
+                                            <?php echo htmlspecialchars($track['title_album']); ?>
+                                            <span class="badge bg-light text-muted ms-1"
+                                                style="font-size:.6rem"><?php echo strtoupper($track['type_album']); ?></span>
+                                        </td>
+                                        <td class="small text-muted">
+                                            <?php echo formatDuration($track['duration_seconds']); ?>
+                                        </td>
+                                        <td class="fw-bold" style="color:#FF0089">
+                                            <?php echo number_format((int)$track['total_streams']); ?></td>
+                                        <td class="small"><?php echo number_format((int)$track['total_downloads']); ?></td>
+                                        <td class="small fw-semibold" style="color:#198754">
+                                            $<?php echo number_format((float)$track['total_revenue'], 4); ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 <?php endif; ?>
             </div>
         </div>
 
         <!-- ── Bio (se existir) ── -->
         <?php if ($artist['bio']): ?>
-        <div class="card mb-4" style="border-radius:16px">
-            <div class="card-header">
-                <h6 class="mb-0"><i class="bi bi-person-lines-fill me-2 text-pink"></i>Biografia</h6>
+            <div class="card mb-4" style="border-radius:16px">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-person-lines-fill me-2 text-pink"></i>Biografia</h6>
+                </div>
+                <div class="card-body" style="font-size:.87rem;line-height:1.7;white-space:pre-line">
+                    <?php echo nl2br(htmlspecialchars($artist['bio'])); ?>
+                </div>
             </div>
-            <div class="card-body" style="font-size:.87rem;line-height:1.7;white-space:pre-line">
-                <?php echo nl2br(htmlspecialchars($artist['bio'])); ?>
-            </div>
-        </div>
         <?php endif; ?>
 
     </div><!-- /container -->
@@ -1009,11 +1009,11 @@ function wuAlert(string $type, string $icon, string $message, ?array $action = n
     <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
     <!-- ── Dados injectados pelo PHP para o JS ── -->
     <script>
-    const BASE_URL = <?php echo json_encode(APP_URL . '/' . APP_URL_PANEL); ?>;
-    const HAS_TRACKS = <?php echo !empty($tracks)         ? 'true' : 'false'; ?>;
-    const HAS_CHART = <?php echo !empty($chart_datasets)  ? 'true' : 'false'; ?>;
-    const CHART_LABELS = <?php echo json_encode($months_pt_short); ?>;
-    const CHART_DATASETS = <?php echo json_encode($chart_datasets ?? []); ?>;
+        const BASE_URL = <?php echo json_encode(APP_URL . '/' . APP_URL_PANEL); ?>;
+        const HAS_TRACKS = <?php echo !empty($tracks)         ? 'true' : 'false'; ?>;
+        const HAS_CHART = <?php echo !empty($chart_datasets)  ? 'true' : 'false'; ?>;
+        const CHART_LABELS = <?php echo json_encode($months_pt_short); ?>;
+        const CHART_DATASETS = <?php echo json_encode($chart_datasets ?? []); ?>;
     </script>
     <script src="<?php echo APP_URL ?>/<?php echo APP_URL_PANEL ?>/analytics/js/artist-details.js"></script>
 </body>

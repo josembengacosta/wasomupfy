@@ -1,6 +1,6 @@
 <?php
 // ══════════════════════════════════════════════
-// WASOM UPFY v2.0 — Lista de Artistas
+// WASOM UPFY v2.0.1.1 — Lista de Artistas
 // Arquivo: dashboard/artists/artists-list.php
 // ══════════════════════════════════════════════
 require_once __DIR__ . '/../../authentic/include/functions.php';
@@ -177,454 +177,454 @@ $albums_json        = json_encode($albums_by_artist, JSON_HEX_TAG | JSON_HEX_APO
     <?php require_once __DIR__ . '/../include/head.php'; ?>
     <title>Artistas — <?php echo APP_NAME; ?></title>
     <style>
-    :root {
-        --wasom: #FF0089;
-        --wasom-dark: #cc006d;
-    }
+        :root {
+            --wasom: #FF0089;
+            --wasom-dark: #cc006d;
+        }
 
-    /* ── Search & filters ── */
-    .search-bar {
-        border-radius: 12px !important;
-    }
+        /* ── Search & filters ── */
+        .search-bar {
+            border-radius: 12px !important;
+        }
 
-    .filter-pill {
-        border-radius: 20px;
-        font-size: .78rem;
-        padding: 4px 14px;
-        cursor: pointer;
-        border: 1.5px solid transparent;
-        transition: all .2s;
-    }
+        .filter-pill {
+            border-radius: 20px;
+            font-size: .78rem;
+            padding: 4px 14px;
+            cursor: pointer;
+            border: 1.5px solid transparent;
+            transition: all .2s;
+        }
 
-    .filter-pill.active {
-        background: var(--wasom);
-        color: #fff;
-        border-color: var(--wasom);
-    }
+        .filter-pill.active {
+            background: var(--wasom);
+            color: #fff;
+            border-color: var(--wasom);
+        }
 
-    .filter-pill:not(.active) {
-        border-color: rgba(0, 0, 0, .15);
-    }
+        .filter-pill:not(.active) {
+            border-color: rgba(0, 0, 0, .15);
+        }
 
-    /* ── View toggle ── */
-    .view-btn {
-        width: 34px;
-        height: 34px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        border: 1.5px solid rgba(0, 0, 0, .12);
-        transition: all .2s;
-    }
+        /* ── View toggle ── */
+        .view-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 1.5px solid rgba(0, 0, 0, .12);
+            transition: all .2s;
+        }
 
-    .view-btn.active {
-        background: var(--wasom);
-        color: #fff;
-        border-color: var(--wasom);
-    }
+        .view-btn.active {
+            background: var(--wasom);
+            color: #fff;
+            border-color: var(--wasom);
+        }
 
-    /* ── Artist card (GRID) ── */
-    .artist-card {
-        border-radius: 16px;
-        overflow: visible;
-        position: relative;
-        border: 1.5px solid rgba(0, 0, 0, .07);
-        box-shadow: 0 2px 12px rgba(0, 0, 0, .06);
-        transition: transform .25s, box-shadow .25s;
-        cursor: pointer;
-    }
+        /* ── Artist card (GRID) ── */
+        .artist-card {
+            border-radius: 16px;
+            overflow: visible;
+            position: relative;
+            border: 1.5px solid rgba(0, 0, 0, .07);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, .06);
+            transition: transform .25s, box-shadow .25s;
+            cursor: pointer;
+        }
 
-    .artist-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 32px rgba(255, 0, 137, .15);
-        border-color: rgba(255, 0, 137, .3);
-    }
+        .artist-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(255, 0, 137, .15);
+            border-color: rgba(255, 0, 137, .3);
+        }
 
-    .artist-card-cover {
-        height: 60px;
-        background: linear-gradient(135deg, #FF0089, #FF4D4D);
-        position: relative;
-        border-radius: 16px 16px 0 0;
-        overflow: hidden;
-    }
+        .artist-card-cover {
+            height: 60px;
+            background: linear-gradient(135deg, #FF0089, #FF4D4D);
+            position: relative;
+            border-radius: 16px 16px 0 0;
+            overflow: hidden;
+        }
 
-    .artist-card-cover.has-cover {
-        background-size: cover;
-        background-position: center;
-        filter: brightness(.7);
-    }
+        .artist-card-cover.has-cover {
+            background-size: cover;
+            background-position: center;
+            filter: brightness(.7);
+        }
 
-    .artist-card-avatar {
-        width: 76px;
-        height: 76px;
-        border-radius: 50%;
-        border: 3px solid #fff;
-        object-fit: cover;
-        position: absolute;
-        bottom: -38px;
-        left: 50%;
-        transform: translateX(-50%);
-        box-shadow: 0 4px 14px rgba(0, 0, 0, .18);
-        background: #eee;
-    }
+        .artist-card-avatar {
+            width: 76px;
+            height: 76px;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            object-fit: cover;
+            position: absolute;
+            bottom: -38px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, .18);
+            background: #eee;
+        }
 
-    .artist-card-avatar-placeholder {
-        width: 76px;
-        height: 76px;
-        border-radius: 50%;
-        border: 3px solid #fff;
-        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-        position: absolute;
-        bottom: -38px;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.8rem;
-        color: #ccc;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, .12);
-    }
+        .artist-card-avatar-placeholder {
+            width: 76px;
+            height: 76px;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            position: absolute;
+            bottom: -38px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: #ccc;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, .12);
+        }
 
-    .artist-card-body {
-        padding: 50px 16px 18px;
-        text-align: center;
-    }
+        .artist-card-body {
+            padding: 50px 16px 18px;
+            text-align: center;
+        }
 
-    .artist-card-name {
-        font-weight: 800;
-        font-size: .92rem;
-        margin-bottom: 2px;
-        letter-spacing: -.2px;
-    }
+        .artist-card-name {
+            font-weight: 800;
+            font-size: .92rem;
+            margin-bottom: 2px;
+            letter-spacing: -.2px;
+        }
 
-    .artist-card-real {
-        font-size: .75rem;
-        color: #999;
-        margin-bottom: 8px;
-    }
+        .artist-card-real {
+            font-size: .75rem;
+            color: #999;
+            margin-bottom: 8px;
+        }
 
-    .artist-card-location {
-        font-size: .72rem;
-        color: #aaa;
-    }
+        .artist-card-location {
+            font-size: .72rem;
+            color: #aaa;
+        }
 
-    .artist-card-stats {
-        display: flex;
-        justify-content: center;
-        gap: 16px;
-        margin: 10px 0;
-    }
+        .artist-card-stats {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin: 10px 0;
+        }
 
-    .artist-card-stat {
-        text-align: center;
-    }
+        .artist-card-stat {
+            text-align: center;
+        }
 
-    .artist-card-stat .num {
-        font-size: 1rem;
-        font-weight: 800;
-        color: var(--wasom);
-    }
+        .artist-card-stat .num {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--wasom);
+        }
 
-    .artist-card-stat .lbl {
-        font-size: .65rem;
-        color: #999;
-        text-transform: uppercase;
-        letter-spacing: .5px;
-    }
+        .artist-card-stat .lbl {
+            font-size: .65rem;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
 
-    .artist-card-socials {
-        display: flex;
-        justify-content: center;
-        gap: 6px;
-        margin-top: 10px;
-        flex-wrap: wrap;
-    }
+        .artist-card-socials {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
 
-    .social-pill {
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: .85rem;
-        color: #fff;
-        transition: transform .2s;
-        text-decoration: none;
-    }
+        .social-pill {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .85rem;
+            color: #fff;
+            transition: transform .2s;
+            text-decoration: none;
+        }
 
-    .social-pill:hover {
-        transform: scale(1.18);
-        color: #fff;
-    }
+        .social-pill:hover {
+            transform: scale(1.18);
+            color: #fff;
+        }
 
-    .artist-status-badge {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        font-size: .65rem;
-        font-weight: 700;
-        padding: 3px 9px;
-        border-radius: 20px;
-        border: 1.5px solid rgba(255, 255, 255, .4);
-    }
+        .artist-status-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: .65rem;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 20px;
+            border: 1.5px solid rgba(255, 255, 255, .4);
+        }
 
-    .status-active {
-        background: rgba(25, 135, 84, .85);
-        color: #fff;
-    }
+        .status-active {
+            background: rgba(25, 135, 84, .85);
+            color: #fff;
+        }
 
-    .status-processing {
-        background: rgba(255, 193, 7, .85);
-        color: #333;
-    }
+        .status-processing {
+            background: rgba(255, 193, 7, .85);
+            color: #333;
+        }
 
-    .status-inactive {
-        background: rgba(108, 117, 125, .85);
-        color: #fff;
-    }
+        .status-inactive {
+            background: rgba(108, 117, 125, .85);
+            color: #fff;
+        }
 
-    .status-blocked {
-        background: rgba(220, 53, 69, .85);
-        color: #fff;
-    }
+        .status-blocked {
+            background: rgba(220, 53, 69, .85);
+            color: #fff;
+        }
 
-    /* ── Artist card (LIST) ── */
-    .artist-list-row {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        padding: 14px 16px;
-        border-radius: 14px;
-        border: 1.5px solid rgba(0, 0, 0, .07);
-        transition: all .2s;
-        cursor: pointer;
-        box-shadow: 0 1px 6px rgba(0, 0, 0, .04);
-    }
+        /* ── Artist card (LIST) ── */
+        .artist-list-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1.5px solid rgba(0, 0, 0, .07);
+            transition: all .2s;
+            cursor: pointer;
+            box-shadow: 0 1px 6px rgba(0, 0, 0, .04);
+        }
 
-    .artist-list-row:hover {
-        border-color: rgba(255, 0, 137, .3);
-        box-shadow: 0 4px 16px rgba(255, 0, 137, .1);
-    }
+        .artist-list-row:hover {
+            border-color: rgba(255, 0, 137, .3);
+            box-shadow: 0 4px 16px rgba(255, 0, 137, .1);
+        }
 
-    .artist-list-avatar {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        object-fit: cover;
-        flex-shrink: 0;
-        background: #eee;
-    }
+        .artist-list-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+            background: #eee;
+        }
 
-    .artist-list-avatar-ph {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
-        color: #ccc;
-        flex-shrink: 0;
-    }
+        .artist-list-avatar-ph {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #ccc;
+            flex-shrink: 0;
+        }
 
-    .artist-list-info {
-        flex: 1;
-        min-width: 0;
-    }
+        .artist-list-info {
+            flex: 1;
+            min-width: 0;
+        }
 
-    .artist-list-name {
-        font-weight: 700;
-        font-size: .9rem;
-    }
+        .artist-list-name {
+            font-weight: 700;
+            font-size: .9rem;
+        }
 
-    .artist-list-meta {
-        font-size: .75rem;
-        color: #999;
-    }
+        .artist-list-meta {
+            font-size: .75rem;
+            color: #999;
+        }
 
-    .artist-list-socials {
-        display: flex;
-        gap: 6px;
-        flex-shrink: 0;
-    }
+        .artist-list-socials {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
 
-    .artist-list-albums {
-        display: flex;
-        gap: 4px;
-        flex-shrink: 0;
-        flex-wrap: wrap;
-        justify-content: flex-end;
-    }
+        .artist-list-albums {
+            display: flex;
+            gap: 4px;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
 
-    /* ── Detail offcanvas ── */
-    .offcanvas-detail {
-        width: min(480px, 100vw) !important;
-    }
+        /* ── Detail offcanvas ── */
+        .offcanvas-detail {
+            width: min(480px, 100vw) !important;
+        }
 
-    .detail-cover {
-        height: 160px;
-        background: linear-gradient(135deg, #FF0089, #FF4D4D);
-        position: relative;
-        flex-shrink: 0;
-    }
+        .detail-cover {
+            height: 160px;
+            background: linear-gradient(135deg, #FF0089, #FF4D4D);
+            position: relative;
+            flex-shrink: 0;
+        }
 
-    .detail-avatar {
-        width: 90px;
-        height: 90px;
-        border-radius: 50%;
-        border: 4px solid #fff;
-        object-fit: cover;
-        position: absolute;
-        bottom: -45px;
-        left: 28px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, .2);
-        background: #eee;
-    }
+        .detail-avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 4px solid #fff;
+            object-fit: cover;
+            position: absolute;
+            bottom: -45px;
+            left: 28px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, .2);
+            background: #eee;
+        }
 
-    .detail-avatar-ph {
-        width: 90px;
-        height: 90px;
-        border-radius: 50%;
-        border: 4px solid #fff;
-        position: absolute;
-        bottom: -45px;
-        left: 28px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2.2rem;
-        color: #ccc;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, .15);
-    }
+        .detail-avatar-ph {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 4px solid #fff;
+            position: absolute;
+            bottom: -45px;
+            left: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            color: #ccc;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, .15);
+        }
 
-    .detail-body {
-        padding: 56px 24px 24px;
-        overflow-y: auto;
-    }
+        .detail-body {
+            padding: 56px 24px 24px;
+            overflow-y: auto;
+        }
 
-    .detail-stat-card {
-        border-radius: 12px;
-        padding: 12px 16px;
-        text-align: center;
-        background: rgba(255, 0, 137, .06);
-        border: 1px solid rgba(255, 0, 137, .12);
-    }
+        .detail-stat-card {
+            border-radius: 12px;
+            padding: 12px 16px;
+            text-align: center;
+            background: rgba(255, 0, 137, .06);
+            border: 1px solid rgba(255, 0, 137, .12);
+        }
 
-    .detail-stat-card .num {
-        font-size: 1.4rem;
-        font-weight: 800;
-        color: var(--wasom);
-    }
+        .detail-stat-card .num {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--wasom);
+        }
 
-    .detail-stat-card .lbl {
-        font-size: .7rem;
-        color: #999;
-        text-transform: uppercase;
-        letter-spacing: .5px;
-    }
+        .detail-stat-card .lbl {
+            font-size: .7rem;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
 
-    .album-row {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 10px 0;
-        border-bottom: 1px solid rgba(0, 0, 0, .05);
-    }
+        .album-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, .05);
+        }
 
-    .album-row:last-child {
-        border-bottom: none;
-    }
+        .album-row:last-child {
+            border-bottom: none;
+        }
 
-    .album-cover-sm {
-        width: 44px;
-        height: 44px;
-        border-radius: 8px;
-        object-fit: cover;
-        background: #eee;
-        flex-shrink: 0;
-    }
+        .album-cover-sm {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: #eee;
+            flex-shrink: 0;
+        }
 
-    .album-cover-sm-ph {
-        width: 44px;
-        height: 44px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: .9rem;
-        color: #ccc;
-        flex-shrink: 0;
-    }
+        .album-cover-sm-ph {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .9rem;
+            color: #ccc;
+            flex-shrink: 0;
+        }
 
-    .status-badge {
-        font-size: .65rem;
-        font-weight: 700;
-        padding: 2px 8px;
-        border-radius: 12px;
-    }
+        .status-badge {
+            font-size: .65rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
 
-    .sb-approved {
-        background: #d4edda;
-        color: #155724;
-    }
+        .sb-approved {
+            background: #d4edda;
+            color: #155724;
+        }
 
-    .sb-pending {
-        background: #fff3cd;
-        color: #856404;
-    }
+        .sb-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
 
-    .sb-rejected {
-        background: #f8d7da;
-        color: #721c24;
-    }
+        .sb-rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
 
-    .sb-draft {
-        background: #e2e3e5;
-        color: #383d41;
-    }
+        .sb-draft {
+            background: #e2e3e5;
+            color: #383d41;
+        }
 
-    .sb-under_review {
-        background: #cce5ff;
-        color: #004085;
-    }
+        .sb-under_review {
+            background: #cce5ff;
+            color: #004085;
+        }
 
-    .sb-processing {
-        background: #fff3cd;
-        color: #856404;
-    }
+        .sb-processing {
+            background: #fff3cd;
+            color: #856404;
+        }
 
-    /* ── Empty state ── */
-    .empty-state {
-        text-align: center;
-        padding: 4rem 2rem;
-    }
+        /* ── Empty state ── */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
 
-    .empty-icon {
-        font-size: 4rem;
-        opacity: .15;
-        display: block;
-        margin-bottom: 1rem;
-    }
+        .empty-icon {
+            font-size: 4rem;
+            opacity: .15;
+            display: block;
+            margin-bottom: 1rem;
+        }
 
-    /* ── No results ── */
-    #no-results {
-        display: none;
-        text-align: center;
-        padding: 3rem;
-        color: #aaa;
-    }
+        /* ── No results ── */
+        #no-results {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+            color: #aaa;
+        }
 
-    /* ── Plan bar ── */
-    .plan-bar {
-        background: rgba(255, 0, 137, .06);
-        border: 1.5px solid rgba(255, 0, 137, .15);
-        border-radius: 14px;
-        padding: 12px 18px;
-    }
+        /* ── Plan bar ── */
+        .plan-bar {
+            background: rgba(255, 0, 137, .06);
+            border: 1.5px solid rgba(255, 0, 137, .15);
+            border-radius: 14px;
+            padding: 12px 18px;
+        }
     </style>
 </head>
 
@@ -678,7 +678,7 @@ $albums_json        = json_encode($albums_by_artist, JSON_HEX_TAG | JSON_HEX_APO
         ?>
 
         <?php if (!$email_verified): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'danger',
                 'bi-envelope-exclamation-fill',
                 '<strong>Email não verificado.</strong> Verifica o teu e-mail para garantir o acesso à conta.',
@@ -689,7 +689,7 @@ $albums_json        = json_encode($albums_by_artist, JSON_HEX_TAG | JSON_HEX_APO
         <?php endif; ?>
 
         <?php if ($plan_expired): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'danger',
                 'bi-exclamation-triangle-fill',
                 '<strong>Plano expirado!</strong> O teu plano ' . htmlspecialchars($plan['name_plan'] ?? '') . ' expirou. Renova para continuar a distribuir.',
@@ -698,7 +698,7 @@ $albums_json        = json_encode($albums_by_artist, JSON_HEX_TAG | JSON_HEX_APO
                 'banner-plan-expired'
             ); ?>
         <?php elseif ($plan && !$plan_paid): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'warning',
                 'bi-clock-history',
                 '<strong>Pagamento pendente — ' . htmlspecialchars($plan['name_plan']) . '.</strong> O plano foi seleccionado mas o pagamento ainda não foi confirmado. Os teus lançamentos estão pausados.',
@@ -707,7 +707,7 @@ $albums_json        = json_encode($albums_by_artist, JSON_HEX_TAG | JSON_HEX_APO
                 'banner-plan-pending'
             ); ?>
         <?php elseif (!$plan): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'danger',
                 'bi-credit-card-fill',
                 '<strong>Sem plano activo.</strong> Escolhe um plano para começar a distribuir para +150 plataformas.',
@@ -718,7 +718,7 @@ $albums_json        = json_encode($albums_by_artist, JSON_HEX_TAG | JSON_HEX_APO
         <?php endif; ?>
 
         <?php if ($plan_paid && !$has_artist): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'info',
                 'bi-person-plus-fill',
                 '<strong>Cria o teu perfil artístico.</strong> Tens plano activo mas ainda não criaste um perfil artístico. Precisas de um para poder lançar música.',
@@ -729,7 +729,7 @@ $albums_json        = json_encode($albums_by_artist, JSON_HEX_TAG | JSON_HEX_APO
         <?php endif; ?>
 
         <?php if ($plan_paid && $has_artist && !$bank_account): ?>
-        <?php wuAlert(
+            <?php wuAlert(
                 'info',
                 'bi-bank',
                 '<strong>Conta bancária não registada.</strong> Para sacar os teus royalties, regista uma conta IBAN ou Multicaixa Express.',
@@ -740,7 +740,7 @@ $albums_json        = json_encode($albums_by_artist, JSON_HEX_TAG | JSON_HEX_APO
         <?php endif; ?>
 
         <?php if ($rejected_account): ?>
-        <?php
+            <?php
             $rej_msg = '<strong>Conta ' . htmlspecialchars($rejected_account['type_account']) . ' rejeitada.</strong>';
             if ($rejected_account['reject_reason']) $rej_msg .= ' Motivo: <em>' . htmlspecialchars($rejected_account['reject_reason']) . '</em>.';
             $rej_msg .= ' Actualiza os dados e submete novamente.';
@@ -757,36 +757,43 @@ $albums_json        = json_encode($albums_by_artist, JSON_HEX_TAG | JSON_HEX_APO
 
         <!-- Header de Artistas -->
         <div class="page-header">
-            <div class="row align-items-center mb-4">
+            <div class="row align-items-center" style="position:relative;z-index:1">
                 <div class="col-md-8">
-                    <div class="page-header-compact">
-                        <h1>
-                            <i class="bi bi-people-fill me-3"></i>
-                            Artistas
-                        </h1>
-                        <p class="lead">
-                            Gere os perfis artísticos da tua conta. Clica num artista para ver
-                            detalhes.
-                        </p>
-                    </div>
+                    <nav aria-label="breadcrumb" style="margin-bottom:8px">
+                        <ol class="breadcrumb mb-0" style="font-size:.90rem;opacity:.6">
+                            <li class="breadcrumb-item"><a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/painel"
+                                    class="text-white text-decoration-none">Dashboard</a></li>
+                            <li class="breadcrumb-item active text-white">Artistas</li>
+                        </ol>
+                    </nav>
+                    <h1 class="fw-bold mb-1" style="font-size:1.6rem">
+                        <i class="bi bi-people-fill me-2" style="color:#FF0089"></i>Artistas
+                    </h1>
+                    <p class="mb-0" style="font-size:.99rem;opacity:.7">
+                        Gere os perfis artísticos da tua conta. Clica num artista para ver detalhes.
+                    </p>
                 </div>
                 <div class="col-md-4 text-md-end mt-3 mt-md-0">
                     <?php if ($can_add): ?>
-                    <button class="btn btn-pink" onclick="window.location='add-artist'">
-                        <i class="bi bi-person-plus me-1"></i> Novo artista
-                    </button>
+                        <button class="btn fw-bold" style="background:#FF0089;color:#fff;border:none;border-radius:20px;"
+                            onclick="window.location='add-artist'">
+                            <i class="bi bi-plus me-1"></i>Novo artista
+                        </button>
                     <?php else: ?>
-                    <button class="btn btn-sm btn-outline-secondary" disabled title="Limite do plano atingido">
-                        <i class="bi bi-lock me-1"></i>Novo Artista
-                    </button>
+                        <button class="btn fw-bold"
+                            style="background:rgba(255,255,255,.12);color:#fff;border:none;border-radius:20px;" disabled
+                            title="Limite do plano atingido">
+                            <i class="bi bi-lock me-1"></i>Novo artista
+                        </button>
                     <?php endif; ?>
                 </div>
             </div>
             <style>
-            .page-header::before {
-                content: "\F4D1";
-                /* bi-people-fill */
-            }
+                .page-header::before {
+                    content: "\F4D1";
+                    /* bi-people-fill */
+
+                }
             </style>
         </div>
 
@@ -809,63 +816,63 @@ $albums_json        = json_encode($albums_by_artist, JSON_HEX_TAG | JSON_HEX_APO
                 </div>
             </div>
             <?php if (!$can_add): ?>
-            <a href="<?php echo APP_URL .'/'. APP_URL_PANEL ?>/all-plans" class="btn btn-sm btn-outline-secondary"
-                style="font-size:.78rem">
-                <i class="bi bi-arrow-up-circle me-1"></i>Fazer upgrade
-            </a>
+                <a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/all-plans" class="btn btn-sm btn-outline-secondary"
+                    style="font-size:.78rem">
+                    <i class="bi bi-arrow-up-circle me-1"></i>Fazer upgrade
+                </a>
             <?php endif; ?>
         </div>
 
         <?php if ($artist_count === 0): ?>
-        <!-- Empty state -->
-        <div class="empty-state card">
-            <i class="bi bi-person-x empty-icon"></i>
-            <h4 class="fw-bold mb-2">Nenhum artista ainda</h4>
-            <p class="text-muted small mb-4">Cria o primeiro perfil artístico para poderes lançar música nas
-                plataformas.</p>
-            <?php if ($can_add): ?>
-            <a href="add-artist" class="btn px-5" style="background:var(--wasom);color:#fff">
-                <i class="bi bi-person-plus me-2"></i>Criar primeiro artista
-            </a>
-            <?php endif; ?>
-        </div>
+            <!-- Empty state -->
+            <div class="empty-state card">
+                <i class="bi bi-person-x empty-icon"></i>
+                <h4 class="fw-bold mb-2">Nenhum artista ainda</h4>
+                <p class="text-muted small mb-4">Cria o primeiro perfil artístico para poderes lançar música nas
+                    plataformas.</p>
+                <?php if ($can_add): ?>
+                    <a href="add-artist" class="btn px-5" style="background:var(--wasom);color:#fff">
+                        <i class="bi bi-person-plus me-2"></i>Criar primeiro artista
+                    </a>
+                <?php endif; ?>
+            </div>
 
         <?php else: ?>
 
-        <!-- Search + Filter + View toggle -->
-        <div class="d-flex align-items-center gap-2 mb-3 flex-wrap">
-            <div class="flex-fill" style="min-width:200px;max-width:340px">
-                <div class="input-group">
-                    <span class="input-group-text" style="border-radius:12px 0 0 12px"><i
-                            class="bi bi-search text-muted"></i></span>
-                    <input type="text" class="form-control search-bar" id="search-input"
-                        placeholder="Pesquisar artista..." oninput="applyFilters()" />
+            <!-- Search + Filter + View toggle -->
+            <div class="d-flex align-items-center gap-2 mb-3 flex-wrap">
+                <div class="flex-fill" style="min-width:200px;max-width:340px">
+                    <div class="input-group">
+                        <span class="input-group-text" style="border-radius:12px 0 0 12px"><i
+                                class="bi bi-search text-muted"></i></span>
+                        <input type="text" class="form-control search-bar" id="search-input"
+                            placeholder="Pesquisar artista..." oninput="applyFilters()" />
+                    </div>
+                </div>
+                <!-- Status filter pills -->
+                <div class="d-flex gap-2 flex-wrap">
+                    <span class="filter-pill active" data-status="" onclick="setPill(this)">Todos <span
+                            class="badge bg-secondary ms-1" id="pill-count-all"><?php echo $artist_count; ?></span></span>
+                    <span class="filter-pill" data-status="active" onclick="setPill(this)">Activos</span>
+                    <span class="filter-pill" data-status="processing" onclick="setPill(this)">Em análise</span>
+                    <span class="filter-pill" data-status="inactive" onclick="setPill(this)">Inactivos</span>
+                </div>
+                <!-- View toggle -->
+                <div class="d-flex gap-1 ms-auto">
+                    <div class="view-btn active" id="btn-grid" onclick="setView('grid')" title="Grelha">
+                        <i class="bi bi-grid-3x3-gap" style="font-size:.85rem"></i>
+                    </div>
+                    <div class="view-btn" id="btn-list" onclick="setView('list')" title="Lista">
+                        <i class="bi bi-list-ul" style="font-size:.85rem"></i>
+                    </div>
                 </div>
             </div>
-            <!-- Status filter pills -->
-            <div class="d-flex gap-2 flex-wrap">
-                <span class="filter-pill active" data-status="" onclick="setPill(this)">Todos <span
-                        class="badge bg-secondary ms-1" id="pill-count-all"><?php echo $artist_count; ?></span></span>
-                <span class="filter-pill" data-status="active" onclick="setPill(this)">Activos</span>
-                <span class="filter-pill" data-status="processing" onclick="setPill(this)">Em análise</span>
-                <span class="filter-pill" data-status="inactive" onclick="setPill(this)">Inactivos</span>
-            </div>
-            <!-- View toggle -->
-            <div class="d-flex gap-1 ms-auto">
-                <div class="view-btn active" id="btn-grid" onclick="setView('grid')" title="Grelha">
-                    <i class="bi bi-grid-3x3-gap" style="font-size:.85rem"></i>
-                </div>
-                <div class="view-btn" id="btn-list" onclick="setView('list')" title="Lista">
-                    <i class="bi bi-list-ul" style="font-size:.85rem"></i>
-                </div>
-            </div>
-        </div>
 
-        <!-- GRID VIEW -->
-        <div id="view-grid">
-            <div class="row g-3" id="grid-container">
-                <?php foreach ($artists as $a): ?>
-                <?php
+            <!-- GRID VIEW -->
+            <div id="view-grid">
+                <div class="row g-3" id="grid-container">
+                    <?php foreach ($artists as $a): ?>
+                        <?php
                         $photo = $a['photo_artist'] ? $photo_base . htmlspecialchars($a['photo_artist']) : null;
                         $s_label  = $status_labels[$a['status_artist']] ?? 'Desconhecido';
                         $s_class  = 'status-' . $a['status_artist'];
@@ -877,211 +884,211 @@ $albums_json        = json_encode($albums_by_artist, JSON_HEX_TAG | JSON_HEX_APO
                         if ($a['facebook_url'])  $socials[] = ['url' => $a['facebook_url'],  'icon' => 'bi-facebook',  'bg' => '#1877f2'];
                         if ($a['website_url'])   $socials[] = ['url' => $a['website_url'],   'icon' => 'bi-globe',     'bg' => '#6c757d'];
                         ?>
-                <div class="col-xl-3 col-lg-4 col-md-6 col-6 artist-item"
-                    data-name="<?php echo strtolower(htmlspecialchars($a['stage_name'])); ?>"
-                    data-real="<?php echo strtolower(htmlspecialchars($a['real_name'] ?? '')); ?>"
-                    data-status="<?php echo htmlspecialchars($a['status_artist']); ?>"
-                    data-genre="<?php echo strtolower(htmlspecialchars($a['genre_main'] ?? '')); ?>">
-                    <div class="artist-card" onclick="openDetail(<?php echo $a['id_artist']; ?>)">
-                        <!-- Cover / gradient -->
-                        <div class="artist-card-cover"></div>
-                        <!-- Status badge -->
-                        <span class="artist-status-badge <?php echo $s_class; ?>"><?php echo $s_label; ?></span>
-                        <!-- Avatar -->
-                        <?php if ($photo): ?>
-                        <img src="<?php echo $photo; ?>" class="artist-card-avatar"
-                            alt="<?php echo htmlspecialchars($a['stage_name']); ?>" />
-                        <?php else: ?>
-                        <div class="artist-card-avatar-placeholder"><i class="bi bi-person"></i></div>
-                        <?php endif; ?>
+                        <div class="col-xl-3 col-lg-4 col-md-6 col-6 artist-item"
+                            data-name="<?php echo strtolower(htmlspecialchars($a['stage_name'])); ?>"
+                            data-real="<?php echo strtolower(htmlspecialchars($a['real_name'] ?? '')); ?>"
+                            data-status="<?php echo htmlspecialchars($a['status_artist']); ?>"
+                            data-genre="<?php echo strtolower(htmlspecialchars($a['genre_main'] ?? '')); ?>">
+                            <div class="artist-card" onclick="openDetail(<?php echo $a['id_artist']; ?>)">
+                                <!-- Cover / gradient -->
+                                <div class="artist-card-cover"></div>
+                                <!-- Status badge -->
+                                <span class="artist-status-badge <?php echo $s_class; ?>"><?php echo $s_label; ?></span>
+                                <!-- Avatar -->
+                                <?php if ($photo): ?>
+                                    <img src="<?php echo $photo; ?>" class="artist-card-avatar"
+                                        alt="<?php echo htmlspecialchars($a['stage_name']); ?>" />
+                                <?php else: ?>
+                                    <div class="artist-card-avatar-placeholder"><i class="bi bi-person"></i></div>
+                                <?php endif; ?>
 
-                        <div class="artist-card-body">
-                            <div class="artist-card-name"><?php echo htmlspecialchars($a['stage_name']); ?></div>
-                            <?php if ($a['real_name']): ?>
-                            <div class="artist-card-real"><?php echo htmlspecialchars($a['real_name']); ?></div>
-                            <?php endif; ?>
-                            <?php if ($a['city'] || $a['country']): ?>
-                            <div class="artist-card-location">
-                                <i class="bi bi-geo-alt-fill me-1" style="font-size:.6rem"></i>
-                                <?php echo htmlspecialchars(implode(', ', array_filter([$a['city'], $a['country']]))); ?>
-                            </div>
-                            <?php endif; ?>
-                            <div class="mt-1 d-flex flex-wrap justify-content-center gap-1">
-                                <?php if ($a['default_role']): ?>
-                                <span class="badge"
-                                    style="background:rgba(13,110,253,.12);color:#0d6efd;font-size:.62rem">
-                                    <i
-                                        class="bi bi-person-badge me-1"></i><?php echo htmlspecialchars(str_replace('_', ' ', $a['default_role'])); ?>
-                                </span>
-                                <?php endif; ?>
-                                <?php if ($a['genre_main']): ?>
-                                <span class="badge"
-                                    style="background:rgba(255,0,137,.12);color:var(--wasom);font-size:.65rem">
-                                    <?php echo htmlspecialchars($a['genre_main']); ?>
-                                </span>
-                                <?php endif; ?>
-                                <?php if ($a['genre_secondary']): ?>
-                                <span class="badge bg-light text-dark" style="font-size:.62rem">
-                                    <?php echo htmlspecialchars($a['genre_secondary']); ?>
-                                </span>
-                                <?php endif; ?>
-                            </div>
-                            <!-- Stats -->
-                            <div class="artist-card-stats">
-                                <div class="artist-card-stat">
-                                    <div class="num"><?php echo $a['total_albums']; ?></div>
-                                    <div class="lbl">Álbuns</div>
+                                <div class="artist-card-body">
+                                    <div class="artist-card-name"><?php echo htmlspecialchars($a['stage_name']); ?></div>
+                                    <?php if ($a['real_name']): ?>
+                                        <div class="artist-card-real"><?php echo htmlspecialchars($a['real_name']); ?></div>
+                                    <?php endif; ?>
+                                    <?php if ($a['city'] || $a['country']): ?>
+                                        <div class="artist-card-location">
+                                            <i class="bi bi-geo-alt-fill me-1" style="font-size:.6rem"></i>
+                                            <?php echo htmlspecialchars(implode(', ', array_filter([$a['city'], $a['country']]))); ?>
+                                        </div>
+                                    <?php endif; ?>
+                                    <div class="mt-1 d-flex flex-wrap justify-content-center gap-1">
+                                        <?php if ($a['default_role']): ?>
+                                            <span class="badge"
+                                                style="background:rgba(13,110,253,.12);color:#0d6efd;font-size:.62rem">
+                                                <i
+                                                    class="bi bi-person-badge me-1"></i><?php echo htmlspecialchars(str_replace('_', ' ', $a['default_role'])); ?>
+                                            </span>
+                                        <?php endif; ?>
+                                        <?php if ($a['genre_main']): ?>
+                                            <span class="badge"
+                                                style="background:rgba(255,0,137,.12);color:var(--wasom);font-size:.65rem">
+                                                <?php echo htmlspecialchars($a['genre_main']); ?>
+                                            </span>
+                                        <?php endif; ?>
+                                        <?php if ($a['genre_secondary']): ?>
+                                            <span class="badge bg-light text-dark" style="font-size:.62rem">
+                                                <?php echo htmlspecialchars($a['genre_secondary']); ?>
+                                            </span>
+                                        <?php endif; ?>
+                                    </div>
+                                    <!-- Stats -->
+                                    <div class="artist-card-stats">
+                                        <div class="artist-card-stat">
+                                            <div class="num"><?php echo $a['total_albums']; ?></div>
+                                            <div class="lbl">Álbuns</div>
+                                        </div>
+                                        <div class="artist-card-stat">
+                                            <div class="num"><?php echo $a['albums_approved']; ?></div>
+                                            <div class="lbl">Activos</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Socials (stop propagation — abre link sem abrir modal) -->
+                                    <?php if (!empty($socials)): ?>
+                                        <div class="artist-card-socials">
+                                            <?php foreach (array_slice($socials, 0, 5) as $s): ?>
+                                                <a href="<?php echo htmlspecialchars($s['url']); ?>" target="_blank" rel="noopener"
+                                                    class="social-pill" style="background:<?php echo $s['bg']; ?>"
+                                                    onclick="event.stopPropagation()"
+                                                    title="<?php echo htmlspecialchars($s['url']); ?>">
+                                                    <i class="bi <?php echo $s['icon']; ?>"></i>
+                                                </a>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <!-- Actions -->
+                                    <div class="d-flex gap-2 justify-content-center mt-3">
+                                        <a href="add-artist?edit=<?php echo $a['id_artist']; ?>"
+                                            class="btn btn-outline-secondary btn-sm" style="font-size:.72rem"
+                                            onclick="event.stopPropagation()">
+                                            <i class="bi bi-pencil me-1"></i>Editar
+                                        </a>
+                                        <button class="btn btn-outline-secondary btn-sm" style="font-size:.72rem"
+                                            onclick="event.stopPropagation();openDetail(<?php echo $a['id_artist']; ?>)">
+                                            <i class="bi bi-eye me-1"></i>Ver
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="artist-card-stat">
-                                    <div class="num"><?php echo $a['albums_approved']; ?></div>
-                                    <div class="lbl">Activos</div>
-                                </div>
-                            </div>
-
-                            <!-- Socials (stop propagation — abre link sem abrir modal) -->
-                            <?php if (!empty($socials)): ?>
-                            <div class="artist-card-socials">
-                                <?php foreach (array_slice($socials, 0, 5) as $s): ?>
-                                <a href="<?php echo htmlspecialchars($s['url']); ?>" target="_blank" rel="noopener"
-                                    class="social-pill" style="background:<?php echo $s['bg']; ?>"
-                                    onclick="event.stopPropagation()"
-                                    title="<?php echo htmlspecialchars($s['url']); ?>">
-                                    <i class="bi <?php echo $s['icon']; ?>"></i>
-                                </a>
-                                <?php endforeach; ?>
-                            </div>
-                            <?php endif; ?>
-
-                            <!-- Actions -->
-                            <div class="d-flex gap-2 justify-content-center mt-3">
-                                <a href="add-artist?edit=<?php echo $a['id_artist']; ?>"
-                                    class="btn btn-outline-secondary btn-sm" style="font-size:.72rem"
-                                    onclick="event.stopPropagation()">
-                                    <i class="bi bi-pencil me-1"></i>Editar
-                                </a>
-                                <button class="btn btn-outline-secondary btn-sm" style="font-size:.72rem"
-                                    onclick="event.stopPropagation();openDetail(<?php echo $a['id_artist']; ?>)">
-                                    <i class="bi bi-eye me-1"></i>Ver
-                                </button>
                             </div>
                         </div>
-                    </div>
+                    <?php endforeach; ?>
                 </div>
-                <?php endforeach; ?>
+                <div id="no-results" class="text-center py-5 text-muted">
+                    <i class="bi bi-search d-block mb-2" style="font-size:2rem;opacity:.3"></i>
+                    Nenhum artista encontrado para essa pesquisa.
+                </div>
             </div>
-            <div id="no-results" class="text-center py-5 text-muted">
-                <i class="bi bi-search d-block mb-2" style="font-size:2rem;opacity:.3"></i>
-                Nenhum artista encontrado para essa pesquisa.
-            </div>
-        </div>
 
-        <!-- LIST VIEW -->
-        <div id="view-list" class="d-none">
-            <div class="d-flex flex-column gap-2" id="list-container">
-                <?php foreach ($artists as $a): ?>
-                <?php
+            <!-- LIST VIEW -->
+            <div id="view-list" class="d-none">
+                <div class="d-flex flex-column gap-2" id="list-container">
+                    <?php foreach ($artists as $a): ?>
+                        <?php
                         $photo   = $a['photo_artist'] ? $photo_base . htmlspecialchars($a['photo_artist']) : null;
                         $s_class = 'status-' . $a['status_artist'];
                         ?>
-                <div class="artist-list-row artist-item"
-                    data-name="<?php echo strtolower(htmlspecialchars($a['stage_name'])); ?>"
-                    data-real="<?php echo strtolower(htmlspecialchars($a['real_name'] ?? '')); ?>"
-                    data-status="<?php echo htmlspecialchars($a['status_artist']); ?>"
-                    data-genre="<?php echo strtolower(htmlspecialchars($a['genre_main'] ?? '')); ?>"
-                    onclick="openDetail(<?php echo $a['id_artist']; ?>)">
-                    <!-- Avatar -->
-                    <?php if ($photo): ?>
-                    <img src="<?php echo $photo; ?>" class="artist-list-avatar" alt="" />
-                    <?php else: ?>
-                    <div class="artist-list-avatar-ph"><i class="bi bi-person"></i></div>
-                    <?php endif; ?>
+                        <div class="artist-list-row artist-item"
+                            data-name="<?php echo strtolower(htmlspecialchars($a['stage_name'])); ?>"
+                            data-real="<?php echo strtolower(htmlspecialchars($a['real_name'] ?? '')); ?>"
+                            data-status="<?php echo htmlspecialchars($a['status_artist']); ?>"
+                            data-genre="<?php echo strtolower(htmlspecialchars($a['genre_main'] ?? '')); ?>"
+                            onclick="openDetail(<?php echo $a['id_artist']; ?>)">
+                            <!-- Avatar -->
+                            <?php if ($photo): ?>
+                                <img src="<?php echo $photo; ?>" class="artist-list-avatar" alt="" />
+                            <?php else: ?>
+                                <div class="artist-list-avatar-ph"><i class="bi bi-person"></i></div>
+                            <?php endif; ?>
 
-                    <!-- Info -->
-                    <div class="artist-list-info">
-                        <div class="artist-list-name">
-                            <?php echo htmlspecialchars($a['stage_name']); ?>
-                            <span class="badge ms-1 <?php echo $s_class; ?>"
-                                style="font-size:.6rem;vertical-align:middle">
-                                <?php echo $status_labels[$a['status_artist']] ?? '—'; ?>
-                            </span>
+                            <!-- Info -->
+                            <div class="artist-list-info">
+                                <div class="artist-list-name">
+                                    <?php echo htmlspecialchars($a['stage_name']); ?>
+                                    <span class="badge ms-1 <?php echo $s_class; ?>"
+                                        style="font-size:.6rem;vertical-align:middle">
+                                        <?php echo $status_labels[$a['status_artist']] ?? '—'; ?>
+                                    </span>
+                                </div>
+                                <div class="artist-list-meta">
+                                    <?php if ($a['default_role']): ?>
+                                        <span class="badge me-1"
+                                            style="background:rgba(13,110,253,.1);color:#0d6efd;font-size:.6rem">
+                                            <?php echo htmlspecialchars(str_replace('_', ' ', $a['default_role'])); ?>
+                                        </span>
+                                    <?php endif; ?>
+                                    <?php if ($a['real_name']): ?>
+                                        <span><?php echo htmlspecialchars($a['real_name']); ?></span>
+                                    <?php endif; ?>
+                                    <?php if ($a['genre_main']): ?>
+                                        <span class="ms-1">· <?php echo htmlspecialchars($a['genre_main']); ?></span>
+                                    <?php endif; ?>
+                                    <?php if ($a['genre_secondary']): ?>
+                                        <span class="ms-1">· <?php echo htmlspecialchars($a['genre_secondary']); ?></span>
+                                    <?php endif; ?>
+                                    <?php if ($a['city'] || $a['country']): ?>
+                                        <span class="ms-1">· <i class="bi bi-geo-alt-fill" style="font-size:.6rem"></i>
+                                            <?php echo htmlspecialchars(implode(', ', array_filter([$a['city'], $a['country']]))); ?>
+                                        </span>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+
+                            <!-- Albums count -->
+                            <div class="artist-list-albums d-none d-md-flex">
+                                <?php if ($a['albums_approved']): ?>
+                                    <span class="status-badge sb-approved"><?php echo $a['albums_approved']; ?>
+                                        aprovado<?php echo $a['albums_approved'] > 1 ? 's' : ''; ?></span>
+                                <?php endif; ?>
+                                <?php if ($a['albums_pending']): ?>
+                                    <span class="status-badge sb-pending"><?php echo $a['albums_pending']; ?>
+                                        pendente<?php echo $a['albums_pending'] > 1 ? 's' : ''; ?></span>
+                                <?php endif; ?>
+                                <?php if ($a['albums_draft']): ?>
+                                    <span class="status-badge sb-draft"><?php echo $a['albums_draft']; ?>
+                                        rascunho<?php echo $a['albums_draft'] > 1 ? 's' : ''; ?></span>
+                                <?php endif; ?>
+                                <?php if (!$a['total_albums']): ?>
+                                    <span class="text-muted" style="font-size:.75rem">Sem lançamentos</span>
+                                <?php endif; ?>
+                            </div>
+
+                            <!-- Social quick links -->
+                            <div class="artist-list-socials d-none d-lg-flex" onclick="event.stopPropagation()">
+                                <?php if ($a['spotify_url']): ?>
+                                    <a href="<?php echo htmlspecialchars($a['spotify_url']); ?>" target="_blank" rel="noopener"
+                                        class="social-pill" style="background:#1db954" title="Spotify"><i
+                                            class="bi bi-spotify"></i></a>
+                                <?php endif; ?>
+                                <?php if ($a['youtube_url']): ?>
+                                    <a href="<?php echo htmlspecialchars($a['youtube_url']); ?>" target="_blank" rel="noopener"
+                                        class="social-pill" style="background:#ff0000" title="YouTube"><i
+                                            class="bi bi-youtube"></i></a>
+                                <?php endif; ?>
+                                <?php if ($a['instagram_url']): ?>
+                                    <a href="<?php echo htmlspecialchars($a['instagram_url']); ?>" target="_blank" rel="noopener"
+                                        class="social-pill" style="background:#e1306c" title="Instagram"><i
+                                            class="bi bi-instagram"></i></a>
+                                <?php endif; ?>
+                            </div>
+
+                            <!-- Action button -->
+                            <div onclick="event.stopPropagation()">
+                                <a href="add-artist?edit=<?php echo $a['id_artist']; ?>"
+                                    class="btn btn-outline-secondary btn-sm" style="font-size:.75rem">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                            </div>
                         </div>
-                        <div class="artist-list-meta">
-                            <?php if ($a['default_role']): ?>
-                            <span class="badge me-1"
-                                style="background:rgba(13,110,253,.1);color:#0d6efd;font-size:.6rem">
-                                <?php echo htmlspecialchars(str_replace('_', ' ', $a['default_role'])); ?>
-                            </span>
-                            <?php endif; ?>
-                            <?php if ($a['real_name']): ?>
-                            <span><?php echo htmlspecialchars($a['real_name']); ?></span>
-                            <?php endif; ?>
-                            <?php if ($a['genre_main']): ?>
-                            <span class="ms-1">· <?php echo htmlspecialchars($a['genre_main']); ?></span>
-                            <?php endif; ?>
-                            <?php if ($a['genre_secondary']): ?>
-                            <span class="ms-1">· <?php echo htmlspecialchars($a['genre_secondary']); ?></span>
-                            <?php endif; ?>
-                            <?php if ($a['city'] || $a['country']): ?>
-                            <span class="ms-1">· <i class="bi bi-geo-alt-fill" style="font-size:.6rem"></i>
-                                <?php echo htmlspecialchars(implode(', ', array_filter([$a['city'], $a['country']]))); ?>
-                            </span>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-
-                    <!-- Albums count -->
-                    <div class="artist-list-albums d-none d-md-flex">
-                        <?php if ($a['albums_approved']): ?>
-                        <span class="status-badge sb-approved"><?php echo $a['albums_approved']; ?>
-                            aprovado<?php echo $a['albums_approved'] > 1 ? 's' : ''; ?></span>
-                        <?php endif; ?>
-                        <?php if ($a['albums_pending']): ?>
-                        <span class="status-badge sb-pending"><?php echo $a['albums_pending']; ?>
-                            pendente<?php echo $a['albums_pending'] > 1 ? 's' : ''; ?></span>
-                        <?php endif; ?>
-                        <?php if ($a['albums_draft']): ?>
-                        <span class="status-badge sb-draft"><?php echo $a['albums_draft']; ?>
-                            rascunho<?php echo $a['albums_draft'] > 1 ? 's' : ''; ?></span>
-                        <?php endif; ?>
-                        <?php if (!$a['total_albums']): ?>
-                        <span class="text-muted" style="font-size:.75rem">Sem lançamentos</span>
-                        <?php endif; ?>
-                    </div>
-
-                    <!-- Social quick links -->
-                    <div class="artist-list-socials d-none d-lg-flex" onclick="event.stopPropagation()">
-                        <?php if ($a['spotify_url']): ?>
-                        <a href="<?php echo htmlspecialchars($a['spotify_url']); ?>" target="_blank" rel="noopener"
-                            class="social-pill" style="background:#1db954" title="Spotify"><i
-                                class="bi bi-spotify"></i></a>
-                        <?php endif; ?>
-                        <?php if ($a['youtube_url']): ?>
-                        <a href="<?php echo htmlspecialchars($a['youtube_url']); ?>" target="_blank" rel="noopener"
-                            class="social-pill" style="background:#ff0000" title="YouTube"><i
-                                class="bi bi-youtube"></i></a>
-                        <?php endif; ?>
-                        <?php if ($a['instagram_url']): ?>
-                        <a href="<?php echo htmlspecialchars($a['instagram_url']); ?>" target="_blank" rel="noopener"
-                            class="social-pill" style="background:#e1306c" title="Instagram"><i
-                                class="bi bi-instagram"></i></a>
-                        <?php endif; ?>
-                    </div>
-
-                    <!-- Action button -->
-                    <div onclick="event.stopPropagation()">
-                        <a href="add-artist?edit=<?php echo $a['id_artist']; ?>"
-                            class="btn btn-outline-secondary btn-sm" style="font-size:.75rem">
-                            <i class="bi bi-pencil"></i>
-                        </a>
-                    </div>
+                    <?php endforeach; ?>
                 </div>
-                <?php endforeach; ?>
+                <div id="no-results-list" class="text-center py-5 text-muted d-none">
+                    <i class="bi bi-search d-block mb-2" style="font-size:2rem;opacity:.3"></i>
+                    Nenhum artista encontrado.
+                </div>
             </div>
-            <div id="no-results-list" class="text-center py-5 text-muted d-none">
-                <i class="bi bi-search d-block mb-2" style="font-size:2rem;opacity:.3"></i>
-                Nenhum artista encontrado.
-            </div>
-        </div>
 
         <?php endif; ?>
     </div><!-- /container -->
@@ -1161,11 +1168,11 @@ $albums_json        = json_encode($albums_by_artist, JSON_HEX_TAG | JSON_HEX_APO
     <script src="<?php echo APP_URL  ?>/js/theme.wp.js"></script>
     <script src="<?php echo APP_URL  ?>/js/wp.tools.js"></script>
     <script>
-    const ARTISTS = <?php echo $artists_json; ?>;
-    const ALBUMS_MAP = <?php echo $albums_json; ?>;
-    const PHOTO_BASE = '<?php echo $photo_base; ?>';
-    const COVER_BASE = '<?php echo $cover_base; ?>';
-    const BASE_URL = '<?php echo APP_URL . '/' . APP_URL_PANEL; ?>';
+        const ARTISTS = <?php echo $artists_json; ?>;
+        const ALBUMS_MAP = <?php echo $albums_json; ?>;
+        const PHOTO_BASE = '<?php echo $photo_base; ?>';
+        const COVER_BASE = '<?php echo $cover_base; ?>';
+        const BASE_URL = '<?php echo APP_URL . '/' . APP_URL_PANEL; ?>';
     </script>
     <script src="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/artists/js/artists-list.js"></script>
 
