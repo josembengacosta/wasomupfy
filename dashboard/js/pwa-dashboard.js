@@ -1,5 +1,5 @@
 // ══════════════════════════════════════════════════════
-// WASOM UPFY v2.0.1.1 — PWA Dashboard Manager
+// WASOM UPFY v2.0.1 — PWA Dashboard Manager
 // Arquivo: dashboard/js/pwa-dashboard.js
 // ══════════════════════════════════════════════════════
 
@@ -43,7 +43,7 @@ if (
         typeof window.WasomPWA.showToast === "function"
       ) {
         window.WasomPWA.showToast(
-          '<i class="bi bi-arrow-repeat me-1"></i> Nova versao disponivel <button type="button" class="wasom-toast-action" data-wasom-update-now>Actualizar agora</button>',
+          '<i class="bi bi-arrow-repeat me-1"></i> Nova versão disponivel - v2.0.1 <button type="button" class="wasom-toast-action" data-wasom-update-now>Actualizar agora</button>',
           "info",
           0
         );

@@ -620,9 +620,8 @@ $csrf = htmlspecialchars($_SESSION['csrf_token']);
                         <i class="bi bi-disc-fill me-2" style="color:#FF0089"></i>Meus Lançamentos
                     </h1>
                     <p class="mb-0" style="font-size:.99rem;opacity:.7">
-                        O <q>Meus Lançamentos</q> agrega todo o catálogo de lançamentos desta conta.
-                        Aqui você encontra todos os singles, EPs e álbuns distribuídos para as
-                        plataformas digitais. Utilize a busca para encontrar rapidamente o que procura.
+                        Meus Lançamentos reúne todos os seus singles, EPs e álbuns distribuídos. Use a busca para
+                        encontrar o que precisa.
                     </p>
                 </div>
                 <div class="col-md-4 text-md-end mt-3 mt-md-0">

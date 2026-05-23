@@ -1,6 +1,6 @@
 <?php
 // ══════════════════════════════════════════════
-// WASOM UPFY v2.0 — Sidebar Dashboard (reutilizável)
+// WASOM UPFY v2.0.1.1 — Sidebar Dashboard (reutilizável)
 // Arquivo: dashboard/include/sidebar.php
 //
 // Requer platform.php carregado antes.
@@ -23,12 +23,14 @@ $routes = [
     // Perfil
     '/dashboard/user/profile'       => 'profile',
     //Financas
-    '/dashboard/report'             => 'overview',
-    '/dashboard/withdrawal'         => 'overview',
-    '/dashboard/transactions'       => 'overview',
+    '/dashboard/report'             => 'report',
+    '/dashboard/withdrawal'         => 'withdrawal',
+    '/dashboard/transactions'       => 'transactions',
     //estatisticas
     '/dashboard/statistics/overview' => 'statistics',
     '/dashboard/statistics/artists' => 'statistics',
+    '/dashboard/statistics/compare' => 'statistics',
+    '/dashboard/statistics/export' => 'statistics',
     // Configurações
     '/dashboard/page/settings'      => 'settings',
     '/dashboard/account/manage-account' => 'manage_account',
@@ -85,7 +87,7 @@ function is_active_dash($page, $current)
         <!-- Logo (Center on Mobile, Left on Desktop) -->
         <a class="navbar-brand" href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/painel">
             <span class="text-light"
-                style="font-weight: bold; box-sizing: border-box; text-transform: uppercase; font-family: Arial, sans-serif;">
+                style="font-weight: 400; box-sizing: border-box; font-family: 'Pacifico', cursive; font-size: 1.6rem; font-style: normal;">
                 <?php echo APP_NAME; ?>
             </span>
         </a>
@@ -135,33 +137,33 @@ function is_active_dash($page, $current)
         <!-- User Icon (Right) — com indicador de página ativa -->
         <div class="user-menu d-flex align-items-center">
             <!-- Theme Toggle Button -->
-            <a class="theme-toggle text-white me-2" id="themeToggle">
+            <a class="theme-toggle text-white me-1" id="themeToggle">
                 <i class="bi bi-sun" id="themeIcon"></i>
             </a>
             <a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/page/notifications"
-                class="text-white me-2 position-relative" aria-label="Notificações" id="navNotifBtn">
-                <i class="bi bi-bell fs-4"></i>
+                class="text-white me-1 position-relative" aria-label="Notificações" id="navNotifBtn">
+                <i class="bi bi-bell fs-5"></i>
                 <?php if ($notif_count > 0): ?>
-                <span id="navNotifBadge" class="position-absolute translate-middle badge rounded-pill" style="top:2px;left:calc(100% - 4px);background:#FF0089;font-size:.6rem;
+                    <span id="navNotifBadge" class="position-absolute translate-middle badge rounded-pill" style="top:2px;left:calc(100% - 4px);background:#FF0089;font-size:.6rem;
                        min-width:18px;height:18px;padding:0 5px;line-height:18px;
                        box-shadow:0 0 0 2px #1a1a2e;">
-                    <?php echo $notif_count > 99 ? '99+' : $notif_count; ?>
-                </span>
+                        <?php echo $notif_count > 99 ? '99+' : $notif_count; ?>
+                    </span>
                 <?php else: ?>
-                <span id="navNotifBadge" class="position-absolute translate-middle badge rounded-pill" style="top:2px;left:calc(100% - 4px);background:#FF0089;font-size:.6rem;
+                    <span id="navNotifBadge" class="position-absolute translate-middle badge rounded-pill" style="top:2px;left:calc(100% - 4px);background:#FF0089;font-size:.6rem;
                        min-width:18px;height:18px;padding:0 5px;line-height:18px;
                        box-shadow:0 0 0 2px #1a1a2e;display:none;">0</span>
                 <?php endif; ?>
             </a>
             <a href="#" class="text-white" data-bs-toggle="dropdown">
                 <?php if ($user_photo): ?>
-                <img src="<?php echo APP_URL  ?>/assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
-                    width="32" height="32" class="rounded-circle flex-shrink-0"
-                    style="object-fit:cover;border:2px solid #FF4D4D" alt="Foto conta"
-                    onerror="this.onerror=null;this.src='<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png'">
+                    <img src="<?php echo APP_URL  ?>/assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
+                        width="30" height="30" class="rounded-circle flex-shrink-0"
+                        style="object-fit:cover;border:2px solid #FF0089" alt="Foto conta"
+                        onerror="this.onerror=null;this.src='<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png'">
                 <?php else: ?>
-                <img src="<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png" width="32" height="32"
-                    class="rounded-circle flex-shrink-0" style="object-fit:cover;" alt="Avatar">
+                    <img src="<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png" width="30" height="30"
+                        class="rounded-circle flex-shrink-0" style="object-fit:cover;" alt="Avatar">
                 <?php endif; ?>
             </a>
             <ul class="dropdown-menu dropdown-menu-end user-dropdown" aria-labelledby="userDropdown">
@@ -170,13 +172,13 @@ function is_active_dash($page, $current)
                 <?php echo is_active_dash('profile', $active_page); ?>"
                         href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/user/profile">
                         <?php if ($user_photo): ?>
-                        <img src="<?php echo APP_URL  ?>/assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
-                            width="32" height="32" class="rounded-circle flex-shrink-0"
-                            style="object-fit:cover;border:2px solid #FF4D4D" alt="Foto conta"
-                            onerror="this.onerror=null;this.src='<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png'">
+                            <img src="<?php echo APP_URL  ?>/assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
+                                width="32" height="32" class="rounded-circle flex-shrink-0"
+                                style="object-fit:cover;border:2px solid #FF0089" alt="Foto conta"
+                                onerror="this.onerror=null;this.src='<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png'">
                         <?php else: ?>
-                        <img src="<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png" width="32" height="32"
-                            class="rounded-circle flex-shrink-0" style="object-fit:cover;" alt="Avatar">
+                            <img src="<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png" width="32" height="32"
+                                class="rounded-circle flex-shrink-0" style="object-fit:cover;" alt="Avatar">
                         <?php endif; ?>
                         <div class="overflow-hidden">
                             <div class="fw-bold text-truncate" style="max-width:160px">
@@ -194,14 +196,14 @@ function is_active_dash($page, $current)
                     <a class="dropdown-item d-flex align-items-center gap-2 <?php echo is_active_dash('profile', $active_page); ?>"
                         href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/user/profile">
                         <?php if ($user_photo): ?>
-                        <img src="<?php echo APP_URL  ?>/assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
-                            width="28" height="28" class="rounded-circle flex-shrink-0" style="object-fit:cover"
-                            alt="Foto perfil"
-                            onerror="this.onerror=null;this.src='<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png'">
+                            <img src="<?php echo APP_URL  ?>/assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
+                                width="28" height="28" class="rounded-circle flex-shrink-0" style="object-fit:cover"
+                                alt="Foto perfil"
+                                onerror="this.onerror=null;this.src='<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png'">
                         <?php else: ?>
-                        <img src="<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png" width="28" height="28"
-                            class="rounded-circle flex-shrink-0" style="object-fit:cover" alt="Perfil"
-                            onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\'bi bi-person-circle fs-5 flex-shrink-0\'></i>')">
+                            <img src="<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png" width="28" height="28"
+                                class="rounded-circle flex-shrink-0" style="object-fit:cover" alt="Perfil"
+                                onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\'bi bi-person-circle fs-5 flex-shrink-0\'></i>')">
                         <?php endif; ?>
                         Meu Perfil
                     </a>
@@ -290,8 +292,8 @@ function is_active_dash($page, $current)
     <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="offcanvasMenuLabel">
             <span class="text-light"
-                style="font-weight: bold; box-sizing: border-box; text-transform: uppercase; font-family: Arial, sans-serif;">
-                WASOM UPFY
+                style="font-weight: 400; box-sizing: border-box; font-family: 'Pacifico', cursive; font-size: 1.6rem; font-style: normal;">
+                <?php echo APP_NAME; ?>
             </span>
         </h5>
         <button type="button" class="btn-close text-white" data-bs-dismiss="offcanvas" aria-label="Close">
@@ -347,14 +349,14 @@ function is_active_dash($page, $current)
                 <a class="nav-link me-2 <?php echo is_active_dash('profile', $active_page); ?>"
                     href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/user/profile">
                     <?php if ($user_photo): ?>
-                    <img src="<?php echo APP_URL  ?>/assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
-                        width="28" height="28" class="rounded-circle flex-shrink-0" style="object-fit:cover"
-                        alt="Foto perfil"
-                        onerror="this.onerror=null;this.src='<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png'">
+                        <img src="<?php echo APP_URL  ?>/assets/comprovantes/uploads/users/<?php echo htmlspecialchars($user_photo); ?>"
+                            width="28" height="28" class="rounded-circle flex-shrink-0" style="object-fit:cover"
+                            alt="Foto perfil"
+                            onerror="this.onerror=null;this.src='<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png'">
                     <?php else: ?>
-                    <img src="<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png" width="28" height="28"
-                        class="rounded-circle flex-shrink-0" style="object-fit:cover" alt="Perfil"
-                        onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\'bi bi-person-circle fs-5 flex-shrink-0\'></i>')">
+                        <img src="<?php echo APP_URL  ?>/assets/img/avatar/avatar_wasomupfy.png" width="28" height="28"
+                            class="rounded-circle flex-shrink-0" style="object-fit:cover" alt="Perfil"
+                            onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<i class=\'bi bi-person-circle fs-5 flex-shrink-0\'></i>')">
                     <?php endif; ?>
                     Meu Perfil
                 </a>

@@ -1,6 +1,6 @@
 <?php
 // ══════════════════════════════════════════════════════
-// WASOM UPFY v2.0 — Conta e Serviços Disponíveis
+// WASOM UPFY v2.0.1.1 — Conta e Serviços Disponíveis
 // Arquivo: dashboard/services/available-services.php
 // ══════════════════════════════════════════════════════
 require_once __DIR__ . '/../../authentic/include/functions.php';

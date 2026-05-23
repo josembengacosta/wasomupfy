@@ -315,8 +315,8 @@ $reports_url = $base_url . '/';
                         <ol class="breadcrumb mb-0" style="font-size:.90rem;opacity:.6">
                             <li class="breadcrumb-item"><a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/painel"
                                     class="text-white text-decoration-none">Dashboard</a></li>
-                            <li class="breadcrumb-item"><a href="statistics"
-                                    class="text-white text-decoration-none">Estatísticas</a></li>
+                            <li class="breadcrumb-item"><a href="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/overview"
+                                    class="text-white text-decoration-none">Finanças</a></li>
                             <li class="breadcrumb-item active text-white">Relatórios Financeiros</li>
                         </ol>
                     </nav>

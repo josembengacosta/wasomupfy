@@ -1,7 +1,8 @@
 <?php
 // head.php — Wasom Upfy Dashboard
 // Incluir dentro de <head>...</head> em todas as páginas do dashboard
-// Uso: <?php include __DIR__ . '/../include/head.php'; ?>
+// Uso: <?php include __DIR__ . '/../include/head.php'; 
+?>
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -39,6 +40,11 @@
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
 <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
 <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Homemade+Apple&family=Just+Another+Hand&family=Pacifico&display=swap"
+    rel="stylesheet">
 
 <!-- ── CSS ──────────────────────────────────────────── -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@6.2.5/dist/simplebar.min.css" />
@@ -55,66 +61,66 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <!-- Toastr -->
 <script>
-// ── Conexão offline ─────────────────────────────────
-function checkConnection() {
-    if (!navigator.onLine) {
-        var toast = bootstrap.Toast.getOrCreateInstance(document.getElementById('connectionToast'));
-        toast.show();
+    // ── Conexão offline ─────────────────────────────────
+    function checkConnection() {
+        if (!navigator.onLine) {
+            var toast = bootstrap.Toast.getOrCreateInstance(document.getElementById('connectionToast'));
+            toast.show();
+        }
     }
-}
-checkConnection();
-window.addEventListener('offline', checkConnection);
-window.addEventListener('online', function() {
-    var toastEl = document.getElementById('connectionToast');
-    var toast = bootstrap.Toast.getInstance(toastEl);
-    if (toast) toast.hide();
-});
+    checkConnection();
+    window.addEventListener('offline', checkConnection);
+    window.addEventListener('online', function() {
+        var toastEl = document.getElementById('connectionToast');
+        var toast = bootstrap.Toast.getInstance(toastEl);
+        if (toast) toast.hide();
+    });
 </script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Seleciona todos os links do offcanvas e bottom-nav que tenham a classe 'active'
-    const activeLinks = document.querySelectorAll(
-        '.offcanvas .nav-link.active, .bottom-nav .nav-link.active');
-    activeLinks.forEach(link => {
-        link.style.color = '#ff0089';
-        link.style.fontWeight = '600';
+    document.addEventListener('DOMContentLoaded', function() {
+        // Seleciona todos os links do offcanvas e bottom-nav que tenham a classe 'active'
+        const activeLinks = document.querySelectorAll(
+            '.offcanvas .nav-link.active, .bottom-nav .nav-link.active');
+        activeLinks.forEach(link => {
+            link.style.color = '#ff0089';
+            link.style.fontWeight = '600';
+        });
     });
-});
 </script>
 <!-- ── PWA ─────────────────────────────────── -->
 <script src="<?php echo APP_URL . '/' . APP_URL_PANEL ?>/js/pwa-dashboard.js" defer></script>
 
 <!-- ── Estilos inline PWA standalone ────────────────── -->
 <style>
-/* Quando instalado como PWA: remove elementos só do browser */
-@media (display-mode: standalone) {
-    .hide-in-pwa {
-        display: none !important;
+    /* Quando instalado como PWA: remove elementos só do browser */
+    @media (display-mode: standalone) {
+        .hide-in-pwa {
+            display: none !important;
+        }
+
+        body {
+            padding-top: env(safe-area-inset-top);
+        }
     }
 
-    body {
-        padding-top: env(safe-area-inset-top);
+    .offcanvas .nav-link.active {
+        color: #ff0089 !important;
+        font-weight: 600;
     }
-}
 
-.offcanvas .nav-link.active {
-    color: #ff0089 !important;
-    font-weight: 600;
-}
+    .bottom-nav .nav-link.active {
+        color: #ff0089 !important;
+    }
 
-.bottom-nav .nav-link.active {
-    color: #ff0089 !important;
-}
+    .dropdown-item.active,
+    .dropdown-item:active {
+        color: #FF0089 !important;
+        background-color: rgba(255, 0, 137, 0.1) !important;
+    }
 
-.dropdown-item.active,
-.dropdown-item:active {
-    color: #FF0089 !important;
-    background-color: rgba(255, 0, 137, 0.1) !important;
-}
-
-.user-dropdown {
-    max-height: 80vh;
-    overflow-y: auto;
-}
+    .user-dropdown {
+        max-height: 80vh;
+        overflow-y: auto;
+    }
 </style>
